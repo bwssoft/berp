@@ -20,6 +20,7 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
+  ClipboardIcon,
 } from "@heroicons/react/24/outline";
 import {
   Disclosure,
@@ -28,48 +29,56 @@ import {
 } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { cn } from "../util/cn";
+import { useIsOnPathname } from "../hook/is-on-pathname";
+import Link from "next/link";
 
 const navigation: {
   name: string;
-  href?: string;
   icon: ForwardRefExoticComponent<
     Omit<SVGProps<SVGSVGElement>, "ref"> & {
       title?: string | undefined;
       titleId?: string | undefined;
     } & RefAttributes<SVGSVGElement>
   >;
-  current: boolean;
+  pathname?: string;
   children?: {
     name: string;
-    href: string;
-    current?: boolean;
+    pathname?: string;
   }[];
 }[] = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, current: true },
+  { name: "Dashboard", icon: HomeIcon },
   {
-    name: "Teams",
+    name: "Times",
     icon: UsersIcon,
-    current: false,
     children: [
-      { name: "Engineering", href: "#" },
-      { name: "Human Resources", href: "#" },
-      { name: "Customer Success", href: "#" },
+      { name: "Software" },
+      { name: "Engenharia" },
+      { name: "Recursos Humanos" },
+      { name: "Suporte" },
     ],
   },
   {
-    name: "Projects",
+    name: "Insumos",
     icon: FolderIcon,
-    current: false,
     children: [
-      { name: "GraphQL API", href: "#" },
-      { name: "iOS App", href: "#" },
-      { name: "Android App", href: "#" },
-      { name: "New Customer Portal", href: "#" },
+      { name: "Gestão", pathname: "/input/management" },
+      { name: "Entradas e Saídas", pathname: "/input/enter-exit" },
+      { name: "Resumo", pathname: "/input/resume" },
+      { name: "Estoque", pathname: "/input/stock" },
+      { name: "Histórico", pathname: "/input/historic" },
     ],
   },
-  { name: "Calendar", href: "#", icon: CalendarIcon, current: false },
-  { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
+  {
+    name: "Ordem de Produção",
+    icon: ClipboardIcon,
+    children: [
+      { name: "Gestão", pathname: "/production-order/management" },
+      { name: "Resumo", pathname: "/production-order/resume" },
+    ],
+  },
+  { name: "Calendário", icon: CalendarIcon },
+  { name: "Documentos", icon: DocumentDuplicateIcon },
+  { name: "Relatórios", icon: ChartPieIcon },
 ];
 
 const teams = [
@@ -80,17 +89,10 @@ const teams = [
 
 export function SideBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isOnPathname = useIsOnPathname();
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
       <div>
         <Transition show={sidebarOpen}>
           <Dialog className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
@@ -153,10 +155,10 @@ export function SideBar() {
                             {navigation.map((item) => (
                               <li key={item.name}>
                                 {!item?.children ? (
-                                  <a
-                                    href={item.href}
+                                  <Link
+                                    href={item.pathname ?? "#"}
                                     className={cn(
-                                      item.current
+                                      isOnPathname(item.pathname)
                                         ? "bg-gray-50"
                                         : "hover:bg-gray-50",
                                       "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700"
@@ -167,14 +169,14 @@ export function SideBar() {
                                       aria-hidden="true"
                                     />
                                     {item.name}
-                                  </a>
+                                  </Link>
                                 ) : (
                                   <Disclosure as="div">
                                     {({ open }) => (
                                       <>
                                         <DisclosureButton
                                           className={cn(
-                                            item.current
+                                            isOnPathname(item.pathname)
                                               ? "bg-gray-50"
                                               : "hover:bg-gray-50",
                                             "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm font-semibold leading-6 text-gray-700"
@@ -202,18 +204,23 @@ export function SideBar() {
                                           {item?.children?.map((subItem) => (
                                             <li key={subItem.name}>
                                               {/* 44px */}
-                                              <DisclosureButton
-                                                as="a"
-                                                href={subItem.href}
-                                                className={cn(
-                                                  subItem?.current
-                                                    ? "bg-gray-50"
-                                                    : "hover:bg-gray-50",
-                                                  "block rounded-md py-2 pl-9 pr-2 text-sm leading-6 text-gray-700"
-                                                )}
+                                              <Link
+                                                href={subItem.pathname ?? "#"}
                                               >
-                                                {subItem.name}
-                                              </DisclosureButton>
+                                                <DisclosureButton
+                                                  as="div"
+                                                  className={cn(
+                                                    isOnPathname(
+                                                      subItem.pathname
+                                                    )
+                                                      ? "bg-gray-50"
+                                                      : "hover:bg-gray-50",
+                                                    "block rounded-md py-2 pl-9 pr-2 text-sm leading-6 text-gray-700"
+                                                  )}
+                                                >
+                                                  {subItem.name}
+                                                </DisclosureButton>
+                                              </Link>
                                             </li>
                                           ))}
                                         </DisclosurePanel>
@@ -225,7 +232,7 @@ export function SideBar() {
                             ))}
                           </ul>
                         </li>
-                        <li>
+                        {/* <li>
                           <div className="text-xs font-semibold leading-6 text-gray-400">
                             Your teams
                           </div>
@@ -256,7 +263,7 @@ export function SideBar() {
                               </li>
                             ))}
                           </ul>
-                        </li>
+                        </li> */}
                       </ul>
                     </nav>
                   </div>
@@ -284,10 +291,12 @@ export function SideBar() {
                     {navigation.map((item) => (
                       <li key={item.name}>
                         {!item?.children ? (
-                          <a
-                            href={item.href}
+                          <Link
+                            href={item.pathname ?? "#"}
                             className={cn(
-                              item.current ? "bg-gray-50" : "hover:bg-gray-50",
+                              isOnPathname(item.pathname)
+                                ? "bg-gray-50"
+                                : "hover:bg-gray-50",
                               "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700"
                             )}
                           >
@@ -296,14 +305,14 @@ export function SideBar() {
                               aria-hidden="true"
                             />
                             {item.name}
-                          </a>
+                          </Link>
                         ) : (
                           <Disclosure as="div">
                             {({ open }) => (
                               <>
                                 <DisclosureButton
                                   className={cn(
-                                    item.current
+                                    isOnPathname(item.pathname)
                                       ? "bg-gray-50"
                                       : "hover:bg-gray-50",
                                     "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm font-semibold leading-6 text-gray-700"
@@ -328,18 +337,19 @@ export function SideBar() {
                                   {item?.children?.map((subItem) => (
                                     <li key={subItem.name}>
                                       {/* 44px */}
-                                      <DisclosureButton
-                                        as="a"
-                                        href={subItem.href}
-                                        className={cn(
-                                          subItem?.current
-                                            ? "bg-gray-50"
-                                            : "hover:bg-gray-50",
-                                          "block rounded-md py-2 pl-9 pr-2 text-sm leading-6 text-gray-700"
-                                        )}
-                                      >
-                                        {subItem.name}
-                                      </DisclosureButton>
+                                      <Link href={subItem.pathname ?? "#"}>
+                                        <DisclosureButton
+                                          as="div"
+                                          className={cn(
+                                            isOnPathname(subItem.pathname)
+                                              ? "bg-gray-50"
+                                              : "hover:bg-gray-50",
+                                            "block rounded-md py-2 pl-9 pr-2 text-sm leading-6 text-gray-700"
+                                          )}
+                                        >
+                                          {subItem.name}
+                                        </DisclosureButton>
+                                      </Link>
                                     </li>
                                   ))}
                                 </DisclosurePanel>
@@ -351,7 +361,7 @@ export function SideBar() {
                     ))}
                   </ul>
                 </li>
-                <li>
+                {/* <li>
                   <div className="text-xs font-semibold leading-6 text-gray-400">
                     Your teams
                   </div>
@@ -382,7 +392,7 @@ export function SideBar() {
                       </li>
                     ))}
                   </ul>
-                </li>
+                </li> */}
                 <li className="-mx-6 mt-auto">
                   <a
                     href="#"
