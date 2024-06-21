@@ -1,5 +1,5 @@
 import clientPromise from "./config";
-import { Document, WithId } from "mongodb";
+import { AggregateOptions, AggregationCursor, Document, Filter, WithId } from "mongodb";
 
 type Constructor = {
   collection: string
@@ -22,7 +22,28 @@ export class BaseRepository<Entity extends Document> {
 
   async findOne(params: Partial<Entity>) {
     const db = await this.connect();
-    return await db.collection<Entity>(this.collection).findOne(params as Partial<WithId<Entity>>);
+    return await db.collection<Entity>(this.collection).findOne(params as Partial<WithId<Entity>>, { projection: { _id: 0 } })
+  }
+
+  async findAll() {
+    const db = await this.connect();
+    return await db.collection<Entity>(this.collection).find().project({ _id: 0 }).toArray();
+  }
+
+  async updateOne(query: Filter<Entity>, value: Partial<Entity>) {
+    const db = await this.connect();
+    return await db.collection<Entity>(this.collection).updateOne(query, { $set: value })
+  }
+
+  async deleteOne(query: Filter<Entity>) {
+    const db = await this.connect();
+    return await db.collection<Entity>(this.collection).deleteOne(query);
+  }
+
+  async aggregate<T extends Document>(pipeline?: Document[], options?: AggregateOptions): Promise<AggregationCursor<T>> {
+    const db = await this.connect();
+    console.log('pipeline', pipeline)
+    return db.collection(this.collection).aggregate<T>(pipeline, options)
   }
 
   async connect() {
