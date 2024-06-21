@@ -8,7 +8,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 interface Props {
   title: string;
   subtitle: string;
-  series: { name: string; data: number[]; color: string }[];
+  series: { name: string; data: number[]; color?: string }[];
   options: {
     xaxis: {
       categories: string[];
@@ -90,7 +90,7 @@ export const BarChart = (props: Props) => {
   }, [_series]);
 
   return (
-    <div className="w-full h-full bg-white border-x-2 border-x-gray-900/5 dark:bg-gray-800 p-4 md:p-6">
+    <div className="flex flex-col w-full h-full bg-white border-x-2 border-x-gray-900/5 dark:bg-gray-800 p-4 md:p-6">
       <div className="flex justify-between mb-5">
         <div>
           <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">
@@ -101,15 +101,17 @@ export const BarChart = (props: Props) => {
           </p>
         </div>
       </div>
-      {series.length > 0 && (
-        <Chart
-          options={chartOptions}
-          series={series}
-          type="bar"
-          height="auto"
-          width="100%"
-        />
-      )}
+      <div className="flex-1">
+        {series.length > 0 && (
+          <Chart
+            options={chartOptions}
+            series={series}
+            type="bar"
+            height="100%"
+            width="100%"
+          />
+        )}
+      </div>
     </div>
   );
 };
