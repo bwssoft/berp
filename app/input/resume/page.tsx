@@ -1,26 +1,7 @@
 import { resumeStockByInput } from "@/app/lib/action/input-transaction.action";
 import { BarChart } from "@/app/ui/chart/bar.chart";
 import { StackedBarChart } from "@/app/ui/chart/stacked-bar.chart";
-
-function fillMissingDates(
-  data: any[],
-  allDates: string[],
-  extractValue: (arg: any) => any
-): any[] {
-  return data.map((d) => {
-    const dataByDate: { [key: string]: number } = {};
-    d.byDay.forEach((_d: any) => {
-      dataByDate[_d.day] = extractValue(_d);
-    });
-
-    const filledData = allDates.map((date) => dataByDate[date] || 0);
-
-    return {
-      name: d.input.name,
-      data: filledData,
-    };
-  });
-}
+import { fillMissingDates } from "@/app/util/fillMissingDates";
 
 export default async function Page() {
   const stackedBarChartData = await resumeStockByInput();
@@ -58,11 +39,11 @@ export default async function Page() {
     },
   ];
   return (
-    <div className="flex flex-col h-full gap-6">
+    <div className="grid grid-rows-[min_content, min_content, 1fr, 1fr] h-full gap-6">
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Resumo dos insumos
+            Balanço Semanal dos insumos
           </h1>
           <p className="mt-2 text-sm text-gray-700">
             Um resumo com gráficos e listas para obter insights sobre a
@@ -86,7 +67,7 @@ export default async function Page() {
         ))}
       </dl>
 
-      <div className="mx-auto w-full grid grid-cols-3 grid-rols-1 gap-6">
+      <div className="mx-auto w-full grid grid-cols-3 grid-rols-1 gap-6 px-4 sm:px-6 lg:px-8 h-[500px]">
         <div className="col-span-3">
           <StackedBarChart
             series={cumulativeSeries}
@@ -96,12 +77,12 @@ export default async function Page() {
               },
             }}
             title="Balanço Geral"
-            subtitle="Semanal - Cumulativo"
+            subtitle="Semanal - Acumulativo"
           />
         </div>
       </div>
 
-      <div className="mx-auto w-full grid grid-cols-4 grid-rols-1 gap-6">
+      <div className="mx-auto w-full grid grid-cols-4 grid-rols-1 gap-6 px-4 sm:px-6 lg:px-8 h-[600px]">
         <div className="col-span-2">
           <BarChart
             series={enterSeries}
