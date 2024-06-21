@@ -17,6 +17,29 @@ class InputTransactionRepository extends BaseRepository<IInputTransaction> {
     }
     return InputTransactionRepository.instance;
   }
+
+  async findAllWithInput() {
+    const db = await this.connect();
+    return await db.collection<IInputTransaction>(this.collection).aggregate([
+      { $match: {} },
+      {
+        $lookup: {
+          as: "input",
+          from: "input",
+          localField: "input_id",
+          foreignField: "id"
+        }
+      },
+      {
+        $project: {
+          quantity: 1,
+          created_at: 1,
+          type: 1,
+          input: { $arrayElemAt: ["$input", 0] },
+        }
+      },
+    ]).toArray();
+  }
 }
 
 export default InputTransactionRepository.getInstance();
