@@ -1,23 +1,28 @@
+"use server"
+
 import { IInput } from "../definition";
 import inputRepository from "../repository/mongodb/input.repository";
-import { BaseAction } from "./@base/base";
 
+const repository = inputRepository
 
-class InputAction extends BaseAction<IInput> {
-  private static instance: InputAction;
-
-  private constructor() {
-    super({
-      repository: inputRepository
-    })
-  }
-
-  public static getInstance(): InputAction {
-    if (!InputAction.instance) {
-      InputAction.instance = new InputAction();
-    }
-    return InputAction.instance;
-  }
+export async function createOneInput(input: Omit<IInput, "id" | "created_at">) {
+  await repository.create({ ...input, created_at: new Date(), id: crypto.randomUUID() })
+  return input
 }
 
-export default InputAction.getInstance();
+export async function findOneInput(input: Partial<IInput>) {
+  return await repository.findOne(input)
+}
+
+export async function updateOneInputById(query: { id: string }, value: Omit<IInput, "id" | "created_at">) {
+  return await repository.updateOne(query, value)
+}
+
+export async function deleteOneInputById(query: { id: string }) {
+  return await repository.deleteOne(query)
+}
+
+export async function findAllInput(): Promise<IInput[]> {
+  return await repository.findAll() as IInput[]
+}
+
