@@ -1,6 +1,8 @@
 export interface IInput {
-  id: string
+  id?: string
   name: string
-  measure_unit: 'cm' | 'm' | 'kg' | 'g' | 'ml' | 'l'
-  amount: number
+  description?: string
+  measure_unit: 'cm' | 'm' | 'kg' | 'g' | 'ml' | 'l' | 'un'
+  files?: string[]
+  created_at: Date
 }

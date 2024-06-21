@@ -4,4 +4,5 @@ export interface IInputTransaction {
   type: 'enter' | 'exit'
   quantity: number
   created_at: Date
+  files?: string[]
 }
