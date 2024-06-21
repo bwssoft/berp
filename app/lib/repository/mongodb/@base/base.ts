@@ -42,7 +42,6 @@ export class BaseRepository<Entity extends Document> {
 
   async aggregate<T extends Document>(pipeline?: Document[], options?: AggregateOptions): Promise<AggregationCursor<T>> {
     const db = await this.connect();
-    console.log('pipeline', pipeline)
     return db.collection(this.collection).aggregate<T>(pipeline, options)
   }
 
