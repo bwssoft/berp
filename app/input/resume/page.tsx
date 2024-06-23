@@ -90,6 +90,14 @@ export default async function Page() {
               xaxis: {
                 categories: stackedBarChartData.dates,
               },
+              chart: {
+                stacked: true,
+              },
+              plotOptions: {
+                bar: {
+                  horizontal: false,
+                },
+              },
             }}
             title="Entradas"
             subtitle="Semanal"
@@ -101,6 +109,14 @@ export default async function Page() {
             options={{
               xaxis: {
                 categories: stackedBarChartData.dates,
+              },
+              chart: {
+                stacked: true,
+              },
+              plotOptions: {
+                bar: {
+                  horizontal: false,
+                },
               },
             }}
             title="Saídas"

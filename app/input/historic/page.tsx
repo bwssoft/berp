@@ -131,6 +131,14 @@ sm:px-6 lg:px-8"
                   xaxis: {
                     categories: historic!.dates,
                   },
+                  chart: {
+                    stacked: false,
+                  },
+                  plotOptions: {
+                    bar: {
+                      horizontal: false,
+                    },
+                  },
                 }}
               />
             </div>
