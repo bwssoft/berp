@@ -36,6 +36,7 @@ export default async function Page() {
           series={stock.map((s) => ({
             name: s.input.name,
             data: [s.cumulative_balance],
+            color: s.input.color,
           }))}
           // series={[
           //   { data: stock.map((s) => s.cumulative_balance), name: "Acumulado" },
@@ -59,6 +60,7 @@ export default async function Page() {
           series={stock.map((s) => ({
             name: s.input.name,
             data: [s.cumulative_balance],
+            color: s.input.color,
           }))}
           options={{
             xaxis: { categories: [""] },
