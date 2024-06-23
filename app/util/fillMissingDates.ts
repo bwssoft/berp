@@ -26,6 +26,7 @@ export function fillMissingDates(
 
     return {
       name: d.input.name,
+      color: d.input.color,
       data: filledData,
     };
   });
