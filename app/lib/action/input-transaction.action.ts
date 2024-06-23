@@ -19,7 +19,7 @@ export async function findAllInputTransactionWithInput(): Promise<(IInputTransac
   return await repository.findAllWithInput() as (IInputTransaction & { input: IInput })[]
 }
 
-export async function resumeStockByInput(input_id?: string) {
+export async function analyzeStockByInput(input_id?: string) {
   const { init, end, dates } = getWeekRange(new Date())
   const cumulativeAggregation = await repository.aggregate<{
     enter: number
@@ -46,7 +46,7 @@ export async function resumeStockByInput(input_id?: string) {
 
   return {
     cumulative: result[0],
-    count: result[1][0],
+    count: result[1][0] ?? { total: 0, enter: 0, exit: 0, ratioEnterExit: 0 },
     dates
   }
 }
@@ -54,7 +54,7 @@ export async function resumeStockByInput(input_id?: string) {
 export async function countStockByInput(input_id?: string) {
   const { init, end, dates } = getWeekRange(new Date())
   const countAggregation = await repository.aggregate<{
-    transactions: number
+    total: number
     enter: number
     exit: number
     ratioEnterExit: number
