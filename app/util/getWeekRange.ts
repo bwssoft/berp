@@ -35,3 +35,31 @@ export function getWeekRange(currentDate: Date): { init: Date, end: Date, dates:
     dates
   };
 }
+
+export function getRange(currentDate: Date, rangeDays: number): { init: Date, end: Date, dates: string[] } {
+  // Cria uma nova instância da data para garantir que não estamos modificando a original
+  const date = new Date(currentDate);
+
+  // Calcular a data de início (init) e a data de fim (end) do intervalo
+  const init = new Date(date);
+  init.setDate(date.getDate() - Math.floor(rangeDays / 2));
+
+  const end = new Date(date);
+  end.setDate(date.getDate() + Math.ceil(rangeDays / 2) - 1);
+
+  // Formatar as datas como strings no formato ISO (YYYY-MM-DD)
+  const formatDate = (date: Date): string => date.toISOString().split('T')[0];
+
+  const dates: string[] = [];
+  let current = new Date(init);
+  while (current <= end) {
+    dates.push(formatDate(current));
+    current.setDate(current.getDate() + 1);
+  }
+
+  return {
+    init,
+    end,
+    dates
+  };
+}
