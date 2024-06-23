@@ -31,6 +31,7 @@ export async function resumeStockByInput(input_id?: string) {
       enter: number
       exit: number
       balance: number
+      cumulative_balance: number
     }[]
   }>(stockValueByInputByDayCumulative(init, end, input_id))
 
@@ -242,7 +243,7 @@ const stockValueByInputByDayCumulative = (init: Date, end: Date, input_id?: stri
           $subtract: ["$enter", "$exit"]
         },
         input: {
-          $arrayElemAt: ["$input", 0]
+          $first: "$input"
         }
       }
     },
@@ -282,10 +283,10 @@ const stockValueByInputByDayCumulative = (init: Date, end: Date, input_id?: stri
         byDay: {
           $reduce: {
             input: "$byDay",
-            initialValue: { cumulativeBalance: 0, days: [] },
+            initialValue: { cumulative_balance: 0, days: [] },
             in: {
-              cumulativeBalance: {
-                $add: ["$$value.cumulativeBalance", "$$this.balance"]
+              cumulative_balance: {
+                $add: ["$$value.cumulative_balance", "$$this.balance"]
               },
               days: {
                 $concatArrays: [
@@ -296,8 +297,8 @@ const stockValueByInputByDayCumulative = (init: Date, end: Date, input_id?: stri
                       enter: "$$this.enter",
                       exit: "$$this.exit",
                       balance: "$$this.balance",
-                      cumulativeBalance: {
-                        $add: ["$$value.cumulativeBalance", "$$this.balance"]
+                      cumulative_balance: {
+                        $add: ["$$value.cumulative_balance", "$$this.balance"]
                       }
                     }
                   ]
