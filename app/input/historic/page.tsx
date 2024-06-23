@@ -1,5 +1,5 @@
 import { findAllInput } from "@/app/lib/action";
-import { resumeStockByInput } from "@/app/lib/action/input-transaction.action";
+import { analyzeStockByInput } from "@/app/lib/action/input-transaction.action";
 import { MultilineChart } from "@/app/ui/chart/multiline.chart";
 import { fillMissingDates } from "@/app/util/fillMissingDates";
 import { InputSelect } from "./components/inputSelect";
@@ -35,33 +35,41 @@ export default async function Page(props: Props) {
       </div>
     </>
   );
-  let cumulativeSeries, enterSeries, exitSeries, stats, historic;
+  let cumulativeSeries, stats, historic, countSeries;
   if (id) {
-    historic = await resumeStockByInput(id);
+    historic = await analyzeStockByInput(id);
     cumulativeSeries = fillMissingDates(
       historic.cumulative,
       historic.dates,
-      (d) => d.cumulativeBalance
+      (d) => d.cumulative_balance
     );
-    [enterSeries] = fillMissingDates(
+    const [enterSeries] = fillMissingDates(
       historic.cumulative,
       historic.dates,
       (d) => d.enter
     );
-    [exitSeries] = fillMissingDates(
+    const [exitSeries] = fillMissingDates(
       historic.cumulative,
       historic.dates,
       (d) => d.exit
     );
-    const inStock = historic.cumulative?.[0]?.balance;
+    countSeries = [
+      ...(exitSeries
+        ? [{ ...exitSeries, color: "#ef4444", name: "Saída" }]
+        : [{ data: [], color: "#ef4444", name: "Saída" }]),
+      ...(enterSeries
+        ? [{ ...enterSeries, color: "#84cc16", name: "Entrada" }]
+        : [{ data: [], color: "#84cc16", name: "Entrada" }]),
+    ];
+    const inStock = historic.cumulative?.[0]?.balance ?? 0;
     stats = [
       {
-        name: "Valor em estoque",
+        name: "Quantidade em Estoque",
         value: inStock,
       },
       {
         name: "Total de transações",
-        value: historic.count.transactions,
+        value: historic.count.total,
       },
       {
         name: "Total de entradas",
@@ -106,10 +114,7 @@ sm:px-6 lg:px-8"
               <MultilineChart
                 title="Entradas x Saída"
                 subtitle="Semanal"
-                series={[
-                  { ...exitSeries!, color: "#ef4444", name: "Saída" },
-                  { ...enterSeries!, color: "#84cc16", name: "Entrada" },
-                ]}
+                series={countSeries!}
                 options={{
                   xaxis: {
                     categories: historic!.dates,
@@ -124,7 +129,7 @@ sm:px-6 lg:px-8"
           >
             <div className="col-span-3">
               <BarChart
-                title="Valor em Estoque"
+                title="Quantidade em Estoque"
                 subtitle="Semanal - Acumulativo"
                 series={cumulativeSeries!}
                 options={{

@@ -1,14 +1,14 @@
-import { resumeStockByInput } from "@/app/lib/action/input-transaction.action";
+import { analyzeStockByInput } from "@/app/lib/action/input-transaction.action";
 import { BarChart } from "@/app/ui/chart/bar.chart";
 import { StackedBarChart } from "@/app/ui/chart/stacked-bar.chart";
 import { fillMissingDates } from "@/app/util/fillMissingDates";
 
 export default async function Page() {
-  const stackedBarChartData = await resumeStockByInput();
+  const stackedBarChartData = await analyzeStockByInput();
   const cumulativeSeries = fillMissingDates(
     stackedBarChartData.cumulative,
     stackedBarChartData.dates,
-    (d) => d.cumulativeBalance
+    (d) => d.cumulative_balance
   );
   const enterSeries = fillMissingDates(
     stackedBarChartData.cumulative,
@@ -23,7 +23,7 @@ export default async function Page() {
   const stats = [
     {
       name: "Total de transações",
-      value: stackedBarChartData.count.transactions,
+      value: stackedBarChartData.count.total,
     },
     {
       name: "Total de entradas",
