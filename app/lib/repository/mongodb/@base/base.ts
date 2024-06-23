@@ -45,6 +45,11 @@ export class BaseRepository<Entity extends Document> {
     return db.collection(this.collection).aggregate<T>(pipeline, options)
   }
 
+  async getDb() {
+    const db = await this.connect();
+    return db
+  }
+
   async connect() {
     const client = await clientPromise;
     const db = client.db(this.db);
