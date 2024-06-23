@@ -36,7 +36,7 @@ export async function resumeStockByInput(input_id?: string) {
   }>(stockValueByInputByDayCumulative(init, end, input_id))
 
   const countAggregation = await repository.aggregate<{
-    transactions: number
+    total: number
     enter: number
     exit: number
     ratioEnterExit: number
@@ -347,7 +347,7 @@ const countStockTransactions = (init: Date, end: Date, input_id?: string) => {
     {
       $group: {
         _id: null,
-        transactions: { $sum: 1 },
+        total: { $sum: 1 },
         enter: {
           $sum: {
             $cond: {
@@ -371,7 +371,7 @@ const countStockTransactions = (init: Date, end: Date, input_id?: string) => {
     {
       $project: {
         _id: 0,
-        transactions: 1,
+        total: 1,
         enter: 1,
         exit: 1,
         ratioEnterExit: {
