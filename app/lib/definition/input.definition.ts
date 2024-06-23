@@ -5,4 +5,6 @@ export interface IInput {
   measure_unit: 'cm' | 'm' | 'kg' | 'g' | 'ml' | 'l' | 'un'
   files?: string[]
   created_at: Date
+  color: string
+  price: number
 }
