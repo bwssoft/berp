@@ -6,12 +6,20 @@ import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 interface Props {
-  title: string;
-  subtitle: string;
+  title?: string;
+  subtitle?: string;
   series: { name: string; data: number[]; color?: string }[];
   options: {
     xaxis: {
       categories: string[];
+    };
+    chart: {
+      stacked: boolean;
+    };
+    plotOptions: {
+      bar: {
+        horizontal: boolean;
+      };
     };
   };
 }
@@ -29,11 +37,11 @@ export const BarChart = (props: Props) => {
         toolbar: {
           show: false,
         },
-        stacked: true,
+        stacked: _options.chart.stacked,
       },
       plotOptions: {
         bar: {
-          horizontal: false,
+          horizontal: _options.plotOptions.bar.horizontal,
           columnWidth: "70%",
         },
       },
@@ -91,16 +99,22 @@ export const BarChart = (props: Props) => {
 
   return (
     <div className="flex flex-col w-full h-full bg-white border-x-2 border-x-gray-900/5 dark:bg-gray-800 p-4 md:p-6">
-      <div className="flex justify-between mb-5">
-        <div>
-          <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">
-            {title}
-          </h5>
-          <p className="text-base font-normal text-gray-500 dark:text-gray-400">
-            {subtitle}
-          </p>
+      {(title || subtitle) && (
+        <div className="flex justify-between mb-5">
+          <div>
+            {title && (
+              <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">
+                {title}
+              </h5>
+            )}
+            {subtitle && (
+              <p className="text-base font-normal text-gray-500 dark:text-gray-400">
+                {subtitle}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
       <div className="flex-1">
         {series.length > 0 && (
           <Chart
