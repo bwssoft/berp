@@ -186,7 +186,6 @@ const getMostRecentStockAggregate = (input_id?: string) => {
   const pipeline = [
     match,
     // Ordena os documentos por input_id, year, month, day em ordem decrescente
-    // Ordena os documentos por input_id, year, month, day em ordem decrescente
     {
       $sort: {
         input_id: 1,
@@ -228,6 +227,11 @@ const getMostRecentStockAggregate = (input_id?: string) => {
         month: "$most_recent.month",
         day: "$most_recent.day",
         week: "$most_recent.week"
+      }
+    },
+    {
+      $sort: {
+        "input._id": 1,
       }
     }
   ]
