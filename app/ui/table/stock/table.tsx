@@ -6,7 +6,11 @@ import { columns } from "./columns";
 import { DataTable } from "../../data-table";
 
 interface Props {
-  data: { input: IInput; cumulative_balance: number }[];
+  data: {
+    input: IInput;
+    cumulative_balance: number;
+    cumulative_price: number;
+  }[];
 }
 export default function StockTable(props: Props) {
   const { data } = props;
@@ -18,7 +22,7 @@ export default function StockTable(props: Props) {
         `${data.input.name}: ${data.cumulative_balance}`
       }
       mobileKeyExtractor={(data) => data.input.id!}
-      className="w-full mt-10"
+      className="w-full"
     />
   );
 }
