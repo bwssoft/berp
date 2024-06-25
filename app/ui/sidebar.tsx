@@ -65,7 +65,7 @@ const navigation: {
       { name: "Entradas e Saídas", pathname: "/input/enter-exit" },
       { name: "Balanço Semanal", pathname: "/input/resume" },
       { name: "Estoque", pathname: "/input/stock" },
-      { name: "Histórico", pathname: "/input/historic" },
+      { name: "Análise", pathname: "/input/analysis" },
     ],
   },
   {
