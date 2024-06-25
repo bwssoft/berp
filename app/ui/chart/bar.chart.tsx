@@ -8,7 +8,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 interface Props {
   title?: string;
   subtitle?: string;
-  series: { name: string; data: number[]; color?: string }[];
+  series: { name: string; data: (number | string)[]; color?: string }[];
   options: {
     xaxis: {
       categories: string[];
@@ -55,7 +55,7 @@ export const BarChart = (props: Props) => {
       },
       stroke: {
         show: true,
-        width: 0,
+        width: 5,
         colors: ["transparent"],
       },
       grid: {
