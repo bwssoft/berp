@@ -22,6 +22,7 @@ export async function getMostRecentStock() {
     {
       input: IInput;
       cumulative_balance: number;
+      cumulative_price: number;
     }[]
 }
 
@@ -193,9 +194,15 @@ const getMostRecentStockAggregate = (input_id?: string) => {
     {
       $project: {
         _id: 0,
-        input: { $first: ["$input"] },
         cumulative_balance:
           "$most_recent.cumulative_balance",
+        cumulative_price: {
+          $multiply: [
+            "$most_recent.cumulative_balance",
+            { $arrayElemAt: ["$input.price", 0] }
+          ]
+        },
+        input: { $first: ["$input"] },
         year: "$most_recent.year",
         month: "$most_recent.month",
         day: "$most_recent.day",
