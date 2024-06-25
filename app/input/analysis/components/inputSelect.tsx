@@ -6,9 +6,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   inputs: IInput[];
+  currentInputIdSelected?: string;
 }
 export function InputSelect(props: Props) {
-  const { inputs } = props;
+  const { inputs, currentInputIdSelected } = props;
   const { replace } = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -29,6 +30,7 @@ export function InputSelect(props: Props) {
       valueExtractor={(i) => i.id!}
       labelExtractor={(i) => i.name}
       onChangeSelect={(i) => handleChange(i?.id)}
+      defaultValue={currentInputIdSelected ?? undefined}
       placeholder="Selecione algum insumo para pesquisar"
     />
   );
