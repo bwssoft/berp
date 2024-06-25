@@ -26,6 +26,26 @@ export async function getMostRecentStock() {
     }[]
 }
 
+export async function getStockInsights() {
+  const pipeline = getStockInsightsAggregate()
+  const aggregate = await _stockRepository.aggregate(pipeline)
+  return await aggregate.toArray() as
+    {
+      [
+      key in "max_balance_item" |
+      "min_balance_item" |
+      "max_unit_price_item" |
+      "min_unit_price_item" |
+      "max_cumulative_price_item" |
+      "min_cumulative_price_item"
+      ]: {
+        input: IInput;
+        cumulative_balance: number;
+        cumulative_price: number;
+      }
+    }[]
+}
+
 const updateStockAggregate = (input_id?: string) => {
   const match: any = {
     $match: {}
@@ -182,6 +202,7 @@ const getMostRecentStockAggregate = (input_id?: string) => {
         most_recent: { $first: "$$ROOT" }
       }
     },
+
     {
       $lookup: {
         from: "input",
@@ -207,6 +228,184 @@ const getMostRecentStockAggregate = (input_id?: string) => {
         month: "$most_recent.month",
         day: "$most_recent.day",
         week: "$most_recent.week"
+      }
+    }
+  ]
+  return pipeline
+}
+
+const getStockInsightsAggregate = () => {
+  const match: any = {
+    $match: {}
+  }
+  const pipeline = [
+    match,
+    // Ordena os documentos por input_id, year, month, day em ordem decrescente
+    {
+      $sort: {
+        input_id: 1,
+        year: -1,
+        month: -1,
+        day: -1
+      }
+    },
+    // Agrupa os documentos por input_id, pegando o documento mais recente (primeiro)
+    {
+      $group: {
+        _id: "$input_id",
+        most_recent: { $first: "$$ROOT" }
+      }
+    },
+    {
+      $lookup: {
+        from: "input",
+        localField: "_id",
+        foreignField: "id",
+        as: "input"
+      }
+    },
+    // Projetar os campos desejados
+    {
+      $project: {
+        _id: 0,
+        cumulative_balance:
+          "$most_recent.cumulative_balance",
+        cumulative_price: {
+          $multiply: [
+            "$most_recent.cumulative_balance",
+            { $arrayElemAt: ["$input.price", 0] }
+          ]
+        },
+        input: { $arrayElemAt: ["$input", 0] }
+      }
+    },
+    // Estágio para encontrar os itens com maior e menor quantidade, maior e menor valor unitário, e maior e menor valor total
+    {
+      $group: {
+        _id: null,
+        max_balance: {
+          $max: "$cumulative_balance"
+        },
+        min_balance: {
+          $min: "$cumulative_balance"
+        },
+        max_unit_price: { $max: "$input.price" },
+        min_unit_price: { $min: "$input.price" },
+        max_cumulative_price: {
+          $max: "$cumulative_price"
+        },
+        min_cumulative_price: {
+          $min: "$cumulative_price"
+        },
+        items: { $push: "$$ROOT" }
+      }
+    },
+    // Projetar os campos desejados, incluindo os itens com maior e menor quantidade, valor unitário e valor total
+    {
+      $project: {
+        _id: 0,
+        max_balance_item: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$items",
+                as: "item",
+                cond: {
+                  $eq: [
+                    "$$item.cumulative_balance",
+                    "$max_balance"
+                  ]
+                }
+              }
+            },
+            0
+          ]
+        },
+        min_balance_item: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$items",
+                as: "item",
+                cond: {
+                  $eq: [
+                    "$$item.cumulative_balance",
+                    "$min_balance"
+                  ]
+                }
+              }
+            },
+            0
+          ]
+        },
+        max_unit_price_item: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$items",
+                as: "item",
+                cond: {
+                  $eq: [
+                    "$$item.input.price",
+                    "$max_unit_price"
+                  ]
+                }
+              }
+            },
+            0
+          ]
+        },
+        min_unit_price_item: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$items",
+                as: "item",
+                cond: {
+                  $eq: [
+                    "$$item.input.price",
+                    "$min_unit_price"
+                  ]
+                }
+              }
+            },
+            0
+          ]
+        },
+        max_cumulative_price_item: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$items",
+                as: "item",
+                cond: {
+                  $eq: [
+                    "$$item.cumulative_price",
+                    "$max_cumulative_price"
+                  ]
+                }
+              }
+            },
+            0
+          ]
+        },
+        min_cumulative_price_item: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$items",
+                as: "item",
+                cond: {
+                  $eq: [
+                    "$$item.cumulative_price",
+                    "$min_cumulative_price"
+                  ]
+                }
+              }
+            },
+            0
+          ]
+        },
       }
     }
   ]
