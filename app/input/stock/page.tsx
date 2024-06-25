@@ -1,11 +1,17 @@
-import { getMostRecentStock, updateStock } from "@/app/lib/action/stock.action";
+import {
+  getMostRecentStock,
+  getStockInsights,
+  updateStock,
+} from "@/app/lib/action/stock.action";
 import { Button } from "@/app/ui/button";
 import { BarChart } from "@/app/ui/chart/bar.chart";
+import { DoughnutChart } from "@/app/ui/chart/doughnut.chart";
 import StockTable from "@/app/ui/table/stock/table";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {
   const stock = await getMostRecentStock();
+  const [insights] = await getStockInsights();
   return (
     <div className="flex flex-col h-full gap-6">
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -28,8 +34,43 @@ export default async function Page() {
           </Button>
         </form>
       </div>
+      <dl className="mx-auto w-full grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-3">
+        {[
+          { name: "Valor total em estoque", value: "R$55.140,90" },
+          {
+            name: "Insumo em maior quantidade",
+            value: insights?.max_balance_item.input.name ?? "--",
+          },
+          {
+            name: "Insumo em menor quantidade",
+            value: insights?.min_balance_item.input.name ?? "--",
+          },
+        ].map((stat) => (
+          <div
+            key={stat.name}
+            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
+          >
+            <dt className="text-sm font-medium leading-6 text-gray-500">
+              {stat.name}
+            </dt>
+            <dd className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+              {stat.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
         <StockTable data={stock} />
+      </div>
+      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+        <div>
+          <h1 className="text-base font-semibold leading-7 text-gray-900">
+            Quantidade em estoque
+          </h1>
+          <p className="mt-2 text-sm text-gray-700">
+            Gráfico em barra com a quantidade de cada insumo em estoque.
+          </p>
+        </div>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12 h-[500px]">
         <BarChart
@@ -38,11 +79,7 @@ export default async function Page() {
             data: [s.cumulative_balance],
             color: s.input.color,
           }))}
-          // series={[
-          //   { data: stock.map((s) => s.cumulative_balance), name: "Acumulado" },
-          // ]}
           options={{
-            // xaxis: { categories: stock.map((s) => s.input.name) },
             xaxis: { categories: [""] },
             chart: { stacked: false },
             plotOptions: {
@@ -51,25 +88,134 @@ export default async function Page() {
               },
             },
           }}
-          title="Quantidade de Insumos"
-          subtitle="Valor geral para quantidade de cada insumo do estoque."
         />
       </div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
+      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+        <div>
+          <h1 className="text-base font-semibold leading-7 text-gray-900">
+            Insights pelo preço
+          </h1>
+          <p className="mt-2 text-sm text-gray-700">
+            Conjunto de informações sobre a quantidade dos insumos e seus
+            valores.
+          </p>
+        </div>
+      </div>
+      <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
+        {[
+          {
+            name: "Maior Valor Unitário",
+            value: insights?.max_unit_price_item.input.name,
+          },
+          {
+            name: "Menor Valor Unitário",
+            value: insights?.min_unit_price_item.input.name,
+          },
+        ].map((stat) => (
+          <div
+            key={stat.name}
+            className="flex flex-1 flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
+          >
+            <dt className="text-sm font-medium leading-6 text-gray-500">
+              {stat.name}
+            </dt>
+            <dd
+              className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 truncate"
+              title={stat.value}
+            >
+              {stat.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
+        {[
+          {
+            name: "Maior Valor Total em Estoque",
+            value: insights?.max_cumulative_price_item.input.name,
+          },
+          {
+            name: "Menor Valor Total em Estoque",
+            value: insights?.min_cumulative_price_item.input.name,
+          },
+        ].map((stat) => (
+          <div
+            key={stat.name}
+            className="flex flex-1 flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
+          >
+            <dt className="text-sm font-medium leading-6 text-gray-500">
+              {stat.name}
+            </dt>
+            <dd
+              className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 truncate"
+              title={stat.value}
+            >
+              {stat.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      {/* <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
+        {[
+          {
+            name: "Maior Variação de Estoque",
+            value: "Processador XYZ",
+          },
+          {
+            name: "Menor Variação de Estoque",
+            value: "Processador XYZ",
+          },
+        ].map((stat) => (
+          <div
+            key={stat.name}
+            className="flex flex-1 flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
+          >
+            <dt className="text-sm font-medium leading-6 text-gray-500">
+              {stat.name}
+            </dt>
+            <dd
+              className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 truncate"
+              title={stat.value}
+            >
+              {stat.value}
+            </dd>
+          </div>
+        ))}
+      </dl> */}
+      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+        <div>
+          <h1 className="text-base font-semibold leading-7 text-gray-900">
+            R$ em estoque
+          </h1>
+          <p className="mt-2 text-sm text-gray-700">
+            Gráficos com os valores de cada insumo em estoque.
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12 h-[500px]">
         <BarChart
           series={stock.map((s) => ({
             name: s.input.name,
-            data: [s.cumulative_balance],
+            data: [s.cumulative_price.toFixed(2)],
             color: s.input.color,
           }))}
           options={{
             xaxis: { categories: [""] },
-            chart: { stacked: true },
+            chart: { stacked: false },
             plotOptions: {
               bar: {
-                horizontal: true,
+                horizontal: false,
               },
             },
+          }}
+        />
+      </div>
+      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12 h-[500px]">
+        <DoughnutChart
+          series={stock.map((s) => s.cumulative_balance)}
+          options={{
+            labels: stock.map((s) => s.input.name),
+            colors: stock.map((s) => s.input.color),
           }}
         />
       </div>
