@@ -2,7 +2,6 @@ import { deleteOneInputById } from "@/app/lib/action";
 import { IInput } from "@/app/lib/definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { Button } from "../../button";
 
 export const columns: ColumnDef<IInput>[] = [
   { header: "Nome", accessorKey: "name" },
@@ -26,7 +25,7 @@ export const columns: ColumnDef<IInput>[] = [
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`/input/update?id=${input.id}`}
+            href={`/input/form/update?id=${input.id}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
             Editar
