@@ -63,7 +63,7 @@ const navigation: {
     children: [
       { name: "Gestão", pathname: "/input/management" },
       { name: "Entradas e Saídas", pathname: "/input/enter-exit" },
-      { name: "Balanço Semanal", pathname: "/input/resume" },
+      { name: "Resumo Transações", pathname: "/input/resume" },
       { name: "Estoque", pathname: "/input/stock" },
       { name: "Análise", pathname: "/input/analysis" },
     ],

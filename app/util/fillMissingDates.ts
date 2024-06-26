@@ -31,3 +31,33 @@ export function fillMissingDates(
     };
   });
 }
+
+export function fillMissingDatesOnAnalysisPage(
+  data: {
+    input: IInput
+    stocks: {
+      date: { day: number, year: number, month: number }
+      enter: number
+      exit: number
+      available_balance: number
+      cumulative_balance: number
+    }[]
+  }[],
+  allDates: string[],
+  extractValue: (arg: any) => any
+): { name: string, data: any[] }[] {
+  return data.map((d) => {
+    const dataByDate: { [key: string]: number } = {};
+    d.stocks.forEach((_d: any) => {
+      dataByDate[`${_d.date.year}-${String(_d.date.month).padStart(2, '0')}-${String(_d.date.day).padStart(2, '0')}`] = extractValue(_d);
+    });
+
+    const filledData = allDates.map((date) => dataByDate[date] || 0);
+
+    return {
+      name: d.input.name,
+      color: d.input.color,
+      data: filledData,
+    };
+  });
+}
