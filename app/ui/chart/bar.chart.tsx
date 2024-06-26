@@ -21,6 +21,9 @@ interface Props {
         horizontal: boolean;
       };
     };
+    stroke?: {
+      width?: number;
+    };
   };
 }
 
@@ -55,7 +58,7 @@ export const BarChart = (props: Props) => {
       },
       stroke: {
         show: true,
-        width: 5,
+        width: _options?.stroke?.width ?? 0,
         colors: ["transparent"],
       },
       grid: {
