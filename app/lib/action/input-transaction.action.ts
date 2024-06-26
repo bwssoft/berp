@@ -19,7 +19,7 @@ export async function findAllInputTransactionWithInput(): Promise<(IInputTransac
   return await repository.findAllWithInput() as (IInputTransaction & { input: IInput })[]
 }
 
-export async function analyzeStockByInput() {
+export async function resumeInputTransactions() {
   const { init, end, dates } = getRange(new Date(), 15)
   const cumulativeAggregation = await repository.aggregate<{
     enter: number
@@ -40,7 +40,7 @@ export async function analyzeStockByInput() {
     enter: number
     exit: number
     ratioEnterExit: number
-  }>(countStockTransactions(init, end))
+  }>(countInputTransactionAggregate({ init, end }))
 
   const result = await Promise.all([cumulativeAggregation.toArray(), countAggregation.toArray()])
 
@@ -51,21 +51,17 @@ export async function analyzeStockByInput() {
   }
 }
 
-export async function countStockByInput() {
-  const { init, end, dates } = getRange(new Date(), 15)
+export async function countInputTransaction(input_id?: string) {
   const countAggregation = await repository.aggregate<{
     total: number
     enter: number
     exit: number
     ratioEnterExit: number
-  }>(countStockTransactions(init, end))
+  }>(countInputTransactionAggregate(undefined, input_id))
 
-  const result = await countAggregation.toArray()
+  const [result] = await countAggregation.toArray()
 
-  return {
-    count: result,
-    dates
-  }
+  return result
 }
 
 const stockValueByInputByDayCumulative = (init: Date, end: Date) => {
@@ -216,16 +212,26 @@ const stockValueByInputByDayCumulative = (init: Date, end: Date) => {
   return query
 }
 
-const countStockTransactions = (init: Date, end: Date) => {
-  const query = [
-    {
-      $match: {
-        created_at: {
-          $gte: init,
-          $lte: end
-        }
+const countInputTransactionAggregate = (date?: { init: Date, end: Date }, input_id?: string) => {
+  const match: any = {}
+
+  if (input_id) {
+    match.$match = {
+      ...match.$match,
+      input_id
+    }
+  }
+  if (date) {
+    match.$match = {
+      ...match.$match,
+      created_at: {
+        $gte: date.init,
+        $lte: date.init
       }
-    },
+    }
+  }
+  const query = [
+    match,
     {
       $group: {
         _id: null,

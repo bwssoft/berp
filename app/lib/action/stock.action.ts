@@ -3,9 +3,12 @@
 import inputTransactionRepository from "../repository/mongodb/input-transaction.repository";
 import { IInput } from "../definition";
 import stockRepository from "../repository/mongodb/stock.repository";
+import temporalStockRepository from "../repository/mongodb/temporal-stock.repository";
+import { getRange } from "@/app/util";
 
 const _inputTransactionRepository = inputTransactionRepository
 const _stockRepository = stockRepository
+const _temporalStockRepository = temporalStockRepository
 
 export async function updateStock() {
   const stockTemporalPipeline = updateStockTemporalAggregate()
@@ -44,6 +47,59 @@ export async function getStockInsights() {
     }[]
 }
 
+export async function analyzeTemporalStock(input_id: string) {
+  const { init, end, dates } = getRange(new Date(), 30)
+  const aggragete = await _temporalStockRepository.aggregate<{
+    input: IInput
+    stocks: {
+      date: { day: number, month: number, year: number }
+      enter: number
+      exit: number
+      balance: number
+      available_balance: number
+      cumulative_balance: number
+    }[]
+  }>(analyzeTemporalStockAggregate(init, end, input_id))
+  const result = await aggragete.toArray()
+  return {
+    result,
+    dates
+  }
+}
+
+export async function getTotalValueInStock(input_id: string) {
+  const aggregate = await _stockRepository.aggregate([
+    {
+      $match: { input_id }
+    },
+    {
+      $lookup: {
+        from: "input",
+        localField: "input_id",
+        foreignField: "id",
+        as: "input"
+      }
+    },
+    {
+      $project: {
+        input: { $first: ["$input"] },
+        available_balance: 1,
+        cumulative_price: { $multiply: [{ $arrayElemAt: ["$input.price", 0] }, "$available_balance"] }
+
+      }
+    }
+  ])
+  const [result] = await aggregate.toArray()
+  return result as {
+    input: IInput
+    available_balance: number
+    cumulative_price: number
+  }
+}
+
+/*
+  Aggregate Helpers
+*/
 const updateStockAggregate = (input_id?: string) => {
   const match: any = {
     $match: {}
@@ -334,7 +390,68 @@ const getStockInsightsAggregate = () => {
   ]
   return pipeline
 }
-
+const analyzeTemporalStockAggregate = (init: Date, end: Date, input_id: string) => {
+  const pipeline = [
+    {
+      $addFields: {
+        _date: {
+          $dateFromParts: {
+            year: "$date.year",
+            month: "$date.month",
+            day: "$date.day"
+          }
+        }
+      }
+    },
+    {
+      $match: {
+        input_id,
+        _date: {
+          $gte: init,
+          $lte: end,
+        }
+      }
+    },
+    {
+      $sort: {
+        "date.year": 1,
+        "date.month": 1,
+        "date.day": 1
+      }
+    },
+    {
+      $group: {
+        _id: "$input_id",
+        stocks: {
+          $push: {
+            available_balance: "$available_balance",
+            cumulative_balance:
+              "$cumulative_balance",
+            enter: "$enter",
+            exit: "$exit",
+            date: "$date"
+          }
+        }
+      }
+    },
+    {
+      $lookup: {
+        from: "input",
+        localField: "_id",
+        foreignField: "id",
+        as: "input"
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        input: { $first: ["$input"] },
+        stocks: "$stocks"
+      }
+    }
+  ]
+  return pipeline
+}
 
 
 
