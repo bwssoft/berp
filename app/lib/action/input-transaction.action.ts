@@ -1,6 +1,6 @@
 "use server"
 
-import { getWeekRange } from "@/app/util";
+import { getRange } from "@/app/util";
 import { IInput, IInputTransaction } from "../definition";
 import inputTransactionRepository from "../repository/mongodb/input-transaction.repository";
 
@@ -19,8 +19,8 @@ export async function findAllInputTransactionWithInput(): Promise<(IInputTransac
   return await repository.findAllWithInput() as (IInputTransaction & { input: IInput })[]
 }
 
-export async function analyzeStockByInput(input_id?: string) {
-  const { init, end, dates } = getWeekRange(new Date())
+export async function analyzeStockByInput() {
+  const { init, end, dates } = getRange(new Date(), 15)
   const cumulativeAggregation = await repository.aggregate<{
     enter: number
     exit: number
@@ -33,14 +33,14 @@ export async function analyzeStockByInput(input_id?: string) {
       balance: number
       cumulative_balance: number
     }[]
-  }>(stockValueByInputByDayCumulative(init, end, input_id))
+  }>(stockValueByInputByDayCumulative(init, end))
 
   const countAggregation = await repository.aggregate<{
     total: number
     enter: number
     exit: number
     ratioEnterExit: number
-  }>(countStockTransactions(init, end, input_id))
+  }>(countStockTransactions(init, end))
 
   const result = await Promise.all([cumulativeAggregation.toArray(), countAggregation.toArray()])
 
@@ -51,14 +51,14 @@ export async function analyzeStockByInput(input_id?: string) {
   }
 }
 
-export async function countStockByInput(input_id?: string) {
-  const { init, end, dates } = getWeekRange(new Date())
+export async function countStockByInput() {
+  const { init, end, dates } = getRange(new Date(), 15)
   const countAggregation = await repository.aggregate<{
     total: number
     enter: number
     exit: number
     ratioEnterExit: number
-  }>(countStockTransactions(init, end, input_id))
+  }>(countStockTransactions(init, end))
 
   const result = await countAggregation.toArray()
 
@@ -68,127 +68,16 @@ export async function countStockByInput(input_id?: string) {
   }
 }
 
-const stockValueByInputByDay = (init: Date, end: Date, input_id: string) => {
-  const match: any = {
-    $match: {
-      created_at: {
-        $gte: init,
-        $lte: end
-      }
-    }
-  }
-  if (input_id) {
-    match.$match = {
-      ...match.$match,
-      input_id
-    }
-  }
+const stockValueByInputByDayCumulative = (init: Date, end: Date) => {
   const query = [
-    match,
     {
-      $group: {
-        _id: {
-          input_id: "$input_id",
-          day: {
-            $dateToString: {
-              format: "%Y-%m-%d",
-              date: "$created_at"
-            }
-          }
-        },
-        enter: {
-          $sum: {
-            $cond: {
-              if: { $eq: ["$type", "enter"] },
-              then: "$quantity",
-              else: 0
-            }
-          }
-        },
-        exit: {
-          $sum: {
-            $cond: {
-              if: { $eq: ["$type", "exit"] },
-              then: "$quantity",
-              else: 0
-            }
-          }
+      $match: {
+        created_at: {
+          $gte: init,
+          $lte: end
         }
       }
     },
-    {
-      $lookup: {
-        from: "input",
-        localField: "_id.input_id",
-        foreignField: "id",
-        as: "input"
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        input_id: "$_id.input_id",
-        day: "$_id.day",
-        enter: 1,
-        exit: 1,
-        balance: { $subtract: ["$enter", "$exit"] },
-        input: { $arrayElemAt: ["$input", 0] }
-      }
-    },
-    {
-      $sort: { day: 1 } // Opcional: Ordena por data
-    },
-    {
-      $group: {
-        _id: "$input_id",
-        enter: { $sum: "$enter" },
-        exit: { $sum: "$exit" },
-        balance: { $sum: "$balance" },
-        input: { $first: "$input" },
-        byDay: {
-          $push: {
-            day: "$day",
-            enter: "$enter",
-            exit: "$exit",
-            balance: "$balance"
-          }
-        }
-      }
-    },
-    {
-      $project: {
-        _id: 0,
-        enter: 1,
-        exit: 1,
-        balance: 1,
-        input: 1,
-        byDay: 1
-      }
-    },
-    {
-      $sort: { "input._id": 1 } // Opcional: Ordena por data
-    }
-  ]
-  return query
-}
-
-const stockValueByInputByDayCumulative = (init: Date, end: Date, input_id?: string) => {
-  const match: any = {
-    $match: {
-      created_at: {
-        $gte: init,
-        $lte: end
-      }
-    }
-  }
-  if (input_id) {
-    match.$match = {
-      ...match.$match,
-      input_id
-    }
-  }
-  const query = [
-    match,
     {
       $group: {
         _id: {
@@ -327,23 +216,16 @@ const stockValueByInputByDayCumulative = (init: Date, end: Date, input_id?: stri
   return query
 }
 
-const countStockTransactions = (init: Date, end: Date, input_id?: string) => {
-  const match: any = {
-    $match: {
-      created_at: {
-        $gte: init,
-        $lte: end
-      }
-    }
-  }
-  if (input_id) {
-    match.$match = {
-      ...match.$match,
-      input_id
-    }
-  }
+const countStockTransactions = (init: Date, end: Date) => {
   const query = [
-    match,
+    {
+      $match: {
+        created_at: {
+          $gte: init,
+          $lte: end
+        }
+      }
+    },
     {
       $group: {
         _id: null,

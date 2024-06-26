@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const columns: ColumnDef<{
   input: IInput;
-  cumulative_balance: number;
+  available_balance: number;
   cumulative_price: number;
 }>[] = [
   {
@@ -17,7 +17,7 @@ export const columns: ColumnDef<{
   },
   {
     header: "Quantidade",
-    accessorKey: "cumulative_balance",
+    accessorKey: "available_balance",
   },
   {
     header: "Preço un.",

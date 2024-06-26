@@ -1,28 +1,31 @@
 "use server"
 
-import { getWeekRange } from "@/app/util";
 import inputTransactionRepository from "../repository/mongodb/input-transaction.repository";
 import { IInput } from "../definition";
 import stockRepository from "../repository/mongodb/stock.repository";
 
-const repository = inputTransactionRepository
+const _inputTransactionRepository = inputTransactionRepository
 const _stockRepository = stockRepository
 
 export async function updateStock() {
-  const pipeline = updateStockAggregate()
-  const aggregate = await repository.aggregate(pipeline)
-  await aggregate.toArray()
+  const stockTemporalPipeline = updateStockTemporalAggregate()
+  const stockPipeline = updateStockAggregate()
+  const stockTemporalAggregate = await _inputTransactionRepository.aggregate(stockTemporalPipeline)
+  const stockAggregate = await _inputTransactionRepository.aggregate(stockPipeline)
+  await Promise.all([stockTemporalAggregate.toArray(), stockAggregate.toArray()])
   return
 }
 
-export async function getMostRecentStock() {
-  const pipeline = getMostRecentStockAggregate()
+export async function getStock() {
+  const pipeline = getStockAggregate()
   const aggregate = await _stockRepository.aggregate(pipeline)
   return await aggregate.toArray() as
     {
-      input: IInput;
-      cumulative_balance: number;
-      cumulative_price: number;
+      input: IInput
+      enter: number
+      exit: number
+      available_balance: number
+      cumulative_price: number
     }[]
 }
 
@@ -31,23 +34,80 @@ export async function getStockInsights() {
   const aggregate = await _stockRepository.aggregate(pipeline)
   return await aggregate.toArray() as
     {
-      [
-      key in "max_balance_item" |
-      "min_balance_item" |
-      "max_unit_price_item" |
-      "min_unit_price_item" |
-      "max_cumulative_price_item" |
-      "min_cumulative_price_item" |
-      "total_value"
-      ]: {
-        input: IInput;
-        cumulative_balance: number;
-        cumulative_price: number;
-      }
+      max_balance: { value: number, input: IInput }
+      min_balance: { value: number, input: IInput }
+      max_unit_price: { value: number, input: IInput }
+      min_unit_price: { value: number, input: IInput }
+      max_cumulative_price: { value: number, input: IInput }
+      min_cumulative_price: { value: number, input: IInput }
+      total_value: number
     }[]
 }
 
 const updateStockAggregate = (input_id?: string) => {
+  const match: any = {
+    $match: {}
+  }
+  if (input_id) {
+    match.$match = {
+      ...match.$match,
+      input_id
+    }
+  }
+  const query = [
+    match,
+    {
+      $group: {
+        _id: "$input_id",
+        enter: {
+          $sum: {
+            $cond: {
+              if: {
+                $eq: ["$type", "enter"]
+              },
+              then: "$quantity",
+              else: 0
+            }
+          }
+        },
+        exit: {
+          $sum: {
+            $cond: {
+              if: {
+                $eq: ["$type", "exit"]
+              },
+              then: "$quantity",
+              else: 0
+            }
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        input_id: "$_id",
+        enter: 1,
+        exit: 1,
+        available_balance: {
+          $subtract: ["$enter", "$exit"]
+        }
+      }
+    },
+    {
+      $merge: {
+        into: "stock",
+        on: ["input_id"],
+        whenMatched: "merge",
+        whenNotMatched: "insert"
+      }
+    }
+  ]
+
+  return query
+}
+
+const updateStockTemporalAggregate = (input_id?: string) => {
   const match: any = {
     $match: {}
   }
@@ -69,21 +129,6 @@ const updateStockAggregate = (input_id?: string) => {
         },
         month: {
           $month: "$created_at"
-        },
-        week: {
-          $week: {
-            $dateFromParts: {
-              year: {
-                $year: "$created_at"
-              },
-              month: {
-                $month: "$created_at"
-              },
-              day: {
-                $dayOfMonth: "$created_at"
-              }
-            }
-          }
         }
       }
     },
@@ -93,7 +138,6 @@ const updateStockAggregate = (input_id?: string) => {
           input_id: "$input_id",
           year: "$year",
           month: "$month",
-          week: "$week",
           day: "$day"
         },
         enter: {
@@ -123,37 +167,37 @@ const updateStockAggregate = (input_id?: string) => {
     {
       $project: {
         input_id: "$_id.input_id",
-        year: "$_id.year",
-        month: "$_id.month",
-        week: "$_id.week",
-        day: "$_id.day",
+        date: {
+          year: "$_id.year",
+          month: "$_id.month",
+          day: "$_id.day"
+        },
         enter: 1,
         exit: 1,
-        balance: { $subtract: ["$enter", "$exit"] },
-        updated_at: new Date()
+        available_balance: {
+          $subtract: ["$enter", "$exit"]
+        }
       }
     },
     {
       $sort: {
         input_id: 1,
-        year: 1,
-        month: 1,
-        week: 1,
-        day: 1
+        "date.day": 1,
+        "date.month": 1,
+        "date.year": 1
       }
     },
     {
       $setWindowFields: {
         partitionBy: "$input_id",
         sortBy: {
-          year: 1,
-          month: 1,
-          week: 1,
-          day: 1
+          "date.day": 1,
+          "date.month": 1,
+          "date.year": 1
         },
         output: {
           cumulative_balance: {
-            $sum: "$balance",
+            $sum: "$available_balance",
             window: {
               documents: ["unbounded", "current"]
             }
@@ -163,8 +207,8 @@ const updateStockAggregate = (input_id?: string) => {
     },
     {
       $merge: {
-        into: "stock",
-        on: ["input_id", "day", "week", "month", "year"],
+        into: "stock-temporal",
+        on: ["input_id", "date"],
         whenMatched: "merge",
         whenNotMatched: "insert"
       }
@@ -174,7 +218,7 @@ const updateStockAggregate = (input_id?: string) => {
   return query
 }
 
-const getMostRecentStockAggregate = (input_id?: string) => {
+const getStockAggregate = (input_id?: string) => {
   const match: any = {
     $match: {}
   }
@@ -188,51 +232,26 @@ const getMostRecentStockAggregate = (input_id?: string) => {
     match,
     // Ordena os documentos por input_id, year, month, day em ordem decrescente
     {
-      $sort: {
-        input_id: 1,
-        year: -1,
-        month: -1,
-        day: -1
-      }
-    },
-    // Agrupa os documentos por input_id, pegando o documento mais recente (primeiro)
-    {
-      $group: {
-        _id: "$input_id",
-        most_recent: { $first: "$$ROOT" }
-      }
-    },
-
-    {
       $lookup: {
         from: "input",
-        localField: "_id",
+        localField: "input_id",
         foreignField: "id",
         as: "input"
       }
     },
-    // Projetar os campos desejados
     {
       $project: {
         _id: 0,
-        cumulative_balance:
-          "$most_recent.cumulative_balance",
+        input: { $first: ["$input"] },
+        enter: 1,
+        exit: 1,
+        available_balance: 1,
         cumulative_price: {
           $multiply: [
-            "$most_recent.cumulative_balance",
+            "$available_balance",
             { $arrayElemAt: ["$input.price", 0] }
           ]
-        },
-        input: { $first: ["$input"] },
-        year: "$most_recent.year",
-        month: "$most_recent.month",
-        day: "$most_recent.day",
-        week: "$most_recent.week"
-      }
-    },
-    {
-      $sort: {
-        "input._id": 1,
+        }
       }
     }
   ]
@@ -245,26 +264,10 @@ const getStockInsightsAggregate = () => {
   }
   const pipeline = [
     match,
-    // Ordena os documentos por input_id, year, month, day em ordem decrescente
-    {
-      $sort: {
-        input_id: 1,
-        year: -1,
-        month: -1,
-        day: -1
-      }
-    },
-    // Agrupa os documentos por input_id, pegando o documento mais recente (primeiro)
-    {
-      $group: {
-        _id: "$input_id",
-        most_recent: { $first: "$$ROOT" }
-      }
-    },
     {
       $lookup: {
         from: "input",
-        localField: "_id",
+        localField: "input_id",
         foreignField: "id",
         as: "input"
       }
@@ -273,11 +276,10 @@ const getStockInsightsAggregate = () => {
     {
       $project: {
         _id: 0,
-        cumulative_balance:
-          "$most_recent.cumulative_balance",
+        available_balance: 1,
         cumulative_price: {
           $multiply: [
-            "$most_recent.cumulative_balance",
+            "$available_balance",
             { $arrayElemAt: ["$input.price", 0] }
           ]
         },
@@ -289,132 +291,44 @@ const getStockInsightsAggregate = () => {
       $group: {
         _id: null,
         max_balance: {
-          $max: "$cumulative_balance"
+          $max: {
+            value: "$available_balance",
+            input: "$$ROOT.input"
+          }
         },
         min_balance: {
-          $min: "$cumulative_balance"
+          $min: {
+            value: "$available_balance",
+            input: "$$ROOT.input"
+          }
         },
-        max_unit_price: { $max: "$input.price" },
-        min_unit_price: { $min: "$input.price" },
+        max_unit_price: {
+          $max: {
+            value: "$input.price",
+            input: "$$ROOT.input"
+          }
+        },
+        min_unit_price: {
+          $min: {
+            value: "$input.price",
+            input: "$$ROOT.input"
+          }
+        },
         max_cumulative_price: {
-          $max: "$cumulative_price"
+          $max: {
+            value: "$cumulative_price",
+            input: "$$ROOT.input"
+          }
         },
         min_cumulative_price: {
-          $min: "$cumulative_price"
+          $min: {
+            value: "$cumulative_price",
+            input: "$$ROOT.input"
+          }
         },
         total_value: {
           $sum: "$cumulative_price"
-        },
-        items: { $push: "$$ROOT" }
-      }
-    },
-    // Projetar os campos desejados, incluindo os itens com maior e menor quantidade, valor unitário e valor total
-    {
-      $project: {
-        _id: 0,
-        total_value: 1,
-        max_balance_item: {
-          $arrayElemAt: [
-            {
-              $filter: {
-                input: "$items",
-                as: "item",
-                cond: {
-                  $eq: [
-                    "$$item.cumulative_balance",
-                    "$max_balance"
-                  ]
-                }
-              }
-            },
-            0
-          ]
-        },
-        min_balance_item: {
-          $arrayElemAt: [
-            {
-              $filter: {
-                input: "$items",
-                as: "item",
-                cond: {
-                  $eq: [
-                    "$$item.cumulative_balance",
-                    "$min_balance"
-                  ]
-                }
-              }
-            },
-            0
-          ]
-        },
-        max_unit_price_item: {
-          $arrayElemAt: [
-            {
-              $filter: {
-                input: "$items",
-                as: "item",
-                cond: {
-                  $eq: [
-                    "$$item.input.price",
-                    "$max_unit_price"
-                  ]
-                }
-              }
-            },
-            0
-          ]
-        },
-        min_unit_price_item: {
-          $arrayElemAt: [
-            {
-              $filter: {
-                input: "$items",
-                as: "item",
-                cond: {
-                  $eq: [
-                    "$$item.input.price",
-                    "$min_unit_price"
-                  ]
-                }
-              }
-            },
-            0
-          ]
-        },
-        max_cumulative_price_item: {
-          $arrayElemAt: [
-            {
-              $filter: {
-                input: "$items",
-                as: "item",
-                cond: {
-                  $eq: [
-                    "$$item.cumulative_price",
-                    "$max_cumulative_price"
-                  ]
-                }
-              }
-            },
-            0
-          ]
-        },
-        min_cumulative_price_item: {
-          $arrayElemAt: [
-            {
-              $filter: {
-                input: "$items",
-                as: "item",
-                cond: {
-                  $eq: [
-                    "$$item.cumulative_price",
-                    "$min_cumulative_price"
-                  ]
-                }
-              }
-            },
-            0
-          ]
-        },
+        }
       }
     }
   ]

@@ -8,7 +8,7 @@ import { DataTable } from "../../data-table";
 interface Props {
   data: {
     input: IInput;
-    cumulative_balance: number;
+    available_balance: number;
     cumulative_price: number;
   }[];
 }
@@ -19,7 +19,7 @@ export default function StockTable(props: Props) {
       columns={columns}
       data={data}
       mobileDisplayValue={(data) =>
-        `${data.input.name}: ${data.cumulative_balance}`
+        `${data.input.name}: ${data.available_balance}`
       }
       mobileKeyExtractor={(data) => data.input.id!}
       className="w-full"

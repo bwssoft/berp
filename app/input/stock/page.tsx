@@ -1,5 +1,5 @@
 import {
-  getMostRecentStock,
+  getStock,
   getStockInsights,
   updateStock,
 } from "@/app/lib/action/stock.action";
@@ -10,7 +10,7 @@ import StockTable from "@/app/ui/table/stock/table";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {
-  const stock = await getMostRecentStock();
+  const stock = await getStock();
   const [insights] = await getStockInsights();
   return (
     <div className="flex flex-col h-full gap-6">
@@ -42,11 +42,11 @@ export default async function Page() {
           },
           {
             name: "Insumo em maior quantidade",
-            value: insights?.max_balance_item?.input.name ?? "--",
+            value: insights?.max_balance?.input.name ?? "--",
           },
           {
             name: "Insumo em menor quantidade",
-            value: insights?.min_balance_item?.input.name ?? "--",
+            value: insights?.min_balance?.input.name ?? "--",
           },
         ].map((stat) => (
           <div
@@ -79,7 +79,7 @@ export default async function Page() {
         <BarChart
           series={stock.map((s) => ({
             name: s.input.name,
-            data: [s.cumulative_balance],
+            data: [s.available_balance],
             color: s.input.color,
           }))}
           options={{
@@ -111,11 +111,11 @@ export default async function Page() {
         {[
           {
             name: "Maior Valor Unitário",
-            value: insights?.max_unit_price_item?.input.name ?? "--",
+            value: insights?.max_unit_price?.input.name ?? "--",
           },
           {
             name: "Menor Valor Unitário",
-            value: insights?.min_unit_price_item?.input.name ?? "--",
+            value: insights?.min_unit_price?.input.name ?? "--",
           },
         ].map((stat) => (
           <div
@@ -138,11 +138,11 @@ export default async function Page() {
         {[
           {
             name: "Maior Valor Total em Estoque",
-            value: insights?.max_cumulative_price_item?.input.name ?? "--",
+            value: insights?.max_cumulative_price?.input.name ?? "--",
           },
           {
             name: "Menor Valor Total em Estoque",
-            value: insights?.min_cumulative_price_item?.input.name ?? "--",
+            value: insights?.min_cumulative_price?.input.name ?? "--",
           },
         ].map((stat) => (
           <div
@@ -221,7 +221,7 @@ export default async function Page() {
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12 h-[500px]">
         <DoughnutChart
-          series={stock.map((s) => s.cumulative_balance)}
+          series={stock.map((s) => s.cumulative_price)}
           options={{
             labels: stock.map((s) => s.input.name),
             colors: stock.map((s) => s.input.color),
