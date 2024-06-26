@@ -37,7 +37,8 @@ export async function getStockInsights() {
       "max_unit_price_item" |
       "min_unit_price_item" |
       "max_cumulative_price_item" |
-      "min_cumulative_price_item"
+      "min_cumulative_price_item" |
+      "total_value"
       ]: {
         input: IInput;
         cumulative_balance: number;
@@ -301,6 +302,9 @@ const getStockInsightsAggregate = () => {
         min_cumulative_price: {
           $min: "$cumulative_price"
         },
+        total_value: {
+          $sum: "$cumulative_price"
+        },
         items: { $push: "$$ROOT" }
       }
     },
@@ -308,6 +312,7 @@ const getStockInsightsAggregate = () => {
     {
       $project: {
         _id: 0,
+        total_value: 1,
         max_balance_item: {
           $arrayElemAt: [
             {
