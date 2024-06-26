@@ -11,10 +11,6 @@ export async function createOneInputTransaction(input: Omit<IInputTransaction, "
   return input
 }
 
-export async function findOneInputTransaction(input: IInputTransaction) {
-  return await repository.findOne(input)
-}
-
 export async function findAllInputTransactionWithInput(): Promise<(IInputTransaction & { input: IInput })[]> {
   return await repository.findAllWithInput() as (IInputTransaction & { input: IInput })[]
 }

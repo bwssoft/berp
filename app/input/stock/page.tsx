@@ -1,5 +1,5 @@
 import {
-  getStock,
+  findAllStock,
   getStockInsights,
   updateStock,
 } from "@/app/lib/action/stock.action";
@@ -10,7 +10,7 @@ import StockTable from "@/app/ui/table/stock/table";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {
-  const stock = await getStock();
+  const stock = await findAllStock();
   const [insights] = await getStockInsights();
   return (
     <div className="flex flex-col h-full gap-6">

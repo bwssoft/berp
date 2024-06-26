@@ -19,7 +19,7 @@ export async function updateStock() {
   return
 }
 
-export async function getStock() {
+export async function findAllStock() {
   const pipeline = getStockAggregate()
   const aggregate = await _stockRepository.aggregate(pipeline)
   return await aggregate.toArray() as
