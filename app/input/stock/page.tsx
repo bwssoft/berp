@@ -71,7 +71,7 @@ export default async function Page() {
             Quantidade em estoque
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Gráfico em barra com a quantidade de cada insumo em estoque.
+            Gráfico em barras com a quantidade de cada insumo em estoque.
           </p>
         </div>
       </div>

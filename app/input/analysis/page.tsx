@@ -112,14 +112,23 @@ export default async function Page(props: Props) {
             </div>
           ))}
         </dl>
+        <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+          <div>
+            <h1 className="text-base font-semibold leading-7 text-gray-900">
+              Entradas X Saídas
+            </h1>
+            <p className="mt-2 text-sm text-gray-700">
+              Gráfico em barras com o balanço de transações do insumo no estoque
+              por dia.
+            </p>
+          </div>
+        </div>
         <div
           className="mx-auto w-full grid grid-cols-3 grid-rols-1 gap-6 px-4
 sm:px-6 lg:px-8 h-[500px]"
         >
           <div className="col-span-3">
             <MultilineChart
-              title="Entradas x Saída"
-              subtitle="Semanal"
               series={countSeries!}
               options={{
                 xaxis: {
@@ -129,14 +138,23 @@ sm:px-6 lg:px-8 h-[500px]"
             />
           </div>
         </div>
+        <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+          <div>
+            <h1 className="text-base font-semibold leading-7 text-gray-900">
+              Quantidade em estoque
+            </h1>
+            <p className="mt-2 text-sm text-gray-700">
+              Gráfico em barras representando o nivel de estoque do insumo por
+              dia.
+            </p>
+          </div>
+        </div>
         <div
           className="mx-auto w-full grid grid-cols-3 grid-rols-1 gap-6 px-4
 sm:px-6 lg:px-8 h-[500px]"
         >
           <div className="col-span-3">
             <BarChart
-              title="Quantidade em Estoque"
-              subtitle="Semanal - Acumulativo"
               series={cumulativeSeries!}
               options={{
                 xaxis: {

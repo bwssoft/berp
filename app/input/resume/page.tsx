@@ -51,11 +51,11 @@ export default async function Page() {
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Balanço Semanal das transações dos insumos
+            Resumo Semanal das transações dos insumos
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Um resumo com gráficos e listas para obter insights sobre a
-            quantidade dos insumos.
+            Insights com gráficos e listas para obter sobre a transações dos
+            insumos do estoque.
           </p>
         </div>
       </div>
@@ -74,7 +74,17 @@ export default async function Page() {
           </div>
         ))}
       </dl>
-
+      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+        <div>
+          <h1 className="text-base font-semibold leading-7 text-gray-900">
+            Balanço das transações dos insumos
+          </h1>
+          <p className="mt-2 text-sm text-gray-700">
+            Gráfico em barras com o balanço diário das transações de cada
+            insumo.
+          </p>
+        </div>
+      </div>
       <div className="mx-auto w-full grid grid-cols-3 grid-rols-1 gap-6 px-4 sm:px-6 lg:px-8 h-[500px]">
         <div className="col-span-3">
           <StackedBarChart
@@ -84,14 +94,23 @@ export default async function Page() {
                 categories: stackedBarChartData.dates,
               },
             }}
-            title="Balanço Geral"
-            subtitle="Semanal - Acumulativo"
           />
         </div>
       </div>
 
       <div className="mx-auto w-full grid grid-cols-4 grid-rols-1 gap-6 px-4 sm:px-6 lg:px-8 h-[600px]">
         <div className="col-span-2">
+          <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+            <div>
+              <h1 className="text-base font-semibold leading-7 text-gray-900">
+                Entradas
+              </h1>
+              <p className="mt-2 text-sm text-gray-700">
+                Gráfico em barras que representa as entradas de insumos no
+                estoque.
+              </p>
+            </div>
+          </div>
           <BarChart
             series={enterSeries}
             options={{
@@ -107,11 +126,20 @@ export default async function Page() {
                 },
               },
             }}
-            title="Entradas"
-            subtitle="Semanal"
           />
         </div>
         <div className="col-span-2">
+          <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+            <div>
+              <h1 className="text-base font-semibold leading-7 text-gray-900">
+                Saídas
+              </h1>
+              <p className="mt-2 text-sm text-gray-700">
+                Gráfico em barras que representa as saídas de insumos no
+                estoque.
+              </p>
+            </div>
+          </div>
           <BarChart
             series={exitSeries}
             options={{
@@ -127,8 +155,6 @@ export default async function Page() {
                 },
               },
             }}
-            title="Saídas"
-            subtitle="Semanal"
           />
         </div>
       </div>
