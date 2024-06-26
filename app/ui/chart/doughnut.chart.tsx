@@ -8,7 +8,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 interface Props {
   title?: string;
   subtitle?: string;
-  series: number[];
+  series: (number | string)[];
   options: {
     labels: string[];
     colors: string[];
