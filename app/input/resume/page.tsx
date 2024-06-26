@@ -20,7 +20,15 @@ export default async function Page() {
     stackedBarChartData.dates,
     (d) => d.exit
   );
+  const inStock = stackedBarChartData.cumulative.reduce(
+    (acc, cur) => cur.balance + acc,
+    0
+  );
   const stats = [
+    {
+      name: "Quantidade em Estoque",
+      value: inStock,
+    },
     {
       name: "Total de transações",
       value: stackedBarChartData.count.total,
@@ -51,7 +59,7 @@ export default async function Page() {
           </p>
         </div>
       </div>
-      <dl className="mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="mx-auto grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-5">
         {stats.map((stat) => (
           <div
             key={stat.name}
