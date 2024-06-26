@@ -36,14 +36,17 @@ export default async function Page() {
       </div>
       <dl className="mx-auto w-full grid grid-cols-1 gap-px bg-gray-900/5 sm:grid-cols-2 lg:grid-cols-3">
         {[
-          { name: "Valor total em estoque", value: "R$55.140,90" },
+          {
+            name: "Valor total em estoque",
+            value: insights?.total_value ? `R$${insights.total_value}` : "--",
+          },
           {
             name: "Insumo em maior quantidade",
-            value: insights?.max_balance_item.input.name ?? "--",
+            value: insights?.max_balance_item?.input.name ?? "--",
           },
           {
             name: "Insumo em menor quantidade",
-            value: insights?.min_balance_item.input.name ?? "--",
+            value: insights?.min_balance_item?.input.name ?? "--",
           },
         ].map((stat) => (
           <div
@@ -87,6 +90,9 @@ export default async function Page() {
                 horizontal: false,
               },
             },
+            stroke: {
+              width: 5,
+            },
           }}
         />
       </div>
@@ -105,11 +111,11 @@ export default async function Page() {
         {[
           {
             name: "Maior Valor Unitário",
-            value: insights?.max_unit_price_item.input.name,
+            value: insights?.max_unit_price_item?.input.name ?? "--",
           },
           {
             name: "Menor Valor Unitário",
-            value: insights?.min_unit_price_item.input.name,
+            value: insights?.min_unit_price_item?.input.name ?? "--",
           },
         ].map((stat) => (
           <div
@@ -132,11 +138,11 @@ export default async function Page() {
         {[
           {
             name: "Maior Valor Total em Estoque",
-            value: insights?.max_cumulative_price_item.input.name,
+            value: insights?.max_cumulative_price_item?.input.name ?? "--",
           },
           {
             name: "Menor Valor Total em Estoque",
-            value: insights?.min_cumulative_price_item.input.name,
+            value: insights?.min_cumulative_price_item?.input.name ?? "--",
           },
         ].map((stat) => (
           <div
@@ -206,6 +212,9 @@ export default async function Page() {
               bar: {
                 horizontal: false,
               },
+            },
+            stroke: {
+              width: 5,
             },
           }}
         />
