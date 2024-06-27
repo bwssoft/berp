@@ -39,7 +39,7 @@ export function useInputCreateForm() {
     } catch (e) {
       toast({
         title: "Erro!",
-        description: "Falha ao criar o insumo!",
+        description: "Falha ao registrar o insumo!",
         variant: "error",
       });
     }

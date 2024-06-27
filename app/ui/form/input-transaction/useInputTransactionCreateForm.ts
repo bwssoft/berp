@@ -31,13 +31,13 @@ export function useInputTransacionCreateForm() {
       await createOneInputTransaction(data);
       toast({
         title: "Sucesso!",
-        description: "Entrada registrado com sucesso!",
+        description: "Entrada registrada com sucesso!",
         variant: "success",
       });
     } catch (e) {
       toast({
         title: "Erro!",
-        description: "Falha ao criar o entrada!",
+        description: "Falha ao registrar a entrada!",
         variant: "error",
       });
     }
