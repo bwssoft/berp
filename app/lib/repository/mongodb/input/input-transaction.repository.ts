@@ -35,7 +35,7 @@ class InputTransactionRepository extends BaseRepository<IInputTransaction> {
           quantity: 1,
           created_at: 1,
           type: 1,
-          input: { $arrayElemAt: ["$input", 0] },
+          input: { $first: "$input" },
         }
       },
     ]).toArray();

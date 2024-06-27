@@ -24,9 +24,9 @@ class ProductTransactionRepository extends BaseRepository<IProductTransaction> {
       { $match: {} },
       {
         $lookup: {
-          as: "input",
-          from: "input",
-          localField: "input_id",
+          as: "product",
+          from: "product",
+          localField: "product_id",
           foreignField: "id"
         }
       },
@@ -35,7 +35,7 @@ class ProductTransactionRepository extends BaseRepository<IProductTransaction> {
           quantity: 1,
           created_at: 1,
           type: 1,
-          input: { $arrayElemAt: ["$input", 0] },
+          product: { $first: "$product" },
         }
       },
     ]).toArray();
