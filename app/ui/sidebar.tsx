@@ -64,7 +64,6 @@ const navigation: {
     children: [
       { name: "Gestão", pathname: "/input/management" },
       { name: "Entradas e Saídas", pathname: "/input/enter-exit" },
-      // { name: "Resumo Transações", pathname: "/input/resume" },
       { name: "Estoque", pathname: "/input/stock" },
       { name: "Análise", pathname: "/input/analysis" },
     ],
@@ -77,7 +76,10 @@ const navigation: {
   {
     name: "Produtos",
     icon: CpuChipIcon,
-    children: [{ name: "Gestão", pathname: "/product/management" }],
+    children: [
+      { name: "Gestão", pathname: "/product/management" },
+      { name: "Entradas e Saídas", pathname: "/product/enter-exit" },
+    ],
   },
   { name: "Calendário", icon: CalendarIcon },
   { name: "Documentos", icon: DocumentDuplicateIcon },
