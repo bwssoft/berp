@@ -1,2 +1,2 @@
-export * from './input.action'
-export * from './product.action'
+export * from './input'
+export * from './product'

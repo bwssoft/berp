@@ -1,4 +1,4 @@
-import { resumeInputTransactions } from "@/app/lib/action/input-transaction.action";
+import { resumeInputTransactions } from "@/app/lib/action/input/input-transaction.action";
 import { BarChart } from "@/app/ui/chart/bar.chart";
 import { StackedBarChart } from "@/app/ui/chart/stacked-bar.chart";
 import { fillMissingDates } from "@/app/util/fillMissingDates";

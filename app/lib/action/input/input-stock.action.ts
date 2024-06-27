@@ -1,14 +1,14 @@
 "use server"
 
-import inputTransactionRepository from "../repository/mongodb/input-transaction.repository";
-import { IInput } from "../definition";
-import stockRepository from "../repository/mongodb/stock.repository";
-import temporalStockRepository from "../repository/mongodb/temporal-stock.repository";
+import inputTransactionRepository from "../../repository/mongodb/input/input-transaction.repository";
+import { IInput } from "../../definition";
+import inputStockRepository from "../../repository/mongodb/input/input-stock.repository";
+import inputTemporalStockRepository from "../../repository/mongodb/input/input-temporal-stock.repository";
 import { getRange } from "@/app/util";
 
 const _inputTransactionRepository = inputTransactionRepository
-const _stockRepository = stockRepository
-const _temporalStockRepository = temporalStockRepository
+const _inputStockRepository = inputStockRepository
+const _inputTemporalStockRepository = inputTemporalStockRepository
 
 export async function updateStock() {
   const stockTemporalPipeline = updateStockTemporalAggregate()
@@ -21,20 +21,20 @@ export async function updateStock() {
 
 export async function findAllStock() {
   const pipeline = getStockAggregate()
-  const aggregate = await _stockRepository.aggregate(pipeline)
+  const aggregate = await _inputStockRepository.aggregate(pipeline)
   return await aggregate.toArray() as
     {
       input: IInput
       enter: number
       exit: number
-      available_balance: number
+      balance: number
       cumulative_price: number
     }[]
 }
 
 export async function getStockInsights() {
   const pipeline = getStockInsightsAggregate()
-  const aggregate = await _stockRepository.aggregate(pipeline)
+  const aggregate = await _inputStockRepository.aggregate(pipeline)
   return await aggregate.toArray() as
     {
       max_balance: { value: number, input: IInput }
@@ -49,14 +49,13 @@ export async function getStockInsights() {
 
 export async function analyzeTemporalStock(input_id: string) {
   const { init, end, dates } = getRange(new Date(), 30)
-  const aggragete = await _temporalStockRepository.aggregate<{
+  const aggragete = await _inputTemporalStockRepository.aggregate<{
     input: IInput
     stocks: {
       date: { day: number, month: number, year: number }
       enter: number
       exit: number
       balance: number
-      available_balance: number
       cumulative_balance: number
     }[]
   }>(analyzeTemporalStockAggregate(init, end, input_id))
@@ -68,7 +67,7 @@ export async function analyzeTemporalStock(input_id: string) {
 }
 
 export async function getTotalValueInStock(input_id: string) {
-  const aggregate = await _stockRepository.aggregate([
+  const aggregate = await _inputStockRepository.aggregate([
     {
       $match: { input_id }
     },
@@ -83,8 +82,8 @@ export async function getTotalValueInStock(input_id: string) {
     {
       $project: {
         input: { $first: ["$input"] },
-        available_balance: 1,
-        cumulative_price: { $multiply: [{ $arrayElemAt: ["$input.price", 0] }, "$available_balance"] }
+        balance: 1,
+        cumulative_price: { $multiply: [{ $arrayElemAt: ["$input.price", 0] }, "$balance"] }
 
       }
     }
@@ -92,7 +91,7 @@ export async function getTotalValueInStock(input_id: string) {
   const [result] = await aggregate.toArray()
   return result as {
     input: IInput
-    available_balance: number
+    balance: number
     cumulative_price: number
   }
 }
@@ -145,14 +144,14 @@ const updateStockAggregate = (input_id?: string) => {
         input_id: "$_id",
         enter: 1,
         exit: 1,
-        available_balance: {
+        balance: {
           $subtract: ["$enter", "$exit"]
         }
       }
     },
     {
       $merge: {
-        into: "stock",
+        into: "input-stock",
         on: ["input_id"],
         whenMatched: "merge",
         whenNotMatched: "insert"
@@ -230,7 +229,7 @@ const updateStockTemporalAggregate = (input_id?: string) => {
         },
         enter: 1,
         exit: 1,
-        available_balance: {
+        balance: {
           $subtract: ["$enter", "$exit"]
         }
       }
@@ -253,7 +252,7 @@ const updateStockTemporalAggregate = (input_id?: string) => {
         },
         output: {
           cumulative_balance: {
-            $sum: "$available_balance",
+            $sum: "$balance",
             window: {
               documents: ["unbounded", "current"]
             }
@@ -263,7 +262,7 @@ const updateStockTemporalAggregate = (input_id?: string) => {
     },
     {
       $merge: {
-        into: "stock-temporal",
+        into: "input-temporal-stock",
         on: ["input_id", "date"],
         whenMatched: "merge",
         whenNotMatched: "insert"
@@ -301,10 +300,10 @@ const getStockAggregate = (input_id?: string) => {
         input: { $first: ["$input"] },
         enter: 1,
         exit: 1,
-        available_balance: 1,
+        balance: 1,
         cumulative_price: {
           $multiply: [
-            "$available_balance",
+            "$balance",
             { $arrayElemAt: ["$input.price", 0] }
           ]
         }
@@ -332,10 +331,10 @@ const getStockInsightsAggregate = () => {
     {
       $project: {
         _id: 0,
-        available_balance: 1,
+        balance: 1,
         cumulative_price: {
           $multiply: [
-            "$available_balance",
+            "$balance",
             { $arrayElemAt: ["$input.price", 0] }
           ]
         },
@@ -348,13 +347,13 @@ const getStockInsightsAggregate = () => {
         _id: null,
         max_balance: {
           $max: {
-            value: "$available_balance",
+            value: "$balance",
             input: "$$ROOT.input"
           }
         },
         min_balance: {
           $min: {
-            value: "$available_balance",
+            value: "$balance",
             input: "$$ROOT.input"
           }
         },
@@ -424,7 +423,7 @@ const analyzeTemporalStockAggregate = (init: Date, end: Date, input_id: string) 
         _id: "$input_id",
         stocks: {
           $push: {
-            available_balance: "$available_balance",
+            balance: "$balance",
             cumulative_balance:
               "$cumulative_balance",
             enter: "$enter",

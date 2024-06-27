@@ -1,7 +1,8 @@
 "use server"
 
-import { IProduct } from "../definition/product.definition";
-import productRepository from "../repository/mongodb/product.repository";
+import { IProduct } from "../../definition"
+import productRepository from "../../repository/mongodb/product/product.repository"
+
 
 const repository = productRepository
 

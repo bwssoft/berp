@@ -1,5 +1,5 @@
 import { toast } from '@/app/hook/use-toast';
-import { createOneInputTransaction } from '@/app/lib/action/input-transaction.action';
+import { createOneInputTransaction } from '@/app/lib/action/input/input-transaction.action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

@@ -6,7 +6,7 @@ export function fillMissingDates(
     exit: number
     balance: number
     input: IInput
-    byDay: {
+    stocks: {
       day: string
       enter: number
       exit: number
@@ -18,7 +18,7 @@ export function fillMissingDates(
 ): { name: string, data: any[] }[] {
   return data.map((d) => {
     const dataByDate: { [key: string]: number } = {};
-    d.byDay.forEach((_d: any) => {
+    d.stocks.forEach((_d: any) => {
       dataByDate[_d.day] = extractValue(_d);
     });
 
@@ -39,7 +39,7 @@ export function fillMissingDatesOnAnalysisPage(
       date: { day: number, year: number, month: number }
       enter: number
       exit: number
-      available_balance: number
+      balance: number
       cumulative_balance: number
     }[]
   }[],

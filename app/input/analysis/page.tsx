@@ -7,7 +7,7 @@ import {
   analyzeTemporalStock,
   getTotalValueInStock,
 } from "@/app/lib/action/stock.action";
-import { countInputTransaction } from "@/app/lib/action/input-transaction.action";
+import { countInputTransaction } from "@/app/lib/action/input/input-transaction.action";
 
 interface Props {
   searchParams: {
@@ -69,7 +69,7 @@ export default async function Page(props: Props) {
     const stats = [
       {
         name: "Quant. Em Estoque",
-        value: totalValueActionResult?.available_balance ?? "--",
+        value: totalValueActionResult?.balance ?? "--",
       },
       {
         name: "R$ em Estoque",

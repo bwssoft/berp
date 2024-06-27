@@ -1,5 +1,5 @@
-import { IProduct } from "../../definition/product.definition";
-import { BaseRepository } from "./@base/base";
+import { IProduct } from "../../../definition/product/product.definition";
+import { BaseRepository } from "../@base/base";
 
 class ProductRepository extends BaseRepository<IProduct> {
   private static instance: ProductRepository;

@@ -1,5 +1,3 @@
-export * from './input.definition'
-export * from './input-transaction.definition'
-export * from './stock.definition'
-export * from './product.definition'
+export * from './input'
+export * from './product'
 export * from './production-order.definition'

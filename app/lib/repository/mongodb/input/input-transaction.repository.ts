@@ -1,5 +1,5 @@
-import { IInputTransaction } from "../../definition";
-import { BaseRepository } from "./@base/base";
+import { IInputTransaction } from "../../../definition";
+import { BaseRepository } from "../@base/base";
 
 class InputTransactionRepository extends BaseRepository<IInputTransaction> {
   private static instance: InputTransactionRepository;

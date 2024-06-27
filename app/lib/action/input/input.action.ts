@@ -1,11 +1,12 @@
 "use server"
 
-import { IInput } from "../definition";
-import inputRepository from "../repository/mongodb/input.repository";
+import { IInput } from "../../definition"
+import inputRepository from "../../repository/mongodb/input/input.repository"
 
 const repository = inputRepository
 
-export async function createOneInput(input: Omit<IInput, "id" | "created_at">) {
+export async function createOneInput(input: Omit<IInput
+  , "id" | "created_at">) {
   await repository.create({ ...input, created_at: new Date(), id: crypto.randomUUID() })
   return input
 }
