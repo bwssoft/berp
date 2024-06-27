@@ -3,14 +3,11 @@
 import inputTransactionRepository from "../../repository/mongodb/input/input-transaction.repository";
 import { IInput } from "../../definition";
 import inputStockRepository from "../../repository/mongodb/input/input-stock.repository";
-import inputTemporalStockRepository from "../../repository/mongodb/input/input-temporal-stock.repository";
-import { getRange } from "@/app/util";
 
 const _inputTransactionRepository = inputTransactionRepository
 const _inputStockRepository = inputStockRepository
-const _inputTemporalStockRepository = inputTemporalStockRepository
 
-export async function updateStock() {
+export async function updateInputStock() {
   const stockTemporalPipeline = updateStockTemporalAggregate()
   const stockPipeline = updateStockAggregate()
   const stockTemporalAggregate = await _inputTransactionRepository.aggregate(stockTemporalPipeline)
@@ -19,7 +16,7 @@ export async function updateStock() {
   return
 }
 
-export async function findAllStock() {
+export async function findAllInputStock() {
   const pipeline = getStockAggregate()
   const aggregate = await _inputStockRepository.aggregate(pipeline)
   return await aggregate.toArray() as
@@ -32,7 +29,7 @@ export async function findAllStock() {
     }[]
 }
 
-export async function getStockInsights() {
+export async function getInputStockInsights() {
   const pipeline = getStockInsightsAggregate()
   const aggregate = await _inputStockRepository.aggregate(pipeline)
   return await aggregate.toArray() as
@@ -47,26 +44,7 @@ export async function getStockInsights() {
     }[]
 }
 
-export async function analyzeTemporalStock(input_id: string) {
-  const { init, end, dates } = getRange(new Date(), 30)
-  const aggragete = await _inputTemporalStockRepository.aggregate<{
-    input: IInput
-    stocks: {
-      date: { day: number, month: number, year: number }
-      enter: number
-      exit: number
-      balance: number
-      cumulative_balance: number
-    }[]
-  }>(analyzeTemporalStockAggregate(init, end, input_id))
-  const result = await aggragete.toArray()
-  return {
-    result,
-    dates
-  }
-}
-
-export async function getTotalValueInStock(input_id: string) {
+export async function getTotalValueInInputStock(input_id: string) {
   const aggregate = await _inputStockRepository.aggregate([
     {
       $match: { input_id }

@@ -1,4 +1,8 @@
-import { findAllStock, getStockInsights, updateStock } from "@/app/lib/action";
+import {
+  findAllInputStock,
+  getInputStockInsights,
+  updateInputStock,
+} from "@/app/lib/action";
 import { Button } from "@/app/ui/button";
 import { BarChart } from "@/app/ui/chart/bar.chart";
 import { DoughnutChart } from "@/app/ui/chart/doughnut.chart";
@@ -6,8 +10,8 @@ import StockTable from "@/app/ui/table/stock/table";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {
-  const stock = await findAllStock();
-  const [insights] = await getStockInsights();
+  const stock = await findAllInputStock();
+  const [insights] = await getInputStockInsights();
   return (
     <div className="flex flex-col h-full gap-6">
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -20,7 +24,7 @@ export default async function Page() {
             atualizada a cada 24h a partir das transações realizadas no dia.
           </p>
         </div>
-        <form action={updateStock} className="ml-auto">
+        <form action={updateInputStock} className="ml-auto">
           <Button
             type="submit"
             className="ml-auto flex items-center gap-x-1 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
