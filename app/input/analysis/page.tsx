@@ -69,7 +69,7 @@ export default async function Page(props: Props) {
     const stats = [
       {
         name: "Quant. Em Estoque",
-        value: totalValueActionResult?.available_balance ?? "--",
+        value: totalValueActionResult?.balance ?? "--",
       },
       {
         name: "R$ em Estoque",

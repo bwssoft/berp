@@ -13,7 +13,7 @@ export default async function Example() {
             <h1 className="text-base font-semibold leading-7 text-gray-900">
               Entradas e Saídas
             </h1>
-            <div className="order-last flex w-full gap-x-8 text-sm font-semibold leading-6 sm:order-none sm:w-auto sm:border-l sm:border-gray-200 sm:pl-6 sm:leading-7">
+            {/* <div className="order-last flex w-full gap-x-8 text-sm font-semibold leading-6 sm:order-none sm:w-auto sm:border-l sm:border-gray-200 sm:pl-6 sm:leading-7">
               <a href="#" className="text-indigo-600">
                 Últimos 7 dias
               </a>
@@ -23,7 +23,7 @@ export default async function Example() {
               <a href="#" className="text-gray-700">
                 Tempo todo
               </a>
-            </div>
+            </div> */}
           </div>
           <p className="mt-2 text-sm text-gray-700">
             Uma lista de todos as entradas e saídas de insumos registrados na

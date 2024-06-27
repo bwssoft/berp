@@ -79,7 +79,7 @@ export default async function Page() {
         <BarChart
           series={stock.map((s) => ({
             name: s.input.name,
-            data: [s.available_balance],
+            data: [s.balance],
             color: s.input.color,
           }))}
           options={{

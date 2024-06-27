@@ -1,7 +1,7 @@
 "use server"
 
 import { IInput } from "../definition";
-import inputRepository from "../repository/mongodb/input.repository";
+import inputRepository from "../repository/mongodb/input/input.repository";
 
 const repository = inputRepository
 

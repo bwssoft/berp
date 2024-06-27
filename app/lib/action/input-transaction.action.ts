@@ -2,7 +2,7 @@
 
 import { getRange } from "@/app/util";
 import { IInput, IInputTransaction } from "../definition";
-import inputTransactionRepository from "../repository/mongodb/input-transaction.repository";
+import inputTransactionRepository from "../repository/mongodb/input/input-transaction.repository";
 
 const repository = inputTransactionRepository
 
@@ -22,7 +22,7 @@ export async function resumeInputTransactions() {
     exit: number
     balance: number
     input: IInput
-    byDay: {
+    stocks: {
       day: string
       enter: number
       exit: number
@@ -149,7 +149,7 @@ const stockValueByInputByDayCumulative = (init: Date, end: Date) => {
         input: {
           $first: "$input"
         },
-        byDay: {
+        stocks: {
           $push: {
             day: "$day",
             enter: "$enter",
@@ -161,9 +161,9 @@ const stockValueByInputByDayCumulative = (init: Date, end: Date) => {
     },
     {
       $addFields: {
-        byDay: {
+        stocks: {
           $reduce: {
-            input: "$byDay",
+            input: "$stocks",
             initialValue: { cumulative_balance: 0, days: [] },
             in: {
               cumulative_balance: {
@@ -196,7 +196,7 @@ const stockValueByInputByDayCumulative = (init: Date, end: Date) => {
         exit: 1,
         balance: 1,
         input: 1,
-        byDay: "$byDay.days"
+        stocks: "$stocks.days"
       }
     },
     {

@@ -29,6 +29,7 @@ export function DataTableDesktop<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: true,
   });
 
   return (
