@@ -26,18 +26,19 @@ export function useInputTransacionCreateForm() {
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
+    const type = data.type === "enter" ? "Entrada" : "Saída"
     try {
       //fazer a request
       await createOneInputTransaction(data);
       toast({
         title: "Sucesso!",
-        description: "Entrada registrada com sucesso!",
+        description: `${type} registrada com sucesso!`,
         variant: "success",
       });
     } catch (e) {
       toast({
         title: "Erro!",
-        description: "Falha ao registrar a entrada!",
+        description: `Falha ao registrar a ${type}!`,
         variant: "error",
       });
     }

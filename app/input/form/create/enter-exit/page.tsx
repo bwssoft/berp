@@ -11,7 +11,8 @@ export default async function Page() {
             Entradas e Saídas
           </h1>
           <p className="mt-1 text-sm leading-6 text-gray-600">
-            Preencha o formulário abaixo para registrar um insumo.
+            Preencha o formulário abaixo para registrar a entrada ou saída de um
+            insumo.
           </p>
         </div>
       </div>

@@ -1,8 +1,4 @@
-import {
-  findAllStock,
-  getStockInsights,
-  updateStock,
-} from "@/app/lib/action/stock.action";
+import { findAllStock, getStockInsights, updateStock } from "@/app/lib/action";
 import { Button } from "@/app/ui/button";
 import { BarChart } from "@/app/ui/chart/bar.chart";
 import { DoughnutChart } from "@/app/ui/chart/doughnut.chart";
