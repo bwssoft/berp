@@ -21,13 +21,14 @@ import {
   UsersIcon,
   XMarkIcon,
   ClipboardIcon,
+  ChevronRightIcon,
+  CpuChipIcon,
 } from "@heroicons/react/24/outline";
 import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { cn } from "../util/cn";
 import { useIsOnPathname } from "../hook/is-on-pathname";
 import Link from "next/link";
@@ -71,10 +72,12 @@ const navigation: {
   {
     name: "Ordem de Produção",
     icon: ClipboardIcon,
-    children: [
-      { name: "Gestão", pathname: "/production-order/management" },
-      { name: "Resumo", pathname: "/production-order/resume" },
-    ],
+    children: [{ name: "Gestão", pathname: "/production-order/management" }],
+  },
+  {
+    name: "Produtos",
+    icon: CpuChipIcon,
+    children: [{ name: "Gestão", pathname: "/product/management" }],
   },
   { name: "Calendário", icon: CalendarIcon },
   { name: "Documentos", icon: DocumentDuplicateIcon },
