@@ -12,7 +12,7 @@ interface Props {
     cumulative_price: number;
   }[];
 }
-export default function StockTable(props: Props) {
+export default function InputStockTable(props: Props) {
   const { data } = props;
   return (
     <DataTable
