@@ -8,6 +8,7 @@ import { z } from 'zod';
 const schema = z.object({
   name: z.string().min(1, 'Esse campo não pode ser vazio'),
   description: z.string().min(1, 'Esse campo não pode ser vazio'),
+  color: z.string(),
   files: z.any(),
   inputs: z.array(z.object({ input_id: z.string(), quantity: z.coerce.number() })),
 });

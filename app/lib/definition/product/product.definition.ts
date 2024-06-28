@@ -3,6 +3,7 @@ export interface IProduct {
   name: string
   files?: string[]
   description: string
+  color: string
   inputs: { input_id: string, quantity: number }[]
   created_at: Date
 }
