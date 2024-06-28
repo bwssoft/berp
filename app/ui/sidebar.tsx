@@ -83,7 +83,10 @@ const navigation: {
   {
     name: "Ordem de Produção",
     icon: ClipboardIcon,
-    children: [{ name: "Gestão", pathname: "/production-order/management" }],
+    children: [
+      { name: "Gestão", pathname: "/production-order/management" },
+      { name: "Kanban", pathname: "/production-order/kanban" },
+    ],
   },
   {
     name: "Comercial",

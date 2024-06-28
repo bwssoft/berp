@@ -315,4 +315,5 @@ export const tailwindColorInHex = [
   { name: "Roxo", value: tailwindColors["purple"][500] },
   { name: "Fúcsia", value: tailwindColors["fuchsia"][500] },
   { name: "Rosa", value: tailwindColors["pink"][500] },
+  { name: "Rose", value: tailwindColors["rose"][500] },
 ];

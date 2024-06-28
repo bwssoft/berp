@@ -18,7 +18,7 @@ export default function ProductUpdateForm(props: Props) {
     handleAppendInput,
     handleRemoveInput,
   } = useProductUpdateForm({ defaultValues: product });
-
+  console.log(product);
   return (
     <form action={() => handleSubmit()}>
       <div className="space-y-12">

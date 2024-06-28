@@ -1,10 +1,9 @@
 "use client";
 import { PhotoIcon } from "@heroicons/react/24/solid";
-import { useInputCreateForm } from "./useInputCreateForm";
 import { Button } from "../../button";
 import { IInput } from "@/app/lib/definition";
 import { useInputUpdateForm } from "./useInputUpdateForm";
-import { InputFormSelectColorsData } from "./input.create.form";
+import { tailwindColorInHex } from "@/app/constant";
 
 interface Props {
   input: IInput;
@@ -77,7 +76,7 @@ export default function InputUpdateForm(props: Props) {
                 {...register("color")}
               >
                 <option>Defina uma cor para o insumo</option>
-                {InputFormSelectColorsData.map((c, idx) => (
+                {tailwindColorInHex.map((c, idx) => (
                   <option key={idx} value={c.value}>
                     {c.name}
                   </option>

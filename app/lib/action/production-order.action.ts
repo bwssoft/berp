@@ -1,5 +1,6 @@
 "use server"
 
+import { IProduct } from "../definition";
 import { IProductionOrder } from "../definition/production-order.definition";
 import productionOrderRepository from "../repository/mongodb/production-order.repository";
 
@@ -24,5 +25,9 @@ export async function deleteOneProductionOrderById(query: { id: string }) {
 
 export async function findAllProductionOrder(): Promise<IProductionOrder[]> {
   return await repository.findAll() as IProductionOrder[]
+}
+
+export async function findAllProductionOrderWithProduct(): Promise<(IProductionOrder & { _products: IProduct[] })[]> {
+  return await repository.findAllWithProduct() as (IProductionOrder & { _products: IProduct[] })[]
 }
 
