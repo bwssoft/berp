@@ -13,7 +13,7 @@ const icon = {
 };
 import { IProduct, IProductTransaction } from "@/app/lib/definition";
 import { ColumnDef } from "@tanstack/react-table";
-import { cn } from "@/app/util";
+import { cn } from "@/app/lib/util";
 
 const typeMapped = {
   enter: "Entrada",

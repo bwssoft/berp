@@ -93,12 +93,9 @@ export function useClientCreateForm() {
   const handleAppendContact = append
   const handleRemoveContact = remove
 
-  useEffect(() => console.log(errors), [errors])
-
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
-      console.log(data)
       await createOneClient(data);
       toast({
         title: "Sucesso!",
@@ -106,7 +103,6 @@ export function useClientCreateForm() {
         variant: "success",
       });
     } catch (e) {
-      console.log(e)
       toast({
         title: "Erro!",
         description: "Falha ao registrar o cliente!",

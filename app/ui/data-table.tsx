@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-table";
 import { ComponentProps, ReactNode } from "react";
 import { useMediaQuery } from "@/app/hook/use-media-query";
-import { cn } from "@/app/util";
+import { cn } from "@/app/lib/util";
 
 interface DataTableDesktopProps<TData, TValue> extends ComponentProps<"div"> {
   columns: ColumnDef<TData, TValue>[];

@@ -1,6 +1,6 @@
 import { findAllInput } from "@/app/lib/action";
 import { MultilineChart } from "@/app/ui/chart/multiline.chart";
-import { fillMissingDatesOnInputAnalysisPage } from "@/app/util/fillMissingDates";
+import { fillMissingDatesOnInputAnalysisPage } from "@/app/lib/util/fillMissingDates";
 import { InputSelect } from "./components/inputSelect";
 import { BarChart } from "@/app/ui/chart/bar.chart";
 import {

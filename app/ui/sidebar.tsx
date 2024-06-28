@@ -31,7 +31,7 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { cn } from "../util/cn";
+import { cn } from "@/app/lib/util";
 import { useIsOnPathname } from "../hook/is-on-pathname";
 import Link from "next/link";
 
@@ -71,11 +71,6 @@ const navigation: {
     ],
   },
   {
-    name: "Ordem de Produção",
-    icon: ClipboardIcon,
-    children: [{ name: "Gestão", pathname: "/production-order/management" }],
-  },
-  {
     name: "Produtos",
     icon: CpuChipIcon,
     children: [
@@ -86,11 +81,16 @@ const navigation: {
     ],
   },
   {
+    name: "Ordem de Produção",
+    icon: ClipboardIcon,
+    children: [{ name: "Gestão", pathname: "/production-order/management" }],
+  },
+  {
     name: "Comercial",
     icon: BriefcaseIcon,
     children: [
       { name: "Clientes", pathname: "/sale/client" },
-      { name: "Oportunidades", pathname: "/sale/oportunity" },
+      { name: "Oportunidades", pathname: "/sale/opportunity" },
       { name: "Propostas", pathname: "/sale/proposal" },
     ],
   },

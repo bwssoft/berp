@@ -5,7 +5,7 @@ import {
   getTotalValueInProductStock,
 } from "@/app/lib/action";
 import { MultilineChart } from "@/app/ui/chart/multiline.chart";
-import { fillMissingDatesOnProductAnalysisPage } from "@/app/util/fillMissingDates";
+import { fillMissingDatesOnProductAnalysisPage } from "@/app/lib/util/fillMissingDates";
 import { ProductSelect } from "./components/productSelect";
 import { BarChart } from "@/app/ui/chart/bar.chart";
 

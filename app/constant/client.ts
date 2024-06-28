@@ -50,10 +50,37 @@ const contactDepartments = {
 };
 
 
+const opportunitySalesStage = {
+  initial_contact: "Contato Inicial",
+  under_review: "Em Análise",
+  proposal_sent: "Proposta Enviada",
+  in_negotiation: "Em Negociação",
+  sale_won: "Venda Ganha",
+  sale_lost: "Venda Perdida",
+  stopped: "Parada"
+};
+
+const opportunityType = {
+  existing_business: "Negócio Existente",
+  new_business: "Novo Negócio"
+};
+
+const opportunityRecurrenceType = {
+  monthly: "Mensal",
+  annual: "Anual",
+  one_time_sale: "Venda Única"
+};
+
+
+
+
 
 export const clientConstants = {
   types,
   sectors,
   contactRoles,
-  contactDepartments
+  contactDepartments,
+  opportunitySalesStage,
+  opportunityType,
+  opportunityRecurrenceType
 }

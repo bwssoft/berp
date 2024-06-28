@@ -1,5 +1,5 @@
 import { SideBar } from "./sidebar";
-import { cn } from "../util/cn";
+import { cn } from "@/app/lib/util";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });

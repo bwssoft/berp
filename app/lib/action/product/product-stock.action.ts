@@ -3,7 +3,7 @@
 import { IProduct } from "../../definition";
 import productTransactionRepository from "../../repository/mongodb/product/product-transaction.repository";
 import productStockRepository from "../../repository/mongodb/product/product-stock.repository";
-import { getRange } from "@/app/util";
+import { getRange } from "@/app/lib/util";
 import productTemporalStockRepository from "../../repository/mongodb/product/product-temporal-stock.repository";
 
 const _productTransactionRepository = productTransactionRepository

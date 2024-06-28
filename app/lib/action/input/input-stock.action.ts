@@ -3,7 +3,7 @@
 import inputTransactionRepository from "../../repository/mongodb/input/input-transaction.repository";
 import { IInput } from "../../definition";
 import inputStockRepository from "../../repository/mongodb/input/input-stock.repository";
-import { getRange } from "@/app/util";
+import { getRange } from "@/app/lib/util";
 import inputTemporalStockRepository from "../../repository/mongodb/input/input-temporal-stock.repository";
 
 const _inputTransactionRepository = inputTransactionRepository

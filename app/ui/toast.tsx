@@ -4,7 +4,7 @@ import { XMarkIcon as Cross2Icon } from "@heroicons/react/20/solid";
 import * as React from "react";
 import * as ToastPrimitives from "@radix-ui/react-toast";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/app/util";
+import { cn } from "@/app/lib/util";
 
 const ToastProvider = ToastPrimitives.Provider;
 

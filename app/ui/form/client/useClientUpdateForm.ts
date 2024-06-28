@@ -100,8 +100,6 @@ export function useClientUpdateForm(props: Props) {
   const handleAppendContact = append
   const handleRemoveContact = remove
 
-  useEffect(() => console.log(errors), [errors])
-
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
@@ -112,7 +110,6 @@ export function useClientUpdateForm(props: Props) {
         variant: "success",
       });
     } catch (e) {
-      console.log(e)
       toast({
         title: "Erro!",
         description: "Falha ao atualizar o cliente!",
