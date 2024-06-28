@@ -23,6 +23,8 @@ import {
   ClipboardIcon,
   ChevronRightIcon,
   CpuChipIcon,
+  WrenchIcon,
+  BriefcaseIcon,
 } from "@heroicons/react/24/outline";
 import {
   Disclosure,
@@ -83,8 +85,24 @@ const navigation: {
       { name: "Análise", pathname: "/product/analysis" },
     ],
   },
+  {
+    name: "Comercial",
+    icon: BriefcaseIcon,
+    children: [
+      { name: "Clientes", pathname: "/sale/client" },
+      { name: "Oportunidades", pathname: "/sale/oportunity" },
+      { name: "Propostas", pathname: "/sale/proposal" },
+    ],
+  },
+  {
+    name: "Ferramentas",
+    icon: WrenchIcon,
+    children: [
+      { name: "Configurador", pathname: "#" },
+      { name: "Calculadora de Estoque", pathname: "#" },
+    ],
+  },
   { name: "Calendário", icon: CalendarIcon },
-  { name: "Documentos", icon: DocumentDuplicateIcon },
   { name: "Relatórios", icon: ChartPieIcon },
 ];
 
