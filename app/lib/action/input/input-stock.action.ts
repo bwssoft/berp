@@ -3,9 +3,12 @@
 import inputTransactionRepository from "../../repository/mongodb/input/input-transaction.repository";
 import { IInput } from "../../definition";
 import inputStockRepository from "../../repository/mongodb/input/input-stock.repository";
+import { getRange } from "@/app/util";
+import inputTemporalStockRepository from "../../repository/mongodb/input/input-temporal-stock.repository";
 
 const _inputTransactionRepository = inputTransactionRepository
 const _inputStockRepository = inputStockRepository
+const _inputTemporalStockRepository = inputTemporalStockRepository
 
 export async function updateInputStock() {
   const stockTemporalPipeline = updateStockTemporalAggregate()
@@ -62,7 +65,6 @@ export async function getTotalValueInInputStock(input_id: string) {
         input: { $first: ["$input"] },
         balance: 1,
         cumulative_price: { $multiply: [{ $arrayElemAt: ["$input.price", 0] }, "$balance"] }
-
       }
     }
   ])
@@ -71,6 +73,29 @@ export async function getTotalValueInInputStock(input_id: string) {
     input: IInput
     balance: number
     cumulative_price: number
+  }
+}
+
+export async function analyzeTemporalInputStock(input_id: string) {
+  const { init, end, dates } = getRange(new Date(), 30)
+  const pipeline = await _inputTemporalStockRepository.aggregate<{
+    input: IInput;
+    stocks: {
+      date: {
+        day: number;
+        year: number;
+        month: number;
+      };
+      enter: number;
+      exit: number;
+      balance: number;
+      cumulative_balance: number;
+    }[];
+  }>(analyzeTemporalStockAggregate(init, end, input_id))
+  const result = await pipeline.toArray()
+  return {
+    result,
+    dates
   }
 }
 
@@ -139,7 +164,6 @@ const updateStockAggregate = (input_id?: string) => {
 
   return query
 }
-
 const updateStockTemporalAggregate = (input_id?: string) => {
   const match: any = {
     $match: {}
@@ -250,7 +274,6 @@ const updateStockTemporalAggregate = (input_id?: string) => {
 
   return query
 }
-
 const getStockAggregate = (input_id?: string) => {
   const match: any = {
     $match: {}
@@ -290,7 +313,6 @@ const getStockAggregate = (input_id?: string) => {
   ]
   return pipeline
 }
-
 const getStockInsightsAggregate = () => {
   const match: any = {
     $match: {}

@@ -1,13 +1,13 @@
-import { findAllInput } from "@/app/lib/action";
-import { MultilineChart } from "@/app/ui/chart/multiline.chart";
-import { fillMissingDatesOnInputAnalysisPage } from "@/app/util/fillMissingDates";
-import { InputSelect } from "./components/inputSelect";
-import { BarChart } from "@/app/ui/chart/bar.chart";
 import {
-  analyzeTemporalInputStock,
-  getTotalValueInInputStock,
+  analyzeTemporalProductStock,
+  countProductTransaction,
+  findAllProduct,
+  getTotalValueInProductStock,
 } from "@/app/lib/action";
-import { countInputTransaction } from "@/app/lib/action/input/input-transaction.action";
+import { MultilineChart } from "@/app/ui/chart/multiline.chart";
+import { fillMissingDatesOnProductAnalysisPage } from "@/app/util/fillMissingDates";
+import { ProductSelect } from "./components/productSelect";
+import { BarChart } from "@/app/ui/chart/bar.chart";
 
 interface Props {
   searchParams: {
@@ -18,7 +18,7 @@ export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
-  const inputs = await findAllInput();
+  const products = await findAllProduct();
   const uiWithNoId = (
     <>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -34,26 +34,26 @@ export default async function Page(props: Props) {
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div className="w-full">
-          <InputSelect inputs={inputs} currentInputIdSelected={id} />
+          <ProductSelect products={products} currentProductIdSelected={id} />
         </div>
       </div>
     </>
   );
   if (id) {
-    const analyzeActionResult = await analyzeTemporalInputStock(id);
-    const countActionResult = await countInputTransaction(id);
-    const totalValueActionResult = await getTotalValueInInputStock(id);
-    const cumulativeSeries = fillMissingDatesOnInputAnalysisPage(
+    const analyzeActionResult = await analyzeTemporalProductStock(id);
+    const countActionResult = await countProductTransaction(id);
+    const totalValueActionResult = await getTotalValueInProductStock(id);
+    const cumulativeSeries = fillMissingDatesOnProductAnalysisPage(
       analyzeActionResult.result,
       analyzeActionResult.dates,
       (d) => d.cumulative_balance
     );
-    const [enterSeries] = fillMissingDatesOnInputAnalysisPage(
+    const [enterSeries] = fillMissingDatesOnProductAnalysisPage(
       analyzeActionResult.result,
       analyzeActionResult.dates,
       (d) => d.enter
     );
-    const [exitSeries] = fillMissingDatesOnInputAnalysisPage(
+    const [exitSeries] = fillMissingDatesOnProductAnalysisPage(
       analyzeActionResult.result,
       analyzeActionResult.dates,
       (d) => d.exit
@@ -73,8 +73,8 @@ export default async function Page(props: Props) {
       },
       {
         name: "R$ em Estoque",
-        value: totalValueActionResult?.cumulative_price
-          ? `R$${totalValueActionResult.cumulative_price.toFixed(2)}`
+        value: totalValueActionResult?.total_cost
+          ? `R$${totalValueActionResult.total_cost.toFixed(2)}`
           : "--",
       },
       {

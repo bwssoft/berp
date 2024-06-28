@@ -1,30 +1,30 @@
 import {
-  findAllInputStock,
-  getInputStockInsights,
-  updateInputStock,
+  findAllProductStock,
+  getProductStockInsights,
+  updateProductStock,
 } from "@/app/lib/action";
 import { Button } from "@/app/ui/button";
 import { BarChart } from "@/app/ui/chart/bar.chart";
 import { DoughnutChart } from "@/app/ui/chart/doughnut.chart";
-import InputStockTable from "@/app/ui/table/input-stock/table";
+import InputStockTable from "@/app/ui/table/product-stock/table";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {
-  const stock = await findAllInputStock();
-  const [insights] = await getInputStockInsights();
+  const stock = await findAllProductStock();
+  const [insights] = await getProductStockInsights();
   return (
     <div className="flex flex-col h-full gap-6">
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Estoque dos insumos
+            Estoque dos produtos
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Uma tabela é apresentada com a quantidade de cada insumo. É
+            Uma tabela é apresentada com a quantidade de cada produto. É
             atualizada a cada 24h a partir das transações realizadas no dia.
           </p>
         </div>
-        <form action={updateInputStock} className="ml-auto">
+        <form action={updateProductStock} className="ml-auto">
           <Button
             type="submit"
             className="ml-auto flex items-center gap-x-1 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -44,11 +44,11 @@ export default async function Page() {
           },
           {
             name: "Insumo em maior quantidade",
-            value: insights?.max_balance?.input.name ?? "--",
+            value: insights?.max_balance?.product.name ?? "--",
           },
           {
             name: "Insumo em menor quantidade",
-            value: insights?.min_balance?.input.name ?? "--",
+            value: insights?.min_balance?.product.name ?? "--",
           },
         ].map((stat) => (
           <div
@@ -80,9 +80,9 @@ export default async function Page() {
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12 h-[500px]">
         <BarChart
           series={stock.map((s) => ({
-            name: s.input.name,
+            name: s.product.name,
             data: [s.balance],
-            color: s.input.color,
+            color: s.product.color,
           }))}
           options={{
             xaxis: { categories: [""] },
@@ -113,11 +113,11 @@ export default async function Page() {
         {[
           {
             name: "Maior Valor Unitário",
-            value: insights?.max_unit_price?.input.name ?? "--",
+            value: insights?.max_unit_cost?.product.name ?? "--",
           },
           {
             name: "Menor Valor Unitário",
-            value: insights?.min_unit_price?.input.name ?? "--",
+            value: insights?.min_unit_cost?.product.name ?? "--",
           },
         ].map((stat) => (
           <div
@@ -140,11 +140,11 @@ export default async function Page() {
         {[
           {
             name: "Maior Valor Total em Estoque",
-            value: insights?.max_cumulative_price?.input.name ?? "--",
+            value: insights?.max_total_cost?.product.name ?? "--",
           },
           {
             name: "Menor Valor Total em Estoque",
-            value: insights?.min_cumulative_price?.input.name ?? "--",
+            value: insights?.min_total_cost?.product.name ?? "--",
           },
         ].map((stat) => (
           <div
@@ -163,33 +163,6 @@ export default async function Page() {
           </div>
         ))}
       </dl>
-      {/* <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
-        {[
-          {
-            name: "Maior Variação de Estoque",
-            value: "Processador XYZ",
-          },
-          {
-            name: "Menor Variação de Estoque",
-            value: "Processador XYZ",
-          },
-        ].map((stat) => (
-          <div
-            key={stat.name}
-            className="flex flex-1 flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 sm:px-6 xl:px-8"
-          >
-            <dt className="text-sm font-medium leading-6 text-gray-500">
-              {stat.name}
-            </dt>
-            <dd
-              className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900 truncate"
-              title={stat.value}
-            >
-              {stat.value}
-            </dd>
-          </div>
-        ))}
-      </dl> */}
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
@@ -203,9 +176,9 @@ export default async function Page() {
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12 h-[500px]">
         <BarChart
           series={stock.map((s) => ({
-            name: s.input.name,
-            data: [s.cumulative_price.toFixed(2)],
-            color: s.input.color,
+            name: s.product.name,
+            data: [s.total_cost.toFixed(2)],
+            color: s.product.color,
           }))}
           options={{
             xaxis: { categories: [""] },
@@ -223,10 +196,10 @@ export default async function Page() {
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12 h-[500px]">
         <DoughnutChart
-          series={stock.map((s) => s.cumulative_price)}
+          series={stock.map((s) => s.total_cost)}
           options={{
-            labels: stock.map((s) => s.input.name),
-            colors: stock.map((s) => s.input.color),
+            labels: stock.map((s) => s.product.name),
+            colors: stock.map((s) => s.product.color),
           }}
         />
       </div>

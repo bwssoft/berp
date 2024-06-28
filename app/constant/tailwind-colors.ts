@@ -292,3 +292,27 @@ export const tailwindColors: Colors = {
     '900': '#881337'
   }
 };
+
+export const tailwindColorInHex = [
+  { name: "Ardósia", value: tailwindColors["slate"][500] },
+  { name: "Cinza", value: tailwindColors["gray"][500] },
+  { name: "Zinco", value: tailwindColors["zinc"][500] },
+  { name: "Neutro", value: tailwindColors["neutral"][500] },
+  { name: "Pedra", value: tailwindColors["stone"][500] },
+  { name: "Vermelho", value: tailwindColors["red"][500] },
+  { name: "Laranja", value: tailwindColors["orange"][500] },
+  { name: "Âmbar", value: tailwindColors["amber"][500] },
+  { name: "Amarelo", value: tailwindColors["yellow"][500] },
+  { name: "Lima", value: tailwindColors["lime"][500] },
+  { name: "Verde", value: tailwindColors["green"][500] },
+  { name: "Esmeralda", value: tailwindColors["emerald"][500] },
+  { name: "Cerceta", value: tailwindColors["teal"][500] },
+  { name: "Ciano", value: tailwindColors["cyan"][500] },
+  { name: "Céu", value: tailwindColors["sky"][500] },
+  { name: "Azul", value: tailwindColors["blue"][500] },
+  { name: "Índigo", value: tailwindColors["indigo"][500] },
+  { name: "Violeta", value: tailwindColors["violet"][500] },
+  { name: "Roxo", value: tailwindColors["purple"][500] },
+  { name: "Fúcsia", value: tailwindColors["fuchsia"][500] },
+  { name: "Rosa", value: tailwindColors["pink"][500] },
+];

@@ -79,6 +79,8 @@ const navigation: {
     children: [
       { name: "Gestão", pathname: "/product/management" },
       { name: "Entradas e Saídas", pathname: "/product/enter-exit" },
+      { name: "Estoque", pathname: "/product/stock" },
+      { name: "Análise", pathname: "/product/analysis" },
     ],
   },
   { name: "Calendário", icon: CalendarIcon },
