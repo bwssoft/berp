@@ -1,4 +1,4 @@
-import { IInput, IProduct } from "../lib/definition";
+import { IInput, IProduct } from "../definition"
 
 export function fillMissingDates(
   data: {
