@@ -1,10 +1,26 @@
+import { productionOrderConstants } from "@/app/constant/production-order";
 import { deleteOneProductionOrderById } from "@/app/lib/action/production-order.action";
 import { IProductionOrder } from "@/app/lib/definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
 export const columns: ColumnDef<IProductionOrder>[] = [
-  { header: "Estágio", accessorKey: "stage" },
+  {
+    header: "Estágio",
+    accessorKey: "stage",
+    cell: ({ row }) => {
+      const productionOrder = row.original;
+      return productionOrderConstants.stage[productionOrder.stage];
+    },
+  },
+  {
+    header: "Prioridade",
+    accessorKey: "priority",
+    cell: ({ row }) => {
+      const productionOrder = row.original;
+      return productionOrderConstants.priority[productionOrder.priority];
+    },
+  },
   {
     header: "Tipos de Produtos",
     accessorKey: "products",

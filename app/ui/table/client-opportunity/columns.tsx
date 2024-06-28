@@ -1,3 +1,4 @@
+import { clientConstants } from "@/app/constant";
 import { deleteOneClientOpportunityById } from "@/app/lib/action";
 import { IClient, IClientOpportunity } from "@/app/lib/definition";
 import { ColumnDef } from "@tanstack/react-table";
@@ -8,10 +9,18 @@ export const columns: ColumnDef<IClientOpportunity & { client: IClient }>[] = [
   {
     header: "Tipo",
     accessorKey: "type",
+    cell: ({ row }) => {
+      const opportunity = row.original;
+      return clientConstants.opportunityType[opportunity.type];
+    },
   },
   {
     header: "Fase da Negociação",
     accessorKey: "sales_stage",
+    cell: ({ row }) => {
+      const opportunity = row.original;
+      return clientConstants.opportunitySalesStage[opportunity.sales_stage];
+    },
   },
   {
     header: "Cliente",
