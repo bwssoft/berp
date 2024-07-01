@@ -15,7 +15,6 @@ import {
   Bars3Icon,
   CalendarIcon,
   ChartPieIcon,
-  DocumentDuplicateIcon,
   FolderIcon,
   HomeIcon,
   UsersIcon,
@@ -25,6 +24,7 @@ import {
   CpuChipIcon,
   WrenchIcon,
   BriefcaseIcon,
+  RectangleStackIcon,
 } from "@heroicons/react/24/outline";
 import {
   Disclosure,
@@ -35,20 +35,18 @@ import { cn } from "@/app/lib/util";
 import { useIsOnPathname } from "../hook/is-on-pathname";
 import Link from "next/link";
 
-const navigation: {
+type NavItem = {
   name: string;
-  icon: ForwardRefExoticComponent<
+  icon?: ForwardRefExoticComponent<
     Omit<SVGProps<SVGSVGElement>, "ref"> & {
       title?: string | undefined;
       titleId?: string | undefined;
     } & RefAttributes<SVGSVGElement>
   >;
   pathname?: string;
-  children?: {
-    name: string;
-    pathname?: string;
-  }[];
-}[] = [
+  children?: NavItem[];
+};
+const navigation: NavItem[] = [
   { name: "Dashboard", icon: HomeIcon },
   {
     name: "Times",
@@ -61,23 +59,29 @@ const navigation: {
     ],
   },
   {
-    name: "Insumos",
-    icon: FolderIcon,
+    name: "Engenharia",
+    icon: RectangleStackIcon,
     children: [
-      { name: "Gestão", pathname: "/input/management" },
-      { name: "Entradas e Saídas", pathname: "/input/enter-exit" },
-      { name: "Estoque", pathname: "/input/stock" },
-      { name: "Análise", pathname: "/input/analysis" },
-    ],
-  },
-  {
-    name: "Produtos",
-    icon: CpuChipIcon,
-    children: [
-      { name: "Gestão", pathname: "/product/management" },
-      { name: "Entradas e Saídas", pathname: "/product/enter-exit" },
-      { name: "Estoque", pathname: "/product/stock" },
-      { name: "Análise", pathname: "/product/analysis" },
+      {
+        name: "Insumos",
+        icon: FolderIcon,
+        children: [
+          { name: "Gestão", pathname: "/input/management" },
+          { name: "Entradas e Saídas", pathname: "/input/enter-exit" },
+          { name: "Estoque", pathname: "/input/stock" },
+          { name: "Análise", pathname: "/input/analysis" },
+        ],
+      },
+      {
+        name: "Produtos",
+        icon: CpuChipIcon,
+        children: [
+          { name: "Gestão", pathname: "/product/management" },
+          { name: "Entradas e Saídas", pathname: "/product/enter-exit" },
+          { name: "Estoque", pathname: "/product/stock" },
+          { name: "Análise", pathname: "/product/analysis" },
+        ],
+      },
     ],
   },
   {
@@ -109,15 +113,86 @@ const navigation: {
   { name: "Relatórios", icon: ChartPieIcon },
 ];
 
-const teams = [
-  { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-  { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
-];
+const getPaddingClass = (depth: number) => {
+  switch (depth) {
+    case 0:
+      return "";
+    case 1:
+      return "pl-5";
+    case 2:
+      return "pl-8";
+    default:
+      return `pl-${9 + (depth - 1) * 3}`;
+  }
+};
 
 export function SideBar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isOnPathname = useIsOnPathname();
+
+  const renderNavItem = (item: NavItem, depth = 0) => {
+    const paddingLeft = getPaddingClass(depth); // Calcula o padding-left baseado na profundidade
+    return (
+      <li key={item.name}>
+        {!item?.children ? (
+          <Link
+            href={item.pathname ?? "#"}
+            className={cn(
+              isOnPathname(item.pathname)
+                ? "bg-gray-50"
+                : "hover:bg-gray-50 pl-",
+              "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700",
+              paddingLeft // Adiciona padding-left baseado na profundidade
+            )}
+          >
+            {item.icon && (
+              <item.icon
+                className="h-6 w-6 shrink-0 text-gray-400"
+                aria-hidden="true"
+              />
+            )}
+            {item.name}
+          </Link>
+        ) : (
+          <Disclosure as="div">
+            {({ open }) => (
+              <>
+                <Disclosure.Button
+                  className={cn(
+                    isOnPathname(item.pathname)
+                      ? "bg-gray-50"
+                      : "hover:bg-gray-50",
+                    "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm font-semibold leading-6 text-gray-700",
+                    paddingLeft // Adiciona padding-left baseado na profundidade
+                  )}
+                >
+                  {item?.icon && (
+                    <item.icon
+                      className="h-6 w-6 shrink-0 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {item.name}
+                  <ChevronRightIcon
+                    className={cn(
+                      open ? "rotate-90 text-gray-500" : "text-gray-400",
+                      "ml-auto h-5 w-5 shrink-0"
+                    )}
+                    aria-hidden="true"
+                  />
+                </Disclosure.Button>
+                <Disclosure.Panel as="ul" className="mt-1">
+                  {item?.children?.map((subItem) =>
+                    renderNavItem(subItem, depth + 1)
+                  )}
+                </Disclosure.Panel>
+              </>
+            )}
+          </Disclosure>
+        )}
+      </li>
+    );
+  };
 
   return (
     <>
@@ -180,118 +255,9 @@ export function SideBar() {
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
                           <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => (
-                              <li key={item.name}>
-                                {!item?.children ? (
-                                  <Link
-                                    href={item.pathname ?? "#"}
-                                    className={cn(
-                                      isOnPathname(item.pathname)
-                                        ? "bg-gray-50"
-                                        : "hover:bg-gray-50",
-                                      "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700"
-                                    )}
-                                  >
-                                    <item.icon
-                                      className="h-6 w-6 shrink-0 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                    {item.name}
-                                  </Link>
-                                ) : (
-                                  <Disclosure as="div">
-                                    {({ open }) => (
-                                      <>
-                                        <DisclosureButton
-                                          className={cn(
-                                            isOnPathname(item.pathname)
-                                              ? "bg-gray-50"
-                                              : "hover:bg-gray-50",
-                                            "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm font-semibold leading-6 text-gray-700"
-                                          )}
-                                        >
-                                          <item.icon
-                                            className="h-6 w-6 shrink-0 text-gray-400"
-                                            aria-hidden="true"
-                                          />
-                                          {item.name}
-                                          <ChevronRightIcon
-                                            className={cn(
-                                              open
-                                                ? "rotate-90 text-gray-500"
-                                                : "text-gray-400",
-                                              "ml-auto h-5 w-5 shrink-0"
-                                            )}
-                                            aria-hidden="true"
-                                          />
-                                        </DisclosureButton>
-                                        <DisclosurePanel
-                                          as="ul"
-                                          className="mt-1 px-2"
-                                        >
-                                          {item?.children?.map((subItem) => (
-                                            <li key={subItem.name}>
-                                              {/* 44px */}
-                                              <Link
-                                                href={subItem.pathname ?? "#"}
-                                              >
-                                                <DisclosureButton
-                                                  as="div"
-                                                  className={cn(
-                                                    isOnPathname(
-                                                      subItem.pathname
-                                                    )
-                                                      ? "bg-gray-50"
-                                                      : "hover:bg-gray-50",
-                                                    "block rounded-md py-2 pl-9 pr-2 text-sm leading-6 text-gray-700"
-                                                  )}
-                                                >
-                                                  {subItem.name}
-                                                </DisclosureButton>
-                                              </Link>
-                                            </li>
-                                          ))}
-                                        </DisclosurePanel>
-                                      </>
-                                    )}
-                                  </Disclosure>
-                                )}
-                              </li>
-                            ))}
+                            {navigation.map((item) => renderNavItem(item))}
                           </ul>
                         </li>
-                        {/* <li>
-                          <div className="text-xs font-semibold leading-6 text-gray-400">
-                            Your teams
-                          </div>
-                          <ul role="list" className="-mx-2 mt-2 space-y-1">
-                            {teams.map((team) => (
-                              <li key={team.name}>
-                                <a
-                                  href={team.href}
-                                  className={cn(
-                                    team.current
-                                      ? "bg-gray-50 text-indigo-600"
-                                      : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
-                                  )}
-                                >
-                                  <span
-                                    className={cn(
-                                      team.current
-                                        ? "border-indigo-600 text-indigo-600"
-                                        : "border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600",
-                                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium"
-                                    )}
-                                  >
-                                    {team.initial}
-                                  </span>
-                                  <span className="truncate">{team.name}</span>
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </li> */}
                       </ul>
                     </nav>
                   </div>
@@ -316,111 +282,9 @@ export function SideBar() {
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
-                        {!item?.children ? (
-                          <Link
-                            href={item.pathname ?? "#"}
-                            className={cn(
-                              isOnPathname(item.pathname)
-                                ? "bg-gray-50"
-                                : "hover:bg-gray-50",
-                              "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700"
-                            )}
-                          >
-                            <item.icon
-                              className="h-6 w-6 shrink-0 text-gray-400"
-                              aria-hidden="true"
-                            />
-                            {item.name}
-                          </Link>
-                        ) : (
-                          <Disclosure as="div">
-                            {({ open }) => (
-                              <>
-                                <DisclosureButton
-                                  className={cn(
-                                    isOnPathname(item.pathname)
-                                      ? "bg-gray-50"
-                                      : "hover:bg-gray-50",
-                                    "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm font-semibold leading-6 text-gray-700"
-                                  )}
-                                >
-                                  <item.icon
-                                    className="h-6 w-6 shrink-0 text-gray-400"
-                                    aria-hidden="true"
-                                  />
-                                  {item.name}
-                                  <ChevronRightIcon
-                                    className={cn(
-                                      open
-                                        ? "rotate-90 text-gray-500"
-                                        : "text-gray-400",
-                                      "ml-auto h-5 w-5 shrink-0"
-                                    )}
-                                    aria-hidden="true"
-                                  />
-                                </DisclosureButton>
-                                <DisclosurePanel as="ul" className="mt-1 px-2">
-                                  {item?.children?.map((subItem) => (
-                                    <li key={subItem.name}>
-                                      {/* 44px */}
-                                      <Link href={subItem.pathname ?? "#"}>
-                                        <DisclosureButton
-                                          as="div"
-                                          className={cn(
-                                            isOnPathname(subItem.pathname)
-                                              ? "bg-gray-50"
-                                              : "hover:bg-gray-50",
-                                            "block rounded-md py-2 pl-9 pr-2 text-sm leading-6 text-gray-700"
-                                          )}
-                                        >
-                                          {subItem.name}
-                                        </DisclosureButton>
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </DisclosurePanel>
-                              </>
-                            )}
-                          </Disclosure>
-                        )}
-                      </li>
-                    ))}
+                    {navigation.map((item) => renderNavItem(item))}
                   </ul>
                 </li>
-                {/* <li>
-                  <div className="text-xs font-semibold leading-6 text-gray-400">
-                    Your teams
-                  </div>
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {teams.map((team) => (
-                      <li key={team.name}>
-                        <a
-                          href={team.href}
-                          className={cn(
-                            team.current
-                              ? "bg-gray-50 text-indigo-600"
-                              : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
-                            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
-                          )}
-                        >
-                          <span
-                            className={cn(
-                              team.current
-                                ? "border-indigo-600 text-indigo-600"
-                                : "border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600",
-                              "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium"
-                            )}
-                          >
-                            {team.initial}
-                          </span>
-                          <span className="truncate">{team.name}</span>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </li> */}
                 <li className="-mx-6 mt-auto">
                   <a
                     href="#"
