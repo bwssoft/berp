@@ -11,6 +11,12 @@ export async function createOneInput(input: Omit<IInput
   return input
 }
 
+export async function createManyInput(input: Omit<IInput
+  , "id" | "created_at">[]) {
+  await repository.createMany(input.map(i => ({ ...i, created_at: new Date(), id: crypto.randomUUID() })))
+  return input
+}
+
 export async function findOneInput(input: Partial<IInput>) {
   return await repository.findOne(input)
 }
