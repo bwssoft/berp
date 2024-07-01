@@ -20,6 +20,11 @@ export class BaseRepository<Entity extends Document> {
     return await db.collection(this.collection).insertOne(data);
   }
 
+  async createMany(data: Entity[]) {
+    const db = await this.connect();
+    return await db.collection(this.collection).insertMany(data);
+  }
+
   async findOne(params: Partial<Entity>) {
     const db = await this.connect();
     return await db.collection<Entity>(this.collection).findOne(params as Partial<WithId<Entity>>, { projection: { _id: 0 } })
