@@ -365,6 +365,11 @@ const getStockAggregate = (product_id?: string) => {
         exit: 1,
         balance: 1
       }
+    },
+    {
+      $match: {
+        product: { $exists: true }
+      }
     }
   ]
   return pipeline
@@ -427,6 +432,11 @@ const getStockInsightsAggregate = () => {
         unit_cost: "$cost",
         total_cost: { $multiply: ["$cost", "$balance"] },
         balance: 1
+      }
+    },
+    {
+      $match: {
+        product: { $exists: true }
       }
     },
     // Estágio para encontrar os itens com maior e menor quantidade, maior e menor valor unitário, e maior e menor valor total

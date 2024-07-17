@@ -38,6 +38,11 @@ class ProductTransactionRepository extends BaseRepository<IProductTransaction> {
           product: { $first: "$product" },
         }
       },
+      {
+        $match: {
+          product: { $exists: true }
+        }
+      }
     ]).toArray();
   }
 }
