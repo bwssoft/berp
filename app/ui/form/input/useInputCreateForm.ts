@@ -7,10 +7,10 @@ import { z } from 'zod';
 const schema = z.object({
   name: z.string().min(1, 'Esse campo não pode ser vazio'),
   description: z.string().min(1, 'Esse campo não pode ser vazio'),
-  measure_unit: z.enum(["cm", "m", "kg", "g", "ml", "l", 'un']),
+  measure_unit: z.enum(["cm", "m", "kg", "g", "ml", "l", "un"]),
   files: z.any(),
   color: z.string(),
-  price: z.coerce.number()
+  price: z.coerce.number().positive().gt(0),
 });
 
 export type Schema = z.infer<typeof schema>;

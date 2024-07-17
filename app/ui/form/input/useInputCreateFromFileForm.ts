@@ -10,8 +10,8 @@ import { z } from 'zod';
 const schema = z.object({
   inputs: z.array(z.object({
     name: z.string().min(1, 'Esse campo não pode ser vazio'),
-    measure_unit: z.enum(["cm", "m", "kg", "g", "ml", "l", 'un']),
-    price: z.coerce.number(),
+    measure_unit: z.enum(["cm", "m", "kg", "g", "ml", "l", "un"]),
+    price: z.coerce.number().positive().gt(0),
     color: z.string()
   }))
 });
@@ -58,24 +58,28 @@ export function useInputCreateFromFileForm() {
 
   const handleFile = async (fileList: File[] | null) => {
     const inputs = await handleXlsxFile<{
-      name: string,
-      price: number,
-      measure_unit: IInput["measure_unit"]
+      name?: string,
+      price?: number,
+      measure_unit?: IInput["measure_unit"]
     }>(fileList, handleFormatInputFromFile)
-
     inputs?.forEach(input => handleAppedInput({
-      price: input.price,
-      measure_unit: input.measure_unit,
-      name: input.name,
+      price: input.price ?? 0,
+      measure_unit: input.measure_unit ?? "" as IInput["measure_unit"],
+      name: input.name ?? "",
       color: getRandomHexColor(),
     }))
   }
 
-  const handleFormatInputFromFile = (obj: { Nome: string, Preço: string, "Unidade de Medida": string }) => {
+  const handleFormatInputFromFile = (obj: {
+    Nome: string,
+    Preço: string,
+    "Unidade de Medida": string
+  }) => {
+    const priceInString = obj?.Preço?.replace(/R\$|\$/g, '').trim();
     return {
       name: obj.Nome,
       measure_unit: obj["Unidade de Medida"] as IInput["measure_unit"],
-      price: Number(obj.Preço)
+      price: priceInString !== undefined ? Number(priceInString) : undefined
     }
   }
 

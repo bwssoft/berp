@@ -1,5 +1,5 @@
 import { toast } from '@/app/hook/use-toast';
-import { createOneInput, updateOneInputById } from '@/app/lib/action';
+import { updateOneInputById } from '@/app/lib/action';
 import { IInput } from '@/app/lib/definition';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -11,7 +11,7 @@ const schema = z.object({
   measure_unit: z.enum(["cm", "m", "kg", "g", "ml", "l", "un"]),
   files: z.any(),
   color: z.string(),
-  price: z.coerce.number()
+  price: z.coerce.number().positive().gt(0),
 });
 
 export type Schema = z.infer<typeof schema>;
