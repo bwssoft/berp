@@ -18,7 +18,6 @@ export default function ProductUpdateForm(props: Props) {
     handleAppendInput,
     handleRemoveInput,
   } = useProductUpdateForm({ defaultValues: product });
-  console.log(product);
   return (
     <form action={() => handleSubmit()}>
       <div className="space-y-12">
@@ -81,49 +80,13 @@ export default function ProductUpdateForm(props: Props) {
                 className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 {...register("color")}
               >
-                <option>Defina uma cor para o insumo</option>
+                <option>Defina uma cor para o produto</option>
                 {tailwindColorInHex.map((c, idx) => (
                   <option key={idx} value={c.value}>
                     {c.name}
                   </option>
                 ))}
               </select>
-            </div>
-
-            <div className="col-span-full">
-              <label
-                htmlFor="cover-photo"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Arquivos
-              </label>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                <div className="text-center">
-                  <PhotoIcon
-                    className="mx-auto h-12 w-12 text-gray-300"
-                    aria-hidden="true"
-                  />
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                    >
-                      <span>Selecione o arquivo</span>
-                      <input
-                        {...register("files")}
-                        id="file-upload"
-                        type="file"
-                        className="sr-only"
-                        multiple={true}
-                      />
-                    </label>
-                    <p className="pl-1">ou arraste e solte</p>
-                  </div>
-                  <p className="text-xs leading-5 text-gray-600">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
-                </div>
-              </div>
             </div>
 
             <div className="col-span-full">
