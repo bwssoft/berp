@@ -38,6 +38,11 @@ class InputTransactionRepository extends BaseRepository<IInputTransaction> {
           input: { $first: "$input" },
         }
       },
+      {
+        $match: {
+          input: { $exists: true }
+        }
+      },
     ]).toArray();
   }
 }

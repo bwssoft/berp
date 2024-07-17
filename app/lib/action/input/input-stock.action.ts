@@ -309,6 +309,11 @@ const getStockAggregate = (input_id?: string) => {
           ]
         }
       }
+    },
+    {
+      $match: {
+        input: { $exists: true }
+      }
     }
   ]
   return pipeline
@@ -339,6 +344,11 @@ const getStockInsightsAggregate = () => {
           ]
         },
         input: { $arrayElemAt: ["$input", 0] }
+      }
+    },
+    {
+      $match: {
+        input: { $exists: true }
       }
     },
     // Estágio para encontrar os itens com maior e menor quantidade, maior e menor valor unitário, e maior e menor valor total
