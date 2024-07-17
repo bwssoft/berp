@@ -2,7 +2,6 @@
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useInputCreateForm } from "./useInputCreateForm";
 import { Button } from "../../button";
-import { tailwindColorInHex } from "@/app/constant/tailwind-colors";
 
 export default function InputCreateForm() {
   const { handleSubmit, register } = useInputCreateForm();
@@ -29,7 +28,7 @@ export default function InputCreateForm() {
                     id="name"
                     autoComplete="name"
                     className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    placeholder="cabo"
+                    placeholder="Cabo"
                   />
                 </div>
               </div>
@@ -47,12 +46,13 @@ export default function InputCreateForm() {
                 className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 {...register("measure_unit")}
               >
-                <option>Selecione uma opção</option>
-                <option value={"un"}>unidade (un)</option>
-                <option value={"m"}>metro (m)</option>
-                <option value={"cm"}>centímetro (cm)</option>
-                <option value={"l"}>litro (L)</option>
-                <option value={"ml"}>mililitro (ml)</option>
+                <option value={"cm"}>Centímetro (cm)</option>
+                <option value={"m"}>Metro (m)</option>
+                <option value={"g"}>Grama (g)</option>
+                <option value={"kg"}>Quilo (kg)</option>
+                <option value={"ml"}>Mililitro (ml)</option>
+                <option value={"l"}>Litro (L)</option>
+                <option value={"un"}>Unidade (un)</option>
               </select>
             </div>
 
@@ -63,18 +63,12 @@ export default function InputCreateForm() {
               >
                 Cor
               </label>
-              <select
+              <input
                 id="color"
-                className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                type="color"
+                className="block mt-2 w-full rounded-md border-0 py-1 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent"
                 {...register("color")}
-              >
-                <option>Defina uma cor para o insumo</option>
-                {tailwindColorInHex.map((c, idx) => (
-                  <option key={idx} value={c.value}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div className="sm:col-span-4">

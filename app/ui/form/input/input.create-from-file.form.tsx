@@ -67,11 +67,13 @@ export default function InputCreateFromFileForm() {
                     <option value={`measure_unit-select-empty-${index}`}>
                       Unidade de medida
                     </option>
-                    <option value={"un"}>unidade (un)</option>
-                    <option value={"m"}>metro (m)</option>
-                    <option value={"cm"}>centímetro (cm)</option>
-                    <option value={"l"}>litro (L)</option>
-                    <option value={"ml"}>mililitro (ml)</option>
+                    <option value={"cm"}>Centímetro (cm)</option>
+                    <option value={"m"}>Metro (m)</option>
+                    <option value={"g"}>Grama (g)</option>
+                    <option value={"kg"}>Quilo (kg)</option>
+                    <option value={"ml"}>Mililitro (ml)</option>
+                    <option value={"l"}>Litro (L)</option>
+                    <option value={"un"}>Unidade (un)</option>
                   </select>
                   <input
                     id="color"
