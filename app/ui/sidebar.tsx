@@ -85,11 +85,23 @@ const navigation: NavItem[] = [
     ],
   },
   {
-    name: "Ordem de Produção",
+    name: "Produção",
     icon: ClipboardIcon,
     children: [
-      { name: "Gestão", pathname: "/production-order/management" },
-      { name: "Kanban", pathname: "/production-order/kanban" },
+      {
+        name: "Ordens de produção",
+        children: [
+          { name: "Gestão", pathname: "/production-order/management" },
+          { name: "Kanban", pathname: "/production-order/kanban" },
+        ],
+      },
+      {
+        name: "Ordens de Configuração",
+        children: [
+          { name: "Gestão", pathname: "/production-order/management" },
+          { name: "Kanban", pathname: "/production-order/kanban" },
+        ],
+      },
     ],
   },
   {
@@ -101,16 +113,16 @@ const navigation: NavItem[] = [
       { name: "Propostas", pathname: "/sale/proposal" },
     ],
   },
-  {
-    name: "Ferramentas",
-    icon: WrenchIcon,
-    children: [
-      { name: "Configurador", pathname: "#" },
-      { name: "Calculadora de Estoque", pathname: "#" },
-    ],
-  },
-  { name: "Calendário", icon: CalendarIcon },
-  { name: "Relatórios", icon: ChartPieIcon },
+  // {
+  //   name: "Ferramentas",
+  //   icon: WrenchIcon,
+  //   children: [
+  //     { name: "Configurador", pathname: "#" },
+  //     { name: "Calculadora de Estoque", pathname: "#" },
+  //   ],
+  // },
+  // { name: "Calendário", icon: CalendarIcon },
+  // { name: "Relatórios", icon: ChartPieIcon },
 ];
 
 const getPaddingClass = (depth: number) => {
