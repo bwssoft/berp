@@ -3,11 +3,10 @@ import {
   countProductTransaction,
   findAllProduct,
   getTotalValueInProductStock,
-} from "@/app/lib/action";
-import { MultilineChart } from "@/app/ui/chart/multiline.chart";
-import { fillMissingDatesOnProductAnalysisPage } from "@/app/lib/util/fillMissingDates";
+} from "@/app/@lib/backend/action";
+import { MultilineChart, BarChart } from "@/app/@lib/frontend/ui";
+import { fillMissingDatesOnProductAnalysisPage } from "@/app/@lib/util";
 import { ProductSelect } from "./components/productSelect";
-import { BarChart } from "@/app/ui/chart/bar.chart";
 
 interface Props {
   searchParams: {

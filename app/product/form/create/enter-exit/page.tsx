@@ -1,5 +1,5 @@
-import { findAllProduct } from "@/app/lib/action";
-import ProductTransactionCreateForm from "@/app/ui/form/product-transaction/product-transaction.create.form";
+import { findAllProduct } from "@/app/@lib/backend/action";
+import { ProductTransactionCreateForm } from "@/app/@lib/frontend/ui";
 
 export default async function Page() {
   const products = await findAllProduct();

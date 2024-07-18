@@ -2,11 +2,13 @@ import {
   findAllInputStock,
   getInputStockInsights,
   updateInputStock,
-} from "@/app/lib/action";
-import { Button } from "@/app/ui/button";
-import { BarChart } from "@/app/ui/chart/bar.chart";
-import { DoughnutChart } from "@/app/ui/chart/doughnut.chart";
-import InputStockTable from "@/app/ui/table/input-stock/table";
+} from "@/app/@lib/backend/action";
+import {
+  Button,
+  BarChart,
+  DoughnutChart,
+  InputStockTable,
+} from "@/app/@lib/frontend/ui";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {

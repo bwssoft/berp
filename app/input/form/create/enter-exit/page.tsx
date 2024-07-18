@@ -1,5 +1,5 @@
-import { findAllInput } from "@/app/lib/action";
-import InputTransactionCreateForm from "@/app/ui/form/input-transaction/input-transaction.create.form";
+import { findAllInput } from "@/app/@lib/backend/action";
+import { InputTransactionCreateForm } from "@/app/@lib/frontend/ui";
 
 export default async function Page() {
   const inputs = await findAllInput();

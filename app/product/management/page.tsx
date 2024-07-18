@@ -1,5 +1,5 @@
-import { findAllProduct } from "@/app/lib/action";
-import ProductTable from "@/app/ui/table/product/table";
+import { findAllProduct } from "@/app/@lib/backend/action";
+import { ProductTable } from "@/app/@lib/frontend/ui";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 

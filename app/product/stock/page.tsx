@@ -2,11 +2,13 @@ import {
   findAllProductStock,
   getProductStockInsights,
   updateProductStock,
-} from "@/app/lib/action";
-import { Button } from "@/app/ui/button";
-import { BarChart } from "@/app/ui/chart/bar.chart";
-import { DoughnutChart } from "@/app/ui/chart/doughnut.chart";
-import InputStockTable from "@/app/ui/table/product-stock/table";
+} from "@/app/@lib/backend/action";
+import {
+  Button,
+  BarChart,
+  DoughnutChart,
+  ProductStockTable,
+} from "@/app/@lib/frontend/ui";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {
@@ -65,7 +67,7 @@ export default async function Page() {
         ))}
       </dl>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <InputStockTable data={stock} />
+        <ProductStockTable data={stock} />
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
