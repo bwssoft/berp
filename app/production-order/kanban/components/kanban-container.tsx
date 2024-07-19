@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Kanban } from "./kanban";
-import { IProduct, IProductionOrder } from "@/app/@lib/backend/domain";
+import { IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 

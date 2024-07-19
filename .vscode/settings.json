@@ -6,5 +6,9 @@
     "repository": "database",
     "@shared": "shared",
     "usecase": "meta",
+    "client": "",
+    "@backend": "server",
+    "@frontend": "client",
   },
+
 }

@@ -1,5 +1,5 @@
-import { findAllInput } from "@/app/@lib/backend/action";
-import { InputTable } from "@/app/@lib/frontend/ui";
+import { findAllInput } from "@/app/lib/@backend/action";
+import { InputTable } from "@/app/lib/@frontend/ui";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";

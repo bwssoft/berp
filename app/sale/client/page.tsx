@@ -1,5 +1,5 @@
-import { findAllClient } from "@/app/@lib/backend/action";
-import { ClientTable } from "@/app/@lib/frontend/ui";
+import { findAllClient } from "@/app/lib/@backend/action";
+import { ClientTable } from "@/app/lib/@frontend/ui";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 

@@ -3,9 +3,9 @@ import {
   countProductTransaction,
   findAllProduct,
   getTotalValueInProductStock,
-} from "@/app/@lib/backend/action";
-import { MultilineChart, BarChart } from "@/app/@lib/frontend/ui";
-import { fillMissingDatesOnProductAnalysisPage } from "@/app/@lib/util";
+} from "@/app/lib/@backend/action";
+import { MultilineChart, BarChart } from "@/app/lib/@frontend/ui";
+import { fillMissingDatesOnProductAnalysisPage } from "@/app/lib/util";
 import { ProductSelect } from "./components/productSelect";
 
 interface Props {

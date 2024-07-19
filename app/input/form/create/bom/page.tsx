@@ -1,4 +1,4 @@
-import { InputCreateFromFileForm } from "@/app/@lib/frontend/ui";
+import { InputCreateFromFileForm } from "@/app/lib/@frontend/ui";
 
 export default function Page() {
   return (

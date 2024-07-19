@@ -1,5 +1,5 @@
-import { findAllClientOpportunityWithClient } from "@/app/@lib/backend/action";
-import { ClientOpportunityTable } from "@/app/@lib/frontend/ui";
+import { findAllClientOpportunityWithClient } from "@/app/lib/@backend/action";
+import { ClientOpportunityTable } from "@/app/lib/@frontend/ui";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 

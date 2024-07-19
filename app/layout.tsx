@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Layout, Toaster } from "./@lib/frontend/ui";
+import { Layout, Toaster } from "@/app/lib/@frontend/ui";
 
 export const metadata: Metadata = {
   title: "BStock",

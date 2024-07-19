@@ -1,19 +1,19 @@
 import {
   findAllInputStock,
-  getInputStockInsights,
+  getInputStockInsight,
   updateInputStock,
-} from "@/app/@lib/backend/action";
+} from "@/app/lib/@backend/action";
 import {
   Button,
   BarChart,
   DoughnutChart,
   InputStockTable,
-} from "@/app/@lib/frontend/ui";
+} from "@/app/lib/@frontend/ui";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {
   const stock = await findAllInputStock();
-  const [insights] = await getInputStockInsights();
+  const [insights] = await getInputStockInsight();
   return (
     <div className="flex flex-col h-full gap-6">
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

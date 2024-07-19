@@ -1,5 +1,5 @@
-import { findOneInput } from "@/app/@lib/backend/action";
-import { InputUpdateForm } from "@/app/@lib/frontend/ui";
+import { findOneInput } from "@/app/lib/@backend/action";
+import { InputUpdateForm } from "@/app/lib/@frontend/ui";
 
 interface Props {
   searchParams: {

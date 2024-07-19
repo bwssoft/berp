@@ -1,7 +1,7 @@
 "use client";
 
-import { IInput } from "@/app/@lib/backend/domain";
-import { Select } from "@/app/@lib/frontend/ui";
+import { IInput } from "@/app/lib/@backend/domain";
+import { Select } from "@/app/lib/@frontend/ui";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface Props {

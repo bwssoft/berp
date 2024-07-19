@@ -1,5 +1,5 @@
-import { findAllClient, findAllProduct } from "@/app/@lib/backend/action";
-import { ClientOpportunityCreateForm } from "@/app/@lib/frontend/ui";
+import { findAllClient, findAllProduct } from "@/app/lib/@backend/action";
+import { ClientOpportunityCreateForm } from "@/app/lib/@frontend/ui";
 
 export default async function Page() {
   const clients = await findAllClient();

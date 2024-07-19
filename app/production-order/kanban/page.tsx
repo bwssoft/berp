@@ -1,4 +1,4 @@
-import { findAllProductionOrderWithProduct } from "@/app/@lib/backend/action/production-order.action";
+import { findAllProductionOrderWithProduct } from "@/app/lib/@backend/action/production-order.action";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { KanbanContainer } from "./components/kanban-container";

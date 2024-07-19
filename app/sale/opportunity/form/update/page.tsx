@@ -2,8 +2,8 @@ import {
   findAllClient,
   findAllProduct,
   findOneClientOpportunity,
-} from "@/app/@lib/backend/action";
-import { ClientOpportunityUpdateForm } from "@/app/@lib/frontend/ui";
+} from "@/app/lib/@backend/action";
+import { ClientOpportunityUpdateForm } from "@/app/lib/@frontend/ui";
 
 interface Props {
   searchParams: { id: string };
