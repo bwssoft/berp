@@ -6,7 +6,7 @@ class ProductStockRepository extends BaseRepository<IProductStock> {
   constructor() {
     super({
       collection: "product-stock",
-      db: "bstock"
+      db: "berp"
     });
   }
 }

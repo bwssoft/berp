@@ -1,12 +1,12 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProductTransaction } from "@/app/lib/@backend/domain";
+import { IProduct, IProductTransaction } from "@/app/lib/@backend/domain";
 import { BaseRepository } from "../@base/base";
 
 class ProductTransactionRepository extends BaseRepository<IProductTransaction> {
   constructor() {
     super({
       collection: "product-transaction",
-      db: "bstock"
+      db: "berp"
     });
   }
 
@@ -35,7 +35,7 @@ class ProductTransactionRepository extends BaseRepository<IProductTransaction> {
           product: { $exists: true }
         }
       }
-    ]).toArray();
+    ]).toArray() as (IProductTransaction & { product: IProduct })[]
   }
 }
 

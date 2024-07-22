@@ -1,20 +1,20 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IInput, IInputTemporalStockRepository } from "@/app/lib/@backend/domain"
-import { inputTemporalStockRepository } from "@/app/lib/@backend/repository/mongodb"
+import { IProduct, IProductTemporalStockRepository } from "@/app/lib/@backend/domain"
+import { productTemporalStockRepository } from "@/app/lib/@backend/repository/mongodb"
 import { getRange } from "@/app/lib/util"
 
-class AnalyzeTemporalInputStockUsecase {
-  repository: IInputTemporalStockRepository
+class AnalyzeTemporalProductStockUsecase {
+  repository: IProductTemporalStockRepository
 
   constructor() {
-    this.repository = inputTemporalStockRepository
+    this.repository = productTemporalStockRepository
   }
 
-  async execute(input_id: string) {
+  async execute(product_id: string) {
     const { init, end, dates } = getRange(new Date(), 30)
-    const pipeline = this.pipeline(init, end, input_id)
+    const pipeline = this.pipeline(init, end, product_id)
     const aggregate = await this.repository.aggregate<{
-      input: IInput;
+      product: IProduct;
       stocks: {
         date: {
           day: number;
@@ -34,7 +34,7 @@ class AnalyzeTemporalInputStockUsecase {
     }
   }
 
-  pipeline(init: Date, end: Date, input_id: string) {
+  pipeline(init: Date, end: Date, product_id: string) {
     const pipeline = [
       {
         $addFields: {
@@ -49,7 +49,7 @@ class AnalyzeTemporalInputStockUsecase {
       },
       {
         $match: {
-          input_id,
+          product_id,
           _date: {
             $gte: init,
             $lte: end,
@@ -65,7 +65,7 @@ class AnalyzeTemporalInputStockUsecase {
       },
       {
         $group: {
-          _id: "$input_id",
+          _id: "$product_id",
           stocks: {
             $push: {
               balance: "$balance",
@@ -80,16 +80,16 @@ class AnalyzeTemporalInputStockUsecase {
       },
       {
         $lookup: {
-          from: "input",
+          from: "product",
           localField: "_id",
           foreignField: "id",
-          as: "input"
+          as: "product"
         }
       },
       {
         $project: {
           _id: 0,
-          input: { $first: ["$input"] },
+          product: { $first: ["$product"] },
           stocks: "$stocks"
         }
       }
@@ -98,4 +98,4 @@ class AnalyzeTemporalInputStockUsecase {
   }
 }
 
-export const analyzeTemporalInputStockUsecase = singleton(AnalyzeTemporalInputStockUsecase)
+export const analyzeTemporalProductStockUsecase = singleton(AnalyzeTemporalProductStockUsecase)

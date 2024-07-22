@@ -6,7 +6,7 @@ class InputStockRepository extends BaseRepository<IInputStock> {
   constructor() {
     super({
       collection: "input-stock",
-      db: "bstock"
+      db: "berp"
     });
   }
 }

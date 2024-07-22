@@ -1,12 +1,12 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProductionOrder } from "@/app/lib/@backend/domain";
+import { IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
 import { BaseRepository } from "./@base/base";
 
 class ProductionOrderRepository extends BaseRepository<IProductionOrder> {
   constructor() {
     super({
       collection: "production-order",
-      db: "bstock"
+      db: "berp"
     });
   }
 
@@ -31,7 +31,7 @@ class ProductionOrderRepository extends BaseRepository<IProductionOrder> {
           _products: 1,
         }
       },
-    ]).toArray();
+    ]).toArray() as (IProductionOrder & { _products: IProduct[] })[]
   }
 }
 

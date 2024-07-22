@@ -1,16 +1,17 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IInputTransactionRepository } from "@/app/lib/@backend/domain"
-import { inputTransactionRepository } from "@/app/lib/@backend/repository/mongodb"
+import { IProductTransactionRepository } from "@/app/lib/@backend/domain"
+import { productTransactionRepository } from "@/app/lib/@backend/repository/mongodb"
 
-class CountInputTransactionUsecase {
-  repository: IInputTransactionRepository
+class CountProductTransactionUsecase {
+  repository: IProductTransactionRepository
 
   constructor() {
-    this.repository = inputTransactionRepository
+    this.repository = productTransactionRepository
   }
 
-  async execute(input_id?: string) {
-    const pipeline = this.pipeline(input_id)
+  async execute(product_id?: string) {
+    const pipeline = this.pipeline(product_id)
+
     const aggregation = await this.repository.aggregate<{
       total: number
       enter: number
@@ -23,13 +24,13 @@ class CountInputTransactionUsecase {
     return result
   }
 
-  pipeline(input_id?: string) {
+  pipeline(product_id?: string) {
     const match = { $match: {} }
 
-    if (input_id) {
+    if (product_id) {
       match.$match = {
         ...match.$match,
-        input_id
+        product_id
       }
     }
 
@@ -83,4 +84,4 @@ class CountInputTransactionUsecase {
   }
 }
 
-export const countInputTransactionUsecase = singleton(CountInputTransactionUsecase)
+export const countProductTransactionUsecase = singleton(CountProductTransactionUsecase)

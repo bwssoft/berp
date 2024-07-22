@@ -6,7 +6,7 @@ class ClientRepository extends BaseRepository<IClient> {
   constructor() {
     super({
       collection: "client",
-      db: "bstock"
+      db: "berp"
     });
   }
 }

@@ -1,0 +1,1 @@
+export * from './analyze-temporal-product-stock.usecase'

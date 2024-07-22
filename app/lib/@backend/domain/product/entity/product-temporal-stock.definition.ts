@@ -1,4 +1,4 @@
-export interface ITemporalProductStock {
+export interface IProductTemporalStock {
   id?: string
   product_id: string
   balance: number

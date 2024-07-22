@@ -6,7 +6,7 @@ class InputTransactionRepository extends BaseRepository<IInputTransaction> {
   constructor() {
     super({
       collection: "input-transaction",
-      db: "bstock"
+      db: "berp"
     });
   }
 

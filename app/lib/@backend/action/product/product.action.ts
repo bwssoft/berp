@@ -1,29 +1,26 @@
 "use server"
 
 import { IProduct } from "@/app/lib/@backend/domain"
-import { productRepository } from "@/app/lib/@backend/repository/mongodb"
+import { createOneProductUsecase, deleteOneProductUsecase, findAllProductUsecase, findOneProductUsecase, updateOneProductUsecase } from "../../usecase/product/product"
 
-
-const repository = productRepository
-
-export async function createOneProduct(input: Omit<IProduct, "id" | "created_at">) {
-  await repository.create({ ...input, created_at: new Date(), id: crypto.randomUUID() })
-  return input
+export async function createOneProduct(args: Omit<IProduct, "id" | "created_at">) {
+  const product = await createOneProductUsecase.execute(args)
+  return product
 }
 
 export async function findOneProduct(input: Partial<IProduct>) {
-  return await repository.findOne(input)
+  return await findOneProductUsecase.execute(input)
 }
 
 export async function updateOneProductById(query: { id: string }, value: Omit<IProduct, "id" | "created_at">) {
-  return await repository.updateOne(query, value)
+  return await updateOneProductUsecase.execute(query, value)
 }
 
 export async function deleteOneProductById(query: { id: string }) {
-  return await repository.deleteOne(query)
+  return await deleteOneProductUsecase.execute(query)
 }
 
 export async function findAllProduct(): Promise<IProduct[]> {
-  return await repository.findAll() as IProduct[]
+  return await findAllProductUsecase.execute()
 }
 

@@ -1,33 +1,37 @@
 "use server"
 
 import { IProduct, IProductionOrder } from "../domain"
-import { productionOrderRepository } from "../repository/mongodb"
+import {
+  createOneProductionOrderUsecase,
+  findOneProductionOrderUsecase,
+  deleteOneProductionOrderUsecase,
+  updateOneProductionOrderUsecase,
+  findAllProductionOrderUsecase,
+  findAllProductionOrderWithProductUsecase
+} from "../usecase"
 
-
-const repository = productionOrderRepository
 
 export async function createOneProductionOrder(productionOrder: Omit<IProductionOrder, "id" | "created_at">) {
-  await repository.create({ ...productionOrder, created_at: new Date(), id: crypto.randomUUID() })
-  return productionOrder
+  return await createOneProductionOrderUsecase.execute(productionOrder)
 }
 
 export async function findOneProductionOrder(productionOrder: Partial<IProductionOrder>) {
-  return await repository.findOne(productionOrder)
+  return await findOneProductionOrderUsecase.execute(productionOrder)
 }
 
 export async function updateOneProductionOrderById(query: { id: string }, value: Omit<IProductionOrder, "id" | "created_at">) {
-  return await repository.updateOne(query, value)
+  return await updateOneProductionOrderUsecase.execute(query, value)
 }
 
 export async function deleteOneProductionOrderById(query: { id: string }) {
-  return await repository.deleteOne(query)
+  return await deleteOneProductionOrderUsecase.execute(query)
 }
 
 export async function findAllProductionOrder(): Promise<IProductionOrder[]> {
-  return await repository.findAll() as IProductionOrder[]
+  return await findAllProductionOrderUsecase.execute()
 }
 
 export async function findAllProductionOrderWithProduct(): Promise<(IProductionOrder & { _products: IProduct[] })[]> {
-  return await repository.findAllWithProduct() as (IProductionOrder & { _products: IProduct[] })[]
+  return await findAllProductionOrderWithProductUsecase.execute()
 }
 

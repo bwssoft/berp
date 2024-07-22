@@ -6,7 +6,7 @@ class InputRepository extends BaseRepository<IInput> {
   constructor() {
     super({
       collection: "input",
-      db: "bstock"
+      db: "berp"
     });
   }
 }

@@ -6,7 +6,7 @@ class OpportunityRepository extends BaseRepository<IOpportunity> {
   constructor() {
     super({
       collection: "client-opportunity",
-      db: "bstock"
+      db: "berp"
     });
   }
 
