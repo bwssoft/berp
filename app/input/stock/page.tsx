@@ -114,11 +114,11 @@ export default async function Page() {
       <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
         {[
           {
-            name: "Maior Valor Unitário",
+            name: `Maior Preço Unitário (R$${insights?.max_unit_price?.value})`,
             value: insights?.max_unit_price?.input.name ?? "--",
           },
           {
-            name: "Menor Valor Unitário",
+            name: `Menor Preço Unitário (R$${insights?.min_unit_price?.value})`,
             value: insights?.min_unit_price?.input.name ?? "--",
           },
         ].map((stat) => (
@@ -141,11 +141,11 @@ export default async function Page() {
       <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
         {[
           {
-            name: "Maior Valor Total em Estoque",
+            name: `Maior Valor Total em Estoque (R$${insights?.max_cumulative_price?.value})`,
             value: insights?.max_cumulative_price?.input.name ?? "--",
           },
           {
-            name: "Menor Valor Total em Estoque",
+            name: `Menor Valor Total em Estoque (R$${insights?.min_cumulative_price?.value})`,
             value: insights?.min_cumulative_price?.input.name ?? "--",
           },
         ].map((stat) => (

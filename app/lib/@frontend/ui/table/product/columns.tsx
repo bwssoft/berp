@@ -2,6 +2,7 @@ import { deleteOneProductById } from "@/app/lib/@backend/action";
 import { IProduct } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
+import { toast } from "../../../hook";
 
 export const columns: ColumnDef<IProduct>[] = [
   { header: "Nome", accessorKey: "name" },
@@ -34,7 +35,24 @@ export const columns: ColumnDef<IProduct>[] = [
           >
             Editar
           </Link>
-          <form action={() => deleteOneProductById({ id: product.id! })}>
+          <form
+            action={() => {
+              try {
+                deleteOneProductById({ id: product.id! });
+                toast({
+                  variant: "success",
+                  title: "Sucesso!",
+                  description: "Produto deletado com sucesso.",
+                });
+              } catch (e) {
+                toast({
+                  variant: "error",
+                  title: "Erro!",
+                  description: "Falha ao deletar o produto.",
+                });
+              }
+            }}
+          >
             <button
               type="submit"
               className="text-indigo-600 hover:text-indigo-900 px-0 py-0"

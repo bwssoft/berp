@@ -18,6 +18,7 @@ class GetTotalValueProductStockUsecase {
         product: IProduct
         balance: number
         total_cost: number
+        unit_cost: number
       }
   }
 
@@ -74,7 +75,8 @@ class GetTotalValueProductStockUsecase {
         $project: {
           product: { $first: ["$product"] },
           balance: 1,
-          total_cost: { $multiply: ["$cost", "$balance"] }
+          total_cost: { $multiply: ["$cost", "$balance"] },
+          unit_cost: "$cost"
         }
       }
     ]

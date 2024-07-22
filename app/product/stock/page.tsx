@@ -114,11 +114,11 @@ export default async function Page() {
       <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
         {[
           {
-            name: "Maior Valor Unitário",
+            name: `Maior Custo Unitário (R$${insights?.max_unit_cost?.value})`,
             value: insights?.max_unit_cost?.product.name ?? "--",
           },
           {
-            name: "Menor Valor Unitário",
+            name: `Menor Custo Unitário (R$${insights?.min_unit_cost?.value})`,
             value: insights?.min_unit_cost?.product.name ?? "--",
           },
         ].map((stat) => (
@@ -141,11 +141,11 @@ export default async function Page() {
       <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
         {[
           {
-            name: "Maior Valor Total em Estoque",
+            name: `Maior Custo agregado em Estoque (R$${insights?.max_total_cost?.value})`,
             value: insights?.max_total_cost?.product.name ?? "--",
           },
           {
-            name: "Menor Valor Total em Estoque",
+            name: `Menor Custo agregado em Estoque (R$${insights?.min_total_cost?.value})`,
             value: insights?.min_total_cost?.product.name ?? "--",
           },
         ].map((stat) => (

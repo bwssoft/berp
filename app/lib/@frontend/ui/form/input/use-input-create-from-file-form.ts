@@ -72,14 +72,13 @@ export function useInputCreateFromFileForm() {
 
   const handleFormatInputFromFile = (obj: {
     Nome: string,
-    Preço: string,
+    Preço: number,
     "Unidade de Medida": string
   }) => {
-    const priceInString = obj?.Preço?.replace(/R\$|\$/g, '').trim();
     return {
       name: obj.Nome,
       measure_unit: obj["Unidade de Medida"] as IInput["measure_unit"],
-      price: priceInString !== undefined ? Number(priceInString) : undefined
+      price: obj["Preço"] ?? undefined
     }
   }
 

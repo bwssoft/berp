@@ -2,9 +2,11 @@
 
 import { IProduct, IProductTransaction } from "@/app/lib/@backend/domain";
 import { countProductTransactionUsecase, createOneProductTransactionUsecase, findAllProductTransactionWithProductUsecase } from "../../usecase/product/transaction";
+import { revalidatePath } from "next/cache";
 
 export async function createOneProductTransaction(args: Omit<IProductTransaction, "id" | "created_at">) {
   const product = createOneProductTransactionUsecase.execute(args)
+  revalidatePath("/product/enter-exit")
   return product
 }
 

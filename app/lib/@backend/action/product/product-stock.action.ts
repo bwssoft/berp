@@ -1,11 +1,13 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
 import { findAllProductStockUsecase, getProductStockInsightUsecase, getTotalValueProductStockUsecase, updateProductStockUsacase, analyzeTemporalProductStockUsecase } from "../../usecase"
 
 
 
 export async function updateProductStock() {
   await updateProductStockUsacase.execute()
+  revalidatePath("/product/stock")
   return
 }
 

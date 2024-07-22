@@ -10,6 +10,7 @@ interface FileUploadProps {
   element?: (props: {
     files: File[];
     removeFile: (index: number) => void;
+    upload: () => void;
   }) => React.ReactNode;
 }
 
@@ -45,8 +46,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <div className="col-span-full">
       {element ? (
-        <div onClick={() => fileInputRef.current?.click()}>
-          {element({ files: selectedFiles, removeFile })}
+        <div>
+          {element({
+            files: selectedFiles,
+            removeFile,
+            upload: () => fileInputRef.current?.click(),
+          })}
           <input
             id={inputFileId}
             type="file"

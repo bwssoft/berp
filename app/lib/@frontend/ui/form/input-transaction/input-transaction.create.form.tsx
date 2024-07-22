@@ -1,6 +1,6 @@
 "use client";
 import { IInput } from "@/app/lib/@backend/domain";
-import { Radio } from "@/app/lib/@frontend/ui";
+import { Button, Radio } from "@/app/lib/@frontend/ui";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useInputTransacionCreateForm } from "./use-input-transaction-create-form";
 import { Controller } from "react-hook-form";
@@ -132,12 +132,12 @@ export function InputTransactionCreateForm(props: Props) {
         >
           Cancelar
         </button>
-        <button
+        <Button
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           Salvar
-        </button>
+        </Button>
       </div>
     </form>
   );

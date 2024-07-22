@@ -69,6 +69,7 @@ export function ProductCreateForm(props: Props) {
                 Escreva um pouco sobre o produto.
               </p>
             </div>
+
             <div className="sm:col-span-4">
               <label
                 htmlFor="color"
@@ -76,18 +77,12 @@ export function ProductCreateForm(props: Props) {
               >
                 Cor
               </label>
-              <select
+              <input
                 id="color"
-                className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                type="color"
+                className="block mt-2 w-full rounded-md border-0 py-1 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent"
                 {...register("color")}
-              >
-                <option>Defina uma cor para o produto</option>
-                {tailwindColorInHex.map((c, idx) => (
-                  <option key={idx} value={c.value}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
             <div className="col-span-full">
@@ -99,11 +94,21 @@ export function ProductCreateForm(props: Props) {
               </label>
               <FileUpload
                 handleFile={handleFile}
-                element={({ removeFile, files }) => (
+                element={({ removeFile, files, upload }) => (
                   <p className="text-sm leading-6 text-gray-600">
-                    Para preencher o campo a partir de um arquivo xlsx.{" "}
-                    <a className="underline cursor-pointer font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500">
-                      Click aqui.
+                    <a
+                      href="/xlsx/create-product-input-upload.xlsx"
+                      download={"create-product-input-upload.xlsx"}
+                      className="underline cursor-pointer font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                    >
+                      Baixe o modelo
+                    </a>{" "}
+                    para preencher o campo a partir de um arquivo xlsx.{" "}
+                    <a
+                      className="underline cursor-pointer font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                      onClick={upload}
+                    >
+                      Click aqui para fazer o upload.
                     </a>
                   </p>
                 )}

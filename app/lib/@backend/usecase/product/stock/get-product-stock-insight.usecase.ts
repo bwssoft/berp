@@ -106,13 +106,13 @@ class GetProductStockInsightUsecase {
           },
           max_unit_cost: {
             $max: {
-              value: "$cost",
+              value: "$unit_cost",
               product: "$$ROOT.product"
             }
           },
           min_unit_cost: {
             $min: {
-              value: "$cost",
+              value: "$unit_cost",
               product: "$$ROOT.product"
             }
           },

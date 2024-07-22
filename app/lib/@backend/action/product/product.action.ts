@@ -2,9 +2,11 @@
 
 import { IProduct } from "@/app/lib/@backend/domain"
 import { createOneProductUsecase, deleteOneProductUsecase, findAllProductUsecase, findOneProductUsecase, updateOneProductUsecase } from "../../usecase/product/product"
+import { revalidatePath } from "next/cache"
 
 export async function createOneProduct(args: Omit<IProduct, "id" | "created_at">) {
   const product = await createOneProductUsecase.execute(args)
+  revalidatePath("/product/management")
   return product
 }
 
@@ -13,11 +15,13 @@ export async function findOneProduct(input: Partial<IProduct>) {
 }
 
 export async function updateOneProductById(query: { id: string }, value: Omit<IProduct, "id" | "created_at">) {
-  return await updateOneProductUsecase.execute(query, value)
+  await updateOneProductUsecase.execute(query, value)
+  revalidatePath("/product/management")
 }
 
 export async function deleteOneProductById(query: { id: string }) {
-  return await deleteOneProductUsecase.execute(query)
+  await deleteOneProductUsecase.execute(query)
+  revalidatePath("/product/management")
 }
 
 export async function findAllProduct(): Promise<IProduct[]> {
