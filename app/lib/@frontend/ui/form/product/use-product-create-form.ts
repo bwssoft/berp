@@ -5,6 +5,8 @@ import { handleXlsxFile } from '@/app/lib/util/handle-xlsx-file';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useEffect } from 'react';
+import { productConstants } from '@/app/lib/constant/product';
 
 const schema = z.object({
   name: z.string().min(1, 'Esse campo não pode ser vazio'),
@@ -20,6 +22,8 @@ interface Props {
   inputs: IInput[]
 }
 
+const statsMapped = productConstants.statsMapped
+
 export function useProductCreateForm(props: Props) {
   const { inputs } = props
   const {
@@ -29,6 +33,7 @@ export function useProductCreateForm(props: Props) {
     control,
     setValue,
     reset: hookFormReset,
+    watch
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   });
@@ -81,6 +86,66 @@ export function useProductCreateForm(props: Props) {
     }
   }
 
+  //iteração para agregar os dados dos insumos dobanco de dados com os dados do formulário
+  const inputsMerged = (watch("inputs") ?? [])
+    .filter((el) => {
+      return inputs.find((e) => e.id === el.input_id) !== undefined;
+    })
+    .map((i) => {
+      const input = inputs.find((e) => e.id === i.input_id);
+      return {
+        input: input!,
+        color: input!.color,
+        name: input!.name,
+        price: input!.price,
+        total: i.quantity * input!.price,
+        quantity: i.quantity,
+      };
+    });
+
+  //objeto com os valores de insumos em maior e menor quantidade, preço, etc...
+  const stats = Object.entries(
+    inputsMerged.reduce(
+      (acc, item) => {
+        if (item.quantity > acc.maxQuantity.quantity) {
+          acc.maxQuantity = item;
+        }
+        if (item.quantity < acc.minQuantity.quantity) {
+          acc.minQuantity = item;
+        }
+        if (item.price > acc.maxPrice.price) {
+          acc.maxPrice = item;
+        }
+        if (item.price < acc.minPrice.price) {
+          acc.minPrice = item;
+        }
+        if (item.total > acc.maxTotal.total) {
+          acc.maxTotal = item;
+        }
+        if (item.total < acc.minTotal.total) {
+          acc.minTotal = item;
+        }
+        return acc;
+      },
+      {
+        maxQuantity: inputsMerged[0],
+        minQuantity: inputsMerged[0],
+        maxPrice: inputsMerged[0],
+        minPrice: inputsMerged[0],
+        maxTotal: inputsMerged[0],
+        minTotal: inputsMerged[0],
+      }
+    )
+  )
+    .filter(([_, entrie]) => entrie)
+    .map(([key, entire]) => ({
+      name: `${statsMapped[key as keyof typeof statsMapped](entire)}`,
+      value: entire.name,
+    }));
+
+  const totalCost = inputsMerged.reduce((acc, cur) => acc + cur.total, 0)
+  const averageCost = totalCost / inputs.length
+
   return {
     register,
     handleSubmit,
@@ -91,6 +156,12 @@ export function useProductCreateForm(props: Props) {
     inputsOnForm: fields,
     handleAppendInput,
     handleRemoveInput,
-    handleFile
+    handleFile,
+    insights: {
+      totalCost,
+      stats,
+      merged: inputsMerged,
+      averageCost
+    }
   };
 }
