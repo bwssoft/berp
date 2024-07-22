@@ -1,5 +1,6 @@
 "use server"
 
+import { revalidatePath } from "next/cache"
 import { IProduct, IProductionOrder } from "../domain"
 import {
   createOneProductionOrderUsecase,
@@ -12,7 +13,8 @@ import {
 
 
 export async function createOneProductionOrder(productionOrder: Omit<IProductionOrder, "id" | "created_at">) {
-  return await createOneProductionOrderUsecase.execute(productionOrder)
+  await createOneProductionOrderUsecase.execute(productionOrder)
+  revalidatePath("/production-order/management")
 }
 
 export async function findOneProductionOrder(productionOrder: Partial<IProductionOrder>) {
@@ -20,11 +22,13 @@ export async function findOneProductionOrder(productionOrder: Partial<IProductio
 }
 
 export async function updateOneProductionOrderById(query: { id: string }, value: Omit<IProductionOrder, "id" | "created_at">) {
-  return await updateOneProductionOrderUsecase.execute(query, value)
+  await updateOneProductionOrderUsecase.execute(query, value)
+  revalidatePath("/production-order/management")
 }
 
 export async function deleteOneProductionOrderById(query: { id: string }) {
-  return await deleteOneProductionOrderUsecase.execute(query)
+  await deleteOneProductionOrderUsecase.execute(query)
+  revalidatePath("/production-order/management")
 }
 
 export async function findAllProductionOrder(): Promise<IProductionOrder[]> {
