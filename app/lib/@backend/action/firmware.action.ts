@@ -10,14 +10,15 @@ import {
   findAllFirmwareUsecase
 } from "../usecase"
 
-
-export async function createOneFirmware(productionOrder: Omit<IFirmware, "id" | "created_at">) {
-  await createOneFirmwareUsecase.execute(productionOrder)
+type FirmwareToCreate = Omit<IFirmware, "id" | "created_at" | "file">
+export async function createOneFirmware(firmware: FirmwareToCreate, formData: FormData) {
+  const file = formData.get("file") as File
+  await createOneFirmwareUsecase.execute(firmware, file)
   revalidatePath('/firmware/management')
 }
 
-export async function findOneFirmware(productionOrder: Partial<IFirmware>) {
-  return await findOneFirmwareUsecase.execute(productionOrder)
+export async function findOneFirmware(firmware: Partial<IFirmware>) {
+  return await findOneFirmwareUsecase.execute(firmware)
 }
 
 export async function updateOneFirmwareById(query: { id: string }, value: Omit<IFirmware, "id" | "created_at">) {

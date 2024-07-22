@@ -13,8 +13,6 @@ import {
 } from "@headlessui/react";
 import {
   Bars3Icon,
-  CalendarIcon,
-  ChartPieIcon,
   FolderIcon,
   HomeIcon,
   UsersIcon,
@@ -22,15 +20,11 @@ import {
   ClipboardIcon,
   ChevronRightIcon,
   CpuChipIcon,
-  WrenchIcon,
   BriefcaseIcon,
   RectangleStackIcon,
+  CloudArrowUpIcon,
 } from "@heroicons/react/24/outline";
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from "@headlessui/react";
+import { Disclosure } from "@headlessui/react";
 import { cn } from "@/app/lib/util";
 import { useIsOnPathname } from "../hook/is-on-pathname";
 import Link from "next/link";
@@ -80,6 +74,14 @@ const navigation: NavItem[] = [
           { name: "Entradas e Saídas", pathname: "/product/enter-exit" },
           { name: "Estoque", pathname: "/product/stock" },
           { name: "Análise", pathname: "/product/analysis" },
+        ],
+      },
+      {
+        name: "Firmware",
+        icon: CloudArrowUpIcon,
+        children: [
+          { name: "Gestão", pathname: "/firmware/management" },
+          { name: "Atualização de firmware", pathname: "/firmware/management" },
         ],
       },
     ],
