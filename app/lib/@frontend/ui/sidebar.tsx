@@ -23,6 +23,8 @@ import {
   BriefcaseIcon,
   RectangleStackIcon,
   CloudArrowUpIcon,
+  CommandLineIcon,
+  RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
 import { Disclosure } from "@headlessui/react";
 import { cn } from "@/app/lib/util";
@@ -68,7 +70,7 @@ const navigation: NavItem[] = [
       },
       {
         name: "Produtos",
-        icon: CpuChipIcon,
+        icon: RectangleGroupIcon,
         children: [
           { name: "Gestão", pathname: "/product/management" },
           { name: "Entradas e Saídas", pathname: "/product/enter-exit" },
@@ -77,11 +79,26 @@ const navigation: NavItem[] = [
         ],
       },
       {
+        name: "Equipamentos",
+        icon: CpuChipIcon,
+        children: [
+          { name: "Gestão", pathname: "/device/management" },
+          { name: "Entradas e Saídas", pathname: "/device/enter-exit" },
+          { name: "Estoque", pathname: "/device/stock" },
+          { name: "Análise", pathname: "/device/analysis" },
+        ],
+      },
+      {
         name: "Firmware",
         icon: CloudArrowUpIcon,
+        pathname: "/firmware/management",
+      },
+      {
+        name: "Comandos",
+        icon: CommandLineIcon,
         children: [
-          { name: "Gestão", pathname: "/firmware/management" },
-          { name: "Atualização de firmware", pathname: "/firmware/management" },
+          { name: "Gestão", pathname: "/command/management" },
+          { name: "Agendamento de comando", pathname: "/command/schedule" },
         ],
       },
     ],
