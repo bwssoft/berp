@@ -12,6 +12,8 @@ interface FileUploadProps {
     removeFile: (index: number) => void;
     upload: () => void;
   }) => React.ReactNode;
+  multiple?: boolean;
+  accept: string;
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
@@ -19,6 +21,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   label,
   id,
   element,
+  multiple,
+  accept,
 }) => {
   const inputFileId = id ?? `file-upload-${crypto.randomUUID()}`;
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -56,8 +60,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             id={inputFileId}
             type="file"
             className="sr-only"
-            multiple
-            accept=".xlsx"
+            multiple={multiple}
+            accept={accept}
             onChange={onFileChange}
             ref={fileInputRef}
           />

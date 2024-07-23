@@ -36,9 +36,9 @@ export const columns: ColumnDef<IProduct>[] = [
             Editar
           </Link>
           <form
-            action={() => {
+            action={async () => {
               try {
-                deleteOneProductById({ id: product.id! });
+                await deleteOneProductById({ id: product.id! });
                 toast({
                   variant: "success",
                   title: "Sucesso!",

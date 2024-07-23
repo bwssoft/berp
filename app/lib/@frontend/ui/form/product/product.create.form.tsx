@@ -98,7 +98,7 @@ export function ProductCreateForm(props: Props) {
                 </label>
                 <FileUpload
                   handleFile={handleFile}
-                  element={({ removeFile, files, upload }) => (
+                  element={({ upload }) => (
                     <p className="text-sm leading-6 text-gray-600">
                       <a
                         href="/xlsx/create-product-input-upload.xlsx"

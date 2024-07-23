@@ -80,6 +80,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={isLoading || disabled}
         {...props}
+        type={type}
       >
         {isLoading && <ArrowPathIcon className="w-4 h-4 animate-spin" />}
         {children}
