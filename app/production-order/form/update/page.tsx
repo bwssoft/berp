@@ -1,6 +1,8 @@
-import { findAllProduct } from "@/app/lib/action";
-import { findOneProductionOrder } from "@/app/lib/action/production-order.action";
-import ProductionOrderUpdateForm from "@/app/ui/form/production-order/production-order.update.form";
+import {
+  findAllProduct,
+  findOneProductionOrder,
+} from "@/app/lib/@backend/action";
+import { ProductionOrderUpdateForm } from "@/app/lib/@frontend/ui";
 
 interface Props {
   searchParams: { id: string };

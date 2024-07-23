@@ -1,0 +1,15 @@
+{
+  "material-icon-theme.activeIconPack": "none",
+  "material-icon-theme.folders.associations": {
+    "@lib": "lib",
+    "@base": "base",
+    "repository": "database",
+    "@shared": "shared",
+    "usecase": "meta",
+    "client": "",
+    "command": "",
+    "@backend": "server",
+    "@frontend": "client",
+  },
+
+}

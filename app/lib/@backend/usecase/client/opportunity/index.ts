@@ -1,0 +1,6 @@
+export * from './create-one-opportunity.usecase'
+export * from './delete-one-opportunity.usecase'
+export * from './update-one-opportunity.usecase'
+export * from './find-one-opportunity.usecase'
+export * from './find-all-opportunity.usecase'
+export * from './find-all-opportunity-with-client.usecase'

@@ -1,5 +1,5 @@
-import { findAllInput, findOneProduct } from "@/app/lib/action";
-import ProductUpdateForm from "@/app/ui/form/product/product.update.form";
+import { findAllInput, findOneProduct } from "@/app/lib/@backend/action";
+import { ProductUpdateForm } from "@/app/lib/@frontend/ui";
 
 interface Props {
   searchParams: { id: string };

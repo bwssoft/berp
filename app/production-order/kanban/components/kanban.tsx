@@ -1,7 +1,7 @@
 "use client";
 // //  Inspiration https://s3-ap-southeast-2.amazonaws.com/focusbooster.cdn/Landing+pages/kanban-and-focusbooster/kanban-board-notion.png
 
-// import { IProductionOrder } from "@/app/lib/definition";
+// import { IProductionOrder } from "@/app/lib/@backend/domain";
 
 // interface Props {
 //   productionOrders: IProductionOrder[];
@@ -194,8 +194,8 @@
 "use client";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { IProduct, IProductionOrder } from "@/app/lib/definition";
-import { productionOrderConstants } from "@/app/constant/production-order";
+import { IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
+import { productionOrderConstants } from "@/app/lib/constant";
 
 const ItemType = "CARD";
 

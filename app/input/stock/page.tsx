@@ -1,17 +1,19 @@
 import {
   findAllInputStock,
-  getInputStockInsights,
+  getInputStockInsight,
   updateInputStock,
-} from "@/app/lib/action";
-import { Button } from "@/app/ui/button";
-import { BarChart } from "@/app/ui/chart/bar.chart";
-import { DoughnutChart } from "@/app/ui/chart/doughnut.chart";
-import InputStockTable from "@/app/ui/table/input-stock/table";
+} from "@/app/lib/@backend/action";
+import {
+  Button,
+  BarChart,
+  DoughnutChart,
+  InputStockTable,
+} from "@/app/lib/@frontend/ui";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {
   const stock = await findAllInputStock();
-  const [insights] = await getInputStockInsights();
+  const [insights] = await getInputStockInsight();
   return (
     <div className="flex flex-col h-full gap-6">
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -112,11 +114,11 @@ export default async function Page() {
       <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
         {[
           {
-            name: "Maior Valor Unitário",
+            name: `Maior Preço Unitário (R$${insights?.max_unit_price?.value})`,
             value: insights?.max_unit_price?.input.name ?? "--",
           },
           {
-            name: "Menor Valor Unitário",
+            name: `Menor Preço Unitário (R$${insights?.min_unit_price?.value})`,
             value: insights?.min_unit_price?.input.name ?? "--",
           },
         ].map((stat) => (
@@ -139,11 +141,11 @@ export default async function Page() {
       <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
         {[
           {
-            name: "Maior Valor Total em Estoque",
+            name: `Maior Valor Total em Estoque (R$${insights?.max_cumulative_price?.value})`,
             value: insights?.max_cumulative_price?.input.name ?? "--",
           },
           {
-            name: "Menor Valor Total em Estoque",
+            name: `Menor Valor Total em Estoque (R$${insights?.min_cumulative_price?.value})`,
             value: insights?.min_cumulative_price?.input.name ?? "--",
           },
         ].map((stat) => (

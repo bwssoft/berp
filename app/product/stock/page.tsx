@@ -2,11 +2,13 @@ import {
   findAllProductStock,
   getProductStockInsights,
   updateProductStock,
-} from "@/app/lib/action";
-import { Button } from "@/app/ui/button";
-import { BarChart } from "@/app/ui/chart/bar.chart";
-import { DoughnutChart } from "@/app/ui/chart/doughnut.chart";
-import InputStockTable from "@/app/ui/table/product-stock/table";
+} from "@/app/lib/@backend/action";
+import {
+  Button,
+  BarChart,
+  DoughnutChart,
+  ProductStockTable,
+} from "@/app/lib/@frontend/ui";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {
@@ -65,7 +67,7 @@ export default async function Page() {
         ))}
       </dl>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <InputStockTable data={stock} />
+        <ProductStockTable data={stock} />
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
@@ -112,11 +114,11 @@ export default async function Page() {
       <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
         {[
           {
-            name: "Maior Valor Unitário",
+            name: `Maior Custo Unitário (R$${insights?.max_unit_cost?.value})`,
             value: insights?.max_unit_cost?.product.name ?? "--",
           },
           {
-            name: "Menor Valor Unitário",
+            name: `Menor Custo Unitário (R$${insights?.min_unit_cost?.value})`,
             value: insights?.min_unit_cost?.product.name ?? "--",
           },
         ].map((stat) => (
@@ -139,11 +141,11 @@ export default async function Page() {
       <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
         {[
           {
-            name: "Maior Valor Total em Estoque",
+            name: `Maior Custo agregado em Estoque (R$${insights?.max_total_cost?.value})`,
             value: insights?.max_total_cost?.product.name ?? "--",
           },
           {
-            name: "Menor Valor Total em Estoque",
+            name: `Menor Custo agregado em Estoque (R$${insights?.min_total_cost?.value})`,
             value: insights?.min_total_cost?.product.name ?? "--",
           },
         ].map((stat) => (
