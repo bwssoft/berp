@@ -97,6 +97,7 @@ export function ProductCreateForm(props: Props) {
                   Insumos
                 </label>
                 <FileUpload
+                  accept=".xlsx"
                   handleFile={handleFile}
                   element={({ upload }) => (
                     <p className="text-sm leading-6 text-gray-600">
