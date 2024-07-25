@@ -1,4 +1,4 @@
-import { deleteOneFirmwareById } from "@/app/lib/@backend/action/firmware.action";
+import { deleteOneFirmwareById } from "@/app/lib/@backend/action";
 import { IFirmware } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
