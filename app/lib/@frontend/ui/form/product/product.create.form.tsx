@@ -143,9 +143,9 @@ export function ProductCreateForm(props: Props) {
                     <Button
                       type="button"
                       onClick={() => handleRemoveInput(index)}
-                      className="rounded-full bg-red-600 shadow-sm hover:bg-red-500"
+                      className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
                     >
-                      <XMarkIcon width={22} height={22} />
+                      <XMarkIcon width={16} height={16} />
                     </Button>
                   </div>
                 ))}

@@ -329,7 +329,7 @@ export function ClientCreateForm() {
                   <Button
                     type="button"
                     onClick={() => handleRemoveContact(index)}
-                    className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 px-2"
+                    className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
                   >
                     <XMarkIcon width={16} height={16} />
                   </Button>
