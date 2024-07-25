@@ -1,14 +1,14 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { ICommand } from "../domain"
+import { ICommand } from "../../domain"
 import {
   createOneCommandUsecase,
   findOneCommandUsecase,
   deleteOneCommandUsecase,
   updateOneCommandUsecase,
   findAllCommandUsecase
-} from "../usecase"
+} from "../../usecase"
 
 export async function createOneCommand(command: Omit<ICommand, "id" | "created_at">) {
   await createOneCommandUsecase.execute(command)

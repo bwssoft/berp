@@ -3,6 +3,6 @@ export interface ICommand {
   name: string
   data: string
   description: string
-  firmware_id?: string
+  variables?: Record<string, string>
   created_at: Date
 }
