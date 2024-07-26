@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 const schema = z.object({
   serial: z.string().min(1, 'Esse campo não pode ser vazio'),
-  model: z.string().min(1, 'Esse campo não pode ser vazio'),
+  product_id: z.string().min(1, 'Esse campo não pode ser vazio'),
 });
 
 export type Schema = z.infer<typeof schema>;

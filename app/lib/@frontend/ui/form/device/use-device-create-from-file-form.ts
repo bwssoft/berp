@@ -4,17 +4,23 @@ import { handleXlsxFile } from '@/app/lib/util/handle-xlsx-file';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { IProduct } from '@/app/lib/@backend/domain';
 
 const schema = z.object({
   devices: z.array(z.object({
     serial: z.string().min(1, 'Esse campo não pode ser vazio'),
-    model: z.string().min(1, 'Esse campo não pode ser vazio'),
+    product_id: z.string().min(1, 'Esse campo não pode ser vazio'),
   }))
 });
 
 export type Schema = z.infer<typeof schema>;
 
-export function useDeviceCreateFromFileForm() {
+interface Props {
+  products: IProduct[];
+}
+
+export function useDeviceCreateFromFileForm(props: Props) {
+  const { products } = props
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -57,9 +63,10 @@ export function useDeviceCreateFromFileForm() {
       serial?: string,
       model?: string,
     }>(fileList, handleFormatDeviceFromFile)
-    devices?.forEach(input => handleAppedDevice({
-      serial: input.serial ?? "",
-      model: input.model ?? "",
+
+    devices?.forEach(device => handleAppedDevice({
+      serial: device.serial ?? "",
+      product_id: products.find(el => el.name === device.model)?.id ?? "",
     }))
   }
 

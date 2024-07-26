@@ -3,8 +3,13 @@ import { Button } from "../../button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { FileUpload } from "../../input-file";
 import { useDeviceCreateFromFileForm } from "./use-device-create-from-file-form";
+import { IProduct } from "@/app/lib/@backend/domain";
 
-export function DeviceCreateFromFileForm() {
+interface Props {
+  products: IProduct[];
+}
+export function DeviceCreateFromFileForm(props: Props) {
+  const { products } = props;
   const {
     handleSubmit,
     register,
@@ -12,7 +17,7 @@ export function DeviceCreateFromFileForm() {
     handleAppedDevice,
     handleRemoveDevice,
     handleFile,
-  } = useDeviceCreateFromFileForm();
+  } = useDeviceCreateFromFileForm({ products });
 
   return (
     <form action={() => handleSubmit()} className="w-full">
@@ -26,7 +31,7 @@ export function DeviceCreateFromFileForm() {
                 htmlFor="devices"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Insumos
+                Equipamentos
               </label>
               {devices.map((item, index) => (
                 <div key={item.id} className="flex space-x-4 mt-2 items-center">
@@ -39,20 +44,18 @@ export function DeviceCreateFromFileForm() {
                     placeholder="Nome"
                   />
                   <select
-                    id="model"
+                    id="product_id"
                     className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register(`devices.${index}.model`)}
+                    {...register(`devices.${index}.product_id`)}
                   >
-                    <option value={`model-select-empty-${index}`}>
-                      Unidade de medida
+                    <option value={`product_id-select-empty-${index}`}>
+                      Modelo
                     </option>
-                    <option value={"cm"}>Centímetro (cm)</option>
-                    <option value={"m"}>Metro (m)</option>
-                    <option value={"g"}>Grama (g)</option>
-                    <option value={"kg"}>Quilo (kg)</option>
-                    <option value={"ml"}>Mililitro (ml)</option>
-                    <option value={"l"}>Litro (L)</option>
-                    <option value={"un"}>Unidade (un)</option>
+                    {products.map((p) => (
+                      <option id={p.id} key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
                   </select>
                   <Button
                     type="button"
@@ -68,7 +71,8 @@ export function DeviceCreateFromFileForm() {
                 onClick={() =>
                   handleAppedDevice({
                     serial: "",
-                    model: `model-select-empty-${devices.length}` as any,
+                    product_id:
+                      `product_id-select-empty-${devices.length}` as any,
                   })
                 }
                 className="mt-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"
