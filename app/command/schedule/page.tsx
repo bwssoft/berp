@@ -1,10 +1,10 @@
-import { findAllScheduleWithDeviceFirmwareAndCommand } from "@/app/lib/@backend/action";
+import { findAllSchedule } from "@/app/lib/@backend/action";
 import { ScheduleTable } from "@/app/lib/@frontend/ui";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
 export default async function Example() {
-  const schedules = await findAllScheduleWithDeviceFirmwareAndCommand();
+  const schedules = await findAllSchedule();
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

@@ -9,7 +9,7 @@ import {
   updateOneScheduleUsecase,
   findAllScheduleUsecase,
   createManyScheduleUsecase,
-  findAllScheduleWithDeviceFirmwareAndCommandUsecase
+  findManyScheduleBySerialUsecase
 } from "../../usecase"
 
 export async function createOneSchedule(schedule: Omit<ISchedule, "id" | "created_at">) {
@@ -39,13 +39,14 @@ export async function deleteOneScheduleById(query: { id: string }) {
   revalidatePath('/schedule/management')
 }
 
-export async function findAllSchedule(): Promise<ISchedule[]> {
+export async function findAllSchedule(): Promise<(ISchedule & { device: IDevice, command: ICommand, firmware?: IFirmware })[]> {
   return await findAllScheduleUsecase.execute()
 }
 
-export async function findAllScheduleWithDeviceFirmwareAndCommand(): Promise<(ISchedule & { device: IDevice, command: ICommand, firmware?: IFirmware })[]> {
-  return await findAllScheduleWithDeviceFirmwareAndCommandUsecase.execute()
+export async function findManyScheduleBySerial(serial: string): Promise<(ISchedule & { device: IDevice, command: ICommand, firmware?: IFirmware })[]> {
+  return await findManyScheduleBySerialUsecase.execute(serial)
 }
+
 
 
 

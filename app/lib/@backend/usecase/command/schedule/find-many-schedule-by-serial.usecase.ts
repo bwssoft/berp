@@ -2,24 +2,21 @@ import { singleton } from "@/app/lib/util/singleton"
 import { ICommand, IDevice, IFirmware, ISchedule, IScheduleRepository } from "@/app/lib/@backend/domain"
 import { scheduleRepository } from "@/app/lib/@backend/repository/mongodb"
 
-class FindAllScheduleWithDeviceFirmwareAndCommandUsecase {
+class FindManyScheduleBySerialUsecase {
   repository: IScheduleRepository
 
   constructor() {
     this.repository = scheduleRepository
   }
 
-  async execute() {
-    const pipeline = this.pipeline()
+  async execute(serial: string) {
+    const pipeline = this.pipeline(serial)
     const aggregate = await this.repository.aggregate(pipeline)
-    const a = await aggregate.toArray() as (ISchedule & { device: IDevice, command: ICommand, firmware?: IFirmware })[]
-    console.log(a)
-    return a
+    return await aggregate.toArray() as (ISchedule & { device: IDevice, command: ICommand, firmware?: IFirmware })[]
   }
 
-  pipeline() {
+  pipeline(serial: string) {
     const pipeline = [
-      { $match: {} },
       {
         $lookup: {
           from: "device",
@@ -45,6 +42,11 @@ class FindAllScheduleWithDeviceFirmwareAndCommandUsecase {
         }
       },
       {
+        $match: {
+          "device.serial": serial
+        }
+      },
+      {
         $project: {
           device: { $first: "$device" },
           firmware: { $first: "$firmware" },
@@ -56,10 +58,10 @@ class FindAllScheduleWithDeviceFirmwareAndCommandUsecase {
           request_timestamp: 1,
           response_timestamp: 1,
         }
-      }
+      },
     ]
     return pipeline
   }
 }
 
-export const findAllScheduleWithDeviceFirmwareAndCommandUsecase = singleton(FindAllScheduleWithDeviceFirmwareAndCommandUsecase)
+export const findManyScheduleBySerialUsecase = singleton(FindManyScheduleBySerialUsecase)
