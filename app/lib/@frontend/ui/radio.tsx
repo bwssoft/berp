@@ -19,7 +19,7 @@ import { useEffect, useRef } from "react";
 interface Props<T> {
   label?: string;
   keyExtractor: (arg: T) => string | number;
-  valueExtractor: (arg: T) => string;
+  valueExtractor: (arg: T) => string | number;
   labelExtractor: (arg: T) => string;
   data: T[];
   defaultCheckedItem: T;

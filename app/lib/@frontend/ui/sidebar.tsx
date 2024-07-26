@@ -81,12 +81,7 @@ const navigation: NavItem[] = [
       {
         name: "Equipamentos",
         icon: CpuChipIcon,
-        children: [
-          { name: "Gestão", pathname: "/device/management" },
-          { name: "Entradas e Saídas", pathname: "/device/enter-exit" },
-          { name: "Estoque", pathname: "/device/stock" },
-          { name: "Análise", pathname: "/device/analysis" },
-        ],
+        pathname: "/device/management",
       },
       {
         name: "Firmware",
@@ -98,7 +93,7 @@ const navigation: NavItem[] = [
         icon: CommandLineIcon,
         children: [
           { name: "Gestão", pathname: "/command/management" },
-          { name: "Agendamento de comando", pathname: "/command/schedule" },
+          { name: "Agendamento", pathname: "/command/schedule" },
         ],
       },
     ],

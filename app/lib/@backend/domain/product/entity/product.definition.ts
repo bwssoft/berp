@@ -1,5 +1,5 @@
 export interface IProduct {
-  id?: string
+  id: string
   name: string
   files?: string[]
   description: string
