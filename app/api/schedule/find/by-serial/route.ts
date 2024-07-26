@@ -1,4 +1,4 @@
-import { findManyScheduleBySerial } from "@/app/lib/@backend/action"
+import { findManyPendingScheduleBySerial } from "@/app/lib/@backend/action"
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -6,7 +6,7 @@ export async function GET(request: Request) {
 
   if (!serial) return new Response('No serial in searchParams', { status: 400 })
 
-  const schedules = await findManyScheduleBySerial(serial)
+  const schedules = await findManyPendingScheduleBySerial(serial)
 
   return Response.json({ schedules })
 }

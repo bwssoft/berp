@@ -2,7 +2,7 @@ import { singleton } from "@/app/lib/util/singleton"
 import { ICommand, IDevice, IFirmware, ISchedule, IScheduleRepository } from "@/app/lib/@backend/domain"
 import { scheduleRepository } from "@/app/lib/@backend/repository/mongodb"
 
-class FindManyScheduleBySerialUsecase {
+class FindManyPendingScheduleBySerialUsecase {
   repository: IScheduleRepository
 
   constructor() {
@@ -43,7 +43,8 @@ class FindManyScheduleBySerialUsecase {
       },
       {
         $match: {
-          "device.serial": serial
+          "device.serial": serial,
+          pending: false
         }
       },
       {
@@ -56,7 +57,6 @@ class FindManyScheduleBySerialUsecase {
           data: 1,
           pending: 1,
           request_timestamp: 1,
-          response_timestamp: 1,
         }
       },
     ]
@@ -64,4 +64,4 @@ class FindManyScheduleBySerialUsecase {
   }
 }
 
-export const findManyScheduleBySerialUsecase = singleton(FindManyScheduleBySerialUsecase)
+export const findManyPendingScheduleBySerialUsecase = singleton(FindManyPendingScheduleBySerialUsecase)

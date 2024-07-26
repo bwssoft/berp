@@ -9,7 +9,7 @@ import {
   updateOneScheduleUsecase,
   findAllScheduleUsecase,
   createManyScheduleUsecase,
-  findManyScheduleBySerialUsecase
+  findManyPendingScheduleBySerialUsecase
 } from "../../usecase"
 
 export async function createOneSchedule(schedule: Omit<ISchedule, "id" | "created_at">) {
@@ -43,8 +43,8 @@ export async function findAllSchedule(): Promise<(ISchedule & { device: IDevice,
   return await findAllScheduleUsecase.execute()
 }
 
-export async function findManyScheduleBySerial(serial: string): Promise<(ISchedule & { device: IDevice, command: ICommand, firmware?: IFirmware })[]> {
-  return await findManyScheduleBySerialUsecase.execute(serial)
+export async function findManyPendingScheduleBySerial(serial: string): Promise<(ISchedule & { device: IDevice, command: ICommand, firmware?: IFirmware })[]> {
+  return await findManyPendingScheduleBySerialUsecase.execute(serial)
 }
 
 
