@@ -154,7 +154,7 @@ export function useScheduleCreateForm() {
         device_id: d.id,
         command_id: data.command.id,
         data: createCommandPreview(d.serial, data, data.variablesToBeInserted),
-        pending: false,
+        pending: true,
         firmware_id: firmwareInForm,
       }))
 

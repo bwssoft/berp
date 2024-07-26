@@ -52,7 +52,6 @@ class FindAllScheduleUsecase {
           data: 1,
           pending: 1,
           request_timestamp: 1,
-          response_timestamp: 1,
         }
       }
     ]
