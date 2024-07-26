@@ -1,17 +1,24 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { ISchedule } from "../../domain"
+import { ICommand, IDevice, IFirmware, ISchedule } from "../../domain"
 import {
   createOneScheduleUsecase,
   findOneScheduleUsecase,
   deleteOneScheduleUsecase,
   updateOneScheduleUsecase,
-  findAllScheduleUsecase
+  findAllScheduleUsecase,
+  createManyScheduleUsecase,
+  findAllScheduleWithDeviceFirmwareAndCommandUsecase
 } from "../../usecase"
 
 export async function createOneSchedule(schedule: Omit<ISchedule, "id" | "created_at">) {
   await createOneScheduleUsecase.execute(schedule)
+  revalidatePath('/schedule/management')
+}
+
+export async function createManySchedule(schedule: (Omit<ISchedule, "id" | "created_at">)[]) {
+  await createManyScheduleUsecase.execute(schedule)
   revalidatePath('/schedule/management')
 }
 
@@ -35,5 +42,10 @@ export async function deleteOneScheduleById(query: { id: string }) {
 export async function findAllSchedule(): Promise<ISchedule[]> {
   return await findAllScheduleUsecase.execute()
 }
+
+export async function findAllScheduleWithDeviceFirmwareAndCommand(): Promise<(ISchedule & { device: IDevice, command: ICommand, firmware?: IFirmware })[]> {
+  return await findAllScheduleWithDeviceFirmwareAndCommandUsecase.execute()
+}
+
 
 
