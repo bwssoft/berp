@@ -1,5 +1,5 @@
-import { findAllFirmware } from "@/app/lib/@backend/action/firmware.action";
-import { FirmwareTable } from "@/app/lib/@frontend/ui/table/firmware";
+import { findAllFirmware } from "@/app/lib/@backend/action";
+import { FirmwareTable } from "@/app/lib/@frontend/ui";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
