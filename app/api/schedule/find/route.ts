@@ -8,5 +8,5 @@ export async function GET(request: Request) {
 
   const schedules = await findManyPendingScheduleBySerial(serial)
 
-  return Response.json({ schedules })
+  return Response.json(schedules)
 }
