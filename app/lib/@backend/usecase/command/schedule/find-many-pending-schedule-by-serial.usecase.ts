@@ -44,7 +44,7 @@ class FindManyPendingScheduleBySerialUsecase {
       {
         $match: {
           "device.serial": serial,
-          pending: false
+          pending: true
         }
       },
       {
