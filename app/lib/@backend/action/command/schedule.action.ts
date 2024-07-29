@@ -9,7 +9,8 @@ import {
   updateOneScheduleUsecase,
   findAllScheduleUsecase,
   createManyScheduleUsecase,
-  findManyPendingScheduleBySerialUsecase
+  findManyPendingScheduleBySerialUsecase,
+  updateManyScheduleUsecase
 } from "../../usecase"
 
 export async function createOneSchedule(schedule: Omit<ISchedule, "id" | "created_at">) {
@@ -31,6 +32,14 @@ export async function updateOneScheduleById(
   value: Omit<ISchedule, "id" | "created_at">,
 ) {
   await updateOneScheduleUsecase.execute(query, value)
+  revalidatePath('/schedule/management')
+}
+
+export async function updateManyScheduleById(
+  query: { id: string[] },
+  value: Omit<ISchedule, "id" | "created_at">,
+) {
+  await updateManyScheduleUsecase.execute(query, value)
   revalidatePath('/schedule/management')
 }
 
