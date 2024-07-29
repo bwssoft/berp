@@ -166,7 +166,7 @@ export function useScheduleCreateForm() {
         variant: "success",
       });
     } catch (e) {
-      console.log(e)
+      console.error(e)
       toast({
         title: "Erro!",
         description: "Falha ao registrar o agendamento!",

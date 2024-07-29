@@ -50,8 +50,7 @@ export function useClientOpportunityUpdateForm(props: Props) {
       expected_closure_date: defaultValues.expected_closure_date.toISOString().split("T")[0],
     }
   });
-  console.log(defaultValues.initial_supply_date,
-    defaultValues.expected_closure_date)
+
   const { fields: productsOnForm, append, remove } = useFieldArray({
     control,
     name: "products",
@@ -60,12 +59,9 @@ export function useClientOpportunityUpdateForm(props: Props) {
   const handleAppendProduct = append
   const handleRemoveProduct = remove
 
-  useEffect(() => console.log(errors), [errors])
-
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
-      console.log(data)
       await updateOneClientOpportunityById({ id: defaultValues.id! }, { ...data, initial_supply_date: new Date(data.initial_supply_date), expected_closure_date: new Date(data.expected_closure_date) });
       toast({
         title: "Sucesso!",

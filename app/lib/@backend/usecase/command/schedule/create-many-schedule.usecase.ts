@@ -14,7 +14,6 @@ class CreateManyScheduleUsecase {
       created_at: new Date(),
       id: crypto.randomUUID()
     }))
-    console.log('_schedules', _schedules)
     return await this.repository.createMany(_schedules)
   }
 }

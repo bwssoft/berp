@@ -48,7 +48,7 @@ export function useCommandUpdateForm(props: Props) {
         variant: "success",
       });
     } catch (e) {
-      console.log(e)
+      console.error(e)
       toast({
         title: "Erro!",
         description: "Falha ao atualizar o comando!",
@@ -77,11 +77,6 @@ export function useCommandUpdateForm(props: Props) {
   };
 
   const commandPreview = replaceVariables(watchedData, variables)
-
-  useEffect(() => {
-    console.log('errors', errors)
-  }, [errors])
-
 
   return {
     register,

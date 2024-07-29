@@ -49,12 +49,9 @@ export function useClientOpportunityCreateForm() {
   const handleAppendProduct = append
   const handleRemoveProduct = remove
 
-  useEffect(() => console.log(errors), [errors])
-
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
-      console.log(data)
       await createOneClientOpportunity(data);
       toast({
         title: "Sucesso!",

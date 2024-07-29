@@ -43,7 +43,7 @@ export function useCommandCreateForm() {
       });
       hookFormReset({ data: "", name: "", description: "", variables: {} })
     } catch (e) {
-      console.log(e)
+      console.error(e)
       toast({
         title: "Erro!",
         description: "Falha ao registrar o firmware!",

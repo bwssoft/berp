@@ -41,7 +41,7 @@ export function useFirmwareCreateForm() {
         variant: "success",
       });
     } catch (e) {
-      console.log(e)
+      console.error(e)
       toast({
         title: "Erro!",
         description: "Falha ao registrar o firmware!",
@@ -49,11 +49,6 @@ export function useFirmwareCreateForm() {
       });
     }
   });
-
-  useEffect(() => {
-    console.log('errors', errors)
-  }, [errors])
-
 
   return {
     register,

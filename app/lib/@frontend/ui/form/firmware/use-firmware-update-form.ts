@@ -51,7 +51,7 @@ export function useFirmwareUpdateForm(props: Props) {
         variant: "success",
       });
     } catch (e) {
-      console.log(e)
+      console.error(e)
       toast({
         title: "Erro!",
         description: "Falha ao atualizar o firmware!",
@@ -59,11 +59,6 @@ export function useFirmwareUpdateForm(props: Props) {
       });
     }
   });
-
-  useEffect(() => {
-    console.log('errors', errors)
-  }, [errors])
-
 
   return {
     register,
