@@ -6,6 +6,7 @@ export interface IBaseRepository<Entity extends object> {
   findOne(params: Filter<Entity>): Promise<WithId<Entity> | null>;
   findAll(): Promise<WithId<Entity>[]>;
   updateOne(query: Filter<Entity>, value: Partial<Entity>): Promise<UpdateResult<Entity>>;
+  updateMany(query: Filter<Entity>, value: Partial<Entity>): Promise<UpdateResult<Entity>>;
   deleteOne(query: Filter<Entity>): Promise<DeleteResult>;
   aggregate<T extends object>(pipeline?: object[], options?: AggregateOptions): Promise<AggregationCursor<T>>;
   getDb(): Promise<any>;

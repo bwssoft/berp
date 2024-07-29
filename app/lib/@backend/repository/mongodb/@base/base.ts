@@ -41,6 +41,11 @@ export class BaseRepository<Entity extends object> implements IBaseRepository<En
     return await db.collection<Entity>(this.collection).updateOne(query, { $set: value })
   }
 
+  async updateMany(query: Filter<Entity>, value: Partial<Entity>) {
+    const db = await this.connect();
+    return await db.collection<Entity>(this.collection).updateMany(query, { $set: value })
+  }
+
   async deleteOne(query: Filter<Entity>) {
     const db = await this.connect();
     return await db.collection<Entity>(this.collection).deleteOne(query);
