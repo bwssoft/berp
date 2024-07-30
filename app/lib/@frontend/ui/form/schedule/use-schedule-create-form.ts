@@ -1,6 +1,6 @@
 import { createManySchedule, findManyDeviceBySerial } from '@/app/lib/@backend/action';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { findByRegex, handleXlsxFile } from '@/app/lib/util';
+import { findByRegex, xlsxToJson } from '@/app/lib/util';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -63,7 +63,7 @@ export function useScheduleCreateForm() {
   const handleAppendDevice = append
   const handleRemoveDevice = remove
   const handleFile = async (fileList: File[] | null) => {
-    const devices = await handleXlsxFile<{
+    const devices = await xlsxToJson<{
       serial?: string,
     }>(fileList, handleFormatDeviceFromFile)
     devices?.forEach(device => handleAppendDevice({

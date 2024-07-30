@@ -1,17 +1,23 @@
-import { IDevice } from "@/app/lib/@backend/domain";
+import { IDevice, IProduct } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "../../../hook";
 import { deleteOneDeviceById } from "@/app/lib/@backend/action";
 
-export const columns: ColumnDef<IDevice>[] = [
+type Row = IDevice & { product: IProduct };
+
+export const columns: ColumnDef<Row>[] = [
   {
     header: "Serial",
     accessorKey: "serial",
   },
   {
     header: "Modelo",
-    accessorKey: "model",
+    accessorKey: "product",
+    cell: ({ row }) => {
+      const device = row.original;
+      return device.product.name;
+    },
   },
   {
     header: "Criado em",

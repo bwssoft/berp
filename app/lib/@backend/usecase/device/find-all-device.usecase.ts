@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IDeviceRepository } from "@/app/lib/@backend/domain"
+import { IDevice, IDeviceRepository, IProduct } from "@/app/lib/@backend/domain"
 import { deviceRepository } from "@/app/lib/@backend/repository/mongodb"
 
 class FindAllDeviceUsecase {
@@ -10,7 +10,32 @@ class FindAllDeviceUsecase {
   }
 
   async execute() {
-    return await this.repository.findAll()
+    const pipeline = this.pipeline()
+    const aggragate = await this.repository.aggregate(pipeline)
+    return await aggragate.toArray() as (IDevice & { product: IProduct })[]
+  }
+
+  pipeline() {
+    const pipeline = [
+      { $match: {} },
+      {
+        $lookup: {
+          from: "product",
+          as: "product",
+          localField: "product_id",
+          foreignField: "id",
+        }
+      },
+      {
+        $project: {
+          id: 1,
+          serial: 1,
+          created_at: 1,
+          product: { $first: "$product" },
+        }
+      },
+    ]
+    return pipeline
   }
 }
 

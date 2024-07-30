@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IDevice } from "../domain"
+import { IDevice, IProduct } from "../domain"
 import {
   createOneDeviceUsecase,
   findOneDeviceUsecase,
@@ -37,7 +37,9 @@ export async function deleteOneDeviceById(query: { id: string }) {
   revalidatePath("/device/management")
 }
 
-export async function findAllDevice(): Promise<IDevice[]> {
+export async function findAllDevice(): Promise<(IDevice & {
+  product: IProduct;
+})[]> {
   return await findAllDeviceUsecase.execute()
 }
 

@@ -1,6 +1,6 @@
 import ExcelJS from 'exceljs';
 
-export const handleXlsxFile = async <T>(files: File[] | null, callback: (arg: any) => T) => {
+export const xlsxToJson = async <T>(files: File[] | null, callback: (arg: any) => T) => {
   if (files) {
     const result: T[] = []
     for (let file of files) {

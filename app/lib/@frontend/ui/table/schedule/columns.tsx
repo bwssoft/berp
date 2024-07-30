@@ -32,7 +32,7 @@ export const columns: ColumnDef<
     accessorKey: "created_at",
     cell: ({ row }) => {
       const command = row.original;
-      return command.pending ? "Enviado" : "Pendente";
+      return command.pending ? "Pendente" : "Enviado";
     },
   },
   {

@@ -2,7 +2,7 @@ import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { createManyInput } from '@/app/lib/@backend/action';
 import { IInput } from '@/app/lib/@backend/domain';
 import { getRandomHexColor } from '@/app/lib/util/get-hex-color';
-import { handleXlsxFile } from '@/app/lib/util/handle-xlsx-file';
+import { xlsxToJson } from '@/app/lib/util';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -57,7 +57,7 @@ export function useInputCreateFromFileForm() {
   });
 
   const handleFile = async (fileList: File[] | null) => {
-    const inputs = await handleXlsxFile<{
+    const inputs = await xlsxToJson<{
       name?: string,
       price?: number,
       measure_unit?: IInput["measure_unit"]

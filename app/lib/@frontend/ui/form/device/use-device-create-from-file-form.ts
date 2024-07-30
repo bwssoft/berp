@@ -1,6 +1,6 @@
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { createManyDevice } from '@/app/lib/@backend/action';
-import { handleXlsxFile } from '@/app/lib/util/handle-xlsx-file';
+import { xlsxToJson } from '@/app/lib/util';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -59,7 +59,7 @@ export function useDeviceCreateFromFileForm(props: Props) {
   });
 
   const handleFile = async (fileList: File[] | null) => {
-    const devices = await handleXlsxFile<{
+    const devices = await xlsxToJson<{
       serial?: string,
       model?: string,
     }>(fileList, handleFormatDeviceFromFile)

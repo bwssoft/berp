@@ -1,12 +1,11 @@
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { createOneProduct } from '@/app/lib/@backend/action';
 import { IInput } from '@/app/lib/@backend/domain';
-import { handleXlsxFile } from '@/app/lib/util/handle-xlsx-file';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useEffect } from 'react';
 import { productConstants } from '@/app/lib/constant/product';
+import { xlsxToJson } from '@/app/lib/util';
 
 const schema = z.object({
   name: z.string().min(1, 'Esse campo não pode ser vazio'),
@@ -65,7 +64,7 @@ export function useProductCreateForm(props: Props) {
 
 
   const handleFile = async (fileList: File[] | null) => {
-    const _inputs = await handleXlsxFile<{
+    const _inputs = await xlsxToJson<{
       name: string,
       quantity: number,
     }>(fileList, handleFormatInputFromFile)
