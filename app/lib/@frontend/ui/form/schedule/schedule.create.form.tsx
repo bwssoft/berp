@@ -58,7 +58,7 @@ export function ScheduleCreateForm(props: Props) {
               >
                 <option>Selecione um comando</option>
                 {commands.map((i) => (
-                  <option key={i.id} value={i.id} onClick={() => alert(2)}>
+                  <option key={i.id} value={i.id}>
                     {i.name}
                   </option>
                 ))}
@@ -149,7 +149,18 @@ export function ScheduleCreateForm(props: Props) {
                 >
                   Equipamento
                 </label>
-                <select className="w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6 sm:max-w-md">
+                <select
+                  className="w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6 sm:max-w-md"
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    const selectedDevice = devices.find(
+                      (device) => device.id === selectedId
+                    );
+                    if (selectedDevice) {
+                      setValue("devices", [{ serial: selectedDevice.serial }]);
+                    }
+                  }}
+                >
                   <option>Selecione um equipamento</option>
                   {devices.map((i) => (
                     <option key={i.id} value={i.id}>
