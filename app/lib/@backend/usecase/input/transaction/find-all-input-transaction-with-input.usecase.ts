@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IInputTransactionRepository } from "@/app/lib/@backend/domain"
+import { IInput, IInputTransaction, IInputTransactionRepository } from "@/app/lib/@backend/domain"
 import { inputTransactionRepository } from "@/app/lib/@backend/repository/mongodb"
 
 class FindAllInputTransactionWithInputUsecase {
@@ -10,7 +10,42 @@ class FindAllInputTransactionWithInputUsecase {
   }
 
   async execute() {
-    return await this.repository.findAllWithInput()
+    const pipeline = this.pipeline()
+    const aggragate = await this.repository.aggregate(pipeline)
+    return await aggragate.toArray() as (IInputTransaction & { input: IInput })[]
+  }
+
+  pipeline() {
+    const pipeline = [
+      { $match: {} },
+      {
+        $lookup: {
+          as: "input",
+          from: "input",
+          localField: "input_id",
+          foreignField: "id"
+        }
+      },
+      {
+        $project: {
+          quantity: 1,
+          created_at: 1,
+          type: 1,
+          input: { $first: "$input" },
+        }
+      },
+      {
+        $match: {
+          input: { $exists: true }
+        }
+      },
+      {
+        $sort: {
+          _id: -1
+        }
+      }
+    ]
+    return pipeline
   }
 }
 
