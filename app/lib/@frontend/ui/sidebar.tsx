@@ -86,7 +86,13 @@ const navigation: NavItem[] = [
       {
         name: "Firmware",
         icon: CloudArrowUpIcon,
-        pathname: "/firmware/management",
+        children: [
+          { name: "Gestão", pathname: "/firmware/management" },
+          {
+            name: "Requisições para atualização",
+            pathname: "/firmware/request-to-update",
+          },
+        ],
       },
       {
         name: "Comandos",

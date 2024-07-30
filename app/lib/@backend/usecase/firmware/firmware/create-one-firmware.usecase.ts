@@ -1,8 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton"
 import { IFirmware, IFirmwareRepository } from "@/app/lib/@backend/domain"
 import { firmwareRepository } from "@/app/lib/@backend/repository/mongodb"
-import { IFirebaseGateway } from "../../domain/@shared/gateway/firebase.gateway.interface"
-import { firebaseGateway } from "../../gateway/firebase/firebase.gateway"
+import { IFirebaseGateway } from "../../../domain/@shared/gateway/firebase.gateway.interface"
+import { firebaseGateway } from "../../../gateway/firebase/firebase.gateway"
 
 class CreateOneFirmwareUsecase {
   repository: IFirmwareRepository
