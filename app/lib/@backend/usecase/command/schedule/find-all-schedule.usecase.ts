@@ -17,7 +17,6 @@ class FindAllScheduleUsecase {
 
   pipeline() {
     const pipeline = [
-      { $match: {} },
       {
         $lookup: {
           from: "device",
@@ -43,6 +42,13 @@ class FindAllScheduleUsecase {
         }
       },
       {
+        $match: {
+          device: { $not: { $size: 0 } },
+          firmware: { $not: { $size: 0 } },
+          command: { $not: { $size: 0 } },
+        }
+      },
+      {
         $project: {
           device: { $first: "$device" },
           firmware: { $first: "$firmware" },
@@ -52,6 +58,11 @@ class FindAllScheduleUsecase {
           data: 1,
           pending: 1,
           request_timestamp: 1,
+        }
+      },
+      {
+        $sort: {
+          _id: -1
         }
       }
     ]

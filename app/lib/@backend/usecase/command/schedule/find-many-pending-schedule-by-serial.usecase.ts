@@ -59,6 +59,11 @@ class FindManyPendingScheduleBySerialUsecase {
           request_timestamp: 1,
         }
       },
+      {
+        $sort: {
+          _id: -1
+        }
+      }
     ]
     return pipeline
   }

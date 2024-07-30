@@ -34,6 +34,11 @@ class FindAllDeviceUsecase {
           product: { $first: "$product" },
         }
       },
+      {
+        $sort: {
+          _id: -1
+        }
+      }
     ]
     return pipeline
   }

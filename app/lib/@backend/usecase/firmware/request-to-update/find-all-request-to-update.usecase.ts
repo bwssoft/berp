@@ -46,6 +46,11 @@ class FindAllRequestToUpdateUsecase {
           created_at: 1,
           id: 1
         }
+      },
+      {
+        $sort: {
+          _id: -1
+        }
       }
     ]
     return pipeline
