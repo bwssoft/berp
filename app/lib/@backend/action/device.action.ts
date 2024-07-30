@@ -16,11 +16,13 @@ import {
 export async function createOneDevice(device: Omit<IDevice, "id" | "created_at">) {
   await createOneDeviceUsecase.execute(device)
   revalidatePath("/device/management")
+  revalidatePath('/command/schedule')
 }
 
 export async function createManyDevice(device: (Omit<IDevice, "id" | "created_at">)[]) {
   await createManyDeviceUsecase.execute(device)
   revalidatePath("/device/management")
+  revalidatePath('/command/schedule')
 }
 
 export async function findOneDevice(device: Partial<IDevice>) {
@@ -30,11 +32,13 @@ export async function findOneDevice(device: Partial<IDevice>) {
 export async function updateOneDeviceById(query: { id: string }, value: Omit<IDevice, "id" | "created_at">) {
   await updateOneDeviceUsecase.execute(query, value)
   revalidatePath("/device/management")
+  revalidatePath('/command/schedule')
 }
 
 export async function deleteOneDeviceById(query: { id: string }) {
   await deleteOneDeviceUsecase.execute(query)
   revalidatePath("/device/management")
+  revalidatePath('/command/schedule')
 }
 
 export async function findAllDevice(): Promise<(IDevice & {
