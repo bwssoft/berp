@@ -8,6 +8,7 @@ export async function createOneInput(input: Omit<IInput
   , "id" | "created_at">) {
   await createOneInputUsecase.execute(input)
   revalidatePath("/input/management")
+  revalidatePath('/product/management')
   return input
 }
 
@@ -15,6 +16,7 @@ export async function createManyInput(input: Omit<IInput
   , "id" | "created_at">[]) {
   await createManyInputUsecase.execute(input)
   revalidatePath("/input/management")
+  revalidatePath('/product/management')
   return input
 }
 
@@ -25,11 +27,13 @@ export async function findOneInput(input: Partial<IInput>) {
 export async function updateOneInputById(query: { id: string }, value: Omit<IInput, "id" | "created_at">) {
   await updateOneInputUsecase.execute(query, value)
   revalidatePath("/input/management")
+  revalidatePath('/product/management')
 }
 
 export async function deleteOneInputById(query: { id: string }) {
   await deleteOneInputUsecase.execute(query)
   revalidatePath("/input/management")
+  revalidatePath('/product/management')
 }
 
 export async function findAllInput(): Promise<IInput[]> {
