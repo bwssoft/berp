@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { productConstants } from '@/app/lib/constant/product';
-import { xlsxToJson } from '@/app/lib/util';
+import { createExcelTemplate, xlsxToJson } from '@/app/lib/util';
 
 const schema = z.object({
   name: z.string().min(1, 'Esse campo não pode ser vazio'),
@@ -85,6 +85,23 @@ export function useProductCreateForm(props: Props) {
     }
   }
 
+
+  const createFileModel = async () => {
+    const buffer = await createExcelTemplate([{ header: "Insumos", options: ["insumo1", 'insumo2'] }])
+    // Cria um Blob e faz o download do arquivo no navegador
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+
+    // Cria um link e clica nele para iniciar o download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'template.xlsx';
+    a.click();
+
+    // Libera o objeto URL após o download
+    URL.revokeObjectURL(url);
+  }
+
   //iteração para agregar os dados dos insumos dobanco de dados com os dados do formulário
   const inputsMerged = (watch("inputs") ?? [])
     .filter((el) => {
@@ -161,6 +178,7 @@ export function useProductCreateForm(props: Props) {
       stats,
       merged: inputsMerged,
       averageCost
-    }
+    },
+    createFileModel
   };
 }

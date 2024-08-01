@@ -9,16 +9,22 @@ export const createExcelTemplate = async (columns: ColumnOption[]): Promise<Exce
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Planilha 1');
 
+  // Define o cabeçalho na primeira linha
   columns.forEach((col, index) => {
-    worksheet.getCell(1, index + 1).value = col.header;
+    const columnIndex = index + 1;
+    worksheet.getCell(1, columnIndex).value = col.header;
 
+    // Aplica validação de dados para todas as linhas possíveis
     if (col.options) {
-      worksheet.getColumn(index + 1).eachCell((cell, rowNumber) => {
-        if (rowNumber !== 1) { // Ignora a primeira linha (cabeçalho)
+      const columnLetter = worksheet.getColumn(columnIndex).letter; // Obtém a letra da coluna
+      const range = `${columnLetter}2:${columnLetter}1048576`; // Definindo validação para todas as linhas até o limite
+
+      worksheet.getColumn(columnIndex).eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+        if (rowNumber > 1) { // Aplica a partir da segunda linha
           cell.dataValidation = {
             type: 'list',
             allowBlank: true,
-            formulae: col.options ? [col.options.join(",")] : []
+            formulae: col?.options ? [`"${col?.options.join(",")}"`] : []
           };
         }
       });
@@ -26,5 +32,5 @@ export const createExcelTemplate = async (columns: ColumnOption[]): Promise<Exce
   });
 
   const buffer = await workbook.xlsx.writeBuffer();
-  return buffer
+  return buffer;
 };

@@ -21,6 +21,7 @@ export function ProductCreateForm(props: Props) {
     handleRemoveInput,
     handleFile,
     insights,
+    createFileModel,
   } = useProductCreateForm({ inputs });
   const { merged, stats, totalCost, averageCost } = insights;
   return (
