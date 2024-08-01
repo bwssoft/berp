@@ -1,10 +1,37 @@
 export interface IInput {
   id: string
+
   name: string
-  description?: string
-  measure_unit: 'cm' | 'm' | 'kg' | 'g' | 'ml' | 'l' | 'un'
-  files?: string[]
-  created_at: Date
+  measure_unit: MeasureUnit
   color: string
-  price: number
+
+  files?: string[]
+  description?: string
+  price?: number
+
+  category: Category
+  code: number
+
+  created_at: Date
+
+  manufacturer: Manufacturer[]
 }
+
+type Manufacturer = {
+  code: string
+  name: string
+}
+
+type Category =
+  'mdm' |
+  'ids' |
+  'cis' |
+  'com' |
+  'pcb' |
+  'bat' |
+  'cht' |
+  'cas' |
+  'ant' |
+  'dis'
+
+type MeasureUnit = 'cm' | 'm' | 'kg' | 'g' | 'ml' | 'l' | 'un'

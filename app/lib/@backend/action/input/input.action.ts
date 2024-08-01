@@ -5,7 +5,7 @@ import { createManyInputUsecase, createOneInputUsecase, deleteOneInputUsecase, f
 import { revalidatePath } from "next/cache"
 
 export async function createOneInput(input: Omit<IInput
-  , "id" | "created_at">) {
+  , "id" | "created_at" | "code">) {
   await createOneInputUsecase.execute(input)
   revalidatePath("/input/management")
   revalidatePath('/product/management')
@@ -13,7 +13,7 @@ export async function createOneInput(input: Omit<IInput
 }
 
 export async function createManyInput(input: Omit<IInput
-  , "id" | "created_at">[]) {
+  , "id" | "created_at" | "code">[]) {
   await createManyInputUsecase.execute(input)
   revalidatePath("/input/management")
   revalidatePath('/product/management')
@@ -24,7 +24,7 @@ export async function findOneInput(input: Partial<IInput>) {
   return await findOneInputUsecase.execute(input)
 }
 
-export async function updateOneInputById(query: { id: string }, value: Omit<IInput, "id" | "created_at">) {
+export async function updateOneInputById(query: { id: string }, value: Omit<IInput, "id" | "created_at" | "code">) {
   await updateOneInputUsecase.execute(query, value)
   revalidatePath("/input/management")
   revalidatePath('/product/management')

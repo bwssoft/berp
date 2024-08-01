@@ -5,6 +5,16 @@ import Link from "next/link";
 import { toast } from "../../../hook";
 
 export const columns: ColumnDef<IInput>[] = [
+  {
+    header: "Código",
+    accessorKey: "code",
+    cell: ({ row }) => {
+      const input = row.original;
+      return `${input.category.toUpperCase()}${input.code
+        .toString()
+        .padStart(3, "0")}`;
+    },
+  },
   { header: "Nome", accessorKey: "name" },
   {
     header: "Unidade de medida",
@@ -14,8 +24,8 @@ export const columns: ColumnDef<IInput>[] = [
     header: "Criado em",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const iput = row.original;
-      return iput.created_at.toLocaleString();
+      const input = row.original;
+      return input.created_at.toLocaleString();
     },
   },
   {

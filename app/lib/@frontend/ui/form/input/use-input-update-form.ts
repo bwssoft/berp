@@ -2,16 +2,21 @@ import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { updateOneInputById } from '@/app/lib/@backend/action';
 import { IInput } from '@/app/lib/@backend/domain';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const schema = z.object({
   name: z.string().min(1, 'Esse campo não pode ser vazio'),
-  description: z.string().min(1, 'Esse campo não pode ser vazio'),
   measure_unit: z.enum(["cm", "m", "kg", "g", "ml", "l", "un"]),
+  category: z.enum(["mdm", "ids", "cis", "com", "pcb", "bat", "cht", "cas", "ant", "dis",]),
   files: z.any(),
   color: z.string(),
-  price: z.coerce.number().positive().gt(0),
+  description: z.string().optional(),
+  price: z.coerce.number().optional().refine(number => number ? number >= 0 : true),
+  manufacturer: z.array(z.object({
+    code: z.string(),
+    name: z.string(),
+  }))
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -28,11 +33,18 @@ export function useInputUpdateForm(props: Props) {
     control,
     setValue,
     reset: hookFormReset,
-
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues
   });
+
+  const { fields: manufacturer, append, remove } = useFieldArray({
+    control,
+    name: "manufacturer",
+  });
+
+  const handleAppedManufacturer = append
+  const handleRemoveManufacturer = remove
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
@@ -51,6 +63,7 @@ export function useInputUpdateForm(props: Props) {
       });
     }
   });
+  console.log('errors', errors)
 
   return {
     register,
@@ -58,6 +71,9 @@ export function useInputUpdateForm(props: Props) {
     errors,
     control,
     setValue,
+    manufacturer,
+    handleAppedManufacturer,
+    handleRemoveManufacturer,
     reset: hookFormReset,
   };
 }

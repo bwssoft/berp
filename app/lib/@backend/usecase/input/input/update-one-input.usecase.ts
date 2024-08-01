@@ -9,7 +9,7 @@ class UpdateOneInputUsecase {
     this.repository = inputRepository
   }
 
-  async execute(query: { id: string }, value: Omit<IInput, "id" | "created_at">) {
+  async execute(query: { id: string }, value: Omit<IInput, "id" | "created_at" | "code">) {
     return await this.repository.updateOne(query, value)
   }
 }

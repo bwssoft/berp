@@ -3,6 +3,7 @@ import { Button } from "../../button";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { IProduct } from "@/app/lib/@backend/domain";
 import { useProductionOrderCreateForm } from "./use-production-order-create-form";
+import { productionOrderConstants } from "@/app/lib/constant";
 
 export const InputFormSelectPriorityData = [
   { name: "Alta", value: "high" },
@@ -101,11 +102,13 @@ export function ProductionOrderCreateForm(props: Props) {
                 {...register("priority")}
               >
                 <option>Selecione uma opção</option>
-                {InputFormSelectPriorityData.map((p) => (
-                  <option key={p.value} value={p.value}>
-                    {p.name}
-                  </option>
-                ))}
+                {Object.entries(productionOrderConstants.priority).map(
+                  ([key, value]) => (
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
+                  )
+                )}
               </select>
             </div>
 
