@@ -3,11 +3,11 @@ import { createOneFirmware } from '@/app/lib/@backend/action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useEffect } from 'react';
 
 const schema = z.object({
-  name: z.string(),
-  version: z.string(),
+  name: z.string().min(1, "Campo obrigatório."),
+  name_in_device: z.string().min(1, "Campo obrigatório."),
+  version: z.string().min(1, "Campo obrigatório."),
   description: z.string().min(1, 'Esse campo não pode ser vazio'),
   file: z
     .any()

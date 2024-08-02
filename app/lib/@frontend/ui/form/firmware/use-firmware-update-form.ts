@@ -3,16 +3,16 @@ import { updateOneFirmwareById } from '@/app/lib/@backend/action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useEffect } from 'react';
 import { IFirmware } from '@/app/lib/@backend/domain';
 
 const schema = z.object({
-  name: z.string(),
-  version: z.string(),
-  description: z.string().min(1, 'Esse campo não pode ser vazio'),
+  name: z.string().min(1, "Campo obrigatório"),
+  name_in_device: z.string().min(1, "Campo obrigatório"),
+  version: z.string().min(1, "Campo obrigatório"),
+  description: z.string(),
   file: z
     .any()
-    .refine((file) => file instanceof File, "Arquivo inválido")
+    .refine((file) => file ? file instanceof File : true, "Arquivo inválido")
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -40,7 +40,10 @@ export function useFirmwareUpdateForm(props: Props) {
       //fazer a request
       const { file: newFile, ...valuetoUpdate } = data
       const formData = new FormData()
-      formData.append("file", newFile)
+
+      if (newFile) {
+        formData.append("file", newFile)
+      }
 
       const firmware = Object.assign(valuetoUpdate, { file: oldFile })
 
