@@ -74,8 +74,8 @@ export function useProductUpdateForm(props: Props) {
         input: input!,
         color: input!.color,
         name: input!.name,
-        price: input!.price,
-        total: i.quantity * input!.price,
+        price: input?.price ?? 0,
+        total: i.quantity * (input?.price ?? 0),
         quantity: i.quantity,
       };
     });

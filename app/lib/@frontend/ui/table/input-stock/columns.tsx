@@ -26,7 +26,7 @@ export const columns: ColumnDef<{
       const stock = row.original;
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-          R$ {stock.input.price.toFixed(2)}
+          R$ {stock.input?.price?.toFixed(2) ?? 0}
         </td>
       );
     },
