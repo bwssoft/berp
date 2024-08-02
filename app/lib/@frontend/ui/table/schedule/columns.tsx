@@ -24,7 +24,7 @@ export const columns: ColumnDef<
     accessorKey: "command",
     cell: ({ row }) => {
       const schedule = row.original;
-      return schedule.data;
+      return schedule.command.name;
     },
   },
   {
@@ -49,7 +49,7 @@ export const columns: ColumnDef<
     cell: ({ row }) => {
       const schedule = row.original;
       return schedule.request_timestamp
-        ? new Date(schedule.request_timestamp)
+        ? new Date(schedule.request_timestamp).toLocaleString()
         : "--";
     },
   },
