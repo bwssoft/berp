@@ -29,18 +29,28 @@ export const columns: ColumnDef<
   },
   {
     header: "Enviado",
-    accessorKey: "created_at",
+    accessorKey: "pending",
     cell: ({ row }) => {
-      const command = row.original;
-      return command.pending ? "Pendente" : "Enviado";
+      const schedule = row.original;
+      return schedule.pending ? "Pendente" : "Enviado";
     },
   },
   {
-    header: "Criado em",
+    header: "Tempo de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const command = row.original;
-      return command.created_at.toLocaleString();
+      const schedule = row.original;
+      return schedule.created_at.toLocaleString();
+    },
+  },
+  {
+    header: "Tempo de execução",
+    accessorKey: "request_timestamp",
+    cell: ({ row }) => {
+      const schedule = row.original;
+      return schedule.request_timestamp
+        ? new Date(schedule.request_timestamp)
+        : "--";
     },
   },
   {

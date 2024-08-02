@@ -46,6 +46,20 @@ export class BaseRepository<Entity extends object> implements IBaseRepository<En
     return await db.collection<Entity>(this.collection).updateMany(query, { $set: value })
   }
 
+  async updateBulk(operations: { query: Filter<Entity>, value: Partial<Entity> }[]) {
+    const _operations = operations.map(operation => {
+      const { query, value } = operation
+      return {
+        updateMany: {
+          filter: query,
+          update: { $set: value }
+        }
+      }
+    })
+    const db = await this.connect();
+    return await db.collection<Entity>(this.collection).bulkWrite(_operations)
+  }
+
   async deleteOne(query: Filter<Entity>) {
     const db = await this.connect();
     return await db.collection<Entity>(this.collection).deleteOne(query);

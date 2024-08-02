@@ -1,19 +1,14 @@
-import { updateManyScheduleById } from "@/app/lib/@backend/action"
+import { updateBulkSchedule } from "@/app/lib/@backend/action"
 
 export async function PATCH(request: Request) {
-  const { query, value } = await request.json()
+  const { operations } = await request.json()
 
-  if (!("id" in query)) return new Response(
-    "No 'id' on query",
+  if (!operations || !operations.length) return new Response(
+    "No 'operations' on query",
     { status: 400 }
   )
 
-  if (!("pending" in value)) return new Response(
-    "No 'pending' on value",
-    { status: 400 }
-  )
-
-  await updateManyScheduleById(query, value)
+  await updateBulkSchedule(operations)
 
   return Response.json({ ok: true })
 }
