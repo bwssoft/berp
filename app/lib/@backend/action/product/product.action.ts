@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache"
 
 export async function createOneProduct(args: Omit<IProduct, "id" | "created_at">) {
   const product = await createOneProductUsecase.execute(args)
-  revalidatePath("/product/management")
+  revalidatePath("/product")
   return product
 }
 
@@ -16,12 +16,12 @@ export async function findOneProduct(input: Partial<IProduct>) {
 
 export async function updateOneProductById(query: { id: string }, value: Omit<IProduct, "id" | "created_at">) {
   await updateOneProductUsecase.execute(query, value)
-  revalidatePath("/product/management")
+  revalidatePath("/product")
 }
 
 export async function deleteOneProductById(query: { id: string }) {
   await deleteOneProductUsecase.execute(query)
-  revalidatePath("/product/management")
+  revalidatePath("/product")
 }
 
 export async function findAllProduct(): Promise<IProduct[]> {
