@@ -56,4 +56,15 @@ export interface IClient {
     "support"
   }[]
   created_at: Date
+  omie_metadata: {
+    [key in OmieEnterprise]: string
+  }
+}
+
+enum OmieEnterprise {
+  MGC = "MGC",
+  BWS = "BWS",
+  ICB = "ICB",
+  ICBFILIAL = "ICBFILIAL",
+  WFC = "WFC",
 }
