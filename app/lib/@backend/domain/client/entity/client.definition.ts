@@ -24,7 +24,7 @@ export interface IClient {
   "patrimonial_security" |
   "carrier" |
   "other"
-  document: string
+  document: { type: "CPF" | "CNPJ", value: string }
   state_registration: string;
   municipal_registration: string;
   billing_address: {
