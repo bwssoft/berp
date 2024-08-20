@@ -56,12 +56,13 @@ export interface IClient {
     "support"
   }[]
   created_at: Date
-  omie_metadata: {
-    [key in OmieEnterprise]: string
-  }
+  omie_code_metadata: {
+    enterprise: keyof OmieEnterprise
+    code: string
+  }[]
 }
 
-enum OmieEnterprise {
+export enum OmieEnterprise {
   MGC = "MGC",
   BWS = "BWS",
   ICB = "ICB",
