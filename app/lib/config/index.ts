@@ -22,7 +22,8 @@ export const config = EnviromentsSchema.parse({
     (process.env.FIREBASE_CONFIG &&
       JSON.parse(process.env.FIREBASE_CONFIG as string)) ||
     "",
-  MONGO_URI: process.env.MONGO_URI || "",
+  MONGO_URI: process.env.MONGODB_URI || "",
+  OMIE_URL: process.env.NEXT_PUBLIC_OMIE_URL,
   OMIE_SECRETS: {
     MGC: {
       key: process.env.OMIE_MGC_API_KEY,
