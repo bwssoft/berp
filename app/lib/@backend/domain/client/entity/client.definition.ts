@@ -56,7 +56,7 @@ export interface IClient {
     "support"
   }[]
   created_at: Date
-  omie_code_metadata: {
+  omie_code_metadata?: {
     enterprise: keyof OmieEnterprise
     code: string
   }[]
