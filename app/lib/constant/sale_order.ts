@@ -2,7 +2,7 @@ import { ISaleOrder } from "../@backend/domain";
 import {
   OmieSaleOrderStage,
   OmieSaleOrderStageDescription,
-} from "../@backend/domain/@shared/gateway/omie/omie-sale-order.gateway.interface";
+} from "../@backend/domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
 
 //objeto para mapear o titulo dos cards nos insights dos forms de produto
 type StageOmieMapped = Record<

@@ -7,7 +7,7 @@ import {
   OmieEnterpriseEnum,
 } from "../../domain/@shared/gateway/omie/omie.gateway.interface";
 
-export class OmieBaseService {
+export class OmieGateway {
   private _apiSecret: string = "";
   private _apiKey: string = "";
   private _baseUrl: string;
