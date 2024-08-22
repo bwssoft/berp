@@ -18,7 +18,8 @@ export async function POST(request: Request) {
     const body =
       (await request.json()) as OmieSaleOrderEvents[keyof OmieSaleOrderEvents];
 
-    const { idCliente, idPedido, valorPedido, etapa } = body.event;
+    const { idCliente, idPedido, valorPedido, etapa, numeroPedido } =
+      body.event;
 
     const enterpriseHashMapped = appHashsMapping[body.appHash];
 
@@ -60,32 +61,30 @@ export async function POST(request: Request) {
 
     const attachments = attachmentsData.listaAnexos;
 
-    const mongoSaleOrder: ISaleOrder = {
+    const mongoSaleOrder: Omit<ISaleOrder, "id" | "created_at"> = {
       client_id: databaseClient.id,
       products: databaseProducts.map(({ id, omie_code_metadata }) => ({
         product_id: id,
         quantity: productsMapped.find(
           (item) => item.id === omie_code_metadata?.[enterpriseHashMapped]
-        ).quantity,
+        )!.quantity,
       })),
       omie_webhook_metadata: {
         client_id: idCliente.toString(),
+        order_id: idPedido.toString(),
+        order_number: numeroPedido.toString(),
         value: valorPedido,
         files: attachments.map(({ cNomeArquivo, cTabela, nId, nIdAnexo }) => ({
           file_name: cNomeArquivo,
           domain: cTabela,
           order_id: nId,
-          attachment_id: nIdAnexo,
+          attachment_id: nIdAnexo.toString(),
         })),
         stage: saleOrderConstants.stageOmieMapped[etapa],
       },
     };
 
-    console.log({ mongoSaleOrder });
-
     await createOneSaleOrderUsecase.execute(mongoSaleOrder);
-
-    console.log({ databaseProducts, databaseClient });
   } catch (error) {
     console.error(error);
   }

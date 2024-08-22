@@ -1,4 +1,5 @@
 import { singleton } from "@/app/lib/util";
+import { IOmieAttachment } from "./@dto";
 import { OmieGateway } from "./omie.gateway";
 
 class AttachmentOmieGateway extends OmieGateway {
@@ -8,7 +9,10 @@ class AttachmentOmieGateway extends OmieGateway {
       cTabela: "pedido-venda",
     });
 
-    const response = await this._httpProvider.post<any>("/geral/anexo/", data);
+    const response = await this._httpProvider.post<IOmieAttachment>(
+      "/geral/anexo/",
+      data
+    );
 
     return response.data;
   }

@@ -1,4 +1,5 @@
 import { singleton } from "@/app/lib/util";
+import { IOmieSaleOrder } from "./@dto";
 import { OmieGateway } from "./omie.gateway";
 
 class SaleOrderOmieGateway extends OmieGateway {
@@ -7,7 +8,7 @@ class SaleOrderOmieGateway extends OmieGateway {
       codigo_pedido,
     });
 
-    const response = await this._httpProvider.post<any>(
+    const response = await this._httpProvider.post<IOmieSaleOrder>(
       "/produtos/pedido/",
       data
     );
