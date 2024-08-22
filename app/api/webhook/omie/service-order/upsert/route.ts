@@ -1,5 +1,8 @@
 import { OmieSaleOrderEvents } from "@/app/lib/@backend/domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
-import { createSaleOrderFromWebhook } from "@/app/lib/@backend/usecase/sale-order/webhook/create-sale-order-from-webhook.usecase";
+import {
+  createSaleOrderFromWebhook,
+  deleteSaleOrderFromWebhook,
+} from "@/app/lib/@backend/usecase/sale-order/webhook";
 
 export async function POST(request: Request) {
   try {
@@ -22,6 +25,17 @@ export async function POST(request: Request) {
           status: 400,
         });
       }
+    }
+
+    if (body.topic === "VendaProduto.Excluida") {
+      await deleteSaleOrderFromWebhook.execute({
+        body,
+      });
+
+      return new Response("Deleted sale order successfully", {
+        status: 201,
+        statusText: "Sale order deleted successfully",
+      });
     }
   } catch (error) {
     console.error(error);
