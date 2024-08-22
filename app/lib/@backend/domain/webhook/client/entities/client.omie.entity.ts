@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const ClientOmieSchema = z.object({
     bairro: z.string(),
-    bloqueado: z.enum(["N", "S"]),
+    bloqueado: z.enum(["N", "S", ""]),
     bloquear_faturamento: z.enum([""]).optional(),
     cep: z.string(),
     cidade: z.string(),
@@ -39,15 +39,15 @@ export const ClientOmieSchema = z.object({
     nome_fantasia: z.string(),
     obs_detalhadas: z.string().optional(),
     observacao: z.string().optional(),
-    optante_simples_nacional: z.enum(["N", "S"]),
-    pessoa_fisica: z.enum(["N", "S"]),
+    optante_simples_nacional: z.enum(["N", "S", ""]),
+    pessoa_fisica: z.enum(["N", "S", ""]),
     produtor_rural: z.string().optional(),
     razao_social: z.string(),
     recomendacao_atraso: z.string().optional(),
     recomendacoes: z.object({
         codigo_vendedor: z.number(),
         email_fatura: z.string().optional(),
-        gerar_boletos: z.enum(["N", "S"]),
+        gerar_boletos: z.enum(["N", "S", ""]),
         numero_parcelas: z.string().optional(),
     }),
     tags: z.array(z.any()),

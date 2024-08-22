@@ -1,5 +1,9 @@
-export async function POST(request: Request) {
-  // 1. identificar o tipo do evento
+import { ClientController } from "@/app/lib/@backend/usecase/webhook/client/controller/client.controller";
 
-  { omie_enterprise: { BWS: "123" } }
+export async function POST(request: Request) {
+  const data = await request.json();
+  const clientController = new ClientController();
+  await clientController.execute(data);
+
+  return Response.json({ message: "Recived message with success!" })
 }

@@ -17,12 +17,13 @@ export class ClientController implements IClientController {
     const topicEvent = data.topic;
     const objectEvent = await ClientOmieSchema.safeParseAsync(data.event);
     if(!objectEvent.success) {
+      console.log(objectEvent.error);
       throw new Error("Formato do objeto inválido.");
     }
 
     const keyClientFacade = this.getUseCase(topicEvent);
     const useCase = this.ClientFacade[keyClientFacade];
-    await useCase.execute(objectEvent as never);
+    await useCase.execute(data as never);
   }
 
   private getUseCase(data: EventsTopics) {

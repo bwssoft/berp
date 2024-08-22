@@ -21,7 +21,7 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
   "created_at": () => new Date(),
   corporate_name: (data) => data.event.nome_fantasia,
   omie_code_metadata: (data) => {
-    const enterprise = OmieEnterpriseKeyConstants[data.appKey];
+    const enterprise = OmieEnterpriseKeyConstants[data.appHash];
     return [{
       enterprise,
       code: data.event.codigo_cliente_omie

@@ -6,7 +6,9 @@ import { UpdateClientUseCase } from "../usecases/update.client.usecase";
 export class ClientFacade {
   public static create(): IClientFacade {
     const converterObjectUseCase = new ConverterObjectUseCase();
-    const createClientUseCase = new CreateClientUseCase();
+    const createClientUseCase = new CreateClientUseCase(
+      converterObjectUseCase
+    );
     const updateClientUseCase = new UpdateClientUseCase();
 
     const facade: IClientFacade = {
