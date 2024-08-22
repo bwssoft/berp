@@ -1,24 +1,24 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IProduct, IProductRepository } from "@/app/lib/@backend/domain"
-import { productRepository } from "@/app/lib/@backend/repository/mongodb"
-import { Filter } from "mongodb"
+import { IProduct, IProductRepository } from "@/app/lib/@backend/domain";
+import { productRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { Filter } from "mongodb";
 
 class FindManyProductUsecase {
-  repository: IProductRepository
+  repository: IProductRepository;
 
   constructor() {
-    this.repository = productRepository
+    this.repository = productRepository;
   }
 
-  async execute(input: Partial<IProduct>) {
-    const pipeline = this.pipeline(input)
-    const aggregate = await this.repository.aggregate(pipeline)
-    return await aggregate.toArray() as IProduct[]
+  async execute(input: Filter<IProduct>) {
+    const pipeline = this.pipeline(input);
+    const aggregate = await this.repository.aggregate(pipeline);
+    return (await aggregate.toArray()) as IProduct[];
   }
 
   pipeline(input: Filter<IProduct>) {
-    return [{ $match: input }]
+    return [{ $match: input }];
   }
 }
 
-export const findManyProductUsecase = singleton(FindManyProductUsecase)
+export const findManyProductUsecase = singleton(FindManyProductUsecase);
