@@ -20,4 +20,14 @@ export namespace IConverterObjectUsecase {
 
     export type Result = IClient
   }
+
+  export namespace MergeProps {
+    export type Params = {
+      excludeProps?: Array<keyof IClient>,
+      entity: IClient
+      currentObject: IClient
+    }
+
+    export type Result = IClient
+  }
 }

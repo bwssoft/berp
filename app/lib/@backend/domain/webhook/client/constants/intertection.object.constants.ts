@@ -22,10 +22,9 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
   corporate_name: (data) => data.event.nome_fantasia,
   omie_code_metadata: (data) => {
     const enterprise = OmieEnterpriseKeyConstants[data.appHash];
-    return [{
-      enterprise,
-      code: data.event.codigo_cliente_omie
-    }]
+    return {
+      [enterprise]: data.event.codigo_cliente_omie
+    }
   },
   state_registration: (data) => data.event.inscricao_estadual,
   municipal_registration: (data) => data.event.inscricao_municipal,
@@ -39,11 +38,36 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
     }
   },
   contacts: (data) => {
-    return [{
-      phone: data.event.telefone1_numero,
-      name: data.event.contato,
-      role: "owner",
-      department: "owner"
-    }]
+    const contacts: IClient['contacts'] = [];
+
+    if(data.event.telefone1_ddd && data.event.telefone1_numero) {
+      contacts.push({
+        phone: `${data.event.telefone1_ddd}${data.event.telefone1_numero}`,
+        name: data.event.contato,
+        role: "owner",
+        department: "owner"
+      })
+    }
+
+    
+
+    if(data.event.telefone2_ddd && data.event.telefone2_numero) {
+      const isEquals = contacts.find(contact => {
+        return contact.phone === `${data.event.telefone2_ddd}${data.event.telefone2_numero}`;
+      });
+
+      if(isEquals) {
+        return contacts;
+      }
+
+      contacts.push({
+        phone: `${data.event.telefone2_ddd}${data.event.telefone2_numero}`,
+        name: data.event.contato,
+        role: "owner",
+        department: "owner"
+      })
+    }
+    
+    return contacts;
   }
 };

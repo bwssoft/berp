@@ -1,6 +1,7 @@
-import { IClient } from "@/app/lib/@backend/domain";
+import { IClient, OmieEnterprise } from "@/app/lib/@backend/domain";
 import { InterceptionObjectConstants } from "@/app/lib/@backend/domain/webhook/client/constants/intertection.object.constants";
 import { IConverterObjectUsecase } from "@/app/lib/@backend/domain/webhook/client/usecases/converter.object.usecase";
+import _ from 'lodash';
 
 export class ConverterObjectUseCase implements IConverterObjectUsecase {
   public async execute(data: IConverterObjectUsecase.Execute.Params): Promise<IConverterObjectUsecase.Execute.Result> {
@@ -39,12 +40,14 @@ export class ConverterObjectUseCase implements IConverterObjectUsecase {
     currentObject,
     entity
   }: IConverterObjectUsecase.MergeHelper.Params): IConverterObjectUsecase.MergeHelper.Result {
-    const isSameCompany = entity.omie_code_metadata.find(omie => {
-      return omie.enterprise === currentObject.omie_code_metadata[0].enterprise;
-    });
-
+    const currentCompany = Object.keys(currentObject.omie_code_metadata!) as OmieEnterprise[];
+    const entityCompanies = Object.keys(entity.omie_code_metadata!) as OmieEnterprise[];
+    const isSameCompany = currentCompany.find(company => entityCompanies.includes(company));
     if(!isSameCompany) {
-      entity.omie_code_metadata.push(currentObject.omie_code_metadata[0]);
+      entity['omie_code_metadata'] = {
+        ...entity.omie_code_metadata!,
+        ...currentObject.omie_code_metadata!
+      };
     }
 
     return entity;
@@ -54,18 +57,31 @@ export class ConverterObjectUseCase implements IConverterObjectUsecase {
     currentObject,
     entity
   }: IConverterObjectUsecase.MergeHelper.Params): IConverterObjectUsecase.MergeHelper.Result {
-    const isSameContact = entity.contacts.find(contact => {
-      return contact.phone === currentObject.contacts[0].phone;
+    currentObject.contacts.forEach(contactObject => {
+      const isSameContact = entity.contacts.find(contactEntity => {
+        return contactEntity.phone === contactObject.phone;
+      });
+  
+      if(!isSameContact) {
+        entity.contacts.push(contactObject);
+      }
     });
-
-    if(!isSameContact) {
-      entity.contacts.push(currentObject.contacts[0]);
-    }
+    
 
     return entity;
   }
 
-  private mergeProps()
+  private mergeProps({
+    currentObject,
+    entity,
+    excludeProps = []
+  }: IConverterObjectUsecase.MergeProps.Params): IConverterObjectUsecase.MergeProps.Result {
+    excludeProps.forEach((prop) => {
+      delete currentObject[prop];
+    })
+    const mergeObject = _.merge(entity, currentObject);
+    return mergeObject;
+  }
 
   public margeObject({
     currentObject,
@@ -73,6 +89,17 @@ export class ConverterObjectUseCase implements IConverterObjectUsecase {
   }: IConverterObjectUsecase.MergeHelper.Params): IConverterObjectUsecase.MergeHelper.Result {
     entity = this.checkCampanyOrigin({ currentObject, entity });    
     entity = this.checkContact({ currentObject, entity });
+    entity = this.mergeProps({
+      currentObject,
+      entity,
+      excludeProps: [
+        'contacts', 
+        'omie_code_metadata',
+        'id', 
+        'type',
+        'created_at',
+      ]
+    });
     return entity;
   }
 }
