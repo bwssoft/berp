@@ -42,7 +42,7 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
 
     if (data.event.telefone1_ddd && data.event.telefone1_numero) {
       contacts.push({
-        phone: `${data.event.telefone1_ddd}${data.event.telefone1_numero}`,
+        phone: `${data.event.telefone1_ddd}${data.event.telefone1_numero}`.replace(/[^\d]+/g, ''),
         name: data.event.contato,
         role: "owner",
         department: "owner"
