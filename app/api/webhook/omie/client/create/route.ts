@@ -1,4 +1,4 @@
-import { ClientController } from "@/app/lib/@backend/usecase/webhook/client/controller/client.controller";
+import { ClientController } from "@/app/lib/@backend/controller/client/client.controller";
 
 export async function POST(request: Request) {
   const data = await request.json();

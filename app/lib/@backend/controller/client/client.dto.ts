@@ -1,4 +1,4 @@
-import { EventsTopics } from "../events/topics.events";
+import { EventsTopics } from "./topics.events.dto"
 
 export interface BaseOmieEntity<T, E extends EventsTopics = EventsTopics> {
   messageId: string,
