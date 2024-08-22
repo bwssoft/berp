@@ -17,7 +17,6 @@ export class ClientController implements IClientController {
     const topicEvent = data.topic;
     const objectEvent = await ClientOmieSchema.safeParseAsync(data.event);
     if(!objectEvent.success) {
-      console.log(objectEvent.error);
       throw new Error("Formato do objeto inválido.");
     }
 
