@@ -1,10 +1,11 @@
 import { IClient, OmieEnterprise } from "@/app/lib/@backend/domain";
-import { InterceptionObjectConstants } from "@/app/lib/@backend/domain/webhook/client/constants/intertection.object.constants";
-import { IConverterObjectUsecase } from "@/app/lib/@backend/domain/webhook/client/usecases/converter.object.usecase";
+import { singleton } from "@/app/lib/util";
 import _ from 'lodash';
+import { InterceptionObjectConstants } from "../data-mapper/interception.object.constants";
+import { IConverterObjectService } from "./@dto/converter.object.service";
 
-export class ConverterObjectUseCase implements IConverterObjectUsecase {
-  public async execute(data: IConverterObjectUsecase.Execute.Params): Promise<IConverterObjectUsecase.Execute.Result> {
+class ConverterObjectService implements IConverterObjectService {
+  public async execute(data: IConverterObjectService.Execute.Params): Promise<IConverterObjectService.Execute.Result> {
     const result = this.structureObject<IClient>(data);
     return result;
   }
@@ -13,17 +14,17 @@ export class ConverterObjectUseCase implements IConverterObjectUsecase {
     const object = {} as T;
     const keys = Object.keys(InterceptionObjectConstants);
     keys.forEach((key) => {
-      if(Object.prototype.hasOwnProperty.call(InterceptionObjectConstants, key)) {
+      if (Object.prototype.hasOwnProperty.call(InterceptionObjectConstants, key)) {
         if (Object.prototype.hasOwnProperty.call(InterceptionObjectConstants, key)) {
           const func = InterceptionObjectConstants[key as keyof typeof InterceptionObjectConstants]!;
-    
+
           if (key.includes('.')) {
             const [parentKey, childKey] = key.split('.');
-    
+
             if (!object[parentKey as keyof T]) {
               object[parentKey as keyof T] = {} as T[keyof T];
             }
-    
+
             // @ts-ignore
             object[parentKey][childKey] = func(data);
           } else {
@@ -39,11 +40,11 @@ export class ConverterObjectUseCase implements IConverterObjectUsecase {
   private checkCampanyOrigin({
     currentObject,
     entity
-  }: IConverterObjectUsecase.MergeHelper.Params): IConverterObjectUsecase.MergeHelper.Result {
+  }: IConverterObjectService.MergeHelper.Params): IConverterObjectService.MergeHelper.Result {
     const currentCompany = Object.keys(currentObject.omie_code_metadata!) as OmieEnterprise[];
     const entityCompanies = Object.keys(entity.omie_code_metadata!) as OmieEnterprise[];
     const isSameCompany = currentCompany.find(company => entityCompanies.includes(company));
-    if(!isSameCompany) {
+    if (!isSameCompany) {
       entity['omie_code_metadata'] = {
         ...entity.omie_code_metadata!,
         ...currentObject.omie_code_metadata!
@@ -56,17 +57,17 @@ export class ConverterObjectUseCase implements IConverterObjectUsecase {
   private checkContact({
     currentObject,
     entity
-  }: IConverterObjectUsecase.MergeHelper.Params): IConverterObjectUsecase.MergeHelper.Result {
+  }: IConverterObjectService.MergeHelper.Params): IConverterObjectService.MergeHelper.Result {
     currentObject.contacts.forEach(contactObject => {
       const isSameContact = entity.contacts.find(contactEntity => {
         return contactEntity.phone === contactObject.phone;
       });
-  
-      if(!isSameContact) {
+
+      if (!isSameContact) {
         entity.contacts.push(contactObject);
       }
     });
-    
+
 
     return entity;
   }
@@ -75,7 +76,7 @@ export class ConverterObjectUseCase implements IConverterObjectUsecase {
     currentObject,
     entity,
     excludeProps = []
-  }: IConverterObjectUsecase.MergeProps.Params): IConverterObjectUsecase.MergeProps.Result {
+  }: IConverterObjectService.MergeProps.Params): IConverterObjectService.MergeProps.Result {
     excludeProps.forEach((prop) => {
       delete currentObject[prop];
     })
@@ -86,16 +87,16 @@ export class ConverterObjectUseCase implements IConverterObjectUsecase {
   public margeObject({
     currentObject,
     entity
-  }: IConverterObjectUsecase.MergeHelper.Params): IConverterObjectUsecase.MergeHelper.Result {
-    entity = this.checkCampanyOrigin({ currentObject, entity });    
+  }: IConverterObjectService.MergeHelper.Params): IConverterObjectService.MergeHelper.Result {
+    entity = this.checkCampanyOrigin({ currentObject, entity });
     entity = this.checkContact({ currentObject, entity });
     entity = this.mergeProps({
       currentObject,
       entity,
       excludeProps: [
-        'contacts', 
+        'contacts',
         'omie_code_metadata',
-        'id', 
+        'id',
         'type',
         'created_at',
       ]
@@ -103,3 +104,5 @@ export class ConverterObjectUseCase implements IConverterObjectUsecase {
     return entity;
   }
 }
+
+export const converterObjectService = singleton(ConverterObjectService)

@@ -1,5 +1,5 @@
-import { BaseOmieEntity } from "../entities/base.omie.entity"
-import { ClientOmieEntity } from "../entities/client.omie.entity"
+import { BaseOmieEntity } from "./client.dto"
+import { ClientOmieEntity } from "./client.validator"
 
 export enum EventsTopics {
   Include = "ClienteFornecedor.Incluido",

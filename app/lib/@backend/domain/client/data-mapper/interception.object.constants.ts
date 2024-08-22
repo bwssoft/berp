@@ -1,9 +1,9 @@
 import { Path } from "@/app/lib/util/path";
-import { IClient, OmieEnterprise } from "../../../client";
-import { BaseOmieEntity } from "../entities/base.omie.entity";
-import { ClientOmieEntity } from "../entities/client.omie.entity";
-import { OmieEnterpriseKeyConstants } from "../../constants/omie.enterprise.key.constants";
 import { GetCountryNameByCode } from "@/app/lib/util/getCountryNameByCode";
+import { appHashsMapping } from "@/app/lib/constant/app-hashs";
+import { IClient } from "../entity";
+import { BaseOmieEntity } from "../../../controller/client/client.dto";
+import { ClientOmieEntity } from "../../../controller/client/client.validator";
 
 export type IInterceptionObjectConstantsType = {
   [key in Path<IClient>]?: (data: BaseOmieEntity<ClientOmieEntity>) => any;
@@ -21,7 +21,7 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
   "created_at": () => new Date(),
   corporate_name: (data) => data.event.nome_fantasia,
   omie_code_metadata: (data) => {
-    const enterprise = OmieEnterpriseKeyConstants[data.appHash];
+    const enterprise = appHashsMapping[data.appHash];
     return {
       [enterprise]: data.event.codigo_cliente_omie
     }
@@ -40,7 +40,7 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
   contacts: (data) => {
     const contacts: IClient['contacts'] = [];
 
-    if(data.event.telefone1_ddd && data.event.telefone1_numero) {
+    if (data.event.telefone1_ddd && data.event.telefone1_numero) {
       contacts.push({
         phone: `${data.event.telefone1_ddd}${data.event.telefone1_numero}`,
         name: data.event.contato,
@@ -49,14 +49,14 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
       })
     }
 
-    
 
-    if(data.event.telefone2_ddd && data.event.telefone2_numero) {
+
+    if (data.event.telefone2_ddd && data.event.telefone2_numero) {
       const isEquals = contacts.find(contact => {
         return contact.phone === `${data.event.telefone2_ddd}${data.event.telefone2_numero}`;
       });
 
-      if(isEquals) {
+      if (isEquals) {
         return contacts;
       }
 
@@ -67,7 +67,7 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
         department: "owner"
       })
     }
-    
+
     return contacts;
   }
 };
