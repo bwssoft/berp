@@ -2,6 +2,7 @@ import { OmieSaleOrderEvents } from "@/app/lib/@backend/domain/@shared/webhook/o
 import {
   createSaleOrderFromWebhook,
   deleteSaleOrderFromWebhook,
+  updateSaleOrderFromWebhook,
 } from "@/app/lib/@backend/usecase/sale-order/webhook";
 
 export async function POST(request: Request) {
@@ -35,6 +36,22 @@ export async function POST(request: Request) {
       return new Response("Deleted sale order successfully", {
         status: 201,
         statusText: "Sale order deleted successfully",
+      });
+    }
+
+    const updatedSaleOrder = await updateSaleOrderFromWebhook.execute({
+      body,
+    });
+
+    if (updatedSaleOrder) {
+      return new Response(JSON.stringify(updatedSaleOrder), {
+        status: 201,
+        statusText: "Sale order updated successfully",
+        headers: { "Content-Type": "application/json" },
+      });
+    } else {
+      return new Response("Error updating sale order from webhook", {
+        status: 400,
       });
     }
   } catch (error) {
