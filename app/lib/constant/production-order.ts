@@ -1,10 +1,8 @@
 const stage = {
+  "in_warehouse": "No almoxarifado",
   "to_produce": "Para Produzir",
   "producing": "Produzindo",
-  "quality": "Qualidade",
-  "checked": "Checagem",
   "completed": "Finalizada",
-  "stored": "Em Estoque"
 };
 
 const priority = {

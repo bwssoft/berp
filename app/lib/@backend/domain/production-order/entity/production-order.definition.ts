@@ -7,9 +7,6 @@ export interface IProductionOrder {
   stage: "in_warehouse" |
   "to_produce" |
   "producing" |
-  "quality" |
-  "checked" |
-  "completed" |
-  "stored"
+  "completed"
 }
 
