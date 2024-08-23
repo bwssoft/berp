@@ -11,6 +11,11 @@ import {
 import { findOneClientUsecase } from "../../client";
 import { findManyProductUsecase } from "../../product";
 import {
+  createOneProductionOrderUsecase,
+  findOneProductionOrderUsecase,
+  updateOneProductionOrderUsecase,
+} from "../../production-order";
+import {
   findOneSaleOrderUsecase,
   updateOneSaleOrderUsecase,
 } from "../sale-order";
@@ -98,13 +103,37 @@ class UpdateSaleOrderFromWebhookUseCase {
       },
     };
 
-    const updatedServiceOrder = await updateOneSaleOrderUsecase.execute(
+    const updatedSaleOrder = await updateOneSaleOrderUsecase.execute(
       { id: saleOrderToUpdate.id },
       mongoSaleOrder
     );
 
-    if (updatedServiceOrder.acknowledged) {
-      return updatedServiceOrder;
+    const productionOrderExists = await findOneProductionOrderUsecase.execute({
+      sale_order_id: saleOrderToUpdate.id,
+    });
+
+    if (productionOrderExists?.id) {
+      updateOneProductionOrderUsecase.execute(
+        { id: productionOrderExists.id },
+        {
+          description:
+            saleOrderData?.pedido_venda_produto?.observacoes?.obs_venda ??
+            "Ordem de produção não possui descrição.",
+        }
+      );
+    } else {
+      createOneProductionOrderUsecase.execute({
+        description:
+          saleOrderData?.pedido_venda_produto?.observacoes?.obs_venda ??
+          "Ordem de produção não possui descrição.",
+        priority: "medium",
+        stage: "in_warehouse",
+        sale_order_id: saleOrderToUpdate.id,
+      });
+    }
+
+    if (updatedSaleOrder.acknowledged) {
+      return updatedSaleOrder;
     }
   }
 }

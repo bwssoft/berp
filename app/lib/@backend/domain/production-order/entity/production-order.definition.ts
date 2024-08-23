@@ -1,15 +1,12 @@
 export interface IProductionOrder {
-  id?: string
+  id: string
   priority: "high" | "medium" | "low"
   description: string
-  files?: any[]
-  products: { product_id: string, quantity: number }[]
+  sale_order_id: string
   created_at: Date
-  stage: "to_produce" |
+  stage: "in_warehouse" |
+  "to_produce" |
   "producing" |
-  "quality" |
-  "checked" |
-  "completed" |
-  "stored"
+  "completed"
 }
 
