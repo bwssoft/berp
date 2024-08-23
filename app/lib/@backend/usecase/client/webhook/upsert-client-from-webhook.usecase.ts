@@ -1,12 +1,12 @@
 import { createOneClientUsecase, findOneClientUsecase, updateOneClientUsecase } from "..";
 import { converterObjectService } from "../../../domain/client/service/converter-object-service";
 import { singleton } from "@/app/lib/util";
-import { ICreateClientUseCase } from "../@dto/create-client-from-webhook.usecase.dto";
+import { IUpsertClientFromWebhookUseCase } from "../@dto/upsert-client-from-webhook.usecase.dto";
 
-class CreateClientFromWebhookUsecase implements ICreateClientUseCase {
+class UpsertClientFromWebhookUsecase implements IUpsertClientFromWebhookUseCase {
     public async execute(
-        data: ICreateClientUseCase.Execute.Params
-    ): Promise<ICreateClientUseCase.Execute.Result> {
+        data: IUpsertClientFromWebhookUseCase.Execute.Params
+    ): Promise<IUpsertClientFromWebhookUseCase.Execute.Result> {
         const client = await converterObjectService.execute(data);
         const clientExists = await findOneClientUsecase.execute({
             document: {
@@ -31,4 +31,4 @@ class CreateClientFromWebhookUsecase implements ICreateClientUseCase {
     }
 }
 
-export const createClientFromWebhookUsecase = singleton(CreateClientFromWebhookUsecase)
+export const upsertClientFromWebhookUsecase = singleton(UpsertClientFromWebhookUsecase)

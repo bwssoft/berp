@@ -1,8 +1,7 @@
 import { IClientFacade } from "@/app/lib/@backend/domain/client/facade";
 import {
-  createClientFromWebhookUsecase,
+  upsertClientFromWebhookUsecase,
   createOneClientUsecase,
-  updateClientFromWebhookUsecase,
   updateOneClientUsecase,
   deleteOneClientUsecase,
   findAllClientUsecase,
@@ -12,8 +11,7 @@ import {
 export class ClientFacade {
   public static create(): IClientFacade {
     const facade: IClientFacade = {
-      createClientFromWebhookUsecase,
-      updateClientFromWebhookUsecase,
+      upsertClientFromWebhookUsecase,
       createOneClientUsecase,
       updateOneClientUsecase,
       deleteOneClientUsecase,
