@@ -22,9 +22,9 @@ import {
 
 export interface UpdateSaleOrderFromWebhookUseCaseInput {
   body:
-  | OmieSaleOrderEvents["VendaProduto.EtapaAlterada"]
-  | OmieSaleOrderEvents["VendaProduto.Alterada"]
-  | OmieSaleOrderEvents["VendaProduto.Cancelada"];
+    | OmieSaleOrderEvents["VendaProduto.EtapaAlterada"]
+    | OmieSaleOrderEvents["VendaProduto.Alterada"]
+    | OmieSaleOrderEvents["VendaProduto.Cancelada"];
 }
 
 class UpdateSaleOrderFromWebhookUseCase {
@@ -51,17 +51,16 @@ class UpdateSaleOrderFromWebhookUseCase {
       stringifiedSaleOrderId
     );
 
-    const det = saleOrderData.pedido_venda_produto?.det ?? []
+    const det = saleOrderData.pedido_venda_produto?.det ?? [];
+
     if (!det.length) {
-      return
+      return;
     }
 
-    const productsMapped = det.map(
-      ({ produto }) => ({
-        id: produto.codigo_produto.toString(),
-        quantity: produto.quantidade,
-      })
-    );
+    const productsMapped = det.map(({ produto }) => ({
+      id: produto.codigo_produto.toString(),
+      quantity: produto.quantidade,
+    }));
 
     const productsIds = productsMapped.map(({ id }) => id);
 
@@ -75,7 +74,7 @@ class UpdateSaleOrderFromWebhookUseCase {
       [`omie_code_metadata.${enterpriseHashMapped}`]: idCliente.toString(),
     });
 
-    if (databaseProducts.length === 0 || databaseClient === null) {
+    if (databaseClient === null) {
       return;
     }
 
