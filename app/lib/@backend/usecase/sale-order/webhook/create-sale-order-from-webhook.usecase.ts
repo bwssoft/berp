@@ -20,6 +20,8 @@ class CreateSaleOrderFromWebhookUseCase {
   async execute(input: CreateSaleOrderFromWebhookUseCaseInput) {
     const body = input.body;
 
+    console.log({ body });
+
     const { idCliente, idPedido, valorPedido, etapa, numeroPedido } =
       body.event;
 
@@ -35,6 +37,9 @@ class CreateSaleOrderFromWebhookUseCase {
     );
 
     const det = saleOrderData.pedido_venda_produto?.det ?? [];
+
+    console.log({ det });
+
     if (!det.length) {
       return;
     }
@@ -55,6 +60,8 @@ class CreateSaleOrderFromWebhookUseCase {
     const databaseClient = await findOneClientUsecase.execute({
       [`omie_code_metadata.${enterpriseHashMapped}`]: idCliente.toString(),
     });
+
+    console.log({ databaseClient });
 
     if (databaseClient === null) {
       return;
@@ -89,9 +96,13 @@ class CreateSaleOrderFromWebhookUseCase {
       },
     };
 
+    console.log({ mongoSaleOrder });
+
     const newSaleOrder = await createOneSaleOrderUsecase.execute(
       mongoSaleOrder
     );
+
+    console.log({ newSaleOrder });
 
     if (newSaleOrder.insertedId) {
       return newSaleOrder;
