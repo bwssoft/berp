@@ -10,18 +10,20 @@ import {
 } from "../../../gateway/omie";
 import { findOneClientUsecase } from "../../client";
 import { findManyProductUsecase } from "../../product";
-import { findOneSaleOrderUsecase } from "../find-one-sale-order.usecase";
-import { updateOneSaleOrderUsecase } from "../update-one-sale-order.usecase";
+import {
+  findOneSaleOrderUsecase,
+  updateOneSaleOrderUsecase,
+} from "../sale-order";
 
-interface UpdateSaleOrderFromWebhookInput {
+export interface UpdateSaleOrderFromWebhookUseCaseInput {
   body:
     | OmieSaleOrderEvents["VendaProduto.EtapaAlterada"]
     | OmieSaleOrderEvents["VendaProduto.Alterada"]
     | OmieSaleOrderEvents["VendaProduto.Cancelada"];
 }
 
-class UpdateSaleOrderFromWebhook {
-  async execute(input: UpdateSaleOrderFromWebhookInput) {
+class UpdateSaleOrderFromWebhookUseCase {
+  async execute(input: UpdateSaleOrderFromWebhookUseCaseInput) {
     const body = input.body;
 
     const { idCliente, idPedido, valorPedido, etapa, numeroPedido } =
@@ -107,4 +109,6 @@ class UpdateSaleOrderFromWebhook {
   }
 }
 
-export const updateSaleOrderFromWebhook = singleton(UpdateSaleOrderFromWebhook);
+export const updateSaleOrderFromWebhookUseCase = singleton(
+  UpdateSaleOrderFromWebhookUseCase
+);

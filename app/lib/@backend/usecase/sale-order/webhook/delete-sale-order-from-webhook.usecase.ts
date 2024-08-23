@@ -1,14 +1,16 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { OmieSaleOrderEvents } from "../../../domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
-import { deleteOneSaleOrderUsecase } from "../delete-one-sale-order.usecase";
-import { findOneSaleOrderUsecase } from "../find-one-sale-order.usecase";
+import {
+  deleteOneSaleOrderUsecase,
+  findOneSaleOrderUsecase,
+} from "../sale-order";
 
-interface DeleteSaleOrderFromWebhookInput {
+export interface DeleteSaleOrderFromWebhookUseCaseInput {
   body: OmieSaleOrderEvents["VendaProduto.Excluida"];
 }
 
-class DeleteSaleOrderFromWebhook {
-  async execute(input: DeleteSaleOrderFromWebhookInput) {
+class DeleteSaleOrderFromWebhookUseCase {
+  async execute(input: DeleteSaleOrderFromWebhookUseCaseInput) {
     const body = input.body;
 
     const { idPedido } = body.event;
@@ -25,4 +27,6 @@ class DeleteSaleOrderFromWebhook {
   }
 }
 
-export const deleteSaleOrderFromWebhook = singleton(DeleteSaleOrderFromWebhook);
+export const deleteSaleOrderFromWebhookUseCase = singleton(
+  DeleteSaleOrderFromWebhookUseCase
+);
