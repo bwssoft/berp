@@ -22,25 +22,6 @@ export const columns: ColumnDef<IProductionOrder>[] = [
     },
   },
   {
-    header: "Tipos de Produtos",
-    accessorKey: "products",
-    cell: ({ row }) => {
-      const productionOrder = row.original;
-      return productionOrder.products.length;
-    },
-  },
-  {
-    header: "Quantidade total",
-    accessorKey: "products",
-    cell: ({ row }) => {
-      const productionOrder = row.original;
-      return productionOrder.products.reduce(
-        (acc, cur) => (acc += cur.quantity),
-        0
-      );
-    },
-  },
-  {
     header: "Criado em",
     accessorKey: "created_at",
     cell: ({ row }) => {

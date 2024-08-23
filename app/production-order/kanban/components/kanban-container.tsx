@@ -2,24 +2,37 @@
 
 import React, { useState } from "react";
 import { Kanban } from "./kanban";
-import { IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
+import {
+  IProduct,
+  IProductionOrder,
+  ISaleOrder,
+} from "@/app/lib/@backend/domain";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
 
+type CustomProductionOrder = IProductionOrder & {
+  sale_order: ISaleOrder;
+  products_in_sale_order: IProduct[];
+};
 interface Props {
-  productionOrders: (IProductionOrder & { _products: IProduct[] })[];
+  productionOrders: CustomProductionOrder[];
 }
 
 const Container = (props: Props) => {
   const { productionOrders: _productionOrders } = props;
   const [productionOrders, setProductionOrders] =
-    useState<(IProductionOrder & { _products: IProduct[] })[]>(
-      _productionOrders
-    );
+    useState<CustomProductionOrder[]>(_productionOrders);
 
-  const moveCard = (id: string, toStage: string, toIndex: number) => {
+  const moveCard = async (id: string, toStage: string, toIndex: number) => {
     const order = productionOrders.find((order) => order.id === id);
     if (order) {
+      await updateOneProductionOrderById(
+        { id: order.id },
+        {
+          stage: toStage as IProductionOrder["stage"],
+        }
+      );
       const updatedOrders = productionOrders.filter((order) => order.id !== id);
       order.stage = toStage as any;
       updatedOrders.splice(toIndex, 0, order);

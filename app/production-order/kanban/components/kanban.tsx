@@ -194,24 +194,31 @@
 "use client";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
+import {
+  IProduct,
+  IProductionOrder,
+  ISaleOrder,
+} from "@/app/lib/@backend/domain";
 import { productionOrderConstants } from "@/app/lib/constant";
 
 const ItemType = "CARD";
 
+type CustomProductionOrder = IProductionOrder & {
+  sale_order: ISaleOrder;
+  products_in_sale_order: IProduct[];
+};
+
 interface CardProps {
-  order: IProductionOrder & { _products: IProduct[] };
+  order: CustomProductionOrder;
   index: number;
   moveCard: (id: string, toStage: string, toIndex: number) => void;
 }
 
 const stageColor = {
+  in_warehouse: "bg-purple-200",
   to_produce: "bg-slate-200",
   producing: "bg-yellow-200",
-  quality: "bg-orange-200",
-  checked: "bg-purle-200",
   completed: "bg-green-200",
-  stored: "bg-rose-200",
 };
 
 const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
@@ -244,15 +251,20 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
       >
         {productionOrderConstants.stage[order.stage]}
       </p>
-      {order._products.map((p) => (
+      {order.products_in_sale_order.map((p) => (
         <div key={p.id} className="flex flex-row items-center mt-2">
           <div
             style={{ backgroundColor: p.color }}
             className={`rounded-full w-4 h-4 mr-2`}
           ></div>
           <a href="#" className="text-xs text-gray-500">
-            {p.name} -{" "}
-            {order.products.find((el) => el.product_id === p.id)?.quantity}
+            <span className="text-xs text-gray-700">
+              {
+                order.sale_order.products.find((el) => el.product_id === p.id)
+                  ?.quantity
+              }{" "}
+            </span>
+            - {p.name}
           </a>
         </div>
       ))}
@@ -263,7 +275,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
 interface ColumnProps {
   stage: string;
   title: string;
-  orders: (IProductionOrder & { _products: IProduct[] })[];
+  orders: CustomProductionOrder[];
   moveCard: (id: string, toStage: string, toIndex: number) => void;
 }
 
@@ -302,7 +314,7 @@ const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
 };
 
 interface KanbanProps {
-  productionOrders: (IProductionOrder & { _products: IProduct[] })[];
+  productionOrders: CustomProductionOrder[];
   moveCard: (id: string, toStage: string, toIndex: number) => void;
 }
 
@@ -311,19 +323,17 @@ export const Kanban: React.FC<KanbanProps> = ({
   moveCard,
 }) => {
   const stages = [
+    { id: "in_warehouse", title: "No Almoxarifado" },
     { id: "to_produce", title: "Para Produzir" },
     { id: "producing", title: "Produzindo" },
-    { id: "quality", title: "Qualidade" },
-    { id: "checked", title: "Checagem" },
     { id: "completed", title: "Finalizada" },
-    { id: "stored", title: "Armazenada" },
   ];
 
   const getOrdersByStage = (stage: string) =>
     productionOrders.filter((order) => order.stage === stage);
 
   return (
-    <div className="h-screen mt-10 w-full grid md:grid-cols-6 sm:grid-cols-2 gap-5">
+    <div className="h-screen mt-10 w-full grid md:grid-cols-4 sm:grid-cols-2 gap-5">
       {stages.map((stage) => (
         <Column
           key={stage.id}

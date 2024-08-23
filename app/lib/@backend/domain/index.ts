@@ -1,5 +1,6 @@
 export * from './input'
 export * from './product'
+export * from './sale-order'
 export * from './production-order'
 export * from './client'
 export * from './device'

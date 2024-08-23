@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IProduct, IProductionOrder, IProductionOrderRepository } from "@/app/lib/@backend/domain"
+import { IProduct, IProductionOrder, IProductionOrderRepository, ISaleOrder } from "@/app/lib/@backend/domain"
 import { productionOrderRepository } from "@/app/lib/@backend/repository/mongodb"
 
 class FindAllProductionOrderWithInputUsecase {
@@ -12,7 +12,7 @@ class FindAllProductionOrderWithInputUsecase {
   async execute() {
     const pipeline = this.pipeline()
     const aggregate = await this.repository.aggregate(pipeline)
-    return await aggregate.toArray() as (IProductionOrder & { _products: IProduct[] })[]
+    return await aggregate.toArray() as (IProductionOrder & { sale_order: ISaleOrder, products_in_sale_order: IProduct[] })[]
   }
 
   pipeline() {
@@ -20,9 +20,17 @@ class FindAllProductionOrderWithInputUsecase {
       { $match: {} },
       {
         $lookup: {
-          as: "_products",
+          as: "sale_order",
+          from: "sale-order",
+          localField: "sale_order_id",
+          foreignField: "id"
+        }
+      },
+      {
+        $lookup: {
+          as: "products_in_sale_order",
           from: "product",
-          localField: "products.product_id",
+          localField: "sale_order.products.product_id",
           foreignField: "id"
         }
       },
@@ -32,7 +40,8 @@ class FindAllProductionOrderWithInputUsecase {
           created_at: 1,
           products: 1,
           stage: 1,
-          _products: 1,
+          sale_order: { $first: "$sale_order" },
+          products_in_sale_order: 1
         }
       },
       {

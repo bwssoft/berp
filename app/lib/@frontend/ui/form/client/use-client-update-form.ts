@@ -34,7 +34,10 @@ const schema = z.object({
     "other",
   ]),
   corporate_name: z.string(),
-  document: z.string(),
+  document: z.object({
+    type: z.enum(["CNPJ", "CPF"]).default("CNPJ"),
+    value: z.string()
+  }),
   state_registration: z.string(),
   municipal_registration: z.string(),
   description: z.string(),

@@ -1,0 +1,440 @@
+[
+  // vendaproduto.incluida
+  {
+    "messageId": "1d193a64-9ac4-40d8-8659-9de84af2deb9",
+    "topic": "VendaProduto.Incluida",
+    "event": {
+      "codIntPedido": "",
+      "codigoCategoria": "1.01.02",
+      "dataInclusao": "20/08/2024",
+      "dataPrevisao": "20/08/2024",
+      "etapa": "00",
+      "etapaDescr": "Proposta",
+      "horaInclusao": "09:35:57",
+      "idCliente": 4002259154,
+      "idContaCorrente": 3101604997,
+      "idPedido": 4526078173,
+      "numeroPedido": "329",
+      "usuarioInclusao": "P000589679",
+      "valorPedido": 0
+    },
+    "author": {
+      "email": "italo.souza@bwsiot.com",
+      "name": "Italo",
+      "userId": 589679
+    },
+    "appKey": "837068829597",
+    "appHash": "bws-7hxz5c8",
+    "origin": "omie-connect-2.0"
+  },
+  // vendaproduto.alterada
+  {
+    "messageId": "539d8018-e67a-44ac-9ad1-8fc06e8415bd",
+    "topic": "VendaProduto.Alterada",
+    "event": {
+      "codIntPedido": "",
+      "codigoCategoria": "1.01.02",
+      "dataAlteracao": "20/08/2024",
+      "dataPrevisao": "20/08/2024",
+      "etapa": "00",
+      "etapaDescr": "Proposta",
+      "horaAlteracao": "09:37:32",
+      "idCliente": 4002259154,
+      "idContaCorrente": 3101604997,
+      "idPedido": 4526078173,
+      "numeroPedido": "329",
+      "usuarioAlteracao": "P000589679",
+      "valorPedido": 10
+    },
+    "author": {
+      "email": "italo.souza@bwsiot.com",
+      "name": "Italo",
+      "userId": 589679
+    },
+    "appKey": "837068829597",
+    "appHash": "bws-7hxz5c8",
+    "origin": "omie-connect-2.0"
+  },
+  // vendaproduto.excluida
+  {
+    "messageId": "16f1454f-7149-40df-a16b-5082bc047d8b",
+    "topic": "VendaProduto.Excluida",
+    "event": {
+      "codIntPedido": "",
+      "codigoCategoria": "1.01.02",
+      "dataPrevisao": "20/08/2024",
+      "etapa": "00",
+      "etapaDescr": "Proposta",
+      "idCliente": 4002259154,
+      "idContaCorrente": 3101604997,
+      "idPedido": 4526074575,
+      "numeroPedido": "328",
+      "valorPedido": 20
+    },
+    "author": {
+      "email": "italo.souza@bwsiot.com",
+      "name": "Italo",
+      "userId": 589679
+    },
+    "appKey": "837068829597",
+    "appHash": "bws-7hxz5c8",
+    "origin": "omie-connect-2.0"
+  },
+  // vendaproduto.cancelada
+  {
+    "messageId": "524014dd-86a3-4d13-bcff-626ebf7f4955",
+    "topic": "VendaProduto.Cancelada",
+    "event": {
+      "cancelada": "S",
+      "codIntPedido": "",
+      "codigoCategoria": "1.01.02",
+      "dataCancelado": "20/08/2024",
+      "dataPrevisao": "20/08/2024",
+      "etapa": "00",
+      "etapaDescr": "Proposta",
+      "horaCancelado": "09:53:46",
+      "idCliente": 4002259154,
+      "idContaCorrente": 3101604997,
+      "idPedido": 4526078173,
+      "numeroPedido": "329",
+      "usuarioCancelado": "P000589679",
+      "valorPedido": 30
+    },
+    "author": {
+      "email": "italo.souza@bwsiot.com",
+      "name": "Italo",
+      "userId": 589679
+    },
+    "appKey": "837068829597",
+    "appHash": "bws-7hxz5c8",
+    "origin": "omie-connect-2.0"
+  },
+  // consultar info de cliente (https://app.omie.com.br/api/v1/geral/clientes/)
+  {
+    "codigo_cliente_omie": 4002259154,
+    "codigo_cliente_integracao": "8724537",
+    "razao_social": "Rodrigo Ribeiro",
+    "cnpj_cpf": "512.379.998-20",
+    "nome_fantasia": "Rodrigo R.",
+    "telefone1_ddd": "11",
+    "telefone1_numero": "951694432",
+    "contato": "",
+    "endereco": "Rua Perequê",
+    "endereco_numero": "123",
+    "bairro": "Vila São Nicolau",
+    "complemento": "",
+    "estado": "SP",
+    "cidade": "JANDIRA (SP)",
+    "cep": "06620010",
+    "codigo_pais": "1058",
+    "separar_endereco": "",
+    "pesquisar_cep": "",
+    "telefone2_ddd": "11",
+    "telefone2_numero": "951694432",
+    "fax_ddd": "",
+    "fax_numero": "",
+    "email": "rdo.rodrigo2@gmail.com",
+    "homepage": "",
+    "inscricao_estadual": "",
+    "inscricao_municipal": "",
+    "inscricao_suframa": "",
+    "optante_simples_nacional": "",
+    "tipo_atividade": "",
+    "cnae": "",
+    "produtor_rural": "",
+    "contribuinte": "",
+    "observacao": "",
+    "obs_detalhadas": "",
+    "recomendacao_atraso": "",
+    "tags": [
+      {
+        "tag": "Cliente"
+      }
+    ],
+    "pessoa_fisica": "S",
+    "exterior": "N",
+    "logradouro": "",
+    "importado_api": "",
+    "bloqueado": "N",
+    "cidade_ibge": "3525003",
+    "valor_limite_credito": 0,
+    "bloquear_faturamento": "N",
+    "recomendacoes": {
+      "gerar_boletos": "N"
+    },
+    "enderecoEntrega": {},
+    "nif": "",
+    "documento_exterior": "",
+    "inativo": "N",
+    "dadosBancarios": {
+      "agencia": "",
+      "cChavePix": "",
+      "codigo_banco": "",
+      "conta_corrente": "",
+      "doc_titular": "",
+      "nome_titular": "",
+      "transf_padrao": "N"
+    }
+  },
+  // consultar informações do pedido
+  {
+    "pedido_venda_produto": {
+      "cabecalho": {
+        "bloqueado": "N",
+        "codigo_cenario_impostos": "2229186822",
+        "codigo_cliente": 4002259154,
+        "codigo_parcela": "000",
+        "codigo_pedido": 4526086449,
+        "data_previsao": "20/08/2024",
+        "etapa": "00",
+        "numero_pedido": "330",
+        "origem_pedido": "ERP",
+        "qtde_parcelas": 1,
+        "quantidade_itens": 1
+      },
+      "det": [
+        {
+          "combustivel": {},
+          "ide": {
+            "codigo_item": 4526086525,
+            "codigo_item_integracao": "",
+            "simples_nacional": "N"
+          },
+          "imposto": {
+            "cofins_padrao": {
+              "aliq_cofins": 0,
+              "base_cofins": 0,
+              "cod_sit_trib_cofins": "99",
+              "qtde_unid_trib_cofins": 0,
+              "tipo_calculo_cofins": "B",
+              "valor_cofins": 0,
+              "valor_unid_trib_cofins": 0
+            },
+            "cofins_st": {
+              "aliq_cofins_st": 0,
+              "base_cofins_st": 0,
+              "cod_sit_trib_cofins_st": "99",
+              "margem_cofins_st": 0,
+              "qtde_unid_trib_cofins_st": 0,
+              "tipo_calculo_cofins_st": "",
+              "valor_cofins_st": 0,
+              "valor_unid_trib_cofins_st": 0
+            },
+            "csll": {
+              "aliq_csll": 0,
+              "valor_csll": 0
+            },
+            "icms": {
+              "aliq_icms": 0,
+              "base_icms": 0,
+              "cod_sit_trib_icms": "41",
+              "modalidade_icms": "",
+              "origem_icms": "6",
+              "perc_red_base_icms": 0,
+              "valor_icms": 0
+            },
+            "icms_efet": {},
+            "icms_ie": {
+              "aliq_icms_FCP": 0,
+              "aliq_interestadual": 0,
+              "aliq_interna_uf_destino": 0,
+              "aliq_partilha_icms": 0,
+              "base_icms_uf_destino": 0,
+              "valor_fcp_icms_inter": 0,
+              "valor_icms_uf_dest": 0,
+              "valor_icms_uf_remet": 0
+            },
+            "icms_sn": {},
+            "icms_st": {
+              "aliq_icms_opprop": 0,
+              "aliq_icms_st": 0,
+              "base_icms_st": 0,
+              "cest": "",
+              "cod_sit_trib_icms_st": "41",
+              "margem_icms_st": 0,
+              "modalidade_icms_st": "",
+              "perc_red_base_icms_op": 0,
+              "perc_red_base_icms_st": 0,
+              "valor_icms_st": 0
+            },
+            "inss": {
+              "aliq_inss": 0,
+              "valor_inss": 0
+            },
+            "ipi": {
+              "aliq_ipi": 0,
+              "base_ipi": 0,
+              "cod_sit_trib_ipi": "53",
+              "enquadramento_ipi": "999",
+              "qtde_unid_trib_ipi": 0,
+              "tipo_calculo_ipi": "",
+              "valor_ipi": 0,
+              "valor_unid_trib_ipi": 0
+            },
+            "irrf": {
+              "aliq_irrf": 0,
+              "valor_irrf": 0
+            },
+            "iss": {
+              "aliq_iss": 0,
+              "base_iss": 0,
+              "retem_iss": "",
+              "valor_iss": 0
+            },
+            "pis_padrao": {
+              "aliq_pis": 0,
+              "base_pis": 0,
+              "cod_sit_trib_pis": "99",
+              "qtde_unid_trib_pis": 0,
+              "tipo_calculo_pis": "B",
+              "valor_pis": 0,
+              "valor_unid_trib_pis": 0
+            },
+            "pis_st": {
+              "aliq_pis_st": 0,
+              "base_pis_st": 0,
+              "cod_sit_trib_pis_st": "99",
+              "margem_pis_st": 0,
+              "qtde_unid_trib_pis_st": 0,
+              "tipo_calculo_pis_st": "",
+              "valor_pis_st": 0,
+              "valor_unid_trib_pis_st": 0
+            }
+          },
+          "inf_adic": {
+            "codigo_categoria_item": "1.01.02",
+            "codigo_cenario_impostos_item": "2229186822",
+            "codigo_local_estoque": 3122512679,
+            "dados_adicionais_item": "",
+            "item_pedido_compra": 0,
+            "nao_gerar_financeiro": "N",
+            "nao_movimentar_estoque": "N",
+            "numero_pedido_compra": "",
+            "peso_bruto": 0.065,
+            "peso_liquido": 0.06
+          },
+          "observacao": {},
+          "produto": {
+            "cfop": "5.949",
+            "cnpj_fabricante": "",
+            "codigo": "RAL001/M",
+            "codigo_produto": 4248454656,
+            "codigo_tabela_preco": 2,
+            "descricao": "RASTREADOR E3+ LONG LIFE",
+            "ean": "",
+            "indicador_escala": "",
+            "motivo_icms_desonerado": "",
+            "ncm": "8526.91.00",
+            "percentual_desconto": 0,
+            "quantidade": 1,
+            "reservado": "N",
+            "tipo_desconto": "P",
+            "unidade": "UN",
+            "valor_deducao": 0,
+            "valor_desconto": 0,
+            "valor_icms_desonerado": 0,
+            "valor_mercadoria": 10,
+            "valor_total": 10,
+            "valor_unitario": 10
+          },
+          "rastreabilidade": {}
+        }
+      ],
+      "exportacao": {
+        "nao_exportacao": "N"
+      },
+      "frete": {
+        "modalidade": "9",
+        "peso_bruto": 0.065,
+        "peso_liquido": 0.06
+      },
+      "infoCadastro": {
+        "autorizado": "N",
+        "cImpAPI": "N",
+        "cancelado": "N",
+        "dAlt": "20/08/2024",
+        "dInc": "20/08/2024",
+        "denegado": "N",
+        "devolvido": "N",
+        "devolvido_parcial": "N",
+        "faturado": "N",
+        "hAlt": "10:09:58",
+        "hInc": "10:09:13",
+        "uAlt": "P000589679",
+        "uInc": "P000589679"
+      },
+      "informacoes_adicionais": {
+        "codigo_categoria": "1.01.02",
+        "codigo_conta_corrente": 3101604997,
+        "consumidor_final": "S",
+        "enviar_email": "N",
+        "enviar_pix": "N",
+        "utilizar_emails": "rdo.rodrigo2@gmail.com"
+      }
+    }
+  },
+  // consultar informações de conta corrente
+  {
+    "nCodCC": 3101604997,
+    "cCodCCInt": "",
+    "tipo_conta_corrente": "CC",
+    "codigo_banco": "001",
+    "descricao": "Banco do Brasil",
+    "codigo_agencia": "9894-9",
+    "numero_conta_corrente": "390-5",
+    "saldo_inicial": -1268841.4,
+    "saldo_data": "07/02/2020",
+    "valor_limite": 0,
+    "nao_fluxo": "S",
+    "nao_resumo": "S",
+    "observacao": "",
+    "cobr_sn": "S",
+    "per_juros": 1,
+    "per_multa": 2,
+    "bol_instr1": "APÓS VENCIMENTO COBRAR JUROS DE 1% AO MES",
+    "bol_instr2": "APÓS VENCIMENTO COBRAR MULTA DE 2% AO MES",
+    "bol_instr3": "SUJEITO A PROTESTO APOS VENCIMENTO",
+    "bol_instr4": "ATENÇÃO: AO PROGRAMAR PAGAMENTO CONFIRA DADOS DO BENEFICIÁRIO.",
+    "bol_sn": "N",
+    "pix_sn": "N",
+    "cnab_esp": "",
+    "cobr_esp": "",
+    "dias_rcomp": 1,
+    "modalidade": "S",
+    "cancinstr": "90",
+    "pdv_enviar": "N",
+    "pdv_sincr_analitica": "S",
+    "pdv_dias_venc": 30,
+    "pdv_num_parcelas": 6,
+    "pdv_tipo_tef": 1,
+    "pdv_cod_adm": 0,
+    "pdv_limite_pacelas": 6,
+    "pdv_taxa_loja": 0,
+    "pdv_taxa_adm": 0,
+    "pdv_categoria": "",
+    "pdv_bandeira": "",
+    "cTipoCartao": "",
+    "cEstabelecimento": "",
+    "nome_gerente": "",
+    "ddd": "",
+    "telefone": "",
+    "email": "",
+    "endereco": "",
+    "numero": "",
+    "bairro": "",
+    "complemento": "",
+    "estado": "",
+    "cidade": "",
+    "cep": "",
+    "codigo_pais": "",
+    "data_inc": "07/02/2020",
+    "hora_inc": "10:43:49",
+    "user_inc": "P000147746",
+    "data_alt": "28/02/2024",
+    "hora_alt": "16:32:41",
+    "user_alt": "P000000792",
+    "importado_api": "N",
+    "bloqueado": "N",
+    "inativo": "N"
+  }
+]

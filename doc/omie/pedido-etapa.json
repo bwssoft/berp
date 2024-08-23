@@ -1,0 +1,716 @@
+{
+  "nPagina": 1,
+  "nTotPaginas": 1590,
+  "nRegistros": 20,
+  "nTotRegistros": 31786,
+  "etapasPedido": [
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "7",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35230820618574000135550010000014751311442408",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "12:18:53",
+        "cHrSaida": "",
+        "cNumNFE": "00001475",
+        "cSerieNFE": "001",
+        "cUsDev": "P000480496",
+        "dDtFat": "18/08/2023",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "18/08/2023",
+        "dInc": "18/08/2023",
+        "hAlt": "12:18:28",
+        "hInc": "12:07:54",
+        "uAlt": "P000480496",
+        "uInc": "P000480496"
+      },
+      "nCodPed": 4356086114
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "8",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000013841310371873",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "09:12:26",
+        "cHrSaida": "",
+        "cNumNFE": "00001384",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "24/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "24/11/2021",
+        "dInc": "24/11/2021",
+        "hAlt": "12:39:50",
+        "hInc": "08:56:42",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3766467538
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "50",
+      "cNumero": "3300",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "",
+        "cAutorizado": "N",
+        "cChaveNFE": "",
+        "cDANFE": "N",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "14:46:06",
+        "cHrSaida": "",
+        "cNumNFE": "",
+        "cSerieNFE": "",
+        "cUsDev": "P000439813",
+        "dDtFat": "13/10/2022",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "13/10/2022",
+        "dInc": "13/10/2022",
+        "hAlt": "14:46:05",
+        "hInc": "14:46:05",
+        "uAlt": "P000439813",
+        "uInc": "P000439813"
+      },
+      "nCodPed": 4089776728
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "20",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "N",
+        "cChaveNFE": "",
+        "cDANFE": "N",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "11:00:43",
+        "cHrSaida": "",
+        "cNumNFE": "",
+        "cSerieNFE": "",
+        "cUsDev": "P000147746",
+        "dDtFat": "25/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "25/11/2021",
+        "dInc": "25/11/2021",
+        "hAlt": "11:24:38",
+        "hInc": "10:54:28",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3767958460
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "54",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "N",
+        "cChaveNFE": "",
+        "cDANFE": "N",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "08:02:05",
+        "cHrSaida": "",
+        "cNumNFE": "",
+        "cSerieNFE": "",
+        "cUsDev": "P000147746",
+        "dDtFat": "26/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "26/11/2021",
+        "dInc": "26/11/2021",
+        "hAlt": "08:02:01",
+        "hInc": "07:58:47",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3769477507
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "56",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cFaturado": "N"
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "26/11/2021",
+        "dInc": "26/11/2021",
+        "hAlt": "08:06:33",
+        "hInc": "08:04:50",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3769479377
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "67",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000014361337336074",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "09:35:11",
+        "cHrSaida": "",
+        "cNumNFE": "00001436",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "26/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "26/11/2021",
+        "dInc": "26/11/2021",
+        "hAlt": "09:35:08",
+        "hInc": "09:33:47",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3769531812
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "18",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000013901242728179",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "15:26:17",
+        "cHrSaida": "",
+        "cNumNFE": "00001390",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "24/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "24/11/2021",
+        "dInc": "24/11/2021",
+        "hAlt": "15:26:14",
+        "hInc": "15:23:47",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3767118083
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "6",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35230820618574000135550010000014741730332922",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "15:20:06",
+        "cHrSaida": "",
+        "cNumNFE": "00001474",
+        "cSerieNFE": "001",
+        "cUsDev": "P000480496",
+        "dDtFat": "11/08/2023",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "11/08/2023",
+        "dInc": "11/08/2023",
+        "hAlt": "15:16:32",
+        "hInc": "15:14:04",
+        "uAlt": "P000480496",
+        "uInc": "P000480496"
+      },
+      "nCodPed": 4346404184
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "34",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000014071707111240",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "15:06:07",
+        "cHrSaida": "",
+        "cNumNFE": "00001407",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "25/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "25/11/2021",
+        "dInc": "25/11/2021",
+        "hAlt": "15:06:04",
+        "hInc": "15:01:54",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3768605893
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "9",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000013851068631110",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "12:06:23",
+        "cHrSaida": "",
+        "cNumNFE": "00001385",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "24/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "24/11/2021",
+        "dInc": "24/11/2021",
+        "hAlt": "12:06:14",
+        "hInc": "12:00:20",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3766757960
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "25",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "N",
+        "cChaveNFE": "",
+        "cDANFE": "N",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "11:37:34",
+        "cHrSaida": "",
+        "cNumNFE": "",
+        "cSerieNFE": "",
+        "cUsDev": "P000147746",
+        "dDtFat": "25/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "25/11/2021",
+        "dInc": "25/11/2021",
+        "hAlt": "11:36:53",
+        "hInc": "11:33:16",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3767964595
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "29",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000014011741742210",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "14:14:42",
+        "cHrSaida": "",
+        "cNumNFE": "00001401",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "25/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "25/11/2021",
+        "dInc": "25/11/2021",
+        "hAlt": "14:14:38",
+        "hInc": "14:12:12",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3768310063
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "42",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "N",
+        "cChaveNFE": "",
+        "cDANFE": "N",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "16:14:16",
+        "cHrSaida": "",
+        "cNumNFE": "",
+        "cSerieNFE": "",
+        "cUsDev": "P000147746",
+        "dDtFat": "25/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "25/11/2021",
+        "dInc": "25/11/2021",
+        "hAlt": "16:14:10",
+        "hInc": "16:07:56",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3768702057
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "69",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000014381453926286",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "09:44:13",
+        "cHrSaida": "",
+        "cNumNFE": "00001438",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "26/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "26/11/2021",
+        "dInc": "26/11/2021",
+        "hAlt": "09:44:10",
+        "hInc": "09:42:22",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3769535369
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "47",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000014201747456460",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "07:33:40",
+        "cHrSaida": "",
+        "cNumNFE": "00001420",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "26/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "26/11/2021",
+        "dInc": "26/11/2021",
+        "hAlt": "07:33:37",
+        "hInc": "07:31:44",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3769366871
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "45",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000014181653742810",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "07:26:32",
+        "cHrSaida": "",
+        "cNumNFE": "00001418",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "26/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "26/11/2021",
+        "dInc": "25/11/2021",
+        "hAlt": "07:26:29",
+        "hInc": "16:37:03",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3768788026
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "6",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000013821964954784",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "16:17:56",
+        "cHrSaida": "",
+        "cNumNFE": "00001382",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "23/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "24/11/2021",
+        "dInc": "23/11/2021",
+        "hAlt": "15:31:58",
+        "hInc": "11:20:41",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3765457056
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "77",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000014461286178066",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "10:35:47",
+        "cHrSaida": "",
+        "cNumNFE": "00001446",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "26/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "26/11/2021",
+        "dInc": "26/11/2021",
+        "hAlt": "10:35:43",
+        "hInc": "10:30:10",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3769639678
+    },
+    {
+      "cCodIntPed": "",
+      "cEtapa": "10",
+      "cNumero": "68",
+      "cancelamento": {
+        "cCancelado": "N"
+      },
+      "devolucao": {
+        "cDevolvido": "N"
+      },
+      "faturamento": {
+        "cAmbiente": "P",
+        "cAutorizado": "S",
+        "cChaveNFE": "35211120618574000135550010000014371896223104",
+        "cDANFE": "S",
+        "cDenegado": "N",
+        "cFaturado": "S",
+        "cHrFat": "09:42:01",
+        "cHrSaida": "",
+        "cNumNFE": "00001437",
+        "cSerieNFE": "001",
+        "cUsDev": "P000147746",
+        "dDtFat": "26/11/2021",
+        "dDtSainda": ""
+      },
+      "info": {
+        "cImpAPI": "N",
+        "dAlt": "26/11/2021",
+        "dInc": "26/11/2021",
+        "hAlt": "09:41:58",
+        "hInc": "09:40:40",
+        "uAlt": "P000147746",
+        "uInc": "P000147746"
+      },
+      "nCodPed": 3769535025
+    }
+  ]
+}

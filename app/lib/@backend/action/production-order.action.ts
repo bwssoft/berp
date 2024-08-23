@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IProduct, IProductionOrder } from "../domain"
+import { IProduct, IProductionOrder, ISaleOrder } from "../domain"
 import {
   createOneProductionOrderUsecase,
   findOneProductionOrderUsecase,
@@ -21,7 +21,7 @@ export async function findOneProductionOrder(productionOrder: Partial<IProductio
   return await findOneProductionOrderUsecase.execute(productionOrder)
 }
 
-export async function updateOneProductionOrderById(query: { id: string }, value: Omit<IProductionOrder, "id" | "created_at">) {
+export async function updateOneProductionOrderById(query: { id: string }, value: Omit<Partial<IProductionOrder>, "id" | "created_at">) {
   await updateOneProductionOrderUsecase.execute(query, value)
   revalidatePath("/production-order/management")
 }
@@ -35,7 +35,7 @@ export async function findAllProductionOrder(): Promise<IProductionOrder[]> {
   return await findAllProductionOrderUsecase.execute()
 }
 
-export async function findAllProductionOrderWithProduct(): Promise<(IProductionOrder & { _products: IProduct[] })[]> {
+export async function findAllProductionOrderWithProduct(): Promise<(IProductionOrder & { sale_order: ISaleOrder, products_in_sale_order: IProduct[] })[]> {
   return await findAllProductionOrderWithProductUsecase.execute()
 }
 
