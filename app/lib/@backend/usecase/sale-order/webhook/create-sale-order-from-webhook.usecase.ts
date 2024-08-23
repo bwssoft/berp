@@ -86,12 +86,12 @@ class CreateSaleOrderFromWebhookUseCase {
       },
     };
 
-    const newServiceOrder = await createOneSaleOrderUsecase.execute(
+    const newSaleOrder = await createOneSaleOrderUsecase.execute(
       mongoSaleOrder
     );
 
-    if (newServiceOrder.insertedId) {
-      return newServiceOrder;
+    if (newSaleOrder.insertedId) {
+      return newSaleOrder;
     }
   }
 }

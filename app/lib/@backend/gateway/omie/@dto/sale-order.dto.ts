@@ -206,6 +206,9 @@ export interface IOmieSaleOrder {
         }
       ];
     };
+    observacoes: {
+      obs_venda: string;
+    };
     total_pedido: {
       valor_mercadorias: number;
       valor_total_pedido: number;
