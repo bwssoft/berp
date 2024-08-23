@@ -34,7 +34,12 @@ class CreateSaleOrderFromWebhookUseCase {
       stringifiedSaleOrderId
     );
 
-    const productsMapped = saleOrderData.pedido_venda_produto.det.map(
+    const det = saleOrderData.pedido_venda_produto?.det ?? []
+    if (!det.length) {
+      return
+    }
+
+    const productsMapped = det.map(
       ({ produto }) => ({
         id: produto.codigo_produto.toString(),
         quantity: produto.quantidade,

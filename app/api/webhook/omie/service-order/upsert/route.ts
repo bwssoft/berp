@@ -3,11 +3,10 @@ import { OmieSaleOrderEvents } from "@/app/lib/@backend/domain/@shared/webhook/o
 
 export async function POST(request: Request) {
   try {
-    let body = await request.json()
+    let body = await request.json() as OmieSaleOrderEvents[keyof OmieSaleOrderEvents];
 
     if ("ping" in body) return new Response("Pong", { status: 200 })
 
-    body = body as OmieSaleOrderEvents[keyof OmieSaleOrderEvents];
     const saleOrderController = new SaleOrderController();
 
     await saleOrderController.execute(body);
