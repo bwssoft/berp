@@ -13,5 +13,10 @@ export async function POST(request: Request) {
     return new Response("Sale order processed successfully", { status: 200 });
   } catch (error) {
     console.error(error);
+    if (error instanceof Error) {
+      return new Response(error.message, { status: 500 });
+    }
+    return new Response("Error", { status: 500 });
+
   }
 }
