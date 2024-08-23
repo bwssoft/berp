@@ -6,5 +6,6 @@ export type ITopicEventsUseCaseConstants = {
 }
 export const TopicEventsUseCaseConstants: ITopicEventsUseCaseConstants = {
   [EventsTopics.Include]: 'upsertClientFromWebhookUsecase',
-  [EventsTopics.Update]: 'upsertClientFromWebhookUsecase'
+  [EventsTopics.Update]: 'upsertClientFromWebhookUsecase',
+  [EventsTopics.Delete]: 'deleteClientFromWebhookUseCase'
 }
