@@ -36,7 +36,7 @@ export function useProductionOrderUpdateForm(props: Props) {
     reset: hookFormReset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues
+    // defaultValues
   });
   const { fields, append, remove } = useFieldArray({
     control,
@@ -46,7 +46,7 @@ export function useProductionOrderUpdateForm(props: Props) {
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
-      await updateOneProductionOrderById({ id: defaultValues.id! }, data);
+      // await updateOneProductionOrderById({ id: defaultValues.id! }, data);
       toast({
         title: "Sucesso!",
         description: "Order de produção atualizada com sucesso!",

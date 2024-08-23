@@ -32,7 +32,7 @@ export function useProductionOrderCreateForm() {
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
-      await createOneProductionOrder({ ...data, stage: "to_produce" });
+      // await createOneProductionOrder({ ...data, stage: "to_produce" });
       toast({
         title: "Sucesso!",
         description: "Order de produção registrada com sucesso!",
