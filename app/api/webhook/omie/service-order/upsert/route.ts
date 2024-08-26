@@ -3,8 +3,9 @@ import { OmieSaleOrderEvents } from "@/app/lib/@backend/domain/@shared/webhook/o
 
 export async function POST(request: Request) {
   try {
-    const body =
-      (await request.json()) as OmieSaleOrderEvents[keyof OmieSaleOrderEvents];
+    let body = await request.json() as OmieSaleOrderEvents[keyof OmieSaleOrderEvents];
+
+    if ("ping" in body) return new Response("Pong", { status: 200 })
 
     const saleOrderController = new SaleOrderController();
 
@@ -13,5 +14,10 @@ export async function POST(request: Request) {
     return new Response("Sale order processed successfully", { status: 200 });
   } catch (error) {
     console.error(error);
+    if (error instanceof Error) {
+      return new Response(error.message, { status: 500 });
+    }
+    return new Response("Error", { status: 500 });
+
   }
 }

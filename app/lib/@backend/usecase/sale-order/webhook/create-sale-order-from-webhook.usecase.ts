@@ -34,12 +34,12 @@ class CreateSaleOrderFromWebhookUseCase {
       stringifiedSaleOrderId
     );
 
-    const productsMapped = saleOrderData.pedido_venda_produto.det.map(
-      ({ produto }) => ({
-        id: produto.codigo_produto.toString(),
-        quantity: produto.quantidade,
-      })
-    );
+    const det = saleOrderData.pedido_venda_produto?.det ?? [];
+
+    const productsMapped = det.map(({ produto }) => ({
+      id: produto.codigo_produto.toString(),
+      quantity: produto.quantidade,
+    }));
 
     const productsIds = productsMapped.map(({ id }) => id);
 
@@ -53,7 +53,7 @@ class CreateSaleOrderFromWebhookUseCase {
       [`omie_code_metadata.${enterpriseHashMapped}`]: idCliente.toString(),
     });
 
-    if (databaseProducts.length === 0 || databaseClient === null) {
+    if (databaseClient === null) {
       return;
     }
 
