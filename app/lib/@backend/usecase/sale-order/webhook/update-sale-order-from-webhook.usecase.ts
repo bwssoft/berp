@@ -31,8 +31,14 @@ class UpdateSaleOrderFromWebhookUseCase {
   async execute(input: UpdateSaleOrderFromWebhookUseCaseInput) {
     const body = input.body;
 
-    const { idCliente, idPedido, valorPedido, etapa, numeroPedido } =
-      body.event;
+    const {
+      idCliente,
+      idPedido,
+      valorPedido,
+      etapa,
+      etapaDescr,
+      numeroPedido,
+    } = body.event;
 
     const stringifiedSaleOrderId = idPedido.toString();
 
@@ -108,28 +114,33 @@ class UpdateSaleOrderFromWebhookUseCase {
       mongoSaleOrder
     );
 
-    const productionOrderExists = await findOneProductionOrderUsecase.execute({
-      sale_order_id: saleOrderToUpdate.id,
-    });
-
-    if (productionOrderExists?.id) {
-      updateOneProductionOrderUsecase.execute(
-        { id: productionOrderExists.id },
+    if (etapa === "20") {
+      // Etapa 20 é Separar estoque
+      const productionOrderExists = await findOneProductionOrderUsecase.execute(
         {
+          sale_order_id: saleOrderToUpdate.id,
+        }
+      );
+
+      if (productionOrderExists?.id) {
+        updateOneProductionOrderUsecase.execute(
+          { id: productionOrderExists.id },
+          {
+            description:
+              saleOrderData?.pedido_venda_produto?.observacoes?.obs_venda ??
+              "Ordem de produção não possui descrição.",
+          }
+        );
+      } else {
+        createOneProductionOrderUsecase.execute({
           description:
             saleOrderData?.pedido_venda_produto?.observacoes?.obs_venda ??
             "Ordem de produção não possui descrição.",
-        }
-      );
-    } else {
-      createOneProductionOrderUsecase.execute({
-        description:
-          saleOrderData?.pedido_venda_produto?.observacoes?.obs_venda ??
-          "Ordem de produção não possui descrição.",
-        priority: "medium",
-        stage: "in_warehouse",
-        sale_order_id: saleOrderToUpdate.id,
-      });
+          priority: "medium",
+          stage: "in_warehouse",
+          sale_order_id: saleOrderToUpdate.id,
+        });
+      }
     }
 
     if (updatedSaleOrder.acknowledged) {
