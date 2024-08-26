@@ -54,12 +54,16 @@ class UpdateSaleOrderFromWebhookUseCase {
       stringifiedSaleOrderId
     );
 
+    console.log(JSON.stringify({ saleOrderData }, null, 2));
+
     const det = saleOrderData.pedido_venda_produto?.det ?? [];
 
     const productsMapped = det.map(({ produto }) => ({
       id: produto.codigo_produto.toString(),
       quantity: produto.quantidade,
     }));
+
+    console.log({ productsMapped });
 
     const productsIds = productsMapped.map(({ id }) => id);
 
@@ -81,7 +85,11 @@ class UpdateSaleOrderFromWebhookUseCase {
       stringifiedSaleOrderId
     );
 
+    console.log(JSON.stringify({ attachmentsData }, null, 2));
+
     const attachments = attachmentsData.listaAnexos;
+
+    console.log(JSON.stringify({ attachments }, null, 2));
 
     const mongoSaleOrder: Omit<ISaleOrder, "id" | "created_at"> = {
       client_id: databaseClient.id,
@@ -105,6 +113,8 @@ class UpdateSaleOrderFromWebhookUseCase {
         stage: saleOrderConstants.stageOmieMapped[etapa],
       },
     };
+
+    console.log(JSON.stringify({ attachments }, null, 2));
 
     const updatedSaleOrder = await updateOneSaleOrderUsecase.execute(
       { id: saleOrderToUpdate.id },
