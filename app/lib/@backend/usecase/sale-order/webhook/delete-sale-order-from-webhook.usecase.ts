@@ -13,6 +13,9 @@ class DeleteSaleOrderFromWebhookUseCase {
   async execute(input: DeleteSaleOrderFromWebhookUseCaseInput) {
     const body = input.body;
 
+    console.log("DeleteSaleOrderFromWebhookUseCase");
+    console.log({ body });
+
     const { idPedido } = body.event;
 
     const stringifiedSaleOrderId = idPedido.toString();
