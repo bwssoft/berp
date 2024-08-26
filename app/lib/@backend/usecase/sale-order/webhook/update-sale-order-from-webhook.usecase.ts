@@ -31,14 +31,11 @@ class UpdateSaleOrderFromWebhookUseCase {
   async execute(input: UpdateSaleOrderFromWebhookUseCaseInput) {
     const body = input.body;
 
-    const {
-      idCliente,
-      idPedido,
-      valorPedido,
-      etapa,
-      etapaDescr,
-      numeroPedido,
-    } = body.event;
+    console.log("UpdateSaleOrderFromWebhookUseCase");
+    console.log({ body });
+
+    const { idCliente, idPedido, valorPedido, etapa, numeroPedido } =
+      body.event;
 
     const stringifiedSaleOrderId = idPedido.toString();
 

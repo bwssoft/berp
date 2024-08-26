@@ -20,6 +20,9 @@ class CreateSaleOrderFromWebhookUseCase {
   async execute(input: CreateSaleOrderFromWebhookUseCaseInput) {
     const body = input.body;
 
+    console.log("CreateSaleOrderFromWebhookUseCase");
+    console.log({ body });
+
     const { idCliente, idPedido, valorPedido, etapa, numeroPedido } =
       body.event;
 
