@@ -93,6 +93,8 @@ class CreateSaleOrderFromWebhookUseCase {
       mongoSaleOrder
     );
 
+    console.log("CreateSaleOrderFromWebhookUseCase - end of usecase");
+
     if (newSaleOrder.insertedId) {
       return newSaleOrder;
     }

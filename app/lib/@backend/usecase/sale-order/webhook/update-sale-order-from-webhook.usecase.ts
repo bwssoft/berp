@@ -150,6 +150,8 @@ class UpdateSaleOrderFromWebhookUseCase {
       }
     }
 
+    console.log("UpdateSaleOrderFromWebhookUseCase - end of usecase");
+
     if (updatedSaleOrder.acknowledged) {
       return updatedSaleOrder;
     }
