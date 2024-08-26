@@ -114,7 +114,8 @@ class UpdateSaleOrderFromWebhookUseCase {
       mongoSaleOrder
     );
 
-    if (etapaDescr === "Separar Estoque") {
+    if (etapa === "20") {
+      // Etapa 20 é Separar estoque
       const productionOrderExists = await findOneProductionOrderUsecase.execute(
         {
           sale_order_id: saleOrderToUpdate.id,
