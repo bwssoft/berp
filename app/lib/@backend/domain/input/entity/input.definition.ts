@@ -23,15 +23,7 @@ type Manufacturer = {
 }
 
 type Category =
-  'mdm' |
-  'ids' |
-  'cis' |
-  'com' |
-  'pcb' |
-  'bat' |
-  'cht' |
-  'cas' |
-  'ant' |
-  'dis'
+  "cap" | "dio" | "fet" | "swa" | "dcd" | "res" | "con" | "mod" | "ldo" | "led" | "sen" | "ind" | "mem" | "ic"
+
 
 type MeasureUnit = 'cm' | 'm' | 'kg' | 'g' | 'ml' | 'l' | 'un'
