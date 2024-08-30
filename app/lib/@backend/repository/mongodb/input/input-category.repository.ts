@@ -5,7 +5,7 @@ import { BaseRepository } from "../@base/base";
 class IInputCategoryRepository extends BaseRepository<IInputCategory> {
   constructor() {
     super({
-      collection: "category",
+      collection: "input-category",
       db: "berp"
     })
   }

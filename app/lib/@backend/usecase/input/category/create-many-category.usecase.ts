@@ -1,10 +1,10 @@
 import { singleton } from "@/app/lib/util";
-import { inputCategoryRepository } from "../../../repository/mongodb/input/input-category.repository";
-import { IINputCategoryRepository } from "../../../domain/input/repository/input-category.repository";
 import { IInputCategory } from "../../../domain/input/entity/input-category.definition";
+import { IInputCategoryRepository } from "../../../domain/input/repository/input-category.repository";
+import { inputCategoryRepository } from "../../../repository/mongodb/input/input-category.repository";
 
 class CreateManyInputCategory {
-  repository: IINputCategoryRepository;
+  repository: IInputCategoryRepository;
 
   constructor() {
     this.repository = inputCategoryRepository
