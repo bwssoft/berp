@@ -23,7 +23,24 @@ type Manufacturer = {
 }
 
 type Category =
-  "cap" | "dio" | "fet" | "swa" | "dcd" | "res" | "con" | "mod" | "ldo" | "led" | "sen" | "ind" | "mem" | "ic"
-
+  | "cap"
+  | "dio"
+  | "fet"
+  | "swa"
+  | "dcd"
+  | "res"
+  | "con"
+  | "mod"
+  | "ldo"
+  | "led"
+  | "sen"
+  | "ind"
+  | "mem"
+  | "ic"
+  | "ant"
+  | "fus"
+  | "swi"
+  | "swa"
+  | "trn";
 
 type MeasureUnit = 'cm' | 'm' | 'kg' | 'g' | 'ml' | 'l' | 'un'

@@ -12,7 +12,7 @@ const category = {
   cap: "Capacitores",
   dio: "Diodos",
   fet: "Transistores MOSFET",
-  swa: "Interruptores/Chaves",
+  swa: "Chave analógica",
   dcd: "Conversores DC-DC",
   res: "Resistores",
   con: "Conectores",
@@ -23,6 +23,10 @@ const category = {
   ind: "Indutores",
   mem: "Memórias",
   ic: "Circuitos Integrados",
+  ant: "Antena",
+  fus: "Fusível",
+  swi: "Chave mecânica",
+  trn: "Transistor"
 }
 
 export const inputConstants = {

@@ -1,5 +1,5 @@
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { createOneInput } from '@/app/lib/@backend/action';
+import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -7,7 +7,26 @@ import { z } from 'zod';
 const schema = z.object({
   name: z.string().min(1, 'Esse campo não pode ser vazio'),
   measure_unit: z.enum(["cm", "m", "kg", "g", "ml", "l", "un"]),
-  category: z.enum(["cap", "dio", "fet", "swa", "dcd", "res", "con", "mod", "ldo", "led", "sen", "ind", "mem", "ic"]),
+  category: z.enum([
+    "cap", 
+    "dio", 
+    "fet", 
+    "swa", 
+    "dcd", 
+    "res", 
+    "con", 
+    "mod", 
+    "ldo", 
+    "led", 
+    "sen", 
+    "ind", 
+    "mem", 
+    "ic",
+    "ant",
+    "fus",
+    "swi",
+    "trn"
+  ]),  
   files: z.any(),
   color: z.string(),
   description: z.string().optional(),
