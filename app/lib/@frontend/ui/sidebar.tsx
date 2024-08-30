@@ -1,35 +1,24 @@
 "use client";
-import {
-  ForwardRefExoticComponent,
-  RefAttributes,
-  SVGProps,
-  useState,
-} from "react";
-import {
-  Dialog,
-  DialogPanel,
-  Transition,
-  TransitionChild,
-} from "@headlessui/react";
+import { cn } from "@/app/lib/util";
+import { Dialog, DialogPanel, Disclosure, Transition, TransitionChild } from "@headlessui/react";
 import {
   Bars3Icon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
-  ClipboardIcon,
-  ChevronRightIcon,
-  CpuChipIcon,
   BriefcaseIcon,
-  RectangleStackIcon,
+  ChevronRightIcon,
+  ClipboardIcon,
   CloudArrowUpIcon,
   CommandLineIcon,
+  CpuChipIcon,
+  FolderIcon,
+  HomeIcon,
   RectangleGroupIcon,
+  RectangleStackIcon,
+  UsersIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Disclosure } from "@headlessui/react";
-import { cn } from "@/app/lib/util";
-import { useIsOnPathname } from "../hook/is-on-pathname";
 import Link from "next/link";
+import { ForwardRefExoticComponent, RefAttributes, SVGProps, useState } from "react";
+import { useIsOnPathname } from "../hook/is-on-pathname";
 
 type NavItem = {
   name: string;
@@ -63,6 +52,10 @@ const navigation: NavItem[] = [
         icon: FolderIcon,
         children: [
           { name: "Gestão", pathname: "/input/management" },
+          {
+            name: "Categorias",
+            pathname: "/input/category",
+          },
           { name: "Entradas e Saídas", pathname: "/input/enter-exit" },
           { name: "Estoque", pathname: "/input/stock" },
           { name: "Análise", pathname: "/input/analysis" },
@@ -170,18 +163,13 @@ export function SideBar() {
           <Link
             href={item.pathname ?? "#"}
             className={cn(
-              isOnPathname(item.pathname)
-                ? "bg-gray-50"
-                : "hover:bg-gray-50 pl-",
+              isOnPathname(item.pathname) ? "bg-gray-50" : "hover:bg-gray-50 pl-",
               "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700",
               paddingLeft // Adiciona padding-left baseado na profundidade
             )}
           >
             {item.icon && (
-              <item.icon
-                className="h-6 w-6 shrink-0 text-gray-400"
-                aria-hidden="true"
-              />
+              <item.icon className="h-6 w-6 shrink-0 text-gray-400" aria-hidden="true" />
             )}
             {item.name}
           </Link>
@@ -191,18 +179,13 @@ export function SideBar() {
               <>
                 <Disclosure.Button
                   className={cn(
-                    isOnPathname(item.pathname)
-                      ? "bg-gray-50"
-                      : "hover:bg-gray-50",
+                    isOnPathname(item.pathname) ? "bg-gray-50" : "hover:bg-gray-50",
                     "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm font-semibold leading-6 text-gray-700",
                     paddingLeft // Adiciona padding-left baseado na profundidade
                   )}
                 >
                   {item?.icon && (
-                    <item.icon
-                      className="h-6 w-6 shrink-0 text-gray-400"
-                      aria-hidden="true"
-                    />
+                    <item.icon className="h-6 w-6 shrink-0 text-gray-400" aria-hidden="true" />
                   )}
                   {item.name}
                   <ChevronRightIcon
@@ -214,9 +197,7 @@ export function SideBar() {
                   />
                 </Disclosure.Button>
                 <Disclosure.Panel as="ul" className="mt-1">
-                  {item?.children?.map((subItem) =>
-                    renderNavItem(subItem, depth + 1)
-                  )}
+                  {item?.children?.map((subItem) => renderNavItem(subItem, depth + 1))}
                 </Disclosure.Panel>
               </>
             )}
@@ -267,21 +248,14 @@ export function SideBar() {
                         onClick={() => setSidebarOpen(false)}
                       >
                         <span className="sr-only">Close sidebar</span>
-                        <XMarkIcon
-                          className="h-6 w-6 text-white"
-                          aria-hidden="true"
-                        />
+                        <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
                       </button>
                     </div>
                   </TransitionChild>
                   {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
                     <div className="flex h-16 shrink-0 items-center">
-                      <img
-                        className="h-8 w-auto"
-                        src="/logo-bws.png"
-                        alt="Your Company"
-                      />
+                      <img className="h-8 w-auto" src="/logo-bws.png" alt="Your Company" />
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -304,11 +278,7 @@ export function SideBar() {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
             <div className="flex h-16 shrink-0 items-center">
-              <img
-                className="h-8 w-auto"
-                src="/logo-bws.png"
-                alt="Your Company"
-              />
+              <img className="h-8 w-auto" src="/logo-bws.png" alt="Your Company" />
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -322,11 +292,7 @@ export function SideBar() {
                     href="#"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                   >
-                    <img
-                      className="h-8 w-8 rounded-full bg-gray-50"
-                      src="/avatar.webp"
-                      alt=""
-                    />
+                    <img className="h-8 w-8 rounded-full bg-gray-50" src="/avatar.webp" alt="" />
                     <span className="sr-only">Your profile</span>
                     <span aria-hidden="true">Oswaldo Conti-Bosso</span>
                   </a>
@@ -345,16 +311,10 @@ export function SideBar() {
             <span className="sr-only">Open sidebar</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
-          <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
-            Dashboard
-          </div>
+          <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">Dashboard</div>
           <a href="#">
             <span className="sr-only">Your profile</span>
-            <img
-              className="h-8 w-8 rounded-full bg-gray-50"
-              src="/avatar.webp"
-              alt=""
-            />
+            <img className="h-8 w-8 rounded-full bg-gray-50" src="/avatar.webp" alt="" />
           </a>
         </div>
       </div>
