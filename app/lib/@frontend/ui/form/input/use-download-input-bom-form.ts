@@ -11,11 +11,16 @@ export function useDownloadInputBOMForm() {
     const workbook = new ExcelJS.Workbook();
     const sheet = prepareInputSheet(workbook);
 
+    // Adiciona dinamicamente as opções de categoria do usuário na planilha.
     //@ts-expect-error Existe um dataValidations dentro da classe sheet, mas a tipagem nao reconhece
-    sheet.dataValidations.add("A2:A9999", {
+    sheet.dataValidations.add("A2:A99999", {
       type: "list",
-      allowBlank: true,
+      allowBlank: false,
       formulae: formatCategoriesSheetValidationFormulae(inputCategories),
+      operator: 'equal',
+      showErrorMessage: true, 
+      errorStyle: 'error', 
+      error: 'Só é possível preencher com um dos valores disponíveis na lista. Se precisar de mais categorias cadastre uma nova em Engenharia > Insumos > Categorias.'
     });
 
     const sheetBuffer = await workbook.xlsx.writeBuffer();
@@ -34,6 +39,7 @@ export function useDownloadInputBOMForm() {
   function prepareInputSheet(workbook: ExcelJS.Workbook) {
     let sheet = workbook.addWorksheet('Planilha');
 
+    // Adiciona os headers da planilha.
     sheet.addRow([
       'Categoria', 
       'Nome', 
@@ -47,17 +53,39 @@ export function useDownloadInputBOMForm() {
       'Unidade de Medida'
     ]);
 
-    //@ts-expect-error Existe um dataValidations dentro da classe sheet, mas a tipagem nao reconhece
-    sheet.dataValidations.add("J2:J9999", {
-      type: "list",
-      allowBlank: true,
-      formulae: ['"cm,m,kg,g,ml,l,un"'],
-    })
-
+    // Torna o texto da coluna de header em negrito. 
     sheet.getRow(1).font = {
       bold: true
     };
 
+    // Adiciona as opções fixas de unidade de medida.
+    //@ts-expect-error Existe um dataValidations dentro da classe sheet, mas a tipagem nao reconhece
+    sheet.dataValidations.add("J2:J99999", {
+      type: "list",
+      allowBlank: false,
+      formulae: ['"cm,m,kg,g,ml,l,un"'],
+      showErrorMessage: true, 
+      operator: 'equal',
+      errorStyle: 'error', 
+      error: 'Só é possível preencher com um dos valores disponíveis na lista.',
+    })
+
+    // Adiciona formatação de moeda na coluna de Preço.
+    sheet.getColumn(9).numFmt = '"R$ "#,##0.00;[Red]\-"R$ "#,##0.00';
+
+    // Adiciona validação decimal na coluna de preço.
+    //@ts-expect-error Existe um dataValidations dentro da classe sheet, mas a tipagem nao reconhece
+    sheet.dataValidations.add("I2:I99999", {
+      type: "decimal",
+      allowBlank: false,
+      formulae: [0, 9999999],
+      showErrorMessage: true, 
+      operator: 'between',
+      showInputMessage: true,
+      prompt: 'Use a virgula para valores decimais'
+    })
+
+    // Formata a largura das colunas utilizadas para um melhor espaçamento.
     formatSheetColumnsWidth(sheet);
    
     return sheet;
