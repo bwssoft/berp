@@ -31,9 +31,9 @@ export class BaseRepository<Entity extends object> implements IBaseRepository<En
     return await db.collection<Entity>(this.collection).findOne(params)
   }
 
-  async findAll() {
+  async findAll(params: Filter<Entity> = {}) {
     const db = await this.connect();
-    return await db.collection<Entity>(this.collection).find().sort({ _id: -1 }).toArray();
+    return await db.collection<Entity>(this.collection).find(params).sort({ _id: -1 }).toArray();
   }
 
   async updateOne(query: Filter<Entity>, value: Partial<Entity>) {
@@ -81,5 +81,3 @@ export class BaseRepository<Entity extends object> implements IBaseRepository<En
     return db;
   }
 }
-
-
