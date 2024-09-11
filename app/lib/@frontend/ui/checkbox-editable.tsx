@@ -1,9 +1,12 @@
 "use client";
 
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { ChangeEvent, KeyboardEvent, useState } from "react";
 import { cn } from "../../util";
-import { useDebounce } from "../hook";
 
 type CheckboxTypes = {
   label: string;
@@ -26,14 +29,14 @@ export function CheckboxEditable({
   const [text, setText] = useState(label);
 
   function handleInputEnterPress(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Enter") setIsEditing(false);
+    if (event.key === "Enter") {
+      onLabelEdit(text);
+      setIsEditing(false);
+    }
   }
-
-  const debouncedOnLabelEdit = useDebounce(onLabelEdit, 1000);
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     setText(event.target.value);
-    debouncedOnLabelEdit?.(event.target.value);
   }
 
   return (
@@ -73,12 +76,27 @@ export function CheckboxEditable({
 
               {!viewOnly && (
                 <div className="flex flex-row gap-3 mr-4">
-                  <PencilIcon
-                    className="w-4 h-4"
-                    title="Editar valor da label do checkbox"
-                    role="button"
-                    onClick={() => setIsEditing((prev) => !prev)}
-                  />
+                  {!isEditing && (
+                    <PencilIcon
+                      className="w-4 h-4"
+                      title="Editar valor da label do checkbox"
+                      role="button"
+                      onClick={() => setIsEditing((prev) => !prev)}
+                    />
+                  )}
+
+                  {isEditing && (
+                    <CheckCircleIcon
+                      className="w-4 h-4"
+                      title="Salvar valor da label do checkbox"
+                      role="button"
+                      onClick={() => {
+                        setIsEditing((prev) => !prev);
+                        onLabelEdit(text);
+                      }}
+                    />
+                  )}
+
                   <TrashIcon
                     className="w-4 h-4"
                     title="Deletar checkbox"
