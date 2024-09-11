@@ -1,3 +1,5 @@
+import { IProductionProcessStep } from "../../production-process/entity/production-process.definition"
+
 export interface IProductionOrder {
   id: string
   priority: "high" | "medium" | "low"
@@ -7,6 +9,12 @@ export interface IProductionOrder {
   stage: "in_warehouse" |
   "to_produce" |
   "producing" |
-  "completed"
+  "completed",
+  production_process?: Array<IProductionOrderProcess>
 }
 
+
+export type IProductionOrderProcess = {
+  process_uuid: string,
+  steps_progress: Array<IProductionProcessStep>
+}
