@@ -16,7 +16,7 @@ export const columns: ColumnDef<Row>[] = [
     accessorKey: "product",
     cell: ({ row }) => {
       const device = row.original;
-      return device.product.name;
+      return device.product?.name;
     },
   },
   {
