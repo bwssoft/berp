@@ -1,35 +1,35 @@
 "use client";
+import { cn } from "@/app/lib/util";
+import {
+  Dialog,
+  DialogPanel,
+  Disclosure,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
+import {
+  Bars3Icon,
+  BriefcaseIcon,
+  ChevronRightIcon,
+  ClipboardIcon,
+  CloudArrowUpIcon,
+  CommandLineIcon,
+  CpuChipIcon,
+  FolderIcon,
+  HomeIcon,
+  RectangleGroupIcon,
+  RectangleStackIcon,
+  UsersIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
 import {
   ForwardRefExoticComponent,
   RefAttributes,
   SVGProps,
   useState,
 } from "react";
-import {
-  Dialog,
-  DialogPanel,
-  Transition,
-  TransitionChild,
-} from "@headlessui/react";
-import {
-  Bars3Icon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-  XMarkIcon,
-  ClipboardIcon,
-  ChevronRightIcon,
-  CpuChipIcon,
-  BriefcaseIcon,
-  RectangleStackIcon,
-  CloudArrowUpIcon,
-  CommandLineIcon,
-  RectangleGroupIcon,
-} from "@heroicons/react/24/outline";
-import { Disclosure } from "@headlessui/react";
-import { cn } from "@/app/lib/util";
 import { useIsOnPathname } from "../hook/is-on-pathname";
-import Link from "next/link";
 
 type NavItem = {
   name: string;
@@ -116,10 +116,16 @@ const navigation: NavItem[] = [
         ],
       },
       {
-        name: "Ordens de Configuração",
+        name: "Ordens de configuração",
         children: [
           { name: "Gestão", pathname: "/production-order/management" },
           { name: "Kanban", pathname: "/production-order/kanban" },
+        ],
+      },
+      {
+        name: "Processos de produção",
+        children: [
+          { name: "Gestão", pathname: "/production-process/management" },
         ],
       },
     ],
