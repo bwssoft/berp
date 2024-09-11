@@ -28,7 +28,7 @@ export const columns: ColumnDef<IProductionProcess>[] = [
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`/production-order/form/update?id=${productionProcess.id}`}
+            href={`/production-process/form/update?id=${productionProcess.id}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
             Editar
