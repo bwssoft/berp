@@ -7,3 +7,4 @@ export * from "./product";
 export * from "./production-order.action";
 export * from "./production-process.action";
 export * from "./sale-order.action";
+export * from "./technical-sheet.action";
