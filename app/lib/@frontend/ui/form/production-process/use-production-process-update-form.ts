@@ -10,8 +10,7 @@ type UseProductionProcessUpdateFormParams = {
 };
 
 const schema = z.object({
-  name: z.string().min(1, "Nome não pode ser vazio"),
-  description: z.string().min(1, "Nome não pode ser vazio"),
+  name: z.string({ required_error: "Nome não pode ser vazio" }),
   steps: z.array(
     z.object({
       id: z.string(),
@@ -47,7 +46,6 @@ export function useProductionProcessUpdateForm({
       attachments: productionProcess.attachments,
       steps: productionProcess.steps,
       name: productionProcess.name,
-      description: productionProcess.description,
     },
   });
 

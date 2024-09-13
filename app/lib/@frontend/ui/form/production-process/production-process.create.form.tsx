@@ -10,7 +10,7 @@ export function ProductionProcessCreateForm() {
     handleAppendStep,
     handleRemoveStep,
     handleStepLabelEdit,
-    steps
+    steps,
   } = useProductionProcessCreateForm();
 
   return (
@@ -39,25 +39,6 @@ export function ProductionProcessCreateForm() {
                     placeholder="E3+"
                   />
                 </div>
-              </div>
-            </div>
-
-            <div className="col-span-full">
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Descrição
-              </label>
-              <div className="mt-2">
-                <textarea
-                  id="description"
-                  rows={3}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue={"Descreva brevemente o processo de produção"}
-                  placeholder=""
-                  {...register("description")}
-                />
               </div>
             </div>
 

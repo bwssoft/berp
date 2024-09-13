@@ -9,10 +9,6 @@ export const columns: ColumnDef<IProductionProcess>[] = [
     accessorKey: "name",
   },
   {
-    header: "Descrição",
-    accessorKey: "description",
-  },
-  {
     header: "Criado em",
     accessorKey: "created_at",
     cell: ({ row }) => {

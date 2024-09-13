@@ -5,8 +5,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
-  name: z.string().min(1, "Nome não pode ser vazio"),
-  description: z.string().min(1, "Nome não pode ser vazio"),
+  name: z.string({ required_error: "Nome não pode ser vazio" }),
   steps: z.array(
     z.object({
       id: z.string(),
