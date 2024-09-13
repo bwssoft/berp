@@ -17,7 +17,7 @@ export const SaleOrderOmieSchema = z.object({
     dataCancelado: z.string().optional(),
     dataPrevisao: z.string(),
     dataAlteracao: z.string().optional(),
-    etapa: z.enum(["00", "20", "60", "70", "50", "80"]),
+    etapa: z.enum(["00", "20", "60", "70", "50", "80", "10"]),
     etapaDescr: z.enum([
       "Proposta",
       "Separar Estoque",
@@ -25,6 +25,7 @@ export const SaleOrderOmieSchema = z.object({
       "Entrega",
       "Faturar",
       "Pedido/ Aprovação Financeira",
+      "Proposta/ Orçamento",
     ]),
     horaInclusao: z.string().optional(),
     horaAlteracao: z.string().optional(),
