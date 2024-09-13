@@ -1,9 +1,9 @@
 import { deleteOneProductionProcessById } from "@/app/lib/@backend/action";
-import { IProductionProcess } from "@/app/lib/@backend/domain";
+import { ITechnicalSheet } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
-export const columns: ColumnDef<IProductionProcess>[] = [
+export const columns: ColumnDef<ITechnicalSheet>[] = [
   {
     header: "Nome",
     accessorKey: "name",
@@ -24,7 +24,7 @@ export const columns: ColumnDef<IProductionProcess>[] = [
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`/production-process/form/update?id=${productionProcess.id}`}
+            href={`/technical-sheet/form/update?id=${productionProcess.id}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
             Editar

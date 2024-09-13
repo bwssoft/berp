@@ -76,6 +76,7 @@ const navigation: NavItem[] = [
           { name: "Entradas e Saídas", pathname: "/product/enter-exit" },
           { name: "Estoque", pathname: "/product/stock" },
           { name: "Análise", pathname: "/product/analysis" },
+          { name: "Fichas técnicas", pathname: "/technical-sheet/management" },
         ],
       },
       {

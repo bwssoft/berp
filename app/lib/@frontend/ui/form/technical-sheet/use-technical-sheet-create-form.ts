@@ -1,4 +1,4 @@
-import { createOneProductionProcess } from "@/app/lib/@backend/action";
+import { createOneTechnicalSheet } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -6,26 +6,18 @@ import { z } from "zod";
 
 const schema = z.object({
   name: z.string({ required_error: "Nome não pode ser vazio" }),
-  steps: z.array(
+  inputs: z.array(
     z.object({
-      id: z.string(),
-      label: z.string(),
-      checked: z.boolean(),
+      uuid: z.string(),
+      quantity: z.number(),
     })
   ),
-  attachments: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      url: z.string(),
-      extension: z.string(),
-    })
-  ),
+  product_id: z.string(),
 });
 
 export type Schema = z.infer<typeof schema>;
 
-export function useProductionProcessCreateForm() {
+export function useTechnicalSheetCreateForm() {
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -36,52 +28,56 @@ export function useProductionProcessCreateForm() {
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
-      attachments: [],
-      steps: [],
+      inputs: [],
     },
   });
 
   const { fields, append, remove, update } = useFieldArray({
     control,
-    name: "steps",
+    name: "inputs",
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
-      await createOneProductionProcess({ ...data });
+      await createOneTechnicalSheet({ ...data });
+
       toast({
         title: "Sucesso!",
-        description: "Processo de produção registrado com sucesso!",
+        description: "Ficha técnica registrada com sucesso!",
         variant: "success",
       });
     } catch (e) {
       toast({
         title: "Erro!",
-        description: "Falha ao registrar processo de produção!",
+        description: "Falha ao registrar ficha técnica!",
         variant: "error",
       });
     }
   });
 
-  const handleAppendStep = () => {
+  const handleAppendInput = () => {
     append({
-      id: crypto.randomUUID(),
-      checked: false,
-      label: "Etapa",
+      uuid: "",
+      quantity: 0,
     });
   };
 
-  const handleRemoveStep = (stepIndex: number) => {
+  const handleRemoveInput = (stepIndex: number) => {
     remove(stepIndex);
   };
 
-  const handleStepLabelEdit = (params: {
-    label: string;
+  const handleUpdateInput = ({
+    quantity,
+    stepIndex,
+    uuid,
+  }: {
+    uuid: string;
+    quantity?: number;
     stepIndex: number;
   }) => {
-    update(params.stepIndex, {
-      ...fields[params.stepIndex],
-      label: params.label,
+    update(stepIndex, {
+      quantity: quantity ?? 0,
+      uuid,
     });
   };
 
@@ -92,9 +88,9 @@ export function useProductionProcessCreateForm() {
     control,
     setValue,
     reset: hookFormReset,
-    steps: fields,
-    handleAppendStep,
-    handleRemoveStep,
-    handleStepLabelEdit,
+    inputsFields: fields,
+    handleAppendInput,
+    handleRemoveInput,
+    handleUpdateInput,
   };
 }

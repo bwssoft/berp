@@ -1,7 +1,6 @@
 export interface IProductionProcess {
   id: string;
   name: string;
-  description?: string;
   steps: Array<IProductionProcessStep>;
   attachments?: Array<IProductionProcessAttachment>;
   created_at: Date;
