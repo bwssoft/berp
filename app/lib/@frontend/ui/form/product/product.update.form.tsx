@@ -1,18 +1,20 @@
 "use client";
+import { IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+import { Controller } from "react-hook-form";
 import { Button } from "../../button";
-import { PhotoIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { IInput, IProduct } from "@/app/lib/@backend/domain";
-import { useProductUpdateForm } from "./use-product-update-form";
-import { tailwindColorInHex } from "@/app/lib/constant/tailwind-colors";
-import { Stat } from "../../stat";
 import { BarChart, DoughnutChart } from "../../chart";
+import { Stat } from "../../stat";
+import { useProductUpdateForm } from "./use-product-update-form";
 
 interface Props {
   inputs: IInput[];
+  technicalSheets: ITechnicalSheet[];
   product: IProduct;
 }
+
 export function ProductUpdateForm(props: Props) {
-  const { inputs, product } = props;
+  const { inputs, product, technicalSheets } = props;
   const {
     register,
     handleSubmit,
@@ -20,8 +22,11 @@ export function ProductUpdateForm(props: Props) {
     handleAppendInput,
     handleRemoveInput,
     insights,
+    control,
   } = useProductUpdateForm({ defaultValues: product, inputs });
+
   const { merged, stats, totalCost, averageCost } = insights;
+
   return (
     <div className="w-full flex flex-col gap-6">
       <form action={() => handleSubmit()}>
@@ -86,6 +91,42 @@ export function ProductUpdateForm(props: Props) {
                   className="block mt-2 w-full rounded-md border-0 py-1 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent"
                   {...register("color")}
                 />
+              </div>
+
+              <div className="sm:col-span-4">
+                <label className="block text-sm font-medium leading-6 text-gray-900">
+                  Ficha técnica
+                </label>
+                <div className="mt-2">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <Controller
+                      control={control}
+                      name="technical_sheet_id"
+                      render={({ field }) => (
+                        <select
+                          className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          value={field.value}
+                          onChange={(event) =>
+                            field.onChange(event.target.value)
+                          }
+                        >
+                          <option value={""}>
+                            Selecione uma ficha técnica
+                          </option>
+
+                          {technicalSheets.map((technicalSheetData) => (
+                            <option
+                              key={technicalSheetData.id}
+                              value={technicalSheetData.id}
+                            >
+                              {technicalSheetData.name}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="col-span-full">

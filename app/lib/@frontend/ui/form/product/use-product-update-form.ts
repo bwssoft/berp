@@ -1,30 +1,39 @@
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { updateOneProductById } from '@/app/lib/@backend/action';
-import { IInput, IProduct } from '@/app/lib/@backend/domain';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { productConstants } from '@/app/lib/constant/product';
+import { updateOneProductById } from "@/app/lib/@backend/action";
+import { IInput, IProduct } from "@/app/lib/@backend/domain";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { productConstants } from "@/app/lib/constant/product";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
 const schema = z.object({
-  name: z.string().min(1, 'Esse campo não pode ser vazio'),
-  description: z.string().min(1, 'Esse campo não pode ser vazio'),
+  name: z
+    .string({ required_error: "Esse campo não pode ser vazio" })
+    .min(1, "Esse campo não pode ser vazio"),
+  description: z
+    .string({ required_error: "Esse campo não pode ser vazio" })
+    .min(1, "Esse campo não pode ser vazio"),
+  technical_sheet_id: z
+    .string({ required_error: "Esse campo não pode ser vazio" })
+    .min(1, "Esse campo não pode ser vazio"),
   color: z.string(),
   files: z.any(),
-  inputs: z.array(z.object({ input_id: z.string(), quantity: z.coerce.number() })),
+  inputs: z.array(
+    z.object({ input_id: z.string(), quantity: z.coerce.number() })
+  ),
 });
 
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
-  defaultValues: IProduct
-  inputs: IInput[]
+  defaultValues: IProduct;
+  inputs: IInput[];
 }
 
-const statsMapped = productConstants.statsMapped
+const statsMapped = productConstants.statsMapped;
 
 export function useProductUpdateForm(props: Props) {
-  const { defaultValues, inputs } = props
+  const { defaultValues, inputs } = props;
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -32,10 +41,10 @@ export function useProductUpdateForm(props: Props) {
     control,
     setValue,
     reset: hookFormReset,
-    watch
+    watch,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues
+    defaultValues,
   });
   const { fields, append, remove } = useFieldArray({
     control,
@@ -60,8 +69,8 @@ export function useProductUpdateForm(props: Props) {
     }
   });
 
-  const handleAppendInput = append
-  const handleRemoveInput = remove
+  const handleAppendInput = append;
+  const handleRemoveInput = remove;
 
   //iteração para agregar os dados dos insumos dobanco de dados com os dados do formulário
   const inputsMerged = (watch("inputs") ?? [])
@@ -120,8 +129,8 @@ export function useProductUpdateForm(props: Props) {
       value: entire.name,
     }));
 
-  const totalCost = inputsMerged.reduce((acc, cur) => acc + cur.total, 0)
-  const averageCost = totalCost / inputs.length
+  const totalCost = inputsMerged.reduce((acc, cur) => acc + cur.total, 0);
+  const averageCost = totalCost / inputs.length;
 
   return {
     register,
@@ -137,7 +146,7 @@ export function useProductUpdateForm(props: Props) {
       totalCost,
       stats,
       merged: inputsMerged,
-      averageCost
-    }
+      averageCost,
+    },
   };
 }
