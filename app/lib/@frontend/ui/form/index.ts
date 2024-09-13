@@ -10,3 +10,4 @@ export * from "./product-transaction";
 export * from "./production-order";
 export * from "./production-process";
 export * from "./schedule";
+export * from "./technical-sheet";
