@@ -5,7 +5,7 @@ import {
   clientTypeMapping,
   IClient,
 } from "@/app/lib/@backend/domain";
-import { formatDate } from "@/app/lib/util/format-date";
+import { formatDate } from "@/app/lib/util";
 
 type ClientDetailsProps = {
   client: IClient | null;

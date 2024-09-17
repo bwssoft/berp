@@ -5,7 +5,7 @@ import {
   productionOrderPriorityMapping,
   productionOrderStageMapping,
 } from "@/app/lib/@backend/domain";
-import { formatDate } from "@/app/lib/util/format-date";
+import { formatDate } from "@/app/lib/util";
 
 type ProductionOrderDetailsProps = {
   productionOrder: IProductionOrder | null;
