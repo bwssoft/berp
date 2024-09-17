@@ -14,7 +14,7 @@ export interface IBaseRepository<Entity extends object> {
   create(data: Entity): Promise<InsertOneResult<Entity>>;
   createMany(data: Entity[]): Promise<InsertManyResult<Entity>>;
   findOne(params: Filter<Entity>): Promise<WithId<Entity> | null>;
-  findAll(params: Filter<Entity>): Promise<WithId<Entity>[]>;
+  findAll(params?: Filter<Entity>): Promise<WithId<Entity>[]>;
   updateOne(
     query: Filter<Entity>,
     value: Partial<Entity>

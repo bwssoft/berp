@@ -1,5 +1,6 @@
 "use server";
 
+import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
 import { ITechnicalSheet } from "../domain";
 import {
@@ -36,6 +37,8 @@ export async function deleteOneTechnicalSheetById(query: { id: string }) {
   revalidatePath("/production-order/management");
 }
 
-export async function findAllTechnicalSheet(): Promise<ITechnicalSheet[]> {
-  return await findAllTechnicalSheetUsecase.execute();
+export async function findAllTechnicalSheet(
+  params: Filter<ITechnicalSheet>
+): Promise<ITechnicalSheet[]> {
+  return await findAllTechnicalSheetUsecase.execute(params);
 }
