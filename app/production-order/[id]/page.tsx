@@ -1,11 +1,18 @@
 "use server";
 
 import {
+  findAllInput,
   findAllProduct,
+  findAllTechnicalSheet,
   findOneClient,
   findOneProductionOrder,
   findOneSaleOrder,
 } from "@/app/lib/@backend/action";
+import {
+  IClient,
+  IProductionOrder,
+  ISaleOrder,
+} from "@/app/lib/@backend/domain";
 import {
   Tabs,
   TabsContent,
@@ -25,19 +32,33 @@ type ProductionOrderViewPageProps = {
 };
 
 export default async function Page({ params }: ProductionOrderViewPageProps) {
-  const productionOrderData = await findOneProductionOrder({ id: params.id });
+  const productionOrderData = (await findOneProductionOrder({
+    id: params.id,
+  })) as IProductionOrder | null;
 
-  const saleOrderData = await findOneSaleOrder({
+  const saleOrderData = (await findOneSaleOrder({
     id: productionOrderData?.sale_order_id,
-  });
+  })) as ISaleOrder | null;
 
-  const clientData = await findOneClient({ id: saleOrderData?.client_id });
+  const clientData = (await findOneClient({
+    id: saleOrderData?.client_id,
+  })) as IClient | null;
 
   const productsData = await findAllProduct({
     id: {
       $in: saleOrderData?.products.map(({ product_id }) => product_id),
     },
   });
+
+  const technicalSheetsData = await findAllTechnicalSheet({
+    id: {
+      $in: productsData
+        ?.map((product) => product?.technical_sheet_id)
+        .filter(Boolean) as string[],
+    },
+  });
+
+  const inputsData = await findAllInput();
 
   return (
     <div className="w-full h-full">
@@ -59,19 +80,23 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
         </TabsList>
 
         <TabsContent value="production-order-data">
-          <ProductionOrderDetails />
+          <ProductionOrderDetails productionOrder={productionOrderData} />
         </TabsContent>
 
         <TabsContent value="client-data">
-          <ClientDetails />
+          <ClientDetails client={clientData} />
         </TabsContent>
 
         <TabsContent value="sale-order-data">
-          <SaleOrderDetails />
+          <SaleOrderDetails saleOrder={saleOrderData} />
         </TabsContent>
 
         <TabsContent value="products-data">
-          <ProductsDetails />
+          <ProductsDetails
+            products={productsData}
+            technicalSheets={technicalSheetsData}
+            inputs={inputsData}
+          />
         </TabsContent>
 
         <TabsContent value="comments-data">
