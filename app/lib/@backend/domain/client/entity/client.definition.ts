@@ -63,6 +63,35 @@ export interface IClient {
   omie_code_metadata?: Record<keyof OmieEnterprise, string>;
 }
 
+export const clientTypeMapping: Record<IClient["type"], string> = {
+  active_client: "Cliente ativo",
+  dealer: "Concessionário",
+  deregistered_cnpj: "CNPJ cancelado",
+  inactive_cnpj: "CNPJ inativo",
+  inactive_registration: "Cadastro inativo",
+  other: "Outros",
+  prospect: "Potencial cliente",
+  suspended_client: "Cliente suspendido",
+};
+
+export const clientSectorMapping: Record<IClient["sector"], string> = {
+  vehicle_protection_association: "Associação de proteção veicular",
+  retail_trade: "Comércio varejista",
+  tracking_company: "Empresa de rastreamento",
+  service_company: "Empresa de serviços",
+  vehicle_protection_manager: "Gestor de proteção veicular",
+  industry: "Indústria",
+  integrator_ti: "Integrações de TI",
+  rental_company: "Empresa de locadora",
+  logistics: "Logística",
+  iot_tracking_platform: "Plataforam de rastreamento IoT",
+  resale: "Revenda",
+  insurance_company: "Seguradora",
+  patrimonial_security: "Segurança patrimonial",
+  carrier: "Transportadora",
+  other: "Outro",
+};
+
 export enum OmieEnterprise {
   MGC = "MGC",
   BWS = "BWS",
