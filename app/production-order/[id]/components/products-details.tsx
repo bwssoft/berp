@@ -6,6 +6,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
+  DataTable,
 } from "@/app/lib/@frontend/ui";
 import { formatDate } from "@/app/lib/util";
 
@@ -105,17 +106,35 @@ export function ProductsDetails({
                       Ficha técnica
                     </p>
 
-                    <div className="flex flex-col gap-1 mt-1 text-sm leading-6 text-gray-800 sm:col-span-2 sm:mt-0">
-                      {productTechnicalSheet?.inputs.map((input) => (
-                        <div key={input.uuid} className="flex flex-row">
-                          <p>
-                            {inputsReduced[input.uuid].name}
-                            {" - "}
-                            {input.quantity}{" "}
-                            {inputsReduced[input.uuid].measure_unit}
-                          </p>
-                        </div>
-                      ))}
+                    <div className="flex mt-1 text-sm leading-6 text-gray-800 sm:col-span-2 sm:mt-0">
+                      <DataTable
+                        data={productTechnicalSheet?.inputs ?? []}
+                        columns={[
+                          {
+                            header: "Insumo",
+                            accessorKey: "uuid",
+                            cell: ({ row }) => {
+                              const input = row.original;
+
+                              return inputsReduced[input.uuid].name;
+                            },
+                          },
+                          {
+                            header: "Quantidade",
+                            accessorKey: "quantity",
+                            cell: ({ row }) => {
+                              const input = row.original;
+
+                              return `${input.quantity} ${
+                                inputsReduced[input.uuid].measure_unit
+                              }`;
+                            },
+                          },
+                        ]}
+                        mobileDisplayValue={(data) => data.uuid}
+                        mobileKeyExtractor={(data) => data.uuid}
+                        className="w-full"
+                      />
                     </div>
                   </div>
                 </dl>
