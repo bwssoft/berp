@@ -10,5 +10,6 @@ export * from "./radio";
 export * from "./select";
 export * from "./sidebar";
 export * from "./table";
+export * from "./tabs";
 export * from "./toast";
 export * from "./toaster";
