@@ -62,7 +62,7 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
 
   return (
     <div className="w-full h-full">
-      <Tabs>
+      <Tabs defaultValue="production-order-data">
         <TabsList defaultValue="production-order-data">
           <TabsTrigger value="production-order-data">
             Detalhes da ordem de produção
