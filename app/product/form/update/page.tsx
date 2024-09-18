@@ -1,4 +1,8 @@
-import { findAllInput, findOneProduct } from "@/app/lib/@backend/action";
+import {
+  findAllInput,
+  findAllTechnicalSheet,
+  findOneProduct,
+} from "@/app/lib/@backend/action";
 import { ProductUpdateForm } from "@/app/lib/@frontend/ui";
 
 interface Props {
@@ -24,7 +28,10 @@ export default async function Page(props: Props) {
       </div>
     );
   }
+
+  const technicalSheets = await findAllTechnicalSheet();
   const inputs = await findAllInput();
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -38,7 +45,11 @@ export default async function Page(props: Props) {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <ProductUpdateForm inputs={inputs} product={product} />
+        <ProductUpdateForm
+          inputs={inputs}
+          product={product}
+          technicalSheets={technicalSheets}
+        />
       </div>
     </div>
   );

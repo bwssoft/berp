@@ -24,3 +24,15 @@ export interface ISaleOrder {
       | "shipment";
   };
 }
+
+export const saleOrderStageMapping: Record<
+  ISaleOrder["omie_webhook_metadata"]["stage"],
+  string
+> = {
+  awaiting_approval: "Aguardando aprovação",
+  invoiced: "Faturado",
+  proposal: "Proposta",
+  shipment: "Expedido",
+  stock: "Estoque",
+  to_invoice: "À faturar",
+};
