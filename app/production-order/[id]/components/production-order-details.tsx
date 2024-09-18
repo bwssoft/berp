@@ -1,10 +1,14 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
+
+import { findAllProductionProcess } from "@/app/lib/@backend/action";
 import {
   IProductionOrder,
   productionOrderPriorityMapping,
   productionOrderStageMapping,
 } from "@/app/lib/@backend/domain";
+import { Select } from "@/app/lib/@frontend/ui";
 import { formatDate } from "@/app/lib/util";
 
 type ProductionOrderDetailsProps = {
@@ -14,6 +18,11 @@ type ProductionOrderDetailsProps = {
 export function ProductionOrderDetails({
   productionOrder,
 }: ProductionOrderDetailsProps) {
+  const findAllProductionProcesses = useQuery({
+    queryKey: ["findAllProductionProcesses"],
+    queryFn: () => findAllProductionProcess(),
+  });
+
   if (!productionOrder)
     return <p>Dados da ordem de produção não encontrados.</p>;
 
@@ -75,6 +84,31 @@ export function ProductionOrderDetails({
                 includeHours: true,
               })}
             </dd>
+          </div>
+
+          <div className="px-4 py-6 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-0">
+            <p className="text-sm font-medium leading-6 text-gray-900">
+              Processo de produção
+            </p>
+
+            {!productionOrder.production_process && (
+              <div className="text-sm">
+                <p>
+                  Nenhum processo de produção associado a essa ordem de
+                  produção. Associe um processo de produção para poder ver e
+                  editar o progresso das etapas.
+                </p>
+
+                <Select
+                  data={findAllProductionProcesses.data ?? []}
+                  placeholder="Selecione um processo de produção"
+                  keyExtractor={(item) => item.id}
+                  labelExtractor={(item) => item.name}
+                  valueExtractor={(item) => item.id}
+                  onChangeSelect={(item) => console.log({ item })}
+                />
+              </div>
+            )}
           </div>
         </dl>
       </div>
