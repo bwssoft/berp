@@ -1,6 +1,7 @@
 import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
 import { IProductionOrder } from "@/app/lib/@backend/domain";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "../../../hook";
@@ -31,10 +32,11 @@ export function useProductionOrderStepsUpdateForm({
     handleSubmit: hookFormSubmit,
   } = useForm<StepsSchemaFormData>({
     resolver: zodResolver(stepsSchema),
-    defaultValues: {
-      steps: productionOrder.production_process?.[0].steps_progress ?? [],
-    },
   });
+
+  useEffect(() => {
+    setValue("steps", productionOrder.production_process![0].steps_progress);
+  }, [productionOrder]);
 
   function handleCheckboxChange(stepId: string, checked: boolean) {
     const currentStepsValue = getValues("steps");
