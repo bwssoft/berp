@@ -1,4 +1,5 @@
 "use client";
+import { findAllProductionOrderWithProduct } from "@/app/lib/@backend/action";
 import {
   IProduct,
   IProductionOrder,
@@ -7,6 +8,7 @@ import {
 import { toast } from "@/app/lib/@frontend/hook";
 import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { MouseEventHandler } from "react";
 import { useDrag, useDrop } from "react-dnd";
@@ -175,10 +177,12 @@ interface KanbanProps {
   moveCard: (id: string, toStage: string, toIndex: number) => void;
 }
 
-export const Kanban: React.FC<KanbanProps> = ({
-  productionOrders,
-  moveCard,
-}) => {
+export const Kanban: React.FC<KanbanProps> = ({ moveCard }) => {
+  const findAllProductionOrders = useQuery({
+    queryKey: ["findAllProductionOrdersKanban"],
+    queryFn: () => findAllProductionOrderWithProduct(),
+  });
+
   const stages = [
     { id: "in_warehouse", title: "No Almoxarifado" },
     { id: "to_produce", title: "Para Produzir" },
@@ -187,14 +191,15 @@ export const Kanban: React.FC<KanbanProps> = ({
   ];
 
   const getOrdersByStage = (stage: string) =>
-    productionOrders.filter((order) => order.stage === stage);
+    findAllProductionOrders.data?.filter((order) => order.stage === stage) ??
+    [];
 
   return (
     <div className="h-screen mt-10 w-full grid md:grid-cols-4 sm:grid-cols-2 gap-5">
       {stages.map((stage) => (
         <Column
           key={stage.id}
-          allProductionOrders={productionOrders}
+          allProductionOrders={findAllProductionOrders.data ?? []}
           stage={stage.id}
           title={stage.title}
           orders={getOrdersByStage(stage.id)}
