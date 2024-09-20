@@ -4,6 +4,7 @@ import {
   IProductionOrder,
   ISaleOrder,
 } from "@/app/lib/@backend/domain";
+import { toast } from "@/app/lib/@frontend/hook";
 import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { useRouter } from "next/navigation";
@@ -96,16 +97,43 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
 interface ColumnProps {
   stage: string;
   title: string;
+  allProductionOrders: IProductionOrder[];
   orders: CustomProductionOrder[];
   moveCard: (id: string, toStage: string, toIndex: number) => void;
 }
 
-const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
+const Column: React.FC<ColumnProps> = ({
+  stage,
+  title,
+  orders,
+  allProductionOrders,
+  moveCard,
+}) => {
   const nextRouter = useRouter();
 
   const [, ref] = useDrop({
     accept: ItemType,
-    drop: (item: { id: string }) => moveCard(item.id, stage, orders.length),
+    drop: (item: { id: string }) => {
+      const currentOrder = allProductionOrders.find(
+        (order) => order.id === item.id
+      );
+
+      const areAllProductionOrderStepsChecked =
+        currentOrder?.production_process?.[0].steps_progress.every(
+          ({ checked }) => checked === true
+        );
+
+      if (stage === "completed" && !areAllProductionOrderStepsChecked) {
+        toast({
+          title: "Erro!",
+          description: "É necessário finalizar todas as etapas",
+          variant: "error",
+        });
+        return;
+      }
+
+      moveCard(item.id, stage, orders.length);
+    },
   });
 
   return (
@@ -166,6 +194,7 @@ export const Kanban: React.FC<KanbanProps> = ({
       {stages.map((stage) => (
         <Column
           key={stage.id}
+          allProductionOrders={productionOrders}
           stage={stage.id}
           title={stage.title}
           orders={getOrdersByStage(stage.id)}
