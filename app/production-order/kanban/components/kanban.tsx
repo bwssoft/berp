@@ -4,9 +4,10 @@ import {
   IProductionOrder,
   ISaleOrder,
 } from "@/app/lib/@backend/domain";
+import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 const ItemType = "CARD";
@@ -20,7 +21,7 @@ interface CardProps {
   order: CustomProductionOrder;
   index: number;
   moveCard: (id: string, toStage: string, toIndex: number) => void;
-  onClick: () => void;
+  onClick: MouseEventHandler;
 }
 
 const stageColor = {
@@ -52,8 +53,10 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
       ref={(node) => ref(drop(node)) as any}
       className="w-full p-2 rounded shadow-sm border-gray-100 border-2 hover:bg-gray-100 cursor-pointer transition-all duration-300 ease-in-out"
       onClick={onClick}
+      id="kanban-card-container"
     >
       <h3 className="text-sm mb-3 text-gray-700">{order.id?.slice(0, 5)}</h3>
+
       <p
         className={`${
           stageColor[order.stage]
@@ -61,6 +64,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
       >
         {productionOrderConstants.stage[order.stage]}
       </p>
+
       {order.products_in_sale_order.map((p) => (
         <div key={p.id} className="flex flex-row items-center mt-2">
           <div
@@ -78,6 +82,13 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
           </a>
         </div>
       ))}
+
+      <div className="flex flex-col gap-1 mt-4">
+        <p className="text-sm font-semibold text-gray-800">
+          Progresso das etapas
+        </p>
+        <ProductionOrderStepsUpdateForm productionOrder={order} />
+      </div>
     </div>
   );
 };
@@ -118,7 +129,12 @@ const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
             order={order}
             index={index}
             moveCard={moveCard}
-            onClick={() => nextRouter.push(`/production-order/${order.id}`)}
+            onClick={(event) => {
+              // @ts-ignore
+              if (event.target.id === "kanban-card-container") {
+                nextRouter.push(`/production-order/${order.id}`);
+              }
+            }}
           />
         ))}
       </div>

@@ -7,7 +7,7 @@ import {
 } from "@/app/lib/@backend/domain";
 import {
   Button,
-  ProductionProcessStepsUpdateForm,
+  ProductionOrderStepsUpdateForm,
   Select,
 } from "@/app/lib/@frontend/ui";
 import { formatDate } from "@/app/lib/util";
@@ -188,7 +188,7 @@ export function ProductionOrderDetails({
                     )}
 
                     {!isEditingSelectedProcess && (
-                      <ProductionProcessStepsUpdateForm
+                      <ProductionOrderStepsUpdateForm
                         productionOrder={productionOrder}
                       />
                     )}
