@@ -10,6 +10,11 @@ export interface IProductionOrder {
   production_process?: Array<IProductionOrderProcess>;
 }
 
+export type IProductionOrderProcess = {
+  process_uuid: string;
+  steps_progress: Array<IProductionProcessStep>;
+};
+
 export const productionOrderStageMapping: Record<
   IProductionOrder["stage"],
   string
@@ -27,9 +32,4 @@ export const productionOrderPriorityMapping: Record<
   high: "Alta",
   medium: "Média",
   low: "Baixa",
-};
-
-export type IProductionOrderProcess = {
-  process_uuid: string;
-  steps_progress: Array<IProductionProcessStep>;
 };
