@@ -29,7 +29,7 @@ export default async function Page(props: Props) {
     );
   }
 
-  const technicalSheets = await findAllTechnicalSheet();
+  const technicalSheets = await findAllTechnicalSheet({});
   const inputs = await findAllInput();
 
   return (
