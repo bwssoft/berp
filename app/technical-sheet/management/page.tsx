@@ -4,7 +4,7 @@ import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
 export default async function TechnicalSheetPage() {
-  const productionProcess = await findAllTechnicalSheet();
+  const productionProcess = await findAllTechnicalSheet({});
 
   return (
     <div>
