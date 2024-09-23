@@ -34,6 +34,8 @@ export async function GET(request: Request, { params }: { params: { slug: string
       }
     })
 
+
+
     return new Response(stream.pipeThrough(new_stream), {
       headers: {
         'Content-Type': 'application/octet-stream',
