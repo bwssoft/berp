@@ -1,19 +1,21 @@
 import { IBaseRepository } from "@/app/lib/@backend/domain/@shared/repository/repository.interface";
-import clientPromise from "./config";
 import { AggregateOptions, AggregationCursor, Filter } from "mongodb";
+import clientPromise from "./config";
 
 type Constructor = {
-  collection: string
-  db: string
-}
+  collection: string;
+  db: string;
+};
 
-export class BaseRepository<Entity extends object> implements IBaseRepository<Entity> {
-  protected collection: string
-  protected db: string
+export class BaseRepository<Entity extends object>
+  implements IBaseRepository<Entity>
+{
+  protected collection: string;
+  protected db: string;
 
   constructor(args: Constructor) {
-    this.collection = args.collection
-    this.db = args.db
+    this.collection = args.collection;
+    this.db = args.db;
   }
 
   async create(data: Entity) {
@@ -28,36 +30,46 @@ export class BaseRepository<Entity extends object> implements IBaseRepository<En
 
   async findOne(params: Filter<Entity>) {
     const db = await this.connect();
-    return await db.collection<Entity>(this.collection).findOne(params)
+    return await db.collection<Entity>(this.collection).findOne(params);
   }
 
-  async findAll() {
+  async findAll(params: Filter<Entity> = {}) {
     const db = await this.connect();
-    return await db.collection<Entity>(this.collection).find().sort({ _id: -1 }).toArray();
+    return await db
+      .collection<Entity>(this.collection)
+      .find(params)
+      .sort({ _id: -1 })
+      .toArray();
   }
 
   async updateOne(query: Filter<Entity>, value: Partial<Entity>) {
     const db = await this.connect();
-    return await db.collection<Entity>(this.collection).updateOne(query, { $set: value })
+    return await db
+      .collection<Entity>(this.collection)
+      .updateOne(query, { $set: value });
   }
 
   async updateMany(query: Filter<Entity>, value: Partial<Entity>) {
     const db = await this.connect();
-    return await db.collection<Entity>(this.collection).updateMany(query, { $set: value })
+    return await db
+      .collection<Entity>(this.collection)
+      .updateMany(query, { $set: value });
   }
 
-  async updateBulk(operations: { query: Filter<Entity>, value: Partial<Entity> }[]) {
-    const _operations = operations.map(operation => {
-      const { query, value } = operation
+  async updateBulk(
+    operations: { query: Filter<Entity>; value: Partial<Entity> }[]
+  ) {
+    const _operations = operations.map((operation) => {
+      const { query, value } = operation;
       return {
         updateMany: {
           filter: query,
-          update: { $set: value }
-        }
-      }
-    })
+          update: { $set: value },
+        },
+      };
+    });
     const db = await this.connect();
-    return await db.collection<Entity>(this.collection).bulkWrite(_operations)
+    return await db.collection<Entity>(this.collection).bulkWrite(_operations);
   }
 
   async deleteOne(query: Filter<Entity>) {
@@ -65,14 +77,17 @@ export class BaseRepository<Entity extends object> implements IBaseRepository<En
     return await db.collection<Entity>(this.collection).deleteOne(query);
   }
 
-  async aggregate<T extends object>(pipeline?: object[], options?: AggregateOptions): Promise<AggregationCursor<T>> {
+  async aggregate<T extends object>(
+    pipeline?: object[],
+    options?: AggregateOptions
+  ): Promise<AggregationCursor<T>> {
     const db = await this.connect();
-    return db.collection(this.collection).aggregate<T>(pipeline, options)
+    return db.collection(this.collection).aggregate<T>(pipeline, options);
   }
 
   async getDb() {
     const db = await this.connect();
-    return db
+    return db;
   }
 
   async connect() {
@@ -81,5 +96,3 @@ export class BaseRepository<Entity extends object> implements IBaseRepository<En
     return db;
   }
 }
-
-

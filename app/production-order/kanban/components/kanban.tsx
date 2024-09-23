@@ -1,205 +1,13 @@
 "use client";
-// //  Inspiration https://s3-ap-southeast-2.amazonaws.com/focusbooster.cdn/Landing+pages/kanban-and-focusbooster/kanban-board-notion.png
-
-// import { IProductionOrder } from "@/app/lib/@backend/domain";
-
-// interface Props {
-//   productionOrders: IProductionOrder[];
-// }
-// export function Kanban(props: Props) {
-//   const { productionOrders } = props;
-
-//   const to_produce = productionOrders.filter((p) => p.stage === "to_produce");
-//   const producing = productionOrders.filter((p) => p.stage === "producing");
-//   const quality = productionOrders.filter((p) => p.stage === "quality");
-//   const checked = productionOrders.filter((p) => p.stage === "checked");
-//   const completed = productionOrders.filter((p) => p.stage === "completed");
-//   const stored = productionOrders.filter((p) => p.stage === "stored");
-//   return (
-//     <div className="h-screen mt-10 w-full">
-//       <div className="grid md:grid-cols-5 sm:grid-cols-2 gap-5">
-//         {/* <!-- To-do --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-slate-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Para Produzir
-//               </h2>
-//               <p className="text-gray-400 text-sm">{to_produce.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {to_produce.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">Social media</h3>
-//                 <p className="bg-slate-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Para Produzir
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* <!-- WIP Kanban --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-yellow-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Produzindo
-//               </h2>
-//               <p className="text-gray-400 text-sm">{producing.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {producing.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">Blog post live</h3>
-//                 <p className="bg-yellow-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Produzindo
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//                 <p className="text-xs text-gray-500 mt-2">Jun 21, 2019</p>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* <!-- Complete Kanban --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-orange-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Qualidade
-//               </h2>
-//               <p className="text-gray-400 text-sm">{quality.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {quality.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">
-//                   Morning emails and to-do list
-//                 </h3>
-//                 <p className="bg-orange-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Qualidade
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//                 <p className="text-xs text-gray-500 mt-2">Jun 21, 2019</p>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* <!-- Checked --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-purple-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Checagem
-//               </h2>
-//               <p className="text-gray-400 text-sm">{checked.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {checked.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">Social media</h3>
-//                 <p className="bg-purple-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Checagem
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* <!-- Complete --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-green-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Finalizada
-//               </h2>
-//               <p className="text-gray-400 text-sm">{completed.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {completed.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">Social media</h3>
-//                 <p className="bg-green-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Finalizada
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-"use client";
-import React from "react";
-import { useDrag, useDrop } from "react-dnd";
 import {
   IProduct,
   IProductionOrder,
   ISaleOrder,
 } from "@/app/lib/@backend/domain";
 import { productionOrderConstants } from "@/app/lib/constant";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useDrag, useDrop } from "react-dnd";
 
 const ItemType = "CARD";
 
@@ -212,6 +20,7 @@ interface CardProps {
   order: CustomProductionOrder;
   index: number;
   moveCard: (id: string, toStage: string, toIndex: number) => void;
+  onClick: () => void;
 }
 
 const stageColor = {
@@ -221,7 +30,7 @@ const stageColor = {
   completed: "bg-green-200",
 };
 
-const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
+const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
   const [, ref] = useDrag({
     type: ItemType,
     item: { id: order.id, index, stage: order.stage },
@@ -241,7 +50,8 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
   return (
     <div
       ref={(node) => ref(drop(node)) as any}
-      className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
+      className="w-full p-2 rounded shadow-sm border-gray-100 border-2 hover:bg-gray-100 cursor-pointer transition-all duration-300 ease-in-out"
+      onClick={onClick}
     >
       <h3 className="text-sm mb-3 text-gray-700">{order.id?.slice(0, 5)}</h3>
       <p
@@ -280,6 +90,8 @@ interface ColumnProps {
 }
 
 const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
+  const nextRouter = useRouter();
+
   const [, ref] = useDrop({
     accept: ItemType,
     drop: (item: { id: string }) => moveCard(item.id, stage, orders.length),
@@ -306,6 +118,7 @@ const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
             order={order}
             index={index}
             moveCard={moveCard}
+            onClick={() => nextRouter.push(`/production-order/${order.id}`)}
           />
         ))}
       </div>
