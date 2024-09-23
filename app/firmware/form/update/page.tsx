@@ -32,7 +32,7 @@ export default async function Page(props: Props) {
             Atualização de firmware
           </h1>
           <p className="mt-1 text-sm leading-6 text-gray-600">
-            Preencha o formulário abaixo para atualizar um firmware.
+            Preencha o formulário abaixo para atualizar o firmware.
           </p>
         </div>
       </div>
