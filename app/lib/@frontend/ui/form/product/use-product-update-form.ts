@@ -3,7 +3,7 @@ import { IInput, IProduct } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { productConstants } from "@/app/lib/constant/product";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
@@ -46,10 +46,6 @@ export function useProductUpdateForm(props: Props) {
     resolver: zodResolver(schema),
     defaultValues,
   });
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "inputs",
-  });
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
@@ -68,9 +64,6 @@ export function useProductUpdateForm(props: Props) {
       });
     }
   });
-
-  const handleAppendInput = append;
-  const handleRemoveInput = remove;
 
   //iteração para agregar os dados dos insumos dobanco de dados com os dados do formulário
   const inputsMerged = (watch("inputs") ?? [])
@@ -139,9 +132,6 @@ export function useProductUpdateForm(props: Props) {
     control,
     setValue,
     reset: hookFormReset,
-    inputsOnForm: fields,
-    handleAppendInput,
-    handleRemoveInput,
     insights: {
       totalCost,
       stats,

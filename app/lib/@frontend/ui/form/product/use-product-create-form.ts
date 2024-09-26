@@ -2,9 +2,8 @@ import { createOneProduct } from "@/app/lib/@backend/action";
 import { IInput } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { productConstants } from "@/app/lib/constant/product";
-import { createExcelTemplate, xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
@@ -45,10 +44,6 @@ export function useProductCreateForm(props: Props) {
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   });
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "inputs",
-  });
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
@@ -67,53 +62,6 @@ export function useProductCreateForm(props: Props) {
       });
     }
   });
-
-  const handleAppendInput = append;
-  const handleRemoveInput = remove;
-
-  const handleFile = async (fileList: File[] | null) => {
-    const _inputs = await xlsxToJson<{
-      name: string;
-      quantity: number;
-    }>(fileList, handleFormatInputFromFile);
-
-    _inputs?.forEach((input) =>
-      handleAppendInput({
-        input_id: inputs.find((el) => el.name === input.name)?.id ?? "",
-        quantity: input.quantity ?? 0,
-      })
-    );
-  };
-
-  const handleFormatInputFromFile = (obj: {
-    Nome?: string;
-    Quantidade?: string;
-  }) => {
-    return {
-      name: obj?.Nome ?? "",
-      quantity: obj?.Quantidade !== undefined ? Number(obj?.Quantidade) : 0,
-    };
-  };
-
-  const createFileModel = async () => {
-    const buffer = await createExcelTemplate([
-      { header: "Insumos", options: ["insumo1", "insumo2"] },
-    ]);
-    // Cria um Blob e faz o download do arquivo no navegador
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    const url = URL.createObjectURL(blob);
-
-    // Cria um link e clica nele para iniciar o download
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "template.xlsx";
-    a.click();
-
-    // Libera o objeto URL após o download
-    URL.revokeObjectURL(url);
-  };
 
   //iteração para agregar os dados dos insumos dobanco de dados com os dados do formulário
   const inputsMerged = (watch("inputs") ?? [])
@@ -182,16 +130,11 @@ export function useProductCreateForm(props: Props) {
     control,
     setValue,
     reset: hookFormReset,
-    inputsOnForm: fields,
-    handleAppendInput,
-    handleRemoveInput,
-    handleFile,
     insights: {
       totalCost,
       stats,
       merged: inputsMerged,
       averageCost,
     },
-    createFileModel,
   };
 }
