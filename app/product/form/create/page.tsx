@@ -3,7 +3,7 @@ import { ProductCreateForm } from "@/app/lib/@frontend/ui";
 
 export default async function Page() {
   const inputs = await findAllInput();
-  const technicalSheets = await findAllTechnicalSheet();
+  const technicalSheets = await findAllTechnicalSheet({});
 
   return (
     <div>

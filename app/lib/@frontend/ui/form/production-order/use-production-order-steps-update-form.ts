@@ -1,6 +1,7 @@
 import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
 import { IProductionOrder } from "@/app/lib/@backend/domain";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -33,6 +34,8 @@ export function useProductionOrderStepsUpdateForm({
   } = useForm<StepsSchemaFormData>({
     resolver: zodResolver(stepsSchema),
   });
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!productionOrder.production_process) return;
@@ -72,6 +75,10 @@ export function useProductionOrderStepsUpdateForm({
         title: "Sucesso!",
         description: "Etapas da ordem de produção atualizadas com sucesso",
         variant: "success",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["findAllProductionOrdersKanban"],
       });
     } catch {
       toast({

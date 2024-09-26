@@ -1,5 +1,5 @@
 import { Path } from "@/app/lib/util/path";
-import { GetCountryNameByCode } from "@/app/lib/util/getCountryNameByCode";
+import { GetCountryNameByCode } from "@/app/lib/util/get-country-name-by-code";
 import { appHashsMapping } from "@/app/lib/constant/app-hashs";
 import { IClient } from "../entity";
 import { BaseOmieEntity } from "../../../controller/client/client.dto";
