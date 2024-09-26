@@ -9,7 +9,7 @@ type ProductionProcessStepsUpdateFormProps = {
   productionOrder: IProductionOrder;
 };
 
-export function ProductionProcessStepsUpdateForm({
+export function ProductionOrderStepsUpdateForm({
   productionOrder,
 }: ProductionProcessStepsUpdateFormProps) {
   const { watch, handleCheckboxChange, handleSubmit } =
