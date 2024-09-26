@@ -38,7 +38,9 @@ export function useProductionOrderStepsUpdateForm({
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    setValue("steps", productionOrder.production_process![0].steps_progress);
+    if (!productionOrder.production_process) return;
+
+    setValue("steps", productionOrder.production_process[0].steps_progress);
   }, [productionOrder]);
 
   function handleCheckboxChange(stepId: string, checked: boolean) {
