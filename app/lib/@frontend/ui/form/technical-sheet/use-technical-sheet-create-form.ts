@@ -1,5 +1,7 @@
 import { createOneTechnicalSheet } from "@/app/lib/@backend/action";
+import { IInput } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,7 +19,13 @@ const schema = z.object({
 
 export type Schema = z.infer<typeof schema>;
 
-export function useTechnicalSheetCreateForm() {
+type UseTechnicalSheetCreateFormParams = {
+  inputs: IInput[];
+};
+
+export function useTechnicalSheetCreateForm({
+  inputs,
+}: UseTechnicalSheetCreateFormParams) {
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -54,6 +62,30 @@ export function useTechnicalSheetCreateForm() {
       });
     }
   });
+
+  const handleFormatInputFromFile = (obj: {
+    Nome?: string;
+    Quantidade?: string;
+  }) => {
+    return {
+      name: obj?.Nome ?? "",
+      quantity: obj?.Quantidade !== undefined ? Number(obj?.Quantidade) : 0,
+    };
+  };
+
+  const handleFile = async (fileList: File[] | null) => {
+    const _inputs = await xlsxToJson<{
+      name: string;
+      quantity: number;
+    }>(fileList, handleFormatInputFromFile);
+
+    _inputs?.forEach((input) =>
+      append({
+        uuid: inputs.find((el) => el.name === input.name)?.id ?? "",
+        quantity: input.quantity ?? 0,
+      })
+    );
+  };
 
   const handleAppendInput = () => {
     append({
@@ -92,5 +124,6 @@ export function useTechnicalSheetCreateForm() {
     handleAppendInput,
     handleRemoveInput,
     handleUpdateInput,
+    handleFile,
   };
 }
