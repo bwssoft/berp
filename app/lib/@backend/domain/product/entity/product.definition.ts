@@ -7,6 +7,6 @@ export interface IProduct {
   description: string;
   color: string;
   created_at: Date;
-  technical_sheet_id?: string;
+  technical_sheet_id?: string[];
   omie_code_metadata?: Record<keyof typeof OmieEnterprise, string>;
 }

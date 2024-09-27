@@ -14,13 +14,13 @@ const schema = z.object({
     .string({ required_error: "Esse campo não pode ser vazio" })
     .min(1, "Esse campo não pode ser vazio"),
   technical_sheet_id: z
-    .string({ required_error: "Esse campo não pode ser vazio" })
+    .array(z.string({ required_error: "Esse campo não pode ser vazio" }))
     .min(1, "Esse campo não pode ser vazio"),
   color: z.string(),
   files: z.any(),
-  inputs: z.array(
-    z.object({ input_id: z.string(), quantity: z.coerce.number() })
-  ),
+  inputs: z
+    .array(z.object({ input_id: z.string(), quantity: z.coerce.number() }))
+    .optional(),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -51,6 +51,7 @@ export function useProductUpdateForm(props: Props) {
     try {
       //fazer a request
       await updateOneProductById({ id: defaultValues.id! }, data);
+
       toast({
         title: "Sucesso!",
         description: "Produto atualizado com sucesso!",
