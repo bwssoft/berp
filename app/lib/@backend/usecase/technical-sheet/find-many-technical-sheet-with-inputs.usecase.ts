@@ -1,0 +1,46 @@
+import {
+  IInput,
+  ITechnicalSheet,
+  ITechnicalSheetRepository,
+} from "@/app/lib/@backend/domain";
+import { technicalSheetRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { Filter } from "mongodb";
+
+export type TechnicalSheetWithInputs = ITechnicalSheet & {
+  inputs_metadata: IInput[];
+};
+
+class FindManyTechnicalSheetWithInputsUsecase {
+  repository: ITechnicalSheetRepository;
+
+  constructor() {
+    this.repository = technicalSheetRepository;
+  }
+
+  async execute(
+    input: Filter<ITechnicalSheet>
+  ): Promise<TechnicalSheetWithInputs[]> {
+    const pipeline = this.pipeline(input);
+    const aggregate = await this.repository.aggregate(pipeline);
+    return (await aggregate.toArray()) as TechnicalSheetWithInputs[];
+  }
+
+  pipeline(input: Filter<ITechnicalSheet>) {
+    return [
+      { $match: input },
+      {
+        $lookup: {
+          from: "input",
+          localField: "inputs.uuid",
+          foreignField: "id",
+          as: "inputs_metadata",
+        },
+      },
+    ];
+  }
+}
+
+export const findManyTechnicalSheetWithInputsUsecase = singleton(
+  FindManyTechnicalSheetWithInputsUsecase
+);
