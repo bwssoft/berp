@@ -1,10 +1,9 @@
-import { IProduct, IProductRepository } from "@/app/lib/@backend/domain";
+import { IProductRepository } from "@/app/lib/@backend/domain";
 import { productRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
 import { IProductWithTechnicalSheet } from "./dto/product-with-technical-sheet.dto";
 
-class FindManyProductWithTechnicalSheetsUsecase {
+class FindOneProductWithTechnicalSheetsUsecase {
   repository: IProductRepository;
 
   constructor() {
@@ -12,16 +11,19 @@ class FindManyProductWithTechnicalSheetsUsecase {
   }
 
   async execute(
-    input: Filter<IProduct>
-  ): Promise<IProductWithTechnicalSheet[]> {
-    const pipeline = this.pipeline(input);
-    const aggregate = await this.repository.aggregate(pipeline);
-    return (await aggregate.toArray()) as IProductWithTechnicalSheet[];
+    input: Partial<IProductWithTechnicalSheet>
+  ): Promise<IProductWithTechnicalSheet> {
+    const result = await this.repository.aggregate(this.pipeline(input));
+
+    const [mongoDocument] = await result.toArray();
+
+    return mongoDocument as IProductWithTechnicalSheet;
   }
 
-  pipeline(input: Filter<IProduct>) {
+  pipeline(input: Partial<IProductWithTechnicalSheet>) {
     return [
       { $match: input },
+
       {
         $lookup: {
           from: "technical-sheet",
@@ -30,6 +32,7 @@ class FindManyProductWithTechnicalSheetsUsecase {
           as: "technical_sheets",
         },
       },
+
       {
         $project: {
           name: 1,
@@ -59,6 +62,7 @@ class FindManyProductWithTechnicalSheetsUsecase {
           },
         },
       },
+
       {
         $lookup: {
           from: "input",
@@ -67,6 +71,7 @@ class FindManyProductWithTechnicalSheetsUsecase {
           as: "inputs",
         },
       },
+
       {
         $project: {
           input_id: 0,
@@ -76,6 +81,6 @@ class FindManyProductWithTechnicalSheetsUsecase {
   }
 }
 
-export const findManyProductWithTechnicalSheetsUsecase = singleton(
-  FindManyProductWithTechnicalSheetsUsecase
+export const findOneProductWithTechnicalSheetsUsecase = singleton(
+  FindOneProductWithTechnicalSheetsUsecase
 );

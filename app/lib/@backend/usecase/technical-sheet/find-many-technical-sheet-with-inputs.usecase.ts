@@ -7,7 +7,7 @@ import { technicalSheetRepository } from "@/app/lib/@backend/repository/mongodb"
 import { singleton } from "@/app/lib/util/singleton";
 import { Filter } from "mongodb";
 
-export type TechnicalSheetWithInputs = ITechnicalSheet & {
+export type ITechnicalSheetWithInputs = ITechnicalSheet & {
   inputs_metadata: IInput[];
 };
 
@@ -20,10 +20,10 @@ class FindManyTechnicalSheetWithInputsUsecase {
 
   async execute(
     input: Filter<ITechnicalSheet>
-  ): Promise<TechnicalSheetWithInputs[]> {
+  ): Promise<ITechnicalSheetWithInputs[]> {
     const pipeline = this.pipeline(input);
     const aggregate = await this.repository.aggregate(pipeline);
-    return (await aggregate.toArray()) as TechnicalSheetWithInputs[];
+    return (await aggregate.toArray()) as ITechnicalSheetWithInputs[];
   }
 
   pipeline(input: Filter<ITechnicalSheet>) {
