@@ -1,5 +1,5 @@
 "use client";
-import { TechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
+import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
 import { Controller } from "react-hook-form";
 import { Button } from "../../button";
 import { BarChart, DoughnutChart } from "../../chart";
@@ -7,8 +7,9 @@ import { Stat } from "../../stat";
 import { useProductCreateForm } from "./use-product-create-form";
 
 interface Props {
-  technicalSheets: TechnicalSheetWithInputs[];
+  technicalSheets: ITechnicalSheetWithInputs[];
 }
+
 export function ProductCreateForm(props: Props) {
   const { technicalSheets } = props;
   const { register, handleSubmit, insights, control } = useProductCreateForm();

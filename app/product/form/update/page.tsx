@@ -1,8 +1,7 @@
 import {
-  findAllInput,
-  findAllTechnicalSheet,
-  findOneProduct,
-} from "@/app/lib/@backend/action";
+  findManyTechnicalSheetWithInputsUsecase,
+  findOneProductWithTechnicalSheetsUsecase,
+} from "@/app/lib/@backend/usecase";
 import { ProductUpdateForm } from "@/app/lib/@frontend/ui";
 
 interface Props {
@@ -13,7 +12,10 @@ export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
-  const product = await findOneProduct({ id });
+
+  const product = await findOneProductWithTechnicalSheetsUsecase.execute({
+    id,
+  });
 
   if (!product) {
     return (
@@ -29,8 +31,9 @@ export default async function Page(props: Props) {
     );
   }
 
-  const technicalSheets = await findAllTechnicalSheet({});
-  const inputs = await findAllInput();
+  const technicalSheets = await findManyTechnicalSheetWithInputsUsecase.execute(
+    {}
+  );
 
   return (
     <div>
@@ -46,7 +49,6 @@ export default async function Page(props: Props) {
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <ProductUpdateForm
-          inputs={inputs}
           product={product}
           technicalSheets={technicalSheets}
         />

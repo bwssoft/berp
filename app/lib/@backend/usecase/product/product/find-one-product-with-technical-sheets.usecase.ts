@@ -13,9 +13,10 @@ class FindOneProductWithTechnicalSheetsUsecase {
   async execute(
     input: Partial<IProductWithTechnicalSheet>
   ): Promise<IProductWithTechnicalSheet> {
-    const result = await this.repository.aggregate(this.pipeline(input));
+    const pipeline = this.pipeline(input);
+    const aggregate = await this.repository.aggregate(pipeline);
 
-    const [mongoDocument] = await result.toArray();
+    const [mongoDocument] = await aggregate.toArray();
 
     return mongoDocument as IProductWithTechnicalSheet;
   }

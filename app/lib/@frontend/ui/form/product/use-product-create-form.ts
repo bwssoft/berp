@@ -1,5 +1,5 @@
 import { createOneProduct } from "@/app/lib/@backend/action";
-import { TechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
+import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
 import { productConstants } from "@/app/lib/constant/product";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
@@ -69,10 +69,10 @@ export function useProductCreateForm() {
   const inputsMerged = useMemo(() => {
     return (
       (
-        watch("technical_sheet") as TechnicalSheetWithInputs
+        watch("technical_sheet") as ITechnicalSheetWithInputs
       )?.inputs_metadata?.map((input) => {
         const technicalSheetInputsQuantities = (
-          getValues("technical_sheet") as TechnicalSheetWithInputs
+          getValues("technical_sheet") as ITechnicalSheetWithInputs
         ).inputs;
 
         const currentInputQuantity = technicalSheetInputsQuantities.find(
@@ -134,7 +134,7 @@ export function useProductCreateForm() {
   const totalCost = inputsMerged.reduce((acc, cur) => acc + cur.total, 0);
   const averageCost =
     totalCost /
-    ((watch("technical_sheet") as TechnicalSheetWithInputs)?.inputs?.length ??
+    ((watch("technical_sheet") as ITechnicalSheetWithInputs)?.inputs?.length ??
       1);
 
   return {

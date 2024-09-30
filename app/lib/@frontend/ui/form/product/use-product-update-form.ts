@@ -1,8 +1,10 @@
 import { updateOneProductById } from "@/app/lib/@backend/action";
-import { IInput, IProduct } from "@/app/lib/@backend/domain";
+import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
+import { IProductWithTechnicalSheet } from "@/app/lib/@backend/usecase/product/product/dto/product-with-technical-sheet.dto";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { productConstants } from "@/app/lib/constant/product";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -13,44 +15,54 @@ const schema = z.object({
   description: z
     .string({ required_error: "Esse campo não pode ser vazio" })
     .min(1, "Esse campo não pode ser vazio"),
-  technical_sheet_id: z
-    .array(z.string({ required_error: "Esse campo não pode ser vazio" }))
-    .min(1, "Esse campo não pode ser vazio"),
+  technical_sheet: z.any({ required_error: "Selecione uma ficha técnica" }),
   color: z.string(),
   files: z.any(),
-  inputs: z
-    .array(z.object({ input_id: z.string(), quantity: z.coerce.number() }))
-    .optional(),
 });
 
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
-  defaultValues: IProduct;
-  inputs: IInput[];
+  currentProduct: IProductWithTechnicalSheet;
+  technicalSheets: ITechnicalSheetWithInputs[];
 }
 
 const statsMapped = productConstants.statsMapped;
 
 export function useProductUpdateForm(props: Props) {
-  const { defaultValues, inputs } = props;
+  const { currentProduct, technicalSheets } = props;
   const {
     register,
     handleSubmit: hookFormSubmit,
     formState: { errors },
     control,
     setValue,
+    getValues,
     reset: hookFormReset,
     watch,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues,
+    defaultValues: {
+      color: currentProduct.color,
+      description: currentProduct.description,
+      name: currentProduct.name,
+      technical_sheet: technicalSheets.find(
+        ({ id }) => id === currentProduct.technical_sheets?.[0].id
+      ),
+    },
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
+      const updateOneData = {
+        ...data,
+        technical_sheet_id: data.technical_sheet.id,
+      };
+
+      delete updateOneData.technical_sheet;
+
       //fazer a request
-      await updateOneProductById({ id: defaultValues.id! }, data);
+      await updateOneProductById({ id: currentProduct.id! }, data);
 
       toast({
         title: "Sucesso!",
@@ -66,22 +78,33 @@ export function useProductUpdateForm(props: Props) {
     }
   });
 
+  const technicalSheetData = watch("technical_sheet");
+
   //iteração para agregar os dados dos insumos dobanco de dados com os dados do formulário
-  const inputsMerged = (watch("inputs") ?? [])
-    .filter((el) => {
-      return inputs.find((e) => e.id === el.input_id) !== undefined;
-    })
-    .map((i) => {
-      const input = inputs.find((e) => e.id === i.input_id);
-      return {
-        input: input!,
-        color: input!.color,
-        name: input!.name,
-        price: input?.price ?? 0,
-        total: i.quantity * (input?.price ?? 0),
-        quantity: i.quantity,
-      };
-    });
+  const inputsMerged = useMemo(() => {
+    return (
+      (
+        watch("technical_sheet") as ITechnicalSheetWithInputs
+      )?.inputs_metadata?.map((input) => {
+        const technicalSheetInputsQuantities = (
+          getValues("technical_sheet") as ITechnicalSheetWithInputs
+        ).inputs;
+
+        const currentInputQuantity = technicalSheetInputsQuantities.find(
+          ({ uuid }) => uuid === input.id
+        )?.quantity;
+
+        return {
+          input: input!,
+          color: input!.color,
+          name: input!.name,
+          price: input?.price ?? 0,
+          total: currentInputQuantity! * (input?.price ?? 0),
+          quantity: currentInputQuantity!,
+        };
+      }) ?? []
+    );
+  }, [technicalSheetData]);
 
   //objeto com os valores de insumos em maior e menor quantidade, preço, etc...
   const stats = Object.entries(
@@ -124,7 +147,10 @@ export function useProductUpdateForm(props: Props) {
     }));
 
   const totalCost = inputsMerged.reduce((acc, cur) => acc + cur.total, 0);
-  const averageCost = totalCost / inputs.length;
+  const averageCost =
+    totalCost /
+    ((watch("technical_sheet") as ITechnicalSheetWithInputs)?.inputs?.length ??
+      1);
 
   return {
     register,

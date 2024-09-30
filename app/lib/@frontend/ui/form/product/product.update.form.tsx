@@ -1,5 +1,6 @@
 "use client";
-import { IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
+import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
+import { IProductWithTechnicalSheet } from "@/app/lib/@backend/usecase/product/product/dto/product-with-technical-sheet.dto";
 import { Controller } from "react-hook-form";
 import { Button } from "../../button";
 import { BarChart, DoughnutChart } from "../../chart";
@@ -7,16 +8,15 @@ import { Stat } from "../../stat";
 import { useProductUpdateForm } from "./use-product-update-form";
 
 interface Props {
-  inputs: IInput[];
-  technicalSheets: ITechnicalSheet[];
-  product: IProduct;
+  technicalSheets: ITechnicalSheetWithInputs[];
+  product: IProductWithTechnicalSheet;
 }
 
 export function ProductUpdateForm(props: Props) {
-  const { inputs, product, technicalSheets } = props;
+  const { product, technicalSheets } = props;
   const { register, handleSubmit, insights, control } = useProductUpdateForm({
-    defaultValues: product,
-    inputs,
+    currentProduct: product,
+    technicalSheets,
   });
 
   const { merged, stats, totalCost, averageCost } = insights;
@@ -95,13 +95,17 @@ export function ProductUpdateForm(props: Props) {
                   <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                     <Controller
                       control={control}
-                      name="technical_sheet_id"
+                      name="technical_sheet"
                       render={({ field }) => (
                         <select
                           className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                           value={field.value}
                           onChange={(event) => {
-                            field.onChange([event.target.value]);
+                            const currentTechnicalSheet = technicalSheets.find(
+                              (item) => item.id === event.target.value
+                            );
+
+                            field.onChange(currentTechnicalSheet);
                           }}
                         >
                           <option value={""}>
