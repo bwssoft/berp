@@ -9,7 +9,6 @@ export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
-
   const productionProcess = await findOneProductionProcess({ id });
 
   if (!productionProcess) {
