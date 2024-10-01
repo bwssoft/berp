@@ -1,18 +1,24 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IDevice, IDeviceRepository, IProduct } from "@/app/lib/@backend/domain"
-import { deviceRepository } from "@/app/lib/@backend/repository/mongodb"
+import {
+  IDevice,
+  IDeviceRepository,
+  IProduct,
+} from "@/app/lib/@backend/domain";
+import { deviceRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../decorators";
 
 class FindAllDeviceUsecase {
-  repository: IDeviceRepository
+  repository: IDeviceRepository;
 
   constructor() {
-    this.repository = deviceRepository
+    this.repository = deviceRepository;
   }
 
+  @RemoveMongoId()
   async execute() {
-    const pipeline = this.pipeline()
-    const aggragate = await this.repository.aggregate(pipeline)
-    return await aggragate.toArray() as (IDevice & { product: IProduct })[]
+    const pipeline = this.pipeline();
+    const aggragate = await this.repository.aggregate(pipeline);
+    return (await aggragate.toArray()) as (IDevice & { product: IProduct })[];
   }
 
   pipeline() {
@@ -24,7 +30,7 @@ class FindAllDeviceUsecase {
           as: "product",
           localField: "product_id",
           foreignField: "id",
-        }
+        },
       },
       {
         $project: {
@@ -32,16 +38,16 @@ class FindAllDeviceUsecase {
           serial: 1,
           created_at: 1,
           product: { $first: "$product" },
-        }
+        },
       },
       {
         $sort: {
-          _id: -1
-        }
-      }
-    ]
-    return pipeline
+          _id: -1,
+        },
+      },
+    ];
+    return pipeline;
   }
 }
 
-export const findAllDeviceUsecase = singleton(FindAllDeviceUsecase)
+export const findAllDeviceUsecase = singleton(FindAllDeviceUsecase);

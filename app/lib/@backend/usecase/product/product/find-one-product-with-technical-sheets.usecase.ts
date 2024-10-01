@@ -1,6 +1,7 @@
 import { IProductRepository } from "@/app/lib/@backend/domain";
 import { productRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../../decorators";
 import { IProductWithTechnicalSheet } from "./dto/product-with-technical-sheet.dto";
 
 class FindOneProductWithTechnicalSheetsUsecase {
@@ -10,6 +11,7 @@ class FindOneProductWithTechnicalSheetsUsecase {
     this.repository = productRepository;
   }
 
+  @RemoveMongoId()
   async execute(
     input: Partial<IProductWithTechnicalSheet>
   ): Promise<IProductWithTechnicalSheet> {

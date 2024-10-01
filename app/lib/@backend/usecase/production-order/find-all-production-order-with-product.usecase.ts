@@ -6,6 +6,7 @@ import {
 } from "@/app/lib/@backend/domain";
 import { productionOrderRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../decorators";
 
 class FindAllProductionOrderWithInputUsecase {
   repository: IProductionOrderRepository;
@@ -14,6 +15,7 @@ class FindAllProductionOrderWithInputUsecase {
     this.repository = productionOrderRepository;
   }
 
+  @RemoveMongoId()
   async execute() {
     const pipeline = this.pipeline();
     const aggregate = await this.repository.aggregate(pipeline);

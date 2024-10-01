@@ -1,7 +1,8 @@
 import { IProduct, IProductRepository } from "@/app/lib/@backend/domain";
 import { productRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
+import { type Filter } from "mongodb";
+import { RemoveMongoId } from "../../../decorators";
 import { IProductWithTechnicalSheet } from "./dto/product-with-technical-sheet.dto";
 
 class FindManyProductWithTechnicalSheetsUsecase {
@@ -11,6 +12,7 @@ class FindManyProductWithTechnicalSheetsUsecase {
     this.repository = productRepository;
   }
 
+  @RemoveMongoId()
   async execute(
     input: Filter<IProduct>
   ): Promise<IProductWithTechnicalSheet[]> {
@@ -70,6 +72,7 @@ class FindManyProductWithTechnicalSheetsUsecase {
       {
         $project: {
           input_id: 0,
+          "inputs._id": 0,
         },
       },
     ];

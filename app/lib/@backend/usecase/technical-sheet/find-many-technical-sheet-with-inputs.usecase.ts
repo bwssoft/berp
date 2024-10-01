@@ -5,7 +5,8 @@ import {
 } from "@/app/lib/@backend/domain";
 import { technicalSheetRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
+import { type Filter } from "mongodb";
+import { RemoveMongoId } from "../../decorators";
 
 export type ITechnicalSheetWithInputs = ITechnicalSheet & {
   inputs_metadata: IInput[];
@@ -18,6 +19,7 @@ class FindManyTechnicalSheetWithInputsUsecase {
     this.repository = technicalSheetRepository;
   }
 
+  @RemoveMongoId()
   async execute(
     params: Filter<ITechnicalSheet>
   ): Promise<ITechnicalSheetWithInputs[]> {
