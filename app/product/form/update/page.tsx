@@ -1,7 +1,5 @@
-import {
-  findManyTechnicalSheetWithInputsUsecase,
-  findOneProductWithTechnicalSheetsUsecase,
-} from "@/app/lib/@backend/usecase";
+import { findOneProductWithTechnicalSheets } from "@/app/lib/@backend/action";
+import { findManyTechnicalSheetWithInputsUsecase } from "@/app/lib/@backend/usecase";
 import { ProductUpdateForm } from "@/app/lib/@frontend/ui";
 
 interface Props {
@@ -13,7 +11,7 @@ export default async function Page(props: Props) {
     searchParams: { id },
   } = props;
 
-  const product = await findOneProductWithTechnicalSheetsUsecase.execute({
+  const product = await findOneProductWithTechnicalSheets({
     id,
   });
 

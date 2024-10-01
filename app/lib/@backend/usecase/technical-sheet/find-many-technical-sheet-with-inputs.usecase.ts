@@ -19,16 +19,16 @@ class FindManyTechnicalSheetWithInputsUsecase {
   }
 
   async execute(
-    input: Filter<ITechnicalSheet>
+    params: Filter<ITechnicalSheet>
   ): Promise<ITechnicalSheetWithInputs[]> {
-    const pipeline = this.pipeline(input);
+    const pipeline = this.pipeline(params);
     const aggregate = await this.repository.aggregate(pipeline);
     return (await aggregate.toArray()) as ITechnicalSheetWithInputs[];
   }
 
-  pipeline(input: Filter<ITechnicalSheet>) {
+  pipeline(params: Filter<ITechnicalSheet>) {
     return [
-      { $match: input },
+      { $match: params },
       {
         $lookup: {
           from: "input",

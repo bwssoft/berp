@@ -1,10 +1,8 @@
-import { findManyTechnicalSheetWithInputsUsecase } from "@/app/lib/@backend/usecase";
+import { findManyTechnicalSheetWithInputs } from "@/app/lib/@backend/action";
 import { ProductCreateForm } from "@/app/lib/@frontend/ui";
 
 export default async function Page() {
-  const technicalSheets = await findManyTechnicalSheetWithInputsUsecase.execute(
-    {}
-  );
+  const technicalSheets = await findManyTechnicalSheetWithInputs({});
 
   return (
     <div>

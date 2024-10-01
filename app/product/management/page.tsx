@@ -1,10 +1,10 @@
-import { findManyProductWithTechnicalSheetsUsecase } from "@/app/lib/@backend/usecase";
+import { findManyProductWithTechnicalSheets } from "@/app/lib/@backend/action";
 import { ProductTable } from "@/app/lib/@frontend/ui";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
 export default async function Example() {
-  const products = await findManyProductWithTechnicalSheetsUsecase.execute({});
+  const products = await findManyProductWithTechnicalSheets();
 
   return (
     <div>
