@@ -10,7 +10,6 @@ const schema = z.object({
     z.object({
       id: z.string(),
       label: z.string(),
-      checked: z.boolean(),
     })
   ),
   attachments: z.array(
@@ -66,7 +65,6 @@ export function useProductionProcessCreateForm() {
   const handleAppendStep = () => {
     append({
       id: crypto.randomUUID(),
-      checked: false,
       label: "Etapa",
     });
   };
