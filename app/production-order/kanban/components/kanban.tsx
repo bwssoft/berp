@@ -6,12 +6,13 @@ import {
   ISaleOrder,
 } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
-import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
+import { Button, ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
+import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import React, { MouseEventHandler } from "react";
+import React from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 const ItemType = "CARD";
@@ -25,7 +26,6 @@ interface CardProps {
   order: CustomProductionOrder;
   index: number;
   moveCard: (id: string, toStage: string, toIndex: number) => void;
-  onClick: MouseEventHandler;
 }
 
 const stageColor = {
@@ -35,11 +35,13 @@ const stageColor = {
   completed: "bg-green-200",
 };
 
-const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
+const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
   const [, ref] = useDrag({
     type: ItemType,
     item: { id: order.id, index, stage: order.stage },
   });
+
+  const { push } = useRouter();
 
   const [, drop] = useDrop({
     accept: ItemType,
@@ -55,13 +57,11 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
   return (
     <div
       ref={(node) => ref(drop(node)) as any}
-      className="w-full p-2 rounded shadow-sm border-gray-100 border-2 hover:bg-gray-100 cursor-pointer transition-all duration-300 ease-in-out"
-      onClick={onClick}
-      id="kanban-card-container"
+      className="w-full p-2 rounded shadow-sm border-gray-100 border-2 relative"
     >
       <div className="w-full flex justify-between">
-        <p className="text-sm mb-3 text-gray-700 font-semibold">
-          {order.id?.split("-")[0]}
+        <p className="text-sm mb-3 text-gray-500 font-semibold">
+          OP-{order.id?.split("-")[0].toUpperCase()}
         </p>
         <p className="text-sm mb-3 text-gray-700 font-semibold">
           {formatDate(new Date(order.created_at), { includeHours: true })}
@@ -82,7 +82,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
             style={{ backgroundColor: p.color }}
             className={`rounded-full w-4 h-4 mr-2`}
           ></div>
-          <a href="#" className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500">
             <span className="text-xs text-gray-700">
               {
                 order.sale_order.products.find((el) => el.product_id === p.id)
@@ -90,7 +90,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
               }{" "}
             </span>
             - {p.name}
-          </a>
+          </p>
         </div>
       ))}
 
@@ -102,6 +102,16 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
           <ProductionOrderStepsUpdateForm productionOrder={order} />
         </div>
       )}
+
+      <Button
+        onClick={() => {
+          push(`/production-order/${order.id}`);
+        }}
+        variant="ghost"
+        className="absolute bottom-1 right-2 p-2"
+      >
+        <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
+      </Button>
     </div>
   );
 };
@@ -121,8 +131,6 @@ const Column: React.FC<ColumnProps> = ({
   allProductionOrders,
   moveCard,
 }) => {
-  const nextRouter = useRouter();
-
   const [, ref] = useDrop({
     accept: ItemType,
     drop: (item: { id: string }) => {
@@ -169,12 +177,6 @@ const Column: React.FC<ColumnProps> = ({
             order={order}
             index={index}
             moveCard={moveCard}
-            onClick={(event) => {
-              // @ts-ignore
-              if (event.target.id === "kanban-card-container") {
-                nextRouter.push(`/production-order/${order.id}`);
-              }
-            }}
           />
         ))}
       </div>

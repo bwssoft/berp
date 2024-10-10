@@ -13,7 +13,7 @@ export function RemoveMongoId(): MethodDecorator {
         return result.map(({ _id, ...item }) => ({ ...item }));
       }
 
-      if (typeof result === "object") {
+      if (typeof result === "object" && result !== null) {
         if ("_id" in result) delete result["_id"];
         return result;
       }
