@@ -7,7 +7,9 @@ import {
   createOneProductUsecase,
   deleteOneProductUsecase,
   findAllProductUsecase,
+  findManyProductWithTechnicalSheetsUsecase,
   findOneProductUsecase,
+  findOneProductWithTechnicalSheetsUsecase,
   updateOneProductUsecase,
 } from "../../usecase/product/product";
 
@@ -40,4 +42,16 @@ export async function findAllProduct(
   params: Filter<IProduct> = {}
 ): Promise<IProduct[]> {
   return await findAllProductUsecase.execute(params);
+}
+
+export async function findManyProductWithTechnicalSheets(
+  params: Filter<IProduct> = {}
+) {
+  return await findManyProductWithTechnicalSheetsUsecase.execute(params);
+}
+
+export async function findOneProductWithTechnicalSheets(
+  input: Partial<IProduct>
+) {
+  return await findOneProductWithTechnicalSheetsUsecase.execute(input);
 }

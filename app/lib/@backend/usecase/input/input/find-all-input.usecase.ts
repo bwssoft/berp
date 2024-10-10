@@ -1,17 +1,19 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IInputRepository } from "@/app/lib/@backend/domain"
-import { inputRepository } from "@/app/lib/@backend/repository/mongodb"
+import { IInputRepository } from "@/app/lib/@backend/domain";
+import { inputRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../../decorators";
 
 class FindAllInputUsecase {
-  repository: IInputRepository
+  repository: IInputRepository;
 
   constructor() {
-    this.repository = inputRepository
+    this.repository = inputRepository;
   }
 
+  @RemoveMongoId()
   async execute() {
-    return await this.repository.findAll()
+    return await this.repository.findAll();
   }
 }
 
-export const findAllInputUsecase = singleton(FindAllInputUsecase)
+export const findAllInputUsecase = singleton(FindAllInputUsecase);

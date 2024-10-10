@@ -1,11 +1,11 @@
 import { createOneProduct } from "@/app/lib/@backend/action";
-import { IInput } from "@/app/lib/@backend/domain";
-import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
 import { productConstants } from "@/app/lib/constant/product";
-import { createExcelTemplate, xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "../../../hook";
 
 const schema = z.object({
   name: z
@@ -14,46 +14,41 @@ const schema = z.object({
   description: z
     .string({ required_error: "Esse campo não pode ser vazio" })
     .min(1, "Esse campo não pode ser vazio"),
-  technical_sheet_id: z
-    .string({ required_error: "Esse campo não pode ser vazio" })
-    .min(1, "Esse campo não pode ser vazio"),
+  technical_sheet: z.any({ required_error: "Selecione uma ficha técnica" }),
   color: z.string(),
   files: z.any(),
-  inputs: z.array(
-    z.object({ input_id: z.string(), quantity: z.coerce.number() })
-  ),
 });
 
 export type Schema = z.infer<typeof schema>;
 
-interface Props {
-  inputs: IInput[];
-}
-
 const statsMapped = productConstants.statsMapped;
 
-export function useProductCreateForm(props: Props) {
-  const { inputs } = props;
+export function useProductCreateForm() {
   const {
     register,
     handleSubmit: hookFormSubmit,
     formState: { errors },
     control,
     setValue,
+    getValues,
     reset: hookFormReset,
     watch,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   });
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "inputs",
-  });
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
+      const createOneData = {
+        ...data,
+        technical_sheet_id: data.technical_sheet.id,
+      };
+
+      delete createOneData.technical_sheet;
+
       //fazer a request
-      await createOneProduct(data);
+      await createOneProduct(createOneData);
+
       toast({
         title: "Sucesso!",
         description: "Produto registrado com sucesso!",
@@ -68,69 +63,33 @@ export function useProductCreateForm(props: Props) {
     }
   });
 
-  const handleAppendInput = append;
-  const handleRemoveInput = remove;
-
-  const handleFile = async (fileList: File[] | null) => {
-    const _inputs = await xlsxToJson<{
-      name: string;
-      quantity: number;
-    }>(fileList, handleFormatInputFromFile);
-
-    _inputs?.forEach((input) =>
-      handleAppendInput({
-        input_id: inputs.find((el) => el.name === input.name)?.id ?? "",
-        quantity: input.quantity ?? 0,
-      })
-    );
-  };
-
-  const handleFormatInputFromFile = (obj: {
-    Nome?: string;
-    Quantidade?: string;
-  }) => {
-    return {
-      name: obj?.Nome ?? "",
-      quantity: obj?.Quantidade !== undefined ? Number(obj?.Quantidade) : 0,
-    };
-  };
-
-  const createFileModel = async () => {
-    const buffer = await createExcelTemplate([
-      { header: "Insumos", options: ["insumo1", "insumo2"] },
-    ]);
-    // Cria um Blob e faz o download do arquivo no navegador
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    const url = URL.createObjectURL(blob);
-
-    // Cria um link e clica nele para iniciar o download
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "template.xlsx";
-    a.click();
-
-    // Libera o objeto URL após o download
-    URL.revokeObjectURL(url);
-  };
+  const technicalSheetData = watch("technical_sheet");
 
   //iteração para agregar os dados dos insumos dobanco de dados com os dados do formulário
-  const inputsMerged = (watch("inputs") ?? [])
-    .filter((el) => {
-      return inputs.find((e) => e.id === el.input_id) !== undefined;
-    })
-    .map((i) => {
-      const input = inputs.find((e) => e.id === i.input_id);
-      return {
-        input: input!,
-        color: input!.color,
-        name: input!.name,
-        price: input?.price ?? 0,
-        total: i.quantity * (input?.price ?? 0),
-        quantity: i.quantity,
-      };
-    });
+  const inputsMerged = useMemo(() => {
+    return (
+      (
+        watch("technical_sheet") as ITechnicalSheetWithInputs
+      )?.inputs_metadata?.map((input) => {
+        const technicalSheetInputsQuantities = (
+          getValues("technical_sheet") as ITechnicalSheetWithInputs
+        ).inputs;
+
+        const currentInputQuantity = technicalSheetInputsQuantities.find(
+          ({ uuid }) => uuid === input.id
+        )?.quantity;
+
+        return {
+          input: input!,
+          color: input!.color,
+          name: input!.name,
+          price: input?.price ?? 0,
+          total: currentInputQuantity! * (input?.price ?? 0),
+          quantity: currentInputQuantity!,
+        };
+      }) ?? []
+    );
+  }, [technicalSheetData]);
 
   //objeto com os valores de insumos em maior e menor quantidade, preço, etc...
   const stats = Object.entries(
@@ -173,7 +132,10 @@ export function useProductCreateForm(props: Props) {
     }));
 
   const totalCost = inputsMerged.reduce((acc, cur) => acc + cur.total, 0);
-  const averageCost = totalCost / inputs.length;
+  const averageCost =
+    totalCost /
+    ((watch("technical_sheet") as ITechnicalSheetWithInputs)?.inputs?.length ??
+      1);
 
   return {
     register,
@@ -182,16 +144,11 @@ export function useProductCreateForm(props: Props) {
     control,
     setValue,
     reset: hookFormReset,
-    inputsOnForm: fields,
-    handleAppendInput,
-    handleRemoveInput,
-    handleFile,
     insights: {
       totalCost,
       stats,
       merged: inputsMerged,
       averageCost,
     },
-    createFileModel,
   };
 }

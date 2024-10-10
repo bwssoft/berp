@@ -4,6 +4,7 @@ import {
 } from "@/app/lib/@backend/domain";
 import { productionProcessRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../decorators";
 
 class FindOneProductionProcessUsecase {
   repository: IProductionProcessRepository;
@@ -12,6 +13,7 @@ class FindOneProductionProcessUsecase {
     this.repository = productionProcessRepository;
   }
 
+  @RemoveMongoId()
   async execute(args: Partial<IProductionProcess>) {
     return await this.repository.findOne(args);
   }

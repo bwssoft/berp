@@ -1,30 +1,18 @@
 "use client";
-import { IInput, ITechnicalSheet } from "@/app/lib/@backend/domain";
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
 import { Controller } from "react-hook-form";
 import { Button } from "../../button";
 import { BarChart, DoughnutChart } from "../../chart";
-import { FileUpload } from "../../input-file";
 import { Stat } from "../../stat";
 import { useProductCreateForm } from "./use-product-create-form";
 
 interface Props {
-  inputs: IInput[];
-  technicalSheets: ITechnicalSheet[];
+  technicalSheets: ITechnicalSheetWithInputs[];
 }
+
 export function ProductCreateForm(props: Props) {
-  const { inputs, technicalSheets } = props;
-  const {
-    register,
-    handleSubmit,
-    inputsOnForm,
-    handleAppendInput,
-    handleRemoveInput,
-    handleFile,
-    insights,
-    createFileModel,
-    control,
-  } = useProductCreateForm({ inputs });
+  const { technicalSheets } = props;
+  const { register, handleSubmit, insights, control } = useProductCreateForm();
 
   const { merged, stats, totalCost, averageCost } = insights;
 
@@ -102,14 +90,18 @@ export function ProductCreateForm(props: Props) {
                   <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                     <Controller
                       control={control}
-                      name="technical_sheet_id"
+                      name="technical_sheet"
                       render={({ field }) => (
                         <select
                           className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                          value={field.value}
-                          onChange={(event) =>
-                            field.onChange(event.target.value)
-                          }
+                          value={field.value?.id ?? ""}
+                          onChange={(event) => {
+                            const currentTechnicalSheet = technicalSheets.find(
+                              (item) => item.id === event.target.value
+                            );
+
+                            field.onChange(currentTechnicalSheet);
+                          }}
                         >
                           <option value={""}>
                             Selecione uma ficha técnica
@@ -128,80 +120,6 @@ export function ProductCreateForm(props: Props) {
                     />
                   </div>
                 </div>
-              </div>
-
-              <div className="col-span-full">
-                <label
-                  htmlFor="inputs"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Insumos
-                </label>
-                <FileUpload
-                  accept=".xlsx"
-                  handleFile={handleFile}
-                  element={({ upload }) => (
-                    <p className="text-sm leading-6 text-gray-600">
-                      <a
-                        href="/xlsx/create-product-input-upload.xlsx"
-                        download={"create-product-input-upload.xlsx"}
-                        className="underline cursor-pointer font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                      >
-                        Baixe o modelo
-                      </a>{" "}
-                      para preencher o campo a partir de um arquivo xlsx.{" "}
-                      <a
-                        className="underline cursor-pointer font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                        onClick={upload}
-                      >
-                        Click aqui para fazer o upload.
-                      </a>
-                    </p>
-                  )}
-                />
-                {inputsOnForm.map((item, index) => (
-                  <div key={item.id} className="flex space-x-4 mt-2">
-                    <select
-                      id={`input-${index}`}
-                      className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...register(`inputs.${index}.input_id`)}
-                    >
-                      <option value={`select-empty-${index}`}>
-                        Selecione um Insumo
-                      </option>
-                      {inputs.map((i) => (
-                        <option key={i.id} value={i.id}>
-                          {i.name} - {i.measure_unit}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="number"
-                      placeholder="Quantidade"
-                      className="block w-1/2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...register(`inputs.${index}.quantity`)}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => handleRemoveInput(index)}
-                      className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
-                    >
-                      <XMarkIcon width={16} height={16} />
-                    </Button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleAppendInput({
-                      input_id: `select-empty-${inputsOnForm.length}`,
-                      quantity: 0,
-                    })
-                  }
-                  className="mt-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"
-                >
-                  Adicionar insumo
-                </button>
               </div>
             </div>
           </div>
