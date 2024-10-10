@@ -8,6 +8,7 @@ import {
 import { toast } from "@/app/lib/@frontend/hook";
 import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
+import { formatDate } from "@/app/lib/util";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { MouseEventHandler } from "react";
@@ -58,7 +59,14 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
       onClick={onClick}
       id="kanban-card-container"
     >
-      <h3 className="text-sm mb-3 text-gray-700">{order.id?.slice(0, 5)}</h3>
+      <div className="w-full flex justify-between">
+        <p className="text-sm mb-3 text-gray-700 font-semibold">
+          {order.id?.split("-")[0]}
+        </p>
+        <p className="text-sm mb-3 text-gray-700 font-semibold">
+          {formatDate(new Date(order.created_at), { includeHours: true })}
+        </p>
+      </div>
 
       <p
         className={`${
@@ -86,12 +94,14 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard, onClick }) => {
         </div>
       ))}
 
-      <div className="flex flex-col gap-1 mt-4">
-        <p className="text-sm font-semibold text-gray-800">
-          Progresso das etapas
-        </p>
-        <ProductionOrderStepsUpdateForm productionOrder={order} />
-      </div>
+      {order.production_process?.[0].process_uuid && (
+        <div className="flex flex-col gap-1 mt-4">
+          <p className="text-sm font-semibold text-gray-800">
+            Progresso das etapas
+          </p>
+          <ProductionOrderStepsUpdateForm productionOrder={order} />
+        </div>
+      )}
     </div>
   );
 };
