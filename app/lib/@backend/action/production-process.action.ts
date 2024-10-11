@@ -29,11 +29,13 @@ export async function updateOneProductionProcessById(
 ) {
   await updateOneProductionProcessUsecase.execute(query, value);
   revalidatePath("/production-order/management");
+  revalidatePath("/production-order/kanban");
 }
 
 export async function deleteOneProductionProcessById(query: { id: string }) {
   await deleteOneProductionProcessUsecase.execute(query);
   revalidatePath("/production-order/management");
+  revalidatePath("/production-order/kanban");
 }
 
 export async function findAllProductionProcess(): Promise<

@@ -1,3 +1,5 @@
+import { OmieEnterpriseEnum } from "../../@shared/gateway/omie/omie.gateway.interface";
+
 export interface ISaleOrder {
   id: string;
   client_id: string;
@@ -8,6 +10,7 @@ export interface ISaleOrder {
     order_id: string; //idPedido
     order_number: string; //numeroPedido 329
     value: number; //valorPedido 2.54
+    enterprise: keyof typeof OmieEnterpriseEnum; //EMPRESA
     files: {
       file_name: string; //cNomeArquivo
       domain: string; //cTabela
