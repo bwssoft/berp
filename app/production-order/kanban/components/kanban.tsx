@@ -6,11 +6,12 @@ import {
   ISaleOrder,
 } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
-import { Button, ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
+import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
 import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
@@ -103,15 +104,12 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
         </div>
       )}
 
-      <Button
-        onClick={() => {
-          push(`/production-order/${order.id}`);
-        }}
-        variant="ghost"
+      <Link
+        href={`/production-order/${order.id}`}
         className="absolute bottom-1 right-2 p-2"
       >
         <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
-      </Button>
+      </Link>
     </div>
   );
 };
