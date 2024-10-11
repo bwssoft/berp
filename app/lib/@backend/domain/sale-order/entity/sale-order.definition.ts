@@ -10,7 +10,7 @@ export interface ISaleOrder {
     order_id: string; //idPedido
     order_number: string; //numeroPedido 329
     value: number; //valorPedido 2.54
-    enterprise?: keyof typeof OmieEnterpriseEnum; //EMPRESA
+    enterprise: keyof typeof OmieEnterpriseEnum; //EMPRESA
     files: {
       file_name: string; //cNomeArquivo
       domain: string; //cTabela
