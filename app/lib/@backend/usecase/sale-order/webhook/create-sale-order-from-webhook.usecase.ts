@@ -75,6 +75,7 @@ class CreateSaleOrderFromWebhookUseCase {
         )!.quantity,
       })),
       omie_webhook_metadata: {
+        enterprise: enterpriseHashMapped,
         client_id: idCliente.toString(),
         order_id: idPedido.toString(),
         order_number: numeroPedido.toString(),

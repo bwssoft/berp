@@ -101,6 +101,7 @@ class UpdateSaleOrderFromWebhookUseCase {
       })),
       omie_webhook_metadata: {
         client_id: idCliente.toString(),
+        enterprise: enterpriseHashMapped,
         order_id: idPedido.toString(),
         order_number: numeroPedido.toString(),
         value: valorPedido,

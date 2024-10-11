@@ -1,3 +1,4 @@
+export * from "./attachments-details";
 export * from "./client-details";
 export * from "./comments-section";
 export * from "./production-order-details";

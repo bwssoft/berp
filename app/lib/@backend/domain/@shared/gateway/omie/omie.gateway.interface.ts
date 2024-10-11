@@ -21,7 +21,10 @@ export type OmieCredentials = {
 
 export type OmieSearchParams = Omit<OmieDefaultParams, "apenas_importado_api">;
 
-export type OmieCallFunctions = "ConsultarPedido" | "ListarAnexo";
+export type OmieCallFunctions =
+  | "ConsultarPedido"
+  | "ListarAnexo"
+  | "ObterAnexo";
 
 export enum OmieEnterpriseEnum {
   MGC = "MGC",
