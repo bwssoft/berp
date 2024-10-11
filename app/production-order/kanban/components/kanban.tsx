@@ -12,7 +12,6 @@ import { formatDate } from "@/app/lib/util";
 import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
 
@@ -41,8 +40,6 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
     type: ItemType,
     item: { id: order.id, index, stage: order.stage },
   });
-
-  const { push } = useRouter();
 
   const [, drop] = useDrop({
     accept: ItemType,
@@ -107,6 +104,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
       <Link
         href={`/production-order/${order.id}`}
         className="absolute bottom-1 right-2 p-2"
+        title="Ver detalhes da ordem de produção"
       >
         <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
       </Link>
