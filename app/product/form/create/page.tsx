@@ -1,9 +1,8 @@
-import { findAllInput, findAllTechnicalSheet } from "@/app/lib/@backend/action";
+import { findManyTechnicalSheetWithInputs } from "@/app/lib/@backend/action";
 import { ProductCreateForm } from "@/app/lib/@frontend/ui";
 
 export default async function Page() {
-  const inputs = await findAllInput();
-  const technicalSheets = await findAllTechnicalSheet({});
+  const technicalSheets = await findManyTechnicalSheetWithInputs({});
 
   return (
     <div>
@@ -18,7 +17,7 @@ export default async function Page() {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <ProductCreateForm inputs={inputs} technicalSheets={technicalSheets} />
+        <ProductCreateForm technicalSheets={technicalSheets} />
       </div>
     </div>
   );

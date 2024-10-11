@@ -1,17 +1,24 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IProductionOrder, IProductionOrderRepository } from "@/app/lib/@backend/domain"
-import { productionOrderRepository } from "@/app/lib/@backend/repository/mongodb"
+import {
+  IProductionOrder,
+  IProductionOrderRepository,
+} from "@/app/lib/@backend/domain";
+import { productionOrderRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../decorators";
 
 class FindOneProductionOrderUsecase {
-  repository: IProductionOrderRepository
+  repository: IProductionOrderRepository;
 
   constructor() {
-    this.repository = productionOrderRepository
+    this.repository = productionOrderRepository;
   }
 
+  @RemoveMongoId()
   async execute(args: Partial<IProductionOrder>) {
-    return await this.repository.findOne(args)
+    return await this.repository.findOne(args);
   }
 }
 
-export const findOneProductionOrderUsecase = singleton(FindOneProductionOrderUsecase)
+export const findOneProductionOrderUsecase = singleton(
+  FindOneProductionOrderUsecase
+);

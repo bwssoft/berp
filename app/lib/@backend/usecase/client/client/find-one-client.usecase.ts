@@ -1,7 +1,8 @@
 import { IClient, IClientRepository } from "@/app/lib/@backend/domain";
 import { clientRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
+import { type Filter } from "mongodb";
+import { RemoveMongoId } from "../../../decorators";
 
 class FindOneClientUsecase {
   repository: IClientRepository;
@@ -10,6 +11,7 @@ class FindOneClientUsecase {
     this.repository = clientRepository;
   }
 
+  @RemoveMongoId()
   async execute(input: Filter<IClient>) {
     return await this.repository.findOne(input);
   }

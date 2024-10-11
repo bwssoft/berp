@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
-import "./globals.css";
 import { Layout, Toaster } from "@/app/lib/@frontend/ui";
+import type { Metadata } from "next";
+import NextJsTopLoader from "nextjs-toploader";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "BErp",
@@ -14,6 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <Layout>
+      <NextJsTopLoader color="#a855f7" />
       {children}
       <Toaster />
     </Layout>

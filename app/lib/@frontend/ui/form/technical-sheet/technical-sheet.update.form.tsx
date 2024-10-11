@@ -2,6 +2,7 @@
 import { IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
 import { Controller } from "react-hook-form";
 import { Button } from "../../button";
+import { FileUpload } from "../../input-file";
 import { useTechnicalSheetUpdateForm } from "./use-technical-sheet-update-form";
 
 type TechnicalSheetUpdateFormProps = {
@@ -22,7 +23,8 @@ export function TechnicalSheetUpdateForm({
     handleAppendInput,
     handleUpdateInput,
     inputsFields,
-  } = useTechnicalSheetUpdateForm({ technicalSheet });
+    handleFile,
+  } = useTechnicalSheetUpdateForm({ technicalSheet, inputs });
 
   return (
     <form action={() => handleSubmit()}>
@@ -83,6 +85,29 @@ export function TechnicalSheetUpdateForm({
               <h2 className="block text-sm font-medium leading-6 text-gray-900">
                 Insumos
               </h2>
+
+              <FileUpload
+                accept=".xlsx"
+                handleFile={handleFile}
+                element={({ upload }) => (
+                  <p className="text-sm leading-6 text-gray-600">
+                    <a
+                      href="/xlsx/create-product-input-upload.xlsx"
+                      download={"create-product-input-upload.xlsx"}
+                      className="underline cursor-pointer font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                    >
+                      Baixe o modelo
+                    </a>{" "}
+                    para preencher o campo a partir de um arquivo xlsx.{" "}
+                    <a
+                      className="underline cursor-pointer font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                      onClick={upload}
+                    >
+                      Click aqui para fazer o upload.
+                    </a>
+                  </p>
+                )}
+              />
 
               {inputsFields.map((input, inputIndex) => (
                 <div

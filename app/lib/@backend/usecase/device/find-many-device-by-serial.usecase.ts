@@ -1,18 +1,24 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IDevice, IDeviceRepository, IProduct } from "@/app/lib/@backend/domain"
-import { deviceRepository } from "@/app/lib/@backend/repository/mongodb"
+import {
+  IDevice,
+  IDeviceRepository,
+  IProduct,
+} from "@/app/lib/@backend/domain";
+import { deviceRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../decorators";
 
 class FindManyDeviceBySerialUsecase {
-  repository: IDeviceRepository
+  repository: IDeviceRepository;
 
   constructor() {
-    this.repository = deviceRepository
+    this.repository = deviceRepository;
   }
 
+  @RemoveMongoId()
   async execute(serial: string[]) {
-    const pipeline = this.pipeline(serial)
-    const aggregate = await this.repository.aggregate(pipeline)
-    return await aggregate.toArray() as (IDevice & { product: IProduct })[]
+    const pipeline = this.pipeline(serial);
+    const aggregate = await this.repository.aggregate(pipeline);
+    return (await aggregate.toArray()) as (IDevice & { product: IProduct })[];
   }
 
   pipeline(serial: string[]) {
@@ -24,7 +30,7 @@ class FindManyDeviceBySerialUsecase {
           as: "product",
           localField: "product_id",
           foreignField: "id",
-        }
+        },
       },
       {
         $project: {
@@ -32,16 +38,18 @@ class FindManyDeviceBySerialUsecase {
           serial: 1,
           created_at: 1,
           product: { $first: "$product" },
-        }
+        },
       },
       {
         $sort: {
-          _id: -1
-        }
-      }
-    ]
-    return pipeline
+          _id: -1,
+        },
+      },
+    ];
+    return pipeline;
   }
 }
 
-export const findManyDeviceBySerialUsecase = singleton(FindManyDeviceBySerialUsecase)
+export const findManyDeviceBySerialUsecase = singleton(
+  FindManyDeviceBySerialUsecase
+);

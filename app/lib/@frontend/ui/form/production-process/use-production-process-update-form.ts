@@ -15,7 +15,6 @@ const schema = z.object({
     z.object({
       id: z.string(),
       label: z.string(),
-      checked: z.boolean(),
     })
   ),
   attachments: z.array(
@@ -52,14 +51,19 @@ export function useProductionProcessUpdateForm({
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: "steps",
+    keyName: "key",
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
+      // removes field array key
+      const mappedSteps = data.steps.map(({ id, label }) => ({ id, label }));
+
       await updateOneProductionProcessById(
         { id: productionProcess.id },
-        { ...data }
+        { ...data, steps: mappedSteps }
       );
+
       toast({
         title: "Sucesso!",
         description: "Processo de produção alterado com sucesso!",
@@ -77,7 +81,6 @@ export function useProductionProcessUpdateForm({
   const handleAppendStep = () => {
     append({
       id: crypto.randomUUID(),
-      checked: false,
       label: "Etapa",
     });
   };

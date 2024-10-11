@@ -10,9 +10,13 @@ export interface IProductionOrder {
   production_process?: Array<IProductionOrderProcess>;
 }
 
+export type IProductionOrderStep = IProductionProcessStep & {
+  checked: boolean;
+};
+
 export type IProductionOrderProcess = {
   process_uuid: string;
-  steps_progress: Array<IProductionProcessStep>;
+  steps_progress: Array<IProductionOrderStep>;
 };
 
 export const productionOrderStageMapping: Record<

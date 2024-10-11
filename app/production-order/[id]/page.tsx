@@ -46,7 +46,7 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
 
   const productsData = await findAllProduct({
     id: {
-      $in: saleOrderData?.products.map(({ product_id }) => product_id),
+      $in: saleOrderData?.products.map(({ product_id }) => product_id) ?? [],
     },
   });
 
@@ -54,7 +54,7 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
     id: {
       $in: productsData
         ?.map((product) => product?.technical_sheet_id)
-        .filter(Boolean) as string[],
+        .filter(Boolean) as unknown as string[],
     },
   });
 
