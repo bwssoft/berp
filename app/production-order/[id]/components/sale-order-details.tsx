@@ -1,7 +1,6 @@
 "use client";
 
 import { ISaleOrder, saleOrderStageMapping } from "@/app/lib/@backend/domain";
-import { formatCurrency } from "@/app/lib/util";
 import { formatDate } from "@/app/lib/util/format-date";
 
 type SaleOrderDetailsProps = {
@@ -66,15 +65,6 @@ export function SaleOrderDetails({ saleOrder }: SaleOrderDetailsProps) {
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               {saleOrderStageMapping[saleOrder.omie_webhook_metadata.stage]}
-            </dd>
-          </div>
-
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">
-              Valor
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {formatCurrency(saleOrder.omie_webhook_metadata.value)}
             </dd>
           </div>
 
