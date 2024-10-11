@@ -22,6 +22,7 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import {
+  AttachmentsDetails,
   ClientDetails,
   CommentsSection,
   ProductionOrderDetails,
@@ -82,6 +83,8 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
 
           <TabsTrigger value="products-data">Detalhes dos produtos</TabsTrigger>
 
+          <TabsTrigger value="attachments">Anexos</TabsTrigger>
+
           <TabsTrigger value="comments-data">Comentários</TabsTrigger>
         </TabsList>
 
@@ -91,6 +94,10 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
 
         <TabsContent value="client-data">
           <ClientDetails client={clientData} />
+        </TabsContent>
+
+        <TabsContent value="attachments">
+          <AttachmentsDetails saleOrder={saleOrderData} />
         </TabsContent>
 
         <TabsContent value="sale-order-data">
