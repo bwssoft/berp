@@ -1,5 +1,5 @@
 "use client";
-import { findAllProductionOrderWithProduct } from "@/app/lib/@backend/action";
+import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
 import {
   IProduct,
   IProductionOrder,
@@ -12,7 +12,6 @@ import { formatDate } from "@/app/lib/util";
 import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
 
@@ -41,8 +40,6 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
     type: ItemType,
     item: { id: order.id, index, stage: order.stage },
   });
-
-  const { push } = useRouter();
 
   const [, drop] = useDrop({
     accept: ItemType,
@@ -107,6 +104,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
       <Link
         href={`/production-order/${order.id}`}
         className="absolute bottom-1 right-2 p-2"
+        title="Ver detalhes da ordem de produção"
       >
         <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
       </Link>
@@ -117,8 +115,8 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
 interface ColumnProps {
   stage: string;
   title: string;
-  allProductionOrders: IProductionOrder[];
   orders: CustomProductionOrder[];
+  allOrders: CustomProductionOrder[];
   moveCard: (id: string, toStage: string, toIndex: number) => void;
 }
 
@@ -126,15 +124,13 @@ const Column: React.FC<ColumnProps> = ({
   stage,
   title,
   orders,
-  allProductionOrders,
   moveCard,
+  allOrders,
 }) => {
   const [, ref] = useDrop({
     accept: ItemType,
-    drop: (item: { id: string }) => {
-      const currentOrder = allProductionOrders.find(
-        (order) => order.id === item.id
-      );
+    drop: async (item: { id: string }) => {
+      const currentOrder = allOrders.find((order) => order.id === item.id);
 
       const areAllProductionOrderStepsChecked =
         currentOrder?.production_process?.[0].steps_progress.every(
@@ -148,6 +144,15 @@ const Column: React.FC<ColumnProps> = ({
           variant: "error",
         });
         return;
+      }
+
+      if (currentOrder) {
+        await updateOneProductionOrderById(
+          { id: currentOrder.id },
+          {
+            stage: stage as IProductionOrder["stage"],
+          }
+        );
       }
 
       moveCard(item.id, stage, orders.length);
@@ -187,12 +192,10 @@ interface KanbanProps {
   moveCard: (id: string, toStage: string, toIndex: number) => void;
 }
 
-export const Kanban: React.FC<KanbanProps> = ({ moveCard }) => {
-  const findAllProductionOrders = useQuery({
-    queryKey: ["findAllProductionOrdersKanban"],
-    queryFn: () => findAllProductionOrderWithProduct(),
-  });
-
+export const Kanban: React.FC<KanbanProps> = ({
+  moveCard,
+  productionOrders,
+}) => {
   const stages = [
     { id: "in_warehouse", title: "No Almoxarifado" },
     { id: "to_produce", title: "Para Produzir" },
@@ -201,17 +204,16 @@ export const Kanban: React.FC<KanbanProps> = ({ moveCard }) => {
   ];
 
   const getOrdersByStage = (stage: string) =>
-    findAllProductionOrders.data?.filter((order) => order.stage === stage) ??
-    [];
+    productionOrders.filter((order) => order.stage === stage) ?? [];
 
   return (
     <div className="h-screen mt-10 w-full grid md:grid-cols-4 sm:grid-cols-2 gap-5">
       {stages.map((stage) => (
         <Column
           key={stage.id}
-          allProductionOrders={findAllProductionOrders.data ?? []}
           stage={stage.id}
           title={stage.title}
+          allOrders={productionOrders}
           orders={getOrdersByStage(stage.id)}
           moveCard={moveCard}
         />
