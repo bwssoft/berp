@@ -114,21 +114,16 @@ const navigation: NavItem[] = [
         children: [
           { name: "Gestão", pathname: "/production-order/management" },
           { name: "Kanban", pathname: "/production-order/kanban" },
+          { name: "Processos", pathname: "/production-process/management" },
         ],
       },
-      {
-        name: "Ordens de configuração",
-        children: [
-          { name: "Gestão", pathname: "/production-order/management" },
-          { name: "Kanban", pathname: "/production-order/kanban" },
-        ],
-      },
-      {
-        name: "Processos de produção",
-        children: [
-          { name: "Gestão", pathname: "/production-process/management" },
-        ],
-      },
+      // {
+      //   name: "Ordens de configuração",
+      //   children: [
+      //     { name: "Gestão", pathname: "/production-order/management" },
+      //     { name: "Kanban", pathname: "/production-order/kanban" },
+      //   ],
+      // },
     ],
   },
   {
