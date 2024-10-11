@@ -19,6 +19,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/lib/@frontend/ui";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import {
   ClientDetails,
   CommentsSection,
@@ -61,7 +63,11 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
   const inputsData = await findAllInput();
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
+      <Link href="/production-order/kanban">
+        <XMarkIcon className="absolute top-1 right-1 w-6 h-6" />
+      </Link>
+
       <Tabs defaultValue="production-order-data">
         <TabsList defaultValue="production-order-data">
           <TabsTrigger value="production-order-data">
