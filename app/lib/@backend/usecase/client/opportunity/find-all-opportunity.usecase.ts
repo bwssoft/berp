@@ -1,17 +1,19 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IOpportunityRepository } from "@/app/lib/@backend/domain"
-import { opportunityRepository } from "@/app/lib/@backend/repository/mongodb"
+import { IOpportunityRepository } from "@/app/lib/@backend/domain";
+import { opportunityRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../../decorators";
 
 class FindAllOpportunityUsecase {
-  repository: IOpportunityRepository
+  repository: IOpportunityRepository;
 
   constructor() {
-    this.repository = opportunityRepository
+    this.repository = opportunityRepository;
   }
 
+  @RemoveMongoId()
   async execute() {
-    return await this.repository.findAll()
+    return await this.repository.findAll();
   }
 }
 
-export const findAllOpportunityUsecase = singleton(FindAllOpportunityUsecase)
+export const findAllOpportunityUsecase = singleton(FindAllOpportunityUsecase);

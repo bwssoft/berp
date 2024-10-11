@@ -1,18 +1,26 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IClient, IOpportunity, IOpportunityRepository } from "@/app/lib/@backend/domain"
-import { opportunityRepository } from "@/app/lib/@backend/repository/mongodb"
+import {
+  IClient,
+  IOpportunity,
+  IOpportunityRepository,
+} from "@/app/lib/@backend/domain";
+import { opportunityRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../../decorators";
 
 class FindAllOpportunityWithClientUsecase {
-  repository: IOpportunityRepository
+  repository: IOpportunityRepository;
 
   constructor() {
-    this.repository = opportunityRepository
+    this.repository = opportunityRepository;
   }
 
+  @RemoveMongoId()
   async execute() {
-    const pipeline = this.pipeline()
-    const aggragate = await this.repository.aggregate(pipeline)
-    return await aggragate.toArray() as (IOpportunity & { client: IClient })[]
+    const pipeline = this.pipeline();
+    const aggragate = await this.repository.aggregate(pipeline);
+    return (await aggragate.toArray()) as (IOpportunity & {
+      client: IClient;
+    })[];
   }
   pipeline() {
     return [
@@ -22,8 +30,8 @@ class FindAllOpportunityWithClientUsecase {
           as: "client",
           from: "client",
           localField: "client_id",
-          foreignField: "id"
-        }
+          foreignField: "id",
+        },
       },
       {
         $project: {
@@ -33,15 +41,17 @@ class FindAllOpportunityWithClientUsecase {
           sales_stage: 1,
           created_at: 1,
           client: { $first: "$client" },
-        }
+        },
       },
       {
         $sort: {
-          _id: -1
-        }
-      }
-    ]
+          _id: -1,
+        },
+      },
+    ];
   }
 }
 
-export const findAllOpportunityWithClientUsecase = singleton(FindAllOpportunityWithClientUsecase)
+export const findAllOpportunityWithClientUsecase = singleton(
+  FindAllOpportunityWithClientUsecase
+);

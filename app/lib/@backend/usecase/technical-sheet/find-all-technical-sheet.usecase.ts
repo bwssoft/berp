@@ -4,7 +4,8 @@ import {
 } from "@/app/lib/@backend/domain";
 import { technicalSheetRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
+import { type Filter } from "mongodb";
+import { RemoveMongoId } from "../../decorators";
 
 class FindAllTechnicalSheetUsecase {
   repository: ITechnicalSheetRepository;
@@ -13,6 +14,7 @@ class FindAllTechnicalSheetUsecase {
     this.repository = technicalSheetRepository;
   }
 
+  @RemoveMongoId()
   async execute(params: Filter<ITechnicalSheet>) {
     return await this.repository.findAll(params);
   }

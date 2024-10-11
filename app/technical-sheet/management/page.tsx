@@ -4,7 +4,7 @@ import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
 export default async function TechnicalSheetPage() {
-  const productionProcess = await findAllTechnicalSheet({});
+  const technicalSheets = await findAllTechnicalSheet({});
 
   return (
     <div>
@@ -27,7 +27,7 @@ export default async function TechnicalSheetPage() {
         </Link>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <TechnicalSheetTable data={productionProcess} />
+        <TechnicalSheetTable data={technicalSheets} />
       </div>
     </div>
   );

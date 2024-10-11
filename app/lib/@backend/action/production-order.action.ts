@@ -24,11 +24,13 @@ export async function findOneProductionOrder(productionOrder: Partial<IProductio
 export async function updateOneProductionOrderById(query: { id: string }, value: Omit<Partial<IProductionOrder>, "id" | "created_at">) {
   await updateOneProductionOrderUsecase.execute(query, value)
   revalidatePath("/production-order/management")
+  revalidatePath("/production-order/kanban")
 }
 
 export async function deleteOneProductionOrderById(query: { id: string }) {
   await deleteOneProductionOrderUsecase.execute(query)
   revalidatePath("/production-order/management")
+  revalidatePath("/production-order/kanban")
 }
 
 export async function findAllProductionOrder(): Promise<IProductionOrder[]> {

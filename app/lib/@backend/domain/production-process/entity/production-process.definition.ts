@@ -9,7 +9,6 @@ export interface IProductionProcess {
 export interface IProductionProcessStep {
   id: string;
   label: string;
-  checked: boolean;
 }
 
 export interface IProductionProcessAttachment {

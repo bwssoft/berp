@@ -11,7 +11,7 @@ export const columns: ColumnDef<IProduct>[] = [
     accessorKey: "inputs",
     cell: ({ row }) => {
       const product = row.original;
-      return product.inputs.length;
+      return Math.ceil(Math.random()); // TO DO - Modificar pra pegar os dados da ficha técnica e trazer a quantidade total de insumos
     },
   },
   {
