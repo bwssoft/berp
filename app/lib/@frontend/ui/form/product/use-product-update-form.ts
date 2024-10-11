@@ -59,10 +59,10 @@ export function useProductUpdateForm(props: Props) {
         technical_sheet_id: data.technical_sheet.id,
       };
 
-      delete updateOneData.technical_sheet;
+      delete updateOneData["technical_sheet"];
 
       //fazer a request
-      await updateOneProductById({ id: currentProduct.id! }, data);
+      await updateOneProductById({ id: currentProduct.id! }, updateOneData);
 
       toast({
         title: "Sucesso!",
