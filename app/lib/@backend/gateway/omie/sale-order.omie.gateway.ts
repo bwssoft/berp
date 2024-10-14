@@ -23,17 +23,11 @@ class SaleOrderOmieGateway extends OmieGateway {
       etapa: statusId,
     });
 
-    const result = await this._httpProvider.post<void>(
-      "/produtos/pedido/",
-      data,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    console.log({ result });
+    await this._httpProvider.post<void>("/produtos/pedido/", data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 }
 
