@@ -15,5 +15,5 @@ export async function updateSaleOrderStatus(
 ) {
   saleOrderOmieGateway.setSecrets(OmieEnterpriseEnum[params.enterprise]);
 
-  saleOrderOmieGateway.updateStage(params.saleOrderId, params.statusId);
+  await saleOrderOmieGateway.updateStage(params.saleOrderId, params.statusId);
 }
