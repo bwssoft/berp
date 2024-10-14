@@ -1,5 +1,6 @@
 "use client";
 import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
+import { updateSaleOrderStatus } from "@/app/lib/@backend/action/omie/sale-order/update-sale-order-status";
 import {
   IProduct,
   IProductionOrder,
@@ -131,12 +132,18 @@ const Column: React.FC<ColumnProps> = ({
     drop: async (item: { id: string }) => {
       const currentOrder = allOrders.find((order) => order.id === item.id);
 
+      const productionOrderHaveSteps =
+        currentOrder?.production_process !== undefined;
       const areAllProductionOrderStepsChecked =
         currentOrder?.production_process?.[0].steps_progress.every(
           ({ checked }) => checked === true
         );
 
-      if (stage === "completed" && !areAllProductionOrderStepsChecked) {
+      if (
+        productionOrderHaveSteps &&
+        stage === "completed" &&
+        !areAllProductionOrderStepsChecked
+      ) {
         toast({
           title: "Erro!",
           description: "É necessário finalizar todas as etapas",
@@ -152,6 +159,14 @@ const Column: React.FC<ColumnProps> = ({
             stage: stage as IProductionOrder["stage"],
           }
         );
+      }
+
+      if (currentOrder && stage === "completed") {
+        await updateSaleOrderStatus({
+          enterprise: currentOrder!.sale_order.omie_webhook_metadata.enterprise,
+          saleOrderId: currentOrder!.sale_order.omie_webhook_metadata.order_id,
+          statusId: "50",
+        });
       }
 
       moveCard(item.id, stage, orders.length);
