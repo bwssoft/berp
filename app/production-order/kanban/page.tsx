@@ -3,6 +3,8 @@ import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { KanbanContainer } from "./components/kanban-container";
 
+export const revalidate = 10;
+
 export default async function Example() {
   const productionOrders = await findAllProductionOrderWithProduct();
   return (
