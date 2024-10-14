@@ -10,7 +10,6 @@ import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
 import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
@@ -103,7 +102,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
 
       <Link
         href={`/production-order/${order.id}`}
-        className="absolute bottom-1 right-2 p-2"
+        className="absolute bottom-2 right-2 p-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200"
         title="Ver detalhes da ordem de produção"
       >
         <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
