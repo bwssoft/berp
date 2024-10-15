@@ -89,7 +89,11 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
         </TabsList>
 
         <TabsContent value="production-order-data">
-          <ProductionOrderDetails productionOrder={productionOrderData} />
+          <ProductionOrderDetails
+            productionOrder={productionOrderData}
+            products={productsData}
+            saleOrder={saleOrderData}
+          />
         </TabsContent>
 
         <TabsContent value="client-data">
