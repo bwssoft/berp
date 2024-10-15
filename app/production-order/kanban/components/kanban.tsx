@@ -10,6 +10,12 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@bwsoft/accordion";
 import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import React from "react";
@@ -93,12 +99,20 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
       ))}
 
       {order.production_process?.[0].process_uuid && (
-        <div className="flex flex-col gap-1 mt-4">
-          <p className="text-sm font-semibold text-gray-800">
-            Progresso das etapas
-          </p>
-          <ProductionOrderStepsUpdateForm productionOrder={order} />
-        </div>
+        <Accordion type="multiple" className="flex flex-col gap-1 mt-4">
+          <AccordionItem value="steps-progress">
+            <AccordionTrigger
+              className="text-sm font-semibold text-gray-800"
+              value="steps-progress"
+            >
+              Progresso das etapas
+            </AccordionTrigger>
+
+            <AccordionContent>
+              <ProductionOrderStepsUpdateForm productionOrder={order} />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       )}
 
       <Link
