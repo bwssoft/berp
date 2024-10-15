@@ -100,10 +100,10 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
 
       {order.production_process?.[0].process_uuid && (
         <Accordion type="multiple" className="flex flex-col gap-1 mt-4">
-          <AccordionItem value="steps-progress">
+          <AccordionItem value={order.id}>
             <AccordionTrigger
               className="text-sm font-semibold text-gray-800"
-              value="steps-progress"
+              value={order.id}
             >
               Progresso das etapas
             </AccordionTrigger>
@@ -115,13 +115,15 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
         </Accordion>
       )}
 
-      <Link
-        href={`/production-order/${order.id}`}
-        className="absolute bottom-2 right-2 p-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200"
-        title="Ver detalhes da ordem de produção"
-      >
-        <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
-      </Link>
+      <div className="w-full flex items-center justify-end mt-2">
+        <Link
+          href={`/production-order/${order.id}`}
+          className="bottom-2 right-2 p-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200"
+          title="Ver detalhes da ordem de produção"
+        >
+          <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
+        </Link>
+      </div>
     </div>
   );
 };
