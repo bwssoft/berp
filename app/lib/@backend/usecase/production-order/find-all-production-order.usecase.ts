@@ -12,7 +12,9 @@ class FindAllProductionOrderUsecase {
 
   @RemoveMongoId()
   async execute() {
-    return await this.repository.findAll();
+    return await this.repository.findAll({
+      active: true,
+    });
   }
 }
 

@@ -2,6 +2,7 @@ import { IProductionProcessStep } from "../../production-process/entity/producti
 
 export interface IProductionOrder {
   id: string;
+  active: boolean;
   priority: "high" | "medium" | "low";
   description: string;
   sale_order_id: string;

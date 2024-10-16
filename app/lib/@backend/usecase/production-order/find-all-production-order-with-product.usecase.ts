@@ -27,7 +27,7 @@ class FindAllProductionOrderWithInputUsecase {
 
   pipeline() {
     const pipeline = [
-      { $match: {} },
+      { $match: { active: true } },
       {
         $lookup: {
           as: "sale_order",
