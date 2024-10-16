@@ -7,6 +7,7 @@ import {
 import { productionOrderRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "../../decorators";
+import { Filter } from "mongodb";
 
 class FindAllProductionOrderWithInputUsecase {
   repository: IProductionOrderRepository;
@@ -16,8 +17,8 @@ class FindAllProductionOrderWithInputUsecase {
   }
 
   @RemoveMongoId()
-  async execute() {
-    const pipeline = this.pipeline();
+  async execute(input?: any) {
+    const pipeline = this.pipeline(input);
     const aggregate = await this.repository.aggregate(pipeline);
     return (await aggregate.toArray()) as (IProductionOrder & {
       sale_order: ISaleOrder;
@@ -25,9 +26,10 @@ class FindAllProductionOrderWithInputUsecase {
     })[];
   }
 
-  pipeline() {
+  pipeline(input?: any) {
+    const match = input ? Object.assign(input, { active: true }) : { active: true }
     const pipeline = [
-      { $match: { active: true } },
+      { $match: match },
       {
         $lookup: {
           as: "sale_order",
