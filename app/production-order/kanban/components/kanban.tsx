@@ -1,5 +1,8 @@
 "use client";
-import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
+import {
+  findAllProductionOrderWithProduct,
+  updateOneProductionOrderById,
+} from "@/app/lib/@backend/action";
 import { updateSaleOrderStatus } from "@/app/lib/@backend/action/omie/sale-order/update-sale-order-status";
 import {
   IProduct,
@@ -132,24 +135,20 @@ interface ColumnProps {
   stage: string;
   title: string;
   orders: CustomProductionOrder[];
-  allOrders: CustomProductionOrder[];
   moveCard: (id: string, toStage: string, toIndex: number) => void;
 }
 
-const Column: React.FC<ColumnProps> = ({
-  stage,
-  title,
-  orders,
-  moveCard,
-  allOrders,
-}) => {
+const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
   const [, ref] = useDrop({
     accept: ItemType,
     drop: async (item: { id: string }) => {
-      const currentOrder = allOrders.find((order) => order.id === item.id);
+      const [currentOrder] = await findAllProductionOrderWithProduct({
+        id: item.id,
+      });
 
       const productionOrderHaveSteps =
         currentOrder?.production_process !== undefined;
+
       const areAllProductionOrderStepsChecked =
         currentOrder?.production_process?.[0].steps_progress.every(
           ({ checked }) => checked === true
@@ -165,6 +164,7 @@ const Column: React.FC<ColumnProps> = ({
           description: "É necessário finalizar todas as etapas",
           variant: "error",
         });
+        moveCard(item.id, currentOrder.stage, orders.length);
         return;
       }
 
@@ -243,7 +243,6 @@ export const Kanban: React.FC<KanbanProps> = ({
           key={stage.id}
           stage={stage.id}
           title={stage.title}
-          allOrders={productionOrders}
           orders={getOrdersByStage(stage.id)}
           moveCard={moveCard}
         />
