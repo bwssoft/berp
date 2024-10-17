@@ -3,9 +3,11 @@ import {
   clientSectorMapping,
   clientTypeMapping,
   IClient,
+  IInput,
   IProduct,
   IProductionOrder,
   ISaleOrder,
+  ITechnicalSheet,
   productionOrderPriorityMapping,
   productionOrderStageMapping,
   saleOrderStageMapping,
@@ -18,6 +20,8 @@ type ProductionOrderPdfTemplateProps = {
   products: IProduct[];
   saleOrder: ISaleOrder | null;
   client: IClient | null;
+  technicalSheets: ITechnicalSheet[];
+  inputs: IInput[];
 };
 
 export function ProductionOrderPdfTemplate({
@@ -25,6 +29,8 @@ export function ProductionOrderPdfTemplate({
   products,
   saleOrder,
   client,
+  inputs,
+  technicalSheets,
 }: ProductionOrderPdfTemplateProps) {
   return (
     <Tailwind>
@@ -41,7 +47,60 @@ export function ProductionOrderPdfTemplate({
       <PageBreak />
 
       <SaleOrderSection saleOrder={saleOrder!} />
+
+      <PageBreak />
+
+      <InputsSection technicalSheets={technicalSheets} inputs={inputs} />
     </Tailwind>
+  );
+}
+
+type InputsSectionProps = {
+  technicalSheets: ITechnicalSheet[];
+  inputs: IInput[];
+};
+
+function InputsSection({ inputs, technicalSheets }: InputsSectionProps) {
+  const technicalSheetsInputs = technicalSheets.flatMap(
+    (technicalSheet) => technicalSheet.inputs
+  );
+
+  const reducedInputs = technicalSheetsInputs.reduce((accumulator, input) => {
+    if (Object.keys(accumulator).includes(input.uuid)) {
+      accumulator[input.uuid] = {
+        ...accumulator[input.uuid],
+        quantity: accumulator[input.uuid].quantity + input.quantity,
+      };
+    } else {
+      accumulator[input.uuid] = {
+        name: inputs.find((item) => item.id === input.uuid)!.name,
+        quantity: input.quantity,
+      };
+    }
+
+    return accumulator;
+  }, {} as Record<string, { name: string; quantity: number }>);
+
+  return (
+    <div className="flex flex-col">
+      <h1 className="text-gray-800 font-bold text-2xl">Detalhes dos insumos</h1>
+
+      <dl className="divide-y divide-gray-100 mt-10">
+        {Object.values(reducedInputs).map((item) => (
+          <div
+            key={item.name}
+            className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+          >
+            <dt className="text-sm font-medium leading-6 text-gray-900">
+              {item.name}
+            </dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+              Quantidade: {item.quantity}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }
 

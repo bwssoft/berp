@@ -76,6 +76,8 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
           products={productsData}
           saleOrder={saleOrderData}
           client={clientData}
+          technicalSheets={technicalSheetsData}
+          inputs={inputsData}
         />
       </div>
 

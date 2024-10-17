@@ -2,9 +2,11 @@
 
 import {
   IClient,
+  IInput,
   IProduct,
   IProductionOrder,
   ISaleOrder,
+  ITechnicalSheet,
 } from "@/app/lib/@backend/domain";
 import { ProductionOrderPdfTemplate } from "@/app/lib/@frontend/pdf/templates/production-order-pdf-template";
 import { useBuildPdf } from "@/app/lib/@frontend/pdf/use-build-pdf";
@@ -14,8 +16,10 @@ import { PrinterIcon } from "@heroicons/react/24/outline";
 type PrintProductionOrderProps = {
   productionOrder: IProductionOrder | null;
   products: IProduct[];
+  technicalSheets: ITechnicalSheet[];
   saleOrder: ISaleOrder | null;
   client: IClient | null;
+  inputs: IInput[];
 };
 
 export function PrintProductionOrder({
@@ -23,6 +27,8 @@ export function PrintProductionOrder({
   products,
   saleOrder,
   client,
+  technicalSheets,
+  inputs,
 }: PrintProductionOrderProps) {
   const { download } = useBuildPdf(
     <ProductionOrderPdfTemplate
@@ -30,6 +36,8 @@ export function PrintProductionOrder({
       products={products}
       saleOrder={saleOrder}
       client={client}
+      technicalSheets={technicalSheets}
+      inputs={inputs}
     />
   );
 
