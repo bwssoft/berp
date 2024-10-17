@@ -92,6 +92,7 @@ class UpdateSaleOrderFromWebhookUseCase {
     console.log(JSON.stringify({ attachments }, null, 2));
 
     const mongoSaleOrder: Omit<ISaleOrder, "id" | "created_at"> = {
+      active: true,
       client_id: databaseClient.id,
       products: databaseProducts.map(({ id, omie_code_metadata }) => ({
         product_id: id,
@@ -141,6 +142,7 @@ class UpdateSaleOrderFromWebhookUseCase {
         );
       } else {
         createOneProductionOrderUsecase.execute({
+          active: true,
           description:
             saleOrderData?.pedido_venda_produto?.observacoes?.obs_venda ??
             "Ordem de produção não possui descrição.",
