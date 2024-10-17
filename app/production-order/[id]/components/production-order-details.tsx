@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  IProduct,
   IProductionOrder,
+  ISaleOrder,
   productionOrderPriorityMapping,
   productionOrderStageMapping,
 } from "@/app/lib/@backend/domain";
@@ -15,10 +17,14 @@ import { useProductionOrderDetails } from "../hooks";
 
 type ProductionOrderDetailsProps = {
   productionOrder: IProductionOrder | null;
+  products: IProduct[];
+  saleOrder: ISaleOrder | null;
 };
 
 export function ProductionOrderDetails({
   productionOrder,
+  products,
+  saleOrder,
 }: ProductionOrderDetailsProps) {
   const {
     findAllProductionProcesses,
@@ -88,6 +94,38 @@ export function ProductionOrderDetails({
 
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">
+              Produtos
+            </dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex items-center gap-1 font-semibold text-gray-800"
+                >
+                  <p>
+                    {
+                      saleOrder?.products.find(
+                        (saleOrderProduct) =>
+                          saleOrderProduct.product_id === product.id
+                      )?.quantity
+                    }{" "}
+                    -
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <p>{product.name}</p>
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: product.color }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </dd>
+          </div>
+
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">
               Data de criação
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
@@ -97,24 +135,26 @@ export function ProductionOrderDetails({
             </dd>
           </div>
 
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-semibold leading-6 text-gray-900">
-              Processo de produção
-            </dt>
+          {currentProductionProcess && (
+            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt className="text-sm font-semibold leading-6 text-gray-900">
+                Processo de produção
+              </dt>
 
-            <dd className="flex flex-row items-center gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              <p>{currentProductionProcess?.name}</p>
+              <dd className="flex flex-row items-center gap-4 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <p>{currentProductionProcess?.name}</p>
 
-              {!isEditingSelectedProcess && (
-                <Button
-                  className="bg-indigo-600 hover:bg-indigo-500"
-                  onClick={() => setIsEditingSelectedProcess(true)}
-                >
-                  Alterar processo
-                </Button>
-              )}
-            </dd>
-          </div>
+                {!isEditingSelectedProcess && (
+                  <Button
+                    className="bg-indigo-600 hover:bg-indigo-500"
+                    onClick={() => setIsEditingSelectedProcess(true)}
+                  >
+                    Alterar processo
+                  </Button>
+                )}
+              </dd>
+            </div>
+          )}
 
           <div className="px-4 py-6 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-0">
             <dt className="text-sm font-semibold leading-6 text-gray-900">

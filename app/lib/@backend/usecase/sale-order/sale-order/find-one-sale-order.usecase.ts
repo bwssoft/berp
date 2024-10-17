@@ -13,7 +13,7 @@ class FindOneSaleOrderUsecase {
 
   @RemoveMongoId()
   async execute(input: Filter<ISaleOrder>) {
-    return await this.repository.findOne(input);
+    return await this.repository.findOne({ active: true, ...input });
   }
 }
 

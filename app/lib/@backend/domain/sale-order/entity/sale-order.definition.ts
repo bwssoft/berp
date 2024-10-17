@@ -3,6 +3,7 @@ import { OmieEnterpriseEnum } from "../../@shared/gateway/omie/omie.gateway.inte
 export interface ISaleOrder {
   id: string;
   client_id: string;
+  active: boolean;
   products: { product_id: string; quantity: number }[];
   created_at: Date;
   omie_webhook_metadata: {
