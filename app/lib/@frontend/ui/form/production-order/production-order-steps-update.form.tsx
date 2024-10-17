@@ -33,7 +33,7 @@ export function ProductionOrderStepsUpdateForm({
         ))}
       </div>
 
-      <Button type="submit" className="bg-indigo-600 hover:bg-indigo-500">
+      <Button type="submit" variant="outline">
         Atualizar etapas
       </Button>
     </form>

@@ -15,7 +15,7 @@ class FindOneProductionOrderUsecase {
 
   @RemoveMongoId()
   async execute(args: Partial<IProductionOrder>) {
-    return await this.repository.findOne(args);
+    return await this.repository.findOne({ active: true, ...args });
   }
 }
 

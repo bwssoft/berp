@@ -1,5 +1,9 @@
 "use client";
-import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
+import {
+  findAllProductionOrderWithProduct,
+  updateOneProductionOrderById,
+} from "@/app/lib/@backend/action";
+import { updateSaleOrderStatus } from "@/app/lib/@backend/action/omie/sale-order/update-sale-order-status";
 import {
   IProduct,
   IProductionOrder,
@@ -9,8 +13,13 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@bwsoft/accordion";
 import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 import { useDrag, useDrop } from "react-dnd";
@@ -93,21 +102,31 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
       ))}
 
       {order.production_process?.[0].process_uuid && (
-        <div className="flex flex-col gap-1 mt-4">
-          <p className="text-sm font-semibold text-gray-800">
-            Progresso das etapas
-          </p>
-          <ProductionOrderStepsUpdateForm productionOrder={order} />
-        </div>
+        <Accordion type="multiple" className="flex flex-col gap-1 mt-4">
+          <AccordionItem value={order.id}>
+            <AccordionTrigger
+              className="text-sm font-semibold text-gray-800"
+              value={order.id}
+            >
+              Progresso das etapas
+            </AccordionTrigger>
+
+            <AccordionContent>
+              <ProductionOrderStepsUpdateForm productionOrder={order} />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       )}
 
-      <Link
-        href={`/production-order/${order.id}`}
-        className="absolute bottom-1 right-2 p-2"
-        title="Ver detalhes da ordem de produção"
-      >
-        <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
-      </Link>
+      <div className="w-full flex items-center justify-end mt-2">
+        <Link
+          href={`/production-order/${order.id}`}
+          className="bottom-2 right-2 p-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200"
+          title="Ver detalhes da ordem de produção"
+        >
+          <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
+        </Link>
+      </div>
     </div>
   );
 };
@@ -116,33 +135,36 @@ interface ColumnProps {
   stage: string;
   title: string;
   orders: CustomProductionOrder[];
-  allOrders: CustomProductionOrder[];
   moveCard: (id: string, toStage: string, toIndex: number) => void;
 }
 
-const Column: React.FC<ColumnProps> = ({
-  stage,
-  title,
-  orders,
-  moveCard,
-  allOrders,
-}) => {
+const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
   const [, ref] = useDrop({
     accept: ItemType,
     drop: async (item: { id: string }) => {
-      const currentOrder = allOrders.find((order) => order.id === item.id);
+      const [currentOrder] = await findAllProductionOrderWithProduct({
+        id: item.id,
+      });
+
+      const productionOrderHaveSteps =
+        currentOrder?.production_process !== undefined;
 
       const areAllProductionOrderStepsChecked =
         currentOrder?.production_process?.[0].steps_progress.every(
           ({ checked }) => checked === true
         );
 
-      if (stage === "completed" && !areAllProductionOrderStepsChecked) {
+      if (
+        productionOrderHaveSteps &&
+        stage === "completed" &&
+        !areAllProductionOrderStepsChecked
+      ) {
         toast({
           title: "Erro!",
           description: "É necessário finalizar todas as etapas",
           variant: "error",
         });
+        moveCard(item.id, currentOrder.stage, orders.length);
         return;
       }
 
@@ -153,6 +175,14 @@ const Column: React.FC<ColumnProps> = ({
             stage: stage as IProductionOrder["stage"],
           }
         );
+      }
+
+      if (currentOrder && stage === "completed") {
+        await updateSaleOrderStatus({
+          enterprise: currentOrder!.sale_order.omie_webhook_metadata.enterprise,
+          saleOrderId: currentOrder!.sale_order.omie_webhook_metadata.order_id,
+          statusId: "50",
+        });
       }
 
       moveCard(item.id, stage, orders.length);
@@ -213,7 +243,6 @@ export const Kanban: React.FC<KanbanProps> = ({
           key={stage.id}
           stage={stage.id}
           title={stage.title}
-          allOrders={productionOrders}
           orders={getOrdersByStage(stage.id)}
           moveCard={moveCard}
         />

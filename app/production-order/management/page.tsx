@@ -3,6 +3,8 @@ import { ProductionOrderTable } from "@/app/lib/@frontend/ui";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
+export const revalidate = 10;
+
 export default async function Example() {
   const productionOrders = await findAllProductionOrder();
   return (
