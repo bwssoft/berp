@@ -26,7 +26,7 @@ import { useDrag, useDrop } from "react-dnd";
 
 const ItemType = "CARD";
 
-type CustomProductionOrder = IProductionOrder & {
+export type CustomProductionOrder = IProductionOrder & {
   sale_order: ISaleOrder;
   products_in_sale_order: IProduct[];
 };
