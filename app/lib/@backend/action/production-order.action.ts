@@ -37,7 +37,7 @@ export async function findAllProductionOrder(): Promise<IProductionOrder[]> {
   return await findAllProductionOrderUsecase.execute()
 }
 
-export async function findAllProductionOrderWithProduct(): Promise<(IProductionOrder & { sale_order: ISaleOrder, products_in_sale_order: IProduct[] })[]> {
-  return await findAllProductionOrderWithProductUsecase.execute()
+export async function findAllProductionOrderWithProduct(input?: Partial<IProductionOrder>): Promise<(IProductionOrder & { sale_order: ISaleOrder, products_in_sale_order: IProduct[] })[]> {
+  return await findAllProductionOrderWithProductUsecase.execute(input)
 }
 
