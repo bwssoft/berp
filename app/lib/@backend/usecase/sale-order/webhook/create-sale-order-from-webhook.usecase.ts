@@ -67,6 +67,7 @@ class CreateSaleOrderFromWebhookUseCase {
     const attachments = attachmentsData.listaAnexos;
 
     const mongoSaleOrder: Omit<ISaleOrder, "id" | "created_at"> = {
+      active: true,
       client_id: databaseClient.id,
       products: databaseProducts.map(({ id, omie_code_metadata }) => ({
         product_id: id,
