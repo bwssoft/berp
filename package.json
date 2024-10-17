@@ -13,6 +13,7 @@
     "@bwsoft/accordion": "^2.5.10",
     "@bwsoft/button": "^2.0.5",
     "@faker-js/faker": "^8.4.1",
+    "@fileforge/react-print": "^0.1.150",
     "@headlessui/react": "^2.0.4",
     "@heroicons/react": "^2.1.4",
     "@hookform/resolvers": "^3.6.0",
