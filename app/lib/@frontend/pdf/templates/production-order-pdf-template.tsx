@@ -50,56 +50,88 @@ export function ProductionOrderPdfTemplate({
 
       <PageBreak />
 
-      <InputsSection technicalSheets={technicalSheets} inputs={inputs} />
+      <InputsSection
+        technicalSheets={technicalSheets}
+        inputs={inputs}
+        products={products}
+        saleOrder={saleOrder!}
+      />
     </Tailwind>
   );
 }
 
 type InputsSectionProps = {
+  products: IProduct[];
   technicalSheets: ITechnicalSheet[];
   inputs: IInput[];
+  saleOrder: ISaleOrder;
 };
 
-function InputsSection({ inputs, technicalSheets }: InputsSectionProps) {
-  const technicalSheetsInputs = technicalSheets.flatMap(
-    (technicalSheet) => technicalSheet.inputs
-  );
+function InputsSection({
+  saleOrder,
+  inputs,
+  technicalSheets,
+  products,
+}: InputsSectionProps) {
+  const customProducts = products.map((product) => {
+    const productsQuantity = saleOrder.products.find(
+      (saleOrderProduct) => saleOrderProduct.product_id === product.id
+    )!.quantity;
+    const technicalSheet = technicalSheets.find(
+      (technicalSheet) => technicalSheet.product_id === product.id
+    );
 
-  const reducedInputs = technicalSheetsInputs.reduce((accumulator, input) => {
-    if (Object.keys(accumulator).includes(input.uuid)) {
-      accumulator[input.uuid] = {
-        ...accumulator[input.uuid],
-        quantity: accumulator[input.uuid].quantity + input.quantity,
-      };
-    } else {
-      accumulator[input.uuid] = {
-        name: inputs.find((item) => item.id === input.uuid)!.name,
+    return {
+      ...product,
+      productInputs: technicalSheet?.inputs.map((input) => ({
         quantity: input.quantity,
-      };
-    }
-
-    return accumulator;
-  }, {} as Record<string, { name: string; quantity: number }>);
+        totalQuantity: input.quantity * productsQuantity,
+        name: inputs.find((item) => item.id === input.uuid)!.name,
+      })),
+    };
+  });
 
   return (
     <div className="flex flex-col">
-      <h1 className="text-gray-800 font-bold text-2xl">Detalhes dos insumos</h1>
+      <h1 className="text-gray-800 font-bold text-2xl">
+        Detalhes dos materiais
+      </h1>
+      {customProducts.map((customProduct) => (
+        <div key={customProduct.id} className="divide-gray-100 mt-10">
+          <p className="text-lg font-semibold text-gray-800">
+            {customProduct.name}
+          </p>
 
-      <dl className="divide-y divide-gray-100 mt-10">
-        {Object.values(reducedInputs).map((item) => (
-          <div
-            key={item.name}
-            className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-          >
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">
-              {item.name}
+              Insumo
             </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              Quantidade: {item.quantity}
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
+              Quantidade por produto{" "}
+            </dd>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
+              Quantidade total{" "}
             </dd>
           </div>
-        ))}
-      </dl>
+
+          {customProduct.productInputs?.map((input) => (
+            <div
+              key={input.name}
+              className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+            >
+              <dt className="text-sm font-medium leading-6 text-gray-900">
+                {input.name}
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
+                {input.quantity}
+              </dd>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
+                {input.totalQuantity}
+              </dd>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
