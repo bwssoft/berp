@@ -29,6 +29,7 @@ import {
   ProductsDetails,
   SaleOrderDetails,
 } from "./components";
+import { PrintProductionOrder } from "./components/print-production-order";
 
 type ProductionOrderViewPageProps = {
   params: { id: string };
@@ -68,6 +69,17 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
       <Link href="/production-order/kanban">
         <XMarkIcon className="absolute top-1 right-1 w-6 h-6" />
       </Link>
+
+      <div className="absolute top-0 right-10">
+        <PrintProductionOrder
+          productionOrder={productionOrderData}
+          products={productsData}
+          saleOrder={saleOrderData}
+          client={clientData}
+          technicalSheets={technicalSheetsData}
+          inputs={inputsData}
+        />
+      </div>
 
       <Tabs defaultValue="production-order-data">
         <TabsList defaultValue="production-order-data">
