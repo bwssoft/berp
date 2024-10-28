@@ -105,6 +105,8 @@ class UpdateSaleOrderFromWebhookUseCase {
         enterprise: enterpriseHashMapped,
         order_id: idPedido.toString(),
         order_number: numeroPedido.toString(),
+        vendor_id: "",
+        vendor_name: "",
         value: valorPedido,
         files: attachments.map(({ cNomeArquivo, cTabela, nId, nIdAnexo }) => ({
           file_name: cNomeArquivo,
