@@ -9,6 +9,7 @@ export interface IProductionOrder {
   created_at: Date;
   stage: "in_warehouse" | "to_produce" | "producing" | "completed";
   production_process?: Array<IProductionOrderProcess>;
+  code: number;
 }
 
 export type IProductionOrderStep = IProductionProcessStep & {
