@@ -7,7 +7,6 @@ import {
 import { productionOrderRepository } from "@/app/lib/@backend/repository/mongodb";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "../../decorators";
-import { Filter } from "mongodb";
 
 class FindAllProductionOrderWithInputUsecase {
   repository: IProductionOrderRepository;
@@ -27,7 +26,9 @@ class FindAllProductionOrderWithInputUsecase {
   }
 
   pipeline(input?: any) {
-    const match = input ? Object.assign(input, { active: true }) : { active: true }
+    const match = input
+      ? Object.assign(input, { active: true })
+      : { active: true };
     const pipeline = [
       { $match: match },
       {
@@ -52,6 +53,7 @@ class FindAllProductionOrderWithInputUsecase {
           created_at: 1,
           products: 1,
           stage: 1,
+          code: 1,
           sale_order: { $first: "$sale_order" },
           products_in_sale_order: 1,
           production_process: 1,
