@@ -68,7 +68,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
     >
       <div className="w-full flex justify-between">
         <p className="text-sm mb-3 text-gray-500 font-semibold">
-          OP-{order.id?.split("-")[0].toUpperCase()}
+          OP-{order.code.toString().padStart(5, "0")}
         </p>
         <p className="text-sm mb-3 text-gray-700 font-semibold">
           {formatDate(new Date(order.created_at), { includeHours: true })}
