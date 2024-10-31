@@ -75,13 +75,22 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
         </p>
       </div>
 
-      <p
-        className={`${
-          stageColor[order.stage]
-        } text-xs w-max p-1 rounded mr-2 text-gray-700  font-bold`}
-      >
-        {productionOrderConstants.stage[order.stage]}
-      </p>
+      <div className="w-full flex justify-between">
+        <p
+          className={`${
+            stageColor[order.stage]
+          } text-xs w-max p-1 rounded mr-2 text-gray-700 font-bold`}
+        >
+          {productionOrderConstants.stage[order.stage]}
+        </p>
+
+        <p className="text-sm text-gray-500/80 font-semibold">
+          No. pedido OMIE:{" "}
+          <span className="text-gray-800">
+            {order.sale_order.omie_webhook_metadata.order_number}
+          </span>
+        </p>
+      </div>
 
       {order.products_in_sale_order.map((p) => (
         <div key={p.id} className="flex flex-row items-center mt-2">
