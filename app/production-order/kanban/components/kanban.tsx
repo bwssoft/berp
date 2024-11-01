@@ -66,7 +66,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
       ref={(node) => ref(drop(node)) as any}
       className="w-full p-2 rounded shadow-sm border-gray-100 border-2 relative"
     >
-      <div className="w-full flex justify-between">
+      <div className="w-full flex flex-col justify-between">
         <p className="text-sm mb-3 text-gray-500 font-semibold">
           OP-{order.code.toString().padStart(5, "0")}
         </p>
@@ -75,7 +75,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
         </p>
       </div>
 
-      <div className="w-full flex justify-between">
+      <div className="w-full flex flex-col-reverse gap-3 justify-between">
         <p
           className={`${
             stageColor[order.stage]
