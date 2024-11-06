@@ -35,6 +35,13 @@ export default async function Page() {
         return acc;
     }, {} as Record<string, Record<string, number>>);
 
+    const productsQuantityArray = Object.keys(productsQuantity).map((key) => {
+      return {
+        name: key,
+        data: productsQuantity[key],
+      };
+    });
+
     // spreads since sort mutates the array in memory reference
     const productionOrdersWithMostProductsQuantity = [...productionOrders]
         .sort((po1, po2) => {
@@ -74,10 +81,6 @@ export default async function Page() {
 
             return acc;
         }, {} as Record<string, number>);
-
-        console.log({
-          keys: Object.keys(finishedProductionOrdersProductsQuantity),
-        })
 
     return (
         <div>
@@ -147,7 +150,7 @@ export default async function Page() {
                 />
 
                 <PieChart
-                    subtitle="Quantidade de equipamento por modelo"
+                    subtitle="Equipamentos finalizados"
                     options={{
                       labels: Object.keys(finishedProductionOrdersProductsQuantity),
                       colors: Object.keys(finishedProductionOrdersProductsQuantity).map(() => "#4f46e5"),
@@ -160,6 +163,33 @@ export default async function Page() {
                       }
                     }}
                     series={Object.values(finishedProductionOrdersProductsQuantity)}
+                />
+
+                <BarChart
+                  subtitle="Quantidade de equipamentos por estágio"
+                  series={productsQuantityArray.map((product) => ({
+                    name: product.name,
+                    data: [
+                      Object.keys(product.data)
+                        .map((key) => product.data[key])
+                        .reduce((partialSum, a) => partialSum + a, 0),
+                    ],
+                    color: "#4f46e5", // bg-indigo-600
+                  }))}
+                  options={{
+                    xaxis: {
+                      categories: [""],
+                    },
+                    chart: { stacked: false },
+                    plotOptions: {
+                      bar: {
+                        horizontal: false,
+                      },
+                    },
+                    stroke: {
+                      width: 1,
+                    },
+                  }}
                 />
             </div>
         </div>
