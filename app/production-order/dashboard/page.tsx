@@ -1,5 +1,4 @@
 import { findAllProductionOrderWithProduct } from "@/app/lib/@backend/action";
-import { IProductionOrder } from "@/app/lib/@backend/domain";
 import { BarChart } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
 
@@ -67,8 +66,48 @@ export default async function Page() {
         </div> 
       </div>
 
-      <div className="grid grid-cols-2 grid-rows-auto">
+      <div className="grid grid-cols-2 mt-8 grid-rows-auto items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+        <BarChart
+          subtitle="Quantidade de ordens produção por estágio"
+          series={Object.entries(productionOrdersByStage).map(([key, value]) => ({
+            name: key,
+            data: [value],
+            color: '#4f46e5', // bg-indigo-600
+          }))}
+          options={{
+            xaxis: { categories: [""] },
+            chart: { stacked: false },
+            plotOptions: {
+              bar: {
+                horizontal: true,
+              },
+            },
+            stroke: {
+              width: 1,
+            },
+          }}
+        />
 
+        <BarChart
+          subtitle="Ordens de produção com mais produtos"
+          series={productionOrdersWithMostProductsQuantity.map((productionOrder) => ({
+            name: `OP-${productionOrder.code.toString().padStart(5, "0")}`,
+            data: [productionOrder.sale_order.products.reduce((acc, curr) => acc + curr.quantity, 0)],
+            color: '#4f46e5', // bg-indigo-600
+          }))}
+          options={{
+            xaxis: { categories: [""] },
+            chart: { stacked: false },
+            plotOptions: {
+              bar: {
+                horizontal: false,
+              },
+            },
+            stroke: {
+              width: 1,
+            },
+          }}
+        />
       </div>
     </div>
   )
