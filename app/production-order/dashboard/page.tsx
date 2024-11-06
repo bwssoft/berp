@@ -1,5 +1,6 @@
 import { findAllProductionOrderWithProduct } from "@/app/lib/@backend/action";
 import { IProductionOrder } from "@/app/lib/@backend/domain";
+import { BarChart } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
 
 export default async function Page() {
@@ -18,11 +19,17 @@ export default async function Page() {
     productsWithQuantities.forEach((product) => {
       const productMetadata = currentItemProductsMetadata.find((productMetadata) => productMetadata.id === product.product_id)!
 
-      acc[productMetadata.name] = (acc[productMetadata.name] ?? 0) + product.quantity
+      const stage = productionOrderConstants.stage[current.stage]
+
+      if (!acc[stage]) {
+        acc[stage] = {}
+      }
+
+      acc[stage][productMetadata.name] = (acc[stage][productMetadata.name] ?? 0) + product.quantity
     })
 
     return acc
-  }, {} as Record<string, number>)
+  }, {} as Record<string, Record<string, number>>)
 
   // spreads since sort mutates the array in memory reference
   const productionOrdersWithMostProductsQuantity = [...productionOrders].sort((po1, po2) => {
@@ -58,6 +65,10 @@ export default async function Page() {
             Dashboard para insights sobre as ordens de produção 
           </p>
         </div> 
+      </div>
+
+      <div className="grid grid-cols-2 grid-rows-auto">
+
       </div>
     </div>
   )
