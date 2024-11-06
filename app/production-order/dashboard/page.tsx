@@ -2,6 +2,7 @@ import { findAllProductionOrderWithProduct } from "@/app/lib/@backend/action";
 import { BarChart } from "@/app/lib/@frontend/ui";
 import PieChart from "@/app/lib/@frontend/ui/chart/pie.chart";
 import { productionOrderConstants } from "@/app/lib/constant";
+import { getRandomHexColor } from "@/app/lib/util";
 
 export default async function Page() {
     const productionOrders = await findAllProductionOrderWithProduct();
@@ -95,14 +96,14 @@ export default async function Page() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 mt-8 grid-rows-auto items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 mt-8 grid-rows-auto items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
                 <BarChart
                     subtitle="Quantidade de ordens produção por estágio"
                     series={Object.entries(productionOrdersByStage).map(
                         ([key, value]) => ({
                             name: key,
                             data: [value],
-                            color: "#4f46e5", // bg-indigo-600
+                            color: getRandomHexColor(),
                         })
                     )}
                     options={{
@@ -132,7 +133,7 @@ export default async function Page() {
                                     0
                                 ),
                             ],
-                            color: "#4f46e5", // bg-indigo-600
+                            color: getRandomHexColor(),
                         })
                     )}
                     options={{
@@ -153,13 +154,13 @@ export default async function Page() {
                     subtitle="Equipamentos finalizados"
                     options={{
                       labels: Object.keys(finishedProductionOrdersProductsQuantity),
-                      colors: Object.keys(finishedProductionOrdersProductsQuantity).map(() => "#4f46e5"),
+                      colors: Object.keys(finishedProductionOrdersProductsQuantity).map(() => getRandomHexColor()),
                       stroke: {
                         width: 2,
                         show: true,
                       },
                       markers: {
-                        colors: "#4f46e5",
+                        colors: getRandomHexColor(),
                       }
                     }}
                     series={Object.values(finishedProductionOrdersProductsQuantity)}
@@ -174,7 +175,7 @@ export default async function Page() {
                         .map((key) => product.data[key])
                         .reduce((partialSum, a) => partialSum + a, 0),
                     ],
-                    color: "#4f46e5", // bg-indigo-600
+                    color: getRandomHexColor(),
                   }))}
                   options={{
                     xaxis: {
