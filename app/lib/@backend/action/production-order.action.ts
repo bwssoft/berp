@@ -16,6 +16,8 @@ export async function createOneProductionOrder(
 ) {
   await createOneProductionOrderUsecase.execute(productionOrder);
   revalidatePath("/production-order/management");
+  revalidatePath("/production-order/kanban");
+  revalidatePath("/production-order/revalidate");
 }
 
 export async function findOneProductionOrder(
@@ -38,6 +40,7 @@ export async function deleteOneProductionOrderById(query: { id: string }) {
   await deleteOneProductionOrderUsecase.execute(query);
   revalidatePath("/production-order/management");
   revalidatePath("/production-order/kanban");
+  revalidatePath("/production-order/dashboard");
 }
 
 export async function findAllProductionOrder(): Promise<IProductionOrder[]> {
