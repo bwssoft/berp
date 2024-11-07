@@ -17,7 +17,7 @@ export async function createOneProductionOrder(
   await createOneProductionOrderUsecase.execute(productionOrder);
   revalidatePath("/production-order/management");
   revalidatePath("/production-order/kanban");
-  revalidatePath("/production-order/revalidate");
+  revalidatePath("/production-order/dashboard");
 }
 
 export async function findOneProductionOrder(
