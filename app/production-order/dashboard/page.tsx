@@ -2,6 +2,7 @@ import { findAllProductionOrderWithProduct } from "@/app/lib/@backend/action";
 import { BarChart } from "@/app/lib/@frontend/ui";
 import PieChart from "@/app/lib/@frontend/ui/chart/pie.chart";
 import { productionOrderConstants } from "@/app/lib/constant";
+import { months } from "@/app/lib/constant/months";
 
 export default async function Page() {
   const productionOrders = await findAllProductionOrderWithProduct();
@@ -84,7 +85,27 @@ export default async function Page() {
       return acc;
     }, {} as Record<string, { quantity: number; color: string }>);
 
-  console.log({ finishedProductionOrdersProductsQuantity });
+  const productsByMonth = productionOrders
+    .filter(({ stage }) => stage === "completed")
+    .reduce((acc, current) => {
+      const createdYear = new Date(current.created_at).getFullYear();
+      const createdMonth = new Date(current.created_at).getMonth();
+      const quantity = current.sale_order.products.reduce(
+        (acc, current) => current.quantity + acc,
+        0
+      );
+
+      const stringifiedMonthAndYear = `${
+        months[createdMonth as keyof typeof months]
+      }/${createdYear}`;
+
+      acc[stringifiedMonthAndYear] =
+        (acc[stringifiedMonthAndYear as keyof typeof acc] ?? 0) + quantity;
+
+      return acc;
+    }, {} as Record<string, number>);
+
+  console.log({ productsByMonth });
 
   return (
     <div>
@@ -206,6 +227,29 @@ export default async function Page() {
             },
           }}
         />
+
+        <div className="col-span-2">
+          <BarChart
+            subtitle="Equipamentos produzidos por mês"
+            series={Object.entries(productsByMonth).map(([key, value]) => ({
+              name: key,
+              data: [value],
+              color: "#3b82f6",
+            }))}
+            options={{
+              xaxis: { categories: Object.keys(productsByMonth) },
+              chart: { stacked: false },
+              plotOptions: {
+                bar: {
+                  horizontal: false,
+                },
+              },
+              stroke: {
+                width: 1,
+              },
+            }}
+          />
+        </div>
       </div>
     </div>
   );
