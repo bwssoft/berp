@@ -50,8 +50,6 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
     item: { id: order.id, index, stage: order.stage },
   });
 
-  console.log({ order });
-
   const [, drop] = useDrop({
     accept: ItemType,
     hover(item: { id: string; index: number; stage: string }) {
