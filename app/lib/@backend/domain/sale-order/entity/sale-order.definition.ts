@@ -10,6 +10,8 @@ export interface ISaleOrder {
     client_id: string; //idCliente
     order_id: string; //idPedido
     order_number: string; //numeroPedido 329
+    vendor_id: string;
+    vendor_name: string;
     value: number; //valorPedido 2.54
     enterprise: keyof typeof OmieEnterpriseEnum; //EMPRESA
     files: {

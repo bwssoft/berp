@@ -112,6 +112,7 @@ const navigation: NavItem[] = [
       {
         name: "Ordens de produção",
         children: [
+          { name: "Dashboard", pathname: "/production-order/dashboard" },
           { name: "Gestão", pathname: "/production-order/management" },
           { name: "Kanban", pathname: "/production-order/kanban" },
           { name: "Processos", pathname: "/production-process/management" },

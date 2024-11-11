@@ -111,7 +111,7 @@ export const BarChart = (props: Props) => {
               </h5>
             )}
             {subtitle && (
-              <p className="text-base font-normal text-gray-500 dark:text-gray-400">
+              <p className="text-base font-semibold text-gray-500 dark:text-gray-400">
                 {subtitle}
               </p>
             )}
