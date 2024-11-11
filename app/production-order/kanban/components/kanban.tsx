@@ -50,6 +50,8 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
     item: { id: order.id, index, stage: order.stage },
   });
 
+  console.log({ order });
+
   const [, drop] = useDrop({
     accept: ItemType,
     hover(item: { id: string; index: number; stage: string }) {
@@ -67,9 +69,16 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
       className="w-full p-2 rounded shadow-sm border-gray-100 border-2 relative"
     >
       <div className="w-full flex flex-col justify-between">
-        <p className="text-sm mb-3 text-gray-500 font-semibold">
-          OP-{order.code.toString().padStart(5, "0")}
-        </p>
+        <div className="w-full flex justify-between items-center">
+          <p className="text-sm mb-3 text-gray-500 font-semibold">
+            OP-{order.code.toString().padStart(5, "0")}
+          </p>
+          <p
+            className={`bg-white text-xs w-max py-1 px-2 rounded mr-2 text-gray-500 border border-gray-500 font-bold`}
+          >
+            {order.sale_order.omie_webhook_metadata.enterprise}
+          </p>
+        </div>
         <p className="text-sm mb-3 text-gray-700 font-semibold">
           {formatDate(new Date(order.created_at), { includeHours: true })}
         </p>
