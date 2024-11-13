@@ -61,7 +61,7 @@ class FindAllProductionOrderWithInputUsecase {
       },
       {
         $sort: {
-          _id: -1,
+          code: 1,
         },
       },
     ];
