@@ -1,0 +1,76 @@
+import { OmieEnterprise } from "./client.definition";
+
+export interface IProposal {
+  id: string;
+  phase: 'negotiation' | 'proposal_sent' | 'accepted' | 'rejected';
+  valid_at: Date;
+  description?: string;
+  billing_address: Address;
+  delivery_address: Address;
+  scenarios: Scenario[];
+  user_id: string;
+  client_id: string;
+  billing_process: BillingProcess
+  created_at: Date
+}
+
+interface Address {
+  street: string;
+  city: string;
+  state_or_region: string;
+  postal_code: string;
+  country: string;
+}
+
+interface Scenario {
+  id: string
+  name: string;
+  currency: Currency;
+  product_total: number;
+  discount_value: number;
+  subtotal_with_discount: number;
+  grand_total: number;
+  description?: string;
+  freight?: {
+    value: number
+    type: FreightType
+  };
+  line_items: LineItem[];
+}
+
+enum Currency {
+  BRL = 'BRL',
+  USD = 'USD',
+  EUR = 'EUR',
+}
+
+enum FreightType {
+  Correios = "Correios",
+  MedeirosRodoviario = "MedeirosRodoviario",
+  Motoboy = "Motoboy",
+  PlaceAereo = "PlaceAereo",
+  PlaceRodoviario = "PlaceRodoviario",
+  Retira = "Retira",
+  Outros = "Outros",
+  AviatAereo = "AviatAereo",
+  AviatRodoviario = "AviatRodoviario",
+}
+
+interface LineItem {
+  id: string
+  product_id: string
+  quantity: number;
+  unit_price: number;
+  discount: number;
+  total_price: number;
+}
+
+
+
+interface BillingProcess {
+  id: string
+  line_item_id: string[]
+  billing_company: OmieEnterprise
+  installment_quantity: number
+  omie_sale_order_id?: string
+}

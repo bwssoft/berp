@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogPanel,
   Disclosure,
+  DisclosureButton,
   Transition,
   TransitionChild,
 } from "@headlessui/react";
@@ -192,7 +193,7 @@ export function SideBar() {
           <Disclosure as="div">
             {({ open }) => (
               <>
-                <Disclosure.Button
+                <DisclosureButton
                   className={cn(
                     isOnPathname(item.pathname)
                       ? "bg-gray-50"
@@ -215,7 +216,7 @@ export function SideBar() {
                     )}
                     aria-hidden="true"
                   />
-                </Disclosure.Button>
+                </DisclosureButton>
                 <Disclosure.Panel as="ul" className="mt-1">
                   {item?.children?.map((subItem) =>
                     renderNavItem(subItem, depth + 1)

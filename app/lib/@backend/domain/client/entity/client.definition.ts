@@ -1,31 +1,31 @@
 export interface IClient {
   id: string;
   type:
-    | "prospect"
-    | "inactive_registration"
-    | "active_client"
-    | "suspended_client"
-    | "deregistered_cnpj"
-    | "inactive_cnpj"
-    | "dealer"
-    | "other";
+  | "prospect"
+  | "inactive_registration"
+  | "active_client"
+  | "suspended_client"
+  | "deregistered_cnpj"
+  | "inactive_cnpj"
+  | "dealer"
+  | "other";
   corporate_name: string;
   sector:
-    | "vehicle_protection_association"
-    | "retail_trade"
-    | "tracking_company"
-    | "service_company"
-    | "vehicle_protection_manager"
-    | "industry"
-    | "integrator_ti"
-    | "rental_company"
-    | "logistics"
-    | "iot_tracking_platform"
-    | "resale"
-    | "insurance_company"
-    | "patrimonial_security"
-    | "carrier"
-    | "other";
+  | "vehicle_protection_association"
+  | "retail_trade"
+  | "tracking_company"
+  | "service_company"
+  | "vehicle_protection_manager"
+  | "industry"
+  | "integrator_ti"
+  | "rental_company"
+  | "logistics"
+  | "iot_tracking_platform"
+  | "resale"
+  | "insurance_company"
+  | "patrimonial_security"
+  | "carrier"
+  | "other";
   document: { type: "CPF" | "CNPJ"; value: string };
   state_registration: string;
   municipal_registration: string;
@@ -38,26 +38,27 @@ export interface IClient {
   };
   description: string;
   contacts: {
+    id: string
     phone: string;
     name: string;
     role:
-      | "analyst"
-      | "supervisor"
-      | "manager"
-      | "director"
-      | "president"
-      | "owner";
+    | "analyst"
+    | "supervisor"
+    | "manager"
+    | "director"
+    | "president"
+    | "owner";
     department:
-      | "administrative"
-      | "commercial"
-      | "purchasing"
-      | "financial"
-      | "logistics"
-      | "operations"
-      | "presidency"
-      | "products"
-      | "owner"
-      | "support";
+    | "administrative"
+    | "commercial"
+    | "purchasing"
+    | "financial"
+    | "logistics"
+    | "operations"
+    | "presidency"
+    | "products"
+    | "owner"
+    | "support";
   }[];
   created_at: Date;
   omie_code_metadata?: Record<keyof OmieEnterprise, string>;

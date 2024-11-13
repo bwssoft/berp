@@ -1,3 +1,5 @@
+import { IProposal } from "../@backend/domain";
+
 const types = {
   prospect: "Prospecção",
   inactive_registration: "Cadastro Inativo",
@@ -72,9 +74,30 @@ const opportunityRecurrenceType = {
 };
 
 
+const proposalPhase: { [key in IProposal["phase"]]: string } = {
+  accepted: "Aceito",
+  negotiation: "Em negociação",
+  proposal_sent: "Proposta Enviada",
+  rejected: "Rejeitada"
+};
 
+const proposalCurrency: { [key in IProposal["scenarios"][number]["currency"]]: string } = {
+  USD: "Dólar Americano (USD)",
+  BRL: "Real (R$)",
+  EUR: "Euro (€)"
+};
 
-
+const proposalFreightType: { [key in NonNullable<IProposal["scenarios"][number]["freight"]>["type"]]: string } = {
+  Correios: "Correios",
+  MedeirosRodoviario: "Medeiros - Rodoviário",
+  Motoboy: "Motoboy",
+  PlaceAereo: "Place - Aéreo",
+  PlaceRodoviario: "Place - Rodoviário",
+  Retira: "Retira",
+  Outros: "Outros",
+  AviatAereo: "AVIAT - Aéreo",
+  AviatRodoviario: "AVIAT - Rodoviário",
+};
 export const clientConstants = {
   types,
   sectors,
@@ -82,5 +105,8 @@ export const clientConstants = {
   contactDepartments,
   opportunitySalesStage,
   opportunityType,
-  opportunityRecurrenceType
+  opportunityRecurrenceType,
+  proposalPhase,
+  proposalCurrency,
+  proposalFreightType
 }

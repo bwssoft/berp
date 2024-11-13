@@ -176,7 +176,6 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-
             <div className="col-span-3">
               <label
                 htmlFor="country"
@@ -211,7 +210,6 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2 sm:col-start-1">
               <label
                 htmlFor="city"
@@ -229,7 +227,6 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2">
               <label
                 htmlFor="state"
@@ -247,7 +244,6 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2">
               <label
                 htmlFor="postal_code"

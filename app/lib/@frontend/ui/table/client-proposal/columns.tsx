@@ -1,18 +1,10 @@
-import { deleteOneClientById } from "@/app/lib/@backend/action";
-import { IClient } from "@/app/lib/@backend/domain";
+import { deleteOneClientOpportunityById } from "@/app/lib/@backend/action";
+import { IClient, IProposal } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
-export const columns: ColumnDef<IClient>[] = [
-  { header: "Razão Social", accessorKey: "corporate_name" },
-  {
-    header: "Documento",
-    accessorKey: "document",
-    cell: ({ row }) => {
-      const client = row.original;
-      return client.document.value;
-    },
-  },
+export const columns: ColumnDef<IProposal & { client: IClient }>[] = [
+  { header: "Nome", accessorKey: "name" },
   {
     header: "Criado em",
     accessorKey: "created_at",
@@ -29,12 +21,14 @@ export const columns: ColumnDef<IClient>[] = [
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`/sale/client/form/update?id=${input.id}`}
+            href={`/sale/proposal/form/update?id=${input.id}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
             Editar
           </Link>
-          <form action={() => deleteOneClientById({ id: input.id! })}>
+          <form
+            action={() => deleteOneClientOpportunityById({ id: input.id! })}
+          >
             <button
               type="submit"
               className="text-indigo-600 hover:text-indigo-900 px-0 py-0"

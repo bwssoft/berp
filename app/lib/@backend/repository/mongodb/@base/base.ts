@@ -8,8 +8,7 @@ type Constructor = {
 };
 
 export class BaseRepository<Entity extends object>
-  implements IBaseRepository<Entity>
-{
+  implements IBaseRepository<Entity> {
   protected collection: string;
   protected db: string;
 
@@ -39,6 +38,7 @@ export class BaseRepository<Entity extends object>
       .collection<Entity>(this.collection)
       .find(params)
       .sort({ _id: -1 })
+      .limit(20)
       .toArray();
   }
 
