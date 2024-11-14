@@ -10,14 +10,14 @@ export interface IProposal {
   scenarios: Scenario[];
   user_id: string;
   client_id: string;
-  billing_process: BillingProcess
+  billing_process?: BillingProcess[]
   created_at: Date
 }
 
 interface Address {
   street: string;
   city: string;
-  state_or_region: string;
+  state: string;
   postal_code: string;
   country: string;
 }
@@ -38,13 +38,13 @@ interface Scenario {
   line_items: LineItem[];
 }
 
-enum Currency {
+export enum Currency {
   BRL = 'BRL',
   USD = 'USD',
   EUR = 'EUR',
 }
 
-enum FreightType {
+export enum FreightType {
   Correios = "Correios",
   MedeirosRodoviario = "MedeirosRodoviario",
   Motoboy = "Motoboy",

@@ -48,6 +48,7 @@ const schema = z.object({
     postal_code: z.string()
   }),
   contacts: z.array(z.object({
+    id: z.string(),
     phone: z.string(),
     name: z.string(),
     role: z.enum([

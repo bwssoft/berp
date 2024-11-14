@@ -1,22 +1,13 @@
-import { OmieEnterprise } from '@/app/lib/@backend/domain';
+import { createOneClientProposal } from '@/app/lib/@backend/action/client/proposal.action';
+import { Currency, FreightType, OmieEnterprise } from '@/app/lib/@backend/domain';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const CurrencyEnum = z.enum(['BRL', 'USD', 'EUR']);
-const FreightTypeEnum = z.enum([
-  'Correios',
-  'MedeirosRodoviario',
-  'Motoboy',
-  'PlaceAereo',
-  'PlaceRodoviario',
-  'Retira',
-  'Outros',
-  'AviatAereo',
-  'AviatRodoviario',
-]);
+const CurrencyEnum = z.nativeEnum(Currency);
+const FreightTypeEnum = z.nativeEnum(FreightType);
 
 const AddressSchema = z.object({
   street: z.string(),
@@ -71,9 +62,9 @@ export const schema = z.object({
   description: z.string().optional(),
   billing_address: AddressSchema,
   delivery_address: AddressSchema,
-  scenarios: z.array(ScenarioSchema),
+  scenarios: z.array(ScenarioSchema).min(1),
   client_id: z.string(),
-  billing_process: BillingProcessSchema,
+  billing_process: z.array(BillingProcessSchema).optional(),
 });
 
 type Schema = z.infer<typeof schema>;
@@ -104,8 +95,7 @@ export function useClientProposalCreateForm() {
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
-      console.log('data', data)
-      // await createOneClientOpportunity(data);
+      await createOneClientProposal(data);
       toast({
         title: 'Sucesso!',
         description: 'Proposta registrada com sucesso!',

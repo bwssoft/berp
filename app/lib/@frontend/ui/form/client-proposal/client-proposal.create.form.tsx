@@ -4,7 +4,7 @@ import {
   ClientProposalSchema,
   useClientProposalCreateForm,
 } from "./use-client-proposal-create-form";
-import { IClient, IProduct } from "@/app/lib/@backend/domain";
+import { Currency, IClient, IProduct } from "@/app/lib/@backend/domain";
 import { clientConstants } from "@/app/lib/constant";
 import { cn } from "@/app/lib/util";
 import {
@@ -182,7 +182,7 @@ export function ClientProposalCreateForm(props: Props) {
             type="button"
             onClick={() =>
               appendScenario({
-                currency: "BRL",
+                currency: Currency["BRL"],
                 discount_value: 0,
                 grand_total: 0,
                 line_items: [],
@@ -316,7 +316,7 @@ export function ClientProposalCreateForm(props: Props) {
                   id="country"
                   autoComplete="country"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.country")}
+                  {...register("delivery_address.country")}
                 />
               </div>
             </div>
@@ -333,7 +333,7 @@ export function ClientProposalCreateForm(props: Props) {
                   id="street"
                   autoComplete="street"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.street")}
+                  {...register("delivery_address.street")}
                 />
               </div>
             </div>
@@ -350,7 +350,7 @@ export function ClientProposalCreateForm(props: Props) {
                   id="city"
                   autoComplete="address-level2"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.city")}
+                  {...register("delivery_address.city")}
                 />
               </div>
             </div>
@@ -367,7 +367,7 @@ export function ClientProposalCreateForm(props: Props) {
                   id="state"
                   autoComplete="address-level1"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.state")}
+                  {...register("delivery_address.state")}
                 />
               </div>
             </div>
@@ -384,7 +384,7 @@ export function ClientProposalCreateForm(props: Props) {
                   id="postal_code"
                   autoComplete="postal_code"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.postal_code")}
+                  {...register("delivery_address.postal_code")}
                 />
               </div>
             </div>

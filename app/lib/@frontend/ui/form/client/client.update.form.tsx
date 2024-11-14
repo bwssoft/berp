@@ -349,6 +349,7 @@ export function ClientUpdateForm(props: Props) {
                   phone: "",
                   department: "other" as any,
                   role: "other" as any,
+                  id: crypto.randomUUID(),
                 })
               }
               className="mt-5 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"
