@@ -1,25 +1,32 @@
 "use server"
 
-import { IProposal } from "@/app/lib/@backend/domain"
-import { createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalUsecase, updateOneProposalUsecase, findOneProposalUsecase } from "../../usecase"
+import { IClient, IProposal } from "@/app/lib/@backend/domain"
+import { createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase } from "../../usecase"
+import { revalidatePath } from "next/cache"
 
 export async function createOneClientProposal(client: Omit<IProposal
   , "id" | "created_at" | "user_id">) {
-  return await createOneProposalUsecase.execute(client)
+  await createOneProposalUsecase.execute(client)
+  revalidatePath("/sale/proposal")
+  return
 }
 
 export async function findOneClientProposal(client: Partial<IProposal>) {
   return await findOneProposalUsecase.execute(client)
 }
 
-export async function updateOneClientProposalById(query: { id: string }, value: Omit<IProposal, "id" | "created_at">) {
-  return await updateOneProposalUsecase.execute(query, value)
+export async function updateOneClientProposalById(query: { id: string }, value: Omit<IProposal, "id" | "created_at" | "user_id">) {
+  await updateOneProposalUsecase.execute(query, value)
+  revalidatePath("/sale/proposal")
+  return
 }
 
 export async function deleteOneClientProposalById(query: { id: string }) {
-  return await deleteOneProposalUsecase.execute(query)
+  await deleteOneProposalUsecase.execute(query)
+  revalidatePath("/sale/proposal")
+  return
 }
 
-export async function findAllClientProposal(): Promise<IProposal[]> {
-  return await findAllProposalUsecase.execute()
+export async function findAllClientProposal(): Promise<(IProposal & { client: IClient })[]> {
+  return await findAllProposalWithClientUsecase.execute()
 }

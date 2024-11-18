@@ -15,7 +15,7 @@ export function RemoveMongoId(): MethodDecorator {
 
       if (typeof result === "object" && result !== null) {
         if ("_id" in result) delete result["_id"];
-        if ("insertedId" in result) delete result["_id"];
+        if ("insertedId" in result) delete result["insertedId"];
         return result;
       }
 

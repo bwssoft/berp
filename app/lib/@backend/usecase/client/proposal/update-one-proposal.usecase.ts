@@ -9,7 +9,7 @@ class UpdateOneProposalUsecase {
     this.repository = proposalRepository
   }
 
-  async execute(query: { id: string }, value: Omit<IProposal, "id" | "created_at">) {
+  async execute(query: { id: string }, value: Omit<IProposal, "id" | "created_at" | "user_id">) {
     return await this.repository.updateOne(query, value)
   }
 }

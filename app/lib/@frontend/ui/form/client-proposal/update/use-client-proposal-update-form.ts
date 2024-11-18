@@ -1,5 +1,5 @@
-import { createOneClientProposal } from '@/app/lib/@backend/action/client/proposal.action';
-import { Currency, FreightType, OmieEnterprise } from '@/app/lib/@backend/domain';
+import { updateOneClientProposalById } from '@/app/lib/@backend/action/client/proposal.action';
+import { Currency, FreightType, IProposal, OmieEnterprise } from '@/app/lib/@backend/domain';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
@@ -53,9 +53,6 @@ const BillingProcessSchema = z.object({
 });
 
 export const schema = z.object({
-  // id: z.string(),
-  // user_id: z.string(),
-  // created_at: z.date(),
   phase: z.enum(['negotiation', 'proposal_sent', 'accepted', 'rejected']),
   valid_at: z.coerce.date(),
   probability: z.coerce.number().nonnegative(),
@@ -71,7 +68,11 @@ type Schema = z.infer<typeof schema>;
 
 export { type Schema as ClientProposalSchema }
 
-export function useClientProposalCreateForm() {
+interface Props {
+  defaultValues: IProposal
+}
+export function useClientProposalUpdateForm(props: Props) {
+  const { defaultValues } = props
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -79,8 +80,10 @@ export function useClientProposalCreateForm() {
     control,
     setValue,
     reset: hookFormReset,
+    getValues
   } = useForm<Schema>({
     resolver: zodResolver(schema),
+    defaultValues
   });
 
   // Gerencia apenas o array principal de scenarios
@@ -94,17 +97,18 @@ export function useClientProposalCreateForm() {
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
+    console.log(data)
     try {
-      await createOneClientProposal(data);
+      await updateOneClientProposalById({ id: defaultValues.id! }, data);
       toast({
         title: 'Sucesso!',
-        description: 'Proposta registrada com sucesso!',
+        description: 'Proposta atualizada com sucesso!',
         variant: 'success',
       });
     } catch (e) {
       toast({
         title: 'Erro!',
-        description: 'Falha ao registrar a oportunidade!',
+        description: 'Falha ao atualizar a oportunidade!',
         variant: 'error',
       });
     }
@@ -121,6 +125,7 @@ export function useClientProposalCreateForm() {
     reset: hookFormReset,
     scenarios,
     appendScenario,
-    removeScenario
+    removeScenario,
+    getValues
   };
 }

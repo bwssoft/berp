@@ -1,10 +1,15 @@
 "use client";
-import { Button } from "../../button";
+import { Button } from "../../../button";
 import {
   ClientProposalSchema,
-  useClientProposalCreateForm,
-} from "./use-client-proposal-create-form";
-import { Currency, IClient, IProduct } from "@/app/lib/@backend/domain";
+  useClientProposalUpdateForm,
+} from "./use-client-proposal-update-form";
+import {
+  Currency,
+  IClient,
+  IProduct,
+  IProposal,
+} from "@/app/lib/@backend/domain";
 import { clientConstants } from "@/app/lib/constant";
 import { cn } from "@/app/lib/util";
 import {
@@ -17,16 +22,22 @@ import {
   Control,
   useFieldArray,
   UseFieldArrayRemove,
+  UseFormGetValues,
   UseFormRegister,
+  UseFormSetValue,
+  UseFormUnregister,
+  useWatch,
 } from "react-hook-form";
 import { nanoid } from "nanoid";
+import { useEffect } from "react";
 
 interface Props {
   clients: IClient[];
   products: IProduct[];
+  proposal: IProposal;
 }
-export function ClientProposalCreateForm(props: Props) {
-  const { clients, products } = props;
+export function ClientProposalUpdateForm(props: Props) {
+  const { clients, products, proposal } = props;
   const {
     register,
     handleSubmit,
@@ -34,31 +45,22 @@ export function ClientProposalCreateForm(props: Props) {
     appendScenario,
     removeScenario,
     scenarios,
-    errors,
-  } = useClientProposalCreateForm();
+    getValues,
+    setValue,
+  } = useClientProposalUpdateForm({
+    defaultValues: {
+      ...proposal,
+      valid_at: proposal.valid_at
+        .toISOString()
+        .split("T")[0] as unknown as Date, // Formata a data aqui
+    },
+  });
 
   return (
     <form action={() => handleSubmit()}>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-            {/* <div className="sm:col-span-3">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Nome
-              </label>
-              <input
-                type="text"
-                id="name"
-                autoComplete="name"
-                className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="Insira o nome"
-                {...register("name")}
-              />
-            </div> */}
-
             <div className="sm:col-span-3">
               <label
                 htmlFor="client_id"
@@ -174,6 +176,8 @@ export function ClientProposalCreateForm(props: Props) {
                 scenarioIndex={scenarioIndex}
                 removeScenario={removeScenario}
                 products={products}
+                getValues={getValues}
+                setValue={setValue}
               />
             ))}
           </div>
@@ -416,6 +420,8 @@ interface Scenario {
   scenarioIndex: number;
   products: IProduct[];
   removeScenario: UseFieldArrayRemove;
+  setValue: UseFormSetValue<ClientProposalSchema>;
+  getValues: UseFormGetValues<ClientProposalSchema>;
 }
 
 function Scenario({
@@ -424,6 +430,8 @@ function Scenario({
   scenarioIndex,
   removeScenario,
   products,
+  setValue,
+  getValues,
 }: Scenario) {
   const {
     fields: lineItems,
@@ -433,6 +441,93 @@ function Scenario({
     control,
     name: `scenarios.${scenarioIndex}.line_items`,
   });
+
+  const lineItemsWatched = useWatch({
+    control,
+    name: `scenarios.${scenarioIndex}.line_items`,
+  });
+
+  const freightValue = useWatch({
+    control,
+    name: `scenarios.${scenarioIndex}.freight.value`,
+  });
+
+  useEffect(() => {
+    if (!lineItemsWatched) return;
+
+    const currentTotals = lineItemsWatched.reduce(
+      (totals, item, index) => {
+        const lineTotal =
+          item.unit_price * item.quantity -
+          item.unit_price * item.quantity * (item.discount / 100);
+
+        totals.productTotal += item.unit_price * item.quantity;
+        totals.discountValue +=
+          item.unit_price * item.quantity * (item.discount / 100);
+        totals.lineTotals.push(lineTotal);
+
+        // Atualize o total da linha no formulário, se necessário
+        const currentLineTotal = getValues(
+          `scenarios.${scenarioIndex}.line_items.${index}.total_price`
+        );
+
+        if (currentLineTotal !== lineTotal) {
+          setValue(
+            `scenarios.${scenarioIndex}.line_items.${index}.total_price`,
+            lineTotal
+          );
+        }
+
+        return totals;
+      },
+      { productTotal: 0, discountValue: 0, lineTotals: [] as number[] }
+    );
+
+    const newSubtotalWithDiscount =
+      currentTotals.productTotal - currentTotals.discountValue;
+    const newGrandTotal = newSubtotalWithDiscount + (+freightValue || 0);
+
+    // Atualizar product_total se necessário
+    const currentProductTotal = getValues(
+      `scenarios.${scenarioIndex}.product_total`
+    );
+    if (currentProductTotal !== currentTotals.productTotal) {
+      setValue(
+        `scenarios.${scenarioIndex}.product_total`,
+        currentTotals.productTotal
+      );
+    }
+
+    // Atualizar discount_value se necessário
+    const currentDiscountValue = getValues(
+      `scenarios.${scenarioIndex}.discount_value`
+    );
+    if (currentDiscountValue !== currentTotals.discountValue) {
+      setValue(
+        `scenarios.${scenarioIndex}.discount_value`,
+        currentTotals.discountValue
+      );
+    }
+
+    // Atualizar subtotal_with_discount se necessário
+    const currentSubtotalWithDiscount = getValues(
+      `scenarios.${scenarioIndex}.subtotal_with_discount`
+    );
+    if (newSubtotalWithDiscount !== currentSubtotalWithDiscount) {
+      setValue(
+        `scenarios.${scenarioIndex}.subtotal_with_discount`,
+        newSubtotalWithDiscount
+      );
+    }
+
+    // Atualizar grand_total se necessário
+    const currentGrandTotal = getValues(
+      `scenarios.${scenarioIndex}.grand_total`
+    );
+    if (newGrandTotal !== currentGrandTotal) {
+      setValue(`scenarios.${scenarioIndex}.grand_total`, newGrandTotal);
+    }
+  }, [lineItemsWatched, freightValue, setValue, getValues, scenarioIndex]);
 
   return (
     <Disclosure>
@@ -511,161 +606,164 @@ function Scenario({
           </p>
           <div className="mt-4">
             <div className="col-span-full">
-              {lineItems.map((item, index) => (
-                <div key={item.id} className="flex space-x-4 mb-2 items-end">
-                  <div className="w-1/2">
-                    {index == 0 ? (
-                      <label
-                        htmlFor="name"
-                        className="block w-full text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Produto
-                      </label>
-                    ) : (
-                      <></>
-                    )}
-                    <select
-                      id="product_id"
-                      className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...register(
-                        `scenarios.${scenarioIndex}.line_items.${index}.product_id`
+              {lineItems.map((item, index) => {
+                return (
+                  <div key={item.id} className="flex space-x-4 mb-2 items-end">
+                    <div className="w-1/2">
+                      {index == 0 ? (
+                        <label
+                          htmlFor="name"
+                          className="block w-full text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Produto
+                        </label>
+                      ) : (
+                        <></>
                       )}
+                      <select
+                        id="product_id"
+                        className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        {...register(
+                          `scenarios.${scenarioIndex}.line_items.${index}.product_id`
+                        )}
+                      >
+                        {products.map((p: any) => (
+                          <option key={p.id} value={p.id}>
+                            {p.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="w-1/3">
+                      {index == 0 ? (
+                        <label
+                          htmlFor="name"
+                          className="block w-full text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Quantidade
+                        </label>
+                      ) : (
+                        <></>
+                      )}
+                      <input
+                        type="number"
+                        id="quantity"
+                        autoComplete="quantity"
+                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        placeholder="Quantidade"
+                        {...register(
+                          `scenarios.${scenarioIndex}.line_items.${index}.quantity`
+                        )}
+                      />
+                    </div>
+                    <div className="w-1/5">
+                      {index == 0 ? (
+                        <label
+                          htmlFor="name"
+                          className="block w-full text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Preço Unitário
+                        </label>
+                      ) : (
+                        <></>
+                      )}
+                      <div className="relative rounded-md shadow-sm w-full">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                          <span className="text-gray-500 sm:text-sm">R$</span>
+                        </div>
+                        <input
+                          type="text"
+                          {...register(
+                            `scenarios.${scenarioIndex}.line_items.${index}.unit_price`
+                          )}
+                          id="value"
+                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          placeholder="0.00"
+                          aria-describedby="value-currency"
+                        />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                          <span
+                            className="text-gray-500 sm:text-sm"
+                            id="price-currency"
+                          >
+                            BRL
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-1/5">
+                      {index == 0 ? (
+                        <label
+                          htmlFor="name"
+                          className="block w-full text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Desconto
+                        </label>
+                      ) : (
+                        <></>
+                      )}
+                      <div className="relative rounded-md shadow-sm w-full">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                          <span className="text-gray-500 sm:text-sm">%</span>
+                        </div>
+                        <input
+                          type="text"
+                          {...register(
+                            `scenarios.${scenarioIndex}.line_items.${index}.discount`
+                          )}
+                          id="value"
+                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          placeholder="0.00"
+                          aria-describedby="value-currency"
+                        />
+                      </div>
+                    </div>
+                    <div className="w-1/5">
+                      {index == 0 ? (
+                        <label
+                          htmlFor="name"
+                          className="block w-full text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Preço Total
+                        </label>
+                      ) : (
+                        <></>
+                      )}
+                      <div className="relative rounded-md shadow-sm w-full">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                          <span className="text-gray-500 sm:text-sm">R$</span>
+                        </div>
+                        <input
+                          type="text"
+                          {...register(
+                            `scenarios.${scenarioIndex}.line_items.${index}.total_price`
+                          )}
+                          id="value"
+                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          placeholder="0.00"
+                          aria-describedby="value-currency"
+                          disabled={true}
+                        />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                          <span
+                            className="text-gray-500 sm:text-sm"
+                            id="price-currency"
+                          >
+                            BRL
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
                     >
-                      {products.map((p: any) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name}
-                        </option>
-                      ))}
-                    </select>
+                      <XMarkIcon width={16} height={16} />
+                    </Button>
                   </div>
-                  <div className="w-1/3">
-                    {index == 0 ? (
-                      <label
-                        htmlFor="name"
-                        className="block w-full text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Quantidade
-                      </label>
-                    ) : (
-                      <></>
-                    )}
-                    <input
-                      type="number"
-                      id="quantity"
-                      autoComplete="quantity"
-                      className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      placeholder="Quantidade"
-                      {...register(
-                        `scenarios.${scenarioIndex}.line_items.${index}.quantity`
-                      )}
-                    />
-                  </div>
-                  <div className="w-1/5">
-                    {index == 0 ? (
-                      <label
-                        htmlFor="name"
-                        className="block w-full text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Preço Unitário
-                      </label>
-                    ) : (
-                      <></>
-                    )}
-                    <div className="relative rounded-md shadow-sm w-full">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <span className="text-gray-500 sm:text-sm">R$</span>
-                      </div>
-                      <input
-                        type="text"
-                        {...register(
-                          `scenarios.${scenarioIndex}.line_items.${index}.unit_price`
-                        )}
-                        id="value"
-                        className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        placeholder="0.00"
-                        aria-describedby="value-currency"
-                      />
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                        <span
-                          className="text-gray-500 sm:text-sm"
-                          id="price-currency"
-                        >
-                          BRL
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-1/5">
-                    {index == 0 ? (
-                      <label
-                        htmlFor="name"
-                        className="block w-full text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Desconto
-                      </label>
-                    ) : (
-                      <></>
-                    )}
-                    <div className="relative rounded-md shadow-sm w-full">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <span className="text-gray-500 sm:text-sm">%</span>
-                      </div>
-                      <input
-                        type="text"
-                        {...register(
-                          `scenarios.${scenarioIndex}.line_items.${index}.discount`
-                        )}
-                        id="value"
-                        className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        placeholder="0.00"
-                        aria-describedby="value-currency"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-1/5">
-                    {index == 0 ? (
-                      <label
-                        htmlFor="name"
-                        className="block w-full text-sm font-medium leading-6 text-gray-900"
-                      >
-                        Preço Total
-                      </label>
-                    ) : (
-                      <></>
-                    )}
-                    <div className="relative rounded-md shadow-sm w-full">
-                      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <span className="text-gray-500 sm:text-sm">R$</span>
-                      </div>
-                      <input
-                        type="text"
-                        {...register(
-                          `scenarios.${scenarioIndex}.line_items.${index}.total_price`
-                        )}
-                        id="value"
-                        className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        placeholder="0.00"
-                        aria-describedby="value-currency"
-                      />
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                        <span
-                          className="text-gray-500 sm:text-sm"
-                          id="price-currency"
-                        >
-                          BRL
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={() => remove(index)}
-                    className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
-                  >
-                    <XMarkIcon width={16} height={16} />
-                  </Button>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <button
               type="button"
@@ -770,6 +868,7 @@ function Scenario({
                   placeholder="0.00"
                   aria-describedby="value-currency"
                   {...register(`scenarios.${scenarioIndex}.product_total`)}
+                  disabled={true}
                 />
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                   <span
@@ -799,6 +898,7 @@ function Scenario({
                   placeholder="0.00"
                   aria-describedby="value-currency"
                   {...register(`scenarios.${scenarioIndex}.discount_value`)}
+                  disabled={true}
                 />
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                   <span
@@ -815,7 +915,7 @@ function Scenario({
                 htmlFor="currency"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Total - Desconto
+                SubTotal (Total - Desconto)
               </label>
               <div className="relative rounded-md shadow-sm w-full">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -830,6 +930,7 @@ function Scenario({
                   {...register(
                     `scenarios.${scenarioIndex}.subtotal_with_discount`
                   )}
+                  disabled={true}
                 />
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                   <span
@@ -859,6 +960,7 @@ function Scenario({
                   placeholder="0.00"
                   aria-describedby="value-currency"
                   {...register(`scenarios.${scenarioIndex}.grand_total`)}
+                  disabled={true}
                 />
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                   <span
@@ -874,7 +976,9 @@ function Scenario({
 
           <button
             type="button"
-            onClick={() => removeScenario(scenarioIndex)}
+            onClick={() => {
+              removeScenario(scenarioIndex);
+            }}
             className="mt-4 rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
           >
             Remover {scenarioIndex + 1}º Cenário
