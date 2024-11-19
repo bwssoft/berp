@@ -1,5 +1,6 @@
 export * from "./client";
 export * from "./client-opportunity";
+export * from "./client-proposal";
 export * from "./command";
 export * from "./device";
 export * from "./firmware";

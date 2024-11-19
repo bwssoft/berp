@@ -9,8 +9,7 @@ import {
   updateOneClientUsecase
 } from "../../usecase"
 
-export async function createOneClient(client: Omit<IClient
-  , "id" | "created_at">) {
+export async function createOneClient(client: Omit<IClient, "id" | "created_at">) {
   return await createOneClientUsecase.execute(client)
 }
 

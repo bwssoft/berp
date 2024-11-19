@@ -45,7 +45,8 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
         phone: `${data.event.telefone1_ddd}${data.event.telefone1_numero}`.replace(/[^\d]+/g, ''),
         name: data.event.contato,
         role: "owner",
-        department: "owner"
+        department: "owner",
+        id: crypto.randomUUID()
       })
     }
 
@@ -64,7 +65,8 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
         phone: `${data.event.telefone2_ddd}${data.event.telefone2_numero}`,
         name: data.event.contato,
         role: "owner",
-        department: "owner"
+        department: "owner",
+        id: crypto.randomUUID()
       })
     }
 

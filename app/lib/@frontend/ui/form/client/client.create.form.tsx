@@ -176,7 +176,6 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-
             <div className="col-span-3">
               <label
                 htmlFor="country"
@@ -211,7 +210,6 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2 sm:col-start-1">
               <label
                 htmlFor="city"
@@ -229,7 +227,6 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2">
               <label
                 htmlFor="state"
@@ -247,7 +244,6 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2">
               <label
                 htmlFor="postal_code"
@@ -344,6 +340,7 @@ export function ClientCreateForm() {
                   phone: "",
                   department: "other" as any,
                   role: "other" as any,
+                  id: crypto.randomUUID(),
                 })
               }
               className="mt-5 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"
