@@ -1,5 +1,5 @@
 import { IBaseRepository } from "@/app/lib/@backend/domain/@shared/repository/repository.interface";
-import { AggregateOptions, AggregationCursor, Filter } from "mongodb";
+import { AggregateOptions, AggregationCursor, Filter, MongoClient, TransactionOptions, UpdateFilter } from "mongodb";
 import clientPromise from "./config";
 
 type Constructor = {
@@ -42,29 +42,29 @@ export class BaseRepository<Entity extends object>
       .toArray();
   }
 
-  async updateOne(query: Filter<Entity>, value: Partial<Entity>) {
+  async updateOne(query: Filter<Entity>, value: UpdateFilter<Entity>) {
     const db = await this.connect();
     return await db
       .collection<Entity>(this.collection)
-      .updateOne(query, { $set: value });
+      .updateOne(query, value);
   }
 
-  async updateMany(query: Filter<Entity>, value: Partial<Entity>) {
+  async updateMany(query: Filter<Entity>, value: UpdateFilter<Entity>) {
     const db = await this.connect();
     return await db
       .collection<Entity>(this.collection)
-      .updateMany(query, { $set: value });
+      .updateMany(query, value);
   }
 
   async updateBulk(
-    operations: { query: Filter<Entity>; value: Partial<Entity> }[]
+    operations: { query: Filter<Entity>; value: UpdateFilter<Entity> }[],
   ) {
     const _operations = operations.map((operation) => {
       const { query, value } = operation;
       return {
         updateMany: {
           filter: query,
-          update: { $set: value },
+          update: value,
         },
       };
     });
@@ -85,14 +85,35 @@ export class BaseRepository<Entity extends object>
     return db.collection(this.collection).aggregate<T>(pipeline, options);
   }
 
-  async getDb() {
-    const db = await this.connect();
-    return db;
+
+  async withTransaction(
+    operations: (client: MongoClient) => Promise<void>,
+    options: TransactionOptions = {}
+  ): Promise<void> {
+    const client = await clientPromise; // Conexão com o MongoDB
+    const session = client.startSession(); // Inicia a sessão
+
+    try {
+      // Use session.withTransaction para gerenciar tudo
+      await session.withTransaction(async () => {
+        await operations(client); // Passa a sessão para as operações
+      }, options)
+      await session.commitTransaction()
+    } catch (error) {
+      console.error("Transaction error:", error);
+      throw error; // Repassa o erro para o chamador
+    } finally {
+      session.endSession(); // Certifique-se de encerrar a sessão
+    }
   }
 
-  async connect() {
+
+
+
+  private async connect() {
     const client = await clientPromise;
     const db = client.db(this.db);
     return db;
   }
+
 }

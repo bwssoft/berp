@@ -10,8 +10,7 @@ import { productionProcessRepository } from "./production-process.repository";
 
 class ProductionOrderRepository
   extends BaseRepository<IProductionOrder>
-  implements IProductionOrderRepository
-{
+  implements IProductionOrderRepository {
   constructor() {
     super({
       collection: "production-order",
@@ -59,7 +58,9 @@ class ProductionOrderRepository
     });
 
     const entityUpdated = await this.updateOne(query, {
-      production_process: current_process,
+      $set: {
+        production_process: current_process,
+      }
     });
 
     return entityUpdated;

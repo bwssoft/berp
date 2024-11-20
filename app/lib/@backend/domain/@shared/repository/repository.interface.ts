@@ -6,6 +6,9 @@ import {
   Filter,
   InsertManyResult,
   InsertOneResult,
+  MongoClient,
+  TransactionOptions,
+  UpdateFilter,
   UpdateResult,
   WithId,
 } from "mongodb";
@@ -17,19 +20,22 @@ export interface IBaseRepository<Entity extends object> {
   findAll(params?: Filter<Entity>): Promise<WithId<Entity>[]>;
   updateOne(
     query: Filter<Entity>,
-    value: Partial<Entity>
+    value: UpdateFilter<Entity>
   ): Promise<UpdateResult<Entity>>;
   updateMany(
     query: Filter<Entity>,
-    value: Partial<Entity>
+    value: UpdateFilter<Entity>
   ): Promise<UpdateResult<Entity>>;
   updateBulk(
-    operations: { query: Filter<Entity>; value: Partial<Entity> }[]
+    operations: { query: Filter<Entity>; value: UpdateFilter<Entity> }[]
   ): Promise<BulkWriteResult>;
   deleteOne(query: Filter<Entity>): Promise<DeleteResult>;
   aggregate<T extends object>(
     pipeline?: object[],
     options?: AggregateOptions
   ): Promise<AggregationCursor<T>>;
-  getDb(): Promise<any>;
+  withTransaction(
+    operations: (client: MongoClient) => Promise<void>,
+    options?: TransactionOptions
+  ): Promise<void>
 }

@@ -13,7 +13,7 @@ class UpdateOneProductUsecase {
     query: { id: string },
     value: Omit<IProduct, "id" | "created_at">
   ) {
-    return await this.repository.updateOne(query, value)
+    return await this.repository.updateOne(query, { $set: value })
   }
 }
 

@@ -58,7 +58,7 @@ class UpdateOneProductionProcessUsecase {
     query: { id: string },
     value: Partial<Omit<IProductionProcess, "id" | "created_at">>
   ) {
-    const result = await this.repository.updateOne(query, value);
+    const result = await this.repository.updateOne(query, { $set: value })
 
     if (result.modifiedCount > 0 && value.steps) {
       const productionOrdersWithThisProductionProcess =
@@ -73,16 +73,18 @@ class UpdateOneProductionProcessUsecase {
           return productionOrderRepository.updateOne(
             { id: productionOrder.id },
             {
-              production_process: [
-                {
-                  process_uuid: query.id,
-                  steps_progress: this.mergeSteps({
-                    currentSteps:
-                      productionOrder.production_process![0].steps_progress,
-                    newSteps: value.steps!,
-                  }),
-                },
-              ],
+              $set: {
+                production_process: [
+                  {
+                    process_uuid: query.id,
+                    steps_progress: this.mergeSteps({
+                      currentSteps:
+                        productionOrder.production_process![0].steps_progress,
+                      newSteps: value.steps!,
+                    }),
+                  },
+                ],
+              }
             }
           );
         })
