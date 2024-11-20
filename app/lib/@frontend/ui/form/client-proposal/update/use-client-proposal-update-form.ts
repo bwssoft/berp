@@ -1,4 +1,4 @@
-import { updateOneClientProposalById } from '@/app/lib/@backend/action/client/proposal.action';
+import { updateOneClientProposalById } from '@/app/lib/@backend/action';
 import { Currency, FreightType, IProposal, OmieEnterprise } from '@/app/lib/@backend/domain';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -62,6 +62,7 @@ export const schema = z.object({
   scenarios: z.array(ScenarioSchema).min(1),
   client_id: z.string(),
   billing_process: z.array(BillingProcessSchema).optional(),
+  documents: z.array(z.any()),
 });
 
 type Schema = z.infer<typeof schema>;
@@ -94,10 +95,10 @@ export function useClientProposalUpdateForm(props: Props) {
   } = useFieldArray({
     control,
     name: 'scenarios',
+    keyName: "key"
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
-    console.log(data)
     try {
       await updateOneClientProposalById({ id: defaultValues.id! }, data);
       toast({

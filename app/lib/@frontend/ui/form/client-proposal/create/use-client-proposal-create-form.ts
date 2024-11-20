@@ -1,4 +1,4 @@
-import { createOneClientProposal } from '@/app/lib/@backend/action/client/proposal.action';
+import { createOneClientProposal } from '@/app/lib/@backend/action';
 import { Currency, FreightType, OmieEnterprise } from '@/app/lib/@backend/domain';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -61,7 +61,8 @@ export const schema = z.object({
   scenarios: z.array(ScenarioSchema).min(1),
   client_id: z.string(),
   billing_process: z.array(BillingProcessSchema).optional(),
-});
+  documents: z.array(z.any()).default([])
+})
 
 type Schema = z.infer<typeof schema>;
 
