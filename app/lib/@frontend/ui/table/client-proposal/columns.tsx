@@ -1,4 +1,4 @@
-import { deleteOneClientProposalById } from "@/app/lib/@backend/action/client/proposal.action";
+import { deleteOneClientProposalById } from "@/app/lib/@backend/action";
 import { IClient, IProposal } from "@/app/lib/@backend/domain";
 import { clientConstants } from "@/app/lib/constant";
 import { ColumnDef } from "@tanstack/react-table";

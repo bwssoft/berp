@@ -1,4 +1,4 @@
-import { findAllClientProposal } from "@/app/lib/@backend/action/client/proposal.action";
+import { findAllClientProposal } from "@/app/lib/@backend/action";
 import { ClientProposalTable } from "@/app/lib/@frontend/ui/table/client-proposal";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";

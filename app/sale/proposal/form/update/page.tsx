@@ -1,5 +1,5 @@
 import { findAllClient, findAllProduct } from "@/app/lib/@backend/action";
-import { findOneClientProposal } from "@/app/lib/@backend/action/client/proposal.action";
+import { findOneClientProposal } from "@/app/lib/@backend/action";
 import { ClientProposalUpdateForm } from "@/app/lib/@frontend/ui/form/client-proposal";
 
 interface Props {
