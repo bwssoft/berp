@@ -15,6 +15,9 @@ const EnviromentsSchema = z.object({
   }),
   OMIE_URL: z.string(),
   FIREBASE_CONFIG: z.any(),
+  AWS_REGION: z.string(),
+  AWS_S3_ACCESS_KEY: z.string(),
+  AWS_S3_SECRET_KEY: z.string(),
 });
 
 export const config = EnviromentsSchema.parse({
@@ -46,4 +49,7 @@ export const config = EnviromentsSchema.parse({
       secret: process.env.OMIE_ICBFILIAL_API_SECRET,
     },
   },
+  AWS_REGION: process.env.AWS_REGION,
+  AWS_S3_ACCESS_KEY: process.env.AWS_S3_ACCESS_KEY,
+  AWS_S3_SECRET_KEY: process.env.AWS_S3_SECRET_KEY,
 });
