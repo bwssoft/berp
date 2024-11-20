@@ -4,6 +4,7 @@ export interface IProposal {
   id: string;
   phase: 'negotiation' | 'proposal_sent' | 'accepted' | 'rejected';
   valid_at: Date;
+  probability: number
   description?: string;
   billing_address: Address;
   delivery_address: Address;
@@ -12,6 +13,15 @@ export interface IProposal {
   client_id: string;
   billing_process?: BillingProcess[]
   created_at: Date
+  documents: Document[]
+}
+
+interface Document {
+  id: string
+  scenario_id: string
+  key: string
+  name: string
+  size: number
 }
 
 interface Address {
