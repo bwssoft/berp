@@ -1,4 +1,5 @@
 export * from './create-one-proposal.usecase'
+export * from './create-one-proposal-document.usecase'
 export * from './delete-one-proposal.usecase'
 export * from './update-one-proposal.usecase'
 export * from './find-one-proposal.usecase'
