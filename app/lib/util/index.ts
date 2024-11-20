@@ -7,3 +7,4 @@ export * from "./get-hex-color";
 export * from "./get-week-range";
 export * from "./singleton";
 export * from "./xlsx";
+export * from "./html-to-pdf";

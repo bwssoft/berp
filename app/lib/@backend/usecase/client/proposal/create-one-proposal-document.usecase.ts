@@ -44,7 +44,13 @@ class CreateOneProposalDocumentUsecase {
   }
 
   generateFilaname(now: number, scenario_name: string) {
-    return `${formatDate(new Date(now), { includeHours: true }).replace(", ", "-")}__${scenario_name.toLowerCase().replace(/\s+/g, '-')}`
+    return `${formatDate(new Date(now), { includeHours: true })}__${scenario_name
+      .toLowerCase()
+      .normalize('NFD') // Separa caracteres com acento dos seus diacríticos
+      .replace(/[\u0300-\u036f]/g, '') // Remove os diacríticos (acentos)
+      .replace(/[^a-z0-9\s]/gi, '') // Remove outros caracteres especiais
+      .replace(/\s+/g, '-')}`; // Substitui espaços por traços
+
   }
   generateKey(now: number, proposal_id: string, scenario_id: string) {
     return `${proposal_id}/${scenario_id}/${now.toString()}.pdf`;

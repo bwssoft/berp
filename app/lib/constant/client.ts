@@ -75,9 +75,9 @@ const opportunityRecurrenceType = {
 
 
 const proposalPhase: { [key in IProposal["phase"]]: string } = {
-  accepted: "Aceito",
   negotiation: "Em negociação",
   proposal_sent: "Proposta Enviada",
+  accepted: "Aceito",
   rejected: "Rejeitada"
 };
 
