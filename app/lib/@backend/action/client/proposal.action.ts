@@ -1,7 +1,7 @@
 "use server"
 
 import { IClient, IProposal } from "@/app/lib/@backend/domain"
-import { createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase } from "../../usecase"
+import { createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase, createOneProposalDocumentUsecase } from "../../usecase"
 import { revalidatePath } from "next/cache"
 
 export async function createOneClientProposal(client: Omit<IProposal
@@ -29,4 +29,10 @@ export async function deleteOneClientProposalById(query: { id: string }) {
 
 export async function findAllClientProposal(): Promise<(IProposal & { client: IClient })[]> {
   return await findAllProposalWithClientUsecase.execute()
+}
+
+export async function createOneProposalDocument(input: { scenario_id: string, proposal: IProposal }) {
+  const { scenario_id, proposal } = input
+  await createOneProposalDocumentUsecase.execute({ scenario_id, proposal })
+  revalidatePath(`/sale/proposal/form/update?id=${proposal.id}`)
 }
