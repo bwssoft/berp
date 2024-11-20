@@ -10,6 +10,7 @@
     "push": "git push origin main && git push bsoft main"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.696.0",
     "@bwsoft/accordion": "^2.5.10",
     "@bwsoft/button": "^2.0.5",
     "@faker-js/faker": "^8.4.1",
@@ -31,10 +32,12 @@
     "firebase": "^10.12.2",
     "flowbite": "^2.3.0",
     "lodash": "^4.17.21",
-    "mongodb": "^6.7.0",
+    "mongodb": "^6.10.0",
+    "mustache": "^4.2.0",
     "nanoid": "^5.0.8",
-    "next": "14.2.4",
+    "next": "^14.2.8",
     "nextjs-toploader": "^3.7.15",
+    "puppeteer": "^23.8.0",
     "react": "^18",
     "react-apexcharts": "^1.4.1",
     "react-dnd": "^16.0.1",
@@ -45,6 +48,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.17.7",
+    "@types/mustache": "^4.2.5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
