@@ -3,6 +3,8 @@
 import { IClient, IProposal } from "@/app/lib/@backend/domain"
 import { createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase, createOneProposalDocumentUsecase } from "../../usecase"
 import { revalidatePath } from "next/cache"
+import { deleteOneProposalDocumentUsecase } from "../../usecase/client/proposal/delete-one-proposal-document.usecase"
+import { downloadOneProposalDocumentUsecase } from "../../usecase/client/proposal/download-one-proposal-document.usecase"
 
 export async function createOneClientProposal(client: Omit<IProposal
   , "id" | "created_at" | "user_id">) {
@@ -36,3 +38,18 @@ export async function createOneProposalDocument(input: { scenario_id: string, pr
   await createOneProposalDocumentUsecase.execute({ scenario_id, proposal })
   revalidatePath(`/sale/proposal/form/update?id=${proposal.id}`)
 }
+
+export async function deleteOneProposalDocument(input: { document_key: string, proposal: IProposal }) {
+  const { document_key, proposal } = input
+  await deleteOneProposalDocumentUsecase.execute({ document_key, proposal })
+  revalidatePath(`/sale/proposal/form/update?id=${proposal.id}`)
+}
+
+export async function downloadOneProposalDocument(input: { document_key: string, proposal: IProposal }) {
+  const { document_key, proposal } = input
+  return await downloadOneProposalDocumentUsecase.execute({ document_key, proposal })
+
+
+}
+
+

@@ -33,7 +33,11 @@ import {
 } from "react-hook-form";
 import { nanoid } from "nanoid";
 import { useEffect } from "react";
-import { createOneProposalDocument } from "@/app/lib/@backend/action";
+import {
+  createOneProposalDocument,
+  deleteOneProposalDocument,
+  downloadOneProposalDocument,
+} from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 
 interface Props {
@@ -60,6 +64,54 @@ export function ClientProposalUpdateForm(props: Props) {
         .split("T")[0] as unknown as Date, // Formata a data aqui
     },
   });
+
+  const handleDownloadOneProposalDocument = async (props: {
+    document_key: string;
+    proposal: IProposal;
+  }) => {
+    try {
+      // Chama a ação do servidor
+      const actionResponse = await downloadOneProposalDocument(props);
+      // Verifica se a resposta é válida
+      if (!actionResponse) {
+        console.error("Resposta inválida ao baixar o documento");
+        return;
+      }
+
+      // Verifica e sanitiza o nome do arquivo
+      const fileName = actionResponse.name;
+
+      // Cria um Blob a partir do buffer
+      const blob = new Blob([new Uint8Array(actionResponse.buffer)], {
+        type: "application/pdf",
+      });
+
+      // Cria uma URL temporária para o Blob
+      const url = URL.createObjectURL(blob);
+
+      // Cria um link para iniciar o download
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName; // Nome do arquivo
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      // Libera o objeto URL para evitar vazamento de memória
+      URL.revokeObjectURL(url);
+      toast({
+        title: "Sucesso",
+        description: "Documento baixado com sucesso!",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Erro ao baixar o documento!",
+        variant: "error",
+      });
+    }
+  };
 
   return (
     <form action={() => handleSubmit()}>
@@ -247,20 +299,32 @@ export function ClientProposalUpdateForm(props: Props) {
                       </div>
                     </div>
                     <div className="ml-4 shrink-0">
-                      <a
-                        href="#"
+                      <button
+                        type="button"
+                        onClick={async () =>
+                          await deleteOneProposalDocument({
+                            document_key: document.key,
+                            proposal,
+                          })
+                        }
                         className="font-medium text-indigo-600 hover:text-indigo-500"
                       >
                         Excluir
-                      </a>
+                      </button>
                     </div>
                     <div className="ml-4 shrink-0">
-                      <a
-                        href="#"
+                      <button
+                        type="button"
+                        onClick={async () =>
+                          await handleDownloadOneProposalDocument({
+                            document_key: document.key,
+                            proposal,
+                          })
+                        }
                         className="font-medium text-indigo-600 hover:text-indigo-500"
                       >
                         Download
-                      </a>
+                      </button>
                     </div>
                     <div className="ml-4 shrink-0">
                       <a

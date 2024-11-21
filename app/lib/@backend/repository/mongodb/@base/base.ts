@@ -38,7 +38,7 @@ export class BaseRepository<Entity extends object>
       .collection<Entity>(this.collection)
       .find(params)
       .sort({ _id: -1 })
-      .limit(20)
+      .limit(50)
       .toArray();
   }
 

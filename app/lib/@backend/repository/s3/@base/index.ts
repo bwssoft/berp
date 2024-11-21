@@ -6,6 +6,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import { IBaseObjectRepository } from "../../../domain/@shared/repository/object.repository.interface";
+import { getContentType } from "@/app/lib/util/get-content-type";
 
 type Constructor = {
   bucket: string;
@@ -48,23 +49,6 @@ export class BaseObjectRepository<Entity extends object>
     });
   }
 
-  private determineContentType(fileName: string): string {
-    const ext = fileName.split(".").pop()?.toLowerCase();
-    switch (ext) {
-      case "json":
-        return "application/json";
-      case "pdf":
-        return "application/pdf";
-      case "png":
-        return "image/png";
-      case "jpeg":
-      case "jpg":
-        return "image/jpeg";
-      default:
-        return "application/octet-stream"; // Tipo genérico para outros formatos
-    }
-  }
-
   generateUrl(key: string) {
     return `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
   }
@@ -75,7 +59,7 @@ export class BaseObjectRepository<Entity extends object>
 
     const isJson = typeof data === "object" && !(data instanceof Buffer);
     const body = isJson ? JSON.stringify(data) : data;
-    const contentType = this.determineContentType(key);
+    const contentType = getContentType(key);
 
     const command = new PutObjectCommand({
       Bucket: this.bucket,
@@ -95,7 +79,7 @@ export class BaseObjectRepository<Entity extends object>
   async findOne(key: string): Promise<{ data: Entity | Buffer; contentType: string } | null> {
     const command = new GetObjectCommand({
       Bucket: this.bucket,
-      Key: key,
+      Key: this.getKey(key),
     });
 
     try {
@@ -147,7 +131,7 @@ export class BaseObjectRepository<Entity extends object>
   async deleteOne(key: string) {
     const command = new DeleteObjectCommand({
       Bucket: this.bucket,
-      Key: key,
+      Key: this.getKey(key),
     });
 
     try {
