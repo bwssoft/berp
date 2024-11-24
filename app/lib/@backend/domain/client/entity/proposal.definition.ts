@@ -1,4 +1,4 @@
-import { OmieEnterprise } from "./client.definition";
+import { OmieEnterpriseEnum } from "../../@shared/gateway/omie/omie.gateway.interface";
 
 export interface IProposal {
   id: string;
@@ -35,12 +35,12 @@ interface Address {
 interface Scenario {
   id: string
   name: string;
+  description?: string;
   currency: Currency;
   product_total: number;
   discount_value: number;
   subtotal_with_discount: number;
   grand_total: number;
-  description?: string;
   freight?: {
     value: number
     type: FreightType
@@ -80,7 +80,15 @@ interface LineItem {
 interface BillingProcess {
   id: string
   line_item_id: string[]
-  billing_company: OmieEnterprise
+  billing_company: OmieEnterpriseEnum
   installment_quantity: number
   omie_sale_order_id?: string
+}
+
+interface SignatureProcess {
+  id: string
+  document_id: string
+  contact_id: string[]
+  is_fullish: boolean
+  is_active: boolean
 }

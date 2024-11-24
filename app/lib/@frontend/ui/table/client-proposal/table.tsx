@@ -14,7 +14,7 @@ export function ClientProposalTable(props: Props) {
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => `${data.client.corporate_name}`}
+      mobileDisplayValue={(data) => `${data.client.company_name}`}
       mobileKeyExtractor={(data) => data.created_at?.toISOString()}
       className="w-full mt-10"
     />

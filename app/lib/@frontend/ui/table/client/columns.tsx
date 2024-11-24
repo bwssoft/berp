@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
 export const columns: ColumnDef<IClient>[] = [
-  { header: "Razão Social", accessorKey: "corporate_name" },
+  { header: "Razão Social", accessorKey: "company_name" },
   {
     header: "Documento",
     accessorKey: "document",

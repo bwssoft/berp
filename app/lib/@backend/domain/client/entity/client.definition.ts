@@ -1,102 +1,74 @@
+import { OmieEnterpriseEnum } from "../../@shared/gateway/omie/omie.gateway.interface";
+import { IContact } from "./contact.definition";
+
 export interface IClient {
   id: string;
-  type:
-  | "prospect"
-  | "inactive_registration"
-  | "active_client"
-  | "suspended_client"
-  | "deregistered_cnpj"
-  | "inactive_cnpj"
-  | "dealer"
-  | "other";
-  corporate_name: string;
-  sector:
-  | "vehicle_protection_association"
-  | "retail_trade"
-  | "tracking_company"
-  | "service_company"
-  | "vehicle_protection_manager"
-  | "industry"
-  | "integrator_ti"
-  | "rental_company"
-  | "logistics"
-  | "iot_tracking_platform"
-  | "resale"
-  | "insurance_company"
-  | "patrimonial_security"
-  | "carrier"
-  | "other";
-  document: { type: "CPF" | "CNPJ"; value: string };
-  state_registration: string;
-  municipal_registration: string;
-  billing_address: {
-    street: string;
-    postal_code: string;
-    city: string;
-    state: string;
-    country: string;
-  };
-  description: string;
-  contacts: {
-    id: string
-    phone: string;
-    name: string;
-    role:
-    | "analyst"
-    | "supervisor"
-    | "manager"
-    | "director"
-    | "president"
-    | "owner";
-    department:
-    | "administrative"
-    | "commercial"
-    | "purchasing"
-    | "financial"
-    | "logistics"
-    | "operations"
-    | "presidency"
-    | "products"
-    | "owner"
-    | "support";
-  }[];
+  company_name: string; //razao social
+  trade_name: string; //nome fantasia
+  document: Document
+  sector?: ClientSector
+  address?: Address;
+  description?: string;
+  bank_details?: BankDetails
+  tax_details?: TaxDetails
+  contacts: IContact[];
   created_at: Date;
-  omie_code_metadata?: Record<keyof OmieEnterprise, string>;
+  omie_metadata?: {
+    codigo_cliente: Partial<Record<OmieEnterpriseEnum, number | undefined>>;
+    codigo_cliente_integracao?: string
+  }
 }
 
-export const clientTypeMapping: Record<IClient["type"], string> = {
-  active_client: "Cliente ativo",
-  dealer: "Concessionário",
-  deregistered_cnpj: "CNPJ cancelado",
-  inactive_cnpj: "CNPJ inativo",
-  inactive_registration: "Cadastro inativo",
-  other: "Outros",
-  prospect: "Potencial cliente",
-  suspended_client: "Cliente suspendido",
+export interface Document {
+  value: string
+  type?: "CPF" | "CNPJ";
 };
+interface TaxDetails {
+  state_registration?: string;
+  municipal_registration?: string;
+  regime?: TaxRegime
+}
+interface BankDetails {
+  code?: string // codigo do banco
+  agency?: string
+  account?: string
+  pix?: string
+  holder?: {
+    document?: string
+    name?: string
+  }
+}
+export interface Address {
+  street?: string;
+  postal_code?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+}
+enum ClientSector {
+  vehicle_protection_association = "vehicle_protection_association",
+  retail_trade = "retail_trade",
+  tracking_company = "tracking_company",
+  service_company = "service_company",
+  vehicle_protection_manager = "vehicle_protection_manager",
+  industry = "industry",
+  integrator_ti = "integrator_ti",
+  rental_company = "rental_company",
+  logistics = "logistics",
+  iot_tracking_platform = "iot_tracking_platform",
+  resale = "resale",
+  insurance_company = "insurance_company",
+  patrimonial_security = "patrimonial_security",
+  carrier = "carrier",
+  other = "other",
+}
 
-export const clientSectorMapping: Record<IClient["sector"], string> = {
-  vehicle_protection_association: "Associação de proteção veicular",
-  retail_trade: "Comércio varejista",
-  tracking_company: "Empresa de rastreamento",
-  service_company: "Empresa de serviços",
-  vehicle_protection_manager: "Gestor de proteção veicular",
-  industry: "Indústria",
-  integrator_ti: "Integrações de TI",
-  rental_company: "Empresa de locadora",
-  logistics: "Logística",
-  iot_tracking_platform: "Plataforam de rastreamento IoT",
-  resale: "Revenda",
-  insurance_company: "Seguradora",
-  patrimonial_security: "Segurança patrimonial",
-  carrier: "Transportadora",
-  other: "Outro",
-};
-
-export enum OmieEnterprise {
-  MGC = "MGC",
-  BWS = "BWS",
-  ICB = "ICB",
-  ICBFILIAL = "ICBFILIAL",
-  WFC = "WFC",
+export enum TaxRegime {
+  simples_nacional = "simples_nacional",
+  simples_nacional_excesso = "simples_nacional_excesso",
+  regime_normal_lucro_presumido = "regime_normal_lucro_presumido",
+  regime_normal_lucro_real = "regime_normal_lucro_real",
+  regime_normal_isento = "regime_normal_isento",
+  produtor_rural = "produtor_rural",
+  mei = "mei"
 }

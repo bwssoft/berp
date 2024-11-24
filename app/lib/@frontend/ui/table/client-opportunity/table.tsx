@@ -15,7 +15,7 @@ export function ClientOpportunityTable(props: Props) {
       columns={columns}
       data={data}
       mobileDisplayValue={(data) =>
-        `${data.name} - ${data.client.corporate_name}`
+        `${data.name} - ${data.client.company_name}`
       }
       mobileKeyExtractor={(data) => data.created_at?.toISOString()}
       className="w-full mt-10"

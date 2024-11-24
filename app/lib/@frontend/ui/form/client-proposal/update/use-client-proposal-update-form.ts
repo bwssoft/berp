@@ -1,5 +1,6 @@
 import { updateOneClientProposalById } from '@/app/lib/@backend/action';
-import { Currency, FreightType, IProposal, OmieEnterprise } from '@/app/lib/@backend/domain';
+import { Currency, FreightType, IProposal } from '@/app/lib/@backend/domain';
+import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
@@ -47,7 +48,7 @@ const ScenarioSchema = z.object({
 const BillingProcessSchema = z.object({
   id: z.string(),
   line_item_id: z.array(z.string()),
-  billing_company: z.custom<OmieEnterprise>(),
+  billing_company: z.custom<OmieEnterpriseEnum>(),
   installment_quantity: z.number().int().positive(),
   omie_sale_order_id: z.string().optional(),
 });

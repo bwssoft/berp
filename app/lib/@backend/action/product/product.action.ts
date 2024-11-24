@@ -14,7 +14,7 @@ import {
 } from "../../usecase/product/product";
 
 export async function createOneProduct(
-  args: Omit<IProduct, "id" | "created_at">
+  args: Omit<IProduct, "id" | "created_at" | "sequence">
 ) {
   const product = await createOneProductUsecase.execute(args);
   revalidatePath("/product");
@@ -27,7 +27,7 @@ export async function findOneProduct(input: Partial<IProduct>) {
 
 export async function updateOneProductById(
   query: { id: string },
-  value: Omit<IProduct, "id" | "created_at">
+  value: Omit<IProduct, "id" | "created_at" | "sequence">
 ) {
   await updateOneProductUsecase.execute(query, value);
   revalidatePath("/product");

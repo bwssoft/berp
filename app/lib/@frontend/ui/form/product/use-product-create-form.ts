@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "../../../hook";
+import { EProductCategory } from "@/app/lib/@backend/domain";
 
 const schema = z.object({
   name: z
@@ -17,6 +18,10 @@ const schema = z.object({
   technical_sheet: z.any({ required_error: "Selecione uma ficha técnica" }),
   color: z.string(),
   files: z.any(),
+  category: z.nativeEnum(EProductCategory),
+  sku: z.string(),
+  price: z.coerce.number(),
+  images: z.array(z.string()).default([]),
 });
 
 export type Schema = z.infer<typeof schema>;

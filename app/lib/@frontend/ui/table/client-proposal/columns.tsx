@@ -10,7 +10,7 @@ export const columns: ColumnDef<IProposal & { client: IClient }>[] = [
     accessorKey: "client",
     cell: ({ row }) => {
       const input = row.original;
-      return input.client.corporate_name;
+      return input.client.company_name;
     },
   },
   {

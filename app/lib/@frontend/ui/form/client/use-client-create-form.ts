@@ -5,42 +5,18 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const schema = z.object({
-  type: z.enum([
-    "prospect",
-    "inactive_registration",
-    "active_client",
-    "suspended_client",
-    "deregistered_cnpj",
-    "inactive_cnpj",
-    "dealer",
-    "other"
-  ]),
-  sector: z.enum([
-    "vehicle_protection_association",
-    "retail_trade",
-    "tracking_company",
-    "service_company",
-    "vehicle_protection_manager",
-    "industry",
-    "integrator_ti",
-    "rental_company",
-    "logistics",
-    "iot_tracking_platform",
-    "resale",
-    "insurance_company",
-    "patrimonial_security",
-    "carrier",
-    "other",
-  ]),
-  corporate_name: z.string(),
+  trade_name: z.string(),
+  company_name: z.string(),
   document: z.object({
     type: z.enum(["CNPJ", "CPF"]).default("CNPJ"),
     value: z.string()
   }),
-  state_registration: z.string(),
-  municipal_registration: z.string(),
+  tax_details: z.object({
+    state_registration: z.string(),
+    municipal_registration: z.string(),
+  }),
   description: z.string(),
-  billing_address: z.object({
+  address: z.object({
     state: z.string(),
     country: z.string(),
     street: z.string(),
@@ -49,28 +25,12 @@ const schema = z.object({
   }),
   contacts: z.array(z.object({
     id: z.string(),
-    phone: z.string(),
+    labels: z.record(z.string(), z.string()),
+    phone: z.record(z.string(), z.string()),
+    email: z.record(z.string(), z.string()),
     name: z.string(),
-    role: z.enum([
-      "analyst",
-      "supervisor",
-      "manager",
-      "director",
-      "president",
-      "owner",
-    ]),
-    department: z.enum([
-      "administrative",
-      "commercial",
-      "purchasing",
-      "financial",
-      "logistics",
-      "operations",
-      "presidency",
-      "products",
-      "owner",
-      "support"
-    ]),
+    can_sign_contract: z.boolean().default(false),
+    created_at: z.coerce.date()
   }))
 });
 

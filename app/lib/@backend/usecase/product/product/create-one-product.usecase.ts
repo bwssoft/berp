@@ -9,12 +9,13 @@ class CreateOneProductUsecase {
     this.repository = productRepository
   }
 
-  async execute(input: Omit<IProduct, "id" | "created_at">) {
+  async execute(input: Omit<IProduct, "id" | "created_at" | "sequence">) {
     const product = Object.assign(
       input,
       {
         created_at: new Date(),
-        id: crypto.randomUUID()
+        id: crypto.randomUUID(),
+        sequence: 0
       }
     )
     await this.repository.create(product)

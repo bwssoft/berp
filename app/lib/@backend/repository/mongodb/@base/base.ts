@@ -110,7 +110,7 @@ export class BaseRepository<Entity extends object>
 
 
 
-  private async connect() {
+  async connect() {
     const client = await clientPromise;
     const db = client.db(this.db);
     return db;
