@@ -215,9 +215,6 @@ export function ClientProposalCreateForm(props: Props) {
             Endereços
           </h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">
-            Insira os endereços de cobrança e frete.
-          </p>
-          <p className="mt-4 text-sm leading-6 text-gray-600">
             Endereço de Faturamento
           </p>
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">

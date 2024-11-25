@@ -12,6 +12,7 @@ export interface IProposal {
   user_id: string;
   client_id: string;
   billing_process?: BillingProcess[]
+  signature_process?: SignatureProcess[]
   created_at: Date
   documents: Document[]
 }
@@ -19,6 +20,7 @@ export interface IProposal {
 interface Document {
   id: string
   scenario_id: string
+  omie_enterprise: OmieEnterpriseEnum
   key: string
   name: string
   size: number
@@ -75,20 +77,23 @@ interface LineItem {
   total_price: number;
 }
 
-
-
 interface BillingProcess {
   id: string
+  omie_enterprise: OmieEnterpriseEnum
   line_item_id: string[]
-  billing_company: OmieEnterpriseEnum
   installment_quantity: number
   omie_sale_order_id?: string
 }
 
 interface SignatureProcess {
   id: string
-  document_id: string
-  contact_id: string[]
-  is_fullish: boolean
-  is_active: boolean
+  scenario_id: string
+  document_id: string[]
+  contact: {
+    id: string
+    signed: boolean,
+    seen: boolean,
+    sent: boolean
+    requested: boolean
+  }[]
 }

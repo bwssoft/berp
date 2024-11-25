@@ -53,28 +53,39 @@ export class BaseObjectRepository<Entity extends object>
     return `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
   }
 
-  async create(props: { data: Entity | Buffer; key: string }) {
-    const { data, key: _key } = props;
-    const key = this.getKey(_key);
+  async create(
+    props: { data: Entity | Buffer; key: string } | { data: Entity | Buffer; key: string }[]
+  ) {
+    // Garantir que `props` seja sempre um array
+    const items = Array.isArray(props) ? props : [props];
 
-    const isJson = typeof data === "object" && !(data instanceof Buffer);
-    const body = isJson ? JSON.stringify(data) : data;
-    const contentType = getContentType(key);
+    // Função auxiliar para criar um único item
+    const uploadSingleItem = async ({ data, key: _key }: { data: Entity | Buffer; key: string }) => {
+      const key = this.getKey(_key);
+      const isJson = typeof data === "object" && !(data instanceof Buffer);
+      const body = isJson ? JSON.stringify(data) : data;
+      const contentType = getContentType(key);
 
-    const command = new PutObjectCommand({
-      Bucket: this.bucket,
-      Key: key,
-      Body: body,
-      ContentType: contentType,
-    });
+      const command = new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        Body: body,
+        ContentType: contentType,
+      });
 
-    try {
       await this.client.send(command);
+    };
+
+    // Executar uploads em paralelo
+    try {
+      await Promise.all(items.map((item) => uploadSingleItem(item)));
+      console.log("All objects created successfully.");
     } catch (error) {
-      console.error("Error creating object:", error);
-      throw new Error("Failed to create object in S3.");
+      console.error("Error creating objects:", error);
+      throw new Error("Failed to create one or more objects in S3.");
     }
   }
+
 
   async findOne(key: string): Promise<{ data: Entity | Buffer; contentType: string } | null> {
     const command = new GetObjectCommand({

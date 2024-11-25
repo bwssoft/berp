@@ -47,7 +47,7 @@ const ScenarioSchema = z.object({
 const BillingProcessSchema = z.object({
   id: z.string(),
   line_item_id: z.array(z.string()),
-  billing_company: z.custom<OmieEnterpriseEnum>(),
+  omie_enterprise: z.custom<OmieEnterpriseEnum>(),
   installment_quantity: z.number().int().positive(),
   omie_sale_order_id: z.string().optional(),
 });

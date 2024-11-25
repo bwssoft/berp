@@ -37,7 +37,6 @@ export class BaseRepository<Entity extends object>
     return await db
       .collection<Entity>(this.collection)
       .find(params)
-      .sort({ _id: -1 })
       .limit(50)
       .toArray();
   }

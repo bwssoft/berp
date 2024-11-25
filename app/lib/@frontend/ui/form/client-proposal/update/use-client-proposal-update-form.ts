@@ -1,9 +1,9 @@
-import { updateOneClientProposalById } from '@/app/lib/@backend/action';
-import { Currency, FreightType, IProposal } from '@/app/lib/@backend/domain';
+import { downloadOneProposalDocument, updateOneClientProposalById } from '@/app/lib/@backend/action';
+import { Currency, FreightType, IClient, IProposal } from '@/app/lib/@backend/domain';
 import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useMemo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -48,9 +48,23 @@ const ScenarioSchema = z.object({
 const BillingProcessSchema = z.object({
   id: z.string(),
   line_item_id: z.array(z.string()),
-  billing_company: z.custom<OmieEnterpriseEnum>(),
+  omie_enterprise: z.custom<OmieEnterpriseEnum>(),
   installment_quantity: z.number().int().positive(),
   omie_sale_order_id: z.string().optional(),
+});
+
+const SignatureProcessSchema = z.object({
+  id: z.string(),
+  scenario_id: z.string(),
+  document_id: z.array(z.string()),
+  omie_enterprise: z.custom<OmieEnterpriseEnum>(),
+  contact: z.array(z.object({
+    id: z.string(),
+    sent: z.boolean(),
+    seen: z.boolean(),
+    signed: z.boolean(),
+    requested: z.boolean()
+  }))
 });
 
 export const schema = z.object({
@@ -63,6 +77,7 @@ export const schema = z.object({
   scenarios: z.array(ScenarioSchema).min(1),
   client_id: z.string(),
   billing_process: z.array(BillingProcessSchema).optional(),
+  signature_process: z.array(SignatureProcessSchema).optional(),
   documents: z.array(z.any()),
 });
 
@@ -72,9 +87,10 @@ export { type Schema as ClientProposalSchema }
 
 interface Props {
   defaultValues: IProposal
+  clients: IClient[]
 }
 export function useClientProposalUpdateForm(props: Props) {
-  const { defaultValues } = props
+  const { defaultValues, clients } = props
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -82,7 +98,8 @@ export function useClientProposalUpdateForm(props: Props) {
     control,
     setValue,
     reset: hookFormReset,
-    getValues
+    getValues,
+    watch
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues
@@ -116,7 +133,60 @@ export function useClientProposalUpdateForm(props: Props) {
     }
   });
 
-  useEffect(() => console.log(errors), [errors])
+
+  const handleDownloadOneProposalDocument = async (props: {
+    document_key: string;
+    proposal: IProposal;
+  }) => {
+    try {
+      // Chama a ação do servidor
+      const actionResponse = await downloadOneProposalDocument(props);
+      // Verifica se a resposta é válida
+      if (!actionResponse) {
+        console.error("Resposta inválida ao baixar o documento");
+        return;
+      }
+
+      // Verifica e sanitiza o nome do arquivo
+      const fileName = actionResponse.name;
+
+      // Cria um Blob a partir do buffer
+      const blob = new Blob([new Uint8Array(actionResponse.buffer)], {
+        type: "application/pdf",
+      });
+
+      // Cria uma URL temporária para o Blob
+      const url = URL.createObjectURL(blob);
+
+      // Cria um link para iniciar o download
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName; // Nome do arquivo
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      // Libera o objeto URL para evitar vazamento de memória
+      URL.revokeObjectURL(url);
+      toast({
+        title: "Sucesso",
+        description: "Documento baixado com sucesso!",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Erro ao baixar o documento!",
+        variant: "error",
+      });
+    }
+  };
+
+  const client_id = watch("client_id");
+  const current_client = useMemo(
+    () => clients.find((cl) => cl.id === client_id),
+    [clients, client_id]
+  );
 
   return {
     register,
@@ -128,6 +198,8 @@ export function useClientProposalUpdateForm(props: Props) {
     scenarios,
     appendScenario,
     removeScenario,
-    getValues
+    getValues,
+    handleDownloadOneProposalDocument,
+    current_client
   };
 }
