@@ -5,6 +5,9 @@ import { createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWith
 import { revalidatePath } from "next/cache"
 import { deleteOneProposalDocumentUsecase } from "../../usecase/client/proposal/delete-one-proposal-document.usecase"
 import { downloadOneProposalDocumentUsecase } from "../../usecase/client/proposal/download-one-proposal-document.usecase"
+import { cancelSignatureProcessUscase } from "../../usecase/client/proposal/cancel-signature-process.usecase"
+import { initializeBillingProcessUscase } from "../../usecase/client/proposal/initialize-billing-process.usecase"
+import { cancelBillingProcessUscase } from "../../usecase/client/proposal/cancel-billing-process.usecase"
 
 export async function createOneClientProposal(client: Omit<IProposal
   , "id" | "created_at" | "user_id">) {
@@ -39,19 +42,49 @@ export async function createOneProposalDocument(input: { scenario: IProposal["sc
   revalidatePath(`/sale/proposal/form/update?id=${proposal.id}`)
 }
 
-export async function deleteOneProposalDocument(input: { document_key: string, proposal: IProposal }) {
-  const { document_key, proposal } = input
-  await deleteOneProposalDocumentUsecase.execute({ document_key, proposal })
-  revalidatePath(`/sale/proposal/form/update?id=${proposal.id}`)
+export async function deleteOneProposalDocument(input: {
+  proposal_id: string;
+  scenario_id: string;
+  document: NonNullable<IProposal["document"]>[string][number]
+}) {
+  const {
+    proposal_id,
+    scenario_id,
+    document,
+  } = input
+  await deleteOneProposalDocumentUsecase.execute({
+    proposal_id,
+    scenario_id,
+    document,
+  })
+  revalidatePath(`/sale/proposal/form/update?id=${proposal_id}`)
 }
 
-export async function downloadOneProposalDocument(input: { document_key: string, proposal: IProposal }) {
-  const { document_key, proposal } = input
-  return await downloadOneProposalDocumentUsecase.execute({ document_key, proposal })
+export async function downloadOneProposalDocument(input: {
+  document: NonNullable<IProposal["document"]>[string][number]
+}) {
+  const { document } = input
+  return await downloadOneProposalDocumentUsecase.execute({ document })
 }
 
-export async function initializeSignatureProcess(input: { contact_id: string[], document_id: string[], proposal_id: string, scenario_id: string }) {
+export async function initializeSignatureProcess(input: { document_id: string[], proposal_id: string, scenario_id: string }) {
   await initializeSignatureProcessUscase.execute(input)
+  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+}
+
+export async function cancelSignatureProcess(input: { proposal_id: string, scenario_id: string }) {
+  await cancelSignatureProcessUscase.execute(input)
+  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+}
+
+
+export async function initializeBillingProcess(input: { scenario: IProposal["scenarios"][number], proposal_id: string }) {
+  await initializeBillingProcessUscase.execute(input)
+  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+}
+
+export async function cancelBillingProcess(input: { proposal_id: string, scenario_id: string }) {
+  await cancelBillingProcessUscase.execute(input)
   revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
 }
 

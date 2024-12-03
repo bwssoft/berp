@@ -13,19 +13,23 @@ class DeleteOneProposalDocumentUsecase {
     this.documentRepository = proposalRepository;
   }
 
-  async execute(input: { proposal: IProposal; document_key: string }) {
+  async execute(input: {
+    proposal_id: string,
+    scenario_id: string,
+    document: NonNullable<IProposal["document"]>[string][number]
+  }) {
     try {
-      const { proposal, document_key } = input
+      const {
+        proposal_id,
+        scenario_id,
+        document
+      } = input
 
-      const [documentToRemove] = proposal.documents.filter(document => document.key === document_key)
-
-      if (!documentToRemove) return
-
-      await this.objectRepository.deleteOne(document_key)
+      await this.objectRepository.deleteOne(document.key)
 
       await this.documentRepository.updateOne(
-        { id: proposal.id },
-        { $pull: { documents: documentToRemove } }
+        { id: proposal_id },
+        { $pullAll: { [`document.${scenario_id}`]: [document] } }
       )
     } catch (err) {
       throw err

@@ -52,7 +52,7 @@ export function useProductUpdateForm(props: Props) {
       description: currentProduct.description,
       name: currentProduct.name,
       technical_sheet: technicalSheets.find(
-        ({ id }) => id === currentProduct.technical_sheets?.[0].id
+        ({ id }) => id === currentProduct.technical_sheets?.[0]?.id
       ),
     },
   });

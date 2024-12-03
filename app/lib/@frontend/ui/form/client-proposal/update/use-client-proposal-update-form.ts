@@ -3,7 +3,7 @@ import { Currency, FreightType, IClient, IProposal } from '@/app/lib/@backend/do
 import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo } from 'react';
+import { useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -21,6 +21,7 @@ const AddressSchema = z.object({
 const LineItemSchema = z.object({
   id: z.string(),
   product_id: z.string(),
+  negotiation_type_id: z.string(),
   quantity: z.coerce.number().nonnegative(),
   unit_price: z.coerce.number().nonnegative(),
   discount: z.coerce.number().nonnegative(),
@@ -49,36 +50,31 @@ const BillingProcessSchema = z.object({
   id: z.string(),
   line_item_id: z.array(z.string()),
   omie_enterprise: z.custom<OmieEnterpriseEnum>(),
-  installment_quantity: z.number().int().positive(),
+  installment_quantity: z.coerce.number().nonnegative().optional(),
   omie_sale_order_id: z.string().optional(),
 });
 
 const SignatureProcessSchema = z.object({
   id: z.string(),
-  scenario_id: z.string(),
   document_id: z.array(z.string()),
-  omie_enterprise: z.custom<OmieEnterpriseEnum>(),
   contact: z.array(z.object({
     id: z.string(),
-    sent: z.boolean(),
-    seen: z.boolean(),
     signed: z.boolean(),
-    requested: z.boolean()
+    seen: z.boolean(),
+    sent: z.boolean(),
+    requested: z.boolean(),
   }))
 });
 
 export const schema = z.object({
-  phase: z.enum(['negotiation', 'proposal_sent', 'accepted', 'rejected']),
-  valid_at: z.coerce.date(),
-  probability: z.coerce.number().nonnegative(),
   description: z.string().optional(),
-  billing_address: AddressSchema,
-  delivery_address: AddressSchema,
-  scenarios: z.array(ScenarioSchema).min(1),
+  billing_address: AddressSchema.optional(),
+  delivery_address: AddressSchema.optional(),
+  scenarios: z.array(ScenarioSchema).default([]),
   client_id: z.string(),
-  billing_process: z.array(BillingProcessSchema).optional(),
-  signature_process: z.array(SignatureProcessSchema).optional(),
-  documents: z.array(z.any()),
+  billing_process: z.record(z.string(), z.array(BillingProcessSchema)).optional(),
+  signature_process: z.record(z.string(), SignatureProcessSchema).optional(),
+  documents: z.array(z.any()).default([])
 });
 
 type Schema = z.infer<typeof schema>;
@@ -87,10 +83,10 @@ export { type Schema as ClientProposalSchema }
 
 interface Props {
   defaultValues: IProposal
-  clients: IClient[]
 }
 export function useClientProposalUpdateForm(props: Props) {
-  const { defaultValues, clients } = props
+  const [currentClient, setCurrentClient] = useState<IClient>()
+  const { defaultValues } = props
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -99,7 +95,7 @@ export function useClientProposalUpdateForm(props: Props) {
     setValue,
     reset: hookFormReset,
     getValues,
-    watch
+    watch,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues
@@ -133,10 +129,8 @@ export function useClientProposalUpdateForm(props: Props) {
     }
   });
 
-
   const handleDownloadOneProposalDocument = async (props: {
-    document_key: string;
-    proposal: IProposal;
+    document: NonNullable<IProposal["document"]>[string][number];
   }) => {
     try {
       // Chama a ação do servidor
@@ -182,11 +176,14 @@ export function useClientProposalUpdateForm(props: Props) {
     }
   };
 
-  const client_id = watch("client_id");
-  const current_client = useMemo(
-    () => clients.find((cl) => cl.id === client_id),
-    [clients, client_id]
-  );
+  const handleChangeClient = (client: IClient) => {
+    setCurrentClient(client)
+    setValue("billing_address.city", client.address?.city ?? "")
+    setValue("billing_address.street", client.address?.street ?? "")
+    setValue("billing_address.postal_code", client.address?.postal_code ?? "")
+    setValue("billing_address.state", client.address?.state ?? "")
+    setValue("billing_address.country", client.address?.country ?? "")
+  }
 
   return {
     register,
@@ -200,6 +197,8 @@ export function useClientProposalUpdateForm(props: Props) {
     removeScenario,
     getValues,
     handleDownloadOneProposalDocument,
-    current_client
+    currentClient,
+    handleChangeClient,
+    watch
   };
 }

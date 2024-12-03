@@ -11,18 +11,14 @@ class DownloadOneProposalDocumentUsecase {
     this.objectRepository = proposalObjectRepository;
   }
 
-  async execute(input: { document_key: string, proposal: IProposal }) {
+  async execute(input: { document: NonNullable<IProposal["document"]>[string][number] }) {
     try {
-      const { document_key, proposal } = input
-      const result = await this.objectRepository.findOne(document_key)
+      const { document } = input
+      const result = await this.objectRepository.findOne(document.key)
       if (!result) return null
-
-      const [document] = proposal.documents.filter(document => document.key === document_key)
       const { data, contentType } = result
-
       const name = `${document.name}.${setContentType(contentType)}`
       const uInt8Array = new Uint8Array(data)
-
       return { buffer: uInt8Array, name }
     } catch (err) {
       throw err

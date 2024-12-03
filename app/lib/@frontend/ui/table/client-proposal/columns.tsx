@@ -1,6 +1,5 @@
 import { deleteOneClientProposalById } from "@/app/lib/@backend/action";
 import { IClient, IProposal } from "@/app/lib/@backend/domain";
-import { clientConstants } from "@/app/lib/constant";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
@@ -11,14 +10,6 @@ export const columns: ColumnDef<IProposal & { client: IClient }>[] = [
     cell: ({ row }) => {
       const input = row.original;
       return input.client.company_name;
-    },
-  },
-  {
-    header: "Fase",
-    accessorKey: "phase",
-    cell: ({ row }) => {
-      const input = row.original;
-      return clientConstants.proposalPhase[input.phase];
     },
   },
   {

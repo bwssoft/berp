@@ -1,62 +1,62 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProductRepository, IProposal, IProposalObjectRepository, IProposalRepository, IRuleRepository } from "../../../domain";
-import { productRepository, proposalRepository, ruleRepository } from "../../../repository/mongodb";
+import { IProposal, IRuleRepository } from "../../../domain";
+import { ruleRepository } from "../../../repository/mongodb";
 import { IRule, RuleOperator, RuleScope } from "../../../domain/client/entity/rule.definition";
 import { OmieEnterpriseEnum } from "../../../domain/@shared/gateway/omie/omie.gateway.interface";
-import { proposalObjectRepository } from "../../../repository/s3";
 
+type Input = { scenario: Scenario }
+type Output = {
+  line_item_id: string,
+  requires_contract: boolean
+  omie_enterprise: OmieEnterpriseEnum
+}[]
+export interface IAnalyseProposalScenarioUsecase {
+  execute(input: Input): Promise<Output>
+}
 
 type LineItem = IProposal["scenarios"][number]["line_items"][number]
 type Scenario = IProposal["scenarios"][number]
 
-export interface IAnalyseProposalScenarioUsecase {
-  execute(input: { scenario: Scenario }): Promise<{
-    [label in OmieEnterpriseEnum]: string[];
-  }>
-}
 
 class AnalyseProposalScenarioUsecase {
-  objectRepository: IProposalObjectRepository;
-  proposalRepository: IProposalRepository;
-  productRepository: IProductRepository;
   ruleRepository: IRuleRepository;
 
   constructor() {
-    this.objectRepository = proposalObjectRepository
-    this.proposalRepository = proposalRepository
-    this.productRepository = productRepository
     this.ruleRepository = ruleRepository
   }
 
-  async execute(input: { scenario: Scenario }) {
+  async execute(input: Input) {
     try {
       const { scenario } = input;
 
-      const result: { [omie_enterprise in OmieEnterpriseEnum]: string[] } = {
-        BWS: [],
-        ICB: [],
-        ICBFILIAL: [],
-        MGC: [],
-        WFC: [],
-      }
+      const result: Output = []
+
       const rules = await this.ruleRepository.findAll()
 
       const scenarioEnterprise = this.getOmieEnterprise(scenario, rules);
 
       if (scenarioEnterprise) {
         for (const lineItem of scenario.line_items) {
-          result[OmieEnterpriseEnum[scenarioEnterprise.omie_enterprise]].push(lineItem.product_id);
+          result.push({
+            line_item_id: lineItem.id,
+            requires_contract: scenarioEnterprise.rule.requires_contract,
+            omie_enterprise: OmieEnterpriseEnum[scenarioEnterprise.omie_enterprise]
+          });
         }
       } else {
         for (const lineItem of scenario.line_items) {
           const lineItemEnterprise = this.getOmieEnterprise(lineItem, rules);
           if (lineItemEnterprise) {
-            result[lineItemEnterprise.omie_enterprise].push(lineItem.product_id);
+            result.push({
+              line_item_id: lineItem.id,
+              requires_contract: lineItemEnterprise.rule.requires_contract,
+              omie_enterprise: OmieEnterpriseEnum[lineItemEnterprise.omie_enterprise]
+            });
           }
         }
       }
 
-      return result;
+      return result
     } catch (err) {
       throw err;
     }

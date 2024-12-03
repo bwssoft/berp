@@ -10,6 +10,7 @@ export interface IRule {
   omie_enterprise: OmieEnterpriseEnum; // Empresa Omie associada à regra
   created_at: Date; // Data de criação
   priority: number
+  requires_contract: boolean
 }
 
 export enum RuleScope {

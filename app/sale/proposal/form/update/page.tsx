@@ -1,4 +1,8 @@
-import { findAllClient, findAllProduct } from "@/app/lib/@backend/action";
+import {
+  findAllClient,
+  findAllNegotiationType,
+  findAllProduct,
+} from "@/app/lib/@backend/action";
 import { findOneClientProposal } from "@/app/lib/@backend/action";
 import { ClientProposalUpdateForm } from "@/app/lib/@frontend/ui/form/client-proposal";
 
@@ -24,9 +28,10 @@ export default async function Page(props: Props) {
       </div>
     );
   }
-  const [clients, products] = await Promise.all([
+  const [clients, products, negotiationType] = await Promise.all([
     findAllClient(),
     findAllProduct(),
+    findAllNegotiationType(),
   ]);
   return (
     <div>
@@ -45,6 +50,7 @@ export default async function Page(props: Props) {
           clients={clients}
           products={products}
           proposal={proposal}
+          negotiationType={negotiationType}
         />
       </div>
     </div>

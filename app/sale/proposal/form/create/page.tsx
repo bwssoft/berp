@@ -1,10 +1,15 @@
-import { findAllClient, findAllProduct } from "@/app/lib/@backend/action";
+import {
+  findAllClient,
+  findAllNegotiationType,
+  findAllProduct,
+} from "@/app/lib/@backend/action";
 import { ClientProposalCreateForm } from "@/app/lib/@frontend/ui";
 
 export default async function Page() {
-  const [clients, products] = await Promise.all([
+  const [clients, products, negotiationType] = await Promise.all([
     findAllClient(),
     findAllProduct(),
+    findAllNegotiationType(),
   ]);
   return (
     <div>
@@ -19,7 +24,11 @@ export default async function Page() {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <ClientProposalCreateForm clients={clients} products={products} />
+        <ClientProposalCreateForm
+          clients={clients}
+          products={products}
+          negotiationType={negotiationType}
+        />
       </div>
     </div>
   );

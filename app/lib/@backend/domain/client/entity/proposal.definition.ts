@@ -1,29 +1,23 @@
 import { OmieEnterpriseEnum } from "../../@shared/gateway/omie/omie.gateway.interface";
 
 export interface IProposal {
-  id: string;
-  phase: 'negotiation' | 'proposal_sent' | 'accepted' | 'rejected';
-  valid_at: Date;
-  probability: number
-  description?: string;
-  billing_address: Address;
-  delivery_address: Address;
-  scenarios: Scenario[];
-  user_id: string;
-  client_id: string;
-  billing_process?: BillingProcess[]
-  signature_process?: SignatureProcess[]
-  created_at: Date
-  documents: Document[]
-}
-
-interface Document {
   id: string
-  scenario_id: string
-  omie_enterprise: OmieEnterpriseEnum
-  key: string
-  name: string
-  size: number
+  description?: string
+  billing_address?: Address
+  delivery_address?: Address
+  scenarios: Scenario[]
+  user_id: string
+  client_id: string
+  created_at: Date
+  billing_process?: {
+    [scenario_id: string]: BillingProcess[]
+  }
+  signature_process?: {
+    [scenario_id: string]: SignatureProcess
+  }
+  document?: {
+    [scenario_id: string]: Document[]
+  }
 }
 
 interface Address {
@@ -43,11 +37,11 @@ interface Scenario {
   discount_value: number;
   subtotal_with_discount: number;
   grand_total: number;
+  line_items: LineItem[];
   freight?: {
     value: number
     type: FreightType
   };
-  line_items: LineItem[];
 }
 
 export enum Currency {
@@ -70,6 +64,7 @@ export enum FreightType {
 
 interface LineItem {
   id: string
+  negotiation_type_id: string
   product_id: string
   quantity: number;
   unit_price: number;
@@ -81,13 +76,12 @@ interface BillingProcess {
   id: string
   omie_enterprise: OmieEnterpriseEnum
   line_item_id: string[]
-  installment_quantity: number
+  installment_quantity?: number
   omie_sale_order_id?: string
 }
 
 interface SignatureProcess {
   id: string
-  scenario_id: string
   document_id: string[]
   contact: {
     id: string
@@ -96,4 +90,12 @@ interface SignatureProcess {
     sent: boolean
     requested: boolean
   }[]
+}
+
+interface Document {
+  id: string
+  key: string
+  name: string
+  size: number
+  omie_enterprise: OmieEnterpriseEnum
 }

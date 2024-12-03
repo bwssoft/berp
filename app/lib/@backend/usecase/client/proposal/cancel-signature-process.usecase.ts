@@ -1,9 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProposal, IProposalRepository } from "../../../domain";
+import { IProposalRepository } from "../../../domain";
 import { proposalRepository } from "../../../repository/mongodb";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "./analyse-proposal-scenario.usecase";
 
-class InitializeSignatureProcessUscase {
+class CancelSignatureProcessUscase {
   analyseProposalScenarioUsecase: IAnalyseProposalScenarioUsecase
   proposalRepository: IProposalRepository;
 
@@ -13,21 +13,15 @@ class InitializeSignatureProcessUscase {
   }
 
   async execute(input: {
-    proposal_id: string,
     scenario_id: string,
-    document_id: string[]
+    proposal_id: string,
   }) {
-    const { document_id, proposal_id, scenario_id } = input
-    const signature_process: NonNullable<IProposal["signature_process"]>[number] = {
-      contact: [],
-      document_id: document_id.map(id => id),
-      id: crypto.randomUUID()
-    }
+    const { scenario_id, proposal_id } = input
     await this.proposalRepository.updateOne(
       { id: proposal_id },
       {
-        $set: {
-          [`signature_process.${scenario_id}`]: signature_process
+        $unset: {
+          [`signature_process.${scenario_id}`]: ""
         }
       })
     try {
@@ -38,6 +32,6 @@ class InitializeSignatureProcessUscase {
 
 }
 
-export const initializeSignatureProcessUscase = singleton(
-  InitializeSignatureProcessUscase
+export const cancelSignatureProcessUscase = singleton(
+  CancelSignatureProcessUscase
 );

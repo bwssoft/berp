@@ -8,7 +8,6 @@ import { proposalRepository } from "../../../repository/mongodb";
 import { nanoid } from "nanoid";
 import { OmieEnterpriseEnum } from "../../../domain/@shared/gateway/omie/omie.gateway.interface";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "./analyse-proposal-scenario.usecase";
-import { object } from "zod";
 
 class CreateOneProposalDocumentUsecase {
   objectRepository: IProposalObjectRepository;
@@ -33,23 +32,27 @@ class CreateOneProposalDocumentUsecase {
       const proposal_id = proposal.id
       proposal.scenarios = [scenario]
 
-      const documents = await Promise.all(Object.keys(scenarioByEnterprise).map(async enterprise => {
-        const now = Date.now()
+      const documents = await Promise.all(
+        scenarioByEnterprise
+          .filter(el => el.requires_contract)
+          .map(async ({ omie_enterprise }) => {
+            const now = Date.now()
 
-        const html = proposalToHtmlDataMapper.format(proposal)
-        const buffer = await htmlToPdf(html, undefined);
+            const html = proposalToHtmlDataMapper.format(proposal)
+            const buffer = await htmlToPdf(html, undefined);
 
-        const key = this.generateKey(now, proposal_id, scenario_id)
-        const name = this.generateFilaname(now, scenario.name)
-        const size = buffer.length
-        return {
-          buffer,
-          key,
-          name,
-          size,
-          omie_enterprise: enterprise
-        }
-      }))
+            const key = this.generateKey(now, proposal_id, scenario_id)
+            const name = this.generateFilaname(omie_enterprise)
+            const size = buffer.length
+            return {
+              buffer,
+              key,
+              name,
+              size,
+              omie_enterprise
+            }
+          })
+      )
 
       await this.objectRepository.create(documents.map(doc => ({
         data: Buffer.from(doc.buffer),
@@ -60,10 +63,9 @@ class CreateOneProposalDocumentUsecase {
         { id: proposal_id },
         {
           $push: {
-            documents: {
+            [`document.${scenario_id}`]: {
               $each: documents.map(doc => ({
                 id: nanoid(),
-                scenario_id,
                 key: doc.key,
                 name: doc.name,
                 size: doc.size,
@@ -78,15 +80,17 @@ class CreateOneProposalDocumentUsecase {
     }
   }
 
-  generateFilaname(now: number, scenario_name: string) {
-    return `${formatDate(new Date(now), { includeHours: true })}__${scenario_name
-      .toLowerCase()
-      .normalize('NFD') // Separa caracteres com acento dos seus diacríticos
-      .replace(/[\u0300-\u036f]/g, '') // Remove os diacríticos (acentos)
-      .replace(/[^a-z0-9\s]/gi, '') // Remove outros caracteres especiais
-      .replace(/\s+/g, '-')}`; // Substitui espaços por traços
-
+  generateFilaname(omie_enterprise: OmieEnterpriseEnum) {
+    return `Contrato_${omie_enterprise.toUpperCase()}`; // Substitui espaços por traços
   }
+
+  // scenario_name
+  //   .toLowerCase()
+  //   .normalize('NFD') // Separa caracteres com acento dos seus diacríticos
+  //   .replace(/[\u0300-\u036f]/g, '') // Remove os diacríticos (acentos)
+  //   .replace(/[^a-z0-9\s]/gi, '') // Remove outros caracteres especiais
+  //   .replace(/\s+/g, '-')
+
   generateKey(now: number, proposal_id: string, scenario_id: string) {
     return `${proposal_id}/${scenario_id}/${now.toString()}.pdf`;
   }
