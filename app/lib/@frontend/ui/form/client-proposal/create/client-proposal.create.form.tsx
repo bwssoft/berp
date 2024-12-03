@@ -642,9 +642,9 @@ function Scenario({
                           key={item.id}
                           className="grid grid-cols-1 lg:flex lg:items-end lg:justify-between lg:gap-4 mb-2"
                         >
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-4 items-end flex-grow">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4 items-end flex-grow">
                             {/* Tipo de Negociação */}
-                            <div className="col-span-1 lg:col-span-2">
+                            <div className="col-span-full lg:col-span-1">
                               {index === 0 && (
                                 <label
                                   htmlFor="negotiation_type"
@@ -669,7 +669,7 @@ function Scenario({
                             </div>
 
                             {/* Produto */}
-                            <div className="col-span-1 lg:col-span-2">
+                            <div className="col-span-full lg:col-span-2">
                               {index === 0 && (
                                 <label
                                   htmlFor="product_id"
@@ -694,7 +694,7 @@ function Scenario({
                             </div>
 
                             {/* Quantidade */}
-                            <div>
+                            <div className="col-span-full lg:col-span-1">
                               {index === 0 && (
                                 <label
                                   htmlFor="quantity"
@@ -715,7 +715,7 @@ function Scenario({
                             </div>
 
                             {/* Preço Unitário */}
-                            <div>
+                            <div className="col-span-full lg:col-span-1">
                               {index === 0 && (
                                 <label
                                   htmlFor="unit_price"
@@ -743,7 +743,7 @@ function Scenario({
                             </div>
 
                             {/* Desconto */}
-                            <div>
+                            <div className="col-span-full lg:col-span-1">
                               {index === 0 && (
                                 <label
                                   htmlFor="discount"
@@ -771,7 +771,7 @@ function Scenario({
                             </div>
 
                             {/* Preço Total */}
-                            <div>
+                            <div className="col-span-full lg:col-span-1">
                               {index === 0 && (
                                 <label
                                   htmlFor="total_price"
@@ -805,10 +805,9 @@ function Scenario({
                             <Button
                               type="button"
                               onClick={() => remove(index)}
-                              className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit pr-2"
+                              className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
                             >
                               <XMarkIcon width={16} height={16} />
-                              Remover linha
                             </Button>
                           </div>
                         </div>
