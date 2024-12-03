@@ -83,10 +83,11 @@ export { type Schema as ClientProposalSchema }
 
 interface Props {
   defaultValues: IProposal
+  client: IClient
 }
 export function useClientProposalUpdateForm(props: Props) {
-  const [currentClient, setCurrentClient] = useState<IClient>()
-  const { defaultValues } = props
+  const { defaultValues, client } = props
+  const [currentClient, setCurrentClient] = useState<IClient>(client)
   const {
     register,
     handleSubmit: hookFormSubmit,

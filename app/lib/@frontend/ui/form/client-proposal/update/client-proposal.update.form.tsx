@@ -45,13 +45,12 @@ import {
   useWatch,
 } from "react-hook-form";
 import { nanoid } from "nanoid";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import {
   cancelBillingProcess,
   cancelSignatureProcess,
   createOneProposalDocument,
   deleteOneProposalDocument,
-  downloadOneProposalDocument,
   initializeBillingProcess,
   initializeSignatureProcess,
 } from "@/app/lib/@backend/action";
@@ -60,12 +59,13 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { SaleProposalBillingProcess } from "../../../table/sale-proposal-billing-process";
 interface Props {
   clients: IClient[];
+  client: IClient;
   products: IProduct[];
   proposal: IProposal;
   negotiationType: INegotiationType[];
 }
 export function ClientProposalUpdateForm(props: Props) {
-  const { clients, products, proposal, negotiationType } = props;
+  const { clients, products, proposal, negotiationType, client } = props;
   const {
     register,
     handleSubmit,
@@ -80,6 +80,7 @@ export function ClientProposalUpdateForm(props: Props) {
     handleChangeClient,
   } = useClientProposalUpdateForm({
     defaultValues: proposal,
+    client,
   });
 
   return (
