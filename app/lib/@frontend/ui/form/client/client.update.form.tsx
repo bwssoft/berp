@@ -35,73 +35,6 @@ export function ClientUpdateForm(props: Props) {
     <form action={() => handleSubmit()}>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="sector"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Setor
-              </label>
-              <select
-                id="sector"
-                className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                {...register("sector")}
-              >
-                <option>Selecione um setor</option>
-                {Object.entries(clientConstants.sectors).map(([key, value]) => (
-                  <option key={key} value={key}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="type"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Tipo
-              </label>
-              <select
-                id="type"
-                className="mt-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                {...register("type")}
-              >
-                <option>Selecione um tipo</option>
-                {Object.entries(clientConstants.types).map(([key, value]) => (
-                  <option key={key} value={key}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="col-span-full">
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Descrição
-              </label>
-              <div className="mt-2">
-                <textarea
-                  id="description"
-                  rows={3}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue={""}
-                  {...register("description")}
-                />
-              </div>
-              <p className="mt-3 text-sm leading-6 text-gray-600">
-                Escreva um pouco sobre o cliente.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
             Informações da empresa
           </h2>
@@ -112,7 +45,7 @@ export function ClientUpdateForm(props: Props) {
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-3">
               <label
-                htmlFor="corporate_name"
+                htmlFor="company_name"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
                 Razão Social
@@ -120,10 +53,10 @@ export function ClientUpdateForm(props: Props) {
               <div className="mt-2">
                 <input
                   type="text"
-                  id="corporate_name"
-                  autoComplete="corporate_name"
+                  id="company_name"
+                  autoComplete="company_name"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("corporate_name")}
+                  {...register("company_name")}
                 />
               </div>
             </div>
@@ -159,7 +92,7 @@ export function ClientUpdateForm(props: Props) {
                   type="text"
                   autoComplete="state_registration"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("state_registration")}
+                  {...register("tax_details.state_registration")}
                 />
               </div>
             </div>
@@ -177,9 +110,30 @@ export function ClientUpdateForm(props: Props) {
                   type="text"
                   autoComplete="municipal_registration"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("municipal_registration")}
+                  {...register("tax_details.municipal_registration")}
                 />
               </div>
+            </div>
+
+            <div className="col-span-full">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Descrição
+              </label>
+              <div className="mt-2">
+                <textarea
+                  id="description"
+                  rows={3}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  defaultValue={""}
+                  {...register("description")}
+                />
+              </div>
+              <p className="mt-3 text-sm leading-6 text-gray-600">
+                Escreva um pouco sobre o cliente.
+              </p>
             </div>
 
             <div className="col-span-3">
@@ -195,7 +149,7 @@ export function ClientUpdateForm(props: Props) {
                   id="country"
                   autoComplete="country"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.country")}
+                  {...register("address.country")}
                 />
               </div>
             </div>
@@ -212,7 +166,7 @@ export function ClientUpdateForm(props: Props) {
                   id="street"
                   autoComplete="street"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.street")}
+                  {...register("address.street")}
                 />
               </div>
             </div>
@@ -230,7 +184,7 @@ export function ClientUpdateForm(props: Props) {
                   id="city"
                   autoComplete="address-level2"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.city")}
+                  {...register("address.city")}
                 />
               </div>
             </div>
@@ -248,7 +202,7 @@ export function ClientUpdateForm(props: Props) {
                   id="state"
                   autoComplete="address-level1"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.state")}
+                  {...register("address.state")}
                 />
               </div>
             </div>
@@ -266,7 +220,7 @@ export function ClientUpdateForm(props: Props) {
                   id="postal_code"
                   autoComplete="postal_code"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.postal_code")}
+                  {...register("address.postal_code")}
                 />
               </div>
             </div>
@@ -301,36 +255,7 @@ export function ClientUpdateForm(props: Props) {
                     placeholder="Telefone"
                     {...register(`contacts.${index}.phone`)}
                   />
-                  <select
-                    id="contact-role"
-                    className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register(`contacts.${index}.role`)}
-                  >
-                    <option>Cargo</option>
-                    {Object.entries(clientConstants.contactRoles).map(
-                      ([key, value]) => (
-                        <option key={key} value={key}>
-                          {value}
-                        </option>
-                      )
-                    )}
-                  </select>
-                  <select
-                    id="contact-department"
-                    className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    {...register(`contacts.${index}.department`)}
-                  >
-                    <option value="select-department-empty-0">
-                      Departamento
-                    </option>
-                    {Object.entries(clientConstants.contactDepartments).map(
-                      ([key, value]) => (
-                        <option key={key} value={key}>
-                          {value}
-                        </option>
-                      )
-                    )}
-                  </select>
+
                   <Button
                     type="button"
                     onClick={() => handleRemoveContact(index)}
@@ -346,9 +271,12 @@ export function ClientUpdateForm(props: Props) {
               onClick={() =>
                 handleAppendContact({
                   name: "",
-                  phone: "",
-                  department: "other" as any,
-                  role: "other" as any,
+                  phone: { principal: "" },
+                  email: { principal: "" },
+                  labels: { principal: "" },
+                  can_sign_contract: false,
+                  created_at: new Date(),
+                  id: crypto.randomUUID(),
                 })
               }
               className="mt-5 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"

@@ -1,18 +1,19 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { ISaleOrder, ISaleOrderRepository, IProduct } from "@/app/lib/@backend/domain"
-import { saleOrderRepository } from "@/app/lib/@backend/repository/mongodb"
+import { ISaleOrderRepository } from "@/app/lib/@backend/domain";
+import { saleOrderRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../../decorators";
 
 class FindAllSaleOrderUsecase {
-  repository: ISaleOrderRepository
+  repository: ISaleOrderRepository;
 
   constructor() {
-    this.repository = saleOrderRepository
+    this.repository = saleOrderRepository;
   }
 
+  @RemoveMongoId()
   async execute() {
-    return await this.repository.findAll()
+    return await this.repository.findAll({ active: true });
   }
-
 }
 
-export const findAllSaleOrderUsecase = singleton(FindAllSaleOrderUsecase)
+export const findAllSaleOrderUsecase = singleton(FindAllSaleOrderUsecase);

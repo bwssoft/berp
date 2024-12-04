@@ -1,18 +1,26 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IDevice, IFirmware, IRequestToUpdate, IRequestToUpdateRepository } from "@/app/lib/@backend/domain"
-import { requestToUpdateRepository } from "@/app/lib/@backend/repository/mongodb"
+import {
+  IDevice,
+  IFirmware,
+  IRequestToUpdate,
+  IRequestToUpdateRepository,
+} from "@/app/lib/@backend/domain";
+import { requestToUpdateRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
 
 class FindAllRequestToUpdateUsecase {
-  repository: IRequestToUpdateRepository
+  repository: IRequestToUpdateRepository;
 
   constructor() {
-    this.repository = requestToUpdateRepository
+    this.repository = requestToUpdateRepository;
   }
 
   async execute() {
-    const pipeline = this.pipeline()
-    const aggregate = await this.repository.aggregate(pipeline)
-    return await aggregate.toArray() as (IRequestToUpdate & { device: IDevice, firmware: IFirmware })[]
+    const pipeline = this.pipeline();
+    const aggregate = await this.repository.aggregate(pipeline);
+    return (await aggregate.toArray()) as (IRequestToUpdate & {
+      device: IDevice;
+      firmware: IFirmware;
+    })[];
   }
 
   pipeline() {
@@ -22,39 +30,41 @@ class FindAllRequestToUpdateUsecase {
           from: "device",
           as: "device",
           localField: "device_id",
-          foreignField: "id"
-        }
+          foreignField: "id",
+        },
       },
       {
         $lookup: {
           from: "firmware",
           as: "firmware",
           localField: "firmware_id",
-          foreignField: "id"
-        }
+          foreignField: "id",
+        },
       },
       {
         $match: {
           device: { $not: { $size: 0 } },
-          firmware: { $not: { $size: 0 } }
-        }
+          firmware: { $not: { $size: 0 } },
+        },
       },
       {
         $project: {
           device: { $first: "$device" },
           firmware: { $first: "$firmware" },
           created_at: 1,
-          id: 1
-        }
+          id: 1,
+        },
       },
       {
         $sort: {
-          _id: -1
-        }
-      }
-    ]
-    return pipeline
+          _id: -1,
+        },
+      },
+    ];
+    return pipeline;
   }
 }
 
-export const findAllRequestToUpdateUsecase = singleton(FindAllRequestToUpdateUsecase)
+export const findAllRequestToUpdateUsecase = singleton(
+  FindAllRequestToUpdateUsecase
+);

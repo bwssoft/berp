@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
-import "./globals.css";
 import { Layout, Toaster } from "@/app/lib/@frontend/ui";
+import type { Metadata } from "next";
+import HolyLoader from "holy-loader";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "BErp",
@@ -14,6 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <Layout>
+      <HolyLoader
+        color="linear-gradient(to right, #fcff54, #5a8cff, #c07cff)"
+        speed={250}
+        easing="linear"
+        showSpinner
+      />
       {children}
       <Toaster />
     </Layout>

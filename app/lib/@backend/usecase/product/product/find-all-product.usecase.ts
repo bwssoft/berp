@@ -1,17 +1,20 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IProductRepository } from "@/app/lib/@backend/domain"
-import { productRepository } from "@/app/lib/@backend/repository/mongodb"
+import { IProduct, IProductRepository } from "@/app/lib/@backend/domain";
+import { productRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { type Filter } from "mongodb";
+import { RemoveMongoId } from "../../../decorators";
 
 class FindAllProductUsecase {
-  repository: IProductRepository
+  repository: IProductRepository;
 
   constructor() {
-    this.repository = productRepository
+    this.repository = productRepository;
   }
 
-  async execute() {
-    return await this.repository.findAll()
+  @RemoveMongoId()
+  async execute(params: Filter<IProduct> = {}) {
+    return await this.repository.findAll(params);
   }
 }
 
-export const findAllProductUsecase = singleton(FindAllProductUsecase)
+export const findAllProductUsecase = singleton(FindAllProductUsecase);

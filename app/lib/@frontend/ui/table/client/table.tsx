@@ -14,7 +14,7 @@ export function ClientTable(props: Props) {
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => data.corporate_name}
+      mobileDisplayValue={(data) => data.company_name}
       mobileKeyExtractor={(data) => data.created_at?.toISOString()}
       className="w-full mt-10"
     />

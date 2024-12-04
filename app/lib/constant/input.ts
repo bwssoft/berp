@@ -9,16 +9,24 @@ const measure_unit = {
 }
 
 const category = {
-  mdm: "mdm (Modem, gps)",
-  ids: "ids (Indutor)",
-  cis: "cis (Circuito integrado)",
-  com: "com (Conector)",
-  pcb: "pcb (Placa de circuito impresso)",
-  bat: "bat (Bateria)",
-  cht: "cht (Chicote)",
-  cas: "cas (Case)",
-  ant: "ant (Antena)",
-  dis: "dis (Diodo smd)",
+  cap: "Capacitores",
+  dio: "Diodos",
+  fet: "Transistores MOSFET",
+  swa: "Chave analógica",
+  dcd: "Conversores DC-DC",
+  res: "Resistores",
+  con: "Conectores",
+  mod: "Módulos",
+  ldo: "Reguladores de Tensão Linear",
+  led: "LEDs",
+  sen: "Sensores",
+  ind: "Indutores",
+  mem: "Memórias",
+  ic: "Circuitos Integrados",
+  ant: "Antena",
+  fus: "Fusível",
+  swi: "Chave mecânica",
+  trn: "Transistor"
 }
 
 export const inputConstants = {

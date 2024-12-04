@@ -1,5 +1,5 @@
 import { Path } from "@/app/lib/util/path";
-import { GetCountryNameByCode } from "@/app/lib/util/getCountryNameByCode";
+import { GetCountryNameByCode } from "@/app/lib/util/get-country-name-by-code";
 import { appHashsMapping } from "@/app/lib/constant/app-hashs";
 import { IClient } from "../entity";
 import { BaseOmieEntity } from "../../../controller/client/client.dto";
@@ -19,16 +19,19 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
     return cleaned.length === 14 ? "CNPJ" : "CPF";
   },
   "created_at": () => new Date(),
-  corporate_name: (data) => data.event.nome_fantasia,
-  omie_code_metadata: (data) => {
+  trade_name: (data) => data.event.nome_fantasia,
+  omie_metadata: (data) => {
     const enterprise = appHashsMapping[data.appHash];
     return {
+      codigo_cliente_integracao: data.event.codigo_cliente_integracao,
       [enterprise]: data.event.codigo_cliente_omie
     }
   },
-  state_registration: (data) => data.event.inscricao_estadual,
-  municipal_registration: (data) => data.event.inscricao_municipal,
-  billing_address: (data) => {
+  tax_details: (data) => ({
+    state_registration: data.event.inscricao_estadual,
+    municipal_registration: data.event.inscricao_municipal,
+  }),
+  address: (data) => {
     return {
       street: data.event.endereco,
       postal_code: data.event.cep,
@@ -42,32 +45,22 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
 
     if (data.event.telefone1_ddd && data.event.telefone1_numero) {
       contacts.push({
-        phone: `${data.event.telefone1_ddd}${data.event.telefone1_numero}`.replace(/[^\d]+/g, ''),
-        name: data.event.contato,
-        role: "owner",
-        department: "owner"
+        created_at: new Date(),
+        address: {
+          state: data.event.estado || undefined,
+          city: data.event.cidade || undefined,
+          postal_code: data.event.cep || undefined,
+          country: data.event.codigo_pais || undefined,
+          street: data.event.endereco || undefined
+        },
+        can_sign_contract: false,
+        name: data.event.nome_fantasia,
+        email: data.event.email ? { "principal": data.event.email } : undefined,
+        phone: data.event.telefone1_numero ? { "principal": `${data.event.telefone1_ddd ?? ""}${data.event.telefone1_numero ?? ""}` } : undefined,
+        labels: { "omie": "omie" },
+        id: crypto.randomUUID()
       })
     }
-
-
-
-    if (data.event.telefone2_ddd && data.event.telefone2_numero) {
-      const isEquals = contacts.find(contact => {
-        return contact.phone === `${data.event.telefone2_ddd}${data.event.telefone2_numero}`;
-      });
-
-      if (isEquals) {
-        return contacts;
-      }
-
-      contacts.push({
-        phone: `${data.event.telefone2_ddd}${data.event.telefone2_numero}`,
-        name: data.event.contato,
-        role: "owner",
-        department: "owner"
-      })
-    }
-
     return contacts;
   }
 };

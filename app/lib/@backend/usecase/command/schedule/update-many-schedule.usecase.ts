@@ -14,7 +14,7 @@ class UpdateManyScheduleUsecase {
     value: Omit<ISchedule, "id" | "created_at">,
   ) {
     const _query = { id: { $in: query.id } }
-    return await this.repository.updateMany(_query, value)
+    return await this.repository.updateMany(_query, { $set: value })
   }
 }
 

@@ -1,17 +1,19 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { ICommandRepository } from "@/app/lib/@backend/domain"
-import { commandRepository } from "@/app/lib/@backend/repository/mongodb"
+import { ICommandRepository } from "@/app/lib/@backend/domain";
+import { commandRepository } from "@/app/lib/@backend/repository/mongodb";
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "../../../decorators";
 
 class FindAllCommandUsecase {
-  repository: ICommandRepository
+  repository: ICommandRepository;
 
   constructor() {
-    this.repository = commandRepository
+    this.repository = commandRepository;
   }
 
+  @RemoveMongoId()
   async execute() {
-    return await this.repository.findAll()
+    return await this.repository.findAll();
   }
 }
 
-export const findAllCommandUsecase = singleton(FindAllCommandUsecase)
+export const findAllCommandUsecase = singleton(FindAllCommandUsecase);

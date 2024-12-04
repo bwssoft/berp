@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { Kanban } from "./kanban";
 import {
   IProduct,
   IProductionOrder,
   ISaleOrder,
 } from "@/app/lib/@backend/domain";
+import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
+import { Kanban } from "./kanban";
 
 type CustomProductionOrder = IProductionOrder & {
   sale_order: ISaleOrder;
@@ -24,15 +23,11 @@ const Container = (props: Props) => {
   const [productionOrders, setProductionOrders] =
     useState<CustomProductionOrder[]>(_productionOrders);
 
+  useEffect(() => setProductionOrders(_productionOrders), [_productionOrders]);
+
   const moveCard = async (id: string, toStage: string, toIndex: number) => {
     const order = productionOrders.find((order) => order.id === id);
     if (order) {
-      await updateOneProductionOrderById(
-        { id: order.id },
-        {
-          stage: toStage as IProductionOrder["stage"],
-        }
-      );
       const updatedOrders = productionOrders.filter((order) => order.id !== id);
       order.stage = toStage as any;
       updatedOrders.splice(toIndex, 0, order);

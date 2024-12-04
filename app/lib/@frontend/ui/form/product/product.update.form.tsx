@@ -1,27 +1,26 @@
 "use client";
+import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
+import { IProductWithTechnicalSheet } from "@/app/lib/@backend/usecase/product/product/dto/product-with-technical-sheet.dto";
+import { Controller } from "react-hook-form";
 import { Button } from "../../button";
-import { PhotoIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { IInput, IProduct } from "@/app/lib/@backend/domain";
-import { useProductUpdateForm } from "./use-product-update-form";
-import { tailwindColorInHex } from "@/app/lib/constant/tailwind-colors";
-import { Stat } from "../../stat";
 import { BarChart, DoughnutChart } from "../../chart";
+import { Stat } from "../../stat";
+import { useProductUpdateForm } from "./use-product-update-form";
 
 interface Props {
-  inputs: IInput[];
-  product: IProduct;
+  technicalSheets: ITechnicalSheetWithInputs[];
+  product: IProductWithTechnicalSheet;
 }
+
 export function ProductUpdateForm(props: Props) {
-  const { inputs, product } = props;
-  const {
-    register,
-    handleSubmit,
-    inputsOnForm,
-    handleAppendInput,
-    handleRemoveInput,
-    insights,
-  } = useProductUpdateForm({ defaultValues: product, inputs });
+  const { product, technicalSheets } = props;
+  const { register, handleSubmit, insights, control } = useProductUpdateForm({
+    currentProduct: product,
+    technicalSheets,
+  });
+
   const { merged, stats, totalCost, averageCost } = insights;
+
   return (
     <div className="w-full flex flex-col gap-6">
       <form action={() => handleSubmit()}>
@@ -88,56 +87,44 @@ export function ProductUpdateForm(props: Props) {
                 />
               </div>
 
-              <div className="col-span-full">
-                <label
-                  htmlFor="inputs"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Insumos
+              <div className="sm:col-span-4">
+                <label className="block text-sm font-medium leading-6 text-gray-900">
+                  Ficha técnica
                 </label>
-                {inputsOnForm.map((item, index) => (
-                  <div key={item.id} className="flex space-x-4 mt-2">
-                    <select
-                      id={`input-${index}`}
-                      className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...register(`inputs.${index}.input_id`)}
-                    >
-                      <option value={`select-empty-${index}`}>
-                        Selecione um Insumo
-                      </option>
-                      {inputs.map((i) => (
-                        <option key={i.id} value={i.id}>
-                          {i.name} - {i.measure_unit}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="number"
-                      placeholder="Quantidade"
-                      className="block w-1/2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...register(`inputs.${index}.quantity`)}
+                <div className="mt-2">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                    <Controller
+                      control={control}
+                      name="technical_sheet"
+                      render={({ field }) => (
+                        <select
+                          className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          value={field.value?.id}
+                          onChange={(event) => {
+                            const currentTechnicalSheet = technicalSheets.find(
+                              (item) => item.id === event.target.value
+                            );
+
+                            field.onChange(currentTechnicalSheet);
+                          }}
+                        >
+                          <option value={""}>
+                            Selecione uma ficha técnica
+                          </option>
+
+                          {technicalSheets.map((technicalSheetData) => (
+                            <option
+                              key={technicalSheetData.id}
+                              value={technicalSheetData.id}
+                            >
+                              {technicalSheetData.name}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     />
-                    <Button
-                      type="button"
-                      onClick={() => handleRemoveInput(index)}
-                      className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
-                    >
-                      <XMarkIcon width={16} height={16} />
-                    </Button>
                   </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleAppendInput({
-                      input_id: `select-empty-${inputsOnForm.length}`,
-                      quantity: 0,
-                    })
-                  }
-                  className="mt-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"
-                >
-                  Adicionar insumo
-                </button>
+                </div>
               </div>
             </div>
           </div>

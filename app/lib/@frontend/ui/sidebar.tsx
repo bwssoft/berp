@@ -1,6 +1,13 @@
 "use client";
 import { cn } from "@/app/lib/util";
-import { Dialog, DialogPanel, Disclosure, Transition, TransitionChild } from "@headlessui/react";
+import {
+  Dialog,
+  DialogPanel,
+  Disclosure,
+  DisclosureButton,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import {
   Bars3Icon,
   BriefcaseIcon,
@@ -17,7 +24,12 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { ForwardRefExoticComponent, RefAttributes, SVGProps, useState } from "react";
+import {
+  ForwardRefExoticComponent,
+  RefAttributes,
+  SVGProps,
+  useState,
+} from "react";
 import { useIsOnPathname } from "../hook/is-on-pathname";
 
 type NavItem = {
@@ -69,6 +81,7 @@ const navigation: NavItem[] = [
           { name: "Entradas e Saídas", pathname: "/product/enter-exit" },
           { name: "Estoque", pathname: "/product/stock" },
           { name: "Análise", pathname: "/product/analysis" },
+          { name: "Fichas técnicas", pathname: "/technical-sheet/management" },
         ],
       },
       {
@@ -104,17 +117,19 @@ const navigation: NavItem[] = [
       {
         name: "Ordens de produção",
         children: [
+          { name: "Dashboard", pathname: "/production-order/dashboard" },
           { name: "Gestão", pathname: "/production-order/management" },
           { name: "Kanban", pathname: "/production-order/kanban" },
+          { name: "Processos", pathname: "/production-process/management" },
         ],
       },
-      {
-        name: "Ordens de Configuração",
-        children: [
-          { name: "Gestão", pathname: "/production-order/management" },
-          { name: "Kanban", pathname: "/production-order/kanban" },
-        ],
-      },
+      // {
+      //   name: "Ordens de configuração",
+      //   children: [
+      //     { name: "Gestão", pathname: "/production-order/management" },
+      //     { name: "Kanban", pathname: "/production-order/kanban" },
+      //   ],
+      // },
     ],
   },
   {
@@ -163,13 +178,18 @@ export function SideBar() {
           <Link
             href={item.pathname ?? "#"}
             className={cn(
-              isOnPathname(item.pathname) ? "bg-gray-50" : "hover:bg-gray-50 pl-",
+              isOnPathname(item.pathname)
+                ? "bg-gray-50"
+                : "hover:bg-gray-50 pl-",
               "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700",
               paddingLeft // Adiciona padding-left baseado na profundidade
             )}
           >
             {item.icon && (
-              <item.icon className="h-6 w-6 shrink-0 text-gray-400" aria-hidden="true" />
+              <item.icon
+                className="h-6 w-6 shrink-0 text-gray-400"
+                aria-hidden="true"
+              />
             )}
             {item.name}
           </Link>
@@ -177,15 +197,20 @@ export function SideBar() {
           <Disclosure as="div">
             {({ open }) => (
               <>
-                <Disclosure.Button
+                <DisclosureButton
                   className={cn(
-                    isOnPathname(item.pathname) ? "bg-gray-50" : "hover:bg-gray-50",
+                    isOnPathname(item.pathname)
+                      ? "bg-gray-50"
+                      : "hover:bg-gray-50",
                     "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm font-semibold leading-6 text-gray-700",
                     paddingLeft // Adiciona padding-left baseado na profundidade
                   )}
                 >
                   {item?.icon && (
-                    <item.icon className="h-6 w-6 shrink-0 text-gray-400" aria-hidden="true" />
+                    <item.icon
+                      className="h-6 w-6 shrink-0 text-gray-400"
+                      aria-hidden="true"
+                    />
                   )}
                   {item.name}
                   <ChevronRightIcon
@@ -195,9 +220,11 @@ export function SideBar() {
                     )}
                     aria-hidden="true"
                   />
-                </Disclosure.Button>
+                </DisclosureButton>
                 <Disclosure.Panel as="ul" className="mt-1">
-                  {item?.children?.map((subItem) => renderNavItem(subItem, depth + 1))}
+                  {item?.children?.map((subItem) =>
+                    renderNavItem(subItem, depth + 1)
+                  )}
                 </Disclosure.Panel>
               </>
             )}
@@ -248,14 +275,21 @@ export function SideBar() {
                         onClick={() => setSidebarOpen(false)}
                       >
                         <span className="sr-only">Close sidebar</span>
-                        <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                        <XMarkIcon
+                          className="h-6 w-6 text-white"
+                          aria-hidden="true"
+                        />
                       </button>
                     </div>
                   </TransitionChild>
                   {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
                     <div className="flex h-16 shrink-0 items-center">
-                      <img className="h-8 w-auto" src="/logo-bws.png" alt="Your Company" />
+                      <img
+                        className="h-8 w-auto"
+                        src="/logo-bws.png"
+                        alt="Your Company"
+                      />
                     </div>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -278,7 +312,11 @@ export function SideBar() {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
             <div className="flex h-16 shrink-0 items-center">
-              <img className="h-8 w-auto" src="/logo-bws.png" alt="Your Company" />
+              <img
+                className="h-8 w-auto"
+                src="/logo-bws.png"
+                alt="Your Company"
+              />
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -292,7 +330,11 @@ export function SideBar() {
                     href="#"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                   >
-                    <img className="h-8 w-8 rounded-full bg-gray-50" src="/avatar.webp" alt="" />
+                    <img
+                      className="h-8 w-8 rounded-full bg-gray-50"
+                      src="/avatar.webp"
+                      alt=""
+                    />
                     <span className="sr-only">Your profile</span>
                     <span aria-hidden="true">Oswaldo Conti-Bosso</span>
                   </a>
@@ -311,10 +353,16 @@ export function SideBar() {
             <span className="sr-only">Open sidebar</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
-          <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">Dashboard</div>
+          <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
+            Dashboard
+          </div>
           <a href="#">
             <span className="sr-only">Your profile</span>
-            <img className="h-8 w-8 rounded-full bg-gray-50" src="/avatar.webp" alt="" />
+            <img
+              className="h-8 w-8 rounded-full bg-gray-50"
+              src="/avatar.webp"
+              alt=""
+            />
           </a>
         </div>
       </div>

@@ -1,209 +1,32 @@
 "use client";
-// //  Inspiration https://s3-ap-southeast-2.amazonaws.com/focusbooster.cdn/Landing+pages/kanban-and-focusbooster/kanban-board-notion.png
-
-// import { IProductionOrder } from "@/app/lib/@backend/domain";
-
-// interface Props {
-//   productionOrders: IProductionOrder[];
-// }
-// export function Kanban(props: Props) {
-//   const { productionOrders } = props;
-
-//   const to_produce = productionOrders.filter((p) => p.stage === "to_produce");
-//   const producing = productionOrders.filter((p) => p.stage === "producing");
-//   const quality = productionOrders.filter((p) => p.stage === "quality");
-//   const checked = productionOrders.filter((p) => p.stage === "checked");
-//   const completed = productionOrders.filter((p) => p.stage === "completed");
-//   const stored = productionOrders.filter((p) => p.stage === "stored");
-//   return (
-//     <div className="h-screen mt-10 w-full">
-//       <div className="grid md:grid-cols-5 sm:grid-cols-2 gap-5">
-//         {/* <!-- To-do --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-slate-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Para Produzir
-//               </h2>
-//               <p className="text-gray-400 text-sm">{to_produce.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {to_produce.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">Social media</h3>
-//                 <p className="bg-slate-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Para Produzir
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* <!-- WIP Kanban --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-yellow-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Produzindo
-//               </h2>
-//               <p className="text-gray-400 text-sm">{producing.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {producing.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">Blog post live</h3>
-//                 <p className="bg-yellow-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Produzindo
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//                 <p className="text-xs text-gray-500 mt-2">Jun 21, 2019</p>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* <!-- Complete Kanban --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-orange-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Qualidade
-//               </h2>
-//               <p className="text-gray-400 text-sm">{quality.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {quality.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">
-//                   Morning emails and to-do list
-//                 </h3>
-//                 <p className="bg-orange-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Qualidade
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//                 <p className="text-xs text-gray-500 mt-2">Jun 21, 2019</p>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* <!-- Checked --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-purple-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Checagem
-//               </h2>
-//               <p className="text-gray-400 text-sm">{checked.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {checked.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">Social media</h3>
-//                 <p className="bg-purple-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Checagem
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* <!-- Complete --> */}
-//         <div className="bg-white p-2 border-x-2 border-x-gray-100">
-//           {/* <!-- board category header --> */}
-//           <div className="flex flex-row justify-between items-center mb-2 mx-1">
-//             <div className="flex items-center">
-//               <h2 className="bg-green-200 text-sm w-max px-1 rounded mr-2 text-gray-700">
-//                 Finalizada
-//               </h2>
-//               <p className="text-gray-400 text-sm">{completed.length}</p>
-//             </div>
-//           </div>
-//           {/* <!-- board card --> */}
-//           <div className="grid grid-rows-2 gap-2">
-//             {completed.map((p) => (
-//               <div
-//                 key={p.id}
-//                 className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
-//               >
-//                 <h3 className="text-sm mb-3 text-gray-700">Social media</h3>
-//                 <p className="bg-green-200 text-xs w-max p-1 rounded mr-2 text-gray-700">
-//                   Finalizada
-//                 </p>
-//                 <div className="flex flex-row items-center mt-2">
-//                   <div className="bg-gray-300 rounded-full w-4 h-4 mr-2"></div>
-//                   <a href="#" className="text-xs text-gray-500">
-//                     Sophie Worso
-//                   </a>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-"use client";
-import React from "react";
-import { useDrag, useDrop } from "react-dnd";
+import {
+  findAllProductionOrderWithProduct,
+  updateOneProductionOrderById,
+} from "@/app/lib/@backend/action";
+import { updateSaleOrderStatus } from "@/app/lib/@backend/action/omie/sale-order/update-sale-order-status";
 import {
   IProduct,
   IProductionOrder,
   ISaleOrder,
 } from "@/app/lib/@backend/domain";
+import { toast } from "@/app/lib/@frontend/hook";
+import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
 import { productionOrderConstants } from "@/app/lib/constant";
+import { formatDate } from "@/app/lib/util";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@bwsoft/accordion";
+import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
+import Link from "next/link";
+import React from "react";
+import { useDrag, useDrop } from "react-dnd";
 
 const ItemType = "CARD";
 
-type CustomProductionOrder = IProductionOrder & {
+export type CustomProductionOrder = IProductionOrder & {
   sale_order: ISaleOrder;
   products_in_sale_order: IProduct[];
 };
@@ -241,23 +64,48 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
   return (
     <div
       ref={(node) => ref(drop(node)) as any}
-      className="w-full p-2 rounded shadow-sm border-gray-100 border-2"
+      className="w-full p-2 rounded shadow-sm border-gray-100 border-2 relative"
     >
-      <h3 className="text-sm mb-3 text-gray-700">{order.id?.slice(0, 5)}</h3>
-      <p
-        className={`${
-          stageColor[order.stage]
-        } text-xs w-max p-1 rounded mr-2 text-gray-700  font-bold`}
-      >
-        {productionOrderConstants.stage[order.stage]}
-      </p>
+      <div className="w-full flex flex-col justify-between">
+        <div className="w-full flex justify-between items-center">
+          <p className="text-sm mb-3 text-gray-500 font-semibold">
+            OP-{order.code.toString().padStart(5, "0")}
+          </p>
+          <p
+            className={`bg-white text-xs w-max py-1 px-2 rounded mr-2 text-gray-500 border border-gray-500 font-bold`}
+          >
+            {order.sale_order.omie_webhook_metadata.enterprise}
+          </p>
+        </div>
+        <p className="text-sm mb-3 text-gray-700 font-semibold">
+          {formatDate(new Date(order.created_at), { includeHours: true })}
+        </p>
+      </div>
+
+      <div className="w-full flex flex-col-reverse gap-3 justify-between">
+        <p
+          className={`${
+            stageColor[order.stage]
+          } text-xs w-max p-1 rounded mr-2 text-gray-700 font-bold`}
+        >
+          {productionOrderConstants.stage[order.stage]}
+        </p>
+
+        <p className="text-sm text-gray-500/80 font-semibold">
+          No. pedido OMIE:{" "}
+          <span className="text-gray-800">
+            {order.sale_order.omie_webhook_metadata.order_number}
+          </span>
+        </p>
+      </div>
+
       {order.products_in_sale_order.map((p) => (
         <div key={p.id} className="flex flex-row items-center mt-2">
           <div
             style={{ backgroundColor: p.color }}
             className={`rounded-full w-4 h-4 mr-2`}
           ></div>
-          <a href="#" className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500">
             <span className="text-xs text-gray-700">
               {
                 order.sale_order.products.find((el) => el.product_id === p.id)
@@ -265,9 +113,36 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
               }{" "}
             </span>
             - {p.name}
-          </a>
+          </p>
         </div>
       ))}
+
+      {order.production_process?.[0].process_uuid && (
+        <Accordion type="multiple" className="flex flex-col gap-1 mt-4">
+          <AccordionItem value={order.id}>
+            <AccordionTrigger
+              className="text-sm font-semibold text-gray-800"
+              value={order.id}
+            >
+              Progresso das etapas
+            </AccordionTrigger>
+
+            <AccordionContent>
+              <ProductionOrderStepsUpdateForm productionOrder={order} />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      )}
+
+      <div className="w-full flex items-center justify-end mt-2">
+        <Link
+          href={`/production-order/${order.id}`}
+          className="bottom-2 right-2 p-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200"
+          title="Ver detalhes da ordem de produção"
+        >
+          <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
+        </Link>
+      </div>
     </div>
   );
 };
@@ -282,7 +157,52 @@ interface ColumnProps {
 const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
   const [, ref] = useDrop({
     accept: ItemType,
-    drop: (item: { id: string }) => moveCard(item.id, stage, orders.length),
+    drop: async (item: { id: string }) => {
+      const [currentOrder] = await findAllProductionOrderWithProduct({
+        id: item.id,
+      });
+
+      const productionOrderHaveSteps =
+        currentOrder?.production_process !== undefined;
+
+      const areAllProductionOrderStepsChecked =
+        currentOrder?.production_process?.[0].steps_progress.every(
+          ({ checked }) => checked === true
+        );
+
+      if (
+        productionOrderHaveSteps &&
+        stage === "completed" &&
+        !areAllProductionOrderStepsChecked
+      ) {
+        toast({
+          title: "Erro!",
+          description: "É necessário finalizar todas as etapas",
+          variant: "error",
+        });
+        moveCard(item.id, currentOrder.stage, orders.length);
+        return;
+      }
+
+      if (currentOrder) {
+        await updateOneProductionOrderById(
+          { id: currentOrder.id },
+          {
+            stage: stage as IProductionOrder["stage"],
+          }
+        );
+      }
+
+      if (currentOrder && stage === "completed") {
+        await updateSaleOrderStatus({
+          enterprise: currentOrder!.sale_order.omie_webhook_metadata.enterprise,
+          saleOrderId: currentOrder!.sale_order.omie_webhook_metadata.order_id,
+          statusId: "50",
+        });
+      }
+
+      moveCard(item.id, stage, orders.length);
+    },
   });
 
   return (
@@ -319,8 +239,8 @@ interface KanbanProps {
 }
 
 export const Kanban: React.FC<KanbanProps> = ({
-  productionOrders,
   moveCard,
+  productionOrders,
 }) => {
   const stages = [
     { id: "in_warehouse", title: "No Almoxarifado" },
@@ -330,7 +250,7 @@ export const Kanban: React.FC<KanbanProps> = ({
   ];
 
   const getOrdersByStage = (stage: string) =>
-    productionOrders.filter((order) => order.stage === stage);
+    productionOrders.filter((order) => order.stage === stage) ?? [];
 
   return (
     <div className="h-screen mt-10 w-full grid md:grid-cols-4 sm:grid-cols-2 gap-5">
