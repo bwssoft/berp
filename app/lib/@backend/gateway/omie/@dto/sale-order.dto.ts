@@ -1,12 +1,41 @@
 import { OmieBoolean } from "../../../domain/@shared/gateway/omie/omie.gateway.interface";
 import { OmieSaleOrderStage } from "../../../domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
 
-interface DET {
-  combustivel: object;
+interface Det {
   ide: {
-    codigo_item: number;
-    codigo_item_integracao: string;
-    simples_nacional: OmieBoolean;
+    codigo_item_integracao: string; // Código de Integração do Item do Pedido de Venda. Obrigatório.
+    codigo_item?: number; // ID do Item do Pedido. Não deve ser informado, preenchimento automático.
+    simples_nacional?: string; // Indica se a empresa é optante pelo Simples Nacional. Opcional. Valores: 'S' ou 'N'.
+    acao_item?: string; // Ação para o item. Opcional. Valores: 'E' (excluir).
+    id_ordem_producao?: number; // ID da Ordem de Produção. Não deve ser informado, disponível apenas para consulta.
+    regra_impostos?: number; // DEPRECATED.
+  };
+  produto: {
+    codigo_produto: number; // ID do Produto. Obrigatório.
+    codigo_produto_integracao?: string; // Código de integração do Produto. Opcional.
+    codigo?: string; // Código do Produto exibido na tela do Pedido de Vendas. Opcional.
+    descricao?: string; // Descrição do Produto. Opcional.
+    cfop?: string; // CFOP - Código Fiscal de Operações e Prestações. Opcional.
+    ncm?: string; // NCM - Nomenclatura Comum do Mercosul. Opcional.
+    ean?: string; // EAN - European Article Number. Opcional.
+    unidade?: string; // Unidade. Opcional.
+    quantidade: number; // Quantidade. Obrigatório.
+    valor_unitario: number; // Valor Unitário. Obrigatório.
+    codigo_tabela_preco?: number; // Código da tabela de preço. Opcional.
+    valor_mercadoria?: number; // Valor da Mercadoria. Opcional.
+    tipo_desconto?: string; // Tipo de Desconto. Opcional.
+    percentual_desconto?: number; // Percentual de Desconto. Opcional.
+    valor_desconto?: number; // Valor do Desconto. Opcional.
+    valor_deducao?: number; // Valor da Dedução. Opcional.
+    valor_icms_desonerado?: number; // Valor do ICMS desonerado. Opcional.
+    motivo_icms_desonerado?: string; // Código do Motivo de desoneração do ICMS. Opcional.
+    valor_total?: number; // Valor Total. Opcional.
+    indicador_escala?: string; // Indicador de Produção em Escala Relevante. Opcional. Valores: 'S' ou 'N'.
+    cnpj_fabricante?: string; // CNPJ do Fabricante da Mercadoria. Opcional.
+    kit?: string; // Indica se o produto é um kit. Opcional.
+    componente_kit?: string; // Indica se o produto é um componente de um kit. Opcional.
+    codigo_item_kit?: number; // ID do Item do kit (pai) que o componente pertence. Opcional.
+    reservado?: string; // Indica se o estoque do produto será reservado. Opcional. Valores: 'S' ou 'N'.
   };
   imposto: {
     cofins_padrao: {
@@ -109,6 +138,31 @@ interface DET {
       valor_unid_trib_pis_st: number;
     };
   };
+  rastreabilidade: {
+    numeroLote?: string; // Número do Lote. Opcional.
+    qtdeProdutoLote?: number; // Quantidade de Produto no Lote. Opcional.
+    dataFabricacaoLote?: string; // Data de Fabricação/Produção. Opcional. Formato: 'dd/mm/aaaa'.
+    dataValidadeLote?: string; // Data de Validade. Opcional. Formato: 'dd/mm/aaaa'.
+    codigoAgregacaoLote?: string; // Código de Agregação. Opcional.
+  };
+  combustivel: {
+    cCodigoANP?: string; // Código de Produto da ANP. Opcional.
+    cDescrANP?: string; // Descrição do Produto conforme ANP. Opcional.
+    cCODIF?: string; // Registro do CODIF. Opcional.
+    nPercGLP?: number; // Percentual de GLP Derivado do Petróleo. Opcional.
+    nPercGasNacional?: number; // Percentual de Gás Natural Nacional. Opcional.
+    nPercGasImportado?: number; // Percentual de Gás Natural Importado. Opcional.
+    nValorPartida?: number; // Valor de Partida. Opcional.
+    nQtdeFatTempAmb?: number; // Quantidade Faturada à Temperatura Ambiente. Opcional.
+    cUFConsumoComb?: string; // UF de Consumo. Opcional.
+    nBC_CIDE?: number; // Base de Cálculo (em quantidade) da CIDE. Opcional.
+    nAliquota_CIDE?: number; // Valor da Alíquota em Reais da CIDE. Opcional.
+    nValor_CIDE?: number; // Valor da CIDE. Opcional.
+    nBC_UFRem?: number; // Base de Cálculo da UF Remetente. Opcional.
+    nValorUFRem?: number; // Valor da UF Remetente. Opcional.
+    nBC_UFDest?: number; // Base de Cálculo da UF Destino. Opcional.
+    nValorUFDest?: number; // Valor da UF Destino. Opcional.
+  };
   inf_adic: {
     codigo_categoria_item: string;
     codigo_cenario_impostos_item: string;
@@ -121,31 +175,15 @@ interface DET {
     peso_bruto: number;
     peso_liquido: number;
   };
-  observacao: object;
-  produto: {
-    cfop: string;
-    cnpj_fabricante: string;
-    codigo: string;
-    codigo_produto: number;
-    codigo_tabela_preco: number;
-    descricao: string;
-    ean: string;
-    indicador_escala: string;
-    motivo_icms_desonerado: string;
-    ncm: string;
-    percentual_desconto: number;
-    quantidade: number;
-    reservado: OmieBoolean;
-    tipo_desconto: string;
-    unidade: string;
-    valor_deducao: number;
-    valor_desconto: number;
-    valor_icms_desonerado: number;
-    valor_mercadoria: number;
-    valor_total: number;
-    valor_unitario: number;
+  observacao: {
+    obs_venda: string
   };
-  rastreabilidade: object;
+  tributavel: {
+    cUnidTrib?: string; // Unidade tributável do Item. Opcional.
+    nQuantTrib?: number; // Quantidade tributável do item. Opcional.
+    nValorTrib?: number; // Valor tributável do item. Opcional.
+    cEanTrib?: string; // Código EAN tributável do item. Opcional.
+  }
 }
 
 interface Cabecalho {
@@ -292,78 +330,11 @@ interface Parcela {
   conta_corrente_adiantamento?: number; // Conta Corrente de Adiantamento. Opcional.
 }
 
-
 export interface IncluirPedidoVendaProduto {
   cabecalho: Cabecalho
   frete?: Frete
   informacoes_adicionais: InformacoesAdicionais
   lista_parcelas: { parcelas: Parcela[] }
+  det: Det[]
 }
 
-export interface IOmieSaleOrder {
-  pedido_venda_produto: {
-    cabecalho: {
-      bloqueado: OmieBoolean;
-      codigo_cenario_impostos: string;
-      codigo_cliente: number;
-      codigo_parcela: string;
-      codigo_pedido: number;
-      data_previsao: string;
-      etapa: OmieSaleOrderStage;
-      numero_pedido: string;
-      origem_pedido: string;
-      qtde_parcelas: number;
-      quantidade_itens: number;
-    };
-    det: DET[];
-    exportacao: {
-      nao_exportacao: OmieBoolean;
-    };
-    frete: {
-      modalidade: string;
-      peso_bruto: number;
-      peso_liquido: number;
-    };
-    infoCadastro: {
-      autorizado: OmieBoolean;
-      cImpAPI: OmieBoolean;
-      cancelado: OmieBoolean;
-      dAlt: string;
-      dInc: string;
-      denegado: OmieBoolean;
-      devolvido: OmieBoolean;
-      devolvido_parcial: OmieBoolean;
-      faturado: OmieBoolean;
-      hAlt: string;
-      hInc: string;
-      uAlt: string;
-      uInc: string;
-    };
-    informacoes_adicionais: {
-      codigo_categoria: string;
-      codigo_conta_corrente: number;
-      consumidor_final: OmieBoolean;
-      enviar_email: OmieBoolean;
-      enviar_pix: OmieBoolean;
-      utilizar_emails: string;
-    };
-    lista_parcelas: {
-      parcela: [
-        {
-          data_vencimento: string;
-          numero_parcela: number;
-          percentual: number;
-          quantidade_dias: number;
-          valor: number;
-        }
-      ];
-    };
-    observacoes: {
-      obs_venda: string;
-    };
-    total_pedido: {
-      valor_mercadorias: number;
-      valor_total_pedido: number;
-    };
-  };
-}
