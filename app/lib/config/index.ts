@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { OmieEnterpriseEnum } from "../@backend/domain/@shared/gateway/omie/omie.gateway.interface";
 
 const OmieSecretSchema = z.object({
   key: z.string(),
@@ -6,13 +7,10 @@ const OmieSecretSchema = z.object({
 });
 
 const EnviromentsSchema = z.object({
-  OMIE_SECRETS: z.object({
-    BWS: OmieSecretSchema,
-    ICB: OmieSecretSchema,
-    WFC: OmieSecretSchema,
-    MGC: OmieSecretSchema,
-    ICBFILIAL: OmieSecretSchema,
-  }),
+  OMIE_SECRETS: z.record(
+    z.nativeEnum(OmieEnterpriseEnum),
+    OmieSecretSchema
+  ),
   OMIE_URL: z.string(),
   FIREBASE_CONFIG: z.any(),
   AWS_REGION: z.string(),

@@ -25,7 +25,8 @@ export type OmieCallFunctions =
   | "ConsultarPedido"
   | "TrocarEtapaPedido"
   | "ListarAnexo"
-  | "ObterAnexo";
+  | "ObterAnexo"
+  | "IncluirPedido";
 
 export enum OmieEnterpriseEnum {
   MGC = "MGC",
