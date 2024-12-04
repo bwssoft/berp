@@ -17,16 +17,10 @@ class ProposalToHtmlDataMapper {
       <body class="bg-gray-100 text-gray-800 font-sans">
         <div class="max-w-4xl mx-auto p-8 bg-white shadow-md rounded-lg">
           <h1 class="text-3xl font-bold text-blue-600 mb-4">Proposta Comercial</h1>
-          <p class="text-gray-600 mb-2"><strong>Fase:</strong> ${input.phase}</p>
-          <p class="text-gray-600 mb-2"><strong>Data de Validade:</strong> ${new Date(input.valid_at).toLocaleDateString()}</p>
-          <p class="text-gray-600 mb-4"><strong>Probabilidade:</strong> ${input.probability}%</p>
           <hr class="my-4">
           <h2 class="text-xl font-semibold text-gray-800 mb-2">Descrição</h2>
           <p class="text-gray-600 mb-4">${input.description}</p>
           <h2 class="text-xl font-semibold text-gray-800 mb-2">Endereço de Cobrança</h2>
-          <p class="text-gray-600">${input.billing_address.street}, ${input.billing_address.city}, ${input.billing_address.state}, ${input.billing_address.postal_code}, ${input.billing_address.country}</p>
-          <h2 class="text-xl font-semibold text-gray-800 mt-4 mb-2">Endereço de Entrega</h2>
-          <p class="text-gray-600">${input.delivery_address.street}, ${input.delivery_address.city}, ${input.delivery_address.state}, ${input.delivery_address.postal_code}, ${input.delivery_address.country}</p>
           <hr class="my-4">
           <h2 class="text-2xl font-semibold text-blue-600 mb-4">Cenários</h2>
           ${input.scenarios.map((scenario: any) => `
