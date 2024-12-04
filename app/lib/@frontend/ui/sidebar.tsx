@@ -64,6 +64,10 @@ const navigation: NavItem[] = [
         icon: FolderIcon,
         children: [
           { name: "Gestão", pathname: "/input/management" },
+          {
+            name: "Categorias",
+            pathname: "/input/category",
+          },
           { name: "Entradas e Saídas", pathname: "/input/enter-exit" },
           { name: "Estoque", pathname: "/input/stock" },
           { name: "Análise", pathname: "/input/analysis" },
