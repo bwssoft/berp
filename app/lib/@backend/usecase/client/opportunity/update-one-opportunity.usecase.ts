@@ -10,7 +10,7 @@ class UpdateOneOpportunityUsecase {
   }
 
   async execute(query: { id: string }, value: Omit<IOpportunity, "id" | "created_at">) {
-    return await this.repository.updateOne(query, value)
+    return await this.repository.updateOne(query, { $set: value })
   }
 }
 

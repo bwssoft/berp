@@ -16,7 +16,7 @@ class UpdateOneTechnicalSheetUsecase {
     query: { id: string },
     value: Partial<Omit<ITechnicalSheet, "id" | "created_at">>
   ) {
-    return await this.repository.updateOne(query, value);
+    return await this.repository.updateOne(query, { $set: value })
   }
 }
 

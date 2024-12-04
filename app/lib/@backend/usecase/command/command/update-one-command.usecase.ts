@@ -13,7 +13,7 @@ class UpdateOneCommandUsecase {
     query: { id: string },
     value: Omit<ICommand, "id" | "created_at">,
   ) {
-    return await this.repository.updateOne(query, value)
+    return await this.repository.updateOne(query, { $set: value })
   }
 }
 

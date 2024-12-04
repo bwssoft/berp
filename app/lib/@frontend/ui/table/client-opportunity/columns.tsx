@@ -27,7 +27,7 @@ export const columns: ColumnDef<IOpportunity & { client: IClient }>[] = [
     accessorKey: "client",
     cell: ({ row }) => {
       const opportunity = row.original;
-      return opportunity.client.corporate_name;
+      return opportunity.client.company_name;
     },
   },
   {

@@ -10,11 +10,12 @@ export function RemoveMongoId(): MethodDecorator {
       const result = await originalMethod.apply(this, args);
 
       if (Array.isArray(result)) {
-        return result.map(({ _id, ...item }) => ({ ...item }));
+        return result.map(({ _id, insertedId, ...item }) => ({ ...item }));
       }
 
       if (typeof result === "object" && result !== null) {
         if ("_id" in result) delete result["_id"];
+        if ("insertedId" in result) delete result["insertedId"];
         return result;
       }
 

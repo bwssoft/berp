@@ -1,6 +1,6 @@
 import { Layout, Toaster } from "@/app/lib/@frontend/ui";
 import type { Metadata } from "next";
-import NextJsTopLoader from "nextjs-toploader";
+import HolyLoader from "holy-loader";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <Layout>
-      <NextJsTopLoader color="#a855f7" />
+      <HolyLoader
+        color="linear-gradient(to right, #fcff54, #5a8cff, #c07cff)"
+        speed={250}
+        easing="linear"
+        showSpinner
+      />
       {children}
       <Toaster />
     </Layout>

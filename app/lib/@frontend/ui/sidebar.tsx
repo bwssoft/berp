@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogPanel,
   Disclosure,
+  DisclosureButton,
   Transition,
   TransitionChild,
 } from "@headlessui/react";
@@ -63,6 +64,10 @@ const navigation: NavItem[] = [
         icon: FolderIcon,
         children: [
           { name: "Gestão", pathname: "/input/management" },
+          {
+            name: "Categorias",
+            pathname: "/input/category",
+          },
           { name: "Entradas e Saídas", pathname: "/input/enter-exit" },
           { name: "Estoque", pathname: "/input/stock" },
           { name: "Análise", pathname: "/input/analysis" },
@@ -192,7 +197,7 @@ export function SideBar() {
           <Disclosure as="div">
             {({ open }) => (
               <>
-                <Disclosure.Button
+                <DisclosureButton
                   className={cn(
                     isOnPathname(item.pathname)
                       ? "bg-gray-50"
@@ -215,7 +220,7 @@ export function SideBar() {
                     )}
                     aria-hidden="true"
                   />
-                </Disclosure.Button>
+                </DisclosureButton>
                 <Disclosure.Panel as="ul" className="mt-1">
                   {item?.children?.map((subItem) =>
                     renderNavItem(subItem, depth + 1)

@@ -5,7 +5,7 @@ import {
   OmieCredentials,
   OmieDefaultParams,
   OmieEnterpriseEnum,
-} from "../../domain/@shared/gateway/omie/omie.gateway.interface";
+} from "../../../domain/@shared/gateway/omie/omie.gateway.interface";
 
 export class OmieGateway {
   private _apiSecret: string = "";
@@ -76,7 +76,7 @@ export class OmieGateway {
   }
 
   setSecrets(params: OmieEnterpriseEnum) {
-    this._apiKey = config.OMIE_SECRETS[params].key;
-    this._apiSecret = config.OMIE_SECRETS[params].secret;
+    this._apiKey = config.OMIE_SECRETS[params]!.key;
+    this._apiSecret = config.OMIE_SECRETS[params]!.secret;
   }
 }

@@ -57,7 +57,7 @@ export function ClientOpportunityUpdateForm(props: Props) {
                 <option>Selecione um cliente</option>
                 {clients.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.corporate_name} - {c.document.value}
+                    {c.trade_name} - {c.document.value}
                   </option>
                 ))}
               </select>

@@ -28,7 +28,7 @@ class UpdateOneFirmwareUsecase {
         }
       )
     }
-    return await this.repository.updateOne(query, value)
+    return await this.repository.updateOne(query, { $set: value })
   }
 }
 

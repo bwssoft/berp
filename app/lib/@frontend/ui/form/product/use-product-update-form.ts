@@ -1,4 +1,5 @@
 import { updateOneProductById } from "@/app/lib/@backend/action";
+import { EProductCategory } from "@/app/lib/@backend/domain";
 import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
 import { IProductWithTechnicalSheet } from "@/app/lib/@backend/usecase/product/product/dto/product-with-technical-sheet.dto";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
@@ -18,6 +19,10 @@ const schema = z.object({
   technical_sheet: z.any({ required_error: "Selecione uma ficha técnica" }),
   color: z.string(),
   files: z.any(),
+  category: z.nativeEnum(EProductCategory),
+  sku: z.string(),
+  price: z.coerce.number(),
+  images: z.array(z.string()).default([]),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -47,7 +52,7 @@ export function useProductUpdateForm(props: Props) {
       description: currentProduct.description,
       name: currentProduct.name,
       technical_sheet: technicalSheets.find(
-        ({ id }) => id === currentProduct.technical_sheets?.[0].id
+        ({ id }) => id === currentProduct.technical_sheets?.[0]?.id
       ),
     },
   });

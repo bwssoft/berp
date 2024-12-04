@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util";
 import { IOmieAttachment } from "./@dto";
-import { OmieGateway } from "./omie.gateway";
+import { OmieGateway } from "./@base";
 
 class AttachmentOmieGateway extends OmieGateway {
   async findAll(idPedido: string) {

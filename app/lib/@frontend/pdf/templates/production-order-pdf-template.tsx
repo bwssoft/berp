@@ -1,7 +1,5 @@
 "use client";
 import {
-  clientSectorMapping,
-  clientTypeMapping,
   IClient,
   IInput,
   IProduct,
@@ -253,7 +251,7 @@ type ClientSectionProps = {
 };
 
 function ClientSection({ client }: ClientSectionProps) {
-  const clientBillingAddresss = client.billing_address;
+  const clientBillingAddresss = client.address;
 
   return (
     <div className="flex flex-col">
@@ -287,7 +285,7 @@ function ClientSection({ client }: ClientSectionProps) {
               Nome
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client.corporate_name}
+              {client.company_name}
             </dd>
           </div>
 
@@ -296,7 +294,7 @@ function ClientSection({ client }: ClientSectionProps) {
               Registro municipal
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client.municipal_registration}
+              {client?.tax_details?.municipal_registration}
             </dd>
           </div>
 
@@ -305,7 +303,7 @@ function ClientSection({ client }: ClientSectionProps) {
               Registro estadual
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client.municipal_registration}
+              {client?.tax_details?.municipal_registration}
             </dd>
           </div>
 
@@ -320,31 +318,13 @@ function ClientSection({ client }: ClientSectionProps) {
 
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">
-              Classificação
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {clientTypeMapping[client.type]}
-            </dd>
-          </div>
-
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">
-              Setor / ramo
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {clientSectorMapping[client.sector]}
-            </dd>
-          </div>
-
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">
               Endereço de cobrança
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              Rua {clientBillingAddresss.street}, {clientBillingAddresss.city},{" "}
-              {clientBillingAddresss.state} -{" "}
-              {clientBillingAddresss.postal_code} -{" "}
-              {clientBillingAddresss.country}
+              Rua {clientBillingAddresss?.street}, {clientBillingAddresss?.city}
+              , {clientBillingAddresss?.state} -{" "}
+              {clientBillingAddresss?.postal_code} -{" "}
+              {clientBillingAddresss?.country}
             </dd>
           </div>
 

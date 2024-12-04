@@ -13,7 +13,7 @@ class UpdateBulkScheduleUsecase {
     query: { id: string },
     value: Omit<ISchedule, "id" | "created_at">,
   }[]) {
-    return await this.repository.updateBulk(operations)
+    return await this.repository.updateBulk(operations.map(({ query, value }) => ({ query, value: { $set: value } })))
   }
 }
 

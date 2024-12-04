@@ -1,21 +1,16 @@
-import { clientConstants } from "@/app/lib/constant";
 import { deleteOneClientById } from "@/app/lib/@backend/action";
 import { IClient } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
 export const columns: ColumnDef<IClient>[] = [
-  { header: "Razão Social", accessorKey: "corporate_name" },
+  { header: "Razão Social", accessorKey: "company_name" },
   {
     header: "Documento",
     accessorKey: "document",
-  },
-  {
-    header: "Setor",
-    accessorKey: "sector",
     cell: ({ row }) => {
       const client = row.original;
-      return clientConstants.sectors[client.sector];
+      return client.document.value;
     },
   },
   {

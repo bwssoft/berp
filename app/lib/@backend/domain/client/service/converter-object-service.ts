@@ -1,8 +1,9 @@
-import { IClient, OmieEnterprise } from "@/app/lib/@backend/domain";
+import { IClient } from "@/app/lib/@backend/domain";
 import { singleton } from "@/app/lib/util";
 import _ from 'lodash';
 import { InterceptionObjectConstants } from "../data-mapper/interception.object.constants";
 import { IConverterObjectService } from "./@dto/converter.object.service";
+import { OmieEnterpriseEnum } from "../../@shared/gateway/omie/omie.gateway.interface";
 
 class ConverterObjectService implements IConverterObjectService {
   public async execute(data: IConverterObjectService.Execute.Params): Promise<IConverterObjectService.Execute.Result> {
@@ -41,13 +42,13 @@ class ConverterObjectService implements IConverterObjectService {
     currentObject,
     entity
   }: IConverterObjectService.MergeHelper.Params): IConverterObjectService.MergeHelper.Result {
-    const currentCompany = Object.keys(currentObject.omie_code_metadata!) as OmieEnterprise[];
-    const entityCompanies = Object.keys(entity.omie_code_metadata!) as OmieEnterprise[];
+    const currentCompany = Object.keys(currentObject.omie_metadata!) as OmieEnterpriseEnum[];
+    const entityCompanies = Object.keys(entity.omie_metadata!) as OmieEnterpriseEnum[];
     const isSameCompany = currentCompany.find(company => entityCompanies.includes(company));
     if (!isSameCompany) {
-      entity['omie_code_metadata'] = {
-        ...entity.omie_code_metadata!,
-        ...currentObject.omie_code_metadata!
+      entity['omie_metadata'] = {
+        ...entity.omie_metadata!,
+        ...currentObject.omie_metadata!
       };
     }
 
@@ -95,9 +96,8 @@ class ConverterObjectService implements IConverterObjectService {
       entity,
       excludeProps: [
         'contacts',
-        'omie_code_metadata',
+        'omie_metadata',
         'id',
-        'type',
         'created_at',
       ]
     });
