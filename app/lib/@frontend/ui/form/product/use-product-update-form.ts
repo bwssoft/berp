@@ -1,7 +1,6 @@
 import { updateOneProductById } from "@/app/lib/@backend/action";
-import { EProductCategory } from "@/app/lib/@backend/domain";
+import { EProductCategory, IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
 import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
-import { IProductWithTechnicalSheet } from "@/app/lib/@backend/usecase/product/product/dto/product-with-technical-sheet.dto";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { productConstants } from "@/app/lib/constant/product";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +27,10 @@ const schema = z.object({
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
-  currentProduct: IProductWithTechnicalSheet;
+  currentProduct: IProduct & {
+    technical_sheets: ITechnicalSheet[];
+    inputs: IInput[];
+  };
   technicalSheets: ITechnicalSheetWithInputs[];
 }
 

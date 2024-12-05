@@ -11,7 +11,7 @@ import {
   findOneProductUsecase,
   findOneProductWithTechnicalSheetsUsecase,
   updateOneProductUsecase,
-} from "../../usecase/product/product";
+} from "../../usecase";
 
 export async function createOneProduct(
   args: Omit<IProduct, "id" | "created_at" | "sequence">

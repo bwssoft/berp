@@ -1,4 +1,4 @@
-import { EventsTopics } from "../../../controller/client/topics.events.dto"
+import { EventsTopics } from "../../../infra/api/controller/sale/client/topics.events.dto"
 import { IClientFacade } from "../facade"
 
 export type ITopicEventsUseCaseConstants = {

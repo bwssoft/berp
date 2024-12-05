@@ -1,10 +1,12 @@
 import { deleteOneProductById } from "@/app/lib/@backend/action";
-import { IProduct } from "@/app/lib/@backend/domain";
+import { IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "../../../hook";
 
-export const columns: ColumnDef<IProduct>[] = [
+export const columns: ColumnDef<
+  IProduct & { technical_sheets: ITechnicalSheet[]; inputs: IInput[] }
+>[] = [
   { header: "Nome", accessorKey: "name" },
   {
     header: "Quant. Insumos",

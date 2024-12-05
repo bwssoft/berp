@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton"
 import { IProposal, IProposalRepository } from "@/app/lib/@backend/domain"
 import { proposalRepository } from "@/app/lib/@backend/infra"
-import { RemoveMongoId } from "../../../decorators"
+import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 
 class CreateOneProposalUsecase {
   repository: IProposalRepository

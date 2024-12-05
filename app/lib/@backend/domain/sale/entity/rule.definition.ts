@@ -11,6 +11,7 @@ export interface IRule {
   created_at: Date; // Data de criação
   priority: number
   requires_contract: boolean
+  requires_sale_order: boolean
 }
 
 export enum RuleScope {

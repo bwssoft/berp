@@ -1,5 +1,5 @@
+import { EventObjectInterfaces, EventsTopics } from "@/app/lib/@backend/infra/api/controller/sale/client/topics.events.dto";
 import { DeleteResult } from "mongodb";
-import { EventObjectInterfaces, EventsTopics } from "../../../../controller/client/topics.events.dto";
 
 export interface IDeleteClientFromWebhookUseCase {
   execute: (data: IDeleteClientFromWebhookUseCase.Execute.Params) => Promise<IDeleteClientFromWebhookUseCase.Execute.Result>;

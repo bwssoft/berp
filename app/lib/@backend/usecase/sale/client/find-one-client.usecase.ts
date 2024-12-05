@@ -2,7 +2,7 @@ import { IClient, IClientRepository } from "@/app/lib/@backend/domain";
 import { clientRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";
-import { RemoveMongoId } from "../../../decorators";
+import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
 
 class FindOneClientUsecase {
   repository: IClientRepository;

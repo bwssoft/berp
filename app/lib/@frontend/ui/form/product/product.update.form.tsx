@@ -1,15 +1,18 @@
 "use client";
 import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
-import { IProductWithTechnicalSheet } from "@/app/lib/@backend/usecase/product/product/dto/product-with-technical-sheet.dto";
 import { Controller } from "react-hook-form";
 import { Button } from "../../button";
 import { BarChart, DoughnutChart } from "../../chart";
 import { Stat } from "../../stat";
 import { useProductUpdateForm } from "./use-product-update-form";
+import { IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
 
 interface Props {
   technicalSheets: ITechnicalSheetWithInputs[];
-  product: IProductWithTechnicalSheet;
+  product: IProduct & {
+    technical_sheets: ITechnicalSheet[];
+    inputs: IInput[];
+  };
 }
 
 export function ProductUpdateForm(props: Props) {

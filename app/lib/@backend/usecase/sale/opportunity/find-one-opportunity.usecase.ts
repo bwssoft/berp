@@ -4,7 +4,7 @@ import {
 } from "@/app/lib/@backend/domain";
 import { opportunityRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "../../../decorators";
+import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
 
 class FindOneOpportunityUsecase {
   repository: IOpportunityRepository;

@@ -1,5 +1,5 @@
+import { EventObjectInterfaces } from "@/app/lib/@backend/infra/api/controller/sale/client/topics.events.dto"
 import { IClient } from "../.."
-import { EventObjectInterfaces } from "../../../../controller/client/topics.events.dto"
 
 export interface IConverterObjectService {
   execute: (data: IConverterObjectService.Execute.Params) => Promise<IConverterObjectService.Execute.Result>

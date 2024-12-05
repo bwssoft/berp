@@ -1286,7 +1286,7 @@ function Scenario({
                           });
                         }}
                       >
-                        Canelar o processo
+                        Cancelar o processo
                       </button>
                     ) : (
                       <></>
@@ -1566,7 +1566,7 @@ function Scenario({
                           });
                         }}
                       >
-                        Canelar o processo
+                        Cancelar o processo
                       </button>
                     ) : (
                       <></>

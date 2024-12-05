@@ -1,4 +1,4 @@
-import { ClientController } from "@/app/lib/@backend/controller/client/client.controller";
+import { ClientController } from "@/app/lib/@backend/infra/api/controller/sale/client/client.controller";
 
 export async function POST(request: Request) {
     try {

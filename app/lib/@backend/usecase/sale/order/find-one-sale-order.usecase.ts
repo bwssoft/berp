@@ -1,7 +1,7 @@
 import { ISaleOrder, ISaleOrderRepository } from "@/app/lib/@backend/domain";
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";
-import { RemoveMongoId } from "../../../decorators";
+import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
 import { saleOrderRepository } from "@/app/lib/@backend/infra";
 
 class FindOneSaleOrderUsecase {

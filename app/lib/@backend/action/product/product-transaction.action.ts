@@ -1,7 +1,7 @@
 "use server"
 
 import { IProduct, IProductTransaction } from "@/app/lib/@backend/domain";
-import { countProductTransactionUsecase, createOneProductTransactionUsecase, findAllProductTransactionWithProductUsecase } from "../../usecase/product/transaction";
+import { countProductTransactionUsecase, createOneProductTransactionUsecase, findAllProductTransactionWithProductUsecase } from "../../usecase";
 import { revalidatePath } from "next/cache";
 
 export async function createOneProductTransaction(args: Omit<IProductTransaction, "id" | "created_at">) {
