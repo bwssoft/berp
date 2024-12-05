@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton"
 import { IInput, IInputTransaction, IInputTransactionRepository } from "@/app/lib/@backend/domain"
-import { inputTransactionRepository } from "@/app/lib/@backend/repository/mongodb"
+import { inputTransactionRepository } from "@/app/lib/@backend/infra"
 
 class FindAllInputTransactionWithInputUsecase {
   repository: IInputTransactionRepository

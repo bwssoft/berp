@@ -1,5 +1,5 @@
 import { deleteOneInputCategoryById } from "@/app/lib/@backend/action/input/input-category.action";
-import { IInputCategory } from "@/app/lib/@backend/domain/input/entity/input-category.definition";
+import { IInputCategory } from "@/app/lib/@backend/domain/engineer/entity/input-category.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "../../../hook";
@@ -44,7 +44,10 @@ export const inputCategoryColumns: ColumnDef<IInputCategory>[] = [
               }
             }}
           >
-            <button type="submit" className="text-indigo-600 hover:text-indigo-900 px-0 py-0">
+            <button
+              type="submit"
+              className="text-indigo-600 hover:text-indigo-900 px-0 py-0"
+            >
               Deletar
             </button>
           </form>

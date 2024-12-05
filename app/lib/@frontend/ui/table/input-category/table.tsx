@@ -1,6 +1,6 @@
 "use client";
 
-import { IInputCategory } from "@/app/lib/@backend/domain/input/entity/input-category.definition";
+import { IInputCategory } from "@/app/lib/@backend/domain/engineer/entity/input-category.definition";
 import { DataTable } from "../../data-table";
 import { inputCategoryColumns } from "./columns";
 

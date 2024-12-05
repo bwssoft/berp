@@ -8,7 +8,7 @@ import {
 import {
   productionOrderRepository,
   productionProcessRepository,
-} from "@/app/lib/@backend/repository/mongodb";
+} from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 
 class UpdateOneProductionProcessUsecase {

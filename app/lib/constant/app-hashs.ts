@@ -1,4 +1,4 @@
-import { OmieEnterpriseEnum } from "../@backend/domain/@shared/gateway/omie/omie.gateway.interface";
+import { OmieEnterpriseEnum } from "../@backend/domain/@shared/gateway/omie.gateway.interface";
 
 export const appHashsMapping = {
   [process.env.OMIE_MGC_APP_HASH as string]: OmieEnterpriseEnum.MGC,

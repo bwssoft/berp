@@ -3,7 +3,7 @@ import {
   IDeviceRepository,
   IProduct,
 } from "@/app/lib/@backend/domain";
-import { deviceRepository } from "@/app/lib/@backend/repository/mongodb";
+import { deviceRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "../../decorators";
 

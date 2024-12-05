@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton"
 import { IProductTransaction, IProductTransactionRepository } from "@/app/lib/@backend/domain"
-import { productTransactionRepository } from "@/app/lib/@backend/repository/mongodb"
+import { productTransactionRepository } from "@/app/lib/@backend/infra"
 
 class CreateOneProductTransactionUsecase {
   repository: IProductTransactionRepository

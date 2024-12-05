@@ -1,4 +1,4 @@
-export * from "./client";
+export * from "./sale";
 export * from "./command";
 export * from "./device";
 export * from "./firmware";
@@ -6,5 +6,4 @@ export * from "./input";
 export * from "./product";
 export * from "./production-order";
 export * from "./production-process";
-export * from "./sale-order";
 export * from "./technical-sheet";

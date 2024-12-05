@@ -1,5 +1,5 @@
 import { IProductionOrderRepository } from "@/app/lib/@backend/domain";
-import { productionOrderRepository } from "@/app/lib/@backend/repository/mongodb";
+import { productionOrderRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "../../decorators";
 

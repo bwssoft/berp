@@ -1,8 +1,8 @@
 "use server";
 
-import { OmieEnterpriseEnum } from "../../../domain/@shared/gateway/omie/omie.gateway.interface";
+import { OmieEnterpriseEnum } from "../../../domain/@shared/gateway/omie.gateway.interface";
 import { OmieSaleOrderStage } from "../../../domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
-import { saleOrderOmieGateway } from "../../../gateway/omie";
+import { saleOrderOmieGateway } from "@/app/lib/@backend/infra";
 
 type GetSaleOrderAttachmentUrlParams = {
   saleOrderId: string;

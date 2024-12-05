@@ -1,5 +1,5 @@
 import { IInputRepository } from "@/app/lib/@backend/domain";
-import { inputRepository } from "@/app/lib/@backend/repository/mongodb";
+import { inputRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "../../../decorators";
 

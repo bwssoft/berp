@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton"
 import { IDevice, IDeviceRepository } from "@/app/lib/@backend/domain"
-import { deviceRepository } from "@/app/lib/@backend/repository/mongodb"
+import { deviceRepository } from "@/app/lib/@backend/infra"
 
 class CreateOneDeviceUsecase {
   repository: IDeviceRepository

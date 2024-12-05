@@ -6,7 +6,7 @@ import {
 import {
   productionOrderRepository,
   saleOrderRepository,
-} from "@/app/lib/@backend/repository/mongodb";
+} from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 
 class DeleteOneProductionOrderUsecase {

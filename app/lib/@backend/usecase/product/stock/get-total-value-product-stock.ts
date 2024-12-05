@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton"
 import { IProduct, IProductStockRepository } from "@/app/lib/@backend/domain"
-import { productStockRepository } from "@/app/lib/@backend/repository/mongodb"
+import { productStockRepository } from "@/app/lib/@backend/infra"
 
 class GetTotalValueProductStockUsecase {
   repository: IProductStockRepository

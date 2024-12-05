@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton"
 import { IInput, IInputRepository } from "@/app/lib/@backend/domain"
-import { inputRepository } from "@/app/lib/@backend/repository/mongodb"
+import { inputRepository } from "@/app/lib/@backend/infra"
 
 class CreateOneInputUsecase {
   repository: IInputRepository

@@ -1,7 +1,6 @@
 import { IFirmwareRepository } from '@/app/lib/@backend/domain'
-import { firmwareRepository } from '../../../repository/mongodb'
+import { firmwareRepository, firebaseGateway } from '@/app/lib/@backend/infra'
 import { IFirebaseGateway } from '../../../domain/@shared/gateway/firebase.gateway.interface'
-import { firebaseGateway } from '../../../gateway/firebase/firebase.gateway'
 import { singleton } from '@/app/lib/util'
 
 class DownloadFirmwareFile {

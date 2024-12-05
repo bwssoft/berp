@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { IInputCategory } from "../../domain/input/entity/input-category.definition";
+import { IInputCategory } from "../../domain/engineer/entity/input-category.definition";
 import { createManyCategoryUsecase } from "../../usecase/input/category/create-many-category.usecase";
 import { createOneInputCategoryUsecase } from "../../usecase/input/category/create-one-category.usecase";
 import { deleteOneInputCategoryUsecase } from "../../usecase/input/category/delete-one-category.usecase";

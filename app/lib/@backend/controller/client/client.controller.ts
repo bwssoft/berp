@@ -1,10 +1,10 @@
-import { IClientController } from "@/app/lib/@backend/domain/client/controller/client.controller";
-import { IClientFacade } from "@/app/lib/@backend/domain/client/facade";
-import { ClientFacade } from "../../usecase/client/@facade";
+import { IClientController } from "@/app/lib/@backend/domain/sale/controller/client.controller";
+import { IClientFacade } from "@/app/lib/@backend/domain/sale/facade";
+import { ClientFacade } from "../../usecase/sale/client/@facade";
 import { EventsTopics } from "./topics.events.dto";
 import { ClientOmieEntity, ClientOmieSchema } from "./client.validator";
 import { BaseOmieEntity } from "./client.dto";
-import { TopicEventsUseCaseConstants } from "../../domain/client/data-mapper/topic.events.usecase.constants";
+import { TopicEventsUseCaseConstants } from "../../domain/sale/data-mapper/topic.events.usecase.constants";
 
 export class ClientController implements IClientController {
   private readonly ClientFacade: IClientFacade;

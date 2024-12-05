@@ -1,5 +1,5 @@
 import { IProductionProcessRepository } from "@/app/lib/@backend/domain";
-import { productionProcessRepository } from "@/app/lib/@backend/repository/mongodb";
+import { productionProcessRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "../../decorators";
 

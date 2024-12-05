@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton"
 import { IInput, IInputTemporalStockRepository } from "@/app/lib/@backend/domain"
-import { inputTemporalStockRepository } from "@/app/lib/@backend/repository/mongodb"
+import { inputTemporalStockRepository } from "@/app/lib/@backend/infra"
 import { getRange } from "@/app/lib/util"
 
 class AnalyzeTemporalInputStockUsecase {

@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IInputCategory } from "../../../domain/input/entity/input-category.definition"
-import { IInputCategoryRepository } from "../../../domain/input/repository/input-category.repository"
-import { inputCategoryRepository } from "../../../repository/mongodb/input/input-category.repository"
+import { IInputCategory } from "../../../domain/engineer/entity/input-category.definition"
+import { IInputCategoryRepository } from "../../../domain/engineer/repository/input-category.repository"
+import { inputCategoryRepository } from "@/app/lib/@backend/infra"
 
 
 class CreateOneInputCategoryUsecase {

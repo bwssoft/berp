@@ -1,5 +1,5 @@
 import { createManyInputCategories } from "@/app/lib/@backend/action/input/input-category.action";
-import { IInputCategory } from "@/app/lib/@backend/domain/input/entity/input-category.definition";
+import { IInputCategory } from "@/app/lib/@backend/domain/engineer/entity/input-category.definition";
 import { xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -11,7 +11,7 @@ interface IInputCategorySheet {
   Nome: string;
 }
 
-interface IInputCategoryCreate extends Omit<IInputCategory, 'id' | 'created_at'> {}
+interface IInputCategoryCreate extends Omit<IInputCategory, 'id' | 'created_at'> { }
 
 const schema = z.object({
   inputs: z.array(z.object({
@@ -61,7 +61,7 @@ export function useInputCategoryCreateFromFileForm() {
 
   async function handleFile(fileList: File[] | null) {
     const inputs = await xlsxToJson<IInputCategoryCreate>(fileList, handleFormatInputFromFile);
-    inputs?.forEach((input) => 
+    inputs?.forEach((input) =>
       handleAppendInput({
         code: input.code,
         name: input.name

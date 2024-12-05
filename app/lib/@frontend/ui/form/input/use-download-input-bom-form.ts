@@ -1,5 +1,5 @@
 import { findAllInputCategories } from "@/app/lib/@backend/action/input/input-category.action";
-import { IInputCategory } from "@/app/lib/@backend/domain/input/entity/input-category.definition";
+import { IInputCategory } from "@/app/lib/@backend/domain/engineer/entity/input-category.definition";
 import ExcelJS from 'exceljs';
 
 export function useDownloadInputBOMForm() {
@@ -7,7 +7,7 @@ export function useDownloadInputBOMForm() {
     event.preventDefault();
 
     const inputCategories = await findAllInputCategories();
-    
+
     const workbook = new ExcelJS.Workbook();
     const sheet = prepareInputSheet(workbook);
 
@@ -18,8 +18,8 @@ export function useDownloadInputBOMForm() {
       allowBlank: false,
       formulae: formatCategoriesSheetValidationFormulae(inputCategories),
       operator: 'equal',
-      showErrorMessage: true, 
-      errorStyle: 'error', 
+      showErrorMessage: true,
+      errorStyle: 'error',
       error: 'Só é possível preencher com um dos valores disponíveis na lista. Se precisar de mais categorias cadastre uma nova em Engenharia > Insumos > Categorias.'
     });
 
@@ -41,10 +41,10 @@ export function useDownloadInputBOMForm() {
 
     // Adiciona os headers da planilha.
     sheet.addRow([
-      'Categoria', 
-      'Nome', 
-      'Part Number 1', 
-      'Nome Fornecedor 1', 
+      'Categoria',
+      'Nome',
+      'Part Number 1',
+      'Nome Fornecedor 1',
       'Part Number 2',
       'Nome Fornecedor 2',
       'Part Number 3',
@@ -64,9 +64,9 @@ export function useDownloadInputBOMForm() {
       type: "list",
       allowBlank: false,
       formulae: ['"cm,m,kg,g,ml,l,un"'],
-      showErrorMessage: true, 
+      showErrorMessage: true,
       operator: 'equal',
-      errorStyle: 'error', 
+      errorStyle: 'error',
       error: 'Só é possível preencher com um dos valores disponíveis na lista.',
     })
 
@@ -79,7 +79,7 @@ export function useDownloadInputBOMForm() {
       type: "decimal",
       allowBlank: false,
       formulae: [0, 9999999],
-      showErrorMessage: true, 
+      showErrorMessage: true,
       operator: 'between',
       showInputMessage: true,
       prompt: 'Use a virgula para valores decimais'
@@ -87,12 +87,12 @@ export function useDownloadInputBOMForm() {
 
     // Formata a largura das colunas utilizadas para um melhor espaçamento.
     formatSheetColumnsWidth(sheet);
-   
+
     return sheet;
   }
 
   function formatSheetColumnsWidth(worksheet: ExcelJS.Worksheet) {
-    for (let i = 0; i < worksheet.columns.length; i += 1) { 
+    for (let i = 0; i < worksheet.columns.length; i += 1) {
       let dataMax = 0;
       const column = worksheet.columns[i];
       for (let j = 1; j < (column.values ?? []).length; j += 1) {

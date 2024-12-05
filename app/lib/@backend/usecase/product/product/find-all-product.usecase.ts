@@ -1,5 +1,5 @@
 import { IProduct, IProductRepository } from "@/app/lib/@backend/domain";
-import { productRepository } from "@/app/lib/@backend/repository/mongodb";
+import { productRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";
 import { RemoveMongoId } from "../../../decorators";

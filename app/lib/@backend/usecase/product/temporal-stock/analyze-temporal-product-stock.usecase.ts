@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton"
 import { IProduct, IProductTemporalStockRepository } from "@/app/lib/@backend/domain"
-import { productTemporalStockRepository } from "@/app/lib/@backend/repository/mongodb"
+import { productTemporalStockRepository } from "@/app/lib/@backend/infra"
 import { getRange } from "@/app/lib/util"
 
 class AnalyzeTemporalProductStockUsecase {

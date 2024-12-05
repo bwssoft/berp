@@ -1,6 +1,6 @@
 import { downloadOneProposalDocument, updateOneClientProposalById } from '@/app/lib/@backend/action';
 import { Currency, FreightType, IClient, IProposal } from '@/app/lib/@backend/domain';
-import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie/omie.gateway.interface';
+import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
