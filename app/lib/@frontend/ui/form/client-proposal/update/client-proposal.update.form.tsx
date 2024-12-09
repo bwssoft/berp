@@ -56,7 +56,7 @@ import {
 } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { SaleProposalBillingProcess } from "../../../table/sale-proposal-billing-process";
+import { SaleProposalBillingProcessTable } from "../../../table/sale-proposal-billing-process";
 interface Props {
   clients: IClient[];
   client: IClient;
@@ -1521,7 +1521,6 @@ function Scenario({
                               type="button"
                               onClick={() =>
                                 initializeSignatureProcess({
-                                  document_id: documents.map((d) => d.id),
                                   proposal_id: proposal.id,
                                   scenario_id: scenario_id,
                                 })
@@ -1583,11 +1582,12 @@ function Scenario({
                 <DisclosurePanel>
                   {billing_process.length ? (
                     <div className="mt-4 flex gap-8 rounded-md border border-gray-200 bg-white">
-                      <SaleProposalBillingProcess
+                      <SaleProposalBillingProcessTable
                         data={billing_process}
                         register={register}
                         scenario={scenario!}
                         products={products}
+                        proposal_id={proposal.id}
                       />
                     </div>
                   ) : (
@@ -1609,7 +1609,7 @@ function Scenario({
                               type="button"
                               onClick={() =>
                                 initializeBillingProcess({
-                                  scenario: scenario!,
+                                  scenario_id: scenario!.id,
                                   proposal_id: proposal.id,
                                 })
                               }

@@ -36,7 +36,7 @@ interface Det {
     codigo_item_kit?: number; // ID do Item do kit (pai) que o componente pertence. Opcional.
     reservado?: string; // Indica se o estoque do produto será reservado. Opcional. Valores: 'S' ou 'N'.
   };
-  imposto: {
+  imposto?: {
     cofins_padrao: {
       aliq_cofins: number;
       base_cofins: number;
@@ -137,14 +137,14 @@ interface Det {
       valor_unid_trib_pis_st: number;
     };
   };
-  rastreabilidade: {
+  rastreabilidade?: {
     numeroLote?: string; // Número do Lote. Opcional.
     qtdeProdutoLote?: number; // Quantidade de Produto no Lote. Opcional.
     dataFabricacaoLote?: string; // Data de Fabricação/Produção. Opcional. Formato: 'dd/mm/aaaa'.
     dataValidadeLote?: string; // Data de Validade. Opcional. Formato: 'dd/mm/aaaa'.
     codigoAgregacaoLote?: string; // Código de Agregação. Opcional.
   };
-  combustivel: {
+  combustivel?: {
     cCodigoANP?: string; // Código de Produto da ANP. Opcional.
     cDescrANP?: string; // Descrição do Produto conforme ANP. Opcional.
     cCODIF?: string; // Registro do CODIF. Opcional.
@@ -162,7 +162,7 @@ interface Det {
     nBC_UFDest?: number; // Base de Cálculo da UF Destino. Opcional.
     nValorUFDest?: number; // Valor da UF Destino. Opcional.
   };
-  inf_adic: {
+  inf_adic?: {
     codigo_categoria_item: string;
     codigo_cenario_impostos_item: string;
     codigo_local_estoque: number;
@@ -174,10 +174,10 @@ interface Det {
     peso_bruto: number;
     peso_liquido: number;
   };
-  observacao: {
+  observacao?: {
     obs_venda: string
   };
-  tributavel: {
+  tributavel?: {
     cUnidTrib?: string; // Unidade tributável do Item. Opcional.
     nQuantTrib?: number; // Quantidade tributável do item. Opcional.
     nValorTrib?: number; // Valor tributável do item. Opcional.

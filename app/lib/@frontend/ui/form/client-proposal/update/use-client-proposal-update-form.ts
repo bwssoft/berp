@@ -50,7 +50,7 @@ const BillingProcessSchema = z.object({
   id: z.string(),
   line_item_id: z.array(z.string()),
   omie_enterprise: z.custom<OmieEnterpriseEnum>(),
-  installment_quantity: z.coerce.number().nonnegative().optional(),
+  installment_quantity: z.coerce.number().nonnegative().min(1).optional(),
   omie_sale_order_id: z.string().optional(),
 });
 

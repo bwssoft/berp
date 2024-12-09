@@ -1,14 +1,11 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { IProposalRepository } from "../../../domain";
 import { proposalRepository } from "@/app/lib/@backend/infra";
-import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "./analyse-proposal-scenario.usecase";
 
 class CancelSignatureProcessUscase {
-  analyseProposalScenarioUsecase: IAnalyseProposalScenarioUsecase
   proposalRepository: IProposalRepository;
 
   constructor() {
-    this.analyseProposalScenarioUsecase = analyseProposalScenarioUsecase
     this.proposalRepository = proposalRepository
   }
 

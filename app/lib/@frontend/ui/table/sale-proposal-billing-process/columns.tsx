@@ -4,13 +4,15 @@ import { cn } from "@/app/lib/util";
 import { ColumnDef } from "@tanstack/react-table";
 import { UseFormRegister } from "react-hook-form";
 import { ClientProposalSchema } from "../../form/client-proposal/update/use-client-proposal-update-form";
+import { createProposalOnOmie } from "@/app/lib/@backend/action";
 
 export const columns = (props: {
   register: UseFormRegister<ClientProposalSchema>;
   scenario: IProposal["scenarios"][number];
   products: IProduct[];
+  proposal_id: string;
 }): ColumnDef<NonNullable<IProposal["billing_process"]>[string][number]>[] => {
-  const { register, products, scenario } = props;
+  const { register, products, scenario, proposal_id } = props;
   return [
     {
       header: "Empresa Omie",
@@ -45,6 +47,7 @@ export const columns = (props: {
               `billing_process.${scenario.id}.${row.index}.installment_quantity`
             )}
           >
+            <option value={0}>Escolha uma Parcela</option>
             {clientConstants.proposalInstallment.map((c) => (
               <option key={c.id} value={c.value}>
                 {c.label}
@@ -67,6 +70,12 @@ export const columns = (props: {
             className={cn(
               "border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4"
             )}
+            onClick={async () =>
+              await createProposalOnOmie({
+                scenario_id: scenario.id,
+                proposal_id: proposal_id,
+              })
+            }
             disabled={typeof input.installment_quantity !== "number"}
           >
             Criar pedido na omie

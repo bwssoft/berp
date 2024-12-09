@@ -42,9 +42,9 @@ export const config = EnviromentsSchema.parse({
       key: process.env.OMIE_ICB_API_KEY,
       secret: process.env.OMIE_ICB_API_SECRET,
     },
-    ICBFILIAL: {
-      key: process.env.OMIE_ICBFILIAL_API_KEY,
-      secret: process.env.OMIE_ICBFILIAL_API_SECRET,
+    ICBFSP: {
+      key: process.env.OMIE_ICBFSP_API_KEY,
+      secret: process.env.OMIE_ICBFSP_API_SECRET,
     },
   },
   AWS_REGION: process.env.AWS_REGION,

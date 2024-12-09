@@ -1,26 +1,27 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { IProposal, IProposalRepository } from "../../../domain";
 import { proposalRepository } from "@/app/lib/@backend/infra";
-import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "./analyse-proposal-scenario.usecase";
 
 class InitializeSignatureProcessUscase {
-  analyseProposalScenarioUsecase: IAnalyseProposalScenarioUsecase
   proposalRepository: IProposalRepository;
 
   constructor() {
-    this.analyseProposalScenarioUsecase = analyseProposalScenarioUsecase
     this.proposalRepository = proposalRepository
   }
 
-  async execute(input: {
-    proposal_id: string,
-    scenario_id: string,
-    document_id: string[]
-  }) {
-    const { document_id, proposal_id, scenario_id } = input
+  async execute(input: { proposal_id: string, scenario_id: string }) {
+    const { proposal_id, scenario_id } = input
+    const proposal = await this.proposalRepository.findOne({ id: proposal_id })
+    if (!proposal) {
+      throw new Error("No proposal found")
+    }
+    const document = proposal.document?.[scenario_id]
+    if (!document) {
+      throw new Error("No document found")
+    }
     const signature_process: NonNullable<IProposal["signature_process"]>[number] = {
       contact: [],
-      document_id: document_id.map(id => id),
+      document_id: document.map(({ id }) => id),
       id: crypto.randomUUID()
     }
     await this.proposalRepository.updateOne(

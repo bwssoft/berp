@@ -12,12 +12,13 @@ interface Props {
   register: UseFormRegister<ClientProposalSchema>;
   scenario: IProposal["scenarios"][number];
   products: IProduct[];
+  proposal_id: string;
 }
-export function SaleProposalBillingProcess(props: Props) {
-  const { data, register, scenario, products } = props;
+export function SaleProposalBillingProcessTable(props: Props) {
+  const { data, register, scenario, products, proposal_id } = props;
   return (
     <DataTable
-      columns={columns({ register, scenario, products })}
+      columns={columns({ register, scenario, products, proposal_id })}
       data={data}
       mobileDisplayValue={(data) => `${data.line_item_id.join(", ")}`}
       mobileKeyExtractor={(data) => data.id}

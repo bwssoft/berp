@@ -32,7 +32,7 @@ export enum OmieEnterpriseEnum {
   MGC = "MGC",
   BWS = "BWS",
   ICB = "ICB",
-  ICBFILIAL = "ICBFILIAL",
+  ICBFSP = "ICBFSP",
   WFC = "WFC",
-  HYBRID = "HYBRID",
+  HYB = "HYB",
 }

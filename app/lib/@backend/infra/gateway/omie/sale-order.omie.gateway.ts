@@ -1,5 +1,4 @@
 import { singleton } from "@/app/lib/util";
-import { IncluirPedidoVendaProduto } from "./@dto";
 import { OmieGateway } from "./@base";
 import { OmieSaleOrderStage } from "../../../domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
 
@@ -9,16 +8,6 @@ class SaleOrderOmieGateway extends OmieGateway {
       codigo_pedido: Number(saleOrderId),
       etapa: statusId,
     });
-
-    await this._httpProvider.post<void>("/produtos/pedido/", data, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
-
-  async insertOne(props: IncluirPedidoVendaProduto) {
-    const data = this.formatBody("IncluirPedido", props);
 
     await this._httpProvider.post<void>("/produtos/pedido/", data, {
       headers: {

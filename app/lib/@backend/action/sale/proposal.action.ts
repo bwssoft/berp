@@ -9,6 +9,7 @@ import {
   cancelBillingProcessUscase
 } from "../../usecase"
 import { revalidatePath } from "next/cache"
+import { createProposalOnOmieUsecase } from "../../usecase/sale/proposal/create-proposal-on-omie.usecase"
 
 export async function createOneClientProposal(client: Omit<IProposal
   , "id" | "created_at" | "user_id">) {
@@ -68,7 +69,7 @@ export async function downloadOneProposalDocument(input: {
   return await downloadOneProposalDocumentUsecase.execute({ document })
 }
 
-export async function initializeSignatureProcess(input: { document_id: string[], proposal_id: string, scenario_id: string }) {
+export async function initializeSignatureProcess(input: { proposal_id: string, scenario_id: string }) {
   await initializeSignatureProcessUscase.execute(input)
   revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
 }
@@ -79,7 +80,7 @@ export async function cancelSignatureProcess(input: { proposal_id: string, scena
 }
 
 
-export async function initializeBillingProcess(input: { scenario: IProposal["scenarios"][number], proposal_id: string }) {
+export async function initializeBillingProcess(input: { scenario_id: string, proposal_id: string }) {
   await initializeBillingProcessUscase.execute(input)
   revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
 }
@@ -89,4 +90,7 @@ export async function cancelBillingProcess(input: { proposal_id: string, scenari
   revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
 }
 
-
+export async function createProposalOnOmie(input: { proposal_id: string, scenario_id: string }) {
+  await createProposalOnOmieUsecase.execute(input)
+  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+}
