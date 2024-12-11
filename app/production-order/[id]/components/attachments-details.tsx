@@ -1,12 +1,12 @@
 "use client";
 
-import { ISaleOrder } from "@/app/lib/@backend/domain";
+import { IFinancialOrder } from "@/app/lib/@backend/domain";
 import { Button, DataTable } from "@/app/lib/@frontend/ui";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/solid";
 import { useAttachmentDetails } from "../hooks";
 
 type AttachmentsDetailsProps = {
-  saleOrder: ISaleOrder | null;
+  saleOrder: IFinancialOrder | null;
 };
 
 export function AttachmentsDetails({ saleOrder }: AttachmentsDetailsProps) {

@@ -145,253 +145,277 @@ export function ClientProposalUpdateForm(props: Props) {
         </div>
 
         <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">
-            Endereços
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">
-            Endereço de Faturamento
-          </p>
-          <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-            <div className="sm:col-span-3">
-              <label
-                htmlFor="country"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                País
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="country"
-                  autoComplete="country"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.country")}
-                />
+          <Disclosure>
+            <DisclosureButton className="group flex w-full items-center justify-between flex-wrap sm:flex-nowrap">
+              <div className="w-full text-start">
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Endereços
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Insira os endereços de faturamento e de entrega.
+                </p>
               </div>
-            </div>
-            <div className="col-span-full">
-              <label
-                htmlFor="street"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Rua
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="street"
-                  autoComplete="street"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.street")}
-                />
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                <ChevronDownIcon className="size-5 fill-gray-text-gray-600 group-data-[hover]:fill-gray-text-gray-600 group-data-[open]:rotate-180 w-full sm:w-auto" />
               </div>
-            </div>
-            <div className="sm:col-span-2 sm:col-start-1">
-              <label
-                htmlFor="city"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Cidade
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="city"
-                  autoComplete="address-level2"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.city")}
-                />
+            </DisclosureButton>
+            <DisclosurePanel>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Endereço de Faturamento
+              </p>
+              <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
+                <div className="sm:col-span-3">
+                  <label
+                    htmlFor="country"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    País
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="country"
+                      autoComplete="country"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("billing_address.country")}
+                    />
+                  </div>
+                </div>
+                <div className="col-span-full">
+                  <label
+                    htmlFor="street"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Rua
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="street"
+                      autoComplete="street"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("billing_address.street")}
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-2 sm:col-start-1">
+                  <label
+                    htmlFor="city"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Cidade
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="city"
+                      autoComplete="address-level2"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("billing_address.city")}
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="state"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Estado
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="state"
+                      autoComplete="address-level1"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("billing_address.state")}
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="postal_code"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    ZIP / Código Postal
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="postal_code"
+                      autoComplete="postal_code"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("billing_address.postal_code")}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="state"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Estado
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="state"
-                  autoComplete="address-level1"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.state")}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="postal_code"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                ZIP / Código Postal
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="postal_code"
-                  autoComplete="postal_code"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.postal_code")}
-                />
-              </div>
-            </div>
-          </div>
 
-          <p className="mt-4 text-sm leading-6 text-gray-600">
-            Endereço de Entrega
-          </p>
-          <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-            <div className="sm:col-span-3">
-              <label
-                htmlFor="country"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                País
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="country"
-                  autoComplete="country"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("delivery_address.country")}
-                />
+              <p className="mt-4 text-sm leading-6 text-gray-600">
+                Endereço de Entrega
+              </p>
+              <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
+                <div className="sm:col-span-3">
+                  <label
+                    htmlFor="country"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    País
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="country"
+                      autoComplete="country"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("delivery_address.country")}
+                    />
+                  </div>
+                </div>
+                <div className="col-span-full">
+                  <label
+                    htmlFor="street"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Rua
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="street"
+                      autoComplete="street"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("delivery_address.street")}
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-2 sm:col-start-1">
+                  <label
+                    htmlFor="city"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Cidade
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="city"
+                      autoComplete="address-level2"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("delivery_address.city")}
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="state"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Estado
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="state"
+                      autoComplete="address-level1"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("delivery_address.state")}
+                    />
+                  </div>
+                </div>
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="postal_code"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    ZIP / Código Postal
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="text"
+                      id="postal_code"
+                      autoComplete="postal_code"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      {...register("delivery_address.postal_code")}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="col-span-full">
-              <label
-                htmlFor="street"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Rua
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="street"
-                  autoComplete="street"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("delivery_address.street")}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2 sm:col-start-1">
-              <label
-                htmlFor="city"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Cidade
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="city"
-                  autoComplete="address-level2"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("delivery_address.city")}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="state"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Estado
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="state"
-                  autoComplete="address-level1"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("delivery_address.state")}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="postal_code"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                ZIP / Código Postal
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="postal_code"
-                  autoComplete="postal_code"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("delivery_address.postal_code")}
-                />
-              </div>
-            </div>
-          </div>
+            </DisclosurePanel>
+          </Disclosure>
         </div>
 
-        <div>
-          <h2 className="text-base font-semibold leading-7 text-gray-900">
-            Cenários
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">
-            Insira os cenários possíveis.
-          </p>
+        <div className="border-b border-gray-900/10 pb-12">
+          <Disclosure>
+            <DisclosureButton className="group flex w-full items-center justify-between flex-wrap sm:flex-nowrap">
+              <div className="w-full text-start">
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Cenários
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Insira os cenários possíveis.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                <ChevronDownIcon className="size-5 fill-gray-text-gray-600 group-data-[hover]:fill-gray-text-gray-600 group-data-[open]:rotate-180 w-full sm:w-auto" />
+              </div>
+            </DisclosureButton>
+            <DisclosurePanel>
+              <div className="flex flex-col space-y-4 mt-8">
+                {scenarios.map((scenario, hookFormScenarioIndex) => (
+                  <>
+                    <Scenario
+                      key={scenario.id}
+                      scenario_id={scenario.id}
+                      proposal={proposal}
+                      hookFormScenarioIndex={hookFormScenarioIndex}
+                      products={products}
+                      negotiationType={negotiationType}
+                      removeScenario={removeScenario}
+                      control={control}
+                      register={register}
+                      getValues={getValues}
+                      setValue={setValue}
+                      handleDownloadOneProposalDocument={
+                        handleDownloadOneProposalDocument
+                      }
+                      currentClient={currentClient}
+                    />
+                    {scenarios.length > 1 ? (
+                      <div className="border-b border-gray-900/10"></div>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                ))}
+              </div>
 
-          <div className="flex flex-col space-y-4 mt-8">
-            {scenarios.map((scenario, hookFormScenarioIndex) => (
-              <>
-                <Scenario
-                  key={scenario.id}
-                  scenario_id={scenario.id}
-                  proposal={proposal}
-                  hookFormScenarioIndex={hookFormScenarioIndex}
-                  products={products}
-                  negotiationType={negotiationType}
-                  removeScenario={removeScenario}
-                  control={control}
-                  register={register}
-                  getValues={getValues}
-                  setValue={setValue}
-                  handleDownloadOneProposalDocument={
-                    handleDownloadOneProposalDocument
-                  }
-                  currentClient={currentClient}
-                />
-                {scenarios.length > 1 ? (
-                  <div className="border-b border-gray-900/10"></div>
-                ) : (
-                  <></>
+              <button
+                type="button"
+                onClick={() =>
+                  appendScenario({
+                    currency: Currency["BRL"],
+                    discount_value: 0,
+                    grand_total: 0,
+                    line_items: [],
+                    product_total: 0,
+                    subtotal_with_discount: 0,
+                    name: "",
+                    id: nanoid(),
+                  })
+                }
+                className={cn(
+                  "mt-4 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2",
+                  scenarios.length > 0 && "mt-8"
                 )}
-              </>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={() =>
-              appendScenario({
-                currency: Currency["BRL"],
-                discount_value: 0,
-                grand_total: 0,
-                line_items: [],
-                product_total: 0,
-                subtotal_with_discount: 0,
-                name: "",
-                id: nanoid(),
-              })
-            }
-            className={cn(
-              "mt-4 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2",
-              scenarios.length > 0 && "mt-8"
-            )}
-          >
-            Adicionar Cenário
-          </button>
+              >
+                Adicionar Cenário
+              </button>
+            </DisclosurePanel>
+          </Disclosure>
         </div>
       </div>
-
+      {/* 
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           type="button"
@@ -405,7 +429,7 @@ export function ClientProposalUpdateForm(props: Props) {
         >
           Salvar
         </Button>
-      </div>
+      </div> */}
     </form>
   );
 }
@@ -1521,95 +1545,6 @@ function Scenario({
                                 initializeSignatureProcess({
                                   proposal_id: proposal.id,
                                   scenario_id: scenario_id,
-                                })
-                              }
-                              className="whitespace-nowrap font-medium text-gray-700 hover:text-gray-600"
-                            >
-                              Iniciar
-                              <span aria-hidden="true"> &rarr;</span>
-                            </button>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </DisclosurePanel>
-              </>
-            )}
-          </Disclosure>
-
-          {/*PROCESSO DE CRIAÇÃO DO PEDIDO*/}
-          <Disclosure>
-            {({ open }) => (
-              <>
-                <DisclosureButton className="group w-full flex justify-between items-center mt-8">
-                  <div className="w-full flex flex-col items-start">
-                    <h2 className="text-sm font-semibold leading-7 text-gray-900">
-                      Processo de criação do pedido
-                    </h2>
-                    <p className="text-xs leading-6 text-gray-600">
-                      Acompanhe o processo de criação do pedido dessa proposta.
-                    </p>
-                  </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                    {billing_process.length ? (
-                      <button
-                        type="button"
-                        className="text-sm text-gray-700 hover:text-gray-500 hover:underline w-full sm:w-auto sm:ml-2 sm:pl-2 text-start text-nowrap"
-                        onClick={async (event) => {
-                          event.stopPropagation();
-                          await cancelBillingProcess({
-                            proposal_id: proposal.id,
-                            scenario_id: scenario_id,
-                          });
-                        }}
-                      >
-                        Cancelar o processo
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                    <ChevronDownIcon
-                      className={cn(
-                        "size-5 fill-gray-text-gray-600 w-full sm:w-auto",
-                        open && "rotate-180"
-                      )}
-                    />
-                  </div>
-                </DisclosureButton>
-                <div className="border-b border-gray-900/10"></div>
-                <DisclosurePanel>
-                  {billing_process.length ? (
-                    <div className="mt-4 flex gap-8 rounded-md border border-gray-200 bg-white">
-                      <SaleProposalBillingProcessTable
-                        data={billing_process}
-                        register={register}
-                        scenario={scenario!}
-                        products={products}
-                        proposal_id={proposal.id}
-                      />
-                    </div>
-                  ) : (
-                    <div className="mt-4 rounded-md bg-gray-100 border border-gray-200 px-6 py-3">
-                      <div className="flex">
-                        <div className="shrink-0">
-                          <InformationCircleIcon
-                            aria-hidden="true"
-                            className="size-5 text-gray-400"
-                          />
-                        </div>
-                        <div className="ml-6 flex-1 md:flex md:justify-between">
-                          <p className="text-sm text-gray-700">
-                            Esse cenário ainda não iniciou o processo de
-                            cobrança.
-                          </p>
-                          <p className="mt-3 text-sm md:ml-6 md:mt-0">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                initializeBillingProcess({
-                                  scenario_id: scenario!.id,
-                                  proposal_id: proposal.id,
                                 })
                               }
                               className="whitespace-nowrap font-medium text-gray-700 hover:text-gray-600"

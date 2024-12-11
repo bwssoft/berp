@@ -5,7 +5,7 @@ import {
   IInput,
   IProduct,
   IProductionOrder,
-  ISaleOrder,
+  IFinancialOrder,
   ITechnicalSheet,
 } from "@/app/lib/@backend/domain";
 import { ProductionOrderPdfTemplate } from "@/app/lib/@frontend/pdf/templates/production-order-pdf-template";
@@ -17,7 +17,7 @@ type PrintProductionOrderProps = {
   productionOrder: IProductionOrder | null;
   products: IProduct[];
   technicalSheets: ITechnicalSheet[];
-  saleOrder: ISaleOrder | null;
+  saleOrder: IFinancialOrder | null;
   client: IClient | null;
   inputs: IInput[];
 };

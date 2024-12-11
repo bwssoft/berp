@@ -1,21 +1,21 @@
 import {
   IProductionOrder,
   IProductionOrderRepository,
-  ISaleOrderRepository,
+  IFinancialOrderRepository,
 } from "@/app/lib/@backend/domain";
 import {
   productionOrderRepository,
-  saleOrderRepository,
+  financialorderRepository,
 } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 
 class DeleteOneProductionOrderUsecase {
   repository: IProductionOrderRepository;
-  saleOrderRepository: ISaleOrderRepository;
+  financialorderRepository: IFinancialOrderRepository;
 
   constructor() {
     this.repository = productionOrderRepository;
-    this.saleOrderRepository = saleOrderRepository;
+    this.financialorderRepository = financialorderRepository;
   }
 
   async execute(input: Partial<IProductionOrder>) {
@@ -24,7 +24,7 @@ class DeleteOneProductionOrderUsecase {
       const currentProductionOrder = await this.repository.findOne(input);
 
       if (currentProductionOrder?.sale_order_id) {
-        await this.saleOrderRepository.deleteOne({
+        await this.financialorderRepository.deleteOne({
           id: currentProductionOrder.sale_order_id,
         });
       }

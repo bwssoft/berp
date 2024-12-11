@@ -1,10 +1,13 @@
 "use client";
 
-import { ISaleOrder, saleOrderStageMapping } from "@/app/lib/@backend/domain";
+import {
+  IFinancialOrder,
+  saleOrderStageMapping,
+} from "@/app/lib/@backend/domain";
 import { formatDate } from "@/app/lib/util/format-date";
 
 type SaleOrderDetailsProps = {
-  saleOrder: ISaleOrder | null;
+  saleOrder: IFinancialOrder | null;
 };
 
 export function SaleOrderDetails({ saleOrder }: SaleOrderDetailsProps) {

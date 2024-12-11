@@ -6,12 +6,12 @@ import {
   findAllTechnicalSheet,
   findOneClient,
   findOneProductionOrder,
-  findOneSaleOrder,
+  findOneOrder,
 } from "@/app/lib/@backend/action";
 import {
   IClient,
   IProductionOrder,
-  ISaleOrder,
+  IFinancialOrder,
 } from "@/app/lib/@backend/domain";
 import {
   Tabs,
@@ -40,9 +40,9 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
     id: params.id,
   })) as IProductionOrder | null;
 
-  const saleOrderData = (await findOneSaleOrder({
+  const saleOrderData = (await findOneOrder({
     id: productionOrderData?.sale_order_id,
-  })) as ISaleOrder | null;
+  })) as IFinancialOrder | null;
 
   const clientData = (await findOneClient({
     id: saleOrderData?.client_id,

@@ -3,7 +3,7 @@
 import {
   IProduct,
   IProductionOrder,
-  ISaleOrder,
+  IFinancialOrder,
   productionOrderPriorityMapping,
   productionOrderStageMapping,
 } from "@/app/lib/@backend/domain";
@@ -18,7 +18,7 @@ import { useProductionOrderDetails } from "../hooks";
 type ProductionOrderDetailsProps = {
   productionOrder: IProductionOrder | null;
   products: IProduct[];
-  saleOrder: ISaleOrder | null;
+  saleOrder: IFinancialOrder | null;
 };
 
 export function ProductionOrderDetails({

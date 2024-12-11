@@ -2,7 +2,7 @@ import {
   IProduct,
   IProductionOrder,
   IProductionOrderRepository,
-  ISaleOrder,
+  IFinancialOrder,
 } from "@/app/lib/@backend/domain";
 import { productionOrderRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
@@ -20,7 +20,7 @@ class FindAllProductionOrderWithInputUsecase {
     const pipeline = this.pipeline(input);
     const aggregate = await this.repository.aggregate(pipeline);
     return (await aggregate.toArray()) as (IProductionOrder & {
-      sale_order: ISaleOrder;
+      sale_order: IFinancialOrder;
       products_in_sale_order: IProduct[];
     })[];
   }

@@ -1,6 +1,6 @@
 import { OmieEnterpriseEnum } from "../../@shared/gateway/omie.gateway.interface";
 
-export interface ISaleOrder {
+export interface IFinancialOrder {
   id: string;
   client_id: string;
   active: boolean;
@@ -32,7 +32,7 @@ export interface ISaleOrder {
 }
 
 export const saleOrderStageMapping: Record<
-  ISaleOrder["omie_webhook_metadata"]["stage"],
+  IFinancialOrder["omie_webhook_metadata"]["stage"],
   string
 > = {
   awaiting_approval: "Aguardando aprovação",

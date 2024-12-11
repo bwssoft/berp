@@ -287,7 +287,7 @@ export function SideBar() {
                     <div className="flex h-16 shrink-0 items-center">
                       <img
                         className="h-8 w-auto"
-                        src="/logo-bws.png"
+                        src="/bcube-logo.svg"
                         alt="Your Company"
                       />
                     </div>
@@ -314,7 +314,7 @@ export function SideBar() {
             <div className="flex h-16 shrink-0 items-center">
               <img
                 className="h-8 w-auto"
-                src="/logo-bws.png"
+                src="/bcube-logo.svg"
                 alt="Your Company"
               />
             </div>

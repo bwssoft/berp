@@ -3,7 +3,7 @@
 import {
   IProduct,
   IProductionOrder,
-  ISaleOrder,
+  IFinancialOrder,
 } from "@/app/lib/@backend/domain";
 import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
@@ -11,7 +11,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Kanban } from "./kanban";
 
 type CustomProductionOrder = IProductionOrder & {
-  sale_order: ISaleOrder;
+  sale_order: IFinancialOrder;
   products_in_sale_order: IProduct[];
 };
 interface Props {

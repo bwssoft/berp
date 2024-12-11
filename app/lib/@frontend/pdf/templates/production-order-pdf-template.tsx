@@ -4,7 +4,7 @@ import {
   IInput,
   IProduct,
   IProductionOrder,
-  ISaleOrder,
+  IFinancialOrder,
   ITechnicalSheet,
   productionOrderPriorityMapping,
   productionOrderStageMapping,
@@ -16,7 +16,7 @@ import { PageBreak, Tailwind } from "@fileforge/react-print";
 type ProductionOrderPdfTemplateProps = {
   productionOrder: IProductionOrder | null;
   products: IProduct[];
-  saleOrder: ISaleOrder | null;
+  saleOrder: IFinancialOrder | null;
   client: IClient | null;
   technicalSheets: ITechnicalSheet[];
   inputs: IInput[];
@@ -62,7 +62,7 @@ type InputsSectionProps = {
   products: IProduct[];
   technicalSheets: ITechnicalSheet[];
   inputs: IInput[];
-  saleOrder: ISaleOrder;
+  saleOrder: IFinancialOrder;
 };
 
 function InputsSection({
@@ -137,7 +137,7 @@ function InputsSection({
 type ProductionOrderSectionProps = {
   productionOrder: IProductionOrder | null;
   products: IProduct[];
-  saleOrder: ISaleOrder | null;
+  saleOrder: IFinancialOrder | null;
 };
 
 function ProductionOrderSection({
@@ -345,7 +345,7 @@ function ClientSection({ client }: ClientSectionProps) {
 }
 
 type SaleOrderSectionProps = {
-  saleOrder: ISaleOrder;
+  saleOrder: IFinancialOrder;
 };
 
 function SaleOrderSection({ saleOrder }: SaleOrderSectionProps) {

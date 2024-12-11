@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { IProduct, IProductionOrder, ISaleOrder } from "../domain";
+import { IProduct, IProductionOrder, IFinancialOrder } from "../domain";
 import {
   createOneProductionOrderUsecase,
   deleteOneProductionOrderUsecase,
@@ -51,7 +51,7 @@ export async function findAllProductionOrderWithProduct(
   input?: Partial<IProductionOrder>
 ): Promise<
   (IProductionOrder & {
-    sale_order: ISaleOrder;
+    sale_order: IFinancialOrder;
     products_in_sale_order: IProduct[];
   })[]
 > {

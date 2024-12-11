@@ -60,7 +60,7 @@ export default async function Page(props: Props) {
           </p>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+      <div className="gap-6 px-4 sm:px-6 lg:px-8">
         <ClientProposalUpdateForm
           clients={clients}
           client={client}
@@ -68,6 +68,14 @@ export default async function Page(props: Props) {
           proposal={proposal}
           negotiationType={negotiationType}
         />
+        <div className="mt-12 border-b border-gray-900/10 pb-12">
+          <h2 className="text-base font-semibold leading-7 text-gray-900">
+            Processo de criação do pedido
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-gray-600">
+            Acompanhe a criação do pedido dessa proposta
+          </p>
+        </div>
       </div>
     </div>
   );
