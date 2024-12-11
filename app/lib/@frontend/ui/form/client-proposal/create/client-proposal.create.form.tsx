@@ -91,7 +91,7 @@ export function ClientProposalCreateForm(props: Props) {
                   handleChangeClient(client);
                 }}
               >
-                <option>Selecione um cliente</option>
+                <option value="">Selecione um cliente</option>
                 {clients.map((c) => (
                   <option
                     key={c.id}

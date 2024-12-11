@@ -70,7 +70,7 @@ export const schema = z.object({
   billing_address: AddressSchema.optional(),
   delivery_address: AddressSchema.optional(),
   scenarios: z.array(ScenarioSchema).default([]),
-  client_id: z.string(),
+  client_id: z.string().min(1),
   billing_process: z.record(z.string(), z.array(BillingProcessSchema)).optional(),
   signature_process: z.record(z.string(), SignatureProcessSchema).optional(),
   documents: z.array(z.any()).default([])
