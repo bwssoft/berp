@@ -598,6 +598,7 @@ function Scenario({
       </DisclosureButton>
       <DisclosurePanel className="mt-2 text-sm text-gray-600">
         <div className="rounded-sm bg-gray-50 p-2 ring-1 ring-inset ring-gray-900/10 lg:px-4 lg:py-8">
+          {/*INFORMAÇÕES GERAIS*/}
           <Disclosure>
             {({ open }) => (
               <>
@@ -685,6 +686,7 @@ function Scenario({
             )}
           </Disclosure>
 
+          {/*PRODUTOS*/}
           <Disclosure>
             {({ open }) => (
               <>
@@ -910,6 +912,7 @@ function Scenario({
             )}
           </Disclosure>
 
+          {/*FRETE*/}
           <Disclosure>
             {({ open }) => (
               <>
@@ -992,6 +995,7 @@ function Scenario({
             )}
           </Disclosure>
 
+          {/*VALORES FINAIS*/}
           <Disclosure>
             {({ open }) => (
               <>
@@ -1148,6 +1152,7 @@ function Scenario({
             )}
           </Disclosure>
 
+          {/*DOCUMENTOS*/}
           <Disclosure>
             {({ open }) => (
               <>
@@ -1261,6 +1266,7 @@ function Scenario({
             )}
           </Disclosure>
 
+          {/*PROCESSO DE ASSINATURA*/}
           <Disclosure>
             {({ open }) => (
               <>
@@ -1328,19 +1334,11 @@ function Scenario({
                                     <p className="text-sm/6 font-semibold text-gray-900">
                                       {person.name}
                                     </p>
-                                    {Object.keys(person.labels).length ? (
-                                      <p className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                        {Object.values(person.labels).join(
-                                          ", "
-                                        )}
-                                      </p>
-                                    ) : (
-                                      <></>
-                                    )}
+                                    <p className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                      {person.label}
+                                    </p>
                                   </div>
-                                  {Object.values(person?.email ?? {}).join(
-                                    ", "
-                                  )}
+                                  {person.email}
                                 </div>
                                 <div className="flex flex-none items-center gap-x-4">
                                   <Menu as="div" className="relative flex-none">
@@ -1540,16 +1538,17 @@ function Scenario({
             )}
           </Disclosure>
 
+          {/*PROCESSO DE CRIAÇÃO DO PEDIDO*/}
           <Disclosure>
             {({ open }) => (
               <>
                 <DisclosureButton className="group w-full flex justify-between items-center mt-8">
                   <div className="w-full flex flex-col items-start">
                     <h2 className="text-sm font-semibold leading-7 text-gray-900">
-                      Processo de cobrança
+                      Processo de criação do pedido
                     </h2>
                     <p className="text-xs leading-6 text-gray-600">
-                      Acompanhe o processo de cobrança dessa proposta.
+                      Acompanhe o processo de criação do pedido dessa proposta.
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">

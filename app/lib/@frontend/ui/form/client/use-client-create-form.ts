@@ -3,6 +3,7 @@ import { createOneClient } from '@/app/lib/@backend/action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { ContactLabelEnum } from '@/app/lib/@backend/domain';
 
 const schema = z.object({
   trade_name: z.string(),
@@ -25,11 +26,12 @@ const schema = z.object({
   }),
   contacts: z.array(z.object({
     id: z.string(),
-    labels: z.record(z.string(), z.string()),
-    phone: z.record(z.string(), z.string()),
-    email: z.record(z.string(), z.string()),
+    label: z.nativeEnum(ContactLabelEnum),
+    phone: z.string(),
+    email: z.string(),
     name: z.string(),
     can_sign_contract: z.boolean().default(false),
+    can_receive_document: z.boolean().default(false),
     created_at: z.coerce.date()
   }))
 });

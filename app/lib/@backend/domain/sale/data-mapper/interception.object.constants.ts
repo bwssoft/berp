@@ -4,6 +4,7 @@ import { appHashsMapping } from "@/app/lib/constant/app-hashs";
 import { IClient } from "../entity";
 import { BaseOmieEntity } from "../../../infra/api/controller/sale/client/client.dto";
 import { ClientOmieEntity } from "../../../infra/api/controller/sale/client/client.validator";
+import { ContactLabelEnum } from "../entity/contact.definition";
 
 export type IInterceptionObjectConstantsType = {
   [key in Path<IClient>]?: (data: BaseOmieEntity<ClientOmieEntity>) => any;
@@ -46,18 +47,12 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
     if (data.event.telefone1_ddd && data.event.telefone1_numero) {
       contacts.push({
         created_at: new Date(),
-        address: {
-          state: data.event.estado || undefined,
-          city: data.event.cidade || undefined,
-          postal_code: data.event.cep || undefined,
-          country: data.event.codigo_pais || undefined,
-          street: data.event.endereco || undefined
-        },
+        can_receive_document: false,
         can_sign_contract: false,
         name: data.event.nome_fantasia,
-        email: data.event.email ? { "principal": data.event.email } : undefined,
-        phone: data.event.telefone1_numero ? { "principal": `${data.event.telefone1_ddd ?? ""}${data.event.telefone1_numero ?? ""}` } : undefined,
-        labels: { "omie": "omie" },
+        email: data.event.email ?? undefined,
+        phone: `${data.event.telefone1_ddd ?? ""}${data.event.telefone1_numero ?? ""}`,
+        label: ContactLabelEnum["UNKNOWN"],
         id: crypto.randomUUID()
       })
     }

@@ -64,11 +64,12 @@ enum ClientSector {
 }
 
 export enum TaxRegime {
-  simples_nacional = "simples_nacional",
-  simples_nacional_excesso = "simples_nacional_excesso",
-  regime_normal_lucro_presumido = "regime_normal_lucro_presumido",
-  regime_normal_lucro_real = "regime_normal_lucro_real",
-  regime_normal_isento = "regime_normal_isento",
-  produtor_rural = "produtor_rural",
-  mei = "mei"
+  SIMPLES_NACIONAL = "SIMPLES_NACIONAL",
+  LUCRO_PRESUMIDO = "LUCRO_PRESUMIDO",
+  LUCRO_REAL = "LUCRO_REAL",
+  MEI = "MEI",
+  ISENTO = "ISENTO",
+  PRODUTOR_RURAL = "PRODUTOR_RURAL",
+  OUTRO = "Outro",
 }
+

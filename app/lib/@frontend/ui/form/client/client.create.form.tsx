@@ -17,6 +17,7 @@ import { clientConstants } from "@/app/lib/constant";
 import { Button } from "../../button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useClientCreateForm } from "./use-client-create-form";
+import { ContactLabelEnum } from "@/app/lib/@backend/domain";
 
 export function ClientCreateForm() {
   const {
@@ -245,7 +246,7 @@ export function ClientCreateForm() {
                     autoComplete="contact-phone"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     placeholder="Telefone"
-                    {...register(`contacts.${index}.phone.principal`)}
+                    {...register(`contacts.${index}.phone`)}
                   />
                   <Button
                     type="button"
@@ -262,12 +263,13 @@ export function ClientCreateForm() {
               onClick={() =>
                 handleAppendContact({
                   name: "",
-                  phone: { principal: "" },
+                  phone: "",
                   id: crypto.randomUUID(),
                   can_sign_contract: false,
                   created_at: new Date(),
-                  email: { principal: "" },
-                  labels: { principal: "" },
+                  email: "",
+                  label: ContactLabelEnum["UNKNOWN"],
+                  can_receive_document: false,
                 })
               }
               className="mt-5 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"

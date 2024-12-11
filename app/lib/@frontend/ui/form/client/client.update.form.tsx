@@ -13,10 +13,9 @@
   ```
 */
 "use client";
-import { clientConstants } from "@/app/lib/constant";
 import { Button } from "../../button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { IClient } from "@/app/lib/@backend/domain";
+import { ContactLabelEnum, IClient } from "@/app/lib/@backend/domain";
 import { useClientUpdateForm } from "./use-client-update-form";
 
 interface Props {
@@ -271,12 +270,13 @@ export function ClientUpdateForm(props: Props) {
               onClick={() =>
                 handleAppendContact({
                   name: "",
-                  phone: { principal: "" },
-                  email: { principal: "" },
-                  labels: { principal: "" },
+                  phone: "",
+                  id: crypto.randomUUID(),
                   can_sign_contract: false,
                   created_at: new Date(),
-                  id: crypto.randomUUID(),
+                  email: "",
+                  label: ContactLabelEnum["UNKNOWN"],
+                  can_receive_document: false,
                 })
               }
               className="mt-5 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"
