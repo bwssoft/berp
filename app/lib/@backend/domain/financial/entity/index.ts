@@ -1,1 +1,1 @@
-export * from "./order.definition"
+export * from "./financial-order.definition"

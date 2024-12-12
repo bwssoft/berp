@@ -9,16 +9,12 @@ export interface IProposal {
   user_id: string
   client_id: string
   created_at: Date
-  billing_process?: {
-    [scenario_id: string]: BillingProcess[]
-  }
-  signature_process?: {
-    [scenario_id: string]: SignatureProcess
-  }
-  document?: {
-    [scenario_id: string]: Document[]
-  }
 }
+
+// reponsabilidades:
+// 1. Saber o que o cliente quer
+// 2. Assinatura
+// 3. Liberar para o proximo processo
 
 interface Address {
   street: string;
@@ -42,6 +38,8 @@ interface Scenario {
     value: number
     type: FreightType
   };
+  signature_process?: SignatureProcess
+  documents?: Document[]
 }
 
 export enum Currency {
