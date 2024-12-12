@@ -8,7 +8,7 @@ import { UseFormRegister } from "react-hook-form";
 import { ClientProposalSchema } from "../../form/client-proposal/update/use-client-proposal-update-form";
 
 interface Props {
-  data: NonNullable<IProposal["billing_process"]>[string];
+  data: NonNullable<IProposal["scenarios"][number]["billing_process"]>;
   register: UseFormRegister<ClientProposalSchema>;
   scenario: IProposal["scenarios"][number];
   products: IProduct[];

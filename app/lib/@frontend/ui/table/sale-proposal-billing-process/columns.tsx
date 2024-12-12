@@ -11,7 +11,9 @@ export const columns = (props: {
   scenario: IProposal["scenarios"][number];
   products: IProduct[];
   proposal_id: string;
-}): ColumnDef<NonNullable<IProposal["billing_process"]>[string][number]>[] => {
+}): ColumnDef<
+  NonNullable<IProposal["scenarios"][number]["billing_process"]>[number]
+>[] => {
   const { register, products, scenario, proposal_id } = props;
   return [
     {
