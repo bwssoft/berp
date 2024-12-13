@@ -59,10 +59,13 @@ class CreateOneProposalDocumentUsecase {
       })))
 
       await this.proposalRepository.updateOne(
-        { id: proposal_id },
+        {
+          id: proposal_id,
+          "scenarios.id": scenario_id
+        },
         {
           $push: {
-            [`document.${scenario_id}`]: {
+            ["scenarios.$.document"]: {
               $each: documents.map(doc => ({
                 id: nanoid(),
                 key: doc.key,

@@ -15,12 +15,16 @@ class CancelSignatureProcessUscase {
   }) {
     const { scenario_id, proposal_id } = input
     await this.proposalRepository.updateOne(
-      { id: proposal_id },
+      {
+        id: proposal_id,
+        "scenarios.id": scenario_id
+      },
       {
         $unset: {
-          [`signature_process.${scenario_id}`]: ""
+          ["scenarios.$.signature_process"]: ""
         }
-      })
+      }
+    )
     try {
     } catch (err) {
       throw err;

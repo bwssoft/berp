@@ -39,7 +39,7 @@ interface Scenario {
     type: FreightType
   };
   signature_process?: SignatureProcess
-  documents?: Document[]
+  document?: Document[]
   billing_process?: BillingProcess[]
 }
 

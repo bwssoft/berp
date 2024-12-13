@@ -16,7 +16,7 @@ class DeleteOneProposalDocumentUsecase {
   async execute(input: {
     proposal_id: string,
     scenario_id: string,
-    document: NonNullable<IProposal["scenarios"][number]["documents"]>[number]
+    document: NonNullable<IProposal["scenarios"][number]["document"]>[number]
   }) {
     try {
       const {
@@ -28,8 +28,11 @@ class DeleteOneProposalDocumentUsecase {
       await this.objectRepository.deleteOne(document.key)
 
       await this.documentRepository.updateOne(
-        { id: proposal_id },
-        { $pullAll: { [`document.${scenario_id}`]: [document] } }
+        {
+          id: proposal_id,
+          "scenarios.id": scenario_id
+        },
+        { $pullAll: { ["scenarios.$.document"]: [document] } }
       )
     } catch (err) {
       throw err

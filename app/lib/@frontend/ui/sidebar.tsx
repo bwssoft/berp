@@ -288,7 +288,7 @@ export function SideBar() {
                       <img
                         className="h-8 w-auto"
                         src="/bcube-logo.svg"
-                        alt="Your Company"
+                        alt="Bcube"
                       />
                     </div>
                     <nav className="flex flex-1 flex-col">

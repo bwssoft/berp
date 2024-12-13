@@ -11,7 +11,7 @@ class DownloadOneProposalDocumentUsecase {
     this.objectRepository = proposalObjectRepository;
   }
 
-  async execute(input: { document: NonNullable<IProposal["scenarios"][number]["documents"]>[number] }) {
+  async execute(input: { document: NonNullable<IProposal["scenarios"][number]["document"]>[number] }) {
     try {
       const { document } = input
       const result = await this.objectRepository.findOne(document.key)

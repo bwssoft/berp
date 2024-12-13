@@ -47,7 +47,7 @@ export async function createOneProposalDocument(input: { scenario: IProposal["sc
 export async function deleteOneProposalDocument(input: {
   proposal_id: string;
   scenario_id: string;
-  document: NonNullable<IProposal["scenarios"][number]["documents"]>[number]
+  document: NonNullable<IProposal["scenarios"][number]["document"]>[number]
 }) {
   const {
     proposal_id,
@@ -63,7 +63,7 @@ export async function deleteOneProposalDocument(input: {
 }
 
 export async function downloadOneProposalDocument(input: {
-  document: NonNullable<IProposal["scenarios"][number]["documents"]>[number]
+  document: NonNullable<IProposal["scenarios"][number]["document"]>[number]
 }) {
   const { document } = input
   return await downloadOneProposalDocumentUsecase.execute({ document })

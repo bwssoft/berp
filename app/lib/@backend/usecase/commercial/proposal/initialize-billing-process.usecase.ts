@@ -38,12 +38,16 @@ class InitializeBillingProcessUscase {
         .map(([key, value]) => ({ ...value, omie_enterprise: key }))
 
       await this.proposalRepository.updateOne(
-        { id: proposal_id },
+        {
+          id: proposal_id,
+          "scenarios.id": scenario_id
+        },
         {
           $set: {
-            [`billing_process.${scenario.id}`]: billing_process
+            ["scenarios.$.billing_process"]: billing_process
           }
-        })
+        }
+      )
     } catch (err) {
       throw err;
     }

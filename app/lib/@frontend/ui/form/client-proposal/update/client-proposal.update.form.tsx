@@ -451,7 +451,7 @@ interface Scenario {
   currentClient?: IClient;
 
   handleDownloadOneProposalDocument: (props: {
-    document: NonNullable<IProposal["scenarios"][number]["documents"]>[number];
+    document: NonNullable<IProposal["scenarios"][number]["document"]>[number];
   }) => Promise<void>;
 }
 function Scenario({
@@ -472,7 +472,7 @@ function Scenario({
   handleDownloadOneProposalDocument,
 }: Scenario) {
   const scenario = proposal.scenarios.find((sce) => sce.id === scenario_id);
-  const documents = scenario?.documents ?? [];
+  const documents = scenario?.document ?? [];
   const signature_process = scenario?.signature_process;
   const billing_process = scenario?.billing_process ?? [];
   const contacts = currentClient?.contacts ?? [];
