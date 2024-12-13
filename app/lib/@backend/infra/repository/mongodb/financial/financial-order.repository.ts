@@ -12,4 +12,4 @@ class FinancialOrderRepository extends BaseRepository<IFinancialOrder> {
 
 }
 
-export const financialorderRepository = singleton(FinancialOrderRepository)
+export const financialOrderRepository = singleton(FinancialOrderRepository)

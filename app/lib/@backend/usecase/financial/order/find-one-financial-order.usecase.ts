@@ -2,13 +2,13 @@ import { IFinancialOrder, IFinancialOrderRepository } from "@/app/lib/@backend/d
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
-import { financialorderRepository } from "@/app/lib/@backend/infra";
+import { financialOrderRepository } from "@/app/lib/@backend/infra";
 
 class FindOneFinancialOrderUsecase {
   repository: IFinancialOrderRepository;
 
   constructor() {
-    this.repository = financialorderRepository;
+    this.repository = financialOrderRepository;
   }
 
   @RemoveMongoId()

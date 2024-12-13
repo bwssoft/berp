@@ -40,7 +40,6 @@ interface Scenario {
   };
   signature_process?: SignatureProcess
   document?: Document[]
-  billing_process?: BillingProcess[]
 }
 
 export enum Currency {
@@ -73,10 +72,9 @@ interface LineItem {
 
 interface BillingProcess {
   id: string
-  omie_enterprise: OmieEnterpriseEnum
+  enterprise_id: OmieEnterpriseEnum
   line_item_id: string[]
   installment_quantity?: number
-  omie_sale_order_id?: string
 }
 
 interface SignatureProcess {
@@ -96,5 +94,5 @@ interface Document {
   key: string
   name: string
   size: number
-  omie_enterprise: OmieEnterpriseEnum
+  enterprise_id: string
 }

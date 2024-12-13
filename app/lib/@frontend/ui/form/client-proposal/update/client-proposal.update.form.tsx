@@ -47,16 +47,14 @@ import {
 import { nanoid } from "nanoid";
 import { useEffect } from "react";
 import {
-  cancelBillingProcess,
   cancelSignatureProcess,
   createOneProposalDocument,
   deleteOneProposalDocument,
-  initializeBillingProcess,
   initializeSignatureProcess,
 } from "@/app/lib/@backend/action";
+
 import { toast } from "@/app/lib/@frontend/hook";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
-import { SaleProposalBillingProcessTable } from "../../../table/sale-proposal-billing-process";
 interface Props {
   clients: IClient[];
   client: IClient;
@@ -474,7 +472,6 @@ function Scenario({
   const scenario = proposal.scenarios.find((sce) => sce.id === scenario_id);
   const documents = scenario?.document ?? [];
   const signature_process = scenario?.signature_process;
-  const billing_process = scenario?.billing_process ?? [];
   const contacts = currentClient?.contacts ?? [];
 
   const {

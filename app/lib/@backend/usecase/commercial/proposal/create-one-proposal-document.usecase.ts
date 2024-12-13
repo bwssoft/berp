@@ -5,7 +5,6 @@ import { htmlToPdf } from "@/app/lib/util";
 import { proposalToHtmlDataMapper } from "../../../domain/commercial/data-mapper/proposal-to-html";
 import { IProposal, IProposalRepository } from "../../../domain";
 import { nanoid } from "nanoid";
-import { OmieEnterpriseEnum } from "../../../domain/@shared/gateway/omie.gateway.interface";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "./analyse-proposal-scenario.usecase";
 
 class CreateOneProposalDocumentUsecase {
@@ -34,21 +33,21 @@ class CreateOneProposalDocumentUsecase {
       const documents = await Promise.all(
         scenarioByEnterprise
           .filter(el => el.requires_contract)
-          .map(async ({ omie_enterprise }) => {
+          .map(async ({ enterprise_id }) => {
             const now = Date.now()
 
             const html = proposalToHtmlDataMapper.format(proposal)
             const buffer = await htmlToPdf(html, undefined);
 
             const key = this.generateKey(now, proposal_id, scenario_id)
-            const name = this.generateFilaname(omie_enterprise)
+            const name = this.generateFilaname(enterprise_id)
             const size = buffer.length
             return {
               buffer,
               key,
               name,
               size,
-              omie_enterprise
+              enterprise_id
             }
           })
       )
@@ -71,7 +70,7 @@ class CreateOneProposalDocumentUsecase {
                 key: doc.key,
                 name: doc.name,
                 size: doc.size,
-                omie_enterprise: doc.omie_enterprise as OmieEnterpriseEnum
+                enterprise_id: doc.enterprise_id
               }))
             }
           }
@@ -82,8 +81,8 @@ class CreateOneProposalDocumentUsecase {
     }
   }
 
-  generateFilaname(omie_enterprise: OmieEnterpriseEnum) {
-    return `Contrato_${omie_enterprise.toUpperCase()}`; // Substitui espaços por traços
+  generateFilaname(enterprise_id: string) {
+    return `Contrato_${enterprise_id}`; // Substitui espaços por traços
   }
 
   // scenario_name

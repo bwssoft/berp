@@ -1,4 +1,3 @@
-import { OmieEnterpriseEnum } from "../../@shared/gateway/omie.gateway.interface";
 import { IProposal } from "./proposal.definition";
 
 export interface IRule {
@@ -7,7 +6,7 @@ export interface IRule {
   description?: string; // Descrição opcional
   scope: RuleScope; // Escopo da regra (Scenario ou LineItem)
   conditions: RuleCondition[]; // Lista de condições que determinam a aplicação
-  omie_enterprise: OmieEnterpriseEnum; // Empresa Omie associada à regra
+  enterprise_id: string; // Empresa Omie associada à regra
   created_at: Date; // Data de criação
   priority: number
   requires_contract: boolean

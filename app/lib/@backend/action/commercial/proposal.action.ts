@@ -5,11 +5,8 @@ import {
   createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase, createOneProposalDocumentUsecase, initializeSignatureProcessUscase, deleteOneProposalDocumentUsecase,
   downloadOneProposalDocumentUsecase,
   cancelSignatureProcessUscase,
-  initializeBillingProcessUscase,
-  cancelBillingProcessUscase
 } from "../../usecase"
 import { revalidatePath } from "next/cache"
-import { createProposalOnOmieUsecase } from "../../usecase/commercial/proposal/create-proposal-on-omie.usecase"
 
 export async function createOneClientProposal(client: Omit<IProposal
   , "id" | "created_at" | "user_id">) {
@@ -76,21 +73,5 @@ export async function initializeSignatureProcess(input: { proposal_id: string, s
 
 export async function cancelSignatureProcess(input: { proposal_id: string, scenario_id: string }) {
   await cancelSignatureProcessUscase.execute(input)
-  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
-}
-
-
-export async function initializeBillingProcess(input: { scenario_id: string, proposal_id: string }) {
-  await initializeBillingProcessUscase.execute(input)
-  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
-}
-
-export async function cancelBillingProcess(input: { proposal_id: string, scenario_id: string }) {
-  await cancelBillingProcessUscase.execute(input)
-  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
-}
-
-export async function createProposalOnOmie(input: { proposal_id: string, scenario_id: string }) {
-  await createProposalOnOmieUsecase.execute(input)
   revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
 }

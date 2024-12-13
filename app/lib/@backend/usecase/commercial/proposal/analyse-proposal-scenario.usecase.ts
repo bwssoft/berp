@@ -2,14 +2,13 @@ import { singleton } from "@/app/lib/util/singleton";
 import { IProposal, IRuleRepository } from "../../../domain";
 import { ruleRepository } from "@/app/lib/@backend/infra";
 import { IRule, RuleOperator, RuleScope } from "../../../domain/commercial/entity/rule.definition";
-import { OmieEnterpriseEnum } from "../../../domain/@shared/gateway/omie.gateway.interface";
 
 type Input = { scenario: Scenario }
 type Output = {
   line_item_id: string,
   requires_contract: boolean
   requires_sale_order: boolean
-  omie_enterprise: OmieEnterpriseEnum
+  enterprise_id: string
 }[]
 export interface IAnalyseProposalScenarioUsecase {
   execute(input: Input): Promise<Output>
@@ -40,9 +39,9 @@ class AnalyseProposalScenarioUsecase {
         for (const lineItem of scenario.line_items) {
           result.push({
             line_item_id: lineItem.id,
-            requires_contract: scenarioEnterprise.rule.requires_contract,
-            requires_sale_order: scenarioEnterprise.rule.requires_sale_order,
-            omie_enterprise: OmieEnterpriseEnum[scenarioEnterprise.omie_enterprise]
+            requires_contract: scenarioEnterprise.requires_contract,
+            requires_sale_order: scenarioEnterprise.requires_sale_order,
+            enterprise_id: scenarioEnterprise.enterprise_id
           });
         }
       } else {
@@ -51,9 +50,9 @@ class AnalyseProposalScenarioUsecase {
           if (lineItemEnterprise) {
             result.push({
               line_item_id: lineItem.id,
-              requires_contract: lineItemEnterprise.rule.requires_contract,
-              requires_sale_order: lineItemEnterprise.rule.requires_sale_order,
-              omie_enterprise: OmieEnterpriseEnum[lineItemEnterprise.omie_enterprise]
+              requires_contract: lineItemEnterprise.requires_contract,
+              requires_sale_order: lineItemEnterprise.requires_sale_order,
+              enterprise_id: lineItemEnterprise.enterprise_id
             });
           }
         }
@@ -106,7 +105,7 @@ class AnalyseProposalScenarioUsecase {
   }
 
 
-  private getOmieEnterprise(entity: LineItem | Scenario, rules: IRule[]): { omie_enterprise: OmieEnterpriseEnum; rule: IRule } | null {
+  private getOmieEnterprise(entity: LineItem | Scenario, rules: IRule[]): IRule | null {
     const applicableRules = rules.filter((rule) => {
       if (rule.scope === RuleScope.Scenario && entity.hasOwnProperty('line_items')) {
         return this.evaluateRule(entity as Scenario, rule);
@@ -121,9 +120,7 @@ class AnalyseProposalScenarioUsecase {
       return !bestRule || currentRule.priority < bestRule.priority ? currentRule : bestRule;
     }, null as IRule | null);
 
-    return highestPriorityRule
-      ? { omie_enterprise: highestPriorityRule.omie_enterprise, rule: highestPriorityRule }
-      : null;
+    return highestPriorityRule ?? null
   }
 }
 

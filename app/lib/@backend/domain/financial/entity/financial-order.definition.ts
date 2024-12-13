@@ -41,15 +41,15 @@ export interface IFinancialOrder {
 interface LineItemProcessed {
   enterprise_id: string
   items: LineItem[]
-  installment_quantity: number
-  installment: Installment[]
+  installment_quantity: number | undefined
+  installment: Installment[] | undefined
 }
 
 interface LineItem {
   id: string,
   product_id: string
   quantity: number
-  total_price: number
+  unit_price: number
 }
 
 interface Installment {

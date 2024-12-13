@@ -1,16 +1,17 @@
 export interface IEnterprise {
   id: string
-  name: string
+  legal_name: string
+  short_name: string
   document: string
   tax_regime: TaxRegime
   created_at: Date
 }
 
 enum TaxRegime {
-  SIMPLES_NACIONAL = "Simples Nacional",
-  LUCRO_PRESUMIDO = "Lucro Presumido",
-  LUCRO_REAL = "Lucro Real",
+  SIMPLES_NACIONAL = "SIMPLES_NACIONAL",
+  LUCRO_PRESUMIDO = "LUCRO_PRESUMIDO",
+  LUCRO_REAL = "LUCRO_REAL",
   MEI = "MEI",
-  ISENTO = "Isento",
-  OUTRO = "Outro"
+  ISENTO = "ISENTO",
+  OUTRO = "OUTRO"
 }
