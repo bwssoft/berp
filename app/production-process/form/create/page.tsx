@@ -1,4 +1,4 @@
-import { ProductionProcessCreateForm } from "@/app/lib/@frontend/ui/form/production-process/production-process.create.form";
+import { ProductionProcessCreateForm } from "@/app/lib/@frontend/ui";
 
 export default async function Page() {
   return (

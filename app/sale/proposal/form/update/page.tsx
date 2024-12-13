@@ -6,7 +6,8 @@ import {
   findOneFinancialOrder,
 } from "@/app/lib/@backend/action";
 import { findOneClientProposal } from "@/app/lib/@backend/action";
-import { ClientProposalUpdateForm } from "@/app/lib/@frontend/ui/form/client-proposal";
+import { ClientProposalUpdateForm } from "@/app/lib/@frontend/ui/form/commercial/proposal";
+import { FinancialOrderCreateForm } from "@/app/lib/@frontend/ui/form/financial/create/financial-order-create-form";
 
 interface Props {
   searchParams: { id: string };
@@ -71,14 +72,7 @@ export default async function Page(props: Props) {
           proposal={proposal}
           negotiationType={negotiationType}
         />
-        <div className="mt-12 border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">
-            Processo de criação do pedido
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">
-            Acompanhe a criação do pedido dessa proposta
-          </p>
-        </div>
+        <FinancialOrderCreateForm />
       </div>
     </div>
   );

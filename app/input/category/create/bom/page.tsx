@@ -1,4 +1,4 @@
-import { InputCategoryCreateFromFileForm } from "@/app/lib/@frontend/ui/form/input-category/input-category.create-from-file.form";
+import { InputCategoryCreateFromFileForm } from "@/app/lib/@frontend/ui/form/engineer/input-category/create-from-file/input-category.create-from-file.form";
 
 export default function InputCategoryCreateBOMPage() {
   return (
@@ -16,7 +16,8 @@ export default function InputCategoryCreateBOMPage() {
             >
               Baixe o modelo
             </a>{" "}
-            e depois faça o upload da planilha para registrar categorias de insumo em massa.
+            e depois faça o upload da planilha para registrar categorias de
+            insumo em massa.
           </p>
         </div>
       </div>

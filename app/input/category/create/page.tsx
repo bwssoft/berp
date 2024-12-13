@@ -1,4 +1,4 @@
-import { InputCategoryCreateForm } from "@/app/lib/@frontend/ui/form/input-category/input-category.create.form";
+import { InputCategoryCreateForm } from "@/app/lib/@frontend/ui/form/engineer/input-category/create/input-category.create.form";
 
 export default function InputCategoryCreatePage() {
   return (
@@ -9,7 +9,8 @@ export default function InputCategoryCreatePage() {
             Registro de categoria de insumo
           </h1>
           <p className="mt-1 text-sm leading-6 text-gray-600">
-            Preencha o formulário abaixo para registrar uma nova categoria para os insumos.
+            Preencha o formulário abaixo para registrar uma nova categoria para
+            os insumos.
           </p>
         </div>
       </div>

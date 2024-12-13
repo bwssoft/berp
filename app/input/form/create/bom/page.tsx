@@ -1,5 +1,5 @@
 import { InputCreateFromFileForm } from "@/app/lib/@frontend/ui";
-import { DownloadInputBOMForm } from "@/app/lib/@frontend/ui/form/input/download-input-category-bom.form";
+import { DownloadInputBOMForm } from "@/app/lib/@frontend/ui/form/engineer/input/download-file-model/download-input-category-bom.form";
 
 export default function Page() {
   return (
@@ -11,7 +11,10 @@ export default function Page() {
           </h1>
           <div className="flex items-center gap-1 mt-1 text-sm leading-6 text-gray-600">
             <DownloadInputBOMForm />
-            <p>e depois faça o upload da planilha para registrar insumos em massa.</p>
+            <p>
+              e depois faça o upload da planilha para registrar insumos em
+              massa.
+            </p>
           </div>
         </div>
       </div>

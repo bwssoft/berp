@@ -6,7 +6,7 @@ import {
   findAllTechnicalSheet,
   findOneClient,
   findOneProductionOrder,
-  findOneOrder,
+  findOneFinancialOrder,
 } from "@/app/lib/@backend/action";
 import {
   IClient,
@@ -40,7 +40,7 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
     id: params.id,
   })) as IProductionOrder | null;
 
-  const saleOrderData = (await findOneOrder({
+  const saleOrderData = (await findOneFinancialOrder({
     id: productionOrderData?.sale_order_id,
   })) as IFinancialOrder | null;
 
