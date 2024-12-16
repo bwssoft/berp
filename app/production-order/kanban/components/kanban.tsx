@@ -10,7 +10,7 @@ import {
   IFinancialOrder,
 } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
-import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui";
+import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui/component";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
 import {

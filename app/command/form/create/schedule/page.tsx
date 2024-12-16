@@ -3,7 +3,7 @@ import {
   findAllDevice,
   findAllFirmware,
 } from "@/app/lib/@backend/action";
-import { ScheduleCreateForm } from "@/app/lib/@frontend/ui";
+import { ScheduleCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
   const commands = await findAllCommand();

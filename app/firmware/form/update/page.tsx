@@ -1,5 +1,5 @@
 import { findOneFirmware } from "@/app/lib/@backend/action";
-import { FirmwareUpdateForm } from "@/app/lib/@frontend/ui";
+import { FirmwareUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
   searchParams: { id: string };

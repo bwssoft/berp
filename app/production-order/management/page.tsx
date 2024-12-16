@@ -1,5 +1,5 @@
 import { findAllProductionOrder } from "@/app/lib/@backend/action";
-import { ProductionOrderTable } from "@/app/lib/@frontend/ui";
+import { ProductionOrderTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 

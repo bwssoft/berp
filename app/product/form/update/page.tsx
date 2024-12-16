@@ -1,6 +1,6 @@
 import { findOneProductWithTechnicalSheets } from "@/app/lib/@backend/action";
 import { findManyTechnicalSheetWithInputsUsecase } from "@/app/lib/@backend/usecase";
-import { ProductUpdateForm } from "@/app/lib/@frontend/ui";
+import { ProductUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
   searchParams: { id: string };

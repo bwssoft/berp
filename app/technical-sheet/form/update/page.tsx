@@ -3,7 +3,7 @@ import {
   findAllProduct,
   findOneTechnicalSheet,
 } from "@/app/lib/@backend/action";
-import { TechnicalSheetUpdateForm } from "@/app/lib/@frontend/ui";
+import { TechnicalSheetUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
   searchParams: { id: string };

@@ -1,8 +1,8 @@
 "use client";
 import { Controller } from "react-hook-form";
 import { IFirmware } from "@/app/lib/@backend/domain";
-import { FileUpload } from "../../../../input-file";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { FileUpload } from "../../../../component/input-file";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useFirmwareUpdateForm } from "./use-firmware-update-form";
 
 interface Props {

@@ -1,6 +1,6 @@
 "use client";
 import { useInputCreateForm } from "./use-input-create-form";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { inputConstants } from "@/app/lib/constant";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 

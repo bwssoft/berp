@@ -1,8 +1,8 @@
 "use client";
 
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { Button } from "@/app/lib/@frontend/ui/button";
-import { FileUpload } from "../../../../input-file";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
+import { FileUpload } from "../../../../component/input-file";
 import { useInputCategoryCreateFromFileForm } from "./use-input-category-from-file-form";
 
 export function InputCategoryCreateFromFileForm() {

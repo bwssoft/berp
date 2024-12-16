@@ -1,7 +1,7 @@
 "use client";
 import { IProductionProcess } from "@/app/lib/@backend/domain";
-import { Button } from "@/app/lib/@frontend/ui/button";
-import { CheckboxEditable } from "@/app/lib/@frontend/ui/checkbox-editable";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
+import { CheckboxEditable } from "@/app/lib/@frontend/ui/component/checkbox-editable";
 import { useProductionProcessUpdateForm } from "./use-production-process-update-form";
 
 type ProductionProcessUpdateFormProps = {

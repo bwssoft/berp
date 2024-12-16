@@ -1,6 +1,6 @@
 "use client";
 import { IInput } from "@/app/lib/@backend/domain";
-import { Button, Radio } from "@/app/lib/@frontend/ui";
+import { Button, Radio } from "@/app/lib/@frontend/ui/component";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useInputTransacionCreateForm } from "./use-input-transaction-create-form";
 import { Controller } from "react-hook-form";

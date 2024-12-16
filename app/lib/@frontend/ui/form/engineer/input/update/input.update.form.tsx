@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { IInput } from "@/app/lib/@backend/domain";
 import { useInputUpdateForm } from "./use-input-update-form";
 import { XMarkIcon } from "@heroicons/react/24/outline";

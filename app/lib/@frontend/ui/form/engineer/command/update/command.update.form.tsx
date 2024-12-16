@@ -1,7 +1,7 @@
 "use client";
 import { ICommand } from "@/app/lib/@backend/domain";
 import { useCommandUpdateForm } from "./use-command-update-form";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 
 interface Props {
   command: ICommand;

@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   DataTable,
-} from "@/app/lib/@frontend/ui";
+} from "@/app/lib/@frontend/ui/component";
 import { formatDate } from "@/app/lib/util";
 
 type InputId = string;

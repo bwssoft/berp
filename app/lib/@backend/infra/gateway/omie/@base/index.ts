@@ -24,11 +24,11 @@ export class OmieGateway {
       },
       function (error) {
         if (error.response) {
-          console.log(error.response.status, error.response.data);
+          console.error(error.response.status, error.response.data);
         } else if (error.request) {
-          console.log(error.request);
+          console.error(error.request);
         } else {
-          console.log("Error", error.message);
+          console.error("Error", error.message);
         }
         return Promise.reject(error);
       }

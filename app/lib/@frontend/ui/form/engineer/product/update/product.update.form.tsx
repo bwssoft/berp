@@ -1,9 +1,9 @@
 "use client";
 import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
 import { Controller } from "react-hook-form";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { BarChart, DoughnutChart } from "../../../../chart";
-import { Stat } from "../../../../stat";
+import { Stat } from "../../../../component/stat";
 import { useProductUpdateForm } from "./use-product-update-form";
 import { IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
 

@@ -50,8 +50,8 @@ class CreateFinancialOrderFromProposalUsecase {
             acc[cur.enterprise_id] = {
               enterprise_id: cur.enterprise_id,
               items: [],
-              installment_quantity: undefined, // Pode ajustar conforme necessário
-              installment: undefined, // Pode ajustar conforme necessário
+              installment_quantity: undefined,
+              installment: undefined,
             };
           }
 

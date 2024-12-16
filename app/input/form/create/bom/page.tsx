@@ -1,4 +1,4 @@
-import { InputCreateFromFileForm } from "@/app/lib/@frontend/ui";
+import { InputCreateFromFileForm } from "@/app/lib/@frontend/ui/component";
 import { DownloadInputBOMForm } from "@/app/lib/@frontend/ui/form/engineer/input/download-file-model/download-input-category-bom.form";
 
 export default function Page() {

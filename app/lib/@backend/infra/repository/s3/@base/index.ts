@@ -79,9 +79,7 @@ export class BaseObjectRepository<Entity extends object>
     // Executar uploads em paralelo
     try {
       await Promise.all(items.map((item) => uploadSingleItem(item)));
-      console.log("All objects created successfully.");
     } catch (error) {
-      console.error("Error creating objects:", error);
       throw new Error("Failed to create one or more objects in S3.");
     }
   }
@@ -147,9 +145,7 @@ export class BaseObjectRepository<Entity extends object>
 
     try {
       await this.client.send(command);
-      console.log("Object deleted successfully:", key);
     } catch (error) {
-      console.error("Error deleting object:", error);
       throw new Error("Failed to delete object from S3.");
     }
   }

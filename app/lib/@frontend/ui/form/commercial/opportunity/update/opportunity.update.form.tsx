@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useClientOpportunityCreateForm } from "../create/use-opportunity-create-form";
 import { IClient, IOpportunity, IProduct } from "@/app/lib/@backend/domain";
 import { clientConstants } from "@/app/lib/constant";

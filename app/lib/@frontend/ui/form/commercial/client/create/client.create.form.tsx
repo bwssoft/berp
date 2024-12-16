@@ -14,7 +14,7 @@
 */
 "use client";
 import { clientConstants } from "@/app/lib/constant";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useClientCreateForm } from "./use-client-create-form";
 import { ContactLabelEnum } from "@/app/lib/@backend/domain";

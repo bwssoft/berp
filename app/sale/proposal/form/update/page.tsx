@@ -6,8 +6,10 @@ import {
   findOneFinancialOrder,
 } from "@/app/lib/@backend/action";
 import { findOneClientProposal } from "@/app/lib/@backend/action";
-import { ClientProposalUpdateForm } from "@/app/lib/@frontend/ui/form/commercial/proposal";
-import { FinancialOrderCreateForm } from "@/app/lib/@frontend/ui/form/financial/create/financial-order-create-form";
+import {
+  ClientProposalUpdateForm,
+  FinancialOrderFromProposalCreateForm,
+} from "@/app/lib/@frontend/ui/form";
 
 interface Props {
   searchParams: { id: string };
@@ -72,7 +74,7 @@ export default async function Page(props: Props) {
           proposal={proposal}
           negotiationType={negotiationType}
         />
-        <FinancialOrderCreateForm />
+        <FinancialOrderFromProposalCreateForm />
       </div>
     </div>
   );

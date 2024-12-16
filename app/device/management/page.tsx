@@ -1,5 +1,5 @@
 import { findAllDevice } from "@/app/lib/@backend/action";
-import { DeviceTable } from "@/app/lib/@frontend/ui";
+import { DeviceTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 

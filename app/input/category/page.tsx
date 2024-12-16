@@ -1,5 +1,5 @@
 import { findAllInputCategories } from "@/app/lib/@backend/action/input/input-category.action";
-import { InputCategoryTable } from "@/app/lib/@frontend/ui/table/input-category";
+import { InputCategoryTable } from "@/app/lib/@frontend/ui/table";
 import { ArrowUpTrayIcon, PlusIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
@@ -14,7 +14,8 @@ export default async function InputCategoryPage() {
             Gestão de categoria de insumos
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Uma lista de todas as categorias registradas para a associação em insumos existentes.
+            Uma lista de todas as categorias registradas para a associação em
+            insumos existentes.
           </p>
         </div>
 

@@ -31,7 +31,6 @@ class DeleteOneProductionOrderUsecase {
 
       await this.repository.deleteOne(input);
     } catch (error) {
-      console.log(error);
       throw new Error(
         "Error in DeleteOneProductionOrderUsecase, execute method"
       );

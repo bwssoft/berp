@@ -1,10 +1,10 @@
 "use client";
 import { ICommand, IDevice, IFirmware } from "@/app/lib/@backend/domain";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useScheduleCreateForm } from "./use-schedule-create-form";
-import { Radio } from "@/app/lib/@frontend/ui/radio";
-import { FileUpload } from "@/app/lib/@frontend/ui/input-file";
-import { Checkbox } from "@/app/lib/@frontend/ui/checkbox";
+import { Radio } from "@/app/lib/@frontend/ui/component/radio";
+import { FileUpload } from "@/app/lib/@frontend/ui/component/input-file";
+import { Checkbox } from "@/app/lib/@frontend/ui/component/checkbox";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 interface Props {

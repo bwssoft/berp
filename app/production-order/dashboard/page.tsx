@@ -1,5 +1,5 @@
 import { findAllProductionOrderWithProduct } from "@/app/lib/@backend/action";
-import { BarChart } from "@/app/lib/@frontend/ui";
+import { BarChart } from "@/app/lib/@frontend/ui/component";
 import PieChart from "@/app/lib/@frontend/ui/chart/pie.chart";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { months } from "@/app/lib/constant/months";
@@ -104,8 +104,6 @@ export default async function Page() {
 
       return acc;
     }, {} as Record<string, number>);
-
-  console.log({ productsByMonth });
 
   return (
     <div>

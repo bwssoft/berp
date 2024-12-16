@@ -1,4 +1,4 @@
-import { MultilineChart, BarChart } from "@/app/lib/@frontend/ui";
+import { MultilineChart, BarChart } from "@/app/lib/@frontend/ui/component";
 import { fillMissingDatesOnInputAnalysisPage } from "@/app/lib/util/fill-missing-dates";
 import { InputSelect } from "./components/input-select";
 import {

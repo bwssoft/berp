@@ -1,5 +1,5 @@
 import { findManyTechnicalSheetWithInputs } from "@/app/lib/@backend/action";
-import { ProductCreateForm } from "@/app/lib/@frontend/ui";
+import { ProductCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
   const technicalSheets = await findManyTechnicalSheetWithInputs({});

@@ -1,6 +1,6 @@
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/button";
-import { FileUpload } from "../../../../input-file";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
+import { FileUpload } from "../../../../component/input-file";
 import { useFirmwareCreateForm } from "./use-firmware-create-form";
 import { Controller } from "react-hook-form";
 

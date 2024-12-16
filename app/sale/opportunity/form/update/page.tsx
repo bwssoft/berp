@@ -3,7 +3,7 @@ import {
   findAllProduct,
   findOneClientOpportunity,
 } from "@/app/lib/@backend/action";
-import { ClientOpportunityUpdateForm } from "@/app/lib/@frontend/ui";
+import { ClientOpportunityUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
   searchParams: { id: string };

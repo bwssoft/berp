@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
 import { useProductionOrderUpdateForm } from "./use-production-order-update-form";

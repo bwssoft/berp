@@ -11,7 +11,7 @@ import {
   Button,
   ProductionOrderStepsUpdateForm,
   Select,
-} from "@/app/lib/@frontend/ui";
+} from "@/app/lib/@frontend/ui/component";
 import { formatDate } from "@/app/lib/util";
 import { useProductionOrderDetails } from "../hooks";
 

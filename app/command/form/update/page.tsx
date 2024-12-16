@@ -1,5 +1,5 @@
 import { findOneCommand } from "@/app/lib/@backend/action";
-import { CommandUpdateForm } from "@/app/lib/@frontend/ui";
+import { CommandUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
   searchParams: { id: string };

@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useCommandCreateForm } from "./use-command-create-form";
 
 export function CommandCreateForm() {

@@ -1,5 +1,5 @@
 import { findOneClient } from "@/app/lib/@backend/action";
-import { ClientUpdateForm } from "@/app/lib/@frontend/ui";
+import { ClientUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
   searchParams: { id: string };

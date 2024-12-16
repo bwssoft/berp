@@ -4,7 +4,7 @@ import { xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { toast } from "../../../../../hook";
+import { toast } from "@/app/lib/@frontend/hook";
 
 interface IInputCategorySheet {
   Código: string;

@@ -18,7 +18,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/app/lib/@frontend/ui";
+} from "@/app/lib/@frontend/ui/component";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import {

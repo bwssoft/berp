@@ -2,7 +2,7 @@ import { createOneInputCategory } from "@/app/lib/@backend/action/input/input-ca
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { toast } from "../../../../../hook"
+import { toast } from "@/app/lib/@frontend/hook"
 
 const schema = z.object({
   name: z.string().min(1, 'Esse campo não pode ser vazio'),

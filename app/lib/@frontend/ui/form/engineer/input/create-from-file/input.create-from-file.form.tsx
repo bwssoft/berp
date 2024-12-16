@@ -1,8 +1,8 @@
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useInputCreateFromFileForm } from "./use-input-create-from-file-form";
-import { FileUpload } from "../../../../input-file";
+import { FileUpload } from "../../../../component/input-file";
 import { inputConstants } from "@/app/lib/constant";
 
 export function InputCreateFromFileForm() {

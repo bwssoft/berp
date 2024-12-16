@@ -6,7 +6,7 @@ import {
   AvatarImage,
   Button,
   Textarea,
-} from "@/app/lib/@frontend/ui";
+} from "@/app/lib/@frontend/ui/component";
 
 const comments: { user: { name: string; pic?: string }; content: string }[] = [
   {

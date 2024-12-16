@@ -13,7 +13,7 @@
   ```
 */
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { ContactLabelEnum, IClient } from "@/app/lib/@backend/domain";
 import { useClientUpdateForm } from "./use-client-update-form";

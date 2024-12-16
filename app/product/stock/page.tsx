@@ -8,7 +8,7 @@ import {
   BarChart,
   DoughnutChart,
   ProductStockTable,
-} from "@/app/lib/@frontend/ui";
+} from "@/app/lib/@frontend/ui/component";
 import { ArrowPathIcon } from "@heroicons/react/20/solid";
 
 export default async function Page() {

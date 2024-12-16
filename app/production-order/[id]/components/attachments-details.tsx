@@ -1,7 +1,7 @@
 "use client";
 
 import { IFinancialOrder } from "@/app/lib/@backend/domain";
-import { Button, DataTable } from "@/app/lib/@frontend/ui";
+import { Button, DataTable } from "@/app/lib/@frontend/ui/component";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/solid";
 import { useAttachmentDetails } from "../hooks";
 

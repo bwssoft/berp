@@ -1,6 +1,6 @@
 "use client";
 import { IProduct } from "@/app/lib/@backend/domain";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useDeviceCreateForm } from "./use-device-create-form";
 
 interface Props {

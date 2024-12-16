@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { toast } from "../../../../../hook";
+import { toast } from "@/app/lib/@frontend/hook";
 import { EProductCategory } from "@/app/lib/@backend/domain";
 
 const schema = z.object({

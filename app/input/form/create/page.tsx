@@ -1,4 +1,4 @@
-import { InputCreateForm } from "@/app/lib/@frontend/ui";
+import { InputCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default function Page() {
   return (

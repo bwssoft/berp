@@ -2,7 +2,7 @@ import {
   findAllProduct,
   findOneProductionOrder,
 } from "@/app/lib/@backend/action";
-import { ProductionOrderUpdateForm } from "@/app/lib/@frontend/ui";
+import { ProductionOrderUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
   searchParams: { id: string };

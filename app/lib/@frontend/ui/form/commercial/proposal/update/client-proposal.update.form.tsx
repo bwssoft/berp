@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
   ClientProposalSchema,
   useClientProposalUpdateForm,
@@ -102,7 +102,6 @@ export function ClientProposalUpdateForm(props: Props) {
                     e.target.options[e.target.selectedIndex];
                   const clientData = selectedOption.getAttribute("data-client");
                   const client = JSON.parse(clientData as string);
-                  console.log(client);
                   handleChangeClient(client);
                 }}
               >

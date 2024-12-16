@@ -1,6 +1,6 @@
 "use client";
 import { IProduct } from "@/app/lib/@backend/domain";
-import { Radio } from "@/app/lib/@frontend/ui";
+import { Radio } from "@/app/lib/@frontend/ui/component";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { useProductTransacionCreateForm } from "./use-product-transaction-create-form";
 import { Controller } from "react-hook-form";

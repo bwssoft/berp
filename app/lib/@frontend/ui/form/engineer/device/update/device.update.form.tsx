@@ -1,7 +1,7 @@
 "use client";
 import { IDevice, IProduct } from "@/app/lib/@backend/domain";
 import { useDeviceUpdateForm } from "./use-device-update-form";
-import { Button } from "@/app/lib/@frontend/ui/button";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
 
 interface Props {
   device: IDevice;

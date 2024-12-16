@@ -1,5 +1,5 @@
 import { findAllInput, findAllProduct } from "@/app/lib/@backend/action";
-import { TechnicalSheetCreateForm } from "@/app/lib/@frontend/ui";
+import { TechnicalSheetCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
   const inputs = await findAllInput();

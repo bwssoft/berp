@@ -2,8 +2,8 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useDeviceCreateFromFileForm } from "./use-device-create-from-file-form";
 import { IProduct } from "@/app/lib/@backend/domain";
-import { Button } from "@/app/lib/@frontend/ui/button";
-import { FileUpload } from "../../../../input-file";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
+import { FileUpload } from "../../../../component/input-file";
 
 interface Props {
   products: IProduct[];

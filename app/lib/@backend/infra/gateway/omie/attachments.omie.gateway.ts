@@ -43,7 +43,6 @@ class AttachmentOmieGateway extends OmieGateway {
 
       return response.data.cLinkDownload;
     } catch (error) {
-      console.log(error);
       throw new Error(
         "Error on AttachmentOmieGateway, getAttachmentUrl method"
       );

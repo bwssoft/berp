@@ -1,5 +1,5 @@
 import { findAllProduct, findOneDevice } from "@/app/lib/@backend/action";
-import { DeviceUpdateForm } from "@/app/lib/@frontend/ui";
+import { DeviceUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
   searchParams: { id: string };
