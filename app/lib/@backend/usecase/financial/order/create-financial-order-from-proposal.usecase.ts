@@ -50,8 +50,8 @@ class CreateFinancialOrderFromProposalUsecase {
             acc[cur.enterprise_id] = {
               enterprise_id: cur.enterprise_id,
               items: [],
-              installment_quantity: undefined,
-              installment: undefined,
+              installment_quantity: null,
+              installment: null,
             };
           }
 
@@ -66,9 +66,9 @@ class CreateFinancialOrderFromProposalUsecase {
         proposal_id: proposal.id,
         created_at: new Date(),
         line_items_processed: Object.values(line_items_processed),
-        products: undefined as any,
-        active: undefined as any,
-        omie_webhook_metadata: undefined as any
+        active: true,
+        products: null as any,
+        omie_webhook_metadata: null as any
       })
     } catch (err) {
       throw err;

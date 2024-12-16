@@ -6,6 +6,7 @@ import {
   findOneFinancialOrder,
 } from "@/app/lib/@backend/action";
 import { findOneClientProposal } from "@/app/lib/@backend/action";
+import { IFinancialOrder } from "@/app/lib/@backend/domain";
 import {
   ClientProposalUpdateForm,
   FinancialOrderFromProposalCreateForm,
@@ -74,7 +75,11 @@ export default async function Page(props: Props) {
           proposal={proposal}
           negotiationType={negotiationType}
         />
-        <FinancialOrderFromProposalCreateForm />
+        <FinancialOrderFromProposalCreateForm
+          financial_order={financialOrder as IFinancialOrder}
+          proposal_id={proposal.id}
+          scenario_id={proposal.scenarios?.[0].id}
+        />
       </div>
     </div>
   );

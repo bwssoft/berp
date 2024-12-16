@@ -38,14 +38,14 @@ export interface IFinancialOrder {
   };
 }
 
-interface LineItemProcessed {
+export interface LineItemProcessed {
   enterprise_id: string
   items: LineItem[]
-  installment_quantity: number | undefined
-  installment: Installment[] | undefined
+  installment_quantity: number | null
+  installment: Installment[] | null
 }
 
-interface LineItem {
+export interface LineItem {
   id: string,
   product_id: string
   quantity: number
@@ -56,6 +56,8 @@ interface Installment {
   id: string
   value: number
   valid_at: Date
+  percentage: number
+  sequence: number
 }
 
 
