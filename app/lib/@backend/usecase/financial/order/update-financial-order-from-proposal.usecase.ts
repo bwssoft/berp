@@ -17,14 +17,14 @@ class UpdateFinancialOrderFromProposalUsecase {
       if (typeof installment_quantity !== "number") {
         throw new Error("line_items_processed without installment_quantity")
       }
-      const total_price = items.reduce((acc, cur) => acc + (cur.unit_price * cur.quantity), 0)
+      const total_price = items.reduce((acc, cur) => acc + cur.total_price, 0)
       const installment_price = total_price / installment_quantity
       line["installment"] = Array.from({ length: installment_quantity }).map((_, index) => {
         const current_date = new Date();
         current_date.setMonth(current_date.getMonth() + index + 1)
         return {
           id: nanoid(),
-          value: installment_price,
+          value: Number(installment_price.toFixed(2)),
           valid_at: current_date,
           percentage: Number((100 / installment_quantity).toFixed(2)),
           sequence: index + 1,

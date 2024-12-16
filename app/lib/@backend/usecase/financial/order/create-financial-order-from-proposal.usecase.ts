@@ -37,10 +37,7 @@ class CreateFinancialOrderFromProposalUsecase {
           return {
             enterprise_id,
             items: [{
-              id: proposal_line_item?.id!,
-              product_id: proposal_line_item?.product_id!,
-              quantity: proposal_line_item?.quantity!,
-              unit_price: proposal_line_item?.unit_price!,
+              ...proposal_line_item
             }]
           }
         })

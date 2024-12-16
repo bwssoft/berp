@@ -47,9 +47,12 @@ export interface LineItemProcessed {
 
 export interface LineItem {
   id: string,
+  negotiation_type_id: string
   product_id: string
   quantity: number
   unit_price: number
+  discount: number
+  total_price: number
 }
 
 interface Installment {

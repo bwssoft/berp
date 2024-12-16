@@ -106,6 +106,12 @@ class FindOneFinancialOrderUsecase {
           items: {
             $push: {
               id: "$line_items_processed.items.id",
+              total_price:
+                "$line_items_processed.items.total_price",
+              discount:
+                "$line_items_processed.items.discount",
+              negotiation_type_id:
+                "$line_items_processed.items.negotiation_type_id",
               quantity:
                 "$line_items_processed.items.quantity",
               unit_price:
