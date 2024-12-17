@@ -131,7 +131,7 @@ export function useClientProposalUpdateForm(props: Props) {
   });
 
   const handleDownloadOneProposalDocument = async (props: {
-    document: NonNullable<IProposal["scenarios"][number]["document"]>[number];
+    document: NonNullable<IProposal["scenarios"][number]["signature_process"]>["documents"][number];
   }) => {
     try {
       // Chama a ação do servidor

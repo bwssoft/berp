@@ -1,6 +1,11 @@
 import { singleton } from "../../../../util";
 import { IProposal } from "../..";
 
+
+export interface IProposalToHtmlDataMapper {
+  format(input: IProposal): string
+}
+
 class ProposalToHtmlDataMapper {
   format(input: IProposal): string {
     return `

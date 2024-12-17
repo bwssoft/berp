@@ -48,8 +48,6 @@ import { nanoid } from "nanoid";
 import { useEffect } from "react";
 import {
   cancelSignatureProcess,
-  createOneProposalDocument,
-  deleteOneProposalDocument,
   initializeSignatureProcess,
 } from "@/app/lib/@backend/action";
 
@@ -448,7 +446,9 @@ interface Scenario {
   currentClient?: IClient;
 
   handleDownloadOneProposalDocument: (props: {
-    document: NonNullable<IProposal["scenarios"][number]["document"]>[number];
+    document: NonNullable<
+      IProposal["scenarios"][number]["signature_process"]
+    >["documents"][number];
   }) => Promise<void>;
 }
 function Scenario({
@@ -469,8 +469,8 @@ function Scenario({
   handleDownloadOneProposalDocument,
 }: Scenario) {
   const scenario = proposal.scenarios.find((sce) => sce.id === scenario_id);
-  const documents = scenario?.document ?? [];
   const signature_process = scenario?.signature_process;
+  const documents = signature_process?.documents ?? [];
   const contacts = currentClient?.contacts ?? [];
 
   const {
@@ -491,26 +491,6 @@ function Scenario({
     control,
     name: `scenarios.${hookFormScenarioIndex}.freight.value`,
   });
-
-  const handleCreateDocument = async (input: {
-    scenario: IProposal["scenarios"][number];
-    proposal: IProposal;
-  }) => {
-    try {
-      await createOneProposalDocument(input);
-      toast({
-        title: "Sucesso",
-        description: "Documento Gerado com sucesso!",
-        variant: "success",
-      });
-    } catch (e) {
-      toast({
-        title: "Error",
-        description: "Erro ao gerar o documento!",
-        variant: "error",
-      });
-    }
-  };
 
   useEffect(() => {
     if (!lineItemsWatched) return;
@@ -1172,120 +1152,6 @@ function Scenario({
             )}
           </Disclosure>
 
-          {/*DOCUMENTOS*/}
-          <Disclosure>
-            {({ open }) => (
-              <>
-                <DisclosureButton className="group w-full flex justify-between items-center mt-8">
-                  <div className="w-full flex flex-col items-start">
-                    <h2 className="text-sm font-semibold leading-7 text-gray-900">
-                      Documentos
-                    </h2>
-                    <p className="text-xs leading-6 text-gray-600">
-                      Uma lista de todos os documentos desse cenário
-                    </p>
-                  </div>
-                  <ChevronDownIcon
-                    className={cn(
-                      "size-5 fill-gray-text-gray-600 w-full sm:w-auto",
-                      open && "rotate-180"
-                    )}
-                  />
-                </DisclosureButton>
-                <div className="border-b border-gray-900/10"></div>
-                <DisclosurePanel>
-                  {documents?.length ? (
-                    <ul
-                      role="list"
-                      className="mt-4 divide-y divide-gray-100 rounded-md border border-gray-200 bg-white"
-                    >
-                      {documents.map((document) => (
-                        <li
-                          key={document.id}
-                          className="flex items-center justify-between py-4 px-5 text-sm/6"
-                        >
-                          <div className="flex w-0 flex-1 items-center">
-                            <PaperClipIcon
-                              aria-hidden="true"
-                              className="size-5 shrink-0 text-gray-400"
-                            />
-                            <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                              <span className="truncate font-medium">
-                                {document.name}
-                              </span>
-                              <span className="shrink-0 text-gray-400">
-                                {(document.size / 1024).toFixed(2)}kb
-                              </span>
-                            </div>
-                          </div>
-                          <div className="ml-4 shrink-0">
-                            <button
-                              type="button"
-                              onClick={async () =>
-                                await deleteOneProposalDocument({
-                                  document,
-                                  proposal_id: proposal.id,
-                                  scenario_id,
-                                })
-                              }
-                              className="text-sm text-gray-700 hover:text-gray-500 hover:underline w-full sm:w-auto sm:ml-2 sm:pl-2 text-start"
-                            >
-                              Excluir
-                            </button>
-                          </div>
-                          <div className="ml-4 shrink-0">
-                            <button
-                              type="button"
-                              onClick={async () =>
-                                await handleDownloadOneProposalDocument({
-                                  document,
-                                })
-                              }
-                              className="text-sm text-gray-700 hover:text-gray-500 hover:underline w-full sm:w-auto sm:ml-2 sm:pl-2 text-start"
-                            >
-                              Download
-                            </button>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="mt-4 rounded-md bg-gray-100 border border-gray-200 px-6 py-3">
-                      <div className="flex">
-                        <div className="shrink-0">
-                          <InformationCircleIcon
-                            aria-hidden="true"
-                            className="size-5 text-gray-400"
-                          />
-                        </div>
-                        <div className="ml-6 flex-1 md:flex md:justify-between">
-                          <p className="text-sm text-gray-700">
-                            Esse cenário ainda não teve nenhum documento gerado.
-                          </p>
-                          <p className="mt-3 text-sm md:ml-6 md:mt-0">
-                            <button
-                              type="button"
-                              className="whitespace-nowrap font-medium text-gray-700 hover:text-gray-600"
-                              onClick={() =>
-                                handleCreateDocument({
-                                  proposal,
-                                  scenario: scenario!,
-                                })
-                              }
-                            >
-                              Gerar
-                              <span aria-hidden="true"> &rarr;</span>
-                            </button>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </DisclosurePanel>
-              </>
-            )}
-          </Disclosure>
-
           {/*PROCESSO DE ASSINATURA*/}
           <Disclosure>
             {({ open }) => (
@@ -1328,198 +1194,251 @@ function Scenario({
                 <div className="border-b border-gray-900/10"></div>
                 <DisclosurePanel>
                   {signature_process ? (
-                    <div className="mt-4 flex gap-8 rounded-md border border-gray-200 bg-white px-5 py-4">
-                      <div className="w-full">
+                    <>
+                      <div className="mt-4 rounded-md border border-gray-200 bg-white px-5 py-4">
                         <h2 className="text-sm font-semibold leading-7 text-gray-900">
-                          Lista de contatos
+                          Lista de Documentos
                         </h2>
                         <p className="text-xs leading-6 text-gray-600">
-                          Segue abaixo uma lista com todos os contatos desse
-                          cliente.
+                          Segue abaixo uma lista com todos os documentos
+                          gerados.
                         </p>
-                        <ul role="list" className="divide-y divide-gray-100">
-                          {contacts.map((person) => (
+                        <ul
+                          role="list"
+                          className="mt-4 divide-y divide-gray-100 rounded-md border border-gray-200 bg-white"
+                        >
+                          {documents.map((document) => (
                             <li
-                              key={person.id}
-                              className="flex justify-between gap-x-6 py-5"
+                              key={document.id}
+                              className="flex items-center justify-between py-4 px-5 text-sm/6"
                             >
-                              <div className="flex gap-x-4 w-full">
-                                <img
-                                  alt=""
-                                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                  className="size-12 flex-none rounded-full bg-gray-50"
+                              <div className="flex w-0 flex-1 items-center">
+                                <PaperClipIcon
+                                  aria-hidden="true"
+                                  className="size-5 shrink-0 text-gray-400"
                                 />
-                                <div className="min-w-0 flex-auto">
-                                  <div className="flex items-center gap-x-3">
-                                    <p className="text-sm/6 font-semibold text-gray-900">
-                                      {person.name}
-                                    </p>
-                                    <p className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                      {person.label}
-                                    </p>
-                                  </div>
-                                  {person.email}
+                                <div className="ml-4 flex min-w-0 flex-1 gap-2">
+                                  <span className="truncate font-medium">
+                                    {document.name}
+                                  </span>
+                                  <span className="shrink-0 text-gray-400">
+                                    {(document.size / 1024).toFixed(2)}kb
+                                  </span>
                                 </div>
-                                <div className="flex flex-none items-center gap-x-4">
-                                  <Menu as="div" className="relative flex-none">
-                                    <MenuButton className="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
-                                      <span className="sr-only">
-                                        Open options
-                                      </span>
-                                      <EllipsisVerticalIcon
-                                        aria-hidden="true"
-                                        className="size-5"
-                                      />
-                                    </MenuButton>
-                                    <MenuItems className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
-                                      <MenuItem>
-                                        <a
-                                          href="#"
-                                          className="block px-3 py-1 text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
-                                        >
-                                          Ver
-                                        </a>
-                                      </MenuItem>
-                                      <MenuItem>
-                                        <a
-                                          href="#"
-                                          className="block px-3 py-1 text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
-                                        >
-                                          Adicionar
-                                        </a>
-                                      </MenuItem>
-                                      <MenuItem>
-                                        <a
-                                          href="#"
-                                          className="block px-3 py-1 text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
-                                        >
-                                          Remover
-                                        </a>
-                                      </MenuItem>
-                                    </MenuItems>
-                                  </Menu>
-                                </div>
+                              </div>
+                              <div className="ml-4 shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={async () =>
+                                    await handleDownloadOneProposalDocument({
+                                      document,
+                                    })
+                                  }
+                                  className="text-sm text-gray-700 hover:text-gray-500 hover:underline w-full sm:w-auto sm:ml-2 sm:pl-2 text-start"
+                                >
+                                  Download
+                                </button>
                               </div>
                             </li>
                           ))}
                         </ul>
                       </div>
-                      <div className="border-l border-gray-900/10"></div>
-                      <div>
-                        <h2 className="text-sm font-semibold leading-7 text-gray-900">
-                          Progresso
-                        </h2>
-                        <p className="text-xs leading-6 text-gray-600">
-                          Acompanhe o progresso do processo.
-                        </p>
-                        <nav aria-label="Progress" className="mt-4">
-                          <ol role="list" className="overflow-hidden">
-                            {steps.map((step, stepIdx) => (
+                      <div className="mt-4 flex gap-8 rounded-md border border-gray-200 bg-white px-5 py-4">
+                        <div className="w-full">
+                          <h2 className="text-sm font-semibold leading-7 text-gray-900">
+                            Lista de contatos
+                          </h2>
+                          <p className="text-xs leading-6 text-gray-600">
+                            Segue abaixo uma lista com todos os contatos desse
+                            cliente.
+                          </p>
+                          <ul role="list" className="divide-y divide-gray-100">
+                            {contacts.map((person) => (
                               <li
-                                key={step.name}
-                                className={cn(
-                                  stepIdx !== steps.length - 1 ? "pb-10" : "",
-                                  "relative"
-                                )}
+                                key={person.id}
+                                className="flex justify-between gap-x-6 py-5"
                               >
-                                {step.status === "complete" ? (
-                                  <>
-                                    {stepIdx !== steps.length - 1 ? (
-                                      <div
-                                        aria-hidden="true"
-                                        className="absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5 bg-indigo-600"
-                                      />
-                                    ) : null}
-                                    <a
-                                      href={step.href}
-                                      className="group relative flex items-start"
+                                <div className="flex gap-x-4 w-full">
+                                  <img
+                                    alt=""
+                                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                    className="size-12 flex-none rounded-full bg-gray-50"
+                                  />
+                                  <div className="min-w-0 flex-auto">
+                                    <div className="flex items-center gap-x-3">
+                                      <p className="text-sm/6 font-semibold text-gray-900">
+                                        {person.name}
+                                      </p>
+                                      <p className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                        {person.label}
+                                      </p>
+                                    </div>
+                                    {person.email}
+                                  </div>
+                                  <div className="flex flex-none items-center gap-x-4">
+                                    <Menu
+                                      as="div"
+                                      className="relative flex-none"
                                     >
-                                      <span className="flex h-9 items-center">
-                                        <span className="relative z-10 flex size-8 items-center justify-center rounded-full bg-indigo-600 group-hover:bg-indigo-800">
-                                          <CheckIcon
-                                            aria-hidden="true"
-                                            className="size-5 text-white"
-                                          />
+                                      <MenuButton className="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
+                                        <span className="sr-only">
+                                          Open options
                                         </span>
-                                      </span>
-                                      <span className="ml-4 flex min-w-0 flex-col">
-                                        <span className="text-sm font-medium">
-                                          {step.name}
-                                        </span>
-                                        <span className="text-sm text-gray-500">
-                                          {step.description}
-                                        </span>
-                                      </span>
-                                    </a>
-                                  </>
-                                ) : step.status === "current" ? (
-                                  <>
-                                    {stepIdx !== steps.length - 1 ? (
-                                      <div
-                                        aria-hidden="true"
-                                        className="absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5 bg-gray-300"
-                                      />
-                                    ) : null}
-                                    <a
-                                      href={step.href}
-                                      aria-current="step"
-                                      className="group relative flex items-start"
-                                    >
-                                      <span
-                                        aria-hidden="true"
-                                        className="flex h-9 items-center"
-                                      >
-                                        <span className="relative z-10 flex size-8 items-center justify-center rounded-full border-2 border-indigo-600 bg-white">
-                                          <span className="size-2.5 rounded-full bg-indigo-600" />
-                                        </span>
-                                      </span>
-                                      <span className="ml-4 flex min-w-0 flex-col">
-                                        <span className="text-sm font-medium text-indigo-600">
-                                          {step.name}
-                                        </span>
-                                        <span className="text-sm text-gray-500">
-                                          {step.description}
-                                        </span>
-                                      </span>
-                                    </a>
-                                  </>
-                                ) : (
-                                  <>
-                                    {stepIdx !== steps.length - 1 ? (
-                                      <div
-                                        aria-hidden="true"
-                                        className="absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5 bg-gray-300"
-                                      />
-                                    ) : null}
-                                    <a
-                                      href={step.href}
-                                      className="group relative flex items-start"
-                                    >
-                                      <span
-                                        aria-hidden="true"
-                                        className="flex h-9 items-center"
-                                      >
-                                        <span className="relative z-10 flex size-8 items-center justify-center rounded-full border-2 border-gray-300 bg-white group-hover:border-gray-400">
-                                          <span className="size-2.5 rounded-full bg-transparent group-hover:bg-gray-300" />
-                                        </span>
-                                      </span>
-                                      <span className="ml-4 flex min-w-0 flex-col">
-                                        <span className="text-sm font-medium text-gray-500">
-                                          {step.name}
-                                        </span>
-                                        <span className="text-sm text-gray-500">
-                                          {step.description}
-                                        </span>
-                                      </span>
-                                    </a>
-                                  </>
-                                )}
+                                        <EllipsisVerticalIcon
+                                          aria-hidden="true"
+                                          className="size-5"
+                                        />
+                                      </MenuButton>
+                                      <MenuItems className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
+                                        <MenuItem>
+                                          <a
+                                            href="#"
+                                            className="block px-3 py-1 text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
+                                          >
+                                            Ver
+                                          </a>
+                                        </MenuItem>
+                                        <MenuItem>
+                                          <a
+                                            href="#"
+                                            className="block px-3 py-1 text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
+                                          >
+                                            Adicionar
+                                          </a>
+                                        </MenuItem>
+                                        <MenuItem>
+                                          <a
+                                            href="#"
+                                            className="block px-3 py-1 text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
+                                          >
+                                            Remover
+                                          </a>
+                                        </MenuItem>
+                                      </MenuItems>
+                                    </Menu>
+                                  </div>
+                                </div>
                               </li>
                             ))}
-                          </ol>
-                        </nav>
+                          </ul>
+                        </div>
+                        <div className="border-l border-gray-900/10"></div>
+                        <div>
+                          <h2 className="text-sm font-semibold leading-7 text-gray-900">
+                            Progresso
+                          </h2>
+                          <p className="text-xs leading-6 text-gray-600">
+                            Acompanhe o progresso do processo.
+                          </p>
+                          <nav aria-label="Progress" className="mt-4">
+                            <ol role="list" className="overflow-hidden">
+                              {steps.map((step, stepIdx) => (
+                                <li
+                                  key={step.name}
+                                  className={cn(
+                                    stepIdx !== steps.length - 1 ? "pb-10" : "",
+                                    "relative"
+                                  )}
+                                >
+                                  {step.status === "complete" ? (
+                                    <>
+                                      {stepIdx !== steps.length - 1 ? (
+                                        <div
+                                          aria-hidden="true"
+                                          className="absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5 bg-indigo-600"
+                                        />
+                                      ) : null}
+                                      <a
+                                        href={step.href}
+                                        className="group relative flex items-start"
+                                      >
+                                        <span className="flex h-9 items-center">
+                                          <span className="relative z-10 flex size-8 items-center justify-center rounded-full bg-indigo-600 group-hover:bg-indigo-800">
+                                            <CheckIcon
+                                              aria-hidden="true"
+                                              className="size-5 text-white"
+                                            />
+                                          </span>
+                                        </span>
+                                        <span className="ml-4 flex min-w-0 flex-col">
+                                          <span className="text-sm font-medium">
+                                            {step.name}
+                                          </span>
+                                          <span className="text-sm text-gray-500">
+                                            {step.description}
+                                          </span>
+                                        </span>
+                                      </a>
+                                    </>
+                                  ) : step.status === "current" ? (
+                                    <>
+                                      {stepIdx !== steps.length - 1 ? (
+                                        <div
+                                          aria-hidden="true"
+                                          className="absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5 bg-gray-300"
+                                        />
+                                      ) : null}
+                                      <a
+                                        href={step.href}
+                                        aria-current="step"
+                                        className="group relative flex items-start"
+                                      >
+                                        <span
+                                          aria-hidden="true"
+                                          className="flex h-9 items-center"
+                                        >
+                                          <span className="relative z-10 flex size-8 items-center justify-center rounded-full border-2 border-indigo-600 bg-white">
+                                            <span className="size-2.5 rounded-full bg-indigo-600" />
+                                          </span>
+                                        </span>
+                                        <span className="ml-4 flex min-w-0 flex-col">
+                                          <span className="text-sm font-medium text-indigo-600">
+                                            {step.name}
+                                          </span>
+                                          <span className="text-sm text-gray-500">
+                                            {step.description}
+                                          </span>
+                                        </span>
+                                      </a>
+                                    </>
+                                  ) : (
+                                    <>
+                                      {stepIdx !== steps.length - 1 ? (
+                                        <div
+                                          aria-hidden="true"
+                                          className="absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5 bg-gray-300"
+                                        />
+                                      ) : null}
+                                      <a
+                                        href={step.href}
+                                        className="group relative flex items-start"
+                                      >
+                                        <span
+                                          aria-hidden="true"
+                                          className="flex h-9 items-center"
+                                        >
+                                          <span className="relative z-10 flex size-8 items-center justify-center rounded-full border-2 border-gray-300 bg-white group-hover:border-gray-400">
+                                            <span className="size-2.5 rounded-full bg-transparent group-hover:bg-gray-300" />
+                                          </span>
+                                        </span>
+                                        <span className="ml-4 flex min-w-0 flex-col">
+                                          <span className="text-sm font-medium text-gray-500">
+                                            {step.name}
+                                          </span>
+                                          <span className="text-sm text-gray-500">
+                                            {step.description}
+                                          </span>
+                                        </span>
+                                      </a>
+                                    </>
+                                  )}
+                                </li>
+                              ))}
+                            </ol>
+                          </nav>
+                        </div>
                       </div>
-                    </div>
+                    </>
                   ) : (
                     <div className="mt-4 rounded-md bg-gray-100 border border-gray-200 px-6 py-3">
                       <div className="flex">

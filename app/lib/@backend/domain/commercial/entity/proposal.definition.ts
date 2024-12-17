@@ -39,7 +39,6 @@ interface Scenario {
     type: FreightType
   };
   signature_process?: SignatureProcess
-  document?: Document[]
 }
 
 export enum Currency {
@@ -70,16 +69,9 @@ interface LineItem {
   total_price: number;
 }
 
-interface BillingProcess {
-  id: string
-  enterprise_id: OmieEnterpriseEnum
-  line_item_id: string[]
-  installment_quantity?: number
-}
-
 interface SignatureProcess {
   id: string
-  document_id: string[]
+  documents: Document[]
   contact: {
     id: string
     signed: boolean,

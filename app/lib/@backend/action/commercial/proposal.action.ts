@@ -2,7 +2,7 @@
 
 import { IClient, IProposal } from "@/app/lib/@backend/domain"
 import {
-  createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase, createOneProposalDocumentUsecase, initializeSignatureProcessUscase, deleteOneProposalDocumentUsecase,
+  createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase, initializeSignatureProcessUscase,
   downloadOneProposalDocumentUsecase,
   cancelSignatureProcessUscase,
 } from "../../usecase"
@@ -35,32 +35,8 @@ export async function findAllClientProposal(): Promise<(IProposal & { client: IC
   return await findAllProposalWithClientUsecase.execute()
 }
 
-export async function createOneProposalDocument(input: { scenario: IProposal["scenarios"][number], proposal: IProposal }) {
-  const { scenario, proposal } = input
-  await createOneProposalDocumentUsecase.execute({ scenario, proposal })
-  revalidatePath(`/sale/proposal/form/update?id=${proposal.id}`)
-}
-
-export async function deleteOneProposalDocument(input: {
-  proposal_id: string;
-  scenario_id: string;
-  document: NonNullable<IProposal["scenarios"][number]["document"]>[number]
-}) {
-  const {
-    proposal_id,
-    scenario_id,
-    document,
-  } = input
-  await deleteOneProposalDocumentUsecase.execute({
-    proposal_id,
-    scenario_id,
-    document,
-  })
-  revalidatePath(`/sale/proposal/form/update?id=${proposal_id}`)
-}
-
 export async function downloadOneProposalDocument(input: {
-  document: NonNullable<IProposal["scenarios"][number]["document"]>[number]
+  document: NonNullable<IProposal["scenarios"][number]["signature_process"]>["documents"][number]
 }) {
   const { document } = input
   return await downloadOneProposalDocumentUsecase.execute({ document })
