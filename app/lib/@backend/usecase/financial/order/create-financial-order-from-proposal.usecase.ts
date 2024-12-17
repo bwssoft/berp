@@ -31,6 +31,7 @@ class CreateFinancialOrderFromProposalUsecase {
       const analysis = await this.analyseProposalScenarioUsecase.execute({ scenario })
 
       const line_items_processed = analysis
+        .filter(el => el.requires_sale_order)
         .map(({ enterprise_id, line_item_id }) => {
           const proposal_line_item = scenario.line_items.find(l => l.id === line_item_id)
           if (!proposal_line_item) return undefined
