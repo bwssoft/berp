@@ -1,7 +1,7 @@
 "use server"
 
 import { IInput, IInputTransaction } from "@/app/lib/@backend/domain";
-import { countInputTransactionUsecase, createOneInputTransactionUsecase, findAllInputTransactionWithInputUsecase } from "../../usecase";
+import { countInputTransactionUsecase, createOneInputTransactionUsecase, findAllInputTransactionWithInputUsecase } from "@/app/lib/@backend/usecase";
 import { revalidatePath } from "next/cache";
 
 

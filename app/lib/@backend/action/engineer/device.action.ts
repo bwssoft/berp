@@ -1,7 +1,6 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IDevice, IProduct } from "../domain"
 import {
   createOneDeviceUsecase,
   findOneDeviceUsecase,
@@ -10,7 +9,8 @@ import {
   findAllDeviceUsecase,
   createManyDeviceUsecase,
   findManyDeviceBySerialUsecase,
-} from "../usecase"
+} from "@/app/lib/@backend/usecase"
+import { IDevice, IProduct } from "@/app/lib/@backend/domain"
 
 
 export async function createOneDevice(device: Omit<IDevice, "id" | "created_at">) {

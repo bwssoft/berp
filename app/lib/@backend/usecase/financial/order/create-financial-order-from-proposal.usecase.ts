@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IFinancialOrder, IFinancialOrderRepository, IProposalRepository } from "../../../domain";
+import { IFinancialOrder, IFinancialOrderRepository, IProposalRepository } from "@/app/lib/@backend/domain";
 import { financialOrderRepository, proposalRepository } from "@/app/lib/@backend/infra";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "../../commercial/proposal/analyse-proposal-scenario.usecase";
 

@@ -1,7 +1,7 @@
 "use server"
 
 import { IClient, IOpportunity } from "@/app/lib/@backend/domain"
-import { createOneOpportunityUsecase, deleteOneOpportunityUsecase, findAllOpportunityUsecase, updateOneOpportunityUsecase, findAllOpportunityWithClientUsecase, findOneOpportunityUsecase } from "../../usecase"
+import { createOneOpportunityUsecase, deleteOneOpportunityUsecase, findAllOpportunityUsecase, updateOneOpportunityUsecase, findAllOpportunityWithClientUsecase, findOneOpportunityUsecase } from "@/app/lib/@backend/usecase"
 
 export async function createOneClientOpportunity(client: Omit<IOpportunity
   , "id" | "created_at">) {

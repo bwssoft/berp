@@ -1,9 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IClientRepository, IProductRepository, IProposalOmiegateway, IProposalRepository } from "../../../domain";
+import { IClientRepository, IProductRepository, IProposalOmiegateway, IProposalRepository } from "@/app/lib/@backend/domain";
 import { clientRepository, productRepository, proposalOmieGateway, proposalRepository, } from "@/app/lib/@backend/infra";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "../../commercial/proposal/analyse-proposal-scenario.usecase";
 import { nanoid } from "nanoid";
-import { OmieEnterpriseEnum } from "../../../domain/@shared/gateway/omie.gateway.interface";
+import { OmieEnterpriseEnum } from "@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface";
 import { account, orderCategory } from "@/app/lib/constant/app-hashs";
 
 class CreateFinancialOrderOnOmieUsecase {

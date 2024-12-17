@@ -1,6 +1,6 @@
 "use server";
 
-import { OmieEnterpriseEnum } from "../../../domain/@shared/gateway/omie.gateway.interface";
+import { OmieEnterpriseEnum } from "@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface";
 import { attachmentOmieGateway } from "@/app/lib/@backend/infra";
 
 type GetSaleOrderAttachmentUrlParams = {

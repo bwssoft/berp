@@ -1,4 +1,4 @@
-import { findAllInputCategories } from "@/app/lib/@backend/action/input/input-category.action";
+import { findAllInputCategories } from "@/app/lib/@backend/action";
 import { InputCategoryTable } from "@/app/lib/@frontend/ui/table";
 import { ArrowUpTrayIcon, PlusIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";

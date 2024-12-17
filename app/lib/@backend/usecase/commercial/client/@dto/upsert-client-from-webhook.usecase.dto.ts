@@ -1,5 +1,5 @@
 import { EventObjectInterfaces, EventsTopics } from "@/app/lib/@backend/infra/api/controller/commercial/client/topics.events.dto";
-import { IClient } from "../../../../domain/commercial";
+import { IClient } from "@/app/lib/@backend/domain";
 
 export interface IUpsertClientFromWebhookUseCase {
   execute: (data: IUpsertClientFromWebhookUseCase.Execute.Params) => Promise<IUpsertClientFromWebhookUseCase.Execute.Result>;

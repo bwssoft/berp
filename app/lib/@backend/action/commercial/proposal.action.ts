@@ -5,7 +5,7 @@ import {
   createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase, initializeSignatureProcessUscase,
   downloadOneProposalDocumentUsecase,
   cancelSignatureProcessUscase,
-} from "../../usecase"
+} from "@/app/lib/@backend/usecase"
 import { revalidatePath } from "next/cache"
 
 export async function createOneClientProposal(client: Omit<IProposal

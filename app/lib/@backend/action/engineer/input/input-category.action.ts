@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { IInputCategory } from "../../domain/engineer/entity/input-category.definition";
-import { createManyCategoryUsecase, createOneInputCategoryUsecase, deleteOneInputCategoryUsecase, findAllInputCategoriesUseCase } from "../../usecase";
+import { createManyCategoryUsecase, createOneInputCategoryUsecase, deleteOneInputCategoryUsecase, findAllInputCategoriesUseCase } from "@/app/lib/@backend/usecase";
+import { IInputCategory } from "@/app/lib/@backend/domain";
 
 
 export async function findAllInputCategories(): Promise<IInputCategory[]> {

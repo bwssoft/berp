@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProposalObjectRepository, IProposalRepository } from "../../../domain";
+import { IProposalObjectRepository, IProposalRepository } from "@/app/lib/@backend/domain";
 import { proposalObjectRepository, proposalRepository } from "@/app/lib/@backend/infra";
 
 class CancelSignatureProcessUscase {

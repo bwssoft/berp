@@ -1,8 +1,8 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IFinancialOrder } from "../../domain"
-import { createFinancialOrderFromProposalUsecase, deleteFinancialOrderUsecase, findOneFinancialOrderUsecase, createFinancialOrderOnOmieUsecase, updateFinancialOrderFromProposalUsecase } from "../../usecase"
+import { IFinancialOrder } from "@/app/lib/@backend/domain"
+import { createFinancialOrderFromProposalUsecase, deleteFinancialOrderUsecase, findOneFinancialOrderUsecase, createFinancialOrderOnOmieUsecase, updateFinancialOrderFromProposalUsecase } from "@/app/lib/@backend/usecase"
 
 export async function findOneFinancialOrder(order: Partial<IFinancialOrder>) {
   return await findOneFinancialOrderUsecase.execute(order)

@@ -1,14 +1,14 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IFirmware } from "../../domain"
+import { IFirmware } from "@/app/lib/@backend/domain"
 import {
   createOneFirmwareUsecase,
   findOneFirmwareUsecase,
   deleteOneFirmwareUsecase,
   updateOneFirmwareUsecase,
   findAllFirmwareUsecase
-} from "../../usecase"
+} from "@/app/lib/@backend/usecase"
 
 type FirmwareWithoutFile = Omit<IFirmware, "id" | "created_at" | "file">
 export async function createOneFirmware(firmware: FirmwareWithoutFile, formData: FormData) {

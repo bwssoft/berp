@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { findAllProductStockUsecase, getProductStockInsightUsecase, getTotalValueProductStockUsecase, updateProductStockUsacase, analyzeTemporalProductStockUsecase } from "../../usecase"
+import { findAllProductStockUsecase, getProductStockInsightUsecase, getTotalValueProductStockUsecase, updateProductStockUsacase, analyzeTemporalProductStockUsecase } from "@/app/lib/@backend/usecase"
 
 
 

@@ -1,4 +1,4 @@
-import { createOneInputCategory } from "@/app/lib/@backend/action/input/input-category.action"
+import { createOneInputCategory } from "@/app/lib/@backend/action"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"

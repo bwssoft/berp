@@ -1,8 +1,8 @@
-import { deleteOneInputCategoryById } from "@/app/lib/@backend/action/input/input-category.action";
-import { IInputCategory } from "@/app/lib/@backend/domain/engineer/entity/input-category.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook";
+import { IInputCategory } from "@/app/lib/@backend/domain";
+import { deleteOneInputCategoryById } from "@/app/lib/@backend/action";
 
 export const inputCategoryColumns: ColumnDef<IInputCategory>[] = [
   {

@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { ICommand, IDevice, IFirmware, ISchedule } from "../../domain"
+import { ICommand, IDevice, IFirmware, ISchedule } from "@/app/lib/@backend/domain"
 import {
   createOneScheduleUsecase,
   findOneScheduleUsecase,
@@ -12,7 +12,7 @@ import {
   findManyPendingScheduleBySerialUsecase,
   updateManyScheduleUsecase,
   updateBulkScheduleUsecase
-} from "../../usecase"
+} from "@/app/lib/@backend/usecase"
 
 export async function createOneSchedule(schedule: Omit<ISchedule, "id" | "created_at">) {
   await createOneScheduleUsecase.execute(schedule)

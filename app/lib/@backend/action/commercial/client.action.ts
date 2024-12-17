@@ -7,7 +7,7 @@ import {
   findAllClientUsecase,
   findOneClientUsecase,
   updateOneClientUsecase
-} from "../../usecase"
+} from "@/app/lib/@backend/usecase"
 
 export async function createOneClient(client: Omit<IClient, "id" | "created_at">) {
   return await createOneClientUsecase.execute(client)

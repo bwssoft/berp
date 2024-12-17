@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { IProduct, IProductionOrder, IFinancialOrder } from "../domain";
+import { IProduct, IProductionOrder, IFinancialOrder } from "@/app/lib/@backend/domain";
 import {
   createOneProductionOrderUsecase,
   deleteOneProductionOrderUsecase,
@@ -9,7 +9,7 @@ import {
   findAllProductionOrderWithProductUsecase,
   findOneProductionOrderUsecase,
   updateOneProductionOrderUsecase,
-} from "../usecase";
+} from "@/app/lib/@backend/usecase";
 
 export async function createOneProductionOrder(
   productionOrder: Omit<IProductionOrder, "id" | "created_at">

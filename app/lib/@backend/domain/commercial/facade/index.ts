@@ -1,5 +1,5 @@
-import { IDeleteClientFromWebhookUseCase } from "../../../usecase/commercial/client/@dto/delete-client-from-webhook.usecase.dto"
-import { IUpsertClientFromWebhookUseCase } from "../../../usecase/commercial/client/@dto/upsert-client-from-webhook.usecase.dto"
+import { IDeleteClientFromWebhookUseCase } from "@/app/lib/@backend/usecase/commercial/client/@dto/delete-client-from-webhook.usecase.dto"
+import { IUpsertClientFromWebhookUseCase } from "@/app/lib/@backend/usecase/commercial/client/@dto/upsert-client-from-webhook.usecase.dto"
 
 
 export interface IClientFacade {

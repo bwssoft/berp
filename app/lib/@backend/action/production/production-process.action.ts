@@ -1,14 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { IProductionProcess } from "../domain";
+import { IProductionProcess } from "@/app/lib/@backend/domain";
 import {
   createOneProductionProcessUsecase,
   findOneProductionProcessUsecase,
   updateOneProductionProcessUsecase,
   deleteOneProductionProcessUsecase,
   findAllProductionProcessUsecase,
-} from "../usecase";
+} from "@/app/lib/@backend/usecase";
 
 
 export async function createOneProductionProcess(

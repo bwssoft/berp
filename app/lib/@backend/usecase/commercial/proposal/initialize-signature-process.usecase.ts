@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProposal, IProposalObjectRepository, IProposalRepository, IProposalToHtmlDataMapper, proposalToHtmlDataMapper } from "../../../domain";
+import { IProposal, IProposalObjectRepository, IProposalRepository, IProposalToHtmlDataMapper, proposalToHtmlDataMapper } from "@/app/lib/@backend/domain";
 import { proposalObjectRepository, proposalRepository } from "@/app/lib/@backend/infra";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "./analyse-proposal-scenario.usecase";
 import { htmlToPdf } from "@/app/lib/util";

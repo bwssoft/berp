@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { analyzeTemporalInputStockUsecase, findAllInputStockUsecase, getInputStockInsightUsecase, getTotalValueInputStockUsecase, updateInputStockUsacase } from "../../usecase"
+import { analyzeTemporalInputStockUsecase, findAllInputStockUsecase, getInputStockInsightUsecase, getTotalValueInputStockUsecase, updateInputStockUsacase } from "@/app/lib/@backend/usecase"
 
 
 export async function updateInputStock() {

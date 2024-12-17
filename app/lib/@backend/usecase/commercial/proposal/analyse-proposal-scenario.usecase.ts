@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProposal, IRuleRepository } from "../../../domain";
+import { IProposal, IRuleRepository } from "@/app/lib/@backend/domain";
 import { ruleRepository } from "@/app/lib/@backend/infra";
-import { IRule, RuleOperator, RuleScope } from "../../../domain/commercial/entity/rule.definition";
+import { IRule, RuleOperator, RuleScope } from "@/app/lib/@backend/domain/commercial/entity/rule.definition";
 
 type Input = { scenario: Scenario }
 type Output = {

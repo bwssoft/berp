@@ -2,7 +2,7 @@
 
 import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
-import { ITechnicalSheet } from "../domain";
+import { ITechnicalSheet } from "@/app/lib/@backend/domain";
 import {
   createOneTechnicalSheetUsecase,
   deleteOneTechnicalSheetUsecase,
@@ -10,7 +10,7 @@ import {
   findManyTechnicalSheetWithInputsUsecase,
   findOneTechnicalSheetUsecase,
   updateOneTechnicalSheetUsecase,
-} from "../usecase";
+} from "@/app/lib/@backend/usecase";
 
 export async function createOneTechnicalSheet(
   productionProcess: Omit<ITechnicalSheet, "id" | "created_at">

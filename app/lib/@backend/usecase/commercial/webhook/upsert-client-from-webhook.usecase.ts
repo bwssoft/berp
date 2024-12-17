@@ -1,5 +1,5 @@
 import { createOneClientUsecase, findOneClientUsecase, updateOneClientUsecase } from "..";
-import { converterObjectService } from "../../../domain/commercial/service/converter-object-service";
+import { converterObjectService } from "@/app/lib/@backend/domain/commercial/service/converter-object-service";
 import { singleton } from "@/app/lib/util";
 import { IUpsertClientFromWebhookUseCase } from "../client/@dto/upsert-client-from-webhook.usecase.dto";
 

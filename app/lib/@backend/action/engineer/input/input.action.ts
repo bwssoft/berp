@@ -1,7 +1,7 @@
 "use server"
 
 import { IInput } from "@/app/lib/@backend/domain"
-import { createManyInputUsecase, createOneInputUsecase, deleteOneInputUsecase, findAllInputUsecase, findOneInputUsecase, updateOneInputUsecase } from "../../usecase"
+import { createManyInputUsecase, createOneInputUsecase, deleteOneInputUsecase, findAllInputUsecase, findOneInputUsecase, updateOneInputUsecase } from "@/app/lib/@backend/usecase"
 import { revalidatePath } from "next/cache"
 
 export async function createOneInput(input: Omit<IInput

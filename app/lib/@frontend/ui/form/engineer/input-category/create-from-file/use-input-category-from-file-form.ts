@@ -1,5 +1,5 @@
-import { createManyInputCategories } from "@/app/lib/@backend/action/input/input-category.action";
-import { IInputCategory } from "@/app/lib/@backend/domain/engineer/entity/input-category.definition";
+import { createManyInputCategories } from "@/app/lib/@backend/action";
+import { IInputCategory } from "@/app/lib/@backend/domain";
 import { xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
