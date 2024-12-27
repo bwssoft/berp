@@ -1,4 +1,4 @@
-import { createOneClientProposal } from '@/app/lib/@backend/action';
+import { createOneProposal } from '@/app/lib/@backend/action';
 import { Currency, FreightType, IClient } from '@/app/lib/@backend/domain';
 import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
@@ -78,9 +78,9 @@ export const schema = z.object({
 
 type Schema = z.infer<typeof schema>;
 
-export { type Schema as ClientProposalSchema }
+export { type Schema as ProposalSchema }
 
-export function useClientProposalCreateForm() {
+export function useProposalCreateForm() {
   const {
     register,
     unregister,
@@ -106,7 +106,7 @@ export function useClientProposalCreateForm() {
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
-      await createOneClientProposal(data);
+      await createOneProposal(data);
       toast({
         title: 'Sucesso!',
         description: 'Proposta registrada com sucesso!',

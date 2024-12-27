@@ -1,12 +1,12 @@
 "use client";
 //tava reclamando da função cell nas colunas
 
-import { IProductionOrder } from "@/app/lib/@backend/domain";
+import { IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
 import { columns } from "./columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 
 interface Props {
-  data: IProductionOrder[];
+  data: (IProductionOrder & { product?: IProduct })[];
 }
 export function ProductionOrderTable(props: Props) {
   const { data } = props;

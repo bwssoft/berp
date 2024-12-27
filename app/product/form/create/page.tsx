@@ -1,9 +1,8 @@
-import { findManyTechnicalSheetWithInputs } from "@/app/lib/@backend/action";
+import { findManyInput, findManyProductCategory } from "@/app/lib/@backend/action";
 import { ProductCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
-  const technicalSheets = await findManyTechnicalSheetWithInputs({});
-
+  const [inputs, categories] = await Promise.all([findManyInput({}), findManyProductCategory({})]);
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -17,7 +16,7 @@ export default async function Page() {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <ProductCreateForm technicalSheets={technicalSheets} />
+        <ProductCreateForm inputs={inputs} categories={categories} />
       </div>
     </div>
   );

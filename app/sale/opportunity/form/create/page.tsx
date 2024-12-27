@@ -1,9 +1,8 @@
-import { findAllClient, findAllProduct } from "@/app/lib/@backend/action";
+import { findAllClient, findManyProduct } from "@/app/lib/@backend/action";
 import { ClientOpportunityCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
-  const clients = await findAllClient();
-  const products = await findAllProduct();
+  const [clients, products] = await Promise.all([findAllClient(), findManyProduct()])
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

@@ -1,5 +1,5 @@
 import { IBaseRepository } from "@/app/lib/@backend/domain/@shared/repository/repository.interface";
-import { AggregateOptions, AggregationCursor, Filter, MongoClient, TransactionOptions, UpdateFilter } from "mongodb";
+import { AggregateOptions, AggregationCursor, Filter, FindOptions, MongoClient, TransactionOptions, UpdateFilter } from "mongodb";
 import clientPromise from "./config";
 
 type Constructor = {
@@ -27,9 +27,9 @@ export class BaseRepository<Entity extends object>
     return await db.collection(this.collection).insertMany(data);
   }
 
-  async findOne(params: Filter<Entity>) {
+  async findOne(params: Filter<Entity>, options?: FindOptions<Entity>) {
     const db = await this.connect();
-    return await db.collection<Entity>(this.collection).findOne(params);
+    return await db.collection<Entity>(this.collection).findOne(params, options);
   }
 
   async findAll(params: Filter<Entity> = {}) {
@@ -38,6 +38,7 @@ export class BaseRepository<Entity extends object>
       .collection<Entity>(this.collection)
       .find(params)
       .limit(50)
+      .sort({ _id: -1 })
       .toArray();
   }
 

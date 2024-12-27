@@ -16,7 +16,7 @@ import { Button } from "../../../component";
 
 interface Props {
   proposal_id: string;
-  scenario_id?: string;
+  scenario_id: string;
   financial_order?: IFinancialOrder;
 }
 
@@ -34,10 +34,10 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
             <DisclosureButton className="group flex w-full items-center justify-between flex-wrap sm:flex-nowrap">
               <div className="w-full text-start">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Processo de criação do pedido
+                  Ordem Financeira
                 </h2>
                 <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Acompanhe a criação do pedido dessa proposta
+                  Acompanhe a ordem financeira dessa proposta
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
@@ -47,14 +47,15 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
             <DisclosurePanel>
               {financial_order?.id ? (
                 <div>
+                  <div className="mt-12 px-4 sm:px-0">
+                    <p className="mt-1 max-w-2xl text-sm/6 text-gray-500">PV Nº {financial_order.code}</p>
+                  </div>
                   {financial_order.line_items_processed.map((line, idx) => (
+
                     <div
                       key={line.enterprise_id + idx}
                       className="mt-6 border-t border-gray-100"
                     >
-                      <p className="my-6 max-w-2xl text-sm/6 text-gray-500">
-                        Pedido {idx + 1}º
-                      </p>
                       <dl className="divide-y divide-gray-100">
                         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                           <dt className="text-sm/6 font-medium text-gray-900">
@@ -106,19 +107,14 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
                         </div> */}
                       </dl>
                     </div>
+
                   ))}
                   <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button
-                      type="button"
-                      className="text-sm font-semibold leading-6 text-gray-900"
-                    >
-                      Cancelar
-                    </button>
                     <Button
                       type="submit"
                       className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
-                      Salvar Pedidos de Venda
+                      Salvar PV Nº {financial_order.code}
                     </Button>
                   </div>
                 </div>
@@ -139,12 +135,10 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
                       <p className="mt-3 text-sm md:ml-6 md:mt-0">
                         <button
                           type="button"
-                          onClick={async () =>
-                            scenario_id &&
-                            createFinancialOrderFromProposal({
-                              proposal_id: proposal_id,
-                              scenario_id: scenario_id,
-                            })
+                          onClick={() => createFinancialOrderFromProposal({
+                            proposal_id: proposal_id,
+                            scenario_id: scenario_id,
+                          })
                           }
                           className="whitespace-nowrap font-medium text-gray-700 hover:text-gray-600"
                         >

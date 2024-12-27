@@ -2,37 +2,37 @@
 
 import { IClient, IProposal } from "@/app/lib/@backend/domain"
 import {
-  createOneProposalUsecase, deleteOneProposalUsecase, findAllProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase, initializeSignatureProcessUscase,
+  createOneProposalUsecase, deleteOneProposalUsecase, findManyProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase, initializeSignatureProcessUscase,
   downloadOneProposalDocumentUsecase,
   cancelSignatureProcessUscase,
 } from "@/app/lib/@backend/usecase"
 import { revalidatePath } from "next/cache"
 
-export async function createOneClientProposal(client: Omit<IProposal
-  , "id" | "created_at" | "user_id">) {
+export async function createOneProposal(client: Omit<IProposal
+  , "id" | "created_at" | "user_id" | "code">) {
   await createOneProposalUsecase.execute(client)
   revalidatePath("/sale/proposal")
   return
 }
 
-export async function findOneClientProposal(client: Partial<IProposal>) {
+export async function findOneProposal(client: Partial<IProposal>) {
   return await findOneProposalUsecase.execute(client)
 }
 
-export async function updateOneClientProposalById(query: { id: string }, value: Omit<IProposal, "id" | "created_at" | "user_id">) {
+export async function updateOneProposalById(query: { id: string }, value: Omit<IProposal, "id" | "created_at" | "user_id" | "code">) {
   await updateOneProposalUsecase.execute(query, value)
   revalidatePath("/sale/proposal")
   return
 }
 
-export async function deleteOneClientProposalById(query: { id: string }) {
+export async function deleteOneProposalById(query: { id: string }) {
   await deleteOneProposalUsecase.execute(query)
   revalidatePath("/sale/proposal")
   return
 }
 
-export async function findAllClientProposal(): Promise<(IProposal & { client: IClient })[]> {
-  return await findAllProposalWithClientUsecase.execute()
+export async function findManyProposal(input: Partial<IProposal>): Promise<(IProposal & { client: IClient })[]> {
+  return await findManyProposalWithClientUsecase.execute(input)
 }
 
 export async function downloadOneProposalDocument(input: {

@@ -1,17 +1,11 @@
 "use server";
 
 import {
-  findAllInput,
-  findAllProduct,
-  findAllTechnicalSheet,
   findOneClient,
   findOneProductionOrder,
-  findOneFinancialOrder,
 } from "@/app/lib/@backend/action";
 import {
   IClient,
-  IProductionOrder,
-  IFinancialOrder,
 } from "@/app/lib/@backend/domain";
 import {
   Tabs,
@@ -22,55 +16,41 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import {
-  AttachmentsDetails,
   ClientDetails,
-  CommentsSection,
   ProductionOrderDetails,
   ProductsDetails,
-  SaleOrderDetails,
 } from "./components";
-import { PrintProductionOrder } from "./components/print-production-order";
 
 type ProductionOrderViewPageProps = {
   params: { id: string };
 };
 
 export default async function Page({ params }: ProductionOrderViewPageProps) {
-  const productionOrderData = (await findOneProductionOrder({
+  const productionOrderData = await findOneProductionOrder({
     id: params.id,
-  })) as IProductionOrder | null;
+  })
 
-  const saleOrderData = (await findOneFinancialOrder({
-    id: productionOrderData?.sale_order_id,
-  })) as IFinancialOrder | null;
+  if (!productionOrderData) return <div>
+    <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+      <div>
+        <h1 className="text-base font-semibold leading-7 text-gray-900">
+          OP não encontrada
+        </h1>
+      </div>
+    </div>
+  </div>
 
   const clientData = (await findOneClient({
-    id: saleOrderData?.client_id,
+    id: productionOrderData?.client_id,
   })) as IClient | null;
-
-  const productsData = await findAllProduct({
-    id: {
-      $in: saleOrderData?.products.map(({ product_id }) => product_id) ?? [],
-    },
-  });
-
-  const technicalSheetsData = await findAllTechnicalSheet({
-    id: {
-      $in: productsData
-        ?.map((product) => product?.technical_sheet_id)
-        .filter(Boolean) as unknown as string[],
-    },
-  });
-
-  const inputsData = await findAllInput();
 
   return (
     <div className="w-full h-full relative">
       <Link href="/production-order/kanban">
         <XMarkIcon className="absolute top-1 right-1 w-6 h-6" />
       </Link>
-
-      <div className="absolute top-0 right-10">
+      {/*TODO: Refazer a exportação em pdf de uma op*/}
+      {/* <div className="absolute top-0 right-10">
         <PrintProductionOrder
           productionOrder={productionOrderData}
           products={productsData}
@@ -79,7 +59,7 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
           technicalSheets={technicalSheetsData}
           inputs={inputsData}
         />
-      </div>
+      </div> */}
 
       <Tabs defaultValue="production-order-data">
         <TabsList defaultValue="production-order-data">
@@ -89,22 +69,13 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
 
           <TabsTrigger value="client-data">Detalhes do cliente</TabsTrigger>
 
-          <TabsTrigger value="sale-order-data">
-            Detalhes da ordem de serviço
-          </TabsTrigger>
-
-          <TabsTrigger value="products-data">Detalhes dos produtos</TabsTrigger>
-
-          <TabsTrigger value="attachments">Anexos</TabsTrigger>
-
-          <TabsTrigger value="comments-data">Comentários</TabsTrigger>
+          <TabsTrigger value="products-data">Detalhes do produto</TabsTrigger>
+          <TabsTrigger value="process-execution">Execução</TabsTrigger>
         </TabsList>
 
         <TabsContent value="production-order-data">
           <ProductionOrderDetails
             productionOrder={productionOrderData}
-            products={productsData}
-            saleOrder={saleOrderData}
           />
         </TabsContent>
 
@@ -112,24 +83,14 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
           <ClientDetails client={clientData} />
         </TabsContent>
 
-        <TabsContent value="attachments">
-          <AttachmentsDetails saleOrder={saleOrderData} />
-        </TabsContent>
-
-        <TabsContent value="sale-order-data">
-          <SaleOrderDetails saleOrder={saleOrderData} />
-        </TabsContent>
-
         <TabsContent value="products-data">
           <ProductsDetails
-            products={productsData}
-            technicalSheets={technicalSheetsData}
-            inputs={inputsData}
+            product={productionOrderData.product}
           />
         </TabsContent>
 
-        <TabsContent value="comments-data">
-          <CommentsSection />
+        <TabsContent value="process-execution">
+          <div>execution</div>
         </TabsContent>
       </Tabs>
     </div>

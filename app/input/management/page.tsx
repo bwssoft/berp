@@ -1,11 +1,11 @@
-import { findAllInput } from "@/app/lib/@backend/action";
+import { findManyInput } from "@/app/lib/@backend/action";
 import { InputTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 export default async function Example() {
-  const inputs = await findAllInput();
+  const inputs = await findManyInput({});
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -25,7 +25,7 @@ export default async function Example() {
             className="flex items-center gap-x-1 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           >
             <ArrowUpTrayIcon className="-ml-1.5 h-4 w-4" aria-hidden="true" />
-            B.O.M
+            Lote
           </Link>
 
           <Link

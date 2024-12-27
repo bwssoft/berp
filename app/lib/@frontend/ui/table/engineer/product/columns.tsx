@@ -1,20 +1,22 @@
 import { deleteOneProductById } from "@/app/lib/@backend/action";
-import { IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
+import { IProduct } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook";
 
-export const columns: ColumnDef<
-  IProduct & { technical_sheets: ITechnicalSheet[]; inputs: IInput[] }
->[] = [
-  { header: "Nome", accessorKey: "name" },
+export const columns: ColumnDef<IProduct>[] = [
   {
-    header: "Quant. Insumos",
-    accessorKey: "inputs",
+    header: "Nome",
+    accessorKey: "name",
     cell: ({ row }) => {
       const product = row.original;
-      return Math.ceil(Math.random()); // TO DO - Modificar pra pegar os dados da ficha técnica e trazer a quantidade total de insumos
-    },
+      return <div
+        className="text-ellipsis whitespace-nowrap overflow-hidden max-w-lg"
+        title={product.name}
+      >
+        {product.name}
+      </div>;
+    }
   },
   {
     header: "Criado em",

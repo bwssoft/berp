@@ -1,12 +1,12 @@
 "use client";
 
-import { IProductionOrder } from "@/app/lib/@backend/domain";
+import { IProductionOrderLegacy } from "@/app/lib/@backend/domain";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { Checkbox } from "@/app/lib/@frontend/ui/component/checkbox";
 import { useProductionOrderStepsUpdateForm } from "./use-production-order-steps-update-form";
 
 type ProductionProcessStepsUpdateFormProps = {
-  productionOrder: IProductionOrder;
+  productionOrder: IProductionOrderLegacy;
 };
 
 export function ProductionOrderStepsUpdateForm({

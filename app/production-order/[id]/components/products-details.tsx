@@ -1,148 +1,128 @@
 "use client";
 
-import { IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  DataTable,
-} from "@/app/lib/@frontend/ui/component";
+import { IProduct } from "@/app/lib/@backend/domain";
+import { ProductProcessToProduceTable, ProductBOMTable } from "@/app/lib/@frontend/ui/table";
 import { formatDate } from "@/app/lib/util";
-
-type InputId = string;
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 type ProductsDetailsProps = {
-  products: IProduct[];
-  technicalSheets: ITechnicalSheet[];
-  inputs: IInput[];
+  product: IProduct;
 };
 
 export function ProductsDetails({
-  products,
-  technicalSheets,
-  inputs,
+  product,
 }: ProductsDetailsProps) {
-  if (products.length === 0) return <p>Nenhum produto associado.</p>;
-
-  const inputsReduced: Record<InputId, { name: string; measure_unit: string }> =
-    inputs.reduce((acc, current) => {
-      acc[current.id] = {
-        name: current.name,
-        measure_unit: current.measure_unit,
-      };
-
-      return acc;
-    }, {} as Record<InputId, { name: string; measure_unit: string }>);
-
+  const hasBOM = Array.isArray(product.bom) && product.bom.length > 0
+  const hasProcessToProduce = Array.isArray(product.process_execution) && product.process_execution.length > 0
   return (
     <div className="p-2">
       <div className="px-4 mb-6 sm:px-0">
         <h3 className="text-base font-semibold leading-7 text-gray-900">
-          Produtos e fichas técnicas
+          Produto
         </h3>
         <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
-          Aba contendo informações dos produtos e suas fichas técnicas
+          Aba contendo informações do produto
         </p>
       </div>
+      <dl className="divide-y divide-gray-100">
+        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt className="text-sm font-medium leading-6 text-gray-900">
+            Nome do produto
+          </dt>
+          <dd className="flex gap-2 items-center">
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: product.color }}
+            />
+            <p className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{product.name}</p>
+          </dd>
+        </div>
 
-      <Accordion type="single" collapsible>
-        {products.map((product) => {
-          const productTechnicalSheet = technicalSheets.find(
-            ({ product_id }) => product_id === product.id
-          );
+        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt className="text-sm font-medium leading-6 text-gray-900">
+            Descrição
+          </dt>
+          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {product.description}
+          </dd>
+        </div>
 
-          return (
-            <AccordionItem key={product.id} value={product.id}>
-              <AccordionTrigger className="text-sm font-semibold text-gray-800">
-                {product.name}
-              </AccordionTrigger>
+        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt className="text-sm font-medium leading-6 text-gray-900">
+            Data de criação
+          </dt>
+          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {formatDate(new Date(product.created_at), {
+              includeHours: true,
+            })}
+          </dd>
+        </div>
 
-              <AccordionContent>
-                <dl className="p-2 divide-y divide-gray-100">
-                  <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt className="text-sm font-medium leading-6 text-gray-900">
-                      Nome do produto
-                    </dt>
-                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      {product.name}
-                    </dd>
-                  </div>
+        <div className="px-4 py-6 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-0">
+          <p className="text-sm font-medium leading-6 text-gray-900">
+            B.O.M
+          </p>
+          <div className="flex mt-1 text-sm leading-6 text-gray-800 sm:col-span-2 sm:mt-0">
+            {hasBOM ? <ProductBOMTable data={product.bom!} /> : <div className="mt-4 rounded-md bg-gray-100 border border-gray-200 px-6 py-3">
+              <div className="flex">
+                <div className="shrink-0">
+                  <InformationCircleIcon
+                    aria-hidden="true"
+                    className="size-5 text-gray-400"
+                  />
+                </div>
+                <div className="ml-6 flex-1 md:flex md:justify-between">
+                  <p className="text-sm text-gray-700">
+                    Esse produto ainda não tem a B.O.M definida.
+                  </p>
+                  <p className="mt-3 text-sm md:ml-6 md:mt-0">
+                    <Link
+                      href={`product/form/update?id=${product.id}`}
+                      className="whitespace-nowrap font-medium text-gray-700 hover:text-gray-600"
+                    >
+                      Definir B.O.M
+                      <span aria-hidden="true"> &rarr;</span>
+                    </Link>
+                  </p>
+                </div>
+              </div>
+            </div>}
+          </div>
+        </div>
 
-                  <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt className="text-sm font-medium leading-6 text-gray-900">
-                      Descrição
-                    </dt>
-                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      {product.description}
-                    </dd>
-                  </div>
-
-                  <div className="items-center px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt className="text-sm font-medium leading-6 text-gray-900">
-                      Cor
-                    </dt>
-                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: product.color }}
-                      />
-                    </dd>
-                  </div>
-
-                  <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt className="text-sm font-medium leading-6 text-gray-900">
-                      Data de criação
-                    </dt>
-                    <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      {formatDate(new Date(product.created_at), {
-                        includeHours: true,
-                      })}
-                    </dd>
-                  </div>
-
-                  <div className="px-4 py-6 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-0">
-                    <p className="text-sm font-medium leading-6 text-gray-900">
-                      Ficha técnica
-                    </p>
-
-                    <div className="flex mt-1 text-sm leading-6 text-gray-800 sm:col-span-2 sm:mt-0">
-                      <DataTable
-                        data={productTechnicalSheet?.inputs ?? []}
-                        columns={[
-                          {
-                            header: "Insumo",
-                            accessorKey: "uuid",
-                            cell: ({ row }) => {
-                              const input = row.original;
-
-                              return inputsReduced[input.uuid].name;
-                            },
-                          },
-                          {
-                            header: "Quantidade",
-                            accessorKey: "quantity",
-                            cell: ({ row }) => {
-                              const input = row.original;
-
-                              return `${input.quantity} ${
-                                inputsReduced[input.uuid].measure_unit
-                              }`;
-                            },
-                          },
-                        ]}
-                        mobileDisplayValue={(data) => data.uuid}
-                        mobileKeyExtractor={(data) => data.uuid}
-                        className="w-full"
-                      />
-                    </div>
-                  </div>
-                </dl>
-              </AccordionContent>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
+        <div className="px-4 py-6 sm:grid sm:grid-cols-1 sm:gap-4 sm:px-0">
+          <p className="text-sm font-medium leading-6 text-gray-900">
+            Processo para Produzir
+          </p>
+          <div className="flex mt-1 text-sm leading-6 text-gray-800 sm:col-span-2 sm:mt-0">
+            {hasProcessToProduce ? <ProductProcessToProduceTable data={product.process_execution!} /> : <div className="mt-4 rounded-md bg-gray-100 border border-gray-200 px-6 py-3">
+              <div className="flex">
+                <div className="shrink-0">
+                  <InformationCircleIcon
+                    aria-hidden="true"
+                    className="size-5 text-gray-400"
+                  />
+                </div>
+                <div className="ml-6 flex-1 md:flex md:justify-between">
+                  <p className="text-sm text-gray-700">
+                    Esse produto ainda não tem o processo produtivo definido.
+                  </p>
+                  <p className="mt-3 text-sm md:ml-6 md:mt-0">
+                    <Link
+                      href={`product/form/update?id=${product.id}`}
+                      className="whitespace-nowrap font-medium text-gray-700 hover:text-gray-600"
+                    >
+                      Definir Processo Produtivo
+                      <span aria-hidden="true"> &rarr;</span>
+                    </Link>
+                  </p>
+                </div>
+              </div>
+            </div>}
+          </div>
+        </div>
+      </dl>
     </div>
   );
 }

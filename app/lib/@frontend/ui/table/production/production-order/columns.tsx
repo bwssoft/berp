@@ -1,10 +1,22 @@
 import { deleteOneProductionOrderById } from "@/app/lib/@backend/action";
-import { IProductionOrder } from "@/app/lib/@backend/domain";
+import { IProduct, IProductionOrder, IProductionOrderLegacy } from "@/app/lib/@backend/domain";
 import { productionOrderConstants } from "@/app/lib/constant/production-order";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
-export const columns: ColumnDef<IProductionOrder>[] = [
+export const columns: ColumnDef<(IProductionOrder & { product?: IProduct })>[] = [
+  {
+    header: "Número",
+    accessorKey: "code",
+  },
+  {
+    header: "Produto",
+    accessorKey: "product",
+    cell: ({ row }) => {
+      const productionOrder = row.original;
+      return productionOrder.product?.name ?? "--"
+    },
+  },
   {
     header: "Estágio",
     accessorKey: "stage",

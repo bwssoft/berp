@@ -13,13 +13,7 @@ class FindManyProductUsecase {
 
   @RemoveMongoId()
   async execute(input: Filter<IProduct>) {
-    const pipeline = this.pipeline(input);
-    const aggregate = await this.repository.aggregate(pipeline);
-    return (await aggregate.toArray()) as IProduct[];
-  }
-
-  pipeline(input: Filter<IProduct>) {
-    return [{ $match: input }];
+    return await this.repository.findAll(input);
   }
 }
 

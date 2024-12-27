@@ -1,4 +1,4 @@
-import { findAllProduct, findOneDevice } from "@/app/lib/@backend/action";
+import { findManyProduct, findOneDevice } from "@/app/lib/@backend/action";
 import { DeviceUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
@@ -10,7 +10,6 @@ export default async function Page(props: Props) {
     searchParams: { id },
   } = props;
   const device = await findOneDevice({ id });
-  const products = await findAllProduct();
 
   if (!device) {
     return (
@@ -25,6 +24,9 @@ export default async function Page(props: Props) {
       </div>
     );
   }
+
+  const products = await findManyProduct();
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

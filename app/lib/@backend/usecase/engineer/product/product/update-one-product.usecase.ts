@@ -11,7 +11,7 @@ class UpdateOneProductUsecase {
 
   async execute(
     query: { id: string },
-    value: Omit<IProduct, "id" | "created_at" | "sequence">
+    value: Omit<IProduct, "id" | "created_at" | "code">
   ) {
     return await this.repository.updateOne(query, { $set: value })
   }

@@ -1,8 +1,8 @@
-import { findAllProduct } from "@/app/lib/@backend/action";
+import { findManyProduct } from "@/app/lib/@backend/action";
 import { ProductTransactionCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
-  const products = await findAllProduct();
+  const products = await findManyProduct();
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

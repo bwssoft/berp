@@ -1,6 +1,7 @@
 import { createOneInput } from '@/app/lib/@backend/action';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -30,7 +31,7 @@ const schema = z.object({
   files: z.any(),
   color: z.string(),
   description: z.string().optional(),
-  price: z.coerce.number().optional().refine(number => number ? number >= 0 : true),
+  price: z.coerce.number().nonnegative().optional(),
   manufacturer: z.array(z.object({
     code: z.string(),
     name: z.string(),

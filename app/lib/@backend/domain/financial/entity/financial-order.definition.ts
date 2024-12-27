@@ -7,6 +7,7 @@ export interface IFinancialOrder {
   line_items: LineItem[]
   line_items_processed: LineItemProcessed[]
   created_at: Date;
+  code: number
 
 
 

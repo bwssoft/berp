@@ -1,18 +1,13 @@
 "use client";
-//tava reclamando da função cell nas colunas
 
-import { IInput, IProduct, ITechnicalSheet } from "@/app/lib/@backend/domain";
+import { IProduct } from "@/app/lib/@backend/domain";
 import { columns } from "./columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 
-type Data = IProduct & {
-  technical_sheets: ITechnicalSheet[];
-  inputs: IInput[];
-};
-
 interface Props {
-  data: Data[];
+  data: IProduct[];
 }
+
 export function ProductTable(props: Props) {
   const { data } = props;
   return (

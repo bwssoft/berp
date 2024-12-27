@@ -1,5 +1,5 @@
 import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
-import { IProductionOrder } from "@/app/lib/@backend/domain";
+import { IProductionOrder, IProductionOrderLegacy } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 type UseProductionOrderStepsUpdateFormParams = {
-  productionOrder: IProductionOrder;
+  productionOrder: IProductionOrderLegacy;
 };
 
 const stepsSchema = z.object({
@@ -68,7 +68,7 @@ export function useProductionOrderStepsUpdateForm({
     try {
       await updateOneProductionOrderById(
         { id: productionOrder.id },
-        { production_process: updatedProcessData }
+        { production_process: updatedProcessData } as any
       );
 
       toast({

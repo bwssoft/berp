@@ -54,7 +54,7 @@ export function useFinancialOrderCreateFromProposal(props: Props) {
     } catch (e) {
       toast({
         title: 'Erro!',
-        description: 'Falha ao atualizar a oportunidade!',
+        description: 'Falha ao atualizar o Pedido de venda!',
         variant: 'error',
       });
     }

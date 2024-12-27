@@ -1,4 +1,4 @@
-import { findAllProductionOrder } from "@/app/lib/@backend/action";
+import { findManyProductionOrder } from "@/app/lib/@backend/action";
 import { ProductionOrderTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import Link from "next/link";
 export const revalidate = 10;
 
 export default async function Example() {
-  const productionOrders = await findAllProductionOrder();
+  const productionOrders = await findManyProductionOrder({})
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

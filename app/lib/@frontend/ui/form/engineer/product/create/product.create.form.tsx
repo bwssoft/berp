@@ -1,28 +1,35 @@
 "use client";
-import { ITechnicalSheetWithInputs } from "@/app/lib/@backend/usecase";
-import { Controller } from "react-hook-form";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
-import { BarChart, DoughnutChart } from "../../../../chart";
-import { Stat } from "../../../../component/stat";
 import { useProductCreateForm } from "./use-product-create-form";
+import { IInput, IProductCategory } from "@/app/lib/@backend/domain";
+import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { cn } from "@/app/lib/util";
+import { nanoid } from "nanoid";
 
 interface Props {
-  technicalSheets: ITechnicalSheetWithInputs[];
+  inputs: IInput[];
+  categories: IProductCategory[];
 }
 
 export function ProductCreateForm(props: Props) {
-  const { technicalSheets } = props;
-  const { register, handleSubmit, insights, control } = useProductCreateForm();
-
-  const { merged, stats, totalCost, averageCost } = insights;
-
+  const { inputs, categories } = props
+  const {
+    register,
+    handleSubmit,
+    bom,
+    handleAppendBom,
+    handleRemoveBom,
+    process_execution,
+    handleAppendProcessToProduce,
+    handleRemoveProcessToProduce
+  } = useProductCreateForm();
   return (
     <div className="w-full flex flex-col gap-6">
       <form action={() => handleSubmit()}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-4">
+              <div className="sm:col-span-3">
                 <label
                   htmlFor="name"
                   className="block text-sm font-medium leading-6 text-gray-900"
@@ -30,7 +37,7 @@ export function ProductCreateForm(props: Props) {
                   Nome
                 </label>
                 <div className="mt-2">
-                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                     <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
                       Produto:
                     </span>
@@ -45,7 +52,54 @@ export function ProductCreateForm(props: Props) {
                   </div>
                 </div>
               </div>
-
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="category"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Categoria
+                </label>
+                <div className="mt-2 grid grid-cols-1">
+                  <select
+                    id="category"
+                    {...register("category")}
+                    className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  >
+                    {categories.map(c => <option key={c.id} value={c.code}>{c.name} ({c.code})</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="color"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Cor
+                </label>
+                <div className="mt-2 ">
+                  <input
+                    id="color"
+                    type="color"
+                    className="block w-full rounded-md border-0 py-1 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent"
+                    {...register("color")}
+                  />
+                </div>
+              </div>
+              <div className="sm:col-span-3">
+                <label htmlFor="price" className="block text-sm/6 font-medium text-gray-900">
+                  Preço
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="number"
+                    id="price"
+                    step={"0.05"}
+                    {...register("price")}
+                    onWheel={(e) => (e.target as HTMLInputElement).blur()}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
               <div className="col-span-full">
                 <label
                   htmlFor="description"
@@ -66,61 +120,166 @@ export function ProductCreateForm(props: Props) {
                   Escreva um pouco sobre o produto.
                 </p>
               </div>
+            </div>
+          </div>
 
-              <div className="sm:col-span-4">
-                <label
-                  htmlFor="color"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Cor
-                </label>
-                <input
-                  id="color"
-                  type="color"
-                  className="block mt-2 w-full rounded-md border-0 py-1 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent"
-                  {...register("color")}
-                />
+          <div className="border-b border-gray-900/10 pb-12">
+            <div className="w-full flex flex-col items-start">
+              <h1 className="text-base font-semibold leading-7 text-gray-900">
+                Processo para produzir
+              </h1>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Insira as etapas necessárias para produção desse produto.
+              </p>
+            </div>
+            <div className="mt-4">
+              <div className="col-span-full space-y-4">
+                {process_execution.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-1 lg:flex lg:items-end lg:justify-between lg:gap-4 mb-2"
+                  >
+                    <div className="grid grid-cols-1 gap-4 items-end flex-grow">
+                      {/* Etapa */}
+                      <div className="col-span-full">
+                        {index === 0 && (
+                          <label
+                            htmlFor="process_execution_step"
+                            className="block text-xs font-medium leading-6 text-gray-900"
+                          >
+                            Etapas
+                          </label>
+                        )}
+                        <input
+                          id="process_execution_step"
+                          className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          placeholder={`${index + 1}ª Etapa`}
+                          {...register(`process_execution.${index}.step`)}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Botão Remover */}
+                    <div className="mt-4 lg:mt-0">
+                      <Button
+                        type="button"
+                        onClick={() => handleRemoveProcessToProduce(index)}
+                        className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
+                      >
+                        <XMarkIcon width={16} height={16} />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
               </div>
+              <button
+                type="button"
+                className={cn(
+                  "border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2",
+                  process_execution.length > 0 && "mt-4"
+                )}
+                onClick={() =>
+                  handleAppendProcessToProduce({
+                    id: nanoid(),
+                    step: "",
+                  })
+                }
+              >
+                Adicionar linha
+              </button>
+            </div>
 
-              <div className="sm:col-span-4">
-                <label className="block text-sm font-medium leading-6 text-gray-900">
-                  Ficha técnica
-                </label>
-                <div className="mt-2">
-                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                    <Controller
-                      control={control}
-                      name="technical_sheet"
-                      render={({ field }) => (
+          </div>
+
+          <div className="border-b border-gray-900/10 pb-12">
+            <div className="w-full flex flex-col items-start">
+              <h1 className="text-base font-semibold leading-7 text-gray-900">
+                B.O.M
+              </h1>
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Insira os insumos desse produto.
+              </p>
+            </div>
+            <div className="mt-4">
+              <div className="col-span-full space-y-4">
+                {bom.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-1 lg:flex lg:items-end lg:justify-between lg:gap-4 mb-2"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end flex-grow">
+
+                      {/* Insumo */}
+                      <div className="col-span-full lg:col-span-1">
+                        {index === 0 && (
+                          <label
+                            htmlFor="input_id"
+                            className="block text-xs font-medium leading-6 text-gray-900"
+                          >
+                            Insumo
+                          </label>
+                        )}
                         <select
-                          className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                          value={field.value?.id}
-                          onChange={(event) => {
-                            const currentTechnicalSheet = technicalSheets.find(
-                              (item) => item.id === event.target.value
-                            );
-
-                            field.onChange(currentTechnicalSheet);
-                          }}
+                          id="input_id"
+                          className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          {...register(`bom.${index}.input_id`)}
                         >
-                          <option value={""}>
-                            Selecione uma ficha técnica
-                          </option>
-
-                          {technicalSheets.map((technicalSheetData) => (
-                            <option
-                              key={technicalSheetData.id}
-                              value={technicalSheetData.id}
-                            >
-                              {technicalSheetData.name}
+                          {inputs.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.name}
                             </option>
                           ))}
                         </select>
-                      )}
-                    />
+                      </div>
+
+                      {/* Quantidade */}
+                      <div className="col-span-full lg:col-span-1 lg:w-1/3">
+                        {index === 0 && (
+                          <label
+                            htmlFor="quantity"
+                            className="block text-xs font-medium leading-6 text-gray-900"
+                          >
+                            Quantidade
+                          </label>
+                        )}
+                        <input
+                          type="number"
+                          id="quantity"
+                          className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          placeholder="Quantidade"
+                          {...register(`bom.${index}.quantity`)}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Botão Remover */}
+                    <div className="mt-4 lg:mt-0">
+                      <Button
+                        type="button"
+                        onClick={() => handleRemoveBom(index)}
+                        className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
+                      >
+                        <XMarkIcon width={16} height={16} />
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
+              <button
+                type="button"
+                className={cn(
+                  "border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2",
+                  bom.length > 0 && "mt-4"
+                )}
+                onClick={() =>
+                  handleAppendBom({
+                    input_id: "",
+                    quantity: 0,
+                  })
+                }
+              >
+                Adicionar linha
+              </button>
             </div>
           </div>
         </div>
@@ -140,82 +299,6 @@ export function ProductCreateForm(props: Props) {
           </Button>
         </div>
       </form>
-      <div className="flex flex-wrap items-center gap-6 sm:flex-nowrap space-y-12">
-        <div className="h-[500px] grid grid-rows-[min-content_1fr] w-full gap-6">
-          <div>
-            <h1 className="text-base font-semibold leading-7 text-gray-900">
-              Insumo x Quantidade
-            </h1>
-            <p className="mt-2 text-sm text-gray-700">
-              Gráfico com a quantidade de cada insumo.
-            </p>
-          </div>
-          <BarChart
-            series={merged.map((i) => ({
-              name: i.name,
-              data: [i.quantity],
-              color: i.color!,
-            }))}
-            options={{
-              xaxis: { categories: [""] },
-              chart: { stacked: false },
-              plotOptions: {
-                bar: {
-                  horizontal: false,
-                },
-              },
-              stroke: {
-                width: 5,
-              },
-            }}
-          />
-        </div>
-        <div className="h-[500px] grid grid-rows-[min-content_1fr] w-full gap-6">
-          <div>
-            <h1 className="text-base font-semibold leading-7 text-gray-900">
-              Insumo x Preço
-            </h1>
-            <p className="mt-2 text-sm text-gray-700">
-              Gráfico com o preço total de cada insumo.
-            </p>
-          </div>
-          <DoughnutChart
-            series={merged.map((i) => {
-              return i.total;
-            })}
-            options={{
-              labels: merged.map((i) => {
-                return i.name;
-              }),
-              colors: merged.map((i) => {
-                return i.color;
-              }),
-            }}
-          />
-        </div>
-      </div>
-      <div>
-        <div>
-          <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Insights
-          </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Cards com valores gerais sobre o produto.
-          </p>
-        </div>
-        <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
-          <Stat name="Custo Total" value={`R$ ${totalCost.toFixed(2)}`} />
-          <Stat
-            name="Média por insumo"
-            value={`R$ ${averageCost.toFixed(2)}`}
-          />
-        </dl>
-        <dl className="mx-auto w-full flex flex-wrap gap-px bg-gray-900/5">
-          {stats.map((stat) => (
-            <Stat {...stat} key={stat.name} />
-          ))}
-        </dl>
-      </div>
     </div>
   );
 }

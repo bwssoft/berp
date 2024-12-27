@@ -1,10 +1,10 @@
-import { findAllClientProposal } from "@/app/lib/@backend/action";
-import { ClientProposalTable } from "@/app/lib/@frontend/ui/table";
+import { findManyProposal } from "@/app/lib/@backend/action";
+import { ProposalTable } from "@/app/lib/@frontend/ui/table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
 export default async function Example() {
-  const proposal = await findAllClientProposal();
+  const proposal = await findManyProposal({});
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -26,7 +26,7 @@ export default async function Example() {
         </Link>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <ClientProposalTable data={proposal} />
+        <ProposalTable data={proposal} />
       </div>
     </div>
   );

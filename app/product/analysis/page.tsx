@@ -1,7 +1,7 @@
 import {
   analyzeTemporalProductStock,
   countProductTransaction,
-  findAllProduct,
+  findManyProduct,
   getTotalValueInProductStock,
 } from "@/app/lib/@backend/action";
 import { MultilineChart, BarChart } from "@/app/lib/@frontend/ui/component";
@@ -17,7 +17,7 @@ export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
-  const products = await findAllProduct();
+  const products = await findManyProduct();
   const uiWithNoId = (
     <>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

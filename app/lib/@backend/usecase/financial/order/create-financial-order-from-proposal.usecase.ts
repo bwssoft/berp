@@ -2,6 +2,7 @@ import { singleton } from "@/app/lib/util/singleton";
 import { IFinancialOrder, IFinancialOrderRepository, IProposalRepository } from "@/app/lib/@backend/domain";
 import { financialOrderRepository, proposalRepository } from "@/app/lib/@backend/infra";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "../../commercial/proposal/analyse-proposal-scenario.usecase";
+import { createOneFinancialOrderUsecase } from "./create-one-financial-order.usecase";
 
 class CreateFinancialOrderFromProposalUsecase {
   analyseProposalScenarioUsecase: IAnalyseProposalScenarioUsecase
@@ -18,7 +19,6 @@ class CreateFinancialOrderFromProposalUsecase {
     const { scenario_id, proposal_id } = input
     try {
       const proposal = await this.proposalRepository.findOne({ id: proposal_id })
-
       if (!proposal) {
         throw new Error("No proposal found")
       }
@@ -57,12 +57,10 @@ class CreateFinancialOrderFromProposalUsecase {
           return acc;
         }, {} as { [key: string]: IFinancialOrder["line_items_processed"][number] })
 
-      await this.financialOrderRepository.create({
-        id: crypto.randomUUID(),
+      await createOneFinancialOrderUsecase.execute({
         line_items: scenario.line_items,
         client_id: proposal.client_id,
         proposal_id: proposal.id,
-        created_at: new Date(),
         line_items_processed: Object.values(line_items_processed),
         active: true,
         products: null as any,

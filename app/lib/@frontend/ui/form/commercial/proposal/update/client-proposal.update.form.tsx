@@ -1,8 +1,8 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
-  ClientProposalSchema,
-  useClientProposalUpdateForm,
+  ProposalSchema,
+  useProposalUpdateForm,
 } from "./use-client-proposal-update-form";
 import {
   Currency,
@@ -60,7 +60,7 @@ interface Props {
   proposal: IProposal;
   negotiationType: INegotiationType[];
 }
-export function ClientProposalUpdateForm(props: Props) {
+export function ProposalUpdateForm(props: Props) {
   const { clients, products, proposal, negotiationType, client } = props;
   const {
     register,
@@ -74,7 +74,7 @@ export function ClientProposalUpdateForm(props: Props) {
     currentClient,
     handleDownloadOneProposalDocument,
     handleChangeClient,
-  } = useClientProposalUpdateForm({
+  } = useProposalUpdateForm({
     defaultValues: proposal,
     client,
   });
@@ -410,21 +410,14 @@ export function ClientProposalUpdateForm(props: Props) {
           </Disclosure>
         </div>
       </div>
-      {/* 
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        <button
-          type="button"
-          className="text-sm font-semibold leading-6 text-gray-900"
-        >
-          Cancelar
-        </button>
         <Button
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           Salvar Proposta
         </Button>
-      </div> */}
+      </div>
     </form>
   );
 }
@@ -432,11 +425,11 @@ export function ClientProposalUpdateForm(props: Props) {
 // ========================================================
 
 interface Scenario {
-  control: Control<ClientProposalSchema>;
-  register: UseFormRegister<ClientProposalSchema>;
+  control: Control<ProposalSchema>;
+  register: UseFormRegister<ProposalSchema>;
   removeScenario: UseFieldArrayRemove;
-  setValue: UseFormSetValue<ClientProposalSchema>;
-  getValues: UseFormGetValues<ClientProposalSchema>;
+  setValue: UseFormSetValue<ProposalSchema>;
+  getValues: UseFormGetValues<ProposalSchema>;
   hookFormScenarioIndex: number;
 
   products: IProduct[];

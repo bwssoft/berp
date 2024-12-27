@@ -3,7 +3,12 @@ import { proposalRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
 
-class FindAllProposalWithClientUsecase {
+namespace Dto {
+  export interface Input extends Partial<IProposal> { }
+  export type Document = IProposal & { client: IClient }
+  export type Output = (IProposal & { client: IClient })[]
+}
+class FindManyProposalWithClientUsecase {
   repository: IProposalRepository;
 
   constructor() {
@@ -11,12 +16,9 @@ class FindAllProposalWithClientUsecase {
   }
 
   @RemoveMongoId()
-  async execute() {
-    const pipeline = this.pipeline();
-    const aggragate = await this.repository.aggregate(pipeline);
-    return (await aggragate.toArray()) as (IProposal & {
-      client: IClient;
-    })[];
+  async execute(input: Dto.Input): Promise<Dto.Output> {
+    const aggragate = await this.repository.aggregate<Dto.Document>(this.pipeline());
+    return await aggragate.toArray()
   }
   pipeline() {
     return [
@@ -34,20 +36,20 @@ class FindAllProposalWithClientUsecase {
         },
       },
       {
+        $sort: {
+          _id: -1,
+        },
+      },
+      {
         $project: {
           client: { $first: "$client" },
           created_at: 1,
           id: 1,
-          phase: 1
+          code: 1
         }
-      },
-      {
-        $sort: {
-          _id: -1,
-        },
       },
     ];
   }
 }
 
-export const findAllProposalWithClientUsecase = singleton(FindAllProposalWithClientUsecase);
+export const findManyProposalWithClientUsecase = singleton(FindManyProposalWithClientUsecase);

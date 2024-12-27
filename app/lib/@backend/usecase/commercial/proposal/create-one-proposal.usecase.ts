@@ -11,11 +11,14 @@ class CreateOneProposalUsecase {
   }
 
   @RemoveMongoId()
-  async execute(input: Omit<IProposal, "id" | "created_at" | "user_id">) {
+  async execute(input: Omit<IProposal, "id" | "created_at" | "code" | "user_id">) {
+    const last_proposal = await this.repository.findOne({}, { sort: { code: -1 }, limit: 1 })
+
     const proposal = Object.assign(input, {
       created_at: new Date(),
       id: crypto.randomUUID(),
-      user_id: "crypto.randomUUID()"
+      user_id: crypto.randomUUID(),
+      code: (last_proposal?.code ?? 0) + 1
     })
     return await this.repository.create(proposal)
   }

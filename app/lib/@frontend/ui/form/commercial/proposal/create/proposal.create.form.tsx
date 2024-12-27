@@ -1,8 +1,8 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
-  ClientProposalSchema,
-  useClientProposalCreateForm,
+  ProposalSchema,
+  useProposalCreateForm,
 } from "./use-proposal-create-form";
 import {
   Currency,
@@ -36,7 +36,7 @@ interface Props {
   products: IProduct[];
   negotiationType: INegotiationType[];
 }
-export function ClientProposalCreateForm(props: Props) {
+export function ProposalCreateForm(props: Props) {
   const { clients, products, negotiationType } = props;
   const {
     register,
@@ -48,7 +48,7 @@ export function ClientProposalCreateForm(props: Props) {
     setValue,
     handleChangeClient,
     getValues,
-  } = useClientProposalCreateForm();
+  } = useProposalCreateForm();
 
   return (
     <form action={() => handleSubmit()}>
@@ -381,14 +381,14 @@ export function ClientProposalCreateForm(props: Props) {
 }
 
 interface Scenario {
-  control: Control<ClientProposalSchema>;
-  register: UseFormRegister<ClientProposalSchema>;
+  control: Control<ProposalSchema>;
+  register: UseFormRegister<ProposalSchema>;
   hookFormScenarioIndex: number;
   products: IProduct[];
   negotiationType: INegotiationType[];
   removeScenario: UseFieldArrayRemove;
-  setValue: UseFormSetValue<ClientProposalSchema>;
-  getValues: UseFormGetValues<ClientProposalSchema>;
+  setValue: UseFormSetValue<ProposalSchema>;
+  getValues: UseFormGetValues<ProposalSchema>;
 }
 
 function Scenario({

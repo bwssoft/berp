@@ -1,15 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { IProduct, IProductionOrder, IFinancialOrder } from "@/app/lib/@backend/domain";
+import { IProductionOrder } from "@/app/lib/@backend/domain";
 import {
   createOneProductionOrderUsecase,
   deleteOneProductionOrderUsecase,
-  findAllProductionOrderUsecase,
-  findAllProductionOrderWithProductUsecase,
+  findManyProductionOrderUsecase,
   findOneProductionOrderUsecase,
   updateOneProductionOrderUsecase,
 } from "@/app/lib/@backend/usecase";
+import { createProductionOrderFromProposalUsecase } from "../../usecase/production/production-order/create-production-order-from-proposal.usecase";
 
 export async function createOneProductionOrder(
   productionOrder: Omit<IProductionOrder, "id" | "created_at">
@@ -43,17 +43,14 @@ export async function deleteOneProductionOrderById(query: { id: string }) {
   revalidatePath("/production-order/dashboard");
 }
 
-export async function findAllProductionOrder(): Promise<IProductionOrder[]> {
-  return await findAllProductionOrderUsecase.execute();
+export async function findManyProductionOrder(input: Partial<IProductionOrder>) {
+  return await findManyProductionOrderUsecase.execute(input);
 }
 
-export async function findAllProductionOrderWithProduct(
-  input?: Partial<IProductionOrder>
-): Promise<
-  (IProductionOrder & {
-    sale_order: IFinancialOrder;
-    products_in_sale_order: IProduct[];
-  })[]
-> {
-  return await findAllProductionOrderWithProductUsecase.execute(input);
+export async function createProductionOrderFromProposal(input: { proposal_id: string; scenario_id: string; }) {
+  await createProductionOrderFromProposalUsecase.execute(input)
+  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+  revalidatePath("/production-order/management");
+  revalidatePath("/production-order/kanban");
+  revalidatePath("/production-order/dashboard");
 }

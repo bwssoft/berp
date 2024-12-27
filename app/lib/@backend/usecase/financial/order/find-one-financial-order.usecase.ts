@@ -138,7 +138,8 @@ class FindOneFinancialOrderUsecase {
           proposal_id: { $first: "$proposal_id" },
           created_at: { $first: "$created_at" },
           active: { $first: "$active" },
-          id: { $first: "$id" }
+          id: { $first: "$id" },
+          code: { $first: "$code" }
         }
       },
       {
@@ -146,6 +147,7 @@ class FindOneFinancialOrderUsecase {
           _id: "$_id._id",
           client_id: { $first: "$client_id" },
           proposal_id: { $first: "$proposal_id" },
+          code: { $first: "$code" },
           created_at: { $first: "$created_at" },
           line_items_processed: {
             $push: {

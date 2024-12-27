@@ -16,3 +16,4 @@ export * from "./tabs";
 export * from "./text-area";
 export * from "./toast";
 export * from "./toaster";
+export * from "./error";

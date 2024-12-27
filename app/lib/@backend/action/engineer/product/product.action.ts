@@ -6,15 +6,14 @@ import { revalidatePath } from "next/cache";
 import {
   createOneProductUsecase,
   deleteOneProductUsecase,
-  findAllProductUsecase,
-  findManyProductWithTechnicalSheetsUsecase,
+  findManyProductUsecase,
   findOneProductUsecase,
   findOneProductWithTechnicalSheetsUsecase,
   updateOneProductUsecase,
 } from "@/app/lib/@backend/usecase";
 
 export async function createOneProduct(
-  args: Omit<IProduct, "id" | "created_at" | "sequence">
+  args: Omit<IProduct, "id" | "created_at" | "code">
 ) {
   const product = await createOneProductUsecase.execute(args);
   revalidatePath("/product");
@@ -27,7 +26,7 @@ export async function findOneProduct(input: Partial<IProduct>) {
 
 export async function updateOneProductById(
   query: { id: string },
-  value: Omit<IProduct, "id" | "created_at" | "sequence">
+  value: Omit<IProduct, "id" | "created_at" | "code">
 ) {
   await updateOneProductUsecase.execute(query, value);
   revalidatePath("/product");
@@ -38,16 +37,10 @@ export async function deleteOneProductById(query: { id: string }) {
   revalidatePath("/product");
 }
 
-export async function findAllProduct(
-  params: Filter<IProduct> = {}
-): Promise<IProduct[]> {
-  return await findAllProductUsecase.execute(params);
-}
-
-export async function findManyProductWithTechnicalSheets(
+export async function findManyProduct(
   params: Filter<IProduct> = {}
 ) {
-  return await findManyProductWithTechnicalSheetsUsecase.execute(params);
+  return await findManyProductUsecase.execute(params);
 }
 
 export async function findOneProductWithTechnicalSheets(

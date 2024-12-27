@@ -4,6 +4,7 @@ import {
 } from "@/app/lib/@backend/action";
 import {
   IProductionOrder,
+  IProductionOrderLegacy,
   IProductionProcess,
 } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
@@ -35,7 +36,7 @@ type ProductionOrderDetailsFormData = z.infer<
 >;
 
 type UseProductionOrderDetailsParams = {
-  productionOrder: IProductionOrder | null;
+  productionOrder: IProductionOrderLegacy | null;
 };
 
 export function useProductionOrderDetails({
@@ -60,7 +61,7 @@ export function useProductionOrderDetails({
       return;
     }
 
-    const formattedProductionProcess: IProductionOrder["production_process"] = [
+    const formattedProductionProcess: IProductionOrderLegacy["production_process"] = [
       {
         process_uuid: productionProcess.id,
         steps_progress: productionProcess.steps.map((step) => ({
@@ -82,7 +83,7 @@ export function useProductionOrderDetails({
     try {
       await updateOneProductionOrderById(
         { id: productionOrder.id },
-        { production_process: productionProcessData }
+        { production_process: productionProcessData } as any // as unknown as IProductionOrderLegacy
       );
 
       toast({

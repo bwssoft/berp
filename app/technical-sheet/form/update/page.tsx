@@ -1,6 +1,6 @@
 import {
-  findAllInput,
-  findAllProduct,
+  findManyInput,
+  findManyProduct,
   findOneTechnicalSheet,
 } from "@/app/lib/@backend/action";
 import { TechnicalSheetUpdateForm } from "@/app/lib/@frontend/ui/component";
@@ -13,8 +13,6 @@ export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
-  const inputs = await findAllInput();
-  const products = await findAllProduct();
   const technicalSheet = await findOneTechnicalSheet({ id });
 
   if (!technicalSheet) {
@@ -30,6 +28,8 @@ export default async function Page(props: Props) {
       </div>
     );
   }
+
+  const [inputs, products] = await Promise.all([findManyInput({}), findManyProduct()])
 
   return (
     <div>

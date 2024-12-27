@@ -8,7 +8,7 @@ import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 interface Props {
   data: (IProposal & { client: IClient })[];
 }
-export function ClientProposalTable(props: Props) {
+export function ProposalTable(props: Props) {
   const { data } = props;
   return (
     <DataTable

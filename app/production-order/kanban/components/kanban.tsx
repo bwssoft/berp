@@ -1,24 +1,15 @@
 "use client";
 import {
-  findAllProductionOrderWithProduct,
+  findOneProductionOrder,
   updateOneProductionOrderById,
 } from "@/app/lib/@backend/action";
-import { updateSaleOrderStatus } from "@/app/lib/@backend/action/omie/sale-order/update-sale-order-status";
 import {
   IProduct,
   IProductionOrder,
-  IFinancialOrder,
+  EProductionOrderStage,
 } from "@/app/lib/@backend/domain";
-import { toast } from "@/app/lib/@frontend/hook";
-import { ProductionOrderStepsUpdateForm } from "@/app/lib/@frontend/ui/component";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@bwsoft/accordion";
 import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import React from "react";
@@ -26,9 +17,8 @@ import { useDrag, useDrop } from "react-dnd";
 
 const ItemType = "CARD";
 
-export type CustomProductionOrder = IProductionOrder & {
-  sale_order: IFinancialOrder;
-  products_in_sale_order: IProduct[];
+type CustomProductionOrder = IProductionOrder & {
+  product: IProduct
 };
 
 interface CardProps {
@@ -38,6 +28,7 @@ interface CardProps {
 }
 
 const stageColor = {
+  in_approval: "bg-indigo-200",
   in_warehouse: "bg-purple-200",
   to_produce: "bg-slate-200",
   producing: "bg-yellow-200",
@@ -71,11 +62,12 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
           <p className="text-sm mb-3 text-gray-500 font-semibold">
             OP-{order.code.toString().padStart(5, "0")}
           </p>
-          <p
+          {/* TODO: Apresentar de qual empresa é esse pedido */}
+          {/* <p
             className={`bg-white text-xs w-max py-1 px-2 rounded mr-2 text-gray-500 border border-gray-500 font-bold`}
           >
             {order.sale_order.omie_webhook_metadata.enterprise}
-          </p>
+          </p> */}
         </div>
         <p className="text-sm mb-3 text-gray-700 font-semibold">
           {formatDate(new Date(order.created_at), { includeHours: true })}
@@ -84,40 +76,36 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
 
       <div className="w-full flex flex-col-reverse gap-3 justify-between">
         <p
-          className={`${
-            stageColor[order.stage]
-          } text-xs w-max p-1 rounded mr-2 text-gray-700 font-bold`}
+          className={`${stageColor[order.stage]
+            } text-xs w-max p-1 rounded mr-2 text-gray-700 font-bold`}
         >
           {productionOrderConstants.stage[order.stage]}
         </p>
 
-        <p className="text-sm text-gray-500/80 font-semibold">
+        {/* TODO: Apresentar de qual o pedido da omie relacionado a essa OP */}
+        {/* <p className="text-sm text-gray-500/80 font-semibold">
           No. pedido OMIE:{" "}
           <span className="text-gray-800">
             {order.sale_order.omie_webhook_metadata.order_number}
           </span>
+        </p> */}
+      </div>
+
+      <div className="flex flex-row items-center mt-2">
+        <div
+          style={{ backgroundColor: order.product.color }}
+          className={`rounded-full w-4 h-4 mr-2`}
+        ></div>
+        <p className="text-xs text-gray-500">
+          <span className="text-xs text-gray-700">
+            {order.total_quantity}{" "}
+          </span>
+          - {order.product.name}
         </p>
       </div>
 
-      {order.products_in_sale_order.map((p) => (
-        <div key={p.id} className="flex flex-row items-center mt-2">
-          <div
-            style={{ backgroundColor: p.color }}
-            className={`rounded-full w-4 h-4 mr-2`}
-          ></div>
-          <p className="text-xs text-gray-500">
-            <span className="text-xs text-gray-700">
-              {
-                order.sale_order.products.find((el) => el.product_id === p.id)
-                  ?.quantity
-              }{" "}
-            </span>
-            - {p.name}
-          </p>
-        </div>
-      ))}
-
-      {order.production_process?.[0].process_uuid && (
+      {/* TODO: Apresentar o progresso do production_process (production_execution) */}
+      {/* {order.production_process?.[0].process_uuid && (
         <Accordion type="multiple" className="flex flex-col gap-1 mt-4">
           <AccordionItem value={order.id}>
             <AccordionTrigger
@@ -132,7 +120,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-      )}
+      )} */}
 
       <div className="w-full flex items-center justify-end mt-2">
         <Link
@@ -158,48 +146,52 @@ const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
   const [, ref] = useDrop({
     accept: ItemType,
     drop: async (item: { id: string }) => {
-      const [currentOrder] = await findAllProductionOrderWithProduct({
+      const currentOrder = await findOneProductionOrder({
         id: item.id,
-      });
+      })
 
-      const productionOrderHaveSteps =
-        currentOrder?.production_process !== undefined;
+      {/* TODO: Refazer logica para atualizar o 'stage' de uma OP */ }
 
-      const areAllProductionOrderStepsChecked =
-        currentOrder?.production_process?.[0].steps_progress.every(
-          ({ checked }) => checked === true
-        );
+      // const productionOrderHaveSteps =
+      //   currentOrder?.production_process !== undefined;
 
-      if (
-        productionOrderHaveSteps &&
-        stage === "completed" &&
-        !areAllProductionOrderStepsChecked
-      ) {
-        toast({
-          title: "Erro!",
-          description: "É necessário finalizar todas as etapas",
-          variant: "error",
-        });
-        moveCard(item.id, currentOrder.stage, orders.length);
-        return;
-      }
+      // const areAllProductionOrderStepsChecked =
+      //   currentOrder?.production_process?.[0].steps_progress.every(
+      //     ({ checked }) => checked === true
+      //   );
+
+      // if (
+      //   productionOrderHaveSteps &&
+      //   stage === "completed" &&
+      //   !areAllProductionOrderStepsChecked
+      // ) {
+      //   toast({
+      //     title: "Erro!",
+      //     description: "É necessário finalizar todas as etapas",
+      //     variant: "error",
+      //   });
+      //   moveCard(item.id, currentOrder.stage, orders.length);
+      //   return;
+      // }
 
       if (currentOrder) {
         await updateOneProductionOrderById(
           { id: currentOrder.id },
           {
-            stage: stage as IProductionOrder["stage"],
+            stage: stage as EProductionOrderStage
           }
         );
       }
 
-      if (currentOrder && stage === "completed") {
-        await updateSaleOrderStatus({
-          enterprise: currentOrder!.sale_order.omie_webhook_metadata.enterprise,
-          saleOrderId: currentOrder!.sale_order.omie_webhook_metadata.order_id,
-          statusId: "50",
-        });
-      }
+      {/* TODO: Refazer logica para atualizar o status do pedido da omie relacionado */ }
+
+      // if (currentOrder && stage === "completed") {
+      //   await updateSaleOrderStatus({
+      //     enterprise: currentOrder!.sale_order.omie_webhook_metadata.enterprise,
+      //     saleOrderId: currentOrder!.sale_order.omie_webhook_metadata.order_id,
+      //     statusId: "50",
+      //   });
+      // }
 
       moveCard(item.id, stage, orders.length);
     },
@@ -210,9 +202,8 @@ const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
       <div className="flex flex-row justify-between items-center mb-2 mx-1">
         <div className="flex items-center">
           <h2
-            className={`${
-              stageColor[stage as keyof typeof stageColor]
-            } text-sm w-max px-1 rounded mr-2 text-gray-700 font-bold`}
+            className={`${stageColor[stage as keyof typeof stageColor]
+              } text-sm w-max px-1 rounded mr-2 text-gray-700 font-bold`}
           >
             {title}
           </h2>
@@ -243,6 +234,7 @@ export const Kanban: React.FC<KanbanProps> = ({
   productionOrders,
 }) => {
   const stages = [
+    { id: "in_approval", title: "Em aprovação" },
     { id: "in_warehouse", title: "No Almoxarifado" },
     { id: "to_produce", title: "Para Produzir" },
     { id: "producing", title: "Produzindo" },
@@ -253,7 +245,7 @@ export const Kanban: React.FC<KanbanProps> = ({
     productionOrders.filter((order) => order.stage === stage) ?? [];
 
   return (
-    <div className="h-screen mt-10 w-full grid md:grid-cols-4 sm:grid-cols-2 gap-5">
+    <div className="h-screen mt-10 w-full grid md:grid-cols-5 sm:grid-cols-2 gap-5">
       {stages.map((stage) => (
         <Column
           key={stage.id}

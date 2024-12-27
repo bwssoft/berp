@@ -1,7 +1,7 @@
 "use server"
 
 import { IInput } from "@/app/lib/@backend/domain"
-import { createManyInputUsecase, createOneInputUsecase, deleteOneInputUsecase, findAllInputUsecase, findOneInputUsecase, updateOneInputUsecase } from "@/app/lib/@backend/usecase"
+import { createManyInputUsecase, createOneInputUsecase, deleteOneInputUsecase, findManyInputUsecase, findOneInputUsecase, updateOneInputUsecase } from "@/app/lib/@backend/usecase"
 import { revalidatePath } from "next/cache"
 
 export async function createOneInput(input: Omit<IInput
@@ -36,7 +36,7 @@ export async function deleteOneInputById(query: { id: string }) {
   revalidatePath('/product')
 }
 
-export async function findAllInput(): Promise<IInput[]> {
-  return await findAllInputUsecase.execute()
+export async function findManyInput(input: Partial<IInput>): Promise<IInput[]> {
+  return await findManyInputUsecase.execute(input)
 }
 

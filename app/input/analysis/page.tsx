@@ -4,7 +4,7 @@ import { InputSelect } from "./components/input-select";
 import {
   analyzeTemporalInputStock,
   countInputTransaction,
-  findAllInput,
+  findManyInput,
   getTotalValueInInputStock,
 } from "@/app/lib/@backend/action";
 
@@ -17,7 +17,7 @@ export default async function Page(props: Props) {
   const {
     searchParams: { id },
   } = props;
-  const inputs = await findAllInput();
+  const inputs = await findManyInput({});
   const uiWithNoId = (
     <>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

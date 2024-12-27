@@ -9,13 +9,15 @@ class CreateOneProductUsecase {
     this.repository = productRepository
   }
 
-  async execute(input: Omit<IProduct, "id" | "created_at" | "sequence">) {
+  async execute(input: Omit<IProduct, "id" | "created_at" | "code">) {
+    const last_product = await this.repository.findOne({}, { sort: { code: -1 }, limit: 1 })
+
     const product = Object.assign(
       input,
       {
         created_at: new Date(),
         id: crypto.randomUUID(),
-        sequence: 0
+        code: (last_product?.code ?? 0) + 1
       }
     )
     await this.repository.create(product)

@@ -1,4 +1,4 @@
-import { downloadOneProposalDocument, updateOneClientProposalById } from '@/app/lib/@backend/action';
+import { downloadOneProposalDocument, updateOneProposalById } from '@/app/lib/@backend/action';
 import { Currency, FreightType, IClient, IProposal } from '@/app/lib/@backend/domain';
 import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
@@ -79,13 +79,13 @@ export const schema = z.object({
 
 type Schema = z.infer<typeof schema>;
 
-export { type Schema as ClientProposalSchema }
+export { type Schema as ProposalSchema }
 
 interface Props {
   defaultValues: IProposal
   client: IClient
 }
-export function useClientProposalUpdateForm(props: Props) {
+export function useProposalUpdateForm(props: Props) {
   const { defaultValues, client } = props
   const [currentClient, setCurrentClient] = useState<IClient>(client)
   const {
@@ -115,7 +115,7 @@ export function useClientProposalUpdateForm(props: Props) {
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
-      await updateOneClientProposalById({ id: defaultValues.id! }, data);
+      await updateOneProposalById({ id: defaultValues.id! }, data);
       toast({
         title: 'Sucesso!',
         description: 'Proposta atualizada com sucesso!',

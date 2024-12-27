@@ -78,6 +78,10 @@ const navigation: NavItem[] = [
         icon: RectangleGroupIcon,
         children: [
           { name: "Gestão", pathname: "/product/management" },
+          {
+            name: "Categorias",
+            pathname: "/product/category",
+          },
           { name: "Entradas e Saídas", pathname: "/product/enter-exit" },
           { name: "Estoque", pathname: "/product/stock" },
           { name: "Análise", pathname: "/product/analysis" },

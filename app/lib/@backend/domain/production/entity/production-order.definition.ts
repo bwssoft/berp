@@ -1,34 +1,50 @@
 export interface IProductionOrder {
   id: string
   client_id: string
-  proposal_id: string | undefined
-  financial_order_id: string | undefined
+  proposal_id?: string
+  financial_order_id?: string
+  description?: string
   line_items: LineItem[]
   product_id: string
   total_quantity: number
-  description: string
   created_at: Date
-  production_process_id: string
-  production_execution_id: string
-  //legacy
-  active: boolean;
-  priority: "high" | "medium" | "low";
-  sale_order_id: string;
-  stage: "in_warehouse" | "to_produce" | "producing" | "completed";
-  production_process?: Array<IProductionOrderProcess>;
-  code: number;
-
+  code: number
+  stage: EProductionOrderStage
+  priority: EProductionOrderPriority
+  process_execution?: {
+    [user_id: string]: {
+      production_process_id: string
+      start_check: boolean
+      start_time: Date
+      end_check: boolean
+      end_time: Date
+    }[]
+  }
 }
 
 interface LineItem {
-  configuration_profile_id: string
+  configuration_profile_id?: string
   parcial_quantity: number
+}
+
+export enum EProductionOrderPriority {
+  high = "high",
+  medium = "medium",
+  low = "low",
+}
+
+export enum EProductionOrderStage {
+  in_approval = "in_approval",
+  in_warehouse = "in_warehouse",
+  to_produce = "to_produce",
+  producing = "producing",
+  completed = "completed",
 }
 
 
 import { IProductionProcessStep } from "./production-process.definition";
 
-interface IProductionOrderLegacy {
+export interface IProductionOrderLegacy {
   id: string;
   active: boolean;
   priority: "high" | "medium" | "low";
@@ -47,23 +63,4 @@ export type IProductionOrderStep = IProductionProcessStep & {
 export type IProductionOrderProcess = {
   process_uuid: string;
   steps_progress: Array<IProductionOrderStep>;
-};
-
-export const productionOrderStageMapping: Record<
-  IProductionOrderLegacy["stage"],
-  string
-> = {
-  in_warehouse: "No almoxarifado",
-  to_produce: "Para Produzir",
-  producing: "Produzindo",
-  completed: "Finalizada",
-};
-
-export const productionOrderPriorityMapping: Record<
-  IProductionOrderLegacy["priority"],
-  string
-> = {
-  high: "Alta",
-  medium: "Média",
-  low: "Baixa",
 };

@@ -3,18 +3,17 @@ import {
   IClient,
   IInput,
   IProduct,
-  IProductionOrder,
   IFinancialOrder,
   ITechnicalSheet,
-  productionOrderPriorityMapping,
-  productionOrderStageMapping,
   saleOrderStageMapping,
+  IProductionOrderLegacy,
 } from "@/app/lib/@backend/domain";
+import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
 import { PageBreak, Tailwind } from "@fileforge/react-print";
 
 type ProductionOrderPdfTemplateProps = {
-  productionOrder: IProductionOrder | null;
+  productionOrder: IProductionOrderLegacy | null;
   products: IProduct[];
   saleOrder: IFinancialOrder | null;
   client: IClient | null;
@@ -135,7 +134,7 @@ function InputsSection({
 }
 
 type ProductionOrderSectionProps = {
-  productionOrder: IProductionOrder | null;
+  productionOrder: IProductionOrderLegacy | null;
   products: IProduct[];
   saleOrder: IFinancialOrder | null;
 };
@@ -167,7 +166,7 @@ function ProductionOrderSection({
               Estágio de produção
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {productionOrderStageMapping[productionOrder!.stage]}
+              {productionOrderConstants.stage[productionOrder!.stage]}
             </dd>
           </div>
 
@@ -176,7 +175,7 @@ function ProductionOrderSection({
               Prioridade
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {productionOrderPriorityMapping[productionOrder!.priority]}
+              {productionOrderConstants.priority[productionOrder!.priority]}
             </dd>
           </div>
 

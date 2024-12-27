@@ -1,9 +1,8 @@
-import { findAllInput, findAllProduct } from "@/app/lib/@backend/action";
+import { findManyInput, findManyProduct } from "@/app/lib/@backend/action";
 import { TechnicalSheetCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
-  const inputs = await findAllInput();
-  const products = await findAllProduct();
+  const [inputs, products] = await Promise.all([findManyInput({}), findManyProduct()]);
 
   return (
     <div>

@@ -9,6 +9,7 @@ export interface IProposal {
   user_id: string
   client_id: string
   created_at: Date
+  code: number
 }
 
 // reponsabilidades:

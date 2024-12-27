@@ -1,4 +1,5 @@
 import {
+  IProductionOrderLegacy,
   IProductionOrderRepository,
   IProductionOrderStep,
   IProductionProcess,
@@ -62,11 +63,11 @@ class UpdateOneProductionProcessUsecase {
 
     if (result.modifiedCount > 0 && value.steps) {
       const productionOrdersWithThisProductionProcess =
-        await this.productionOrderRepository.findAll({
+        (await this.productionOrderRepository.findAll({
           "production_process.process_uuid": {
             $in: [query.id],
           },
-        });
+        })) as unknown as IProductionOrderLegacy[];
 
       await Promise.all(
         productionOrdersWithThisProductionProcess.map((productionOrder) => {
