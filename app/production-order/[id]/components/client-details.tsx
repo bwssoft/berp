@@ -43,7 +43,7 @@ export function ClientDetails({ client }: ClientDetailsProps) {
               Nome
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client.company_name}
+              {client.company_name ?? client.trade_name}
             </dd>
           </div>
 
@@ -52,7 +52,7 @@ export function ClientDetails({ client }: ClientDetailsProps) {
               Registro municipal
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client?.tax_details?.municipal_registration}
+              {client?.tax_details?.municipal_registration ?? "--"}
             </dd>
           </div>
 
@@ -61,16 +61,7 @@ export function ClientDetails({ client }: ClientDetailsProps) {
               Registro estadual
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client?.tax_details?.municipal_registration}
-            </dd>
-          </div>
-
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">
-              Descrição
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client.description}
+              {client?.tax_details?.state_registration ?? "--"}
             </dd>
           </div>
 
