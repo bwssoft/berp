@@ -2,12 +2,8 @@
 
 import {
   IClient,
-  IInput,
   IProduct,
   IProductionOrder,
-  IFinancialOrder,
-  ITechnicalSheet,
-  IProductionOrderLegacy,
 } from "@/app/lib/@backend/domain";
 import { ProductionOrderPdfTemplate } from "@/app/lib/@frontend/pdf/templates/production-order-pdf-template";
 import { useBuildPdf } from "@/app/lib/@frontend/pdf/use-build-pdf";
@@ -15,30 +11,35 @@ import { Button } from "@/app/lib/@frontend/ui/component";
 import { PrinterIcon } from "@heroicons/react/24/outline";
 
 type PrintProductionOrderProps = {
-  productionOrder: IProductionOrderLegacy | null;
-  products: IProduct[];
-  technicalSheets: ITechnicalSheet[];
-  saleOrder: IFinancialOrder | null;
-  client: IClient | null;
-  inputs: IInput[];
+  productionOrder: IProductionOrder
+  product: {
+    id: string
+    name: string
+    color: string
+    description: string
+    created_at: Date
+    process_execution?: IProduct["process_execution"]
+    bom?: {
+      input: {
+        id: string
+        name: string
+      }
+      quantity: number
+    }[]
+  }
+  client: IClient
 };
 
 export function PrintProductionOrder({
   productionOrder,
-  products,
-  saleOrder,
+  product,
   client,
-  technicalSheets,
-  inputs,
 }: PrintProductionOrderProps) {
   const { download } = useBuildPdf(
     <ProductionOrderPdfTemplate
       productionOrder={productionOrder}
-      products={products}
-      saleOrder={saleOrder}
+      product={product}
       client={client}
-      technicalSheets={technicalSheets}
-      inputs={inputs}
     />
   );
 
@@ -46,7 +47,7 @@ export function PrintProductionOrder({
     <Button
       variant="outline"
       onClick={download}
-      title="Imprimir informações"
+      title="Imprimir informações da ordem de produção"
       className="w-[34px] h-[34px] p-2 rounded-none mr-2"
     >
       <PrinterIcon width={16} height={16} className="text-gray-800" />

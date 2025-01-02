@@ -20,6 +20,7 @@ import {
   ProductionOrderDetails,
   ProductsDetails,
 } from "./components";
+import { PrintProductionOrder } from "./components/print-production-order";
 
 type ProductionOrderViewPageProps = {
   params: { id: string };
@@ -44,22 +45,28 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
     id: productionOrderData?.client_id,
   })) as IClient | null;
 
+  if (!clientData) return <div>
+    <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+      <div>
+        <h1 className="text-base font-semibold leading-7 text-gray-900">
+          Cliente não encontrado
+        </h1>
+      </div>
+    </div>
+  </div>
+
   return (
     <div className="w-full h-full relative">
-      <Link href="/production-order/kanban">
-        <XMarkIcon className="absolute top-1 right-1 w-6 h-6" />
-      </Link>
-      {/*TODO: Refazer a exportação em pdf de uma op*/}
-      {/* <div className="absolute top-0 right-10">
+      <div className="absolute top-0 right-0 flex gap-2 items-center">
         <PrintProductionOrder
           productionOrder={productionOrderData}
-          products={productsData}
-          saleOrder={saleOrderData}
+          product={productionOrderData.product}
           client={clientData}
-          technicalSheets={technicalSheetsData}
-          inputs={inputsData}
         />
-      </div> */}
+        <Link href="/production-order/kanban" title="Fechar o modal de Ordem de Produção" >
+          <XMarkIcon height={22} width={22} />
+        </Link>
+      </div>
 
       <Tabs defaultValue="production-order-data">
         <TabsList defaultValue="production-order-data">

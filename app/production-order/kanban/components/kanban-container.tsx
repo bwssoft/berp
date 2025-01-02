@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  IEnterprise,
   IProduct,
   IProductionOrder,
 } from "@/app/lib/@backend/domain";
@@ -10,7 +11,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Kanban } from "./kanban";
 
 type CustomProductionOrder = IProductionOrder & {
-  product: IProduct
+  product: Pick<IProduct, "id" | "name" | "color">
+  enterprise: Pick<IEnterprise, "id" | "short_name">
 };
 
 interface Props {

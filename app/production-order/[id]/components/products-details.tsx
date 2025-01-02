@@ -7,14 +7,28 @@ import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 type ProductsDetailsProps = {
-  product: IProduct;
+  product: {
+    id: string
+    name: string
+    color: string
+    description: string
+    created_at: Date
+    process_execution?: IProduct["process_execution"]
+    bom?: {
+      input: {
+        id: string
+        name: string
+      }
+      quantity: number
+    }[]
+  };
 };
 
 export function ProductsDetails({
   product,
 }: ProductsDetailsProps) {
   const hasBOM = Array.isArray(product.bom) && product.bom.length > 0
-  const hasProcessToProduce = Array.isArray(product.process_execution) && product.process_execution.length > 0
+  const hasProcessExecution = Array.isArray(product.process_execution) && product.process_execution.length > 0
   return (
     <div className="p-2">
       <div className="px-4 mb-6 sm:px-0">
@@ -78,7 +92,7 @@ export function ProductsDetails({
                   </p>
                   <p className="mt-3 text-sm md:ml-6 md:mt-0">
                     <Link
-                      href={`product/form/update?id=${product.id}`}
+                      href={`/product/form/update?id=${product.id}`}
                       className="whitespace-nowrap font-medium text-gray-700 hover:text-gray-600"
                     >
                       Definir B.O.M
@@ -96,7 +110,7 @@ export function ProductsDetails({
             Processo para Produzir
           </p>
           <div className="flex mt-1 text-sm leading-6 text-gray-800 sm:col-span-2 sm:mt-0">
-            {hasProcessToProduce ? <ProductProcessToProduceTable data={product.process_execution!} /> : <div className="mt-4 rounded-md bg-gray-100 border border-gray-200 px-6 py-3">
+            {hasProcessExecution ? <ProductProcessToProduceTable data={product.process_execution!} /> : <div className="mt-4 rounded-md bg-gray-100 border border-gray-200 px-6 py-3">
               <div className="flex">
                 <div className="shrink-0">
                   <InformationCircleIcon
@@ -110,7 +124,7 @@ export function ProductsDetails({
                   </p>
                   <p className="mt-3 text-sm md:ml-6 md:mt-0">
                     <Link
-                      href={`product/form/update?id=${product.id}`}
+                      href={`/product/form/update?id=${product.id}`}
                       className="whitespace-nowrap font-medium text-gray-700 hover:text-gray-600"
                     >
                       Definir Processo Produtivo

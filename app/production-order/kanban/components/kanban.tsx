@@ -7,6 +7,7 @@ import {
   IProduct,
   IProductionOrder,
   EProductionOrderStage,
+  IEnterprise,
 } from "@/app/lib/@backend/domain";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
@@ -18,7 +19,8 @@ import { useDrag, useDrop } from "react-dnd";
 const ItemType = "CARD";
 
 type CustomProductionOrder = IProductionOrder & {
-  product: IProduct
+  product: Pick<IProduct, "id" | "name" | "color">
+  enterprise: Pick<IEnterprise, "id" | "short_name">
 };
 
 interface CardProps {
@@ -55,52 +57,39 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
   return (
     <div
       ref={(node) => ref(drop(node)) as any}
-      className="w-full p-2 rounded shadow-sm border-gray-100 border-2 relative"
+      className="flex flex-col gap-2 w-full p-2 rounded shadow-sm border-gray-100 border-2 relative text-xs"
     >
       <div className="w-full flex flex-col justify-between">
         <div className="w-full flex justify-between items-center">
-          <p className="text-sm mb-3 text-gray-500 font-semibold">
+          <p>
             OP-{order.code.toString().padStart(5, "0")}
           </p>
-          {/* TODO: Apresentar de qual empresa é esse pedido */}
-          {/* <p
-            className={`bg-white text-xs w-max py-1 px-2 rounded mr-2 text-gray-500 border border-gray-500 font-bold`}
-          >
-            {order.sale_order.omie_webhook_metadata.enterprise}
-          </p> */}
+          <p className="text-gray-400">
+            {order.enterprise.short_name.toUpperCase()}
+          </p>
         </div>
-        <p className="text-sm mb-3 text-gray-700 font-semibold">
-          {formatDate(new Date(order.created_at), { includeHours: true })}
-        </p>
       </div>
 
-      <div className="w-full flex flex-col-reverse gap-3 justify-between">
-        <p
-          className={`${stageColor[order.stage]
-            } text-xs w-max p-1 rounded mr-2 text-gray-700 font-bold`}
-        >
-          {productionOrderConstants.stage[order.stage]}
-        </p>
-
-        {/* TODO: Apresentar de qual o pedido da omie relacionado a essa OP */}
-        {/* <p className="text-sm text-gray-500/80 font-semibold">
+      {/* TODO: Apresentar de qual o pedido da omie relacionado a essa OP */}
+      {/* <div className="w-full flex flex-col-reverse gap-2 justify-between">
+        <p>
           No. pedido OMIE:{" "}
-          <span className="text-gray-800">
+          <span>
             {order.sale_order.omie_webhook_metadata.order_number}
           </span>
-        </p> */}
-      </div>
+        </p> 
+      </div>*/}
 
-      <div className="flex flex-row items-center mt-2">
+      <div className="flex flex-row items-center">
         <div
           style={{ backgroundColor: order.product.color }}
           className={`rounded-full w-4 h-4 mr-2`}
         ></div>
-        <p className="text-xs text-gray-500">
-          <span className="text-xs text-gray-700">
+        <p>
+          <span>
             {order.total_quantity}{" "}
           </span>
-          - {order.product.name}
+          - {order.product.name.toUpperCase()}
         </p>
       </div>
 
@@ -109,7 +98,6 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
         <Accordion type="multiple" className="flex flex-col gap-1 mt-4">
           <AccordionItem value={order.id}>
             <AccordionTrigger
-              className="text-sm font-semibold text-gray-800"
               value={order.id}
             >
               Progresso das etapas
@@ -122,15 +110,19 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
         </Accordion>
       )} */}
 
-      <div className="w-full flex items-center justify-end mt-2">
+      <div className="w-full flex items-center justify-between">
+        <p className="text-gray-500">
+          {formatDate(new Date(order.created_at), { includeHours: true })}
+        </p>
         <Link
           href={`/production-order/${order.id}`}
-          className="bottom-2 right-2 p-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200"
+          className="bg-white w-max p-1 rounded border border-gray-300 shadow-sm hover:bg-gray-200"
           title="Ver detalhes da ordem de produção"
         >
-          <ArrowUpRightIcon width={16} height={16} className="text-gray-800" />
+          <ArrowUpRightIcon width={16} height={16} />
         </Link>
       </div>
+
     </div>
   );
 };
@@ -203,9 +195,9 @@ const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
         <div className="flex items-center">
           <h2
             className={`${stageColor[stage as keyof typeof stageColor]
-              } text-sm w-max px-1 rounded mr-2 text-gray-700 font-bold`}
+              } text-sm w-max px-1 rounded mr-2 text-gray-600 font-bold`}
           >
-            {title}
+            {title.toUpperCase()}
           </h2>
           <p className="text-gray-400 text-sm">{orders.length}</p>
         </div>

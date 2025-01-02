@@ -1,148 +1,123 @@
 "use client";
 import {
   IClient,
-  IInput,
   IProduct,
   IFinancialOrder,
-  ITechnicalSheet,
   saleOrderStageMapping,
-  IProductionOrderLegacy,
+  IProductionOrder,
 } from "@/app/lib/@backend/domain";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
 import { PageBreak, Tailwind } from "@fileforge/react-print";
 
 type ProductionOrderPdfTemplateProps = {
-  productionOrder: IProductionOrderLegacy | null;
-  products: IProduct[];
-  saleOrder: IFinancialOrder | null;
-  client: IClient | null;
-  technicalSheets: ITechnicalSheet[];
-  inputs: IInput[];
+  productionOrder: IProductionOrder
+  client: IClient
+  product: {
+    id: string
+    name: string
+    color: string
+    description: string
+    created_at: Date
+    process_execution?: IProduct["process_execution"]
+    bom?: {
+      input: {
+        id: string
+        name: string
+      }
+      quantity: number
+    }[]
+  }
 };
 
 export function ProductionOrderPdfTemplate({
   productionOrder,
-  products,
-  saleOrder,
+  product,
   client,
-  inputs,
-  technicalSheets,
 }: ProductionOrderPdfTemplateProps) {
   return (
     <Tailwind>
       <ProductionOrderSection
         productionOrder={productionOrder}
-        products={products}
-        saleOrder={saleOrder}
+        product={product}
       />
 
       <PageBreak />
 
-      <ClientSection client={client!} />
-
-      <PageBreak />
-
-      <SaleOrderSection saleOrder={saleOrder!} />
+      <ClientSection client={client} />
 
       <PageBreak />
 
       <InputsSection
-        technicalSheets={technicalSheets}
-        inputs={inputs}
-        products={products}
-        saleOrder={saleOrder!}
+        product={product}
       />
     </Tailwind>
   );
 }
 
 type InputsSectionProps = {
-  products: IProduct[];
-  technicalSheets: ITechnicalSheet[];
-  inputs: IInput[];
-  saleOrder: IFinancialOrder;
+  product: {
+    id: string
+    name: string
+    process_execution?: IProduct["process_execution"]
+    bom?: {
+      input: {
+        id: string
+        name: string
+      }
+      quantity: number
+    }[]
+  }
 };
 
 function InputsSection({
-  saleOrder,
-  inputs,
-  technicalSheets,
-  products,
+  product
 }: InputsSectionProps) {
-  const customProducts = products.map((product) => {
-    const productsQuantity = saleOrder.products.find(
-      (saleOrderProduct) => saleOrderProduct.product_id === product.id
-    )!.quantity;
-    const technicalSheet = technicalSheets.find(
-      (technicalSheet) => technicalSheet.product_id === product.id
-    );
-
-    return {
-      ...product,
-      productInputs: technicalSheet?.inputs.map((input) => ({
-        quantity: input.quantity,
-        totalQuantity: input.quantity * productsQuantity,
-        name: inputs.find((item) => item.id === input.uuid)!.name,
-      })),
-    };
-  });
-
   return (
     <div className="flex flex-col">
       <h1 className="text-gray-800 font-bold text-2xl">
         Detalhes dos materiais
       </h1>
-      {customProducts.map((customProduct) => (
-        <div key={customProduct.id} className="divide-gray-100 mt-10">
-          <p className="text-lg font-semibold text-gray-800">
-            {customProduct.name}
-          </p>
+      <div key={product.id} className="divide-gray-100 mt-10">
+        <p className="text-lg font-semibold text-gray-800">
+          {product.name}
+        </p>
 
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt className="text-sm font-medium leading-6 text-gray-900">
+            Insumo
+          </dt>
+          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
+            Quantidade
+          </dd>
+        </div>
+
+        {product.bom?.map((bom, idx) => (
+          <div
+            key={bom.input.id + idx}
+            className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+          >
             <dt className="text-sm font-medium leading-6 text-gray-900">
-              Insumo
+              {bom.input.name}
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
-              Quantidade por produto{" "}
-            </dd>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
-              Quantidade total{" "}
+              {bom.quantity}
             </dd>
           </div>
-
-          {customProduct.productInputs?.map((input) => (
-            <div
-              key={input.name}
-              className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-            >
-              <dt className="text-sm font-medium leading-6 text-gray-900">
-                {input.name}
-              </dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
-                {input.quantity}
-              </dd>
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
-                {input.totalQuantity}
-              </dd>
-            </div>
-          ))}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
 
 type ProductionOrderSectionProps = {
-  productionOrder: IProductionOrderLegacy | null;
-  products: IProduct[];
-  saleOrder: IFinancialOrder | null;
+  productionOrder: IProductionOrder;
+  product: { id: string, name: string, color: string };
 };
 
 function ProductionOrderSection({
   productionOrder,
-  products,
-  saleOrder,
+  product,
 }: ProductionOrderSectionProps) {
   return (
     <div className="flex flex-col">
@@ -157,7 +132,7 @@ function ProductionOrderSection({
               Identificador
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {productionOrder!.id}
+              {productionOrder.code.toString().padStart(5, "0")}
             </dd>
           </div>
 
@@ -166,7 +141,7 @@ function ProductionOrderSection({
               Estágio de produção
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {productionOrderConstants.stage[productionOrder!.stage]}
+              {productionOrderConstants.stage[productionOrder.stage]}
             </dd>
           </div>
 
@@ -175,16 +150,7 @@ function ProductionOrderSection({
               Prioridade
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {productionOrderConstants.priority[productionOrder!.priority]}
-            </dd>
-          </div>
-
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">
-              Número da ordem de serviço (OMIE)
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {saleOrder!.omie_webhook_metadata.order_number}
+              {productionOrderConstants.priority[productionOrder.priority]}
             </dd>
           </div>
 
@@ -193,7 +159,7 @@ function ProductionOrderSection({
               Observação
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {productionOrder!.description}
+              {productionOrder.description}
             </dd>
           </div>
 
@@ -202,30 +168,24 @@ function ProductionOrderSection({
               Produtos
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className="flex items-center gap-1 font-semibold text-gray-800"
-                >
-                  <p>
-                    {
-                      saleOrder?.products.find(
-                        (saleOrderProduct) =>
-                          saleOrderProduct.product_id === product.id
-                      )?.quantity
-                    }{" "}
-                    -
-                  </p>
+              <div
+                key={product.id}
+                className="flex items-center gap-1 font-semibold text-gray-800"
+              >
+                <p>
+                  {productionOrder.total_quantity}
+                  {" "}
+                  -
+                </p>
 
-                  <div className="flex items-center gap-2">
-                    <p>{product.name}</p>
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: product.color }}
-                    />
-                  </div>
+                <div className="flex items-center gap-2">
+                  <p>{product.name}</p>
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: product.color }}
+                  />
                 </div>
-              ))}
+              </div>
             </dd>
           </div>
 
@@ -234,7 +194,7 @@ function ProductionOrderSection({
               Data de criação
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {formatDate(new Date(productionOrder!.created_at), {
+              {formatDate(new Date(productionOrder.created_at), {
                 includeHours: true,
               })}
             </dd>
@@ -284,7 +244,7 @@ function ClientSection({ client }: ClientSectionProps) {
               Nome
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client.company_name}
+              {client.company_name ?? client.trade_name}
             </dd>
           </div>
 
@@ -293,7 +253,7 @@ function ClientSection({ client }: ClientSectionProps) {
               Registro municipal
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client?.tax_details?.municipal_registration}
+              {client?.tax_details?.municipal_registration ?? "--"}
             </dd>
           </div>
 
@@ -302,16 +262,7 @@ function ClientSection({ client }: ClientSectionProps) {
               Registro estadual
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client?.tax_details?.municipal_registration}
-            </dd>
-          </div>
-
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">
-              Descrição
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {client.description}
+              {client?.tax_details?.state_registration ?? "--"}
             </dd>
           </div>
 
