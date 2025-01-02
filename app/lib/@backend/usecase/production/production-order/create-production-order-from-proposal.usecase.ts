@@ -42,6 +42,7 @@ class CreateProductionOrderFromProposalUsecase {
           const proposal_line_item = scenario.line_items.find(l => l.id === li.line_item_id)
           if (!proposal_line_item) return undefined
           return {
+            enterprise_id: li.enterprise_id,
             active: true,
             client_id: proposal.client_id,
             financial_order_id: financial_order?.id,
