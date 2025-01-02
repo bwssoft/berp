@@ -1,10 +1,10 @@
 import { deleteOneProductionOrderById } from "@/app/lib/@backend/action";
-import { IProduct, IProductionOrder, IProductionOrderLegacy } from "@/app/lib/@backend/domain";
+import { IProductionOrder } from "@/app/lib/@backend/domain";
 import { productionOrderConstants } from "@/app/lib/constant/production-order";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
-export const columns: ColumnDef<(IProductionOrder & { product?: IProduct })>[] = [
+export const columns: ColumnDef<(IProductionOrder & { product: { name: string } })>[] = [
   {
     header: "Número",
     accessorKey: "code",
@@ -52,7 +52,7 @@ export const columns: ColumnDef<(IProductionOrder & { product?: IProduct })>[] =
             href={`/production-order/${productionOrder.id}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
-            Editar
+            Gerenciar
           </Link>
           <form
             action={() =>

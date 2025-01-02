@@ -17,7 +17,7 @@ import { Button, Error } from "../../../../component";
 interface ProductionOrderFromProposalCreateFormProps {
   proposal_id: string;
   scenario_id: string;
-  production_orders: (IProductionOrder & { product?: IProduct })[];
+  production_orders: (IProductionOrder & { product: { name: string } })[];
 }
 
 export function ProductionOrderFromProposalCreateForm(props: ProductionOrderFromProposalCreateFormProps) {
@@ -84,7 +84,7 @@ export function ProductionOrderFromProposalCreateForm(props: ProductionOrderFrom
 
 
 interface UpdateProductionOrderFromProposalForm {
-  production_order: IProductionOrder & { product?: IProduct };
+  production_order: IProductionOrder & { product: { name: string } };
 }
 
 export function UpdateProductionOrderFromProposalForm(props: UpdateProductionOrderFromProposalForm) {
