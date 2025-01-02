@@ -11,7 +11,7 @@ import { revalidatePath } from "next/cache"
 export async function createOneProposal(client: Omit<IProposal
   , "id" | "created_at" | "user_id" | "code">) {
   await createOneProposalUsecase.execute(client)
-  revalidatePath("/sale/proposal")
+  revalidatePath("/commercial/proposal")
   return
 }
 
@@ -21,13 +21,13 @@ export async function findOneProposal(client: Partial<IProposal>) {
 
 export async function updateOneProposalById(query: { id: string }, value: Omit<IProposal, "id" | "created_at" | "user_id" | "code">) {
   await updateOneProposalUsecase.execute(query, value)
-  revalidatePath("/sale/proposal")
+  revalidatePath("/commercial/proposal")
   return
 }
 
 export async function deleteOneProposalById(query: { id: string }) {
   await deleteOneProposalUsecase.execute(query)
-  revalidatePath("/sale/proposal")
+  revalidatePath("/commercial/proposal")
   return
 }
 
@@ -44,10 +44,10 @@ export async function downloadOneProposalDocument(input: {
 
 export async function initializeSignatureProcess(input: { proposal_id: string, scenario_id: string }) {
   await initializeSignatureProcessUscase.execute(input)
-  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+  revalidatePath(`/commercial/proposal/form/update?id=${input.proposal_id}`)
 }
 
 export async function cancelSignatureProcess(input: { proposal_id: string, scenario_id: string }) {
   await cancelSignatureProcessUscase.execute(input)
-  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+  revalidatePath(`/commercial/proposal/form/update?id=${input.proposal_id}`)
 }

@@ -29,7 +29,7 @@ export const columns: ColumnDef<IClient>[] = [
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`/sale/client/form/update?id=${input.id}`}
+            href={`/commercial/client/form/update?id=${input.id}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
             Editar

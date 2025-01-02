@@ -11,10 +11,10 @@ export async function findManyProductCategory(input: Partial<IProductCategory>):
 
 export async function createOneProductCategory(inputCategory: Omit<IProductCategory, "id" | "created_at">) {
   await createOneProductCategoryUsecase.execute(inputCategory);
-  revalidatePath("/product");
+  revalidatePath("/engineer/product");
 }
 
 export async function deleteOneProductCategoryById(params: { id: string }) {
   await deleteOneProductCategoryUsecase.execute(params)
-  revalidatePath("/product")
+  revalidatePath("/engineer/product")
 }

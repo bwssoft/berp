@@ -16,7 +16,7 @@ export async function createOneProduct(
   args: Omit<IProduct, "id" | "created_at" | "code">
 ) {
   const product = await createOneProductUsecase.execute(args);
-  revalidatePath("/product");
+  revalidatePath("/engineer/product");
   return product;
 }
 
@@ -29,12 +29,12 @@ export async function updateOneProductById(
   value: Omit<IProduct, "id" | "created_at" | "code">
 ) {
   await updateOneProductUsecase.execute(query, value);
-  revalidatePath("/product");
+  revalidatePath("/engineer/product");
 }
 
 export async function deleteOneProductById(query: { id: string }) {
   await deleteOneProductUsecase.execute(query);
-  revalidatePath("/product");
+  revalidatePath("/engineer/product");
 }
 
 export async function findManyProduct(

@@ -63,7 +63,7 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
           product={productionOrderData.product}
           client={clientData}
         />
-        <Link href="/production-order/kanban" title="Fechar o modal de Ordem de Produção" >
+        <Link href="/production/production-order/kanban" title="Fechar o modal de Ordem de Produção" >
           <XMarkIcon height={22} width={22} />
         </Link>
       </div>

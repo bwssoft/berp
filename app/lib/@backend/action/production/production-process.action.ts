@@ -15,7 +15,7 @@ export async function createOneProductionProcess(
   productionProcess: Omit<IProductionProcess, "id" | "created_at">
 ) {
   await createOneProductionProcessUsecase.execute(productionProcess);
-  revalidatePath("/production-order/management");
+  revalidatePath("/production/production-order/management");
 }
 
 export async function findOneProductionProcess(
@@ -29,14 +29,14 @@ export async function updateOneProductionProcessById(
   value: Omit<Partial<IProductionProcess>, "id" | "created_at">
 ) {
   await updateOneProductionProcessUsecase.execute(query, value);
-  revalidatePath("/production-order/management");
-  revalidatePath("/production-order/kanban");
+  revalidatePath("/production/production-order/management");
+  revalidatePath("/production/production-order/kanban");
 }
 
 export async function deleteOneProductionProcessById(query: { id: string }) {
   await deleteOneProductionProcessUsecase.execute(query);
-  revalidatePath("/production-order/management");
-  revalidatePath("/production-order/kanban");
+  revalidatePath("/production/production-order/management");
+  revalidatePath("/production/production-order/kanban");
 }
 
 export async function findAllProductionProcess(): Promise<

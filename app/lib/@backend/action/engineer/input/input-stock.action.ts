@@ -6,7 +6,7 @@ import { analyzeTemporalInputStockUsecase, findAllInputStockUsecase, getInputSto
 
 export async function updateInputStock() {
   await updateInputStockUsacase.execute()
-  revalidatePath("/input/stock")
+  revalidatePath("/engineer/input/stock")
 }
 
 export async function findAllInputStock() {

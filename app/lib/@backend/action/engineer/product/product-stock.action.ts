@@ -7,7 +7,7 @@ import { findAllProductStockUsecase, getProductStockInsightUsecase, getTotalValu
 
 export async function updateProductStock() {
   await updateProductStockUsacase.execute()
-  revalidatePath("/product/stock")
+  revalidatePath("/engineer/product/stock")
   return
 }
 

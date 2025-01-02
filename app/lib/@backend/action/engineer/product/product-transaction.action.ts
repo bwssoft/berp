@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 export async function createOneProductTransaction(args: Omit<IProductTransaction, "id" | "created_at">) {
   const product = createOneProductTransactionUsecase.execute(args)
-  revalidatePath("/product/enter-exit")
+  revalidatePath("/engineer/product/enter-exit")
   return product
 }
 

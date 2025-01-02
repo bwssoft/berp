@@ -16,12 +16,12 @@ import {
 
 export async function createOneSchedule(schedule: Omit<ISchedule, "id" | "created_at">) {
   await createOneScheduleUsecase.execute(schedule)
-  revalidatePath('/command/schedule')
+  revalidatePath('/engineer/command/schedule')
 }
 
 export async function createManySchedule(schedule: (Omit<ISchedule, "id" | "created_at">)[]) {
   await createManyScheduleUsecase.execute(schedule)
-  revalidatePath('/command/schedule')
+  revalidatePath('/engineer/command/schedule')
 }
 
 export async function findOneSchedule(schedule: Partial<ISchedule>) {
@@ -33,7 +33,7 @@ export async function updateOneScheduleById(
   value: Omit<ISchedule, "id" | "created_at">,
 ) {
   await updateOneScheduleUsecase.execute(query, value)
-  revalidatePath('/command/schedule')
+  revalidatePath('/engineer/command/schedule')
 }
 
 export async function updateManyScheduleById(
@@ -41,7 +41,7 @@ export async function updateManyScheduleById(
   value: Omit<ISchedule, "id" | "created_at">,
 ) {
   await updateManyScheduleUsecase.execute(query, value)
-  revalidatePath('/command/schedule')
+  revalidatePath('/engineer/command/schedule')
 }
 
 export async function updateBulkSchedule(operations: {
@@ -49,12 +49,12 @@ export async function updateBulkSchedule(operations: {
   value: Omit<ISchedule, "id" | "created_at">,
 }[]) {
   await updateBulkScheduleUsecase.execute(operations)
-  revalidatePath('/command/schedule')
+  revalidatePath('/engineer/command/schedule')
 }
 
 export async function deleteOneScheduleById(query: { id: string }) {
   await deleteOneScheduleUsecase.execute(query)
-  revalidatePath('/command/schedule')
+  revalidatePath('/engineer/command/schedule')
 }
 
 export async function findAllSchedule(): Promise<(ISchedule & { device: IDevice, command: ICommand, firmware?: IFirmware })[]> {

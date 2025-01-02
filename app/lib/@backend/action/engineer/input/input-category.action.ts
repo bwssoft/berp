@@ -11,17 +11,17 @@ export async function findAllInputCategories(): Promise<IInputCategory[]> {
 
 export async function createOneInputCategory(inputCategory: Omit<IInputCategory, "id" | "created_at">) {
   await createOneInputCategoryUsecase.execute(inputCategory);
-  revalidatePath("/path");
+  revalidatePath("/engineer/input");
   return inputCategory
 }
 
 export async function createManyInputCategories(inputCategory: Omit<IInputCategory, "id" | "created_at">[]) {
   await createManyCategoryUsecase.execute(inputCategory);
-  revalidatePath("/input")
+  revalidatePath("/engineer/input")
   return inputCategory;
 }
 
 export async function deleteOneInputCategoryById(params: { id: string }) {
   await deleteOneInputCategoryUsecase.execute(params)
-  revalidatePath("/input")
+  revalidatePath("/engineer/input")
 }

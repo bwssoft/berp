@@ -14,7 +14,7 @@ type FirmwareWithoutFile = Omit<IFirmware, "id" | "created_at" | "file">
 export async function createOneFirmware(firmware: FirmwareWithoutFile, formData: FormData) {
   const file = formData.get("file") as File
   await createOneFirmwareUsecase.execute(firmware, file)
-  revalidatePath('/firmware/management')
+  revalidatePath('/engineer/firmware/management')
 }
 
 export async function findOneFirmware(firmware: Partial<IFirmware>) {
@@ -28,12 +28,12 @@ export async function updateOneFirmwareById(
 ) {
   const file = formData?.get("file") as File | undefined
   await updateOneFirmwareUsecase.execute(query, value, file)
-  revalidatePath('/firmware/management')
+  revalidatePath('/engineer/firmware/management')
 }
 
 export async function deleteOneFirmwareById(query: { id: string }) {
   await deleteOneFirmwareUsecase.execute(query)
-  revalidatePath('/firmware/management')
+  revalidatePath('/engineer/firmware/management')
 }
 
 export async function findAllFirmware(): Promise<IFirmware[]> {

@@ -10,25 +10,25 @@ export async function findOneFinancialOrder(order: Partial<IFinancialOrder>) {
 
 export async function createFinancialOrderOnOmie(input: { proposal_id: string, scenario_id: string }) {
   await createFinancialOrderOnOmieUsecase.execute(input)
-  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+  revalidatePath(`/commercial/proposal/form/update?id=${input.proposal_id}`)
 }
 
 export async function deleteFinancialOrder(input: { proposal_id: string, scenario_id: string }) {
   await deleteFinancialOrderUsecase.execute(input)
-  revalidatePath(`/financial/order`)
-  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+  revalidatePath(`/commercial/financial/order`)
+  revalidatePath(`/commercial/proposal/form/update?id=${input.proposal_id}`)
 }
 
 export async function createFinancialOrderFromProposal(input: { scenario_id: string, proposal_id: string }) {
   await createFinancialOrderFromProposalUsecase.execute(input)
-  revalidatePath(`/financial/order`)
-  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
+  revalidatePath(`/commercial/financial/order`)
+  revalidatePath(`/commercial/proposal/form/update?id=${input.proposal_id}`)
 }
 
 export async function updateOneFinancialOrderFromProposal(query: { id: string }, value: Partial<IFinancialOrder>, proposal_id: string) {
   await updateFinancialOrderFromProposalUsecase.execute(query, value)
-  revalidatePath(`/sale/proposal/form/update?id=${proposal_id}`)
-  revalidatePath(`/financial/order`)
+  revalidatePath(`/commercial/proposal/form/update?id=${proposal_id}`)
+  revalidatePath(`/commercial/financial/order`)
   return
 }
 

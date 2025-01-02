@@ -15,9 +15,9 @@ export async function createOneProductionOrder(
   productionOrder: Omit<IProductionOrder, "id" | "created_at">
 ) {
   await createOneProductionOrderUsecase.execute(productionOrder);
-  revalidatePath("/production-order/management");
-  revalidatePath("/production-order/kanban");
-  revalidatePath("/production-order/dashboard");
+  revalidatePath("/production/production-order/management");
+  revalidatePath("/production/production-order/kanban");
+  revalidatePath("/production/production-order/dashboard");
 }
 
 export async function findOneProductionOrder(
@@ -31,16 +31,16 @@ export async function updateOneProductionOrderById(
   value: Omit<Partial<IProductionOrder>, "id" | "created_at">
 ) {
   await updateOneProductionOrderUsecase.execute(query, value);
-  revalidatePath("/production-order/management");
-  revalidatePath("/production-order/kanban");
-  revalidatePath("/production-order/dashboard");
+  revalidatePath("/production/production-order/management");
+  revalidatePath("/production/production-order/kanban");
+  revalidatePath("/production/production-order/dashboard");
 }
 
 export async function deleteOneProductionOrderById(query: { id: string }) {
   await deleteOneProductionOrderUsecase.execute(query);
-  revalidatePath("/production-order/management");
-  revalidatePath("/production-order/kanban");
-  revalidatePath("/production-order/dashboard");
+  revalidatePath("/production/production-order/management");
+  revalidatePath("/production/production-order/kanban");
+  revalidatePath("/production/production-order/dashboard");
 }
 
 export async function findManyProductionOrder(input: Partial<IProductionOrder>) {
@@ -49,8 +49,8 @@ export async function findManyProductionOrder(input: Partial<IProductionOrder>) 
 
 export async function createProductionOrderFromProposal(input: { proposal_id: string; scenario_id: string; }) {
   await createProductionOrderFromProposalUsecase.execute(input)
-  revalidatePath(`/sale/proposal/form/update?id=${input.proposal_id}`)
-  revalidatePath("/production-order/management");
-  revalidatePath("/production-order/kanban");
-  revalidatePath("/production-order/dashboard");
+  revalidatePath(`/commercial/proposal/form/update?id=${input.proposal_id}`)
+  revalidatePath("/production/production-order/management");
+  revalidatePath("/production/production-order/kanban");
+  revalidatePath("/production/production-order/dashboard");
 }

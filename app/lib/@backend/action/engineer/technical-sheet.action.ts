@@ -16,7 +16,8 @@ export async function createOneTechnicalSheet(
   productionProcess: Omit<ITechnicalSheet, "id" | "created_at">
 ) {
   await createOneTechnicalSheetUsecase.execute(productionProcess);
-  revalidatePath("/production-order/management");
+  revalidatePath("/engineer/technical-sheet");
+  revalidatePath("/production/production-order/management");
 }
 
 export async function findOneTechnicalSheet(
@@ -30,12 +31,12 @@ export async function updateOneTechnicalSheetById(
   value: Omit<Partial<ITechnicalSheet>, "id" | "created_at">
 ) {
   await updateOneTechnicalSheetUsecase.execute(query, value);
-  revalidatePath("/production-order/management");
+  revalidatePath("/production/production-order/management");
 }
 
 export async function deleteOneTechnicalSheetById(query: { id: string }) {
   await deleteOneTechnicalSheetUsecase.execute(query);
-  revalidatePath("/production-order/management");
+  revalidatePath("/production/production-order/management");
 }
 
 export async function findAllTechnicalSheet(

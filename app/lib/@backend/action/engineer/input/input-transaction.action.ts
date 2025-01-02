@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 
 export async function createOneInputTransaction(input: Omit<IInputTransaction, "id" | "created_at">) {
   await createOneInputTransactionUsecase.execute(input)
-  revalidatePath("/input/enter-exit")
+  revalidatePath("/engineer/input/enter-exit")
   return input
 }
 
