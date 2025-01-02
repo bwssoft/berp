@@ -1,5 +1,4 @@
 export * from './client'
 export * from './negotiation-type'
-export * from './opportunity'
 export * from './proposal'
 export * from './webhook'
