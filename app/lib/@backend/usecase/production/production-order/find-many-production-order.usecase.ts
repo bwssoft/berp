@@ -5,8 +5,18 @@ import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 
 namespace Dto {
   export interface Input extends Partial<IProductionOrder> { }
-  export type Document = IProductionOrder & { product: IProduct }
-  export type Output = (IProductionOrder & { product: IProduct })[]
+  export type Document = IProductionOrder & { product: Product, enterprise: Enterprise }
+  export type Output = (IProductionOrder & { product: Product, enterprise: Enterprise })[]
+
+  export interface Product {
+    id: string
+    name: string
+    color: string
+  }
+  export interface Enterprise {
+    id: string
+    short_name: string
+  }
 }
 
 class FindManyProductionOrderUsecase {
@@ -32,13 +42,23 @@ class FindManyProductionOrderUsecase {
           as: "product",
           from: "product",
           foreignField: "id",
-          localField: "product_id"
+          localField: "product_id",
+          pipeline: [{ $project: { _id: 0, name: 1, color: 1 } }]
+        }
+      },
+      {
+        $lookup: {
+          as: "enterprise",
+          from: "business-enterprise",
+          foreignField: "id",
+          localField: "enterprise_id",
+          pipeline: [{ $project: { _id: 0, short_name: 1 } }]
         }
       },
       {
         $project: {
           product: { $first: "$product" },
-          created_at: 1,
+          enterprise: { $first: "$enterprise" },
           id: 1,
           client_id: 1,
           proposal_id: 1,
@@ -47,11 +67,10 @@ class FindManyProductionOrderUsecase {
           line_items: 1,
           product_id: 1,
           total_quantity: 1,
-          production_process_id: 1,
-          production_execution_id: 1,
           code: 1,
-          priority: 1,
           stage: 1,
+          priority: 1,
+          created_at: 1,
         }
       },
     ]
