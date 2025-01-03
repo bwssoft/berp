@@ -78,14 +78,8 @@ export function ScheduleCreateForm(props: Props) {
                   { id: 0, label: "Sim", value: "true" },
                   { id: 1, label: "Não", value: "false" },
                 ]}
-                defaultCheckedItem={{
-                  id: 0,
-                  value: "true",
-                  label: "Sim",
-                }}
                 keyExtractor={(d) => d.id}
-                valueExtractor={(d) => d.value}
-                labelExtractor={(d) => d.label}
+                valueExtractor={(d) => d.label}
                 onChange={({ value }) =>
                   setValue("commandSetup.isMultiple", value === "true")
                 }

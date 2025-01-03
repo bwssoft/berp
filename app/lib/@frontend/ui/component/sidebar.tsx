@@ -9,6 +9,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import {
+  AdjustmentsHorizontalIcon,
   Bars3Icon,
   BriefcaseIcon,
   ChevronRightIcon,
@@ -110,6 +111,13 @@ const navigation: NavItem[] = [
         children: [
           { name: "Gestão", pathname: "/engineer/command/management" },
           { name: "Agendamento", pathname: "/engineer/command/schedule" },
+        ],
+      },
+      {
+        name: "Perfil de configuração",
+        icon: AdjustmentsHorizontalIcon,
+        children: [
+          { name: "Gestão", pathname: "/engineer/configuration-profile/management" },
         ],
       },
     ],

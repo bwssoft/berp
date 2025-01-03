@@ -28,14 +28,8 @@ export function ProductTransactionCreateForm(props: Props) {
                       { id: 0, label: "Entrada", value: "enter" },
                       { id: 1, label: "Saída", value: "exit" },
                     ]}
-                    defaultCheckedItem={{
-                      id: 0,
-                      value: "enter",
-                      label: "Entrada",
-                    }}
                     keyExtractor={(d) => d.id}
-                    valueExtractor={(d) => d.value}
-                    labelExtractor={(d) => d.label}
+                    valueExtractor={(d) => d.label}
                     onChange={(d) => field.onChange(d.value)}
                   />
                 )}

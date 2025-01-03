@@ -1,4 +1,5 @@
 export * from "./device.definition"
+export * from "./configuration-profile.definition"
 export * from "./firmware.definition"
 export * from "./input-category.definition"
 export * from "./input-stock.definition"

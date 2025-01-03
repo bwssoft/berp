@@ -26,11 +26,10 @@ export function ProductSelect(props: Props) {
   return (
     <Select
       data={products}
-      keyExtractor={(i) => i.id!}
-      valueExtractor={(i) => i.id!}
-      labelExtractor={(i) => i.name}
-      onChangeSelect={(i) => handleChange(i?.id)}
-      defaultValue={currentProductIdSelected ?? undefined}
+      keyExtractor={(i) => i.id}
+      valueExtractor={(i) => i.name}
+      onChange={(i) => handleChange(i.id)}
+      name="product-select"
       placeholder="Selecione algum produto para pesquisar"
     />
   );

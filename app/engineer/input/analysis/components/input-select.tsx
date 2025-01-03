@@ -26,11 +26,10 @@ export function InputSelect(props: Props) {
   return (
     <Select
       data={inputs}
-      keyExtractor={(i) => i.id!}
-      valueExtractor={(i) => i.id!}
-      labelExtractor={(i) => i.name}
-      onChangeSelect={(i) => handleChange(i?.id)}
-      defaultValue={currentInputIdSelected ?? undefined}
+      keyExtractor={(i) => i.id}
+      valueExtractor={(i) => i.name}
+      name="input-select"
+      onChange={(i) => handleChange(i.id)}
       placeholder="Selecione algum insumo para pesquisar"
     />
   );

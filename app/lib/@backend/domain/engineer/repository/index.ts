@@ -1,4 +1,5 @@
 export * from "./device.repository.interface"
+export * from "./configuration-profile.repository.interface"
 export * from "./firmware.repository"
 export * from "./input-category.repository"
 export * from "./input-stock.repository"

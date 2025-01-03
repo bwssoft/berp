@@ -1,3 +1,4 @@
+export * from "./configuration-profile.repository"
 export * from "./command-schedule.repository"
 export * from "./command.repository"
 export * from "./device.repository"
