@@ -1,8 +1,11 @@
-const stage = {
-  in_warehouse: "No almoxarifado",
-  to_produce: "Para Produzir",
-  producing: "Produzindo",
-  completed: "Finalizada",
+import { EProductionOrderPriority, EProductionOrderStage } from "../@backend/domain";
+
+const stage: Record<EProductionOrderStage, string> = {
+  [EProductionOrderStage.in_approval]: "Em Aprovação",
+  [EProductionOrderStage.in_warehouse]: "No Almoxarifado",
+  [EProductionOrderStage.to_produce]: "Para Produzir",
+  [EProductionOrderStage.producing]: "Produzindo",
+  [EProductionOrderStage.completed]: "Finalizada",
 };
 
 const stageColors = {
@@ -16,10 +19,10 @@ const stageColors = {
   Finalizada: "#16a34a",
 };
 
-const priority = {
-  high: "Alta",
-  medium: "Média",
-  low: "Baixa",
+const priority: Record<EProductionOrderPriority, string> = {
+  [EProductionOrderPriority.high]: "Alta",
+  [EProductionOrderPriority.medium]: "Média",
+  [EProductionOrderPriority.low]: "Baixa",
 };
 
 export const productionOrderConstants = {
