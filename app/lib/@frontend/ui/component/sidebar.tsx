@@ -152,6 +152,7 @@ const navigation: NavItem[] = [
       { name: "Propostas", pathname: "/commercial/proposal" },
     ],
   },
+
   // {
   //   name: "Ferramentas",
   //   icon: WrenchIcon,
