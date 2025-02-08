@@ -115,7 +115,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
           {formatDate(new Date(order.created_at), { includeHours: true })}
         </p>
         <Link
-          href={`/production-order/${order.id}`}
+          href={`/production/production-order/${order.id}`}
           className="bg-white w-max p-1 rounded border border-gray-300 shadow-sm hover:bg-gray-200"
           title="Ver detalhes da ordem de produção"
         >
