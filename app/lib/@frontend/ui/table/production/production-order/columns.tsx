@@ -49,7 +49,7 @@ export const columns: ColumnDef<(IProductionOrder & { product: { name: string } 
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`/production-order/${productionOrder.id}`}
+            href={`production/production-order/${productionOrder.id}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
             Gerenciar
