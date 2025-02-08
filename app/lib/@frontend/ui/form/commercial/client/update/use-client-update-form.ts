@@ -1,6 +1,6 @@
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { updateOneClientById } from '@/app/lib/@backend/action';
-import { ContactLabelEnum, IClient } from '@/app/lib/@backend/domain';
+import { ClientSectorEnum, ContactDepartmentEnum, ContactRoleEnum, DocumentValueEnum, IClient, TaxRegime } from '@/app/lib/@backend/domain';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -8,13 +8,15 @@ import { z } from 'zod';
 const schema = z.object({
   trade_name: z.string(),
   company_name: z.string(),
+  sector: z.nativeEnum(ClientSectorEnum),
   document: z.object({
-    type: z.enum(["CNPJ", "CPF"]).default("CNPJ"),
+    type: z.nativeEnum(DocumentValueEnum).default(DocumentValueEnum["CNPJ"]),
     value: z.string()
   }),
   tax_details: z.object({
     state_registration: z.string(),
     municipal_registration: z.string(),
+    regime: z.nativeEnum(TaxRegime),
   }),
   description: z.string(),
   address: z.object({
@@ -26,10 +28,11 @@ const schema = z.object({
   }),
   contacts: z.array(z.object({
     id: z.string(),
-    label: z.nativeEnum(ContactLabelEnum),
+    name: z.string(),
     phone: z.string(),
     email: z.string(),
-    name: z.string(),
+    role: z.nativeEnum(ContactRoleEnum),
+    department: z.nativeEnum(ContactDepartmentEnum),
     can_sign_contract: z.boolean().default(false),
     can_receive_document: z.boolean().default(false),
     created_at: z.coerce.date()

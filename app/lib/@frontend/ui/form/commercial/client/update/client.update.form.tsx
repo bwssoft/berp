@@ -15,8 +15,9 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { ContactLabelEnum, IClient } from "@/app/lib/@backend/domain";
+import { ContactDepartmentEnum, ContactRoleEnum, IClient } from "@/app/lib/@backend/domain";
 import { useClientUpdateForm } from "./use-client-update-form";
+import { clientConstants } from "@/app/lib/constant";
 
 interface Props {
   client: IClient;
@@ -31,7 +32,7 @@ export function ClientUpdateForm(props: Props) {
     handleSubmit,
   } = useClientUpdateForm({ defaultValues: client });
   return (
-    <form action={() => handleSubmit()}>
+    <form action={() => handleSubmit()} className="mt-6">
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -42,6 +43,24 @@ export function ClientUpdateForm(props: Props) {
           </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="document"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Documento
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  id="document"
+                  autoComplete="family-name"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("document.value")}
+                />
+              </div>
+            </div>            
+            
             <div className="sm:col-span-3">
               <label
                 htmlFor="company_name"
@@ -62,56 +81,42 @@ export function ClientUpdateForm(props: Props) {
 
             <div className="sm:col-span-3">
               <label
-                htmlFor="document"
+                htmlFor="company_name"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Documento
+                Nome Fantasia
               </label>
               <div className="mt-2">
                 <input
                   type="text"
-                  id="document"
-                  autoComplete="family-name"
+                  id="trade_name"
+                  autoComplete="trade_name"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("document.value")}
+                  {...register("trade_name")}
                 />
               </div>
             </div>
 
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-2">
               <label
-                htmlFor="state_registration"
+                htmlFor="client_id"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Inscrição Estadual
+                Setor
               </label>
-              <div className="mt-2">
-                <input
-                  id="state_registration"
-                  type="text"
-                  autoComplete="state_registration"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("tax_details.state_registration")}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-3">
-              <label
-                htmlFor="municipal_registration"
-                className="block text-sm font-medium leading-6 text-gray-900"
+              <select
+                id="tax_details.regime"
+                className="block w-full rounded-md border-0 py-2 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
-                Inscrição Municipal
-              </label>
-              <div className="mt-2">
-                <input
-                  id="municipal_registration"
-                  type="text"
-                  autoComplete="municipal_registration"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("tax_details.municipal_registration")}
-                />
-              </div>
+                <option value="">Selecione um setor</option>
+                {Object.entries(clientConstants.sector).map(
+                  ([key, value]) => (
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
+                  )
+                )}
+              </select>
             </div>
 
             <div className="col-span-full">
@@ -133,6 +138,64 @@ export function ClientUpdateForm(props: Props) {
               <p className="mt-3 text-sm leading-6 text-gray-600">
                 Escreva um pouco sobre o cliente.
               </p>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="state_registration"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Inscrição Estadual
+              </label>
+              <div className="mt-2">
+                <input
+                  id="state_registration"
+                  type="text"
+                  autoComplete="state_registration"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("tax_details.state_registration")}
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="municipal_registration"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Inscrição Municipal
+              </label>
+              <div className="mt-2">
+                <input
+                  id="municipal_registration"
+                  type="text"
+                  autoComplete="municipal_registration"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("tax_details.municipal_registration")}
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="client_id"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Regime tributário
+              </label>
+              <select
+                id="tax_details.regime"
+                className="block w-full rounded-md border-0 py-2 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                <option value="">Selecione um regime tributário</option>
+                {Object.entries(clientConstants.taxRegime).map(
+                  ([key, value]) => (
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
+                  )
+                )}
+              </select>
             </div>
 
             <div className="col-span-3">
@@ -269,14 +332,15 @@ export function ClientUpdateForm(props: Props) {
               type="button"
               onClick={() =>
                 handleAppendContact({
+                  id: crypto.randomUUID(),
                   name: "",
                   phone: "",
-                  id: crypto.randomUUID(),
-                  can_sign_contract: false,
-                  created_at: new Date(),
                   email: "",
-                  label: ContactLabelEnum["UNKNOWN"],
+                  role: ContactRoleEnum["other"],
+                  department: ContactDepartmentEnum["other"],
+                  can_sign_contract: false,
                   can_receive_document: false,
+                  created_at: new Date(),
                 })
               }
               className="mt-5 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"

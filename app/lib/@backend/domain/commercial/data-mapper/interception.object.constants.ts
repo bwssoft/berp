@@ -4,7 +4,7 @@ import { appHashsMapping } from "@/app/lib/constant/app-hashs";
 import { IClient } from "../entity";
 import { BaseOmieEntity } from "../../../infra/api/controller/commercial/client/client.dto";
 import { ClientOmieEntity } from "../../../infra/api/controller/commercial/client/client.validator";
-import { ContactLabelEnum } from "../entity/contact.definition";
+import { ContactDepartmentEnum, ContactRoleEnum } from "../entity/contact.definition";
 
 export type IInterceptionObjectConstantsType = {
   [key in Path<IClient>]?: (data: BaseOmieEntity<ClientOmieEntity>) => any;
@@ -52,7 +52,8 @@ export const InterceptionObjectConstants: IInterceptionObjectConstantsType = {
         name: data.event.nome_fantasia,
         email: data.event.email ?? undefined,
         phone: `${data.event.telefone1_ddd ?? ""}${data.event.telefone1_numero ?? ""}`,
-        label: ContactLabelEnum["UNKNOWN"],
+        role: ContactRoleEnum["other"],
+        department: ContactDepartmentEnum["other"],
         id: crypto.randomUUID()
       })
     }

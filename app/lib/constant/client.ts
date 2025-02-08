@@ -1,4 +1,4 @@
-import { IProposal } from "../@backend/domain";
+import { IClient, IProposal } from "../@backend/domain";
 
 const types = {
   prospect: "Prospecção",
@@ -11,7 +11,7 @@ const types = {
   other: "Outro"
 };
 
-const sectors = {
+const sector: {[key in IClient["sector"]]: string} = {
   vehicle_protection_association: "Associação Prot. Veicular",
   retail_trade: "Comércio Varejista",
   tracking_company: "Empresa de Rastreamento",
@@ -29,16 +29,17 @@ const sectors = {
   other: "Outro"
 };
 
-const contactRoles = {
+const contactRole: {[key in IClient["contacts"][0]["role"]]: string} = {
   analyst: "Analista",
   supervisor: "Supervisor",
   manager: "Gerente",
   director: "Diretor",
   president: "Presidente",
-  owner: "Proprietário"
+  owner: "Proprietário",
+  other: "Outro"
 };
 
-const contactDepartments = {
+const contactDepartment: {[key in IClient["contacts"][0]["department"]]: string} = {
   administrative: "Administrativo",
   commercial: "Comercial",
   purchasing: "Compras",
@@ -46,9 +47,10 @@ const contactDepartments = {
   logistics: "Logística",
   operations: "Operações",
   presidency: "Presidência",
-  products: "Produtos",
+  product: "Produto",
   owner: "Proprietário",
-  support: "Suporte"
+  support: "Suporte",
+  other: "Outro"
 };
 
 
@@ -91,14 +93,25 @@ const proposalFreightType: { [key in NonNullable<IProposal["scenarios"][number][
   AviatRodoviario: "AVIAT - Rodoviário",
 };
 
+const taxRegime: {[key in NonNullable<NonNullable<IClient["tax_details"]>["regime"]>]: string} = {
+  SIMPLES_NACIONAL: "Simples Nacional",
+  LUCRO_PRESUMIDO: "Lucro Presumido",
+  LUCRO_REAL: "Lucro real",
+  MEI: "MEI",
+  ISENTO: "Isento",
+  PRODUTOR_RURAL: "Produtor Rural",
+  OUTRO: "Outro"
+}
+
 export const clientConstants = {
   types,
-  sectors,
-  contactRoles,
-  contactDepartments,
+  sector,
+  contactRole,
+  contactDepartment,
   opportunitySalesStage,
   opportunityType,
   opportunityRecurrenceType,
   proposalCurrency,
-  proposalFreightType
+  proposalFreightType,
+  taxRegime
 }

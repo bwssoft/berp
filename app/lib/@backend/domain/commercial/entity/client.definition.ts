@@ -6,11 +6,11 @@ export interface IClient {
   company_name: string; //razao social
   trade_name: string; //nome fantasia
   document: Document
-  sector?: ClientSector
-  address?: Address;
+  sector: ClientSectorEnum
   description?: string;
-  bank_details?: BankDetails
   tax_details?: TaxDetails
+  bank_details?: BankDetails
+  address?: Address;
   contacts: IContact[];
   created_at: Date;
   omie_metadata?: {
@@ -19,10 +19,16 @@ export interface IClient {
   }
 }
 
+export enum DocumentValueEnum {
+  "CPF" = "CPF",
+  "CNPJ"= "CNPJ" 
+}
+
 export interface Document {
   value: string
-  type?: "CPF" | "CNPJ";
+  type: DocumentValueEnum
 };
+
 interface TaxDetails {
   state_registration?: string;
   municipal_registration?: string;
@@ -40,12 +46,13 @@ interface BankDetails {
 }
 export interface Address {
   street?: string;
+  district?: string;
   postal_code?: string;
   city?: string;
   state?: string;
   country?: string;
 }
-enum ClientSector {
+export enum ClientSectorEnum {
   vehicle_protection_association = "vehicle_protection_association",
   retail_trade = "retail_trade",
   tracking_company = "tracking_company",
@@ -70,6 +77,6 @@ export enum TaxRegime {
   MEI = "MEI",
   ISENTO = "ISENTO",
   PRODUTOR_RURAL = "PRODUTOR_RURAL",
-  OUTRO = "Outro",
+  OUTRO = "OUTRO",
 }
 

@@ -37,7 +37,7 @@ export class BaseRepository<Entity extends object>
     return await db
       .collection<Entity>(this.collection)
       .find(params)
-      .limit(50)
+      .limit(10)
       .sort({ _id: -1 })
       .toArray();
   }
@@ -106,9 +106,6 @@ export class BaseRepository<Entity extends object>
       session.endSession(); // Certifique-se de encerrar a sessão
     }
   }
-
-
-
 
   async connect() {
     const client = await clientPromise;

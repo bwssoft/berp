@@ -3,13 +3,14 @@ import { createOneClient } from '@/app/lib/@backend/action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { ContactLabelEnum } from '@/app/lib/@backend/domain';
+import { ClientSectorEnum, ContactDepartmentEnum, ContactRoleEnum, DocumentValueEnum } from '@/app/lib/@backend/domain';
 
 const schema = z.object({
   trade_name: z.string(),
   company_name: z.string(),
+  sector: z.nativeEnum(ClientSectorEnum),
   document: z.object({
-    type: z.enum(["CNPJ", "CPF"]).default("CNPJ"),
+    type: z.nativeEnum(DocumentValueEnum).default(DocumentValueEnum["CNPJ"]),
     value: z.string()
   }),
   tax_details: z.object({
@@ -26,7 +27,8 @@ const schema = z.object({
   }),
   contacts: z.array(z.object({
     id: z.string(),
-    label: z.nativeEnum(ContactLabelEnum),
+    role: z.nativeEnum(ContactRoleEnum),
+    department: z.nativeEnum(ContactDepartmentEnum),
     phone: z.string(),
     email: z.string(),
     name: z.string(),

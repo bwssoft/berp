@@ -13,11 +13,10 @@
   ```
 */
 "use client";
-import { clientConstants } from "@/app/lib/constant";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useClientCreateForm } from "./use-client-create-form";
-import { ContactLabelEnum } from "@/app/lib/@backend/domain";
+import { ContactDepartmentEnum, ContactRoleEnum } from "@/app/lib/@backend/domain";
 
 export function ClientCreateForm() {
   const {
@@ -268,7 +267,8 @@ export function ClientCreateForm() {
                   can_sign_contract: false,
                   created_at: new Date(),
                   email: "",
-                  label: ContactLabelEnum["UNKNOWN"],
+                  role: ContactRoleEnum["other"],
+                  department: ContactDepartmentEnum["other"],
                   can_receive_document: false,
                 })
               }
