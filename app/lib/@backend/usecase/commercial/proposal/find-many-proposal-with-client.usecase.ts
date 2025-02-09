@@ -27,7 +27,7 @@ class FindManyProposalWithClientUsecase {
       {
         $lookup: {
           as: "client",
-          from: "client",
+          from: "commercial-client",
           localField: "client_id",
           foreignField: "id",
           pipeline: [{

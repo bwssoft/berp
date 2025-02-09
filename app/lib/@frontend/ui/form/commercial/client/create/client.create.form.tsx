@@ -17,6 +17,7 @@ import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useClientCreateForm } from "./use-client-create-form";
 import { ContactDepartmentEnum, ContactRoleEnum } from "@/app/lib/@backend/domain";
+import { clientConstants } from "@/app/lib/constant";
 
 export function ClientCreateForm() {
   const {
@@ -27,7 +28,7 @@ export function ClientCreateForm() {
     handleSubmit,
   } = useClientCreateForm();
   return (
-    <form action={() => handleSubmit()}>
+    <form action={() => handleSubmit()} className="mt-10">
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -38,6 +39,23 @@ export function ClientCreateForm() {
           </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="document"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Documento
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  id="document"
+                  autoComplete="family-name"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("document.value")}
+                />
+              </div>
+            </div>            
             <div className="sm:col-span-3">
               <label
                 htmlFor="company_name"
@@ -55,61 +73,45 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-3">
               <label
-                htmlFor="document"
+                htmlFor="company_name"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Documento
+                Nome Fantasia
               </label>
               <div className="mt-2">
                 <input
                   type="text"
-                  id="document"
-                  autoComplete="family-name"
+                  id="trade_name"
+                  autoComplete="trade_name"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("document.value")}
+                  {...register("trade_name")}
                 />
               </div>
             </div>
-
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-2">
               <label
-                htmlFor="state_registration"
+                htmlFor="client_id"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Inscrição Estadual
+                Setor
               </label>
-              <div className="mt-2">
-                <input
-                  id="state_registration"
-                  type="text"
-                  autoComplete="state_registration"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("tax_details.state_registration")}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-3">
-              <label
-                htmlFor="municipal_registration"
-                className="block text-sm font-medium leading-6 text-gray-900"
+              <select
+                id="sector"
+                {...register("sector")}
+                className="block w-full rounded-md border-0 py-2 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
-                Inscrição Municipal
-              </label>
-              <div className="mt-2">
-                <input
-                  id="municipal_registration"
-                  type="text"
-                  autoComplete="municipal_registration"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("tax_details.municipal_registration")}
-                />
-              </div>
+                <option value="">Selecione um setor</option>
+                {Object.entries(clientConstants.sector).map(
+                  ([key, value]) => (
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
+                  )
+                )}
+              </select>
             </div>
-
             <div className="col-span-full">
               <label
                 htmlFor="description"
@@ -131,7 +133,82 @@ export function ClientCreateForm() {
               </p>
             </div>
 
-            <div className="col-span-3">
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="state_registration"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Inscrição Estadual
+              </label>
+              <div className="mt-2">
+                <input
+                  id="state_registration"
+                  type="text"
+                  autoComplete="state_registration"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("tax_details.state_registration")}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="municipal_registration"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Inscrição Municipal
+              </label>
+              <div className="mt-2">
+                <input
+                  id="municipal_registration"
+                  type="text"
+                  autoComplete="municipal_registration"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("tax_details.municipal_registration")}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="client_id"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Regime tributário
+              </label>
+              <select
+                id="tax_details.regime"
+                className="block w-full rounded-md border-0 py-2 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                <option value="">Selecione um regime tributário</option>
+                {Object.entries(clientConstants.taxRegime).map(
+                  ([key, value]) => (
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="postal_code"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Código Postal
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  id="postal_code"
+                  autoComplete="postal_code"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("address.postal_code")}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-2">
               <label
                 htmlFor="country"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -148,7 +225,7 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-            <div className="col-span-full">
+            <div className="sm:col-span-4">
               <label
                 htmlFor="street"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -165,7 +242,24 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-            <div className="sm:col-span-2 sm:col-start-1">
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="district"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Bairro
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  id="district"
+                  autoComplete="district"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("address.district")}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-3 sm:col-start-1">
               <label
                 htmlFor="city"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -182,7 +276,7 @@ export function ClientCreateForm() {
                 />
               </div>
             </div>
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label
                 htmlFor="state"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -196,23 +290,6 @@ export function ClientCreateForm() {
                   autoComplete="address-level1"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   {...register("address.state")}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="postal_code"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                ZIP / Código Postal
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="postal_code"
-                  autoComplete="postal_code"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("address.postal_code")}
                 />
               </div>
             </div>

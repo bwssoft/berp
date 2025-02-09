@@ -19,6 +19,7 @@ export interface IProposal {
 
 interface Address {
   street: string;
+  district: string;
   city: string;
   state: string;
   postal_code: string;

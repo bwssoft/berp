@@ -5,7 +5,7 @@ import { singleton } from "@/app/lib/util/singleton";
 class ClientRepository extends BaseRepository<IClient> {
   constructor() {
     super({
-      collection: "client",
+      collection: "commercial-client",
       db: "berp"
     });
   }

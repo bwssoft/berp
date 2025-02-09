@@ -5,7 +5,7 @@ import { singleton } from "@/app/lib/util/singleton";
 class RuleRepository extends BaseRepository<IRule> {
   constructor() {
     super({
-      collection: "sale-rule",
+      collection: "commercial-rule",
       db: "berp"
     });
   }

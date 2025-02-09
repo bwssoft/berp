@@ -14,10 +14,12 @@ interface Props {
 
 const line_items_processed = z.object({
   enterprise_id: z.string(),
+  negotiation_type_id: z.string(),
   enterprise: z.any(),
   installment_quantity: z.coerce.number().nullable(),
   installment: z.array(z.any()).nullable(),
   items: z.array(z.any()),
+  entry_amount: z.coerce.number().nullable() // OBS: obrigado a usar nullable pela forma com a tipagem de defaultValues. Revisar uma forma melhor para fazer isso. 'entry_value' nesse form é obrigatório mas na entidade de IFinancialOrder não.
 })
 
 export const schema = z.object({
@@ -31,7 +33,7 @@ export function useFinancialOrderCreateFromProposal(props: Props) {
   const {
     register,
     handleSubmit: hookFormSubmit,
-    reset
+    reset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues

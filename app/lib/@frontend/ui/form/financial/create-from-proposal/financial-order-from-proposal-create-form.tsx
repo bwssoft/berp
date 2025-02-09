@@ -67,6 +67,14 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
                         </div>
                         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                           <dt className="text-sm/6 font-medium text-gray-900">
+                            Tipo de negociação
+                          </dt>
+                          <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                            {(line as any).negotiation_type.label}
+                          </dd>
+                        </div>
+                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                          <dt className="text-sm/6 font-medium text-gray-900">
                             Itens
                           </dt>
                           <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
@@ -82,7 +90,7 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
                           <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                             <select
                               id="installment_quantity"
-                              className="block w-full rounded-md border-0 py-2 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              className="block w-full rounded-md border-0 py-2 pl-2 text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
                               {...register(
                                 `line_items_processed.${idx}.installment_quantity`
                               )}
@@ -97,14 +105,34 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
                             </select>
                           </dd>
                         </div>
-                        {/* <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                           <dt className="text-sm/6 font-medium text-gray-900">
-                            Salary expectation
+                            Valor de entrada
                           </dt>
-                          <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                            $120,000
-                          </dd>
-                        </div> */}
+                          <div className="relative rounded-md shadow-sm w-full">
+                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                              <span className="text-gray-500 sm:text-xs">R$</span>
+                            </div>
+                            <input
+                              type="text"
+                              id="entry_amout"
+                              className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-700 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                              placeholder="0.00"
+                              aria-describedby="value-currency"
+                              {...register(
+                                `line_items_processed.${idx}.entry_amount`
+                              )}
+                            />
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                              <span
+                                className="text-gray-500 sm:text-xs"
+                                id="price-currency"
+                              >
+                                BRL
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </dl>
                     </div>
 

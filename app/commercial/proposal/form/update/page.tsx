@@ -42,8 +42,9 @@ export default async function Page(props: Props) {
       findManyProduct(),
       findAllNegotiationType(),
       findOneFinancialOrder({ proposal_id: proposal.id }),
-      findManyProductionOrder({ proposal_id: proposal.id }),
+      findManyProductionOrder({ "proposal.id": proposal.id }),
     ]);
+
   if (!client) {
     return (
       <div>

@@ -5,7 +5,7 @@ import { BaseRepository } from "../@base";
 class FinancialOrderRepository extends BaseRepository<IFinancialOrder> {
   constructor() {
     super({
-      collection: "sale-order",
+      collection: "financial-order",
       db: "berp"
     });
   }

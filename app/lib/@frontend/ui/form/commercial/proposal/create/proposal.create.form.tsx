@@ -135,7 +135,24 @@ export function ProposalCreateForm(props: Props) {
             Endereço de Faturamento
           </p>
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-            <div className="col-span-3">
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="postal_code"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Código Postal
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  id="postal_code"
+                  autoComplete="postal_code"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("billing_address.postal_code")}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-2">
               <label
                 htmlFor="country"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -152,7 +169,7 @@ export function ProposalCreateForm(props: Props) {
                 />
               </div>
             </div>
-            <div className="col-span-full">
+            <div className="sm:col-span-4">
               <label
                 htmlFor="street"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -169,7 +186,24 @@ export function ProposalCreateForm(props: Props) {
                 />
               </div>
             </div>
-            <div className="sm:col-span-2 sm:col-start-1">
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="district"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Bairro
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  id="district"
+                  autoComplete="district"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("billing_address.district")}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-3 sm:col-start-1">
               <label
                 htmlFor="city"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -186,7 +220,7 @@ export function ProposalCreateForm(props: Props) {
                 />
               </div>
             </div>
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label
                 htmlFor="state"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -203,12 +237,18 @@ export function ProposalCreateForm(props: Props) {
                 />
               </div>
             </div>
+          </div>
+
+          <p className="mt-4 text-sm leading-6 text-gray-600">
+            Endereço de Entrega
+          </p>
+          <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
             <div className="sm:col-span-2">
               <label
                 htmlFor="postal_code"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                ZIP / Código Postal
+                Código Postal
               </label>
               <div className="mt-2">
                 <input
@@ -216,17 +256,11 @@ export function ProposalCreateForm(props: Props) {
                   id="postal_code"
                   autoComplete="postal_code"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("billing_address.postal_code")}
+                  {...register("delivery_address.postal_code")}
                 />
               </div>
             </div>
-          </div>
-
-          <p className="mt-4 text-sm leading-6 text-gray-600">
-            Endereço de Entrega
-          </p>
-          <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
-            <div className="col-span-3">
+            <div className="sm:col-span-2">
               <label
                 htmlFor="country"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -243,7 +277,7 @@ export function ProposalCreateForm(props: Props) {
                 />
               </div>
             </div>
-            <div className="col-span-full">
+            <div className="sm:col-span-4">
               <label
                 htmlFor="street"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -260,7 +294,24 @@ export function ProposalCreateForm(props: Props) {
                 />
               </div>
             </div>
-            <div className="sm:col-span-2 sm:col-start-1">
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="district"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Bairro
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  id="district"
+                  autoComplete="district"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("delivery_address.district")}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-3 sm:col-start-1">
               <label
                 htmlFor="city"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -277,7 +328,7 @@ export function ProposalCreateForm(props: Props) {
                 />
               </div>
             </div>
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label
                 htmlFor="state"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -291,23 +342,6 @@ export function ProposalCreateForm(props: Props) {
                   autoComplete="address-level1"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   {...register("delivery_address.state")}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="postal_code"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                ZIP / Código Postal
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="postal_code"
-                  autoComplete="postal_code"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("delivery_address.postal_code")}
                 />
               </div>
             </div>
@@ -552,7 +586,7 @@ function Scenario({
                     <div className="sm:col-span-3">
                       <label
                         htmlFor="name"
-                        className="block text-xs  font-medium leading-6 text-gray-900"
+                        className="block text-xs font-medium leading-6 text-gray-900"
                       >
                         Nome do cenário
                       </label>
@@ -560,7 +594,7 @@ function Scenario({
                         type="text"
                         id="name"
                         autoComplete="name"
-                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         placeholder="Nome do cenário"
                         {...register(`scenarios.${hookFormScenarioIndex}.name`)}
                       />
@@ -574,7 +608,7 @@ function Scenario({
                       </label>
                       <select
                         id="currency"
-                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         {...register(
                           `scenarios.${hookFormScenarioIndex}.currency`
                         )}
@@ -706,7 +740,7 @@ function Scenario({
                               <input
                                 type="number"
                                 id="quantity"
-                                className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                                className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
                                 placeholder="Quantidade"
                                 {...register(
                                   `scenarios.${hookFormScenarioIndex}.line_items.${index}.quantity`
@@ -870,7 +904,7 @@ function Scenario({
                       </label>
                       <select
                         id="currency"
-                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
                         {...register(
                           `scenarios.${hookFormScenarioIndex}.freight.type`
                         )}

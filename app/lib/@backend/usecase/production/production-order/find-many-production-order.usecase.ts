@@ -2,9 +2,10 @@ import { IProduct, IProductionOrder, IProductionOrderRepository } from "@/app/li
 import { productionOrderRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { Filter } from "mongodb";
 
 namespace Dto {
-  export interface Input extends Partial<IProductionOrder> { }
+  export interface Input extends Filter<IProductionOrder> { }
   export type Document = IProductionOrder & { product: Product, enterprise: Enterprise }
   export type Output = (IProductionOrder & { product: Product, enterprise: Enterprise })[]
 
@@ -32,7 +33,7 @@ class FindManyProductionOrderUsecase {
     return await aggregate.toArray()
   }
 
-  pipeline(input: Partial<IProductionOrder>) {
+  pipeline(input: Filter<IProductionOrder>) {
     return [
       {
         $match: { active: true, ...input }
@@ -61,7 +62,7 @@ class FindManyProductionOrderUsecase {
           enterprise: { $first: "$enterprise" },
           id: 1,
           client_id: 1,
-          proposal_id: 1,
+          proposal: 1,
           financial_order_id: 1,
           description: 1,
           line_items: 1,

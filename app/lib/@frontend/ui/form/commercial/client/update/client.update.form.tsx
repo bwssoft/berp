@@ -32,7 +32,7 @@ export function ClientUpdateForm(props: Props) {
     handleSubmit,
   } = useClientUpdateForm({ defaultValues: client });
   return (
-    <form action={() => handleSubmit()} className="mt-6">
+    <form action={() => handleSubmit()} className="mt-10">
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -43,7 +43,7 @@ export function ClientUpdateForm(props: Props) {
           </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-3">
+          <div className="sm:col-span-3">
               <label
                 htmlFor="document"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -60,7 +60,6 @@ export function ClientUpdateForm(props: Props) {
                 />
               </div>
             </div>            
-            
             <div className="sm:col-span-3">
               <label
                 htmlFor="company_name"
@@ -78,7 +77,6 @@ export function ClientUpdateForm(props: Props) {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-3">
               <label
                 htmlFor="company_name"
@@ -96,7 +94,6 @@ export function ClientUpdateForm(props: Props) {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2">
               <label
                 htmlFor="client_id"
@@ -105,7 +102,8 @@ export function ClientUpdateForm(props: Props) {
                 Setor
               </label>
               <select
-                id="tax_details.regime"
+                id="sector"
+                {...register("sector")}
                 className="block w-full rounded-md border-0 py-2 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
                 <option value="">Selecione um setor</option>
@@ -118,7 +116,6 @@ export function ClientUpdateForm(props: Props) {
                 )}
               </select>
             </div>
-
             <div className="col-span-full">
               <label
                 htmlFor="description"
@@ -140,6 +137,7 @@ export function ClientUpdateForm(props: Props) {
               </p>
             </div>
 
+
             <div className="sm:col-span-2">
               <label
                 htmlFor="state_registration"
@@ -157,7 +155,6 @@ export function ClientUpdateForm(props: Props) {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2">
               <label
                 htmlFor="municipal_registration"
@@ -175,7 +172,6 @@ export function ClientUpdateForm(props: Props) {
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2">
               <label
                 htmlFor="client_id"
@@ -197,8 +193,25 @@ export function ClientUpdateForm(props: Props) {
                 )}
               </select>
             </div>
-
-            <div className="col-span-3">
+            
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="postal_code"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Código Postal
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  id="postal_code"
+                  autoComplete="postal_code"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("address.postal_code")}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-2">
               <label
                 htmlFor="country"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -215,7 +228,7 @@ export function ClientUpdateForm(props: Props) {
                 />
               </div>
             </div>
-            <div className="col-span-full">
+            <div className="sm:col-span-4">
               <label
                 htmlFor="street"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -232,8 +245,24 @@ export function ClientUpdateForm(props: Props) {
                 />
               </div>
             </div>
-
-            <div className="sm:col-span-2 sm:col-start-1">
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="district"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Bairro
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  id="district"
+                  autoComplete="district"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("address.district")}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-3 sm:col-start-1">
               <label
                 htmlFor="city"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -250,8 +279,7 @@ export function ClientUpdateForm(props: Props) {
                 />
               </div>
             </div>
-
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label
                 htmlFor="state"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -265,24 +293,6 @@ export function ClientUpdateForm(props: Props) {
                   autoComplete="address-level1"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   {...register("address.state")}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="postal_code"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                ZIP / Código Postal
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  id="postal_code"
-                  autoComplete="postal_code"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("address.postal_code")}
                 />
               </div>
             </div>

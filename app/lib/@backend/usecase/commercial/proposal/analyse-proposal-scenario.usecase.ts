@@ -7,7 +7,8 @@ type Input = { scenario: Scenario }
 type Output = {
   line_item_id: string,
   requires_contract: boolean
-  requires_sale_order: boolean
+  requires_financial_order: boolean
+  requires_production_order: boolean
   enterprise_id: string
 }[]
 export interface IAnalyseProposalScenarioUsecase {
@@ -40,7 +41,8 @@ class AnalyseProposalScenarioUsecase {
           result.push({
             line_item_id: lineItem.id,
             requires_contract: scenarioEnterprise.requires_contract,
-            requires_sale_order: scenarioEnterprise.requires_sale_order,
+            requires_financial_order: scenarioEnterprise.requires_financial_order,
+            requires_production_order: scenarioEnterprise.requires_production_order,
             enterprise_id: scenarioEnterprise.enterprise_id
           });
         }
@@ -51,7 +53,8 @@ class AnalyseProposalScenarioUsecase {
             result.push({
               line_item_id: lineItem.id,
               requires_contract: lineItemEnterprise.requires_contract,
-              requires_sale_order: lineItemEnterprise.requires_sale_order,
+              requires_financial_order: lineItemEnterprise.requires_financial_order,
+              requires_production_order: lineItemEnterprise.requires_production_order,
               enterprise_id: lineItemEnterprise.enterprise_id
             });
           }

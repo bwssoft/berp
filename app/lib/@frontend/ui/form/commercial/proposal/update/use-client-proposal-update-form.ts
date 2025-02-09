@@ -16,6 +16,7 @@ const AddressSchema = z.object({
   state: z.string(),
   postal_code: z.string(),
   country: z.string(),
+  district: z.string(),
 });
 
 const LineItemSchema = z.object({

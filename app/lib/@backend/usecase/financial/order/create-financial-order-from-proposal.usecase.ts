@@ -31,12 +31,13 @@ class CreateFinancialOrderFromProposalUsecase {
       const analysis = await this.analyseProposalScenarioUsecase.execute({ scenario })
 
       const line_items_processed = analysis
-        .filter(el => el.requires_sale_order)
+        .filter(el => el.requires_financial_order)
         .map(({ enterprise_id, line_item_id }) => {
           const proposal_line_item = scenario.line_items.find(l => l.id === line_item_id)
           if (!proposal_line_item) return undefined
           return {
             enterprise_id,
+            negotiation_type_id: proposal_line_item.negotiation_type_id,
             items: [{
               ...proposal_line_item
             }]
@@ -47,9 +48,11 @@ class CreateFinancialOrderFromProposalUsecase {
           if (!acc[cur.enterprise_id]) {
             acc[cur.enterprise_id] = {
               enterprise_id: cur.enterprise_id,
+              negotiation_type_id: cur.negotiation_type_id,
               items: [],
               installment_quantity: null,
               installment: null,
+              entry_amount: null
             };
           }
 

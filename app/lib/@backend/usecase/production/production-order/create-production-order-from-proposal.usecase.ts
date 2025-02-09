@@ -37,7 +37,7 @@ class CreateProductionOrderFromProposalUsecase {
       const analysis = await this.analyseProposalScenarioUsecase.execute({ scenario })
 
       const production_orders = analysis
-        .filter(li => li.requires_sale_order)
+        .filter(li => li.requires_production_order)
         .map(li => {
           const proposal_line_item = scenario.line_items.find(l => l.id === li.line_item_id)
           if (!proposal_line_item) return undefined
@@ -46,7 +46,10 @@ class CreateProductionOrderFromProposalUsecase {
             active: true,
             client_id: proposal.client_id,
             financial_order_id: financial_order?.id,
-            proposal_id,
+            proposal: {
+              id: proposal_id,
+              scenario_line_item_id: proposal_line_item.id
+            },
             total_quantity: proposal_line_item.quantity,
             created_at: new Date(),
             product_id: proposal_line_item.product_id,

@@ -3,7 +3,7 @@ import { createOneClient } from '@/app/lib/@backend/action';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { ClientSectorEnum, ContactDepartmentEnum, ContactRoleEnum, DocumentValueEnum } from '@/app/lib/@backend/domain';
+import { ClientSectorEnum, ContactDepartmentEnum, ContactRoleEnum, DocumentValueEnum, TaxRegime } from '@/app/lib/@backend/domain';
 
 const schema = z.object({
   trade_name: z.string(),
@@ -16,6 +16,7 @@ const schema = z.object({
   tax_details: z.object({
     state_registration: z.string(),
     municipal_registration: z.string(),
+    regime: z.nativeEnum(TaxRegime),
   }),
   description: z.string(),
   address: z.object({
@@ -23,7 +24,8 @@ const schema = z.object({
     country: z.string(),
     street: z.string(),
     city: z.string(),
-    postal_code: z.string()
+    postal_code: z.string(),
+    district: z.string()
   }),
   contacts: z.array(z.object({
     id: z.string(),

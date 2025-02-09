@@ -9,8 +9,6 @@ export interface IFinancialOrder {
   created_at: Date;
   code: number
 
-
-
   //legacy
   active: boolean;
   products: { product_id: string; quantity: number }[];
@@ -41,9 +39,12 @@ export interface IFinancialOrder {
 
 export interface LineItemProcessed {
   enterprise_id: string
+  negotiation_type_id: string
   items: LineItem[]
   installment_quantity: number | null
   installment: Installment[] | null
+  entry_amount: number | null
+
 }
 
 export interface LineItem {
@@ -58,7 +59,7 @@ export interface LineItem {
 
 interface Installment {
   id: string
-  value: number
+  amount: number
   valid_at: Date
   percentage: number
   sequence: number

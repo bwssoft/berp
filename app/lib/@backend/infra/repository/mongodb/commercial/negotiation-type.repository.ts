@@ -5,7 +5,7 @@ import { singleton } from "@/app/lib/util/singleton";
 class NegotiationTypeRepository extends BaseRepository<INegotiationType> {
   constructor() {
     super({
-      collection: "sale-negotiation-type",
+      collection: "commercial-negotiation-type",
       db: "berp"
     });
   }

@@ -2,7 +2,10 @@ export interface IProductionOrder {
   id: string
   client_id: string
   enterprise_id: string
-  proposal_id?: string
+  proposal?: {
+    id: string
+    scenario_line_item_id: string
+  }
   financial_order_id?: string
   description?: string
   line_items: LineItem[]

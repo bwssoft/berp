@@ -45,12 +45,12 @@ interface BankDetails {
   }
 }
 export interface Address {
-  street?: string;
-  district?: string;
-  postal_code?: string;
-  city?: string;
-  state?: string;
-  country?: string;
+  street: string;
+  district: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
 }
 export enum ClientSectorEnum {
   vehicle_protection_association = "vehicle_protection_association",

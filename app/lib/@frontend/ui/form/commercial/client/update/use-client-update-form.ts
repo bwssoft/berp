@@ -23,6 +23,7 @@ const schema = z.object({
     state: z.string(),
     country: z.string(),
     street: z.string(),
+    district: z.string(),
     city: z.string(),
     postal_code: z.string()
   }),

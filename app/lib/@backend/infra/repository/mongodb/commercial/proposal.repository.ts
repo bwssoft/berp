@@ -5,7 +5,7 @@ import { singleton } from "@/app/lib/util/singleton";
 class ProposalRepository extends BaseRepository<IProposal> {
   constructor() {
     super({
-      collection: "client-proposal",
+      collection: "commercial-proposal",
       db: "berp"
     });
   }
