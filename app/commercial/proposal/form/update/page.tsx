@@ -1,10 +1,11 @@
 import {
-  findAllClient,
+  findManyClient,
   findAllNegotiationType,
   findManyProduct,
   findManyProductionOrder,
   findOneClient,
   findOneFinancialOrder,
+  findManyConfigurationProfile,
 } from "@/app/lib/@backend/action";
 import { findOneProposal } from "@/app/lib/@backend/action";
 import {
@@ -35,14 +36,15 @@ export default async function Page(props: Props) {
       </div>
     );
   }
-  const [clients, client, products, negotiationType, financialOrder, productionOrders] =
+  const [clients, client, products, negotiationType, financialOrder, productionOrders, configurationProfiles] =
     await Promise.all([
-      findAllClient(),
+      findManyClient({}),
       findOneClient({ id: proposal.client_id }),
       findManyProduct(),
       findAllNegotiationType(),
       findOneFinancialOrder({ proposal_id: proposal.id }),
       findManyProductionOrder({ "proposal.id": proposal.id }),
+      findManyConfigurationProfile({ "client_id": proposal.client_id }),
     ]);
 
   if (!client) {
@@ -84,6 +86,7 @@ export default async function Page(props: Props) {
           scenario_id={proposal.scenarios[0].id}
         />
         <ProductionOrderFromProposalCreateForm
+          configuration_profiles={configurationProfiles}
           production_orders={productionOrders}
           proposal_id={proposal.id}
           scenario_id={proposal.scenarios[0].id}

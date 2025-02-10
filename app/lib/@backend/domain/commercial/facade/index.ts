@@ -7,7 +7,7 @@ export interface IClientFacade {
   deleteClientFromWebhookUseCase: IDeleteClientFromWebhookUseCase,
   createOneClientUsecase: any
   deleteOneClientUsecase: any
-  findAllClientUsecase: any
+  findManyClientUsecase: any
   findOneClientUsecase: any
   updateOneClientUsecase: any
 }

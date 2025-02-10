@@ -1,10 +1,10 @@
-import { findAllClient } from "@/app/lib/@backend/action";
+import { findManyClient } from "@/app/lib/@backend/action";
 import { ClientTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
 export default async function Example() {
-  const clients = await findAllClient();
+  const clients = await findManyClient({});
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

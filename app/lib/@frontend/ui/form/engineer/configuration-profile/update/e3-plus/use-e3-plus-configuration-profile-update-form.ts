@@ -1,5 +1,5 @@
 import { updateOneConfigurationProfileById } from "@/app/lib/@backend/action";
-import { EModel, EType, IConfigurationProfile } from "@/app/lib/@backend/domain";
+import { EType, EUseCase, IConfigurationProfile } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { removeEmptyValues, removeUndefined } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -84,6 +84,7 @@ const schema = z.preprocess(removeEmptyValues, z
     name: z.string({ message: "O nome é orbigatório" }),
     client_id: z.string({ message: "O cliente é orbigatório" }),
     type: z.nativeEnum(EType),
+    use_case: z.nativeEnum(EUseCase),
     password: z.object({ old: password, new: password }).optional(),
     apn: z
       .object({
@@ -165,14 +166,15 @@ export function useE3PlusConfigurationProfileUpdateForm(props: Props) {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
-        const { name, optional_functions, client_id, type, ...config } = data;
+        const { name, optional_functions, client_id, type, use_case, ...config } = data;
         await updateOneConfigurationProfileById(
           { id: defaultValues?.id! },
           {
             name,
+            use_case,
             config,
             optional_functions,
-            model: EModel.DM_E3_PLUS,
+            technology_id: "c2d11204-52b2-4a17-91be-8f7a37e6e48e",
             client_id,
             type
           }

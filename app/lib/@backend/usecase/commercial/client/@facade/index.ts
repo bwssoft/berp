@@ -5,7 +5,7 @@ import {
   createOneClientUsecase,
   updateOneClientUsecase,
   deleteOneClientUsecase,
-  findAllClientUsecase,
+  findManyClientUsecase,
   findOneClientUsecase,
 } from "../..";
 
@@ -17,7 +17,7 @@ export class ClientFacade {
       createOneClientUsecase,
       updateOneClientUsecase,
       deleteOneClientUsecase,
-      findAllClientUsecase,
+      findManyClientUsecase,
       findOneClientUsecase
     }
     return facade;

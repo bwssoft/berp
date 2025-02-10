@@ -1,25 +1,38 @@
 export interface IConfigurationProfile {
     id: string
+    client_id: string
+    use_case: EUseCase
     name: string
-    model: EModel
     type: EType
     config: Config
     optional_functions?: Record<string, boolean>
     created_at: Date
     user_id: string
-    client_id: string
+    technology_id: string
+}
+
+export enum EUseCase  {
+    CLIENT = "CLIENT",
+    INTERNAL = "INTERNAL"
 }
 
 export enum EType {
-    CAR = "CAR",
-    MOTORCYCLE = "MOTORCYCLE",
+    HUMAN = "HUMAN",
     TRUCK = "TRUCK",
+    MOTORCYCLE = "MOTORCYCLE",
+    STUFF = "STUFF",
+    BOAT = "BOAT",
+    CAR = "CAR",
     BUS = "BUS",
-}
-
-export enum EModel {
-    DM_E3_PLUS = "DM_E3_PLUS",
-    DM_E3_PLUS_4G = "DM_E3_PLUS_4G",
+    UTILITY_VEHICLE = "UTILITY_VEHICLE", 
+    BIKE = "BIKE",
+    ANIMAL = "ANIMAL",
+    ROAD_IMPLEMENT = "ROAD_IMPLEMENT",
+    FARM_IMPLEMENT = "FARM_IMPLEMENT",
+    JET = "JET",
+    JET_SKI = "JET_SKI",
+    AIRCRAFT = "AIRCRAFT",
+    OTHER = "OTHER"
 }
 
 type Config = {

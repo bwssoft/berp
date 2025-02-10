@@ -4,7 +4,7 @@ import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./columns";
 
 interface Props {
-  data: { id: string; name: string; model: string }[];
+  data: { id: string; name: string; technology_id: string }[];
 }
 export default function ConfigurationProfileTable(props: Props) {
   const { data } = props;

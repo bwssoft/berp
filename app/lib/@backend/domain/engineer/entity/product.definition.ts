@@ -9,6 +9,7 @@ export interface IProduct {
   price: number
   files: File[]
   code: number
+  technology_id: string
   bom?: Bom[]
   process_execution?: ProcessExecution[]
   omie_metadata?: OmieMetadata

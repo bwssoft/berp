@@ -6,19 +6,19 @@ import Link from "next/link";
 export const columns: ColumnDef<{
   id: string;
   name: string;
-  model: string;
+  technology_id: string;
 }>[] = [
     { header: "Nome", accessorKey: "name" },
     {
       header: "Modelo",
-      accessorKey: "model",
+      accessorKey: "technology_id",
     },
     {
       header: "Ações",
       accessorKey: "name",
       cell: ({ row }) => {
         const profile = row.original;
-        const model = profile.model;
+        const model = profile.technology_id;
         return (
           <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <Link

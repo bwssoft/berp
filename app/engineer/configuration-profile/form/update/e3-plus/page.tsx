@@ -1,4 +1,4 @@
-import { findManyProduct, findOneConfigurationProfile } from "@/app/lib/@backend/action";
+import { findManyClient, findManyProduct, findOneConfigurationProfile } from "@/app/lib/@backend/action";
 import { DeviceUpdateForm, E3PlusConfigurationProfileUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
@@ -25,6 +25,8 @@ export default async function Page(props: Props) {
     );
   }
 
+  const clients = await findManyClient({})
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -38,7 +40,7 @@ export default async function Page(props: Props) {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <E3PlusConfigurationProfileUpdateForm configuration_profile={configuration_profile} />
+        <E3PlusConfigurationProfileUpdateForm configuration_profile={configuration_profile} clients={clients}/>
       </div>
     </div>
   );

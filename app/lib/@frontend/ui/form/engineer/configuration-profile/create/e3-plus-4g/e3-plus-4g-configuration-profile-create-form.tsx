@@ -21,9 +21,15 @@ import {
 } from "@/app/lib/constant/configuration-profile-e3-plus-4g";
 import { useE3Plus4GConfigurationProfileCreateForm } from "./use-e3-plus-4g-configuration-profile-create-form";
 import { Controller } from "react-hook-form";
+import { clientConstants, configurationProfileConstants } from "@/app/lib/constant";
+import { IClient } from "@/app/lib/@backend/domain";
 
+interface Props {
+  clients: IClient[]
+}
 
-export function E3Plus4GConfigurationProfileCreateForm() {
+export function E3Plus4GConfigurationProfileCreateForm(props: Props) {
+  const { clients } = props
   const {
     register,
     ipdns,
@@ -55,17 +61,92 @@ export function E3Plus4GConfigurationProfileCreateForm() {
             </p>
           </div>
           <div className="border-t border-gray-200 py-5">
-            <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-              <div className="sm:col-span-1">
-                <Input
+            <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="client_id"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                  Cliente
+                </label>
+                <select
+                  id="client_id"
+                  {...register("client_id")}
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                >
+                  <option value="">Selecione um cliente</option>
+                  {clients.map((c) => (
+                    <option
+                      key={c.id}
+                      value={c.id}
+                      data-client={JSON.stringify(c)}
+                    >
+                      {c.trade_name} - {c.document.value}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                  Nome
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  autoComplete="name"
                   {...register("name")}
-                  id="Nome"
-                  label="Nome"
-                  placeholder="Perfil#00"
-                  error={errors?.name?.message}
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  placeholder="Nome do perfil"
                 />
               </div>
-            </dl>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="client_id"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Caso de uso
+                </label>
+                <select
+                  id="use_case"
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...register("use_case")}
+                >
+                  <option value="">Selecione um caso de uso</option>
+                  {Object.entries(configurationProfileConstants.useCase).map(
+                    ([key, value]) => (
+                      <option key={key} value={key}>
+                        {value}
+                      </option>
+                    )
+                  )}
+                </select>
+              </div>
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="type"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Tipo
+                </label>
+                <select
+                  id="type"
+                  {...register("type")}
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                >
+                  <option value="">Selecione um tipo</option>
+                  {Object.entries(configurationProfileConstants.type).map(
+                    ([key, value]) => (
+                      <option key={key} value={key}>
+                        {value}
+                      </option>
+                    )
+                  )}
+                </select>
+              </div>
+            </div>
           </div>
         </div>
       </section>

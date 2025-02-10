@@ -5,7 +5,7 @@ import {
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
-class ProductionProcessRepository
+class TechnicalSheetRepository
   extends BaseRepository<ITechnicalSheet>
   implements ITechnicalSheetRepository {
   constructor() {
@@ -16,4 +16,4 @@ class ProductionProcessRepository
   }
 }
 
-export const technicalSheetRepository = singleton(ProductionProcessRepository);
+export const technicalSheetRepository = singleton(TechnicalSheetRepository);

@@ -13,6 +13,8 @@ interface Props {
 const LineItemSchema = z.object({
   configuration_profile_id: z.string().optional(),
   parcial_quantity: z.coerce.number(),
+  is_shared: z.boolean(),
+  id: z.string(),
 });
 
 export const schema = z.object({
@@ -60,6 +62,7 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
   const { fields: lineItemsOnForm, append, remove } = useFieldArray({
     control,
     name: "line_items",
+    keyName: "key"
   });
   const handleAppendLineItem = append
   const handleRemoveLineItem = remove
@@ -89,6 +92,7 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
     lineItemsOnForm,
     handleAppendLineItem,
     handleRemoveLineItem,
-    errors
+    errors, 
+    control
   }
 }

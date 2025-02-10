@@ -27,8 +27,10 @@ export interface IProductionOrder {
 }
 
 interface LineItem {
+  id: string
   configuration_profile_id?: string
   parcial_quantity: number
+  is_shared: boolean
 }
 
 export enum EProductionOrderPriority {

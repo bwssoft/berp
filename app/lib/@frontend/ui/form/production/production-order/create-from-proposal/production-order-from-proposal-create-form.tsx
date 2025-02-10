@@ -8,20 +8,25 @@ import { useCreateProductionOrderCreateFromProposal } from "./use-production-ord
 import {
   ChevronDownIcon,
   InformationCircleIcon,
+  LinkIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
 import { createProductionOrderFromProposal } from "@/app/lib/@backend/action";
-import { IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
+import { IConfigurationProfile, IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
 import { Button, Error } from "../../../../component";
+import { Combobox } from "@bwsoft/combobox"
+import { Controller } from "react-hook-form";
+import { nanoid } from "nanoid";
 
 interface ProductionOrderFromProposalCreateFormProps {
   proposal_id: string;
   scenario_id: string;
   production_orders: (IProductionOrder & { product: { name: string } })[];
+  configuration_profiles: IConfigurationProfile[]
 }
 
 export function ProductionOrderFromProposalCreateForm(props: ProductionOrderFromProposalCreateFormProps) {
-  const { proposal_id, scenario_id, production_orders } = props;
+  const { proposal_id, scenario_id, production_orders, configuration_profiles } = props;
 
   return (
     <div className="space-y-12 mt-12">
@@ -42,7 +47,7 @@ export function ProductionOrderFromProposalCreateForm(props: ProductionOrderFrom
           </DisclosureButton>
           <DisclosurePanel>
             {production_orders?.length ? <div>
-              {production_orders.map(p => <UpdateProductionOrderFromProposalForm key={p.id} production_order={p} />)}
+              {production_orders.map(p => <UpdateProductionOrderFromProposalForm key={p.id} production_order={p} configuration_profiles={configuration_profiles}/>)}
             </div> : (
               <div className="mt-4 rounded-md bg-gray-100 border border-gray-200 px-6 py-3">
                 <div className="flex">
@@ -85,16 +90,18 @@ export function ProductionOrderFromProposalCreateForm(props: ProductionOrderFrom
 
 interface UpdateProductionOrderFromProposalForm {
   production_order: IProductionOrder & { product: { name: string } };
+  configuration_profiles: IConfigurationProfile[]
 }
 
 export function UpdateProductionOrderFromProposalForm(props: UpdateProductionOrderFromProposalForm) {
-  const { production_order } = props;
+  const { production_order, configuration_profiles } = props;
   const {
     handleSubmit,
     lineItemsOnForm,
     handleAppendLineItem,
     handleRemoveLineItem,
     register,
+    control,
     errors
   } = useCreateProductionOrderCreateFromProposal({
     defaultValues: production_order
@@ -139,8 +146,10 @@ export function UpdateProductionOrderFromProposalForm(props: UpdateProductionOrd
                       className="ml-2 p-2 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                       type="button"
                       onClick={() => handleAppendLineItem({
-                        parcial_quantity: 0
-                      })}>
+                          parcial_quantity: 0,
+                          is_shared: false,
+                          id: nanoid()
+                        })}>
                       <PlusCircleIcon height={16} width={16} />
                     </button>
                   </dt>
@@ -156,14 +165,25 @@ export function UpdateProductionOrderFromProposalForm(props: UpdateProductionOrd
                               Perfil
                             </label>}
                             <div className="mt-2">
-                              <input
-                                {...register(`line_items.${lineItemIdx}.configuration_profile_id`)}
-                                type="text"
-                                placeholder="Perfil Padrão"
-                                id={"configuration_profile" + lineItem.id + lineItemIdx}
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              <Controller 
+                                control={control}
+                                name={`line_items.${lineItemIdx}.configuration_profile_id`}
+                                render={({field}) => <Combobox
+                                  data={configuration_profiles}
+                                  displayValueGetter={(profile) => profile?.name!}
+                                  keyExtractor={(profile) => profile?.name!}
+                                  placeholder="Escolha um perfil"
+                                  type="single"
+                                  behavior="search"
+                                  onOptionChange={([profile]) => field.onChange(profile?.id!)}
+                                  error={errors?.line_items?.[lineItemIdx]?.configuration_profile_id?.message ?? ""}
+                                  defaultValue={[configuration_profiles.find(el => el.id === lineItem.configuration_profile_id)]}
+                                />}
                               />
-                              <Error message={errors?.line_items?.[lineItemIdx]?.configuration_profile_id?.message} />
+                              <div className="flex items-center gap-2 mt-2">
+                                <LinkIcon height={16} width={16} className="text-blue-600 hover:text-blue-800"/>
+                                <p className="underline text-xs text-blue-600 cursor-pointer hover:text-blue-800">Prencher perfil por compartilhamento</p>
+                              </div>
                             </div>
                           </div>
                           <div>

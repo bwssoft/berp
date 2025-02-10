@@ -3,6 +3,7 @@ import { EProductionOrderPriority, EProductionOrderStage, IFinancialOrderReposit
 import { financialOrderRepository, productionOrderRepository, proposalRepository } from "@/app/lib/@backend/infra"
 import { createManyProductionOrderUsecase } from "./create-many-production-order.usecase"
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "../../commercial"
+import { nanoid } from "nanoid"
 
 class CreateProductionOrderFromProposalUsecase {
   productionOrderRepository: IProductionOrderRepository
@@ -57,7 +58,9 @@ class CreateProductionOrderFromProposalUsecase {
             description: undefined,
             line_items: [{
               configuration_profile_id: undefined,
-              parcial_quantity: proposal_line_item.quantity
+              parcial_quantity: proposal_line_item.quantity,
+              id: nanoid(),
+              is_shared: false
             }],
             stage: EProductionOrderStage.in_approval,
             priority: EProductionOrderPriority.medium,

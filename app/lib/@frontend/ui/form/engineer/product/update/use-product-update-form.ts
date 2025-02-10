@@ -13,7 +13,8 @@ const schema = z.object({
   price: z.coerce.number().nonnegative(),
   files: z.array(z.any()).default([]),
   bom: z.array(z.object({ input_id: z.string(), quantity: z.coerce.number() })).default([]),
-  process_execution: z.array(z.object({ id: z.string(), step: z.string() })).default([])
+  process_execution: z.array(z.object({ id: z.string(), step: z.string() })).default([]),
+  technology_id: z.string()
 });
 
 export type Schema = z.infer<typeof schema>;

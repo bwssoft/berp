@@ -1,6 +1,8 @@
+import { findManyClient } from "@/app/lib/@backend/action";
 import { E3Plus4GConfigurationProfileCreateForm } from "@/app/lib/@frontend/ui/form";
 
 export default async function Page() {
+  const clients = await findManyClient({})
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -14,7 +16,7 @@ export default async function Page() {
         </div>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <E3Plus4GConfigurationProfileCreateForm />
+        <E3Plus4GConfigurationProfileCreateForm clients={clients}/>
       </div>
     </div>
   );

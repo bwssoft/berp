@@ -92,7 +92,7 @@ export function ClientCreateForm() {
             </div>
             <div className="sm:col-span-2">
               <label
-                htmlFor="client_id"
+                htmlFor="sector"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
                 Setor
