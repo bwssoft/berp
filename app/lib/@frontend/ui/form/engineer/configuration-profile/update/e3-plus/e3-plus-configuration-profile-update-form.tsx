@@ -2,15 +2,22 @@
 
 import { useE3PlusConfigurationProfileUpdateForm } from "./use-e3-plus-configuration-profile-update-form";
 import { Controller } from "react-hook-form";
-import { Alert, Button, Input, Radio, Select, Toggle } from "@/app/lib/@frontend/ui/component";
+import {
+  Alert,
+  Button,
+  Input,
+  Radio,
+  Select,
+  Toggle,
+} from "@/app/lib/@frontend/ui/component";
 import { IClient, IConfigurationProfile } from "@/app/lib/@backend/domain";
 import { configurationProfileConstants } from "@/app/lib/constant";
 
-const constants = configurationProfileConstants.config["DM_E3_PLUS"]
+const constants = configurationProfileConstants.config["DM_E3_PLUS"];
 
 interface Props {
   configuration_profile: IConfigurationProfile;
-  clients: IClient[]
+  clients: IClient[];
 }
 export function E3PlusConfigurationProfileUpdateForm(props: Props) {
   const { configuration_profile, clients } = props;
@@ -50,7 +57,7 @@ export function E3PlusConfigurationProfileUpdateForm(props: Props) {
                 <label
                   htmlFor="client_id"
                   className="block text-sm font-medium leading-6 text-gray-900"
-                  >
+                >
                   Cliente
                 </label>
                 <select
@@ -74,7 +81,7 @@ export function E3PlusConfigurationProfileUpdateForm(props: Props) {
                 <label
                   htmlFor="name"
                   className="block text-sm font-medium leading-6 text-gray-900"
-                  >
+                >
                   Nome
                 </label>
                 <input
@@ -345,7 +352,9 @@ export function E3PlusConfigurationProfileUpdateForm(props: Props) {
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Tipo de bloqueio"
-                      value={constants.lockType.find((d) => d.value === field.value)}
+                      value={constants.lockType.find(
+                        (d) => d.value === field.value
+                      )}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -358,11 +367,13 @@ export function E3PlusConfigurationProfileUpdateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="timezone"
-                      data={constants.timezones}
+                      data={configurationProfileConstants.timezones}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Fuso Horário"
-                      value={constants.timezones.find((tz) => tz.value === field.value)}
+                      value={configurationProfileConstants.timezones.find(
+                        (tz) => tz.value === field.value
+                      )}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -379,7 +390,9 @@ export function E3PlusConfigurationProfileUpdateForm(props: Props) {
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Modo de Economia"
-                      value={constants.economyMode.find((d) => d.value === field.value)}
+                      value={constants.economyMode.find(
+                        (d) => d.value === field.value
+                      )}
                       onChange={(d) => alert(JSON.stringify(d.value))}
                     />
                   )}
@@ -425,7 +438,9 @@ export function E3PlusConfigurationProfileUpdateForm(props: Props) {
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Modo de trabalho"
-                      value={constants.workMode.find((d) => d.value === field.value)}
+                      value={constants.workMode.find(
+                        (d) => d.value === field.value
+                      )}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -494,7 +509,6 @@ export function E3PlusConfigurationProfileUpdateForm(props: Props) {
                       {func.label}
                     </label>
                   </div>
-
                 </div>
               ))}
             </div>
@@ -559,7 +573,6 @@ export function E3PlusConfigurationProfileUpdateForm(props: Props) {
                       {func.label}
                     </label>
                   </div>
-
                 </div>
               ))}
             </div>

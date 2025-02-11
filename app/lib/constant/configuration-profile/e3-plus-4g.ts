@@ -1,121 +1,113 @@
 import { IConfigurationProfile } from "../../@backend/domain";
 
 const functions = [
-    {
-        label: "Detecção de jammer",
-        name: "jammer_detection",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-    },
-    {
-        label: "Anti-Furto",
-        name: "anti_theft",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-    },
-    {
-        label: "Posição de LBS",
-        name: "lbs_position",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-    },
-    {
-        label: "Funcionamento dos LEDS",
-        name: "led",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-    },
+  {
+    label: "Detecção de jammer",
+    name: "jammer_detection",
+    data: [
+      { label: "Ligado", value: true },
+      { label: "Desligado", value: false },
+    ],
+  },
+  {
+    label: "Anti-Furto",
+    name: "anti_theft",
+    data: [
+      { label: "Ligado", value: true },
+      { label: "Desligado", value: false },
+    ],
+  },
+  {
+    label: "Posição de LBS",
+    name: "lbs_position",
+    data: [
+      { label: "Ligado", value: true },
+      { label: "Desligado", value: false },
+    ],
+  },
+  {
+    label: "Funcionamento dos LEDS",
+    name: "led",
+    data: [
+      { label: "Ligado", value: true },
+      { label: "Desligado", value: false },
+    ],
+  },
 ];
 
 const optionalFunctions = [
-    {
-        label: "Limpar Buffer",
-        name: "clear_buffer",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-    },
-    {
-        label: "Resetar Horímetro",
-        name: "clear_horimeter",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-    },
+  {
+    label: "Limpar Buffer",
+    name: "clear_buffer",
+    data: [
+      { label: "Ligado", value: true },
+      { label: "Desligado", value: false },
+    ],
+  },
+  {
+    label: "Resetar Horímetro",
+    name: "clear_horimeter",
+    data: [
+      { label: "Ligado", value: true },
+      { label: "Desligado", value: false },
+    ],
+  },
 ];
 
-const lockType = [{ label: "Progressivo", value: 1 }, { label: "Instantâneo", value: 2 }, { label: "Inverso", value: 3 }]
-
-const timezones = [
-    { label: "(UTC-12:00) Linha Internacional de Data Oeste", value: -12 },
-    { label: "(UTC-11:00) Samoa", value: -11 },
-    { label: "(UTC-10:00) Havaí", value: -10 },
-    { label: "(UTC-09:00) Alasca", value: -9 },
-    { label: "(UTC-08:00) Pacífico", value: -8 },
-    { label: "(UTC-07:00) Montanha", value: -7 },
-    { label: "(UTC-06:00) Central", value: -6 },
-    { label: "(UTC-05:00) Leste", value: -5 },
-    { label: "(UTC-04:00) Atlântico", value: -4 },
-    { label: "(UTC-03:00) Brasília", value: -3 },
-    { label: "(UTC-02:00) Meio-Atlântico", value: -2 },
-    { label: "(UTC-01:00) Açores", value: -1 },
-    { label: "(UTC+00:00) Padrão (UTC)", value: 0 },
-    { label: "(UTC+01:00) Europa Ocnameental", value: 1 },
-    { label: "(UTC+02:00) Europa Central", value: 2 },
-    { label: "(UTC+03:00) Moscou", value: 3 },
-    { label: "(UTC+04:00) Geórgia", value: 4 },
-    { label: "(UTC+05:00) Paquistão", value: 5 },
-    { label: "(UTC+06:00) Cazaquistão", value: 6 },
-    { label: "(UTC+07:00) Indochina", value: 7 },
-    { label: "(UTC+08:00) China", value: 8 },
-    { label: "(UTC+09:00) Japão", value: 9 },
-    { label: "(UTC+10:00) Austrália Oriental", value: 10 },
-    { label: "(UTC+11:00) Ilhas Salomão", value: 11 },
-    { label: "(UTC+12:00) Nova Zelândia", value: 12 },
-    { label: "(UTC+13:00) Tonga", value: 13 },
-    { label: "(UTC+14:00) Kiribati", value: 14 }
+const lockType = [
+  { label: "Progressivo", value: 1 },
+  { label: "Instantâneo", value: 2 },
+  { label: "Inverso", value: 3 },
 ];
 
 const accelerometerSensitivity = [
-    { value: 0, label: 0 },
-    { value: 1, label: 1 },
-    { value: 2, label: 2 },
-    { value: 3, label: 3 },
-    { value: 4, label: 4 },
-    { value: 5, label: 5 },
-    { value: 6, label: 6 },
-    { value: 7, label: 7 },
-    { value: 8, label: 8 },
-    { value: 9, label: 9 },
-    { value: 10, label: 10 }
+  { value: 0, label: 0 },
+  { value: 1, label: 1 },
+  { value: 2, label: 2 },
+  { value: 3, label: 3 },
+  { value: 4, label: 4 },
+  { value: 5, label: 5 },
+  { value: 6, label: 6 },
+  { value: 7, label: 7 },
+  { value: 8, label: 8 },
+  { value: 9, label: 9 },
+  { value: 10, label: 10 },
 ];
 
-
 const economyMode = [
-    { value: 0, label: "Desligado" },
-    { value: 1, label: "Meia Economia" },
-    { value: 2, label: "Economia Máxima" }
-]
+  { value: 0, label: "Desligado" },
+  { value: 1, label: "Meia Economia" },
+  { value: 2, label: "Economia Máxima" },
+];
 
 const communicationType = [
-    { value: "TCP", label: "TCP" },
-    { value: "UDP", label: "UDP" },
-]
+  { value: "TCP", label: "TCP" },
+  { value: "UDP", label: "UDP" },
+];
 
 const protocolType = [
-    { value: "E3+", label: "E3" },
-    { value: "GT06", label: "GT06" },
-]
+  { value: "E3+", label: "E3" },
+  { value: "GT06", label: "GT06" },
+];
 
 const jammerDetection = [
-    { value: 0, label: "Desligado" },
-    { value: 1, label: "Ligado" },
-]
+  { value: 0, label: "Desligado" },
+  { value: 1, label: "Ligado" },
+];
 
 const input1 = [
-    { value: 1, label: "Ignição" },
-    { value: 2, label: "SOS" },
-]
+  { value: 1, label: "Ignição" },
+  { value: 2, label: "SOS" },
+];
 
 const input2 = [
-    { value: 1, label: "Monitora" },
-    { value: 2, label: "SOS" },
-    { value: 3, label: "Módulo" },
-]
+  { value: 1, label: "Monitora" },
+  { value: 2, label: "SOS" },
+  { value: 3, label: "Módulo" },
+];
 
-const configMapped: { [key in keyof IConfigurationProfile["config"]]: string } = {
+const configMapped: { [key in keyof IConfigurationProfile["config"]]: string } =
+  {
     accelerometer_sensitivity: "Sensibilidade do Acelerômetro",
     ip: "Ip",
     apn: "Apn",
@@ -149,19 +141,18 @@ const configMapped: { [key in keyof IConfigurationProfile["config"]]: string } =
     ignition_by_voltage: "Ignição por voltagem",
     ack: "Definir ack",
     ignition_status_hb: "Status ignição hb",
-}
+  };
 
 export const configurationProfileE3Plus4G = {
-    functions,
-    optionalFunctions,
-    lockType,
-    timezones,
-    accelerometerSensitivity,
-    economyMode,
-    communicationType,
-    protocolType,
-    jammerDetection,
-    input1,
-    input2,
-    configMapped,
-}
+  functions,
+  optionalFunctions,
+  lockType,
+  accelerometerSensitivity,
+  economyMode,
+  communicationType,
+  protocolType,
+  jammerDetection,
+  input1,
+  input2,
+  configMapped,
+};

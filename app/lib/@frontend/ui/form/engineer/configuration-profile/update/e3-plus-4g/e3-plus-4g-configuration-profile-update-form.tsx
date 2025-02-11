@@ -6,7 +6,7 @@ import {
   Radio,
   Toggle,
   Button,
-  Alert
+  Alert,
 } from "@/app/lib/@frontend/ui/component";
 
 import { useE3Plus4GConfigurationProfileUpdateForm } from "./use-e3-plus-4g-configuration-profile-update-form";
@@ -14,11 +14,11 @@ import { Controller } from "react-hook-form";
 import { IClient, IConfigurationProfile } from "@/app/lib/@backend/domain";
 import { configurationProfileConstants } from "@/app/lib/constant";
 
-const constants = configurationProfileConstants.config["DM_E3_PLUS_4G"]
+const constants = configurationProfileConstants.config["DM_E3_PLUS_4G"];
 
 interface Props {
   configuration_profile: IConfigurationProfile;
-  clients: IClient[]
+  clients: IClient[];
 }
 export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
   const { configuration_profile, clients } = props;
@@ -32,7 +32,9 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
     reset,
     lockType,
     watch,
-  } = useE3Plus4GConfigurationProfileUpdateForm({ defaultValues: configuration_profile });
+  } = useE3Plus4GConfigurationProfileUpdateForm({
+    defaultValues: configuration_profile,
+  });
   return (
     <form
       autoComplete="off"
@@ -58,7 +60,7 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                 <label
                   htmlFor="client_id"
                   className="block text-sm font-medium leading-6 text-gray-900"
-                  >
+                >
                   Cliente
                 </label>
                 <select
@@ -82,7 +84,7 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                 <label
                   htmlFor="name"
                   className="block text-sm font-medium leading-6 text-gray-900"
-                  >
+                >
                   Nome
                 </label>
                 <input
@@ -385,11 +387,13 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="timezone"
-                      data={constants.timezones}
+                      data={configurationProfileConstants.timezones}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Fuso Horário"
-                      value={constants.timezones.find((tz) => tz.value === field.value)}
+                      value={configurationProfileConstants.timezones.find(
+                        (tz) => tz.value === field.value
+                      )}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -406,7 +410,9 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Modo de Economia"
-                      value={constants.economyMode.find((d) => d.value === field.value)}
+                      value={constants.economyMode.find(
+                        (d) => d.value === field.value
+                      )}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -442,7 +448,9 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Entrada 1"
-                      value={constants.input1.find((d) => d.value === field.value)}
+                      value={constants.input1.find(
+                        (d) => d.value === field.value
+                      )}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -459,7 +467,9 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Entrada 2"
-                      value={constants.input2.find((d) => d.value === field.value)}
+                      value={constants.input2.find(
+                        (d) => d.value === field.value
+                      )}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -505,7 +515,9 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Tipo do protocolo"
-                      value={constants.protocolType.find((d) => d.value === field.value)}
+                      value={constants.protocolType.find(
+                        (d) => d.value === field.value
+                      )}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -574,7 +586,6 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                       {func.label}
                     </label>
                   </div>
-
                 </div>
               ))}
 
@@ -597,7 +608,6 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                       Atualização da posição em curva
                     </label>
                   </div>
-
                 </div>
                 {watch("cornering_position_update") ? (
                   <div className="sm:col-span-1">
@@ -634,7 +644,6 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                       Ignição Virtual
                     </label>
                   </div>
-
                 </div>
               </div>
 
@@ -662,7 +671,6 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                           Ignição por Tensão
                         </label>
                       </div>
-
                     </div>
                     {watch("virtual_ignition_by_voltage") ? (
                       <div className="pl-4 sm:col-span-full">
@@ -717,7 +725,6 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                           Ignição por Movimento
                         </label>
                       </div>
-
                     </div>
                     {watch("virtual_ignition_by_movement") ? (
                       <div className="pl-4 sm:col-span-1">
@@ -799,7 +806,6 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                       {func.label}
                     </label>
                   </div>
-
                 </div>
               ))}
             </div>
