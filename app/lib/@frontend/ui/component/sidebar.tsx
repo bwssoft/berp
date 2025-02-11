@@ -1,4 +1,5 @@
 "use client";
+
 import { cn } from "@/app/lib/util";
 import {
   Dialog,
@@ -83,10 +84,16 @@ const navigation: NavItem[] = [
             name: "Categorias",
             pathname: "/engineer/product/category",
           },
-          { name: "Entradas e Saídas", pathname: "/engineer/product/enter-exit" },
+          {
+            name: "Entradas e Saídas",
+            pathname: "/engineer/product/enter-exit",
+          },
           { name: "Estoque", pathname: "/engineer/product/stock" },
           { name: "Análise", pathname: "/engineer/product/analysis" },
-          { name: "Fichas técnicas", pathname: "/engineer/technical-sheet/management" },
+          {
+            name: "Fichas técnicas",
+            pathname: "/engineer/technical-sheet/management",
+          },
         ],
       },
       {
@@ -117,7 +124,10 @@ const navigation: NavItem[] = [
         name: "Perfil de configuração",
         icon: AdjustmentsHorizontalIcon,
         children: [
-          { name: "Gestão", pathname: "/engineer/configuration-profile/management" },
+          {
+            name: "Gestão",
+            pathname: "/engineer/configuration-profile/management",
+          },
         ],
       },
     ],
@@ -129,10 +139,19 @@ const navigation: NavItem[] = [
       {
         name: "Ordens de produção",
         children: [
-          { name: "Dashboard", pathname: "/production/production-order/dashboard" },
-          { name: "Gestão", pathname: "/production/production-order/management" },
+          {
+            name: "Dashboard",
+            pathname: "/production/production-order/dashboard",
+          },
+          {
+            name: "Gestão",
+            pathname: "/production/production-order/management",
+          },
           { name: "Kanban", pathname: "/production/production-order/kanban" },
-          { name: "Processos", pathname: "/production/production-process/management" },
+          {
+            name: "Processos",
+            pathname: "/production/production-process/management",
+          },
         ],
       },
       // {

@@ -1,25 +1,19 @@
-import { IConfigurationProfile } from "../@backend/domain";
+import { IConfigurationProfile } from "../../@backend/domain";
 
-export const functions = [
+const functions = [
+    {
+        label: "Detecção de jammer",
+        name: "jammer_detection",
+        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
+    },
+    {
+        label: "Anti-Furto",
+        name: "anti_theft",
+        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
+    },
     {
         label: "Posição de LBS",
         name: "lbs_position",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-    },
-    {
-        label: "Atualização da posição em curva",
-        name: "cornering_position_update",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-
-    },
-    {
-        label: "Alerta de ignição / Corte de alimentação (SMS)",
-        name: "ignition_alert_power_cut",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-    },
-    {
-        label: "Alerta de falha de GPRS (SMS)",
-        name: "gprs_failure_alert",
         data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
     },
     {
@@ -27,25 +21,24 @@ export const functions = [
         name: "led",
         data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
     },
-    {
-        label: "Ignição Virtual",
-        name: "virtual_ignition",
-        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
-
-    }
 ];
 
-export const optional_functions = [
+const optionalFunctions = [
     {
-        label: "Modo de Operação",
-        name: "operation_mode",
+        label: "Limpar Buffer",
+        name: "clear_buffer",
+        data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
+    },
+    {
+        label: "Resetar Horímetro",
+        name: "clear_horimeter",
         data: [{ label: "Ligado", value: true }, { label: "Desligado", value: false }]
     },
 ];
 
-export const lockType = [{ label: "Progressivo", value: 1 }, { label: "Instantâneo", value: 2 }, { label: "Inverso", value: 3 }]
+const lockType = [{ label: "Progressivo", value: 1 }, { label: "Instantâneo", value: 2 }, { label: "Inverso", value: 3 }]
 
-export const timezones = [
+const timezones = [
     { label: "(UTC-12:00) Linha Internacional de Data Oeste", value: -12 },
     { label: "(UTC-11:00) Samoa", value: -11 },
     { label: "(UTC-10:00) Havaí", value: -10 },
@@ -75,7 +68,7 @@ export const timezones = [
     { label: "(UTC+14:00) Kiribati", value: 14 }
 ];
 
-export const accelerometerSensitivity = [
+const accelerometerSensitivity = [
     { value: 0, label: 0 },
     { value: 1, label: 1 },
     { value: 2, label: 2 },
@@ -90,18 +83,39 @@ export const accelerometerSensitivity = [
 ];
 
 
-export const economyMode = [
-    { value: 0, label: "GPS Ligado (Em Sleep)" },
-    { value: 1, label: "GPS Desligado (Em Sleep)" }
+const economyMode = [
+    { value: 0, label: "Desligado" },
+    { value: 1, label: "Meia Economia" },
+    { value: 2, label: "Economia Máxima" }
 ]
 
-export const workMode = [
-    { value: "SLAVE", label: "Botão de Pânico" },
-    { value: "MASTER", label: "Ignição Física" },
-    { value: "NEGATIVE", label: "Violação de módulo" },
+const communicationType = [
+    { value: "TCP", label: "TCP" },
+    { value: "UDP", label: "UDP" },
 ]
 
-export const configMapped: { [key in keyof IConfigurationProfile["config"]]: string } = {
+const protocolType = [
+    { value: "E3+", label: "E3" },
+    { value: "GT06", label: "GT06" },
+]
+
+const jammerDetection = [
+    { value: 0, label: "Desligado" },
+    { value: 1, label: "Ligado" },
+]
+
+const input1 = [
+    { value: 1, label: "Ignição" },
+    { value: 2, label: "SOS" },
+]
+
+const input2 = [
+    { value: 1, label: "Monitora" },
+    { value: 2, label: "SOS" },
+    { value: 3, label: "Módulo" },
+]
+
+const configMapped: { [key in keyof IConfigurationProfile["config"]]: string } = {
     accelerometer_sensitivity: "Sensibilidade do Acelerômetro",
     ip: "Ip",
     apn: "Apn",
@@ -109,8 +123,6 @@ export const configMapped: { [key in keyof IConfigurationProfile["config"]]: str
     data_transmission: "Tempo de transmissão",
     dns: "Dns",
     economy_mode: "Modo de Economia",
-    gprs_failure_alert: "Alerta de falha de GPRS",
-    ignition_alert_power_cut: "Alerta de Ignição / Corte de Alimentação",
     keep_alive: "Tempo de TX",
     lbs_position: "Posição LBS",
     led: "Led",
@@ -120,5 +132,36 @@ export const configMapped: { [key in keyof IConfigurationProfile["config"]]: str
     timezone: "Fuso horário",
     virtual_ignition: "Ignição Virtual",
     sensitivity_adjustment: "Ajuste de sensibilidade",
-    operation_mode: "Modo de Operação"
+
+    virtual_ignition_by_voltage: "Ignição virtual por tensão",
+    virtual_ignition_by_movement: "Ignição virtual por movimento",
+    communication_type: "Tipo de comunicação",
+    protocol_type: "Tipo do protocolo",
+    anti_theft: "Anti-Furto",
+    horimeter: "Horímetro",
+    jammer_detection: "Detecção de Jammer",
+    clear_buffer: "Limpar Buffer",
+    clear_horimeter: "Resetar Horímetro",
+    input_1: "Entrada 1",
+    input_2: "Entrada 2",
+    angle_adjustment: "Ajuste de ângulo",
+    lock_type_progression: "Definir progressão",
+    ignition_by_voltage: "Ignição por voltagem",
+    ack: "Definir ack",
+    ignition_status_hb: "Status ignição hb",
+}
+
+export const configurationProfileE3Plus4G = {
+    functions,
+    optionalFunctions,
+    lockType,
+    timezones,
+    accelerometerSensitivity,
+    economyMode,
+    communicationType,
+    protocolType,
+    jammerDetection,
+    input1,
+    input2,
+    configMapped,
 }

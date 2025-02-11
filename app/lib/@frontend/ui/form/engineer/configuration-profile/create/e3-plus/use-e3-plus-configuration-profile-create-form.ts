@@ -86,7 +86,11 @@ const schema = z.preprocess(removeEmptyValues, z
     client_id: z.string({ message: "O cliente é orbigatório" }),
     type: z.nativeEnum(EType),
     use_case: z.nativeEnum(EUseCase),
+    
+    // auth
     password: z.object({ old: password, new: password }).optional(),
+    
+    // network
     apn: z
       .object({
         address: z.string().optional(),
@@ -112,32 +116,38 @@ const schema = z.preprocess(removeEmptyValues, z
         port: port,
       })
       .optional(),
-    timezone: z.coerce.number().optional(),
-    lock_type: z.coerce.number().optional(),
     data_transmission: z
       .object({
         on: data_transmission,
         off: data_transmission,
       })
       .optional(),
-    odometer: odometer,
     keep_alive: keep_alive,
+    sleep: sleep,
+    timezone: z.coerce.number().optional(),
+
+    //sensor
     accelerometer_sensitivity: z.coerce.number().optional(),
-    economy_mode: z.coerce.number().optional(),
+    lock_type: z.coerce.number().optional(),
     sensitivity_adjustment: sensitivity_adjustment,
+    work_mode: z.string().optional(),
+
+    // general config
+    economy_mode: z.coerce.number().optional(),
+    odometer: odometer,
+    max_speed: max_speed,
+
+    //aditional functions
     lbs_position: z.coerce.boolean().optional().default(false),
     cornering_position_update: z.coerce.boolean().optional().default(false),
     ignition_alert_power_cut: z.coerce.boolean().optional().default(false),
     gprs_failure_alert: z.coerce.boolean().optional().default(false),
     led: z.coerce.boolean().optional().default(false),
     virtual_ignition: z.coerce.boolean().optional().default(false),
-    work_mode: z.string().optional(),
+
+    //optional aditional functions
     operation_mode: z.coerce.boolean().optional(),
     optional_functions: z.record(z.string(), z.boolean()).optional(),
-    max_speed: max_speed,
-    sleep: sleep,
-    // panic_button: z.coerce.boolean().optional().default(false),
-    // module_violation: z.coerce.boolean().optional().default(false),
   })).transform(removeUndefined).transform(removePropByOptionalFunctions)
 
 export type Schema = z.infer<typeof schema>;

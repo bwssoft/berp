@@ -1,23 +1,18 @@
 "use client";
 
 import {
-  accelerometerSensitivity,
-  economyMode,
-  functions,
-  lockType,
-  optional_functions,
-  timezones,
-  workMode,
-} from "@/app/lib/constant/configuration-profile-e3-plus";
+  configurationProfileConstants
+} from "@/app/lib/constant";
 import { useE3PlusConfigurationProfileCreateForm } from "./use-e3-plus-configuration-profile-create-form";
 import { Controller } from "react-hook-form";
 import { Alert, Button, Input, Radio, Select, Toggle } from "@/app/lib/@frontend/ui/component";
-import { configurationProfileConstants } from "@/app/lib/constant";
 import { IClient } from "@/app/lib/@backend/domain";
 
 interface Props {
   clients: IClient[]
 }
+
+const constants = configurationProfileConstants.config["DM_E3_PLUS"]
 
 export function E3PlusConfigurationProfileCreateForm(props: Props) {
   const { clients } = props
@@ -327,11 +322,11 @@ export function E3PlusConfigurationProfileCreateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="accelerometer_sensitivity"
-                      data={accelerometerSensitivity}
+                      data={constants.accelerometerSensitivity}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Sensibilidade do acelerômetro"
-                      value={accelerometerSensitivity.find(
+                      value={constants.accelerometerSensitivity.find(
                         (d) => d.value === field.value
                       )}
                       onChange={(d) => field.onChange(d.value)}
@@ -346,11 +341,11 @@ export function E3PlusConfigurationProfileCreateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="lock_type"
-                      data={lockType}
+                      data={constants.lockType}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Tipo de bloqueio"
-                      value={lockType.find((d) => d.value === field.value)}
+                      value={constants.lockType.find((d) => d.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -363,11 +358,11 @@ export function E3PlusConfigurationProfileCreateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="timezone"
-                      data={timezones}
+                      data={constants.timezones}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Fuso Horário"
-                      value={timezones.find((tz) => tz.value === field.value)}
+                      value={constants.timezones.find((tz) => tz.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -380,11 +375,11 @@ export function E3PlusConfigurationProfileCreateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="economy_mode"
-                      data={economyMode}
+                      data={constants.economyMode}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Modo de Economia"
-                      value={economyMode.find((d) => d.value === field.value)}
+                      value={constants.economyMode.find((d) => d.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -426,11 +421,11 @@ export function E3PlusConfigurationProfileCreateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="work_mode"
-                      data={workMode}
+                      data={constants.workMode}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Modo de trabalho"
-                      value={workMode.find((d) => d.value === field.value)}
+                      value={constants.workMode.find((d) => d.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -480,7 +475,7 @@ export function E3PlusConfigurationProfileCreateForm(props: Props) {
           />
           <div className="border-t border-gray-200 py-5">
             <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
-              {functions.map((func, id) => (
+              {constants.functions.map((func, id) => (
                 <div key={id} className="relative flex items-center py-4">
 
                   <div className="ml-3 flex h-6 items-center gap-2">
@@ -528,7 +523,7 @@ export function E3PlusConfigurationProfileCreateForm(props: Props) {
           />
           <div className="border-t border-gray-200 py-5">
             <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
-              {optional_functions.map((func, id) => (
+              {constants.optionalFunctions.map((func, id) => (
                 <div key={id} className="relative flex items-center py-4">
                   <div className="flex">
                     <div className="flex h-6 items-center">

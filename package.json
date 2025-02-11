@@ -48,6 +48,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@bwsoft-code-style/eslint-config": "^1.0.8",
+    "@bwsoft-code-style/prettier": "^1.0.4",
     "@types/lodash": "^4.17.7",
     "@types/mustache": "^4.2.5",
     "@types/node": "^20",

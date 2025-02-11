@@ -8,22 +8,13 @@ import {
   Button,
   Alert
 } from "@/app/lib/@frontend/ui/component";
-import {
-  communicationType,
-  protocolType,
-  economyMode,
-  functions,
-  lockType as lockTypeConstant,
-  optional_functions,
-  timezones,
-  input1,
-  input2,
-} from "@/app/lib/constant/configuration-profile-e3-plus-4g";
+
 import { useE3Plus4GConfigurationProfileUpdateForm } from "./use-e3-plus-4g-configuration-profile-update-form";
 import { Controller } from "react-hook-form";
 import { IClient, IConfigurationProfile } from "@/app/lib/@backend/domain";
 import { configurationProfileConstants } from "@/app/lib/constant";
 
+const constants = configurationProfileConstants.config["DM_E3_PLUS_4G"]
 
 interface Props {
   configuration_profile: IConfigurationProfile;
@@ -348,11 +339,11 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="lock_type"
-                      data={lockTypeConstant}
+                      data={constants.lockType}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Tipo do bloqueio"
-                      value={lockTypeConstant.find(
+                      value={constants.lockType.find(
                         (d) => d.value === field.value
                       )}
                       onChange={(d) => field.onChange(d.value)}
@@ -394,11 +385,11 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="timezone"
-                      data={timezones}
+                      data={constants.timezones}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Fuso Horário"
-                      value={timezones.find((tz) => tz.value === field.value)}
+                      value={constants.timezones.find((tz) => tz.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -411,11 +402,11 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="economy_mode"
-                      data={economyMode}
+                      data={constants.economyMode}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Modo de Economia"
-                      value={economyMode.find((d) => d.value === field.value)}
+                      value={constants.economyMode.find((d) => d.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -447,11 +438,11 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="input_1"
-                      data={input1}
+                      data={constants.input1}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Entrada 1"
-                      value={input1.find((d) => d.value === field.value)}
+                      value={constants.input1.find((d) => d.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -464,11 +455,11 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="input_2"
-                      data={input2}
+                      data={constants.input2}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Entrada 2"
-                      value={input2.find((d) => d.value === field.value)}
+                      value={constants.input2.find((d) => d.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -491,11 +482,11 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="communication_type"
-                      data={communicationType}
+                      data={constants.communicationType}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Tipo de comunicação"
-                      value={communicationType.find(
+                      value={constants.communicationType.find(
                         (d) => d.value === field.value
                       )}
                       onChange={(d) => field.onChange(d.value)}
@@ -510,11 +501,11 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
                   render={({ field }) => (
                     <Select
                       name="protocol_type"
-                      data={protocolType}
+                      data={constants.protocolType}
                       keyExtractor={(d) => d.value}
                       valueExtractor={(d) => d.label}
                       label="Tipo do protocolo"
-                      value={protocolType.find((d) => d.value === field.value)}
+                      value={constants.protocolType.find((d) => d.value === field.value)}
                       onChange={(d) => field.onChange(d.value)}
                     />
                   )}
@@ -564,7 +555,7 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
           />
           <div className="border-t border-gray-200 py-5">
             <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
-              {functions.map((func, id) => (
+              {constants.functions.map((func, id) => (
                 <div key={id} className="relative flex items-center py-4">
                   <div className="ml-3 flex h-6 items-center gap-2">
                     <Controller
@@ -770,7 +761,7 @@ export function E3Plus4GConfigurationProfileUpdateForm(props: Props) {
           />
           <div className="border-t border-gray-200 py-5">
             <div className="divide-y divide-gray-200 border-b border-t border-gray-200">
-              {optional_functions.map((func, id) => (
+              {constants.optionalFunctions.map((func, id) => (
                 <div key={id} className="relative flex items-center py-4">
                   <div className="flex">
                     <div className="flex h-6 items-center">
