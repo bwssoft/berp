@@ -4,6 +4,7 @@ import {
 } from "@/app/lib/@backend/domain";
 import { productionOrderRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
+import { UpdateFilter } from "mongodb";
 
 class UpdateOneProductionOrderUsecase {
   repository: IProductionOrderRepository;
@@ -14,9 +15,9 @@ class UpdateOneProductionOrderUsecase {
 
   async execute(
     query: { id: string },
-    value: Partial<Omit<IProductionOrder, "id" | "created_at">>
+    value: UpdateFilter<Omit<IProductionOrder, "id" | "created_at">>
   ) {
-    return await this.repository.updateOne(query, { $set: value })
+    return await this.repository.updateOne(query, { $set: value });
   }
 }
 

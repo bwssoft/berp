@@ -1,17 +1,30 @@
 "use client";
 
 import { configurationProfileConstants } from "@/app/lib/constant";
-import { useConfigurationProfileCreateForm } from "./use-configuration-profile.create.form";
-import { IClient, ITechnology } from "@/app/lib/@backend/domain";
+import { useConfigurationProfileUpdateFromProductionOrderForm } from "./use-configuration-profile.update-from-production-order.form";
+import {
+  EUseCase,
+  IClient,
+  IConfigurationProfile,
+  ITechnology,
+} from "@/app/lib/@backend/domain";
 
 interface Props {
-  clients: IClient[];
-  technologies: ITechnology[];
+  productionOrderId: string;
+  lineItemId: string;
+  configurationProfile: IConfigurationProfile;
+  client: IClient;
+  technology: ITechnology;
+  usecase: EUseCase;
 }
 
-export function ConfigurationProfileCreateForm(props: Props) {
-  const { clients, technologies } = props;
-  const { register } = useConfigurationProfileCreateForm();
+export function ConfigurationProfileUpdateFromProductionOrderForm(
+  props: Props
+) {
+  const { configurationProfile, client, technology, usecase } = props;
+  const { register } = useConfigurationProfileUpdateFromProductionOrderForm({
+    defaultValues: configurationProfile,
+  });
 
   return (
     <form>
@@ -32,22 +45,13 @@ export function ConfigurationProfileCreateForm(props: Props) {
                 >
                   Cliente
                 </label>
-                <select
+                <p
                   id="client_id"
-                  {...register("client_id")}
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 >
-                  <option value="">Selecione um cliente</option>
-                  {clients.map((c) => (
-                    <option
-                      key={c.id}
-                      value={c.id}
-                      data-client={JSON.stringify(c)}
-                    >
-                      {c.company_name ?? c.trade_name} - {c.document.value}
-                    </option>
-                  ))}
-                </select>
+                  {client.company_name ?? client.trade_name} -{" "}
+                  {client.document.value}
+                </p>
               </div>
               <div className="sm:col-span-4">
                 <label
@@ -72,20 +76,13 @@ export function ConfigurationProfileCreateForm(props: Props) {
                 >
                   Caso de uso
                 </label>
-                <select
+                <p
                   id="use_case"
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   {...register("use_case")}
                 >
-                  <option value="">Selecione um caso de uso</option>
-                  {Object.entries(configurationProfileConstants.useCase).map(
-                    ([key, value]) => (
-                      <option key={key} value={key}>
-                        {value}
-                      </option>
-                    )
-                  )}
-                </select>
+                  {usecase}
+                </p>
               </div>
               <div className="sm:col-span-2">
                 <label
@@ -116,18 +113,12 @@ export function ConfigurationProfileCreateForm(props: Props) {
                 >
                   Tecnologia
                 </label>
-                <select
+                <p
                   id="technology_id"
-                  {...register("technology_id")}
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 >
-                  <option value="">Selecione uma tecnologia</option>
-                  {technologies.map((tech) => (
-                    <option key={tech.id} value={tech.id}>
-                      {tech.name.brand}
-                    </option>
-                  ))}
-                </select>
+                  {technology.name.brand}
+                </p>
               </div>
             </div>
           </div>

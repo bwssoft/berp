@@ -17,7 +17,10 @@ import {
 export interface IBaseRepository<Entity extends object> {
   create(data: Entity): Promise<InsertOneResult<Entity>>;
   createMany(data: Entity[]): Promise<InsertManyResult<Entity>>;
-  findOne(params: Filter<Entity>, options?: FindOptions<Entity>): Promise<Entity | null>;
+  findOne(
+    params: Filter<Entity>,
+    options?: FindOptions<Entity>
+  ): Promise<Entity | null>;
   findAll(params?: Filter<Entity>): Promise<WithId<Entity>[]>;
   updateOne(
     query: Filter<Entity>,
@@ -38,5 +41,5 @@ export interface IBaseRepository<Entity extends object> {
   withTransaction(
     operations: (client: MongoClient) => Promise<void>,
     options?: TransactionOptions
-  ): Promise<void>
+  ): Promise<void>;
 }

@@ -1,5 +1,12 @@
-import { createOneConfigurationProfile } from "@/app/lib/@backend/action";
-import { EType, EUseCase } from "@/app/lib/@backend/domain";
+import {
+  updateOneConfigurationProfileById,
+  updateOneProductionOrderById,
+} from "@/app/lib/@backend/action";
+import {
+  EType,
+  EUseCase,
+  IConfigurationProfile,
+} from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -101,7 +108,16 @@ const schema = z.object({
 
 export type Schema = z.infer<typeof schema>;
 
-export function useConfigurationProfileCreateForm() {
+interface Props {
+  defaultValues: IConfigurationProfile;
+}
+
+export function useConfigurationProfileUpdateFromProductionOrderForm(
+  props: Props
+) {
+  const {
+    defaultValues: { id, client_id, name, technology_id, use_case, ...config },
+  } = props;
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -113,9 +129,14 @@ export function useConfigurationProfileCreateForm() {
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
+      client_id,
+      name,
+      technology_id,
+      use_case,
       data_transmission: { on: 60, off: 7200 },
       keep_alive: 60,
       timezone: 0,
+      ...config,
     },
   });
 
@@ -124,16 +145,10 @@ export function useConfigurationProfileCreateForm() {
       try {
         const { name, client_id, type, use_case, technology_id, ...config } =
           data;
-
-        await createOneConfigurationProfile({
-          name,
-          client_id,
-          technology_id,
-          type,
-          use_case,
-          config,
-        });
-
+        await updateOneConfigurationProfileById(
+          { id: id },
+          { name, client_id, type, use_case, technology_id, config }
+        );
         toast({
           title: "Sucesso!",
           description: "Perfil registrado com sucesso!",

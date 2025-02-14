@@ -1,17 +1,24 @@
 "use client";
 
 import { configurationProfileConstants } from "@/app/lib/constant";
-import { useConfigurationProfileCreateForm } from "./use-configuration-profile.create.form";
-import { IClient, ITechnology } from "@/app/lib/@backend/domain";
+import { useConfigurationProfileUpdateForm } from "./use-configuration-profile.update.form";
+import {
+  IClient,
+  IConfigurationProfile,
+  ITechnology,
+} from "@/app/lib/@backend/domain";
 
 interface Props {
   clients: IClient[];
   technologies: ITechnology[];
+  configurationProfile: IConfigurationProfile;
 }
 
-export function ConfigurationProfileCreateForm(props: Props) {
-  const { clients, technologies } = props;
-  const { register } = useConfigurationProfileCreateForm();
+export function ConfigurationProfileUpdateForm(props: Props) {
+  const { clients, technologies, configurationProfile } = props;
+  const { register } = useConfigurationProfileUpdateForm({
+    defaultValues: configurationProfile,
+  });
 
   return (
     <form>
