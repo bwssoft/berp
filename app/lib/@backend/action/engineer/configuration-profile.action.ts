@@ -11,7 +11,10 @@ import {
 import { IConfigurationProfile } from "@/app/lib/@backend/domain";
 
 export async function createOneConfigurationProfile(
-  input: Omit<IConfigurationProfile, "id" | "created_at" | "user_id">
+  input: Omit<
+    IConfigurationProfile,
+    "id" | "created_at" | "user_id" | "validation"
+  >
 ) {
   const result = await createOneConfigurationProfileUsecase.execute(input);
   revalidatePath("/engineer/configuration-profile");
@@ -20,7 +23,10 @@ export async function createOneConfigurationProfile(
 
 export async function updateOneConfigurationProfileById(
   query: { id: string },
-  value: Omit<IConfigurationProfile, "id" | "created_at" | "user_id">
+  value: Omit<
+    IConfigurationProfile,
+    "id" | "created_at" | "user_id" | "validation"
+  >
 ) {
   await updateOneConfigurationProfileUsecase.execute(query, value);
   revalidatePath("/engineer/configuration-profile");

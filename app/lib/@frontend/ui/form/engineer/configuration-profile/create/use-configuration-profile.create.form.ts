@@ -2,80 +2,92 @@ import { createOneConfigurationProfile } from "@/app/lib/@backend/action";
 import { EType, EUseCase } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import {
+  emptyStringToUndefined,
+  formatConfigurationProfileName,
+  optionalNumber,
+  optionalString,
+} from "../util";
 
 const schema = z.object({
-  name: z.string({ message: "O nome é orbigatório" }),
-  client_id: z.string({ message: "O cliente é orbigatório" }),
+  client_id: z.string({ message: "O cliente é obrigatório" }),
   type: z.nativeEnum(EType),
   use_case: z.nativeEnum(EUseCase),
   technology_id: z.string(),
 
-  //auth
+  // auth
   password: z
     .object({
-      old: z
-        .string()
-        .max(6, { message: "A senha deve ter no máximo 6 caracteres." })
-        .optional(),
-      new: z
-        .string()
-        .max(6, { message: "A senha deve ter no máximo 6 caracteres." })
-        .optional(),
+      old: z.preprocess(
+        emptyStringToUndefined,
+        z
+          .string()
+          .max(6, { message: "A senha deve ter no máximo 6 caracteres." })
+          .optional()
+      ),
+      new: z.preprocess(
+        emptyStringToUndefined,
+        z
+          .string()
+          .max(6, { message: "A senha deve ter no máximo 6 caracteres." })
+          .optional()
+      ),
     })
     .optional(),
 
   // network
   apn: z
     .object({
-      address: z.string(),
-      user: z.string(),
-      password: z.string(),
+      address: optionalString,
+      user: optionalString,
+      password: optionalString,
     })
     .optional(),
+
   ip: z
     .object({
       primary: z
         .object({
-          ip: z.string().ip({ message: "IP inválido." }),
-          port: z.coerce
-            .number()
-            .positive({ message: "O valor deve ser positivo" }),
+          // Aqui usamos um refinamento para validar IP caso exista
+          ip: optionalString.refine(
+            (val) =>
+              val === undefined ||
+              z.string().ip({ message: "IP inválido." }).safeParse(val).success,
+            { message: "IP inválido." }
+          ),
+          port: optionalNumber,
         })
-        .refine(
-          (data) =>
-            (!data?.ip?.length && !data?.port) || (data?.ip && data.port),
-          {
-            message:
-              "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
-          }
-        ),
+        .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
+          message:
+            "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
+        }),
       secondary: z
         .object({
-          ip: z.string().ip({ message: "IP inválido." }),
-          port: z.coerce
-            .number()
-            .positive({ message: "O valor deve ser positivo" }),
+          ip: optionalString.refine(
+            (val) =>
+              val === undefined ||
+              z.string().ip({ message: "IP inválido." }).safeParse(val).success,
+            { message: "IP inválido." }
+          ),
+          port: optionalNumber,
         })
-        .refine(
-          (data) =>
-            (!data?.ip?.length && !data?.port) || (data?.ip && data.port),
-          {
-            message:
-              "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
-          }
-        ),
+        .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
+          message:
+            "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
+        }),
     })
     .optional(),
+
   dns: z
     .object({
-      address: z.string(),
-      port: z.coerce
-        .number()
-        .positive({ message: "O valor deve ser positivo" }),
+      address: optionalString,
+      port: optionalNumber,
     })
     .optional(),
+
   data_transmission: z
     .object({
       on: z.coerce
@@ -90,6 +102,7 @@ const schema = z.object({
         .default(1800),
     })
     .optional(),
+
   timezone: z.coerce.number().optional(),
   keep_alive: z.coerce
     .number()
@@ -102,6 +115,12 @@ const schema = z.object({
 export type Schema = z.infer<typeof schema>;
 
 export function useConfigurationProfileCreateForm() {
+  const [name, setName] = useState<{
+    technology?: string;
+    document?: string;
+    type?: string;
+  }>({});
+
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -122,11 +141,9 @@ export function useConfigurationProfileCreateForm() {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
-        const { name, client_id, type, use_case, technology_id, ...config } =
-          data;
-
+        const { client_id, type, use_case, technology_id, ...config } = data;
         await createOneConfigurationProfile({
-          name,
+          name: formatConfigurationProfileName(name),
           client_id,
           technology_id,
           type,
@@ -158,6 +175,12 @@ export function useConfigurationProfileCreateForm() {
     }
   );
 
+  const handleChangeName = (props: {
+    type?: string;
+    technology?: string;
+    document?: string;
+  }) => setName((prev) => Object.assign(prev, props));
+
   return {
     register,
     handleSubmit,
@@ -166,5 +189,6 @@ export function useConfigurationProfileCreateForm() {
     reset: hookFormReset,
     watch,
     formState,
+    handleChangeName,
   };
 }

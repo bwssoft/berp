@@ -13,9 +13,11 @@ namespace Dto {
   export type Document = IProductionOrder & {
     product: Product;
     enterprise: Enterprise;
+    technology: Technology;
   };
   export type Output = (IProductionOrder & {
     product: Product;
+    technology: Technology;
     enterprise: Enterprise;
   })[];
 
@@ -23,7 +25,10 @@ namespace Dto {
     id: string;
     name: string;
     color: string;
-    technology_id: string;
+  }
+  export interface Technology {
+    id: string;
+    name: { brand: string };
   }
   export interface Enterprise {
     id: string;
@@ -64,6 +69,15 @@ class FindManyProductionOrderUsecase {
       },
       {
         $lookup: {
+          as: "technology",
+          from: "engineer-technology",
+          foreignField: "id",
+          localField: "product.technology_id",
+          pipeline: [{ $project: { _id: 0, name: 1, id: 1 } }],
+        },
+      },
+      {
+        $lookup: {
           as: "enterprise",
           from: "business-enterprise",
           foreignField: "id",
@@ -73,6 +87,7 @@ class FindManyProductionOrderUsecase {
       },
       {
         $project: {
+          technology: { $first: "$technology" },
           product: { $first: "$product" },
           enterprise: { $first: "$enterprise" },
           id: 1,

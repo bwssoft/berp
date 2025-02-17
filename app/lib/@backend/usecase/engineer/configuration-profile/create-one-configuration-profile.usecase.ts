@@ -13,12 +13,19 @@ class CreateOneConfigurationProfileUsecase {
   }
 
   async execute(
-    input: Omit<IConfigurationProfile, "id" | "created_at" | "user_id">
+    input: Omit<
+      IConfigurationProfile,
+      "id" | "created_at" | "user_id" | "validation"
+    >
   ) {
     const configuration_profile = Object.assign(input, {
       created_at: new Date(),
       id: crypto.randomUUID(),
       user_id: crypto.randomUUID(),
+      validation: {
+        by_human: false,
+        by_system: false,
+      },
     });
     await this.repository.create(configuration_profile);
     return configuration_profile;

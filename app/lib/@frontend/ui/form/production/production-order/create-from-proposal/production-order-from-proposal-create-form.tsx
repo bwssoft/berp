@@ -13,9 +13,11 @@ import {
 } from "@heroicons/react/24/outline";
 import { createProductionOrderFromProposal } from "@/app/lib/@backend/action";
 import {
+  IClient,
   IConfigurationProfile,
   IProduct,
   IProductionOrder,
+  ITechnology,
 } from "@/app/lib/@backend/domain";
 import { Button, Error } from "../../../../component";
 import { Combobox } from "@bwsoft/combobox";
@@ -27,9 +29,16 @@ interface ProductionOrderFromProposalCreateFormProps {
   proposal_id: string;
   scenario_id: string;
   production_orders: (IProductionOrder & {
-    product: { name: string; technology_id: string };
+    product: {
+      name: string;
+    };
+    technology: {
+      id: string;
+      name: { brand: string };
+    };
   })[];
   client_id: string;
+  client_document_value: string;
   configuration_profiles: IConfigurationProfile[];
 }
 
@@ -42,6 +51,7 @@ export function ProductionOrderFromProposalCreateForm(
     production_orders,
     configuration_profiles,
     client_id,
+    client_document_value,
   } = props;
 
   return (
@@ -71,6 +81,8 @@ export function ProductionOrderFromProposalCreateForm(
                     configuration_profiles={configuration_profiles}
                     client_id={client_id}
                     proposal_id={proposal_id}
+                    client_document_value={client_document_value}
+                    technology_brand_name={p.technology.name.brand}
                   />
                 ))}
               </div>
@@ -116,18 +128,31 @@ export function ProductionOrderFromProposalCreateForm(
 
 interface UpdateProductionOrderFromProposalForm {
   production_order: IProductionOrder & {
-    product: { name: string; technology_id: string };
+    product: {
+      name: string;
+    };
+    technology: {
+      id: string;
+    };
   };
   client_id: string;
   configuration_profiles: IConfigurationProfile[];
   proposal_id: string;
+  client_document_value: string;
+  technology_brand_name: string;
 }
 
 export function UpdateProductionOrderFromProposalForm(
   props: UpdateProductionOrderFromProposalForm
 ) {
-  const { production_order, configuration_profiles, client_id, proposal_id } =
-    props;
+  const {
+    production_order,
+    configuration_profiles,
+    client_id,
+    proposal_id,
+    client_document_value,
+    technology_brand_name,
+  } = props;
   const {
     handleSubmit,
     lineItemsOnForm,
@@ -140,6 +165,8 @@ export function UpdateProductionOrderFromProposalForm(
     handleDeleteConfigurationProfile,
   } = useCreateProductionOrderCreateFromProposal({
     defaultValues: production_order,
+    client_document_value,
+    technology_brand_name,
   });
   return (
     <form action={() => handleSubmit()} className="mt-12">
@@ -290,8 +317,7 @@ export function UpdateProductionOrderFromProposalForm(
                                         await handleCreateConfigurationProfile({
                                           client_id,
                                           technology_id:
-                                            production_order.product
-                                              .technology_id,
+                                            production_order.technology.id,
                                           line_item_id: lineItem.id,
                                           production_order_id:
                                             production_order.id,

@@ -1,5 +1,4 @@
 import { findManyConfigurationProfile } from "@/app/lib/@backend/action";
-import { Button, ButtonGroup } from "@/app/lib/@frontend/ui/component";
 import ConfigurationProfileTable from "@/app/lib/@frontend/ui/table/engineer/configuration-profile/table";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";

@@ -7,10 +7,10 @@ import {
 import { EType, EUseCase, IProductionOrder } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { nanoid } from "nanoid";
 import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { formatConfigurationProfileName } from "../../../engineer/configuration-profile/util";
 
 const LineItemSchema = z.object({
   configuration_profile_id: z.string(),
@@ -51,6 +51,8 @@ type Schema = z.infer<typeof schema>;
 
 interface Props {
   defaultValues: IProductionOrder;
+  client_document_value: string;
+  technology_brand_name: string;
 }
 
 const handleDefaultValues = (defaultValues: IProductionOrder) => {
@@ -64,7 +66,7 @@ const handleDefaultValues = (defaultValues: IProductionOrder) => {
 };
 
 export function useCreateProductionOrderCreateFromProposal(props: Props) {
-  const { defaultValues } = props;
+  const { defaultValues, client_document_value, technology_brand_name } = props;
 
   const {
     register,
@@ -129,7 +131,11 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
         client_id,
         use_case: EUseCase["CLIENT"],
         technology_id,
-        name: `profile#${nanoid()}`,
+        name: formatConfigurationProfileName({
+          type: EType["CAR"],
+          document: client_document_value,
+          technology: technology_brand_name,
+        }),
         type: EType["CAR"],
         config: {},
       });

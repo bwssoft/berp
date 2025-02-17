@@ -1,7 +1,9 @@
 import {
   findManyClient,
   findManyTechnology,
+  findOneClient,
   findOneConfigurationProfile,
+  findOneTechnology,
 } from "@/app/lib/@backend/action";
 import { ConfigurationProfileUpdateForm } from "@/app/lib/@frontend/ui/form";
 
@@ -31,10 +33,26 @@ export default async function Page(props: Props) {
     );
   }
 
-  const [clients, technologies] = await Promise.all([
+  const [clients, technologies, client, technology] = await Promise.all([
     findManyClient({}),
     findManyTechnology(),
+    findOneClient({ id: configurationProfile.client_id }),
+    findOneTechnology({ id: configurationProfile.technology_id }),
   ]);
+
+  if (!client || !technology) {
+    return (
+      <div>
+        <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+          <div>
+            <h1 className="text-base font-semibold leading-7 text-gray-900">
+              Algumas informações do perfil não foram encontradas
+            </h1>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -54,6 +72,8 @@ export default async function Page(props: Props) {
           clients={clients}
           technologies={technologies}
           configurationProfile={configurationProfile}
+          client={client}
+          technology={technology}
         />
       </div>
     </div>

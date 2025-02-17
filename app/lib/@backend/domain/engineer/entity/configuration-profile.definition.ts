@@ -9,6 +9,12 @@ export interface IConfigurationProfile {
   created_at: Date;
   user_id: string;
   technology_id: string;
+  validation: Validation;
+}
+
+interface Validation {
+  by_human: boolean;
+  by_system: boolean;
 }
 
 export enum EUseCase {

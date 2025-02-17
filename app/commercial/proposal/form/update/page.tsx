@@ -98,6 +98,7 @@ export default async function Page(props: Props) {
           proposal_id={proposal.id}
           scenario_id={proposal.scenarios[0].id}
           client_id={client.id}
+          client_document_value={client.document.value}
         />
       </div>
     </div>

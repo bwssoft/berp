@@ -1,11 +1,8 @@
 import {
-  findManyClient,
-  findManyTechnology,
   findOneClient,
   findOneConfigurationProfile,
   findOneTechnology,
 } from "@/app/lib/@backend/action";
-import { EUseCase } from "@/app/lib/@backend/domain";
 import { ConfigurationProfileUpdateFromProductionOrderForm } from "@/app/lib/@frontend/ui/form";
 
 interface Props {
@@ -47,6 +44,21 @@ export default async function Page(props: Props) {
     findOneTechnology({ id: configurationProfile.technology_id }),
   ]);
 
+  if (!client || !technology) {
+    return (
+      <div>
+        <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+          <div>
+            <h1 className="text-base font-semibold leading-7 text-gray-900">
+              Algumas informações do perfil de configurações não foram
+              encontradas
+            </h1>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -67,7 +79,6 @@ export default async function Page(props: Props) {
           technology={technology!}
           productionOrderId={production_order_id}
           lineItemId={production_order_line_item_id}
-          usecase={EUseCase["CLIENT"]}
         />
       </div>
     </div>

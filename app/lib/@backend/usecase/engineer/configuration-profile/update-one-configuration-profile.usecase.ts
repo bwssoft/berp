@@ -14,7 +14,7 @@ class UpdateOneConfigurationProfileUsecase {
 
   async execute(
     query: { id: string },
-    value: Omit<IConfigurationProfile, "id" | "created_at" | "user_id">
+    value: Partial<Omit<IConfigurationProfile, "id" | "created_at" | "user_id">>
   ) {
     return await this.repository.updateOne(query, { $set: value });
   }

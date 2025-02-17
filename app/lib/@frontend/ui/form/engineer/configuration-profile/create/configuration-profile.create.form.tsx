@@ -3,6 +3,7 @@
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { useConfigurationProfileCreateForm } from "./use-configuration-profile.create.form";
 import { IClient, ITechnology } from "@/app/lib/@backend/domain";
+import { Button } from "../../../../component";
 
 interface Props {
   clients: IClient[];
@@ -11,10 +12,11 @@ interface Props {
 
 export function ConfigurationProfileCreateForm(props: Props) {
   const { clients, technologies } = props;
-  const { register } = useConfigurationProfileCreateForm();
+  const { register, handleChangeName, handleSubmit } =
+    useConfigurationProfileCreateForm();
 
   return (
-    <form>
+    <form action={() => handleSubmit()}>
       <section aria-labelledby="identification">
         <div className="bg-white sm:rounded-lg">
           <div className="py-5">
@@ -36,6 +38,14 @@ export function ConfigurationProfileCreateForm(props: Props) {
                   id="client_id"
                   {...register("client_id")}
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={(e) => {
+                    const selectedOption =
+                      e.target.options[e.target.selectedIndex];
+                    const clientData =
+                      selectedOption.getAttribute("data-client");
+                    const client = JSON.parse(clientData as string);
+                    handleChangeName({ document: client.document.value });
+                  }}
                 >
                   <option value="">Selecione um cliente</option>
                   {clients.map((c) => (
@@ -48,22 +58,6 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     </option>
                   ))}
                 </select>
-              </div>
-              <div className="sm:col-span-4">
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Nome
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  autoComplete="name"
-                  {...register("name")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  placeholder="Nome do perfil"
-                />
               </div>
               <div className="sm:col-span-3">
                 <label
@@ -98,6 +92,12 @@ export function ConfigurationProfileCreateForm(props: Props) {
                   id="type"
                   {...register("type")}
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={(e) => {
+                    const selectedOption =
+                      e.target.options[e.target.selectedIndex];
+                    const type = selectedOption.getAttribute("value") as string;
+                    handleChangeName({ type });
+                  }}
                 >
                   <option value="">Selecione um tipo</option>
                   {Object.entries(configurationProfileConstants.type).map(
@@ -120,10 +120,22 @@ export function ConfigurationProfileCreateForm(props: Props) {
                   id="technology_id"
                   {...register("technology_id")}
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={(e) => {
+                    const selectedOption =
+                      e.target.options[e.target.selectedIndex];
+                    const technology = selectedOption.getAttribute(
+                      "brand-name"
+                    ) as string;
+                    handleChangeName({ technology });
+                  }}
                 >
                   <option value="">Selecione uma tecnologia</option>
                   {technologies.map((tech) => (
-                    <option key={tech.id} value={tech.id}>
+                    <option
+                      key={tech.id}
+                      value={tech.id}
+                      brand-name={tech.name.brand}
+                    >
                       {tech.name.brand}
                     </option>
                   ))}
@@ -277,7 +289,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                       IP Secundário
                     </label>
                     <input
-                      {...register("ip.primary.ip")}
+                      {...register("ip.secondary.ip")}
                       id="secondary_ip"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="127.0.0.1"
@@ -291,7 +303,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                       Porta Secundária
                     </label>
                     <input
-                      {...register("ip.primary.port")}
+                      {...register("ip.secondary.port")}
                       id="secondary_ip_port"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="3001"
@@ -418,6 +430,21 @@ export function ConfigurationProfileCreateForm(props: Props) {
           </div>
         </div>
       </section>
+
+      <div className="mt-6 flex items-center justify-start gap-x-6">
+        <button
+          type="button"
+          className="text-sm font-semibold leading-6 text-gray-900"
+        >
+          Cancelar
+        </button>
+        <Button
+          type="submit"
+          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          Salvar
+        </Button>
+      </div>
     </form>
   );
 }
