@@ -193,9 +193,8 @@ export function UpdateProductionOrderFromProposalForm(
                       type="button"
                       onClick={() =>
                         handleAppendLineItem({
-                          configuration_profile_id: null,
+                          configuration_profile_id: "",
                           parcial_quantity: 0,
-                          is_shared: false,
                           id: nanoid(),
                         })
                       }

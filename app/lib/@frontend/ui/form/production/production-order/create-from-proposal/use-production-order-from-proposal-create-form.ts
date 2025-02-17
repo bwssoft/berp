@@ -12,14 +12,9 @@ import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
-interface Props {
-  defaultValues?: IProductionOrder;
-}
-
 const LineItemSchema = z.object({
-  configuration_profile_id: z.string().nullable(),
+  configuration_profile_id: z.string(),
   parcial_quantity: z.coerce.number(),
-  is_shared: z.boolean(),
   id: z.string(),
 });
 
@@ -54,8 +49,23 @@ export const schema = z
 
 type Schema = z.infer<typeof schema>;
 
+interface Props {
+  defaultValues: IProductionOrder;
+}
+
+const handleDefaultValues = (defaultValues: IProductionOrder) => {
+  return {
+    ...defaultValues,
+    line_items: defaultValues.line_items.map((item) => ({
+      ...item,
+      configuration_profile_id: item.configuration_profile_id ?? "",
+    })),
+  };
+};
+
 export function useCreateProductionOrderCreateFromProposal(props: Props) {
   const { defaultValues } = props;
+
   const {
     register,
     control,
@@ -65,7 +75,7 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
     watch,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues,
+    defaultValues: handleDefaultValues(defaultValues),
   });
 
   const {
@@ -183,8 +193,7 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
     }
   };
   useEffect(() => {
-    console.log(defaultValues);
-    reset(defaultValues);
+    reset(handleDefaultValues(defaultValues));
   }, [defaultValues, reset]);
 
   return {

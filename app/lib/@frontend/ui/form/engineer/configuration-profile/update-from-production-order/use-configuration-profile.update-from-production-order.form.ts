@@ -16,7 +16,6 @@ const schema = z.object({
   name: z.string({ message: "O nome é orbigatório" }),
   client_id: z.string({ message: "O cliente é orbigatório" }),
   type: z.nativeEnum(EType),
-  use_case: z.nativeEnum(EUseCase),
   technology_id: z.string(),
 
   //auth
@@ -116,7 +115,7 @@ export function useConfigurationProfileUpdateFromProductionOrderForm(
   props: Props
 ) {
   const {
-    defaultValues: { id, client_id, name, technology_id, use_case, ...config },
+    defaultValues: { id, client_id, name, technology_id, ...config },
   } = props;
   const {
     register,
@@ -132,7 +131,6 @@ export function useConfigurationProfileUpdateFromProductionOrderForm(
       client_id,
       name,
       technology_id,
-      use_case,
       data_transmission: { on: 60, off: 7200 },
       keep_alive: 60,
       timezone: 0,
@@ -143,11 +141,17 @@ export function useConfigurationProfileUpdateFromProductionOrderForm(
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
-        const { name, client_id, type, use_case, technology_id, ...config } =
-          data;
+        const { name, client_id, type, technology_id, ...config } = data;
         await updateOneConfigurationProfileById(
           { id: id },
-          { name, client_id, type, use_case, technology_id, config }
+          {
+            name,
+            client_id,
+            type,
+            technology_id,
+            config,
+            use_case: EUseCase["CLIENT"],
+          }
         );
         toast({
           title: "Sucesso!",

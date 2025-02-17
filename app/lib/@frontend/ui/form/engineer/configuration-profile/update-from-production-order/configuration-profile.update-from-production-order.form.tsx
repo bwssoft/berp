@@ -69,21 +69,6 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                   placeholder="Nome do perfil"
                 />
               </div>
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="client_id"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Caso de uso
-                </label>
-                <p
-                  id="use_case"
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("use_case")}
-                >
-                  {usecase}
-                </p>
-              </div>
               <div className="sm:col-span-2">
                 <label
                   htmlFor="type"
