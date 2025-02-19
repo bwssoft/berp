@@ -2,6 +2,7 @@ import { deleteOneConfigurationProfileById } from "@/app/lib/@backend/action";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { generateConfigurationProfileLinkForClient } from "../../../form/engineer/configuration-profile/util";
+import { SelectColumn } from "./select-column";
 
 export const columns: ColumnDef<{
   id: string;
@@ -17,6 +18,7 @@ export const columns: ColumnDef<{
     by_human: boolean;
     by_system: boolean;
   };
+  selected: boolean;
 }>[] = [
   { header: "Identificador", accessorKey: "name" },
   {
@@ -42,29 +44,17 @@ export const columns: ColumnDef<{
       const profile = row.original;
       return (
         <td className="flex divide-x divide-gray-200 text-right text-sm font-medium sm:pr-0">
-          <div className="pr-2">
+          <SelectColumn
+            configurationProfileId={profile.id}
+            selected={profile.selected}
+          />
+          <div className="px-2">
             <Link
               href={`/crm/configuration-profile/form/update?id=${profile.id}`}
               className="text-indigo-600 hover:text-indigo-900"
             >
               Editar
             </Link>
-          </div>
-          <div className="px-2">
-            <button
-              className="text-indigo-600 hover:text-indigo-900"
-              onClick={() => {
-                window.parent.postMessage(
-                  {
-                    event: "configuration_profile",
-                    link: `https://bconfig.vercel.app/configurator/E3+4G?id=${profile.id}`,
-                  },
-                  "*"
-                );
-              }}
-            >
-              Selecionar
-            </button>
           </div>
           <div className="px-2">
             <button

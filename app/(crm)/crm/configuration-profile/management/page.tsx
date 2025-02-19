@@ -2,20 +2,19 @@ import {
   findManyConfigurationProfile,
   findOneClientWithConfigurationProfile,
 } from "@/app/lib/@backend/action";
-import { ButtonGroup } from "@/app/lib/@frontend/ui/component";
 import ConfigurationProfileTableCrm from "@/app/lib/@frontend/ui/table/engineer/configuration-profile-crm/table";
-import { PlusIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 interface Props {
   searchParams: {
     document: string;
+    configuration_profile_id: string;
   };
 }
 
 export default async function Page(props: Props) {
   const {
-    searchParams: { document },
+    searchParams: { document, configuration_profile_id },
   } = props;
 
   const client = await findOneClientWithConfigurationProfile({
@@ -36,8 +35,13 @@ export default async function Page(props: Props) {
     );
   }
 
-  const profiles = await findManyConfigurationProfile({ client_id: client.id });
-
+  const profilesFromRepository = await findManyConfigurationProfile({
+    client_id: client.id,
+  });
+  const profileProcessed = profilesFromRepository.map((profile) => ({
+    ...profile,
+    selected: profile.id === configuration_profile_id,
+  }));
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -59,7 +63,7 @@ export default async function Page(props: Props) {
         </Link>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <ConfigurationProfileTableCrm data={profiles} />
+        <ConfigurationProfileTableCrm data={profileProcessed} />
       </div>
     </div>
   );

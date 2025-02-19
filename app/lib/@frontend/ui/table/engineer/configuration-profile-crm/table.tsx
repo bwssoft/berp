@@ -18,6 +18,7 @@ interface Props {
       by_human: boolean;
       by_system: boolean;
     };
+    selected: boolean;
   }[];
 }
 export default function ConfigurationProfileTableCrm(props: Props) {
