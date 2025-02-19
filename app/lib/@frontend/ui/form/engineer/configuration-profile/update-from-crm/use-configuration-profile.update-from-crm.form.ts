@@ -154,7 +154,7 @@ export function useConfigurationProfileUpdateFromCrmForm(props: Props) {
       technology_id,
       use_case,
       type,
-      data_transmission: { on: 60, off: 7200 },
+      data_transmission: { on: 60, off: 43200 },
       keep_alive: 60,
       timezone: 0,
       ...config,

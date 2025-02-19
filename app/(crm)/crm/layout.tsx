@@ -12,9 +12,6 @@ export default function RootLayout({
 }) {
   return (
     <CrmLayout>
-      <div className="px-4 sm:px-6 lg:px-8">
-        <BackButton />
-      </div>
       {children}
       <Toaster />
     </CrmLayout>

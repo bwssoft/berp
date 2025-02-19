@@ -9,7 +9,7 @@ export function BackButton() {
   return (
     <button
       onClick={() => router.back()}
-      className="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 mb-2"
+      className="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700"
     >
       <ChevronLeftIcon className="size-5 mr-2" />
       Voltar

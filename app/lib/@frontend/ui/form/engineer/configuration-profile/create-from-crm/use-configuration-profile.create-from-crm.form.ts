@@ -1,4 +1,7 @@
-import { updateOneConfigurationProfileById } from "@/app/lib/@backend/action";
+import {
+  createOneConfigurationProfile,
+  updateOneConfigurationProfileById,
+} from "@/app/lib/@backend/action";
 import {
   EType,
   EUseCase,
@@ -8,20 +11,19 @@ import {
 } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
   emptyStringToUndefined,
   formatConfigurationProfileName,
+  generateConfigurationProfileLinkForClient,
   optionalNumber,
   optionalString,
 } from "../util";
 
 const schema = z.object({
-  client_id: z.string({ message: "O cliente é obrigatório" }),
   type: z.nativeEnum(EType),
-  use_case: z.nativeEnum(EUseCase),
   technology_id: z.string(),
 
   // auth
@@ -120,7 +122,16 @@ const schema = z.object({
 
 export type Schema = z.infer<typeof schema>;
 
-export function useConfigurationProfileCreateFromCrmForm() {
+interface Props {
+  client: IClient;
+}
+
+export function useConfigurationProfileCreateFromCrmForm(props: Props) {
+  const { client } = props;
+
+  const [configurationProfileId, setConfigurationProfileId] =
+    useState<string>();
+
   const [name, setName] = useState<{
     technology?: string;
     document?: string;
@@ -138,7 +149,7 @@ export function useConfigurationProfileCreateFromCrmForm() {
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
-      data_transmission: { on: 60, off: 7200 },
+      data_transmission: { on: 60, off: 43200 },
       keep_alive: 60,
       timezone: 0,
     },
@@ -147,6 +158,18 @@ export function useConfigurationProfileCreateFromCrmForm() {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
+        const { type, technology_id, ...config } = data;
+        const configurationProfileCreated = await createOneConfigurationProfile(
+          {
+            name: formatConfigurationProfileName(name),
+            client_id: client.id,
+            technology_id,
+            type,
+            use_case: EUseCase["CLIENT"],
+            config,
+          }
+        );
+        setConfigurationProfileId(configurationProfileCreated.id);
         toast({
           title: "Sucesso!",
           description: "Perfil registrado com sucesso!",
@@ -177,6 +200,16 @@ export function useConfigurationProfileCreateFromCrmForm() {
     document?: string;
   }) => setName((prev) => Object.assign(prev, props));
 
+  const handleClientLinkGeneration = useCallback(async () => {
+    configurationProfileId &&
+      (await generateConfigurationProfileLinkForClient(configurationProfileId));
+  }, [configurationProfileId]);
+
+  useEffect(
+    () => handleChangeName({ document: client.document.value }),
+    [client]
+  );
+
   return {
     register,
     handleSubmit,
@@ -186,5 +219,6 @@ export function useConfigurationProfileCreateFromCrmForm() {
     watch,
     formState,
     handleChangeName,
+    handleClientLinkGeneration,
   };
 }

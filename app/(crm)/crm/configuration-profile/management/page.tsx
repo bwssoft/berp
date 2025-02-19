@@ -50,27 +50,13 @@ export default async function Page(props: Props) {
             configuração.
           </p>
         </div>
-
-        <ButtonGroup
-          label="Novo perfil de configuração"
-          className="ml-auto"
-          items={[
-            <Link
-              key={1}
-              href={`/crm/configuration-profile/form/create?document=${client.document.value}`}
-              className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
-            >
-              Novo perfil
-            </Link>,
-            <Link
-              key={2}
-              href={`/crm/configuration-profile/form/create?document=${client.document.value}`}
-              className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
-            >
-              Criar por link
-            </Link>,
-          ]}
-        />
+        <Link
+          key={1}
+          href={`/crm/configuration-profile/form/create?document=${client.document.value}`}
+          className="ml-auto rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        >
+          Novo perfil de configuração
+        </Link>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <ConfigurationProfileTableCrm data={profiles} />

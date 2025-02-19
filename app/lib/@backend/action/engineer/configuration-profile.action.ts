@@ -30,11 +30,13 @@ export async function updateOneConfigurationProfileById(
 ) {
   await updateOneConfigurationProfileUsecase.execute(query, value);
   revalidatePath("/engineer/configuration-profile");
+  revalidatePath("/crm/configuration-profile");
 }
 
 export async function deleteOneConfigurationProfileById(query: { id: string }) {
   await deleteOneConfigurationProfileUsecase.execute(query);
   revalidatePath("/engineer/configuration-profile");
+  revalidatePath("/crm/configuration-profile");
 }
 
 export async function findManyConfigurationProfile(

@@ -8,6 +8,8 @@ import {
   ITechnology,
 } from "@/app/lib/@backend/domain";
 import { Button } from "../../../../component";
+import { ShareIcon } from "@heroicons/react/24/outline";
+import { generateConfigurationProfileLinkForClient } from "../util";
 
 interface Props {
   client: IClient;
@@ -414,6 +416,18 @@ export function ConfigurationProfileUpdateFromCrmForm(props: Props) {
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           Salvar
+        </Button>
+
+        <Button
+          variant="link"
+          type="submit"
+          className="ml-auto flex items-center"
+          onClick={() =>
+            generateConfigurationProfileLinkForClient(configurationProfile.id)
+          }
+        >
+          <ShareIcon className="size-4" />
+          <p>Gerar link para o cliente preencher</p>
         </Button>
       </div>
     </form>

@@ -1,4 +1,5 @@
 import { EType } from "@/app/lib/@backend/domain";
+import { toast } from "@/app/lib/@frontend/hook";
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { z } from "zod";
 
@@ -24,4 +25,27 @@ export const formatConfigurationProfileName = (props: {
   const technologyFormatted = technology ?? "Unknown";
   const documentFormatted = document ?? "Unknown";
   return `CONFIG.${documentFormatted}.${technologyFormatted}.${typeFormatted}`.toUpperCase();
+};
+
+export const generateConfigurationProfileLinkForClient = async (
+  configurationProfileId: string
+) => {
+  const domain = window.location.origin;
+  const link = `${domain}/crm/configuration-profile/form/update?id=${configurationProfileId}`;
+  await navigator.clipboard
+    .writeText(link)
+    .then(() =>
+      toast({
+        title: "Sucesso!",
+        description: "Link gerado com sucesso!",
+        variant: "success",
+      })
+    )
+    .catch(() =>
+      toast({
+        title: "Falha!",
+        description: "Falha ao gerar o link!",
+        variant: "error",
+      })
+    );
 };
