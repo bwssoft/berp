@@ -131,13 +131,13 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
         client_id,
         use_case: EUseCase["CLIENT"],
         technology_id,
+        type: EType["CAR"],
+        config: {},
         name: formatConfigurationProfileName({
           type: EType["CAR"],
           document: client_document_value,
           technology: technology_brand_name,
         }),
-        type: EType["CAR"],
-        config: {},
       });
       await updateOneProductionOrderLineItem(
         { id: production_order_id, line_item_id },
@@ -198,6 +198,7 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
       });
     }
   };
+
   useEffect(() => {
     reset(handleDefaultValues(defaultValues));
   }, [defaultValues, reset]);
