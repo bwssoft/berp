@@ -1,22 +1,38 @@
-import { IProduct, IProductionOrder, IProductionOrderRepository } from "@/app/lib/@backend/domain";
+import {
+  IProduct,
+  IProductionOrder,
+  IProductionOrderRepository,
+} from "@/app/lib/@backend/domain";
 import { productionOrderRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { Filter } from "mongodb";
 
 namespace Dto {
-  export interface Input extends Filter<IProductionOrder> { }
-  export type Document = IProductionOrder & { product: Product, enterprise: Enterprise }
-  export type Output = (IProductionOrder & { product: Product, enterprise: Enterprise })[]
+  export interface Input extends Filter<IProductionOrder> {}
+  export type Document = IProductionOrder & {
+    product: Product;
+    enterprise: Enterprise;
+    technology: Technology;
+  };
+  export type Output = (IProductionOrder & {
+    product: Product;
+    technology: Technology;
+    enterprise: Enterprise;
+  })[];
 
   export interface Product {
-    id: string
-    name: string
-    color: string
+    id: string;
+    name: string;
+    color: string;
+  }
+  export interface Technology {
+    id: string;
+    name: { brand: string };
   }
   export interface Enterprise {
-    id: string
-    short_name: string
+    id: string;
+    short_name: string;
   }
 }
 
@@ -29,14 +45,16 @@ class FindManyProductionOrderUsecase {
 
   @RemoveMongoId()
   async execute(input: Dto.Input): Promise<Dto.Output> {
-    const aggregate = await this.repository.aggregate<Dto.Document>(this.pipeline(input))
-    return await aggregate.toArray()
+    const aggregate = await this.repository.aggregate<Dto.Document>(
+      this.pipeline(input)
+    );
+    return await aggregate.toArray();
   }
 
   pipeline(input: Filter<IProductionOrder>) {
     return [
       {
-        $match: { active: true, ...input }
+        $match: { active: true, ...input },
       },
       {
         $lookup: {
@@ -44,8 +62,19 @@ class FindManyProductionOrderUsecase {
           from: "product",
           foreignField: "id",
           localField: "product_id",
-          pipeline: [{ $project: { _id: 0, name: 1, color: 1 } }]
-        }
+          pipeline: [
+            { $project: { _id: 0, name: 1, color: 1, technology_id: 1 } },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          as: "technology",
+          from: "engineer-technology",
+          foreignField: "id",
+          localField: "product.technology_id",
+          pipeline: [{ $project: { _id: 0, name: 1, id: 1 } }],
+        },
       },
       {
         $lookup: {
@@ -53,11 +82,12 @@ class FindManyProductionOrderUsecase {
           from: "business-enterprise",
           foreignField: "id",
           localField: "enterprise_id",
-          pipeline: [{ $project: { _id: 0, short_name: 1 } }]
-        }
+          pipeline: [{ $project: { _id: 0, short_name: 1 } }],
+        },
       },
       {
         $project: {
+          technology: { $first: "$technology" },
           product: { $first: "$product" },
           enterprise: { $first: "$enterprise" },
           id: 1,
@@ -72,9 +102,9 @@ class FindManyProductionOrderUsecase {
           stage: 1,
           priority: 1,
           created_at: 1,
-        }
+        },
       },
-    ]
+    ];
   }
 }
 

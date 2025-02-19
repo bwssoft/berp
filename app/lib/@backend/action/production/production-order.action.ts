@@ -7,6 +7,7 @@ import {
   deleteOneProductionOrderUsecase,
   findManyProductionOrderUsecase,
   findOneProductionOrderUsecase,
+  updateOneProductionOrderLineItemUsecase,
   updateOneProductionOrderUsecase,
 } from "@/app/lib/@backend/usecase";
 import { createProductionOrderFromProposalUsecase } from "../../usecase/production/production-order/create-production-order-from-proposal.usecase";
@@ -48,9 +49,24 @@ export async function findManyProductionOrder(input: Filter<IProductionOrder>) {
   return await findManyProductionOrderUsecase.execute(input);
 }
 
-export async function createProductionOrderFromProposal(input: { proposal_id: string; scenario_id: string; }) {
-  await createProductionOrderFromProposalUsecase.execute(input)
-  revalidatePath(`/commercial/proposal/form/update?id=${input.proposal_id}`)
+export async function createProductionOrderFromProposal(input: {
+  proposal_id: string;
+  scenario_id: string;
+}) {
+  await createProductionOrderFromProposalUsecase.execute(input);
+  revalidatePath(`/commercial/proposal/form/update?id=${input.proposal_id}`);
+  revalidatePath("/production/production-order/management");
+  revalidatePath("/production/production-order/kanban");
+  revalidatePath("/production/production-order/dashboard");
+}
+
+export async function updateOneProductionOrderLineItem(
+  query: { id: string; line_item_id: string },
+  value: { configuration_profile_id: string | null },
+  proposal_id: string
+) {
+  await updateOneProductionOrderLineItemUsecase.execute(query, value);
+  revalidatePath(`/commercial/proposal/form/update?id=${proposal_id}`);
   revalidatePath("/production/production-order/management");
   revalidatePath("/production/production-order/kanban");
   revalidatePath("/production/production-order/dashboard");

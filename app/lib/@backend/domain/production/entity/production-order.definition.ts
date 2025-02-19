@@ -1,36 +1,35 @@
 export interface IProductionOrder {
-  id: string
-  client_id: string
-  enterprise_id: string
+  id: string;
+  client_id: string;
+  enterprise_id: string;
   proposal?: {
-    id: string
-    scenario_line_item_id: string
-  }
-  financial_order_id?: string
-  description?: string
-  line_items: LineItem[]
-  product_id: string
-  total_quantity: number
-  created_at: Date
-  code: number
-  stage: EProductionOrderStage
-  priority: EProductionOrderPriority
+    id: string;
+    scenario_line_item_id: string;
+  };
+  financial_order_id?: string;
+  description?: string;
+  line_items: LineItem[];
+  product_id: string;
+  total_quantity: number;
+  created_at: Date;
+  code: number;
+  stage: EProductionOrderStage;
+  priority: EProductionOrderPriority;
   process_execution?: {
     [user_id: string]: {
-      process_execution_id: string
-      start_check: boolean
-      start_time: Date
-      end_check: boolean
-      end_time: Date
-    }[]
-  }
+      process_execution_id: string;
+      start_check: boolean;
+      start_time: Date;
+      end_check: boolean;
+      end_time: Date;
+    }[];
+  };
 }
 
 interface LineItem {
-  id: string
-  configuration_profile_id?: string
-  parcial_quantity: number
-  is_shared: boolean
+  id: string;
+  configuration_profile_id: string | null;
+  parcial_quantity: number;
 }
 
 export enum EProductionOrderPriority {
@@ -46,7 +45,6 @@ export enum EProductionOrderStage {
   producing = "producing",
   completed = "completed",
 }
-
 
 import { IProductionProcessStep } from "./production-process.definition";
 
