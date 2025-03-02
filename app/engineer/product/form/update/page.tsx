@@ -1,4 +1,9 @@
-import { findManyInput, findManyProductCategory, findOneProduct } from "@/app/lib/@backend/action";
+import {
+  findManyInput,
+  findManyProductCategory,
+  findManyTechnology,
+  findOneProduct,
+} from "@/app/lib/@backend/action";
 import { ProductUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
@@ -28,7 +33,11 @@ export default async function Page(props: Props) {
     );
   }
 
-  const [inputs, categories] = await Promise.all([findManyInput({}), findManyProductCategory({})]);
+  const [inputs, categories, technologies] = await Promise.all([
+    findManyInput({}),
+    findManyProductCategory({}),
+    findManyTechnology(),
+  ]);
 
   return (
     <div>
@@ -47,6 +56,7 @@ export default async function Page(props: Props) {
           product={product}
           inputs={inputs}
           categories={categories}
+          technologies={technologies}
         />
       </div>
     </div>
