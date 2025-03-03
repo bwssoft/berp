@@ -11,3 +11,5 @@ export * from "./html-to-pdf";
 export * from "./remove-empty-values";
 export * from "./remove-null";
 export * from "./remove-undefined";
+export * from "./sleep";
+export * from "./compare-object";
