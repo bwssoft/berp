@@ -5,8 +5,11 @@ import { createOneConfigurationLogUsecase } from "@/app/lib/@backend/usecase";
 import { revalidatePath } from "next/cache";
 
 export async function createOneConfigurationLog(
-  configurationLog: Omit<IConfigurationLog, "id" | "created_at">
+  configurationLog: Omit<IConfigurationLog, "id" | "created_at" | "user_id">
 ) {
-  await createOneConfigurationLogUsecase.execute(configurationLog);
+  await createOneConfigurationLogUsecase.execute({
+    ...configurationLog,
+    user_id: crypto.randomUUID(),
+  });
   revalidatePath("/production/configuration-log");
 }
