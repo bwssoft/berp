@@ -4,7 +4,7 @@ import { cn } from "@/app/lib/util";
 import { Dialog } from "../../component";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { DialogTitle } from "@headlessui/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 
 interface Props {
