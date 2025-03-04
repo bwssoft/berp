@@ -35,7 +35,7 @@ export interface IConfigurationLog {
   profile_name: string;
   created_at: Date;
   user_id: string;
-  technology_id: boolean;
+  technology_id: string;
   need_double_check: boolean;
   has_double_check: boolean;
 }
