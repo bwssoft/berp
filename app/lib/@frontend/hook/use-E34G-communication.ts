@@ -51,13 +51,14 @@ interface ConfigurationLog {
 
 type DeviceResponse = string | undefined;
 
-let countdownTimeout: NodeJS.Timeout;
+interface Props {
+  onSerialConnected: () => void;
+  onDevicesIdentified: () => void;
+  technology_id?: string;
+}
 
-export function useE34GCommunication() {
-  const [isConfigurationDisabled, setIsConfigurationDisabled] =
-    useState<boolean>(true);
-  const [configurationDisabledTimer, setConfigurationDisabledTimer] =
-    useState<number>(10);
+export function useE34GCommunication(props: Props) {
+  const { onSerialConnected, onDevicesIdentified, technology_id } = props;
 
   const [identified, setIdentified] = useState<Identified[]>([]);
   const [identifiedLog, setIdentifiedLog] = useState<IdentifiedLog[]>([]);
@@ -106,9 +107,7 @@ export function useE34GCommunication() {
       description: "Equipamento conectado!",
       variant: "success",
     });
-
-    setIsConfigurationDisabled(true);
-    setConfigurationDisabledTimer(10);
+    onSerialConnected();
   };
 
   const {
@@ -442,13 +441,8 @@ export function useE34GCommunication() {
             return oldIdentifiers.concat({ port, isIdentified: false });
           });
         }
-
-        // vo buta aqui
-
-        setTimeout(() => {
-          setIsConfigurationDisabled(false);
-        }, 10000);
       }
+      onDevicesIdentified();
       setInIdentification(false);
     } catch (e) {
       console.error("[handleDeviceIdentification]", e);
@@ -458,6 +452,8 @@ export function useE34GCommunication() {
     devices: Identified[],
     desired_profile: IConfigurationProfile
   ) => {
+    // to do: tirar a responsabilidade dessa função de saber o objeto e salvar no banco de dados o resultado da configuração
+    if (!technology_id) return;
     try {
       setInConfiguration(true);
       const commands = parseCommands(desired_profile);
@@ -533,10 +529,8 @@ export function useE34GCommunication() {
         });
 
         delete desired_profile.config?.password;
-        const {
-          isEqual: all_fields_have_been_checked,
-          difference: fields_not_configured,
-        } = checkWithDifference(desired_profile.config, actual_profile);
+        const { isEqual: _, difference: fields_not_configured } =
+          checkWithDifference(desired_profile.config, actual_profile);
 
         const is_configured = configured_device.commands_sent.every(
           (c) => typeof c.response !== "undefined"
@@ -557,7 +551,7 @@ export function useE34GCommunication() {
           metadata: configured_device,
           profile_id: desired_profile.id,
           profile_name: desired_profile.name,
-          technology_id: "",
+          technology_id,
           need_double_check: true,
           has_double_check: false,
         };
@@ -589,9 +583,7 @@ export function useE34GCommunication() {
           step_label: "Salvando no banco de dados",
           total_steps,
         });
-        await createOneConfigurationLog(
-          JSON.parse(JSON.stringify(configuration_result))
-        );
+        await createOneConfigurationLog(configuration_result);
         if (is_configured) {
           updateConfigurationLog({
             imei,
@@ -615,6 +607,7 @@ export function useE34GCommunication() {
       }
       setInConfiguration(false);
     } catch (e) {
+      setInConfiguration(false);
       console.error("[handleDeviceConfiguration]", e);
     }
   };
@@ -707,14 +700,6 @@ export function useE34GCommunication() {
     previousPorts.current = ports;
   }, [ports]);
 
-  useEffect(() => {
-    if (isConfigurationDisabled && configurationDisabledTimer > 0) {
-      countdownTimeout = setTimeout(() => {
-        setConfigurationDisabledTimer(configurationDisabledTimer - 1);
-      }, 1000);
-    }
-  }, [isConfigurationDisabled, configurationDisabledTimer]);
-
   // useEffect(() => {
   //   const interval = setInterval(() => {
   //     if (inConfiguration) return
@@ -735,7 +720,5 @@ export function useE34GCommunication() {
     inConfiguration,
     inIdentification,
     handleForgetPort,
-    isConfigurationDisabled,
-    configurationDisabledTimer,
   };
 }
