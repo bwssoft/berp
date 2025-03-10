@@ -258,7 +258,8 @@ export function useE34GCommunication(props: Props) {
       const _status = status ? E34GParser.status(status) : undefined;
       return {
         profile: {
-          ip: cxip ? E34GParser.ip(cxip) : undefined,
+          ip_primary: cxip ? E34GParser.ip_primary(cxip) : undefined,
+          ip_secondary: cxip ? E34GParser.ip_secondary(cxip) : undefined,
           dns: cxip ? E34GParser.dns(cxip) : undefined,
           apn: _check?.apn ?? undefined,
           timezone: _check?.timezone ?? undefined,

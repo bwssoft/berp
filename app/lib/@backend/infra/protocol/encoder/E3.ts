@@ -5,14 +5,8 @@ type APN = {
 };
 
 type IP = {
-  primary?: {
-    ip: string;
-    port: string;
-  };
-  secondary?: {
-    ip: string;
-    port: string;
-  };
+  ip: string;
+  port: string;
 };
 
 type DNS = {
@@ -25,22 +19,20 @@ type Password = {
   new: string;
 };
 
-type DataTransmission = {
-  on: string;
-  off: string;
-};
+type DataTransmission = number
 
 type Timezone = number;
 
 type Encoder =
   | { command: "apn"; args: APN }
-  | { command: "ip"; args: IP }
+  | { command: "ip_primary"; args: IP }
+  | { command: "ip_secondary"; args: IP }
   | { command: "dns"; args: DNS }
   | { command: "password"; args: Password }
   | { command: "timezone"; args: Timezone };
 
 export class E3Encoder {
-  static encoder(props: Encoder) {
+  static encoder(props: Encoder): string | undefined {
     const { command, args } = props;
     const commands = E3Encoder.commands();
     return commands[command](args as any);
@@ -54,22 +46,14 @@ export class E3Encoder {
     return `APN*${props.address}*${props.user ?? ""}*${props.password ?? ""}`;
   }
 
-  static ip(props: IP): string[] | undefined {
-    const result: string[] = [];
+  static ip_primary(props: IP): string | undefined {
+    if (!props?.ip || !props?.port) return undefined 
+    return `IP1#${props.ip}#${props.port}#`
+  }
 
-    if (props?.primary && props?.primary?.ip && props?.primary?.port) {
-      result.push(`IP1#${props.primary.ip}#${props.primary.port}#`);
-    }
-
-    if (props?.secondary && props?.secondary?.ip && props?.secondary?.port) {
-      result.push(`IP2#${props.secondary.ip}#${props.secondary.port}#`);
-    }
-
-    if (result.length === 0) {
-      return undefined;
-    }
-
-    return result;
+  static ip_secondary(props: IP): string | undefined {
+    if (!props?.ip || !props?.port) return undefined 
+    return `IP2#${props.ip}#${props.port}#`
   }
 
   static dns(props: DNS): string | undefined {
@@ -101,21 +85,15 @@ export class E3Encoder {
     return `MODE${props}`;
   }
 
-  static data_transmission(props: DataTransmission): string[] | undefined {
-    const result = [];
-    if (props?.on) {
-      result.push(`HB${props.on}`);
-    }
-    if (props?.off) {
-      result.push(`SHB${props.off}`);
-    }
-
-    if (result.length === 0) {
-      return undefined;
-    }
-
-    return result;
+  static data_transmission_on(props: DataTransmission): string | undefined {
+    if(typeof props !== "number" || Number.isNaN(props)) return undefined
+    return `HB${props}`
   }
+
+  static data_transmission_off(props: DataTransmission): string | undefined {
+    if(typeof props !== "number" || Number.isNaN(props)) return undefined
+    return `SHB${props}`
+  } 
 
   static odometer(props: number): string | undefined {
     if (typeof props !== "number" || Number.isNaN(props) || props === 0) {
@@ -240,12 +218,14 @@ export class E3Encoder {
   static commands() {
     return {
       apn: E3Encoder.apn,
-      ip: E3Encoder.ip,
+      ip_primary: E3Encoder.ip_primary,
+      ip_secondary: E3Encoder.ip_secondary,
       dns: E3Encoder.dns,
       password: E3Encoder.password,
       timezone: E3Encoder.timezone,
       lock_type: E3Encoder.lock_type,
-      data_transmission: E3Encoder.data_transmission,
+      data_transmission_on: E3Encoder.data_transmission_on,
+      data_transmission_off: E3Encoder.data_transmission_off,
       odometer: E3Encoder.odometer,
       keep_alive: E3Encoder.keep_alive,
       accelerometer_sensitivity: E3Encoder.accelerometer_sensitivity,

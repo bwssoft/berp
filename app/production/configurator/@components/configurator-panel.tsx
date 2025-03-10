@@ -9,6 +9,9 @@ import {
   DevicesToConfigureTable,
 } from "@/app/lib/@frontend/ui/table";
 import { useConfiguratorPanel } from "./use-configurator-panel";
+import { useConfiguration, useE34G } from "@/app/lib/@frontend/hook";
+import { ISerialPort } from "@/app/lib/@frontend/hook/use-serial-port";
+import { useEffect } from "react";
 
 interface Props {
   configurationProfile: IConfigurationProfile | null;
@@ -16,26 +19,8 @@ interface Props {
 }
 export function ConfiguratorPanel(props: Props) {
   const { configurationProfile, technology } = props;
-  const {
-    handleConfigurationAction,
-    ports,
-    identified,
-    identifiedLog,
-    inIdentification,
-    getDeviceProfile,
-    handleForgetPort,
-    isConfigurationDisabled,
-    configurationDisabledTimer,
-    requestPort,
-    wrongImeiDetected,
-    setWrongImeiDetected,
-    configurationLog,
-    inConfiguration,
-    configuration,
-  } = useConfiguratorPanel({
-    configurationProfile,
-    technology,
-  });
+
+  const { identified, handleConfiguration } = useConfiguration({ technology });
   return (
     <>
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -66,41 +51,44 @@ export function ConfiguratorPanel(props: Props) {
         </div>
         <div className="flex flex-col gap-6 w-full">
           <div className="flow-root w-full">
-            <ProgressBar log={identifiedLog} inProgress={inIdentification} />
+            {/* <ProgressBar log={identifiedLog} inProgress={inIdentification} /> */}
             <DevicesToConfigureTable
-              data={identified.map((d) => ({
-                ...d,
-                getDeviceProfile,
-                handleForgetPort,
-                progress: identifiedLog.find((el) => el.port === d.port)
-                  ?.progress,
+              data={identified.map((i) => ({
+                ...i,
+                getDeviceProfile: () => {
+                  return null as any;
+                },
+                handleForgetPort: () => {
+                  return null as any;
+                },
+                isIdentified: false,
+                port: {} as ISerialPort,
               }))}
             />
           </div>
           <div className="flex justify-between gap-2">
             <div className="flex gap-2">
               <Button
-                disabled={isConfigurationDisabled}
                 variant="default"
                 className="h-fit bg-indigo-600 hover:bg-indigo-500"
-                onClick={handleConfigurationAction}
+                onClick={() => handleConfiguration(configurationProfile)}
               >
                 Configurar{" "}
-                {isConfigurationDisabled && `(${configurationDisabledTimer})`}
+                {/* {isConfigurationDisabled && `(${configurationDisabledTimer})`} */}
               </Button>
             </div>
 
             <Button
               variant="outline"
               className="h-fit whitespace-nowrap "
-              onClick={requestPort}
+              // onClick={requestPort}
             >
               Nova Porta
             </Button>
           </div>
         </div>
       </div>
-      <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+      {/* <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
             Etapa 3: Verificação
@@ -120,7 +108,7 @@ export function ConfiguratorPanel(props: Props) {
       <WrongImeiDetectedDialog
         wrongImeiDetected={wrongImeiDetected}
         setWrongImeiDetected={setWrongImeiDetected}
-      />
+      /> */}
     </>
   );
 }

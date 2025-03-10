@@ -109,10 +109,12 @@ const input2 = [
 const configMapped: { [key in keyof IConfigurationProfile["config"]]: string } =
   {
     accelerometer_sensitivity: "Sensibilidade do Acelerômetro",
-    ip: "Ip",
+    ip_primary: "Ip Primário",
+    ip_secondary: "Ip Secundário",
     apn: "Apn",
     cornering_position_update: "Atualização de posição em curva",
-    data_transmission: "Tempo de transmissão",
+    data_transmission_on: "Tempo de transmissão Ligado",
+    data_transmission_off: "Tempo de transmissão Desligado",
     dns: "Dns",
     economy_mode: "Modo de Economia",
     keep_alive: "Tempo de TX",

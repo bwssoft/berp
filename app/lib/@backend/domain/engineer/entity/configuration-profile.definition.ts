@@ -46,15 +46,13 @@ type Config = {
     old?: string;
     new?: string;
   };
-  ip?: {
-    primary?: {
-      ip?: string;
-      port?: number;
-    };
-    secondary?: {
-      ip?: string;
-      port?: number;
-    };
+  ip_primary?: {
+    ip?: string;
+    port?: number;
+  };
+  ip_secondary?: {
+    ip?: string;
+    port?: number;
   };
   dns?: {
     address?: string;
@@ -65,10 +63,8 @@ type Config = {
     user?: string;
     password?: string;
   };
-  data_transmission?: {
-    on?: number;
-    off?: number;
-  };
+  data_transmission_on?: number
+  data_transmission_off?: number
   timezone?: number;
   lock_type?: number;
   odometer?: number;

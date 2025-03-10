@@ -5,29 +5,20 @@ type APN = {
 };
 
 type IP = {
-  primary?: {
-    ip?: string;
-    port?: number;
-  };
-  secondary?: {
-    ip?: string;
-    port?: number;
-  };
+  ip: string;
+  port: number;
 };
 
 type DNS = {
-  address?: string;
-  port?: number;
+  address: string;
+  port: number;
 };
 
 type Timezone = number;
 
 type Locktype = number;
 
-type DataTransmission = {
-  on?: number;
-  off?: number;
-};
+type DataTransmission = number
 
 type Odometer = number;
 
@@ -101,7 +92,8 @@ interface Check extends Object {
   apn?: APN;
   timezone?: Timezone;
   lock_type?: Locktype;
-  data_transmission?: DataTransmission;
+  data_transmission_on?: DataTransmission;
+  data_transmission_off?: DataTransmission;
   odometer?: Odometer;
   keep_alive?: KeepAlive;
   accelerometer_sensitivity?: AccelerometerSensitivity;
@@ -158,90 +150,93 @@ export class E34GParser {
       Object.entries(obj).forEach((entrie) => {
         const [key, value] = entrie;
         if (key === "APN") {
-          parsed["apn"] = this.apn(value);
+          parsed["apn"] = E34GParser.apn(value);
         }
         if (key === "TZ") {
-          parsed["timezone"] = this.timezone(value);
+          parsed["timezone"] = E34GParser.timezone(value);
         }
         if (key === "OUT_MODE") {
-          parsed["lock_type"] = this.lock_type(value);
+          parsed["lock_type"] = E34GParser.lock_type(value);
         }
         if (key === "HB") {
-          parsed["data_transmission"] = this.data_transmission(value);
+          parsed["data_transmission_on"] = E34GParser.data_transmission_on(value);
+          parsed["data_transmission_off"] = E34GParser.data_transmission_off(value);
         }
         if (key === "DK") {
-          parsed["odometer"] = this.odometer(value);
+          parsed["odometer"] = E34GParser.odometer(value);
         }
         if (key === "TX") {
-          parsed["keep_alive"] = this.keep_alive(value);
+          parsed["keep_alive"] = E34GParser.keep_alive(value);
         }
         if (key === "ZD") {
           parsed["accelerometer_sensitivity"] =
-            this.accelerometer_sensitivity(value);
+            E34GParser.accelerometer_sensitivity(value);
         }
         if (key === "SDMS") {
-          parsed["economy_mode"] = this.economy_mode(value);
+          parsed["economy_mode"] = E34GParser.economy_mode(value);
         }
         if (key === "LBS") {
-          parsed["lbs_position"] = this.lbs_position(value);
+          parsed["lbs_position"] = E34GParser.lbs_position(value);
         }
         if (key === "TUR") {
           parsed["cornering_position_update"] =
-            this.cornering_position_update(value);
+            E34GParser.cornering_position_update(value);
         }
         if (key === "LED") {
-          parsed["led"] = this.led(value);
+          parsed["led"] = E34GParser.led(value);
         }
         if (key === "IV") {
-          parsed["virtual_ignition"] = this.virtual_ignition(value);
+          parsed["virtual_ignition"] = E34GParser.virtual_ignition(value);
         }
         if (key === "OD") {
-          parsed["max_speed"] = this.max_speed(value);
+          parsed["max_speed"] = E34GParser.max_speed(value);
         }
 
         if (key === "ACCEL") {
           parsed["virtual_ignition_by_movement"] =
-            this.virtual_ignition_by_movement(value);
+            E34GParser.virtual_ignition_by_movement(value);
         }
 
         if (key === "PROT_COM") {
-          parsed["communication_type"] = this.communication_type(value);
+          parsed["communication_type"] = E34GParser.communication_type(value);
         }
 
         if (key === "PROT") {
-          parsed["protocol_type"] = this.protocol_type(value);
+          parsed["protocol_type"] = E34GParser.protocol_type(value);
         }
 
         if (key === "AF") {
-          parsed["anti_theft"] = this.anti_theft(value);
+          parsed["anti_theft"] = E34GParser.anti_theft(value);
         }
         if (key === "JD") {
-          parsed["jammer_detection"] = this.jammer_detection(value);
+          parsed["jammer_detection"] = E34GParser.jammer_detection(value);
         }
         if (key === "TDET") {
-          parsed["angle_adjustment"] = this.angle_adjustment(value);
+          parsed["angle_adjustment"] = E34GParser.angle_adjustment(value);
         }
         if (key === "DC") {
-          parsed["lock_type_progression"] = this.lock_type_progression(value);
+          parsed["lock_type_progression"] =
+            E34GParser.lock_type_progression(value);
         }
         if (key === "Voltage") {
-          parsed["ignition_by_voltage"] = this.ignition_by_voltage(value);
+          parsed["ignition_by_voltage"] = E34GParser.ignition_by_voltage(value);
         }
         if (key === "VOLTAGE") {
           parsed["virtual_ignition_by_voltage"] =
-            this.virtual_ignition_by_voltage(value);
+            E34GParser.virtual_ignition_by_voltage(value);
         }
         if (key === "IN1_MODE") {
-          parsed["input_1"] = this.input_1(value);
+          parsed["input_1"] = E34GParser.input_1(value);
         }
         if (key === "IN2_MODE") {
-          parsed["input_2"] = this.input_2(value);
+          parsed["input_2"] = E34GParser.input_2(value);
         }
         if (key === "GS") {
-          parsed["sensitivity_adjustment"] = this.sensitivity_adjustment(value);
+          parsed["sensitivity_adjustment"] =
+            E34GParser.sensitivity_adjustment(value);
         }
         if (key === "ACK") {
-          parsed["ack"] = this.ack(value);
+          parsed["ack"] = E34GParser.ack(value);
         }
       });
     }
@@ -303,28 +298,31 @@ export class E34GParser {
   /*
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
    */
-  static ip(input: string) {
-    const result: IP = {};
+  static ip_primary(input: string) {
+    let result: IP;
     const ips = input
       .replace(/\s+/g, "")
       .replace(/IP1=|IP2=/g, "")
       .split(";");
-    const ip1 = ips?.[0];
-    const ip2 = ips?.[1];
-    if (ip1) {
-      const [ip, port] = ip1.split(",");
-      result["primary"] = {
-        ip,
-        port: Number.isNaN(port) ? undefined : Number(port),
-      };
-    }
-    if (ip2) {
-      const [ip, port] = ip2.split(",");
-      result["secondary"] = {
-        ip,
-        port: Number.isNaN(port) ? undefined : Number(port),
-      };
-    }
+    const raw = ips?.[0];
+    const [ip, port] = raw.split(",");
+    result = { ip, port: Number(port) }
+    if (Object.keys(result).length === 0) return undefined;
+    return result;
+  }
+
+  /*
+   * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
+  */
+  static ip_secondary(input: string) {
+    let result: IP;
+    const ips = input
+      .replace(/\s+/g, "")
+      .replace(/IP1=|IP2=/g, "")
+      .split(";");
+    const raw = ips?.[1];
+    const [ip, port] = raw.split(",");
+    result = { ip, port: Number(port) }
     if (Object.keys(result).length === 0) return undefined;
     return result;
   }
@@ -333,7 +331,7 @@ export class E34GParser {
    * @example: DNS=dns.com:2000
    */
   static dns(input: string): DNS | undefined {
-    let result: DNS = {};
+    let result: DNS = {} as DNS
     const regex = input
       .replace(/\s+/g, "")
       .replace(/IP1=|IP2=|DNS=/g, "")
@@ -378,15 +376,22 @@ export class E34GParser {
 
   /*
    *@example 30, 180
+  */
+  static data_transmission_on(input: string): DataTransmission | undefined {
+    const [on, _] = input.split(",");
+    if (!on) return undefined;
+    if (Number.isNaN(on)) return undefined;
+    return Number(on)
+  }
+  
+  /*
+   *@example 30, 180
    */
-  static data_transmission(input: string): DataTransmission | undefined {
-    const [on, off] = input.split(",");
-    if (!on || !off) return undefined;
-    if (Number.isNaN(on) || Number.isNaN(off)) return undefined;
-    return {
-      on: Number(on),
-      off: Number(off),
-    };
+  static data_transmission_off(input: string): DataTransmission | undefined {
+    const [_, off] = input.split(",");
+    if (!off) return undefined;
+    if (Number.isNaN(off)) return undefined;
+    return Number(off)
   }
 
   /*

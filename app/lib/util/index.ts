@@ -13,3 +13,4 @@ export * from "./remove-null";
 export * from "./remove-undefined";
 export * from "./sleep";
 export * from "./compare-object";
+export * from "./typed-object-entries";

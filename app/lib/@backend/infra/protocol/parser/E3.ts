@@ -5,29 +5,20 @@ type APN = {
 };
 
 type IP = {
-  primary?: {
-    ip?: string;
-    port?: number;
-  };
-  secondary?: {
-    ip?: string;
-    port?: number;
-  };
+  ip: string;
+  port: number;
 };
 
 type DNS = {
-  address?: string;
-  port?: number;
+  address: string;
+  port: number;
 };
 
 type Timezone = number;
 
 type Locktype = number;
 
-type DataTransmission = {
-  on?: number;
-  off?: number;
-};
+type DataTransmission = number
 
 type Odometer = number;
 
@@ -65,7 +56,8 @@ interface Check extends Object {
   apn?: APN;
   timezone?: Timezone;
   lock_type?: Locktype;
-  data_transmission?: DataTransmission;
+  data_transmission_on?: DataTransmission;
+  data_transmission_off?: DataTransmission;
   odometer?: Odometer;
   keep_alive?: KeepAlive;
   accelerometer_sensitivity?: AccelerometerSensitivity;
@@ -124,7 +116,8 @@ export class E3Parser {
           parsed["lock_type"] = this.lock_type(value);
         }
         if (key === "HB") {
-          parsed["data_transmission"] = this.data_transmission(value);
+          parsed["data_transmission_on"] = this.data_transmission_on(value);
+          parsed["data_transmission_off"] = this.data_transmission_off(value);
         }
         if (key === "DK") {
           parsed["odometer"] = this.odometer(value);
@@ -229,25 +222,31 @@ export class E3Parser {
   /*
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
    */
-  static ip(input: string) {
-    const result: IP = {};
-    const ips = input.replace(/IP1=|IP2=/g, "").split(" ");
-    const ip1 = ips?.[0];
-    const ip2 = ips?.[1];
-    if (ip1) {
-      const [ip, port] = ip1.split(":");
-      result["primary"] = {
-        ip,
-        port: Number.isNaN(port) ? undefined : Number(port),
-      };
-    }
-    if (ip2) {
-      const [ip, port] = ip2.split(":");
-      result["secondary"] = {
-        ip,
-        port: Number.isNaN(port) ? undefined : Number(port),
-      };
-    }
+  static ip_primary(input: string) {
+    let result: IP;
+    const ips = input
+      .replace(/\s+/g, "")
+      .replace(/IP1=|IP2=/g, "")
+      .split(";");
+    const raw = ips?.[0];
+    const [ip, port] = raw.split(",");
+    result = { ip, port: Number(port) }
+    if (Object.keys(result).length === 0) return undefined;
+    return result;
+  }
+
+  /*
+   * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
+  */
+  static ip_secondary(input: string) {
+    let result: IP;
+    const ips = input
+      .replace(/\s+/g, "")
+      .replace(/IP1=|IP2=/g, "")
+      .split(";");
+    const raw = ips?.[1];
+    const [ip, port] = raw.split(",");
+    result = { ip, port: Number(port) }
     if (Object.keys(result).length === 0) return undefined;
     return result;
   }
@@ -256,7 +255,7 @@ export class E3Parser {
    * @example: DNS=dns.com:2000
    */
   static dns(input: string): DNS | undefined {
-    let result: DNS = {};
+    let result: DNS = {} as DNS;
     const dns = input.replace(/DNS=/g, "").split(":");
     const address = dns?.[0];
     const port = dns?.[1];
@@ -297,17 +296,25 @@ export class E3Parser {
     return Number(input);
   }
 
+
+  /*
+   *@example 30, 180
+  */
+   static data_transmission_on(input: string): DataTransmission | undefined {
+    const [on, _] = input.split(",");
+    if (!on) return undefined;
+    if (Number.isNaN(on)) return undefined;
+    return Number(on)
+  }
+  
   /*
    *@example 30, 180
    */
-  static data_transmission(input: string): DataTransmission | undefined {
-    const [on, off] = input.split(",");
-    if (!on || !off) return undefined;
-    if (Number.isNaN(on) || Number.isNaN(off)) return undefined;
-    return {
-      on: Number(on),
-      off: Number(off),
-    };
+  static data_transmission_off(input: string): DataTransmission | undefined {
+    const [_, off] = input.split(",");
+    if (!off) return undefined;
+    if (Number.isNaN(off)) return undefined;
+    return Number(off)
   }
 
   /*
