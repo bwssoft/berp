@@ -22,7 +22,6 @@ export const columns: ColumnDef<{
   iccid?: string;
   et?: string;
   port: ISerialPort;
-  isIdentified: boolean;
   progress?: number;
   getDeviceProfile: (port: ISerialPort) => Promise<{
     profile: IConfigurationProfile["config"];
@@ -36,7 +35,8 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const device = row.original;
       const not_identified = !device.imei && !device.iccid && !device.et;
-      const status = device.isIdentified
+      const is_identified = device.imei && device.iccid && device.et;
+      const status = is_identified
         ? "fully_identified"
         : not_identified
           ? "not_identified"
@@ -49,7 +49,7 @@ export const columns: ColumnDef<{
             <div className="h-1.5 w-1.5 rounded-full bg-current" />
           </div>
           <div className={cn("hidden font-semibold sm:block", text[status])}>
-            {device.isIdentified
+            {is_identified
               ? "Identificado"
               : not_identified
                 ? "Não Identificado"
@@ -80,20 +80,7 @@ export const columns: ColumnDef<{
     accessorKey: "et",
     cell: ({ row }) => {
       const device = row.original;
-      return (
-        <p className="truncate w-[200px]" title={device.et}>
-          {device.et ?? "--"}
-        </p>
-      );
-    },
-  },
-  {
-    header: "Conexão",
-    accessorKey: "progress",
-    cell: ({ row }) => {
-      const device = row.original;
-      const { progress } = device;
-      return `${progress}%`;
+      return <p title={device.et}>{device.et ?? "--"}</p>;
     },
   },
 ];
