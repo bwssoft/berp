@@ -21,13 +21,16 @@ const text = {
 
 export const columns: ColumnDef<{
   id: string;
-  port: ISerialPort;
-  imei?: string;
-  iccid?: string;
+  equipment: {
+    imei: string;
+    iccid?: string;
+  };
   is_configured: boolean;
   not_configured: any;
-  profile_name: string;
-  technology_id: string;
+  profile: {
+    name: string;
+    id: string;
+  };
 }>[] = [
   {
     header: "Configurado",
@@ -50,51 +53,30 @@ export const columns: ColumnDef<{
   },
   {
     header: "Imei",
-    accessorKey: "imei",
+    accessorKey: "equipment",
     cell: ({ row }) => {
       const device = row.original;
-      return device.imei ?? "--";
+      return (
+        <p title={device.equipment.imei}>{device.equipment.imei ?? "--"}</p>
+      );
     },
   },
   {
     header: "Iccid",
-    accessorKey: "iccid",
+    accessorKey: "equipment",
     cell: ({ row }) => {
       const device = row.original;
-      return <p title={device.iccid}>{device.iccid ?? "--"}</p>;
+      return (
+        <p title={device.equipment.iccid}>{device.equipment.iccid ?? "--"}</p>
+      );
     },
   },
   {
     header: "Nome do perfil",
-    accessorKey: "profile_name",
+    accessorKey: "profile",
     cell: ({ row }) => {
       const device = row.original;
-      return device.profile_name ?? "--";
-    },
-  },
-  {
-    header: "Ações",
-    accessorKey: "port",
-    cell: ({ row }) => {
-      const configuration = row.original;
-      const href = `/configurator/review?id=${configuration.id}`;
-      return (
-        <div className="flex gap-2">
-          <Link href={href} target="_blank">
-            <Button
-              variant="outline"
-              className="p-2"
-              title="Verificar logs de configuração"
-            >
-              <DocumentMagnifyingGlassIcon
-                width={16}
-                height={16}
-                title="Verificar logs de configuração"
-              />
-            </Button>
-          </Link>
-        </div>
-      );
+      return device.profile.name ?? "--";
     },
   },
 ];
