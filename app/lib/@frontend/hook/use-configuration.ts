@@ -1,8 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useE34G } from "./use-E34G";
-import { IConfigurationProfile, ITechnology } from "../../@backend/domain";
+import {
+  IConfigurationLog,
+  IConfigurationProfile,
+  ITechnology,
+} from "../../@backend/domain";
 import { toast } from "./use-toast";
-import { checkWithDifference, typedObjectEntries } from "../../util";
+import { checkWithDifference } from "../../util";
+import { ISerialPort } from "./use-serial-port";
+import { createManyConfigurationLog } from "../../@backend/action";
 
 namespace Namespace {
   export interface UseConfigurationProps {
@@ -10,19 +16,21 @@ namespace Namespace {
   }
 
   export interface Identified {
+    port: ISerialPort;
+    equipment: Equipment;
+  }
+
+  interface Equipment {
     imei: string | undefined;
     iccid: string | undefined;
     et: string | undefined;
   }
 
-  export interface Configuration {
-    imei: string;
-    configured: boolean;
-    configuration_profile_log_id: string;
-  }
+  export interface Configuration extends IConfigurationLog {}
 }
 
 export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
+  const { technology } = props;
   const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
   const inIdentificationProcess = useRef(false);
 
@@ -35,6 +43,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
     handleIdentificationProcess,
     handleConfigurationProcess,
     handleGetProfile,
+    requestPort,
   } = useE34G();
 
   // function that handle with configuration process, check if the process was successful and save result on database
@@ -53,39 +62,87 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
       // configure devices
       const configurationResult = await handleConfigurationProcess(
-        ports,
+        identified
+          .filter((i) => i.equipment.imei && i.equipment.et)
+          .map(({ port }) => port),
         configuration_profile
       );
 
       // obtain device profile after configuration process
-      const profilesAfterConfiguration = await handleGetProfile(ports);
+      const profileResult = await handleGetProfile(ports);
 
-      // check if each profile is the desired profile
       delete configuration_profile.config?.password;
-      profilesAfterConfiguration.forEach((profile) => {
-        const { isEqual, difference } = checkWithDifference(
-          configuration_profile.config,
-          profile
-        );
-      });
 
-      // check if each message sent has response
-      configurationResult.forEach((result) => {
-        if (!result) return;
-        Object.entries(result).every(
-          ([key, value]) => typeof value !== "undefined"
-        );
-      });
+      // check if each message sent has response and configured to the desired profile
+      const result = configurationResult
+        .map(({ port, response, messages, end_time, init_time }) => {
+          if (!response || !messages || !end_time || !init_time)
+            return undefined;
+
+          const { equipment } = identified.find((el) => el.port) ?? {};
+
+          if (!equipment || !technology) return undefined;
+
+          const profileAfterConfiguration = profileResult.find(
+            (el) => el.port === port
+          );
+
+          const { difference } = checkWithDifference(
+            configuration_profile.config,
+            profileAfterConfiguration?.response
+          );
+
+          const configuration_log: Omit<
+            IConfigurationLog,
+            "id" | "created_at" | "user_id"
+          > = {
+            profile: {
+              id: configuration_profile.id,
+              name: configuration_profile.name,
+              config: configuration_profile.config,
+            },
+            technology: {
+              id: technology.id,
+              name: technology.name.brand,
+            },
+            equipment: {
+              imei: equipment.imei!,
+              et: equipment.et!,
+              iccid: equipment.iccid,
+            },
+            double_check: {
+              has: false,
+              need: true,
+            },
+            is_configured: Object.entries(response ?? {}).every(
+              ([_, value]) => typeof value !== "undefined"
+            ),
+            metadata: {
+              commands: messages.map(({ key, message }) => ({
+                request: message,
+                response: response[key],
+              })),
+              end_time,
+              init_time,
+            },
+            not_configured: difference,
+            raw_rofile: profileAfterConfiguration?.raw,
+            processed_profile: profileAfterConfiguration?.response,
+          };
+
+          return configuration_log;
+        })
+        .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
       // save result on database
-      // createManyConfigurationProfileLog()
+      const dataSavedOnDb = await createManyConfigurationLog(result);
 
       // update state with configuration process result
-      // setConfiguration(some data)
+      setConfigured((prev) => prev.concat(dataSavedOnDb));
 
       inConfigurationProcess.current = false;
     },
-    [ports]
+    [identified, ports, technology]
   );
 
   // useEffect used to identify devices when connected to serial ports
@@ -94,17 +151,22 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       if (!inIdentificationProcess.current && ports.length) {
         inIdentificationProcess.current = true;
         const identified = await handleIdentificationProcess(ports);
-        setIdentified((prev) => [
-          ...prev,
-          ...identified.filter((item) => item !== undefined),
-        ]);
+        setIdentified(
+          identified
+            .filter((el) => typeof el.response !== "undefined")
+            .map(({ port, response }) => ({ port, equipment: response }))
+        );
         inIdentificationProcess.current = false;
+      } else if (!inIdentificationProcess.current && !ports.length) {
+        setIdentified([]);
       }
     })();
   }, [ports]);
 
   return {
+    configured,
     identified,
     handleConfiguration,
+    requestPort,
   };
 };
