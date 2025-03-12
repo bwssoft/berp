@@ -20,7 +20,10 @@ interface Props {
 export function ConfiguratorPanel(props: Props) {
   const { configurationProfile, technology } = props;
 
-  const { identified, handleConfiguration } = useConfiguration({ technology });
+  const { identified, configured, handleConfiguration, requestPort } =
+    useConfiguration({
+      technology,
+    });
   return (
     <>
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -54,7 +57,10 @@ export function ConfiguratorPanel(props: Props) {
             {/* <ProgressBar log={identifiedLog} inProgress={inIdentification} /> */}
             <DevicesToConfigureTable
               data={identified.map((i) => ({
-                ...i,
+                imei: i.equipment.imei,
+                iccid: i.equipment.iccid,
+                et: i.equipment.et,
+                port: i.port,
                 getDeviceProfile: () => {
                   return null as any;
                 },
@@ -62,7 +68,6 @@ export function ConfiguratorPanel(props: Props) {
                   return null as any;
                 },
                 isIdentified: false,
-                port: {} as ISerialPort,
               }))}
             />
           </div>
@@ -81,14 +86,14 @@ export function ConfiguratorPanel(props: Props) {
             <Button
               variant="outline"
               className="h-fit whitespace-nowrap "
-              // onClick={requestPort}
+              onClick={requestPort}
             >
               Nova Porta
             </Button>
           </div>
         </div>
       </div>
-      {/* <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+      <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
             Etapa 3: Verificação
@@ -98,14 +103,9 @@ export function ConfiguratorPanel(props: Props) {
             enviados.
           </p>
         </div>
-        <ProgressBar
-          log={configurationLog}
-          inProgress={inConfiguration}
-          hintSelector={(el: any) => el.label}
-        />
-        <DevicesConfiguredTable data={configuration} />
+        <DevicesConfiguredTable data={configured} />
       </div>
-      <WrongImeiDetectedDialog
+      {/*<WrongImeiDetectedDialog
         wrongImeiDetected={wrongImeiDetected}
         setWrongImeiDetected={setWrongImeiDetected}
       /> */}
