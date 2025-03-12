@@ -38,6 +38,7 @@ export function TechnologyAndConfigurationProfileSearchForm(props: Props) {
                   onOptionChange={([doc]) => handleChangeTechnology(doc?.id)}
                   type="single"
                   defaultValue={technology ? [technology] : []}
+                  placeholder="Escolha a tecnologia"
                 />
               </div>
             </div>
@@ -61,6 +62,7 @@ export function TechnologyAndConfigurationProfileSearchForm(props: Props) {
                   defaultValue={
                     configurationProfile ? [configurationProfile] : []
                   }
+                  placeholder="Escolha o perfil de confguração"
                 />
               </div>
             </div>
