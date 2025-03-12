@@ -18,7 +18,12 @@ export async function createOneConfigurationLog(
 export async function createManyConfigurationLog(
   input: Omit<IConfigurationLog, "id" | "created_at" | "user_id">[]
 ) {
-  await createManyConfigurationLogUsecase.execute(
-    input.map((i) => ({ ...i, user_id: crypto.randomUUID() }))
-  );
+  const _input = input.map((i) => ({
+    ...i,
+    created_at: new Date(),
+    id: crypto.randomUUID(),
+    user_id: crypto.randomUUID(),
+  }));
+  await createManyConfigurationLogUsecase.execute(_input);
+  return _input;
 }
