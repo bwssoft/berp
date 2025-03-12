@@ -57,9 +57,8 @@ const generateMessages = (
 };
 
 export const useE34G = () => {
-  const { ports, openPort, closePort, getReader, writeToPort } = useSerialPort(
-    {}
-  );
+  const { ports, openPort, closePort, getReader, writeToPort, requestPort } =
+    useSerialPort({});
 
   // hook that handles communication process, like retries, delay between messages
   const { sendMultipleMessages } = useCommunication<ISerialPort>({
@@ -96,9 +95,10 @@ export const useE34G = () => {
               transport: port,
               messages,
             });
-            return response;
+            return { port, response };
           } catch (error) {
             console.error("[ERROR] handleIdentificationProcess", error);
+            return { port };
           }
         })
       );
@@ -108,17 +108,9 @@ export const useE34G = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "CHECK", key: "check", transform: E34GParser.check },
-        {
-          message: "CXIP",
-          key: "cxip",
-          transform: (raw: string) => ({
-            ip_primary: E34GParser.ip_primary(raw),
-            ip_secondary: E34GParser.ip_secondary(raw),
-            dns: E34GParser.dns(raw),
-          }),
-        },
-        { message: "STATUS", key: "status", transform: E34GParser.status },
+        { message: "CHECK", key: "check" },
+        { message: "CXIP", key: "cxip" },
+        { message: "STATUS", key: "status" },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -127,13 +119,23 @@ export const useE34G = () => {
               transport: port,
               messages,
             });
-            return {
-              ...check,
-              ...cxip,
-              horimeter: E34GParser.horimeter(status?.["HR"] ?? ""),
+            const processed_check = E34GParser.check(check);
+            const processed_status = E34GParser.status(status);
+            const ip_primary = E34GParser.ip_primary(cxip);
+            const ip_secondary = E34GParser.ip_secondary(cxip);
+            const dns = E34GParser.dns(cxip);
+            const horimeter = E34GParser.horimeter(processed_status.HR);
+            const response = {
+              ...(processed_check ?? {}),
+              ip_primary,
+              ip_secondary,
+              dns,
+              horimeter,
             };
+            return { port, response, raw: { check, cxip, status } };
           } catch (error) {
             console.error("[ERROR] handleGetProfile", error);
+            return { port };
           }
         })
       );
@@ -145,21 +147,32 @@ export const useE34G = () => {
       ports: ISerialPort[],
       configuration_profile: IConfigurationProfile
     ) => {
-      const commands = generateMessages(configuration_profile);
-      const messages = typedObjectEntries(commands).map(([key, message]) => ({
-        key,
-        message,
-      }));
+      const generatedMessages = generateMessages(configuration_profile);
+      const configurationCommands = typedObjectEntries(generatedMessages).map(
+        ([key, message]) => ({
+          key,
+          message,
+        })
+      );
       return await Promise.all(
         ports.map(async (port) => {
           try {
+            const init_time = Date.now();
             const response = await sendMultipleMessages({
               transport: port,
-              messages,
+              messages: configurationCommands,
             });
-            return response;
+            const end_time = Date.now();
+            return {
+              port,
+              response,
+              messages: configurationCommands,
+              init_time,
+              end_time,
+            };
           } catch (error) {
             console.error("[ERROR] handleConfigurationProcess", error);
+            return { port };
           }
         })
       );
@@ -172,5 +185,6 @@ export const useE34G = () => {
     handleIdentificationProcess,
     handleGetProfile,
     handleConfigurationProcess,
+    requestPort,
   };
 };
