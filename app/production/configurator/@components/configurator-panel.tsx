@@ -52,7 +52,7 @@ export function ConfiguratorPanel(props: Props) {
             identificado
           </p>
         </div>
-        <div className="flex flex-col gap-6 w-full">
+        <div className="border-b border-gray-900/10 pb-12 flex flex-col gap-6 w-full">
           <div className="flow-root w-full">
             {/* <ProgressBar log={identifiedLog} inProgress={inIdentification} /> */}
             <DevicesToConfigureTable
