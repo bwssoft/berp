@@ -26,7 +26,6 @@ export default async function Page(props: Props) {
       id: technology_id,
     }),
   ]);
-  console.log("server - side");
 
   return (
     <div>
