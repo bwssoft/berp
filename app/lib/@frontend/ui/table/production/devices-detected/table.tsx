@@ -6,19 +6,21 @@ import { ISerialPort } from "@/app/lib/@frontend/hook/use-serial-port";
 
 interface Props {
   data: {
-    imei?: string;
-    iccid?: string;
-    et?: string;
+    equipment: {
+      imei?: string;
+      et?: string;
+      iccid?: string;
+    };
     port: ISerialPort;
   }[];
 }
-export function DevicesToAutoTestTable(props: Props) {
+export function DevicesDetectedTable(props: Props) {
   const { data } = props;
   return (
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => data.imei}
+      mobileDisplayValue={(data) => data.equipment.imei}
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full"
     />

@@ -14,3 +14,4 @@ export * from "./remove-undefined";
 export * from "./sleep";
 export * from "./compare-object";
 export * from "./typed-object-entries";
+export * from "./is-imei";

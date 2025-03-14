@@ -5,7 +5,7 @@ import { Button } from "@/app/lib/@frontend/ui/component";
 import { TechnologyAndConfigurationProfileSearchForm } from "@/app/lib/@frontend/ui/form";
 import {
   DevicesConfiguredTable,
-  DevicesToConfigureTable,
+  DevicesDetectedTable,
 } from "@/app/lib/@frontend/ui/table";
 import { useConfiguration } from "@/app/lib/@frontend/hook";
 
@@ -50,22 +50,7 @@ export function ConfiguratorPanel(props: Props) {
         </div>
         <div className="border-b border-gray-900/10 pb-12 flex flex-col gap-6 w-full">
           <div className="flow-root w-full">
-            {/* <ProgressBar log={identifiedLog} inProgress={inIdentification} /> */}
-            <DevicesToConfigureTable
-              data={identified.map((i) => ({
-                imei: i.equipment.imei,
-                iccid: i.equipment.iccid,
-                et: i.equipment.et,
-                port: i.port,
-                getDeviceProfile: () => {
-                  return null as any;
-                },
-                handleForgetPort: () => {
-                  return null as any;
-                },
-                isIdentified: false,
-              }))}
-            />
+            <DevicesDetectedTable data={identified} />
           </div>
           <div className="flex justify-between gap-2">
             <div className="flex gap-2">
@@ -101,10 +86,6 @@ export function ConfiguratorPanel(props: Props) {
         </div>
         <DevicesConfiguredTable data={configured} />
       </div>
-      {/*<WrongImeiDetectedDialog
-        wrongImeiDetected={wrongImeiDetected}
-        setWrongImeiDetected={setWrongImeiDetected}
-      /> */}
     </>
   );
 }

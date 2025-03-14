@@ -2,23 +2,25 @@
 
 import { columns } from "./columns";
 import { DataTable } from "../../../component";
-import { ISerialPort } from "@/app/lib/@frontend/hook/use-serial-port";
 
 interface Props {
   data: {
-    imei?: string;
-    iccid?: string;
-    et?: string;
-    port: ISerialPort;
+    equipment: {
+      imei: string;
+      et: string;
+      iccid?: string;
+    };
+    current_id?: string;
+    is_successful: boolean;
   }[];
 }
-export function DevicesToConfigureTable(props: Props) {
+export function DevicesIdentifiedTable(props: Props) {
   const { data } = props;
   return (
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => data.imei}
+      mobileDisplayValue={(data) => data.equipment.imei}
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full"
     />

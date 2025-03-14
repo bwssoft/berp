@@ -217,6 +217,55 @@ export const useE3Plus = () => {
     [sendMultipleMessages]
   );
 
+  const handleDeviceIdentificationProcess = useCallback(
+    async (port: ISerialPort, identifier: string) => {
+      const messages = [
+        {
+          key: "identifier",
+          message: `13041SETSN,${identifier}`,
+        },
+      ] as const;
+      try {
+        const init_time = Date.now();
+        const response = await sendMultipleMessages({
+          transport: port,
+          messages,
+        });
+        const end_time = Date.now();
+        return {
+          port,
+          response,
+          messages,
+          init_time,
+          end_time,
+        };
+      } catch (error) {
+        console.error("[ERROR] handleDeviceIdentificationProcess", error);
+        return { port };
+      }
+    },
+    [sendMultipleMessages]
+  );
+
+  const handleGetIdentification = useCallback(
+    async (port: ISerialPort) => {
+      const messages = [
+        { message: "IMEI", key: "imei", transform: E3Parser.imei },
+      ] as const;
+      try {
+        const response = await sendMultipleMessages({
+          transport: port,
+          messages,
+        });
+        return { port, response: response.imei };
+      } catch (error) {
+        console.error("[ERROR] handleGetIdentification", error);
+        return { port };
+      }
+    },
+    [sendMultipleMessages]
+  );
+
   return {
     ports,
     handleIdentificationProcess,
@@ -224,5 +273,7 @@ export const useE3Plus = () => {
     handleConfigurationProcess,
     requestPort,
     handleAutoTestProcess,
+    handleDeviceIdentificationProcess,
+    handleGetIdentification,
   };
 };

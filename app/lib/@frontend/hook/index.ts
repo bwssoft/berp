@@ -9,3 +9,4 @@ export * from "./use-e3-plus-4g";
 export * from "./use-technology";
 export * from "./use-communication";
 export * from "./use-configuration";
+export * from "./use-device-id-writer";

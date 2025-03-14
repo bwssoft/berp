@@ -1,23 +1,27 @@
 "use client";
 
 import { ITechnology } from "@/app/lib/@backend/domain";
-import { Button } from "@/app/lib/@frontend/ui/component";
+import { Button, Input } from "@/app/lib/@frontend/ui/component";
 import {
-  DevicesAutoTestedTable,
+  DeviceIdentificationForm,
+  TechnologySearchForm,
+} from "@/app/lib/@frontend/ui/form";
+import {
   DevicesDetectedTable,
+  DevicesIdentifiedTable,
 } from "@/app/lib/@frontend/ui/table";
-import { useAutoTest } from "@/app/lib/@frontend/hook";
-import { TechnologySearchForm } from "@/app/lib/@frontend/ui/form/production/technology-search";
+import { useDeviceIdWriter } from "@/app/lib/@frontend/hook";
 
 interface Props {
   technology: ITechnology | null;
 }
-export function AutoTestPanel(props: Props) {
+export function IdWriterPanel(props: Props) {
   const { technology } = props;
 
-  const { identified, autotest, handleAutoTest, requestPort } = useAutoTest({
-    technology,
-  });
+  const { identified, process, handleDeviceIdentification, requestPort } =
+    useDeviceIdWriter({
+      technology,
+    });
 
   return (
     <>
@@ -27,7 +31,7 @@ export function AutoTestPanel(props: Props) {
             Etapa 1: Definição da tecnologia
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Escolha a technologia para o auto teste
+            Escolha a technologia para o processo de escrita do identificador
           </p>
         </div>
         <div className="flex flex-col gap-6 w-full">
@@ -49,16 +53,10 @@ export function AutoTestPanel(props: Props) {
             <DevicesDetectedTable data={identified} />
           </div>
           <div className="flex justify-between gap-2">
-            <div className="flex gap-2">
-              <Button
-                variant="default"
-                className="h-fit bg-indigo-600 hover:bg-indigo-500"
-                onClick={() => handleAutoTest()}
-              >
-                Auto Test{" "}
-              </Button>
-            </div>
-
+            <DeviceIdentificationForm
+              onSubmit={handleDeviceIdentification}
+              disabled={false}
+            />
             <Button
               variant="outline"
               className="h-fit whitespace-nowrap "
@@ -75,10 +73,10 @@ export function AutoTestPanel(props: Props) {
             Etapa 3: Verificação
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Uma lista de todos os equipamentos testados.
+            Uma lista de todos os equipamentos identificados.
           </p>
         </div>
-        <DevicesAutoTestedTable data={autotest} />
+        <DevicesIdentifiedTable data={process} />
       </div>
     </>
   );
