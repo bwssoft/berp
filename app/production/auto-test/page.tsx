@@ -1,12 +1,8 @@
-import {
-  findOneConfigurationProfile,
-  findOneTechnology,
-} from "@/app/lib/@backend/action";
-import { ConfiguratorPanel } from "./@components/configurator-panel";
+import { findOneTechnology } from "@/app/lib/@backend/action";
+import { AutoTestPanel } from "./@components/auto-test";
 
 interface Props {
   searchParams: {
-    configuration_profile_id?: string;
     technology_id?: string;
   };
 }
@@ -15,17 +11,12 @@ export default async function Page(props: Props) {
   const date = new Date();
 
   const {
-    searchParams: { configuration_profile_id, technology_id },
+    searchParams: { technology_id },
   } = props;
 
-  const [configurationProfile, technology] = await Promise.all([
-    findOneConfigurationProfile({
-      id: configuration_profile_id,
-    }),
-    findOneTechnology({
-      id: technology_id,
-    }),
-  ]);
+  const technology = await findOneTechnology({
+    id: technology_id,
+  });
 
   return (
     <div>
@@ -35,7 +26,7 @@ export default async function Page(props: Props) {
             Configurador
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Ferramenta para configurar
+            Ferramenta para testar
             <a href="#" className="text-gray-900">
               dispositivos IoT.
             </a>{" "}
@@ -46,10 +37,7 @@ export default async function Page(props: Props) {
           </p>
         </div>
       </div>
-      <ConfiguratorPanel
-        configurationProfile={configurationProfile}
-        technology={technology}
-      />
+      <AutoTestPanel technology={technology} />
     </div>
   );
 }

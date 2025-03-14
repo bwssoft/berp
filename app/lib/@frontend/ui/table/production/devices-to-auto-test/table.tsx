@@ -12,7 +12,7 @@ interface Props {
     port: ISerialPort;
   }[];
 }
-export function DevicesToConfigureTable(props: Props) {
+export function DevicesToAutoTestTable(props: Props) {
   const { data } = props;
   return (
     <DataTable

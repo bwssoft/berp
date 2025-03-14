@@ -19,7 +19,7 @@ type Password = {
   new: string;
 };
 
-type DataTransmission = number
+type DataTransmission = number;
 
 type Timezone = number;
 
@@ -35,6 +35,7 @@ export class E3Encoder {
   static encoder(props: Encoder): string | undefined {
     const { command, args } = props;
     const commands = E3Encoder.commands();
+    console.log("command", command);
     return commands[command](args as any);
   }
 
@@ -47,13 +48,13 @@ export class E3Encoder {
   }
 
   static ip_primary(props: IP): string | undefined {
-    if (!props?.ip || !props?.port) return undefined 
-    return `IP1#${props.ip}#${props.port}#`
+    if (!props?.ip || !props?.port) return undefined;
+    return `IP1#${props.ip}#${props.port}#`;
   }
 
   static ip_secondary(props: IP): string | undefined {
-    if (!props?.ip || !props?.port) return undefined 
-    return `IP2#${props.ip}#${props.port}#`
+    if (!props?.ip || !props?.port) return undefined;
+    return `IP2#${props.ip}#${props.port}#`;
   }
 
   static dns(props: DNS): string | undefined {
@@ -86,14 +87,14 @@ export class E3Encoder {
   }
 
   static data_transmission_on(props: DataTransmission): string | undefined {
-    if(typeof props !== "number" || Number.isNaN(props)) return undefined
-    return `HB${props}`
+    if (typeof props !== "number" || Number.isNaN(props)) return undefined;
+    return `HB${props}`;
   }
 
   static data_transmission_off(props: DataTransmission): string | undefined {
-    if(typeof props !== "number" || Number.isNaN(props)) return undefined
-    return `SHB${props}`
-  } 
+    if (typeof props !== "number" || Number.isNaN(props)) return undefined;
+    return `SHB${props}`;
+  }
 
   static odometer(props: number): string | undefined {
     if (typeof props !== "number" || Number.isNaN(props) || props === 0) {

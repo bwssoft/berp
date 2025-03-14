@@ -1,40 +1,34 @@
 "use client";
 
-import { cn } from "@/app/lib/util";
 import { ColumnDef } from "@tanstack/react-table";
+import { cn } from "@/app/lib/util";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",
-  configured: "text-green-500 bg-green-800/20",
+  success: "text-green-500 bg-green-800/20",
   error: "text-rose-500 bg-rose-800/20",
 };
 
 const text = {
   progress: "text-gray-800",
-  configured: "text-green-800",
+  success: "text-green-800",
   error: "text-rose-800",
 };
-
 export const columns: ColumnDef<{
-  id: string;
   equipment: {
     imei: string;
+    et: string;
     iccid?: string;
   };
-  is_configured: boolean;
-  not_configured: any;
-  profile: {
-    name: string;
-    id: string;
-  };
+  is_successful: boolean;
 }>[] = [
   {
     header: "Configurado",
     accessorKey: "checked",
     cell: ({ row }) => {
       const device = row.original;
-      const status = device.is_configured ? "configured" : "error";
-      const label = device.is_configured ? "Configurado" : "Não Configurado";
+      const status = device.is_successful ? "success" : "error";
+      const label = device.is_successful ? "Sucesso" : "Falha";
       return (
         <div className="flex items-center gap-1">
           <div className={cn(statuses[status], "flex-none rounded-full p-1")}>
@@ -65,14 +59,6 @@ export const columns: ColumnDef<{
       return (
         <p title={device.equipment.iccid}>{device.equipment.iccid ?? "--"}</p>
       );
-    },
-  },
-  {
-    header: "Nome do perfil",
-    accessorKey: "profile",
-    cell: ({ row }) => {
-      const device = row.original;
-      return device.profile.name ?? "--";
     },
   },
 ];

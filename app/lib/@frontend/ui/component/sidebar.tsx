@@ -158,6 +158,7 @@ const navigation: NavItem[] = [
         name: "Ferramentas",
         children: [
           { name: "Configurador", pathname: "/production/configurator" },
+          { name: "Auto test", pathname: "/production/auto-test" },
         ],
       },
     ],

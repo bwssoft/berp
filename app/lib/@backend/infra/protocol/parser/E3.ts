@@ -18,7 +18,7 @@ type Timezone = number;
 
 type Locktype = number;
 
-type DataTransmission = number
+type DataTransmission = number;
 
 type Odometer = number;
 
@@ -224,29 +224,23 @@ export class E3Parser {
    */
   static ip_primary(input: string) {
     let result: IP;
-    const ips = input
-      .replace(/\s+/g, "")
-      .replace(/IP1=|IP2=/g, "")
-      .split(";");
+    const ips = input.replace(/IP1=|IP2=/g, "").split(" ");
     const raw = ips?.[0];
-    const [ip, port] = raw.split(",");
-    result = { ip, port: Number(port) }
+    const [ip, port] = raw.split(":");
+    result = { ip, port: Number(port) };
     if (Object.keys(result).length === 0) return undefined;
     return result;
   }
 
   /*
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
-  */
+   */
   static ip_secondary(input: string) {
     let result: IP;
-    const ips = input
-      .replace(/\s+/g, "")
-      .replace(/IP1=|IP2=/g, "")
-      .split(";");
+    const ips = input.replace(/IP1=|IP2=/g, "").split(" ");
     const raw = ips?.[1];
-    const [ip, port] = raw.split(",");
-    result = { ip, port: Number(port) }
+    const [ip, port] = raw.split(":");
+    result = { ip, port: Number(port) };
     if (Object.keys(result).length === 0) return undefined;
     return result;
   }
@@ -296,17 +290,16 @@ export class E3Parser {
     return Number(input);
   }
 
-
   /*
    *@example 30, 180
-  */
-   static data_transmission_on(input: string): DataTransmission | undefined {
+   */
+  static data_transmission_on(input: string): DataTransmission | undefined {
     const [on, _] = input.split(",");
     if (!on) return undefined;
     if (Number.isNaN(on)) return undefined;
-    return Number(on)
+    return Number(on);
   }
-  
+
   /*
    *@example 30, 180
    */
@@ -314,7 +307,7 @@ export class E3Parser {
     const [_, off] = input.split(",");
     if (!off) return undefined;
     if (Number.isNaN(off)) return undefined;
-    return Number(off)
+    return Number(off);
   }
 
   /*

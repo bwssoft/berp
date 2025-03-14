@@ -1,41 +1,37 @@
 "use client";
 
-import { IConfigurationProfile, ITechnology } from "@/app/lib/@backend/domain";
+import { ITechnology } from "@/app/lib/@backend/domain";
 import { Button } from "@/app/lib/@frontend/ui/component";
-import { TechnologyAndConfigurationProfileSearchForm } from "@/app/lib/@frontend/ui/form";
 import {
-  DevicesConfiguredTable,
-  DevicesToConfigureTable,
+  DevicesAutoTestedTable,
+  DevicesToAutoTestTable,
 } from "@/app/lib/@frontend/ui/table";
-import { useConfiguration } from "@/app/lib/@frontend/hook";
+import { useAutoTest } from "@/app/lib/@frontend/hook";
+import { TechnologySearchForm } from "@/app/lib/@frontend/ui/form/production/technology-search";
 
 interface Props {
-  configurationProfile: IConfigurationProfile | null;
   technology: ITechnology | null;
 }
-export function ConfiguratorPanel(props: Props) {
-  const { configurationProfile, technology } = props;
+export function AutoTestPanel(props: Props) {
+  const { technology } = props;
 
-  const { identified, configured, handleConfiguration, requestPort } =
-    useConfiguration({
-      technology,
-    });
+  const { identified, autotest, handleAutoTest, requestPort } = useAutoTest({
+    technology,
+  });
+
   return (
     <>
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Etapa 1: Definição da tecnologia e perfil de configuração
+            Etapa 1: Definição da tecnologia
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Escolha a technologia e o perfil de configuração
+            Escolha a technologia para o auto teste
           </p>
         </div>
         <div className="flex flex-col gap-6 w-full">
-          <TechnologyAndConfigurationProfileSearchForm
-            configurationProfile={configurationProfile}
-            technology={technology}
-          />
+          <TechnologySearchForm technology={technology} />
         </div>
       </div>
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -50,20 +46,12 @@ export function ConfiguratorPanel(props: Props) {
         </div>
         <div className="border-b border-gray-900/10 pb-12 flex flex-col gap-6 w-full">
           <div className="flow-root w-full">
-            {/* <ProgressBar log={identifiedLog} inProgress={inIdentification} /> */}
-            <DevicesToConfigureTable
+            <DevicesToAutoTestTable
               data={identified.map((i) => ({
                 imei: i.equipment.imei,
                 iccid: i.equipment.iccid,
                 et: i.equipment.et,
                 port: i.port,
-                getDeviceProfile: () => {
-                  return null as any;
-                },
-                handleForgetPort: () => {
-                  return null as any;
-                },
-                isIdentified: false,
               }))}
             />
           </div>
@@ -72,9 +60,9 @@ export function ConfiguratorPanel(props: Props) {
               <Button
                 variant="default"
                 className="h-fit bg-indigo-600 hover:bg-indigo-500"
-                onClick={() => handleConfiguration(configurationProfile)}
+                onClick={() => handleAutoTest()}
               >
-                Configurar{" "}
+                Auto Test{" "}
                 {/* {isConfigurationDisabled && `(${configurationDisabledTimer})`} */}
               </Button>
             </div>
@@ -95,16 +83,11 @@ export function ConfiguratorPanel(props: Props) {
             Etapa 3: Verificação
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Uma lista de todos os equipamentos configurados e os comandos
-            enviados.
+            Uma lista de todos os equipamentos testados.
           </p>
         </div>
-        <DevicesConfiguredTable data={configured} />
+        <DevicesAutoTestedTable data={autotest} />
       </div>
-      {/*<WrongImeiDetectedDialog
-        wrongImeiDetected={wrongImeiDetected}
-        setWrongImeiDetected={setWrongImeiDetected}
-      /> */}
     </>
   );
 }

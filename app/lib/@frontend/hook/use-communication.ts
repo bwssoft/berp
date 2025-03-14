@@ -5,12 +5,17 @@ export interface Message<TransformReturn = any> {
   message: string;
   key: string;
   transform?: (raw: any) => TransformReturn;
+  timeout?: number;
 }
 
 export interface Props<Transport> {
   openTransport: (transport: Transport) => Promise<void>;
   closeTransport: (transport: Transport) => Promise<void>;
-  sendMessage: (transport: Transport, message: string) => Promise<any>;
+  sendMessage: (
+    transport: Transport,
+    message: string,
+    timeout?: number
+  ) => Promise<any>;
   options?: {
     delayBetweenMessages?: number;
     maxRetriesPerMessage?: number;
@@ -36,12 +41,13 @@ export function useCommunication<Transport>(props: Props<Transport>) {
     async <TransformReturn>(
       transport: Transport,
       message: string,
-      transform: (raw: any) => TransformReturn
+      transform: (raw: any) => TransformReturn,
+      timeout?: number
     ): Promise<TransformReturn | undefined> => {
       let attempts = 0;
       while (attempts < maxRetriesPerMessage) {
         try {
-          const rawResponse = await sendMessage(transport, message);
+          const rawResponse = await sendMessage(transport, message, timeout);
           if (rawResponse != null) {
             return transform(rawResponse);
           }
@@ -77,12 +83,13 @@ export function useCommunication<Transport>(props: Props<Transport>) {
       try {
         await openTransport(transport);
 
-        for (const { message, key, transform } of messages) {
+        for (const { message, key, transform, timeout } of messages) {
           const _transform = transform ?? ((raw: any) => raw);
           const response = await sendSingleMessage(
             transport,
             message,
-            _transform
+            _transform,
+            timeout
           );
           responses[key as keyof MessagesResult<M>] = response as any;
           await sleep(delayBetweenMessages);

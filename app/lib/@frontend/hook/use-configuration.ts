@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useE34G } from "./use-E34G";
 import {
   IConfigurationLog,
   IConfigurationProfile,
@@ -9,6 +8,7 @@ import { toast } from "./use-toast";
 import { checkWithDifference } from "../../util";
 import { ISerialPort } from "./use-serial-port";
 import { createManyConfigurationLog } from "../../@backend/action";
+import { useTechnology } from "./use-technology";
 
 namespace Namespace {
   export interface UseConfigurationProps {
@@ -32,19 +32,19 @@ namespace Namespace {
 export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
   const { technology } = props;
   const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
-  const inIdentificationProcess = useRef(false);
+  const isIdentifying = useRef(false);
 
   const [configured, setConfigured] = useState<Namespace.Configuration[]>([]);
-  const inConfigurationProcess = useRef(false);
+  const isConfiguring = useRef(false);
 
-  // hook that handle interactions with E34G devices
+  // hook that handle interactions with devices
   const {
     ports,
     handleIdentificationProcess,
     handleConfigurationProcess,
     handleGetProfile,
     requestPort,
-  } = useE34G();
+  } = useTechnology(technology);
 
   // function that handle with configuration process, check if the process was successful and save result on database
   const handleConfiguration = useCallback(
@@ -58,7 +58,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
         return;
       }
 
-      inConfigurationProcess.current = true;
+      isConfiguring.current = true;
 
       // configure devices
       const configurationResult = await handleConfigurationProcess(
@@ -79,7 +79,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
           if (!response || !messages || !end_time || !init_time)
             return undefined;
 
-          const { equipment } = identified.find((el) => el.port) ?? {};
+          const { equipment } = identified.find((el) => el.port === port) ?? {};
 
           if (!equipment || !technology) return undefined;
 
@@ -140,7 +140,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       // update state with configuration process result
       setConfigured((prev) => prev.concat(dataSavedOnDb));
 
-      inConfigurationProcess.current = false;
+      isConfiguring.current = false;
     },
     [identified, ports, technology]
   );
@@ -148,16 +148,16 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
   // useEffect used to identify devices when connected to serial ports
   useEffect(() => {
     (async () => {
-      if (!inIdentificationProcess.current && ports.length) {
-        inIdentificationProcess.current = true;
+      if (!isIdentifying.current && ports.length) {
+        isIdentifying.current = true;
         const identified = await handleIdentificationProcess(ports);
         setIdentified(
           identified
             .filter((el) => typeof el.response !== "undefined")
             .map(({ port, response }) => ({ port, equipment: response }))
         );
-        inIdentificationProcess.current = false;
-      } else if (!inIdentificationProcess.current && !ports.length) {
+        isIdentifying.current = false;
+      } else if (!isIdentifying.current && !ports.length) {
         setIdentified([]);
       }
     })();

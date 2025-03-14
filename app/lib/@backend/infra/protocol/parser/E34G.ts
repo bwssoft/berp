@@ -18,7 +18,7 @@ type Timezone = number;
 
 type Locktype = number;
 
-type DataTransmission = number
+type DataTransmission = number;
 
 type Odometer = number;
 
@@ -68,26 +68,6 @@ type IgnitionByVoltage = {
   t2: number;
 };
 
-export type AutoTest = {
-  SN: string;
-  IC: string;
-  FW: string;
-  GPS: string;
-  GPSf: string;
-  GSM: string;
-  LTE: string;
-  IN1: string;
-  IN2: string;
-  OUT: string;
-  ACEL: string;
-  VCC: string;
-  ACELC: string; //"MC3632"
-  ACELP: string; //"1"
-  CHARGER: string; //"OK"
-  ID_ACEL: string; //"71"
-  ID_MEM: string; //"C22536"
-};
-
 interface Check extends Object {
   apn?: APN;
   timezone?: Timezone;
@@ -120,6 +100,26 @@ interface Check extends Object {
 
 interface Status {
   [key: string]: string;
+}
+
+export interface AutoTest {
+  ACELC: string;
+  ACELP: string;
+  BATT_VOLT: string;
+  CHARGER: string;
+  FW: string;
+  GPS: string;
+  GPSf: string;
+  GSM: string;
+  IC: string;
+  ID_ACEL: string;
+  ID_MEM: string;
+  IN1: string;
+  IN2: string;
+  LTE: string;
+  OUT: string;
+  SN: string;
+  VCC: string;
 }
 
 export class E34GParser {
@@ -159,8 +159,10 @@ export class E34GParser {
           parsed["lock_type"] = E34GParser.lock_type(value);
         }
         if (key === "HB") {
-          parsed["data_transmission_on"] = E34GParser.data_transmission_on(value);
-          parsed["data_transmission_off"] = E34GParser.data_transmission_off(value);
+          parsed["data_transmission_on"] =
+            E34GParser.data_transmission_on(value);
+          parsed["data_transmission_off"] =
+            E34GParser.data_transmission_off(value);
         }
         if (key === "DK") {
           parsed["odometer"] = E34GParser.odometer(value);
@@ -306,14 +308,14 @@ export class E34GParser {
       .split(";");
     const raw = ips?.[0];
     const [ip, port] = raw.split(",");
-    result = { ip, port: Number(port) }
+    result = { ip, port: Number(port) };
     if (Object.keys(result).length === 0) return undefined;
     return result;
   }
 
   /*
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
-  */
+   */
   static ip_secondary(input: string) {
     let result: IP;
     const ips = input
@@ -322,7 +324,7 @@ export class E34GParser {
       .split(";");
     const raw = ips?.[1];
     const [ip, port] = raw.split(",");
-    result = { ip, port: Number(port) }
+    result = { ip, port: Number(port) };
     if (Object.keys(result).length === 0) return undefined;
     return result;
   }
@@ -331,7 +333,7 @@ export class E34GParser {
    * @example: DNS=dns.com:2000
    */
   static dns(input: string): DNS | undefined {
-    let result: DNS = {} as DNS
+    let result: DNS = {} as DNS;
     const regex = input
       .replace(/\s+/g, "")
       .replace(/IP1=|IP2=|DNS=/g, "")
@@ -376,14 +378,14 @@ export class E34GParser {
 
   /*
    *@example 30, 180
-  */
+   */
   static data_transmission_on(input: string): DataTransmission | undefined {
     const [on, _] = input.split(",");
     if (!on) return undefined;
     if (Number.isNaN(on)) return undefined;
-    return Number(on)
+    return Number(on);
   }
-  
+
   /*
    *@example 30, 180
    */
@@ -391,7 +393,7 @@ export class E34GParser {
     const [_, off] = input.split(",");
     if (!off) return undefined;
     if (Number.isNaN(off)) return undefined;
-    return Number(off)
+    return Number(off);
   }
 
   /*

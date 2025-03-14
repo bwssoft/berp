@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { E34GEncoder, E34GParser } from "../../@backend/infra/protocol";
+import { useCallback } from "react";
+import { E3Encoder, E3Parser } from "../../@backend/infra/protocol";
 import { typedObjectEntries } from "../../util";
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
@@ -8,10 +8,13 @@ import { IConfigurationProfile } from "../../@backend/domain";
 type ConfigKeys = keyof IConfigurationProfile["config"];
 
 const readResponse = async (
-  reader: ReadableStreamDefaultReader<Uint8Array>
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+  command: string
 ): Promise<string | undefined> => {
+  console.log("command", command);
   const decoder = new TextDecoder();
   let buffer = "";
+  let foundCommandResponse = false;
   const timeoutPromise = new Promise<undefined>((resolve) =>
     setTimeout(() => resolve(undefined), 500)
   );
@@ -20,13 +23,19 @@ const readResponse = async (
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
+
       const chunk = decoder.decode(value);
       buffer += chunk;
+
       let lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
       for (const line of lines) {
         if (line.length > 0) {
-          return line;
+          if (line.includes(`SMS:${command}`)) {
+            foundCommandResponse = true;
+          } else if (foundCommandResponse) {
+            return line;
+          }
         }
       }
     }
@@ -47,16 +56,14 @@ const generateMessages = (
     : [];
   Object.entries(profile.config).forEach(([message, args]) => {
     if (optional_functions_to_remove.includes(message)) return;
-    const _message = E34GEncoder.encoder({ command: message, args } as any);
+    const _message = E3Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
-    response[message as ConfigKeys] = (
-      Array.isArray(_message) ? _message[0] : _message
-    ) as string;
+    response[message as ConfigKeys] = _message;
   });
   return response;
 };
 
-export const useE34G = () => {
+export const useE3Plus = () => {
   const { ports, openPort, closePort, getReader, writeToPort, requestPort } =
     useSerialPort({});
 
@@ -68,7 +75,7 @@ export const useE34G = () => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
       await writeToPort(port, message);
-      const response = await readResponse(reader);
+      const response = await readResponse(reader, message);
       await reader.cancel();
       reader.releaseLock();
       return response;
@@ -80,13 +87,13 @@ export const useE34G = () => {
     },
   });
 
-  // functions to interact with E34G via serial port
+  // functions to interact with E3 via serial port
   const handleIdentificationProcess = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "IMEI", key: "imei", transform: E34GParser.imei },
-        { message: "ICCID", key: "iccid", transform: E34GParser.iccid },
-        { message: "ET", key: "et", transform: E34GParser.et },
+        { message: "IMEI", key: "imei", transform: E3Parser.imei },
+        { message: "ICCID", key: "iccid", transform: E3Parser.iccid },
+        { message: "ET", key: "et", transform: E3Parser.et },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -95,6 +102,7 @@ export const useE34G = () => {
               transport: port,
               messages,
             });
+            console.log("response", response);
             return { port, response };
           } catch (error) {
             console.error("[ERROR] handleIdentificationProcess", error);
@@ -119,18 +127,15 @@ export const useE34G = () => {
               transport: port,
               messages,
             });
-            const processed_check = E34GParser.check(check);
-            const processed_status = E34GParser.status(status);
-            const ip_primary = E34GParser.ip_primary(cxip);
-            const ip_secondary = E34GParser.ip_secondary(cxip);
-            const dns = E34GParser.dns(cxip);
-            const horimeter = E34GParser.horimeter(processed_status.HR);
+            const processed_check = E3Parser.check(check);
+            const ip_primary = E3Parser.ip_primary(cxip);
+            const ip_secondary = E3Parser.ip_secondary(cxip);
+            const dns = E3Parser.dns(cxip);
             const response = {
               ...(processed_check ?? {}),
               ip_primary,
               ip_secondary,
               dns,
-              horimeter,
             };
             return { port, response, raw: { check, cxip, status } };
           } catch (error) {
@@ -180,11 +185,44 @@ export const useE34G = () => {
     [sendMultipleMessages]
   );
 
+  const handleAutoTestProcess = useCallback(
+    async (ports: ISerialPort[]) => {
+      const messages = [
+        { key: "autotest", message: "AUTOTEST", timeout: 25000 },
+      ];
+      return await Promise.all(
+        ports.map(async (port) => {
+          try {
+            const init_time = Date.now();
+            const response = await sendMultipleMessages({
+              transport: port,
+              messages,
+            });
+            const end_time = Date.now();
+            return {
+              port,
+              response,
+              messages,
+              init_time,
+              end_time,
+              analysis: {},
+            };
+          } catch (error) {
+            console.error("[ERROR] handleAutoTestProcess", error);
+            return { port };
+          }
+        })
+      );
+    },
+    [sendMultipleMessages]
+  );
+
   return {
     ports,
     handleIdentificationProcess,
     handleGetProfile,
     handleConfigurationProcess,
     requestPort,
+    handleAutoTestProcess,
   };
 };
