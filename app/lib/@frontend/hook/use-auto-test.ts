@@ -39,7 +39,7 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
     requestPort,
   } = useTechnology(technology);
 
-  // function that handle with auto test process, check if the process was successful and save result on database
+  // function that handle the auto test process, check if the process was successful and save result on database
   const handleAutoTest = useCallback(async () => {
     isAutoTesting.current = true;
 
@@ -97,7 +97,7 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
     isAutoTesting.current = false;
   }, [identified, ports, technology]);
 
-  // useEffect used to identify devices when connected to serial ports
+  // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     (async () => {
       if (!isIdentifying.current && ports.length) {

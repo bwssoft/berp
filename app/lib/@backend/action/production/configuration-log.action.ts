@@ -9,10 +9,8 @@ import {
 export async function createOneConfigurationLog(
   input: Omit<IConfigurationLog, "id" | "created_at" | "user_id">
 ) {
-  await createOneConfigurationLogUsecase.execute({
-    ...input,
-    user_id: crypto.randomUUID(),
-  });
+  const _input = { ...input, user_id: crypto.randomUUID() };
+  return await createOneConfigurationLogUsecase.execute(_input);
 }
 
 export async function createManyConfigurationLog(
@@ -20,10 +18,7 @@ export async function createManyConfigurationLog(
 ) {
   const _input = input.map((i) => ({
     ...i,
-    created_at: new Date(),
-    id: crypto.randomUUID(),
     user_id: crypto.randomUUID(),
   }));
-  await createManyConfigurationLogUsecase.execute(_input);
-  return _input;
+  return await createManyConfigurationLogUsecase.execute(_input);
 }

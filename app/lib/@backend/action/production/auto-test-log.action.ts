@@ -8,10 +8,7 @@ export async function createManyAutoTestLog(
 ) {
   const _input = input.map((i) => ({
     ...i,
-    created_at: new Date(),
-    id: crypto.randomUUID(),
     user_id: crypto.randomUUID(),
   }));
-  await createManyAutoTestLogUsecase.execute(_input);
-  return _input;
+  return await createManyAutoTestLogUsecase.execute(_input);
 }

@@ -46,7 +46,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
     requestPort,
   } = useTechnology(technology);
 
-  // function that handle with configuration process, check if the process was successful and save result on database
+  // function that handle the configuration process, check if the process was successful and save result on database
   const handleConfiguration = useCallback(
     async (configuration_profile: IConfigurationProfile | null) => {
       if (configuration_profile === null) {
@@ -145,7 +145,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
     [identified, ports, technology]
   );
 
-  // useEffect used to identify devices when connected to serial ports
+  // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     (async () => {
       if (!isIdentifying.current && ports.length) {

@@ -6,9 +6,9 @@ export type ConfigurationCommand = {
 };
 
 export type ConfigurationMetadata = {
-  init_time: number; // horário de início do processo
-  end_time: number; // horário de término do processo
-  commands: ConfigurationCommand[]; // lista de comandos enviados e suas respostas
+  init_time: number;
+  end_time: number;
+  commands: ConfigurationCommand[];
 };
 
 export type DeviceProfile = IConfigurationProfile["config"];

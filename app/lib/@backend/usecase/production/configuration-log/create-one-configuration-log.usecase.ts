@@ -18,7 +18,9 @@ class CreateOneConfigurationLogUsecase {
       id: crypto.randomUUID(),
     });
 
-    return await this.repository.create(_input);
+    await this.repository.create(_input);
+
+    return _input;
   }
 }
 

@@ -6,9 +6,9 @@ export type AutoTestCommand = {
 };
 
 export type AutoTestMetadata = {
-  init_time: number; // horário de início do processo
-  end_time: number; // horário de término do processo
-  commands: AutoTestCommand[]; // lista de comandos enviados e suas respostas
+  init_time: number;
+  end_time: number;
+  commands: AutoTestCommand[];
 };
 
 export interface IAutoTestLog {
