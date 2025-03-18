@@ -4,7 +4,7 @@ import { ConfigurationProfileCreateForm } from "@/app/lib/@frontend/ui/form";
 export default async function Page() {
   const [clients, technologies] = await Promise.all([
     findManyClient({}),
-    findManyTechnology(),
+    findManyTechnology({}),
   ]);
   return (
     <div>

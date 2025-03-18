@@ -33,7 +33,7 @@ export default async function Page(props: Props) {
     );
   }
 
-  const technologies = await findManyTechnology();
+  const technologies = await findManyTechnology({});
 
   return (
     <div>
