@@ -7,8 +7,6 @@ interface Props {
   data: {
     equipment: {
       imei: string;
-      et: string;
-      iccid?: string;
     };
     current_id?: string;
     is_successful: boolean;

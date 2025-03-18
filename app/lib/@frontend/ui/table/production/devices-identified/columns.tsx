@@ -17,8 +17,6 @@ const text = {
 export const columns: ColumnDef<{
   equipment: {
     imei: string;
-    et: string;
-    iccid?: string;
   };
   current_id?: string;
   is_successful: boolean;

@@ -20,9 +20,10 @@ namespace Namespace {
   }
 
   interface Equipment {
-    imei: string | undefined;
-    iccid: string | undefined;
-    et: string | undefined;
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    firmware?: string | undefined;
+    serial?: string | undefined;
   }
 
   export interface DeviceIdentification extends IDeviceIdentificationLog {}
@@ -71,7 +72,8 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
       > = {
         equipment: {
           imei: equipment.imei!,
-          et: equipment.et!,
+          firmware: equipment.firmware!,
+          serial: equipment.serial,
           iccid: equipment.iccid,
         },
         current_id: deviceIdentification.response,
@@ -109,8 +111,8 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
         const identified = await handleIdentificationProcess(ports);
         setIdentified(
           identified
-            .filter((el) => typeof el.response !== "undefined")
-            .map(({ port, response }) => ({ port, equipment: response }))
+            .filter((el) => el.response !== undefined)
+            .map(({ port, response }) => ({ port, equipment: response! }))
         );
         isIdentifying.current = false;
       } else if (!isIdentifying.current && !ports.length) {

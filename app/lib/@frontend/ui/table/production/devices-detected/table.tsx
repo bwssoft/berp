@@ -7,9 +7,10 @@ import { ISerialPort } from "@/app/lib/@frontend/hook/use-serial-port";
 interface Props {
   data: {
     equipment: {
-      imei?: string;
-      et?: string;
-      iccid?: string;
+      imei?: string | undefined;
+      iccid?: string | undefined;
+      firmware?: string | undefined;
+      serial?: string | undefined;
     };
     port: ISerialPort;
   }[];

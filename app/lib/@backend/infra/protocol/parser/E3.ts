@@ -199,7 +199,7 @@ export class E3Parser {
     return input.split("ICCID=")?.[1].trim() ?? undefined;
   }
 
-  static et(input: string) {
+  static firmware(input: string) {
     if (!input.includes("<VER:")) return undefined;
     return input;
   }

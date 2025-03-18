@@ -21,9 +21,10 @@ namespace Namespace {
   }
 
   interface Equipment {
-    imei: string | undefined;
-    iccid: string | undefined;
-    et: string | undefined;
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    firmware?: string | undefined;
+    serial?: string | undefined;
   }
 
   export interface Configuration extends IConfigurationLog {}
@@ -63,7 +64,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       // configure devices
       const configurationResult = await handleConfigurationProcess(
         identified
-          .filter((i) => i.equipment.imei && i.equipment.et)
+          .filter((i) => i.equipment.imei && i.equipment.firmware)
           .map(({ port }) => port),
         configuration_profile
       );
@@ -107,7 +108,8 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
             },
             equipment: {
               imei: equipment.imei!,
-              et: equipment.et!,
+              firmware: equipment.firmware!,
+              serial: equipment.serial,
               iccid: equipment.iccid,
             },
             double_check: {
@@ -153,8 +155,8 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
         const identified = await handleIdentificationProcess(ports);
         setIdentified(
           identified
-            .filter((el) => typeof el.response !== "undefined")
-            .map(({ port, response }) => ({ port, equipment: response }))
+            .filter((el) => el.response !== undefined)
+            .map(({ port, response }) => ({ port, equipment: response! }))
         );
         isIdentifying.current = false;
       } else if (!isIdentifying.current && !ports.length) {

@@ -18,9 +18,10 @@ const text = {
 
 export const columns: ColumnDef<{
   equipment: {
-    imei?: string;
-    et?: string;
-    iccid?: string;
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    firmware?: string | undefined;
+    serial?: string | undefined;
   };
   port: ISerialPort;
 }>[] = [
@@ -32,9 +33,13 @@ export const columns: ColumnDef<{
       const not_identified =
         !device.equipment.imei &&
         !device.equipment.iccid &&
-        !device.equipment.et;
+        !device.equipment.serial &&
+        !device.equipment.firmware;
       const is_identified =
-        device.equipment.imei && device.equipment.iccid && device.equipment.et;
+        device.equipment.imei &&
+        device.equipment.iccid &&
+        device.equipment.serial &&
+        device.equipment.firmware;
       const status = is_identified
         ? "fully_identified"
         : not_identified
@@ -69,6 +74,16 @@ export const columns: ColumnDef<{
     },
   },
   {
+    header: "Serial",
+    accessorKey: "serial",
+    cell: ({ row }) => {
+      const device = row.original;
+      return (
+        <p title={device.equipment.serial}>{device.equipment.serial ?? "--"}</p>
+      );
+    },
+  },
+  {
     header: "Iccid",
     accessorKey: "iccid",
     cell: ({ row }) => {
@@ -82,10 +97,14 @@ export const columns: ColumnDef<{
   },
   {
     header: "Firmware",
-    accessorKey: "et",
+    accessorKey: "firmware",
     cell: ({ row }) => {
       const device = row.original;
-      return <p title={device.equipment.et}>{device.equipment.et ?? "--"}</p>;
+      return (
+        <p title={device.equipment.firmware}>
+          {device.equipment.firmware ?? "--"}
+        </p>
+      );
     },
   },
 ];

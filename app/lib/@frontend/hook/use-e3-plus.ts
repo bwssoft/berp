@@ -11,7 +11,6 @@ const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
   command: string
 ): Promise<string | undefined> => {
-  console.log("command", command);
   const decoder = new TextDecoder();
   let buffer = "";
   let foundCommandResponse = false;
@@ -93,7 +92,7 @@ export const useE3Plus = () => {
       const messages = [
         { message: "IMEI", key: "imei", transform: E3Parser.imei },
         { message: "ICCID", key: "iccid", transform: E3Parser.iccid },
-        { message: "ET", key: "et", transform: E3Parser.et },
+        { message: "ET", key: "firmware", transform: E3Parser.firmware },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {

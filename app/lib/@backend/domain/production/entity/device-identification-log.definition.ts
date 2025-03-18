@@ -13,7 +13,7 @@ export interface IDeviceIdentificationLog {
   id: string;
   equipment: {
     imei: string;
-    et: string;
+    firmware: string;
     iccid?: string;
   };
   technology: {

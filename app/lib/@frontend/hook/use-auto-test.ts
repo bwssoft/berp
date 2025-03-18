@@ -15,9 +15,10 @@ namespace Namespace {
   }
 
   interface Equipment {
-    imei: string | undefined;
-    iccid: string | undefined;
-    et: string | undefined;
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    firmware?: string | undefined;
+    serial?: string | undefined;
   }
 
   export interface Configuration extends IAutoTestLog {}
@@ -46,7 +47,7 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
     // run auto test devices
     const autoTestResult = await handleAutoTestProcess(
       identified
-        .filter((i) => i.equipment.imei && i.equipment.et)
+        .filter((i) => i.equipment.imei && i.equipment.firmware)
         .map(({ port }) => port)
     );
 
@@ -64,7 +65,8 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
           analysis,
           equipment: {
             imei: equipment.imei!,
-            et: equipment.et!,
+            firmware: equipment.firmware!,
+            serial: equipment.serial,
             iccid: equipment.iccid,
           },
           is_successful: Object.entries(analysis).every(
@@ -105,8 +107,8 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
         const identified = await handleIdentificationProcess(ports);
         setIdentified(
           identified
-            .filter((el) => typeof el.response !== "undefined")
-            .map(({ port, response }) => ({ port, equipment: response }))
+            .filter((el) => el.response !== undefined)
+            .map(({ port, response }) => ({ port, equipment: response! }))
         );
         isIdentifying.current = false;
       } else if (!isIdentifying.current && !ports.length) {

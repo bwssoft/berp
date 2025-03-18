@@ -277,7 +277,7 @@ export class E34GParser {
     return iccid.length ? iccid : undefined;
   }
 
-  static et(input: string) {
+  static firmware(input: string) {
     if (!input.includes("BWSiot_E3+4G")) return undefined;
     return input;
   }

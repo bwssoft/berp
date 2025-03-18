@@ -29,7 +29,7 @@ export interface IConfigurationLog {
   };
   equipment: {
     imei: string;
-    et: string;
+    firmware: string;
     iccid?: string;
   };
   technology: {

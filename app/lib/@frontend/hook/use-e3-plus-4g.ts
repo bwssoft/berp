@@ -85,7 +85,7 @@ export const useE3Plus4G = () => {
       const messages = [
         { message: "IMEI", key: "imei", transform: E34GParser.imei },
         { message: "ICCID", key: "iccid", transform: E34GParser.iccid },
-        { message: "ET", key: "et", transform: E34GParser.et },
+        { message: "ET", key: "firmware", transform: E34GParser.firmware },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
