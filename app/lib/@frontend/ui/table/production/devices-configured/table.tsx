@@ -12,7 +12,6 @@ interface Props {
       iccid?: string;
     };
     is_configured: boolean;
-    not_configured: any;
     profile: {
       name: string;
       id: string;

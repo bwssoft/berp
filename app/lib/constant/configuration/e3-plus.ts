@@ -93,30 +93,50 @@ const workMode = [
   { value: "NEGATIVE", label: "Violação de módulo" },
 ];
 
-const configMapped: { [key in keyof IConfigurationProfile["config"]]: string } =
-  {
-    accelerometer_sensitivity: "Sensibilidade do Acelerômetro",
-    ip_primary: "Ip Primário",
-    ip_secondary: "Ip Secondário",
-    apn: "Apn",
-    cornering_position_update: "Atualização de posição em curva",
-    data_transmission_on: "Tempo de transmissão Ligado",
-    data_transmission_off: "Tempo de transmissão Desligado",
-    dns: "Dns",
-    economy_mode: "Modo de Economia",
-    gprs_failure_alert: "Alerta de falha de GPRS",
-    ignition_alert_power_cut: "Alerta de Ignição / Corte de Alimentação",
-    keep_alive: "Tempo de TX",
-    lbs_position: "Posição LBS",
-    led: "Led",
-    lock_type: "Tipo de Bloqueio",
-    odometer: "Hodômetro",
-    password: "Senha",
-    timezone: "Fuso horário",
-    virtual_ignition: "Ignição Virtual",
-    sensitivity_adjustment: "Ajuste de sensibilidade",
-    operation_mode: "Modo de Operação",
-  };
+const configMappedGeneral: {
+  [key in keyof IConfigurationProfile["config"]["general"]]: string;
+} = {
+  ip_primary: "Ip Primário",
+  ip_secondary: "Ip Secundário",
+  apn: "Apn",
+  data_transmission_on: "Tempo de transmissão Ligado",
+  data_transmission_off: "Tempo de transmissão Desligado",
+  dns_primary: "Dns",
+  keep_alive: "Tempo de TX",
+};
+
+const configMappedSpecific: {
+  [key in keyof IConfigurationProfile["config"]["specific"]]: string;
+} = {
+  accelerometer_sensitivity: "Sensibilidade do Acelerômetro",
+  cornering_position_update: "Atualização de posição em curva",
+  economy_mode: "Modo de Economia",
+  lbs_position: "Posição LBS",
+  led: "Led",
+  lock_type: "Tipo de Bloqueio",
+  odometer: "Hodômetro",
+  password: "Senha",
+  timezone: "Fuso horário",
+  virtual_ignition: "Ignição Virtual",
+  sensitivity_adjustment: "Ajuste de sensibilidade",
+
+  virtual_ignition_by_voltage: "Ignição virtual por tensão",
+  virtual_ignition_by_movement: "Ignição virtual por movimento",
+  communication_type: "Tipo de comunicação",
+  protocol_type: "Tipo do protocolo",
+  anti_theft: "Anti-Furto",
+  horimeter: "Horímetro",
+  jammer_detection: "Detecção de Jammer",
+  clear_buffer: "Limpar Buffer",
+  clear_horimeter: "Resetar Horímetro",
+  input_1: "Entrada 1",
+  input_2: "Entrada 2",
+  angle_adjustment: "Ajuste de ângulo",
+  lock_type_progression: "Definir progressão",
+  ignition_by_voltage: "Ignição por voltagem",
+  ack: "Definir ack",
+  ignition_status_hb: "Status ignição hb",
+};
 
 export const configurationProfileE3Plus = {
   functions,
@@ -125,5 +145,8 @@ export const configurationProfileE3Plus = {
   accelerometerSensitivity,
   economyMode,
   workMode,
-  configMapped,
+  configMapped: {
+    general: configMappedGeneral,
+    specific: configMappedSpecific,
+  },
 };

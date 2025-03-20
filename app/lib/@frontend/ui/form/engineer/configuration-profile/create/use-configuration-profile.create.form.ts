@@ -5,12 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  emptyStringToUndefined,
-  formatConfigurationProfileName,
-  optionalNumber,
-  optionalString,
-} from "../util";
+import { formatConfigurationProfileName } from "../util";
 
 const schema = z.object({
   client_id: z.string({ message: "O cliente é obrigatório" }),
@@ -18,98 +13,58 @@ const schema = z.object({
   use_case: z.nativeEnum(EUseCase),
   technology_id: z.string(),
 
-  // auth
-  password: z
-    .object({
-      old: z.preprocess(
-        emptyStringToUndefined,
-        z
-          .string()
-          .max(6, { message: "A senha deve ter no máximo 6 caracteres." })
-          .optional()
-      ),
-      new: z.preprocess(
-        emptyStringToUndefined,
-        z
-          .string()
-          .max(6, { message: "A senha deve ter no máximo 6 caracteres." })
-          .optional()
-      ),
-    })
-    .optional(),
-
-  // network
-  apn: z
-    .object({
-      address: optionalString,
-      user: optionalString,
-      password: optionalString,
-    })
-    .optional(),
-
-  ip: z
-    .object({
-      primary: z
-        .object({
-          // Aqui usamos um refinamento para validar IP caso exista
-          ip: optionalString.refine(
-            (val) =>
-              val === undefined ||
-              z.string().ip({ message: "IP inválido." }).safeParse(val).success,
-            { message: "IP inválido." }
-          ),
-          port: optionalNumber,
-        })
-        .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
-          message:
-            "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
-        }),
-      secondary: z
-        .object({
-          ip: optionalString.refine(
-            (val) =>
-              val === undefined ||
-              z.string().ip({ message: "IP inválido." }).safeParse(val).success,
-            { message: "IP inválido." }
-          ),
-          port: optionalNumber,
-        })
-        .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
-          message:
-            "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
-        }),
-    })
-    .optional(),
-
-  dns: z
-    .object({
-      address: optionalString,
-      port: optionalNumber,
-    })
-    .optional(),
-
-  data_transmission: z
-    .object({
-      on: z.coerce
-        .number()
-        .positive({ message: "O valor deve ser positivo" })
-        .max(65535, { message: "O valor deve ser no máximo 65535" })
-        .default(60),
-      off: z.coerce
-        .number()
-        .positive({ message: "O valor deve ser positivo" })
-        .max(65535, { message: "O valor deve ser no máximo 65535" })
-        .default(1800),
-    })
-    .optional(),
-
-  timezone: z.coerce.number().optional(),
-  keep_alive: z.coerce
-    .number()
-    .positive({ message: "O valor deve ser positivo" })
-    .min(60, { message: "O valor deve ser no mínimo 60" })
-    .max(1800, { message: "O valor deve ser no máximo 1800" })
-    .default(60),
+  general: z.object({
+    // network
+    apn: z
+      .object({
+        address: z.string(),
+        user: z.string(),
+        password: z.string().optional(),
+      })
+      .optional(),
+    ip_primary: z
+      .object({
+        ip: z.string().ip({ message: "IP inválido." }),
+        port: z.coerce.number(),
+      })
+      .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
+        message:
+          "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
+      })
+      .optional(),
+    ip_secondary: z
+      .object({
+        ip: z.string().ip({ message: "IP inválido." }),
+        port: z.coerce.number(),
+      })
+      .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
+        message:
+          "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
+      })
+      .optional(),
+    dns_primary: z
+      .object({
+        address: z.string(),
+        port: z.number(),
+      })
+      .optional(),
+    data_transmission_on: z.coerce
+      .number()
+      .positive({ message: "O valor deve ser positivo" })
+      .max(65535, { message: "O valor deve ser no máximo 65535" })
+      .default(60),
+    data_transmission_off: z.coerce
+      .number()
+      .positive({ message: "O valor deve ser positivo" })
+      .max(65535, { message: "O valor deve ser no máximo 65535" })
+      .default(1800),
+    keep_alive: z.coerce
+      .number()
+      .positive({ message: "O valor deve ser positivo" })
+      .min(60, { message: "O valor deve ser no mínimo 60" })
+      .max(1800, { message: "O valor deve ser no máximo 1800" })
+      .default(60),
+  }),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -132,9 +87,11 @@ export function useConfigurationProfileCreateForm() {
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
-      data_transmission: { on: 60, off: 7200 },
-      keep_alive: 60,
-      timezone: 0,
+      general: {
+        data_transmission_on: 60,
+        data_transmission_off: 7200,
+        keep_alive: 60,
+      },
     },
   });
 

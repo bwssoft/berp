@@ -113,43 +113,6 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
           </div>
           <div className="border-t border-gray-200 py-5">
             <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-              {/* SENHA */}
-              <div className="sm:col-span-3">
-                <dt className="block text-sm font-medium leading-6 text-gray-600">
-                  Senha do Dispositivo
-                </dt>
-                <div className="flex w-full gap-2 mt-2">
-                  <div className="flex-1">
-                    <label
-                      htmlFor="old_password"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Senha antiga
-                    </label>
-                    <input
-                      {...register("password.old")}
-                      id="old_password"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      placeholder="000000"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label
-                      htmlFor="new_password"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Nova senha
-                    </label>
-                    <input
-                      {...register("password.new")}
-                      id="new_password"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      placeholder="123456"
-                    />
-                  </div>
-                </div>
-              </div>
-
               {/* APN */}
               <div className="sm:col-span-5">
                 <dt className="block text-sm font-medium leading-6 text-gray-600">
@@ -164,7 +127,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       APN
                     </label>
                     <input
-                      {...register("apn.address")}
+                      {...register("general.apn.address")}
                       id="apn_address"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="bws.br"
@@ -178,7 +141,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Usuário
                     </label>
                     <input
-                      {...register("apn.user")}
+                      {...register("general.apn.user")}
                       id="apn_address"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="bws"
@@ -192,7 +155,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Senha
                     </label>
                     <input
-                      {...register("apn.password")}
+                      {...register("general.apn.password")}
                       id="apn_password"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="bws"
@@ -215,7 +178,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       IP Primário
                     </label>
                     <input
-                      {...register("ip.primary.ip")}
+                      {...register("general.ip_primary.ip")}
                       id="primary_ip"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="127.0.0.1"
@@ -229,7 +192,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Porta Primária
                     </label>
                     <input
-                      {...register("ip.primary.port")}
+                      {...register("general.ip_primary.port")}
                       id="primary_ip_port"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="3000"
@@ -245,7 +208,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       IP Secundário
                     </label>
                     <input
-                      {...register("ip.secondary.ip")}
+                      {...register("general.ip_secondary.ip")}
                       id="secondary_ip"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="127.0.0.1"
@@ -259,7 +222,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Porta Secundária
                     </label>
                     <input
-                      {...register("ip.secondary.port")}
+                      {...register("general.ip_secondary.port")}
                       id="secondary_ip_port"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="3001"
@@ -282,7 +245,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       DNS
                     </label>
                     <input
-                      {...register("dns.address")}
+                      {...register("general.dns_primary.address")}
                       id="dns_address"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="bwfleets.com"
@@ -296,7 +259,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Porta
                     </label>
                     <input
-                      {...register("dns.port")}
+                      {...register("general.dns_primary.port")}
                       id="dns_port"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="3000"
@@ -319,7 +282,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Ligado (Segundos)
                     </label>
                     <input
-                      {...register("data_transmission.on")}
+                      {...register("general.data_transmission_on")}
                       id="data_transmission.on"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="60"
@@ -334,7 +297,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                     </label>
                     <input
                       id="data_transmission.off"
-                      {...register("data_transmission.off")}
+                      {...register("general.data_transmission_off")}
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="7200"
                     />
@@ -353,34 +316,10 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                 <input
                   type="text"
                   id="keep_alive"
-                  {...register("keep_alive")}
+                  {...register("general.keep_alive")}
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   placeholder="60"
                 />
-              </div>
-
-              {/* TIMEZONE */}
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="timezone"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Fuso horário
-                </label>
-                <select
-                  id="timezone"
-                  {...register("timezone")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                >
-                  <option value="">Selecione um fuso horário</option>
-                  {configurationProfileConstants.timezones.map(
-                    ({ label, value }) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    )
-                  )}
-                </select>
               </div>
             </div>
           </div>

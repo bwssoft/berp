@@ -132,7 +132,9 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
         use_case: EUseCase["CLIENT"],
         technology_id,
         type: EType["CAR"],
-        config: {},
+        config: {
+          general: {},
+        },
         name: formatConfigurationProfileName({
           type: EType["CAR"],
           document: client_document_value,
