@@ -5,12 +5,10 @@ import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 
 interface Props {
   data: {
-    input: {
-      id: string
-      name: string
-    }
-    quantity: number
-  }[]
+    input_id: string;
+    input_name: string;
+    quantity: number;
+  }[];
 }
 
 export function ProductBOMTable(props: Props) {
@@ -19,8 +17,8 @@ export function ProductBOMTable(props: Props) {
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => data.input.id}
-      mobileKeyExtractor={(data) => data.input.id}
+      mobileDisplayValue={(data) => data.input_id}
+      mobileKeyExtractor={(data) => data.input_id}
       className="w-full"
     />
   );

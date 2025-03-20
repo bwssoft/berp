@@ -5,29 +5,31 @@ import {
   IFinancialOrder,
   saleOrderStageMapping,
   IProductionOrder,
+  ITechnology,
+  IProductCategory,
 } from "@/app/lib/@backend/domain";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
 import { PageBreak, Tailwind } from "@fileforge/react-print";
 
 type ProductionOrderPdfTemplateProps = {
-  productionOrder: IProductionOrder
-  client: IClient
+  productionOrder: IProductionOrder;
+  client: IClient;
   product: {
-    id: string
-    name: string
-    color: string
-    description: string
-    created_at: Date
-    process_execution?: IProduct["process_execution"]
+    id: string;
+    name: string;
+    color: string;
+    description: string;
+    created_at: Date;
+    technology: Pick<ITechnology, "name" | "id">;
+    category: Pick<IProductCategory, "name" | "id">;
+    process_execution?: IProduct["process_execution"];
     bom?: {
-      input: {
-        id: string
-        name: string
-      }
-      quantity: number
-    }[]
-  }
+      input_id: string;
+      input_name: string;
+      quantity: number;
+    }[];
+  };
 };
 
 export function ProductionOrderPdfTemplate({
@@ -48,40 +50,34 @@ export function ProductionOrderPdfTemplate({
 
       <PageBreak />
 
-      <InputsSection
-        product={product}
-      />
+      <InputsSection product={product} />
     </Tailwind>
   );
 }
 
 type InputsSectionProps = {
   product: {
-    id: string
-    name: string
-    process_execution?: IProduct["process_execution"]
+    id: string;
+    name: string;
+    technology: Pick<ITechnology, "name" | "id">;
+    category: Pick<IProductCategory, "name" | "id">;
+    process_execution?: IProduct["process_execution"];
     bom?: {
-      input: {
-        id: string
-        name: string
-      }
-      quantity: number
-    }[]
-  }
+      input_id: string;
+      input_name: string;
+      quantity: number;
+    }[];
+  };
 };
 
-function InputsSection({
-  product
-}: InputsSectionProps) {
+function InputsSection({ product }: InputsSectionProps) {
   return (
     <div className="flex flex-col">
       <h1 className="text-gray-800 font-bold text-2xl">
         Detalhes dos materiais
       </h1>
       <div key={product.id} className="divide-gray-100 mt-10">
-        <p className="text-lg font-semibold text-gray-800">
-          {product.name}
-        </p>
+        <p className="text-lg font-semibold text-gray-800">{product.name}</p>
 
         <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt className="text-sm font-medium leading-6 text-gray-900">
@@ -94,11 +90,11 @@ function InputsSection({
 
         {product.bom?.map((bom, idx) => (
           <div
-            key={bom.input.id + idx}
+            key={bom.input_id + idx}
             className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
           >
             <dt className="text-sm font-medium leading-6 text-gray-900">
-              {bom.input.name}
+              {bom.input_name}
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-1 sm:mt-0">
               {bom.quantity}
@@ -112,7 +108,7 @@ function InputsSection({
 
 type ProductionOrderSectionProps = {
   productionOrder: IProductionOrder;
-  product: { id: string, name: string, color: string };
+  product: { id: string; name: string; color: string };
 };
 
 function ProductionOrderSection({
@@ -172,11 +168,7 @@ function ProductionOrderSection({
                 key={product.id}
                 className="flex items-center gap-1 font-semibold text-gray-800"
               >
-                <p>
-                  {productionOrder.total_quantity}
-                  {" "}
-                  -
-                </p>
+                <p>{productionOrder.total_quantity} -</p>
 
                 <div className="flex items-center gap-2">
                   <p>{product.name}</p>

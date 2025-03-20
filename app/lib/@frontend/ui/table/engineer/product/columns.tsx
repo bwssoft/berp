@@ -10,13 +10,15 @@ export const columns: ColumnDef<IProduct>[] = [
     accessorKey: "name",
     cell: ({ row }) => {
       const product = row.original;
-      return <div
-        className="text-ellipsis whitespace-nowrap overflow-hidden max-w-lg"
-        title={product.name}
-      >
-        {product.name}
-      </div>;
-    }
+      return (
+        <div
+          className="text-ellipsis whitespace-nowrap overflow-hidden max-w-lg"
+          title={product.name}
+        >
+          {product.name}
+        </div>
+      );
+    },
   },
   {
     header: "Criado em",
@@ -34,7 +36,7 @@ export const columns: ColumnDef<IProduct>[] = [
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`/product/form/update?id=${product.id}`}
+            href={`/engineer/product/form/update?id=${product.id}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
             Editar

@@ -4,7 +4,9 @@ import { productionOrderConstants } from "@/app/lib/constant/production-order";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
-export const columns: ColumnDef<(IProductionOrder & { product: { name: string } })>[] = [
+export const columns: ColumnDef<
+  IProductionOrder & { product: { name: string } }
+>[] = [
   {
     header: "Número",
     accessorKey: "code",
@@ -14,7 +16,7 @@ export const columns: ColumnDef<(IProductionOrder & { product: { name: string } 
     accessorKey: "product",
     cell: ({ row }) => {
       const productionOrder = row.original;
-      return productionOrder.product?.name ?? "--"
+      return productionOrder.product?.name ?? "--";
     },
   },
   {
@@ -49,7 +51,7 @@ export const columns: ColumnDef<(IProductionOrder & { product: { name: string } 
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
-            href={`production/production-order/${productionOrder.id}`}
+            href={`/production/production-order/${productionOrder.id}`}
             className="text-indigo-600 hover:text-indigo-900"
           >
             Gerenciar

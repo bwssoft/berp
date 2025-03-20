@@ -1,7 +1,11 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useProductCreateForm } from "./use-product-create-form";
-import { IInput, IProductCategory } from "@/app/lib/@backend/domain";
+import {
+  IInput,
+  IProductCategory,
+  ITechnology,
+} from "@/app/lib/@backend/domain";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/app/lib/util";
 import { nanoid } from "nanoid";
@@ -9,10 +13,11 @@ import { nanoid } from "nanoid";
 interface Props {
   inputs: IInput[];
   categories: IProductCategory[];
+  technologies: ITechnology[];
 }
 
 export function ProductCreateForm(props: Props) {
-  const { inputs, categories } = props
+  const { inputs, categories, technologies } = props;
   const {
     register,
     handleSubmit,
@@ -21,7 +26,7 @@ export function ProductCreateForm(props: Props) {
     handleRemoveBom,
     process_execution,
     handleAppendProcessToProduce,
-    handleRemoveProcessToProduce
+    handleRemoveProcessToProduce,
   } = useProductCreateForm();
   return (
     <div className="w-full flex flex-col gap-6">
@@ -65,7 +70,32 @@ export function ProductCreateForm(props: Props) {
                     {...register("category")}
                     className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   >
-                    {categories.map(c => <option key={c.id} value={c.code}>{c.name} ({c.code})</option>)}
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.code}>
+                        {c.name} ({c.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="technology_id"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Technologia
+                </label>
+                <div className="mt-2 grid grid-cols-1">
+                  <select
+                    id="technology_id"
+                    {...register("technology_id")}
+                    className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  >
+                    {technologies.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name.brand}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -86,7 +116,10 @@ export function ProductCreateForm(props: Props) {
                 </div>
               </div>
               <div className="sm:col-span-3">
-                <label htmlFor="price" className="block text-sm/6 font-medium text-gray-900">
+                <label
+                  htmlFor="price"
+                  className="block text-sm/6 font-medium text-gray-900"
+                >
                   Preço
                 </label>
                 <div className="mt-2">
@@ -188,7 +221,6 @@ export function ProductCreateForm(props: Props) {
                 Adicionar linha
               </button>
             </div>
-
           </div>
 
           <div className="border-b border-gray-900/10 pb-12">
@@ -208,7 +240,6 @@ export function ProductCreateForm(props: Props) {
                     className="grid grid-cols-1 lg:flex lg:items-end lg:justify-between lg:gap-4 mb-2"
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end flex-grow">
-
                       {/* Insumo */}
                       <div className="col-span-full lg:col-span-1">
                         {index === 0 && (
@@ -233,7 +264,7 @@ export function ProductCreateForm(props: Props) {
                       </div>
 
                       {/* Quantidade */}
-                      <div className="col-span-full lg:col-span-1 lg:w-1/3">
+                      <div className="col-span-full lg:col-span-1">
                         {index === 0 && (
                           <label
                             htmlFor="quantity"

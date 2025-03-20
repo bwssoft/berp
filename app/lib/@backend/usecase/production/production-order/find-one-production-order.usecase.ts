@@ -1,8 +1,9 @@
 import {
-  IInput,
   IProduct,
+  IProductCategory,
   IProductionOrder,
   IProductionOrderRepository,
+  ITechnology,
 } from "@/app/lib/@backend/domain";
 import { productionOrderRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
@@ -10,27 +11,50 @@ import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { IEnterprise } from "../../../domain/business/entity/enterprise.entity";
 
 namespace Dto {
-  export interface Input extends Partial<IProductionOrder> { }
+  export interface Input extends Partial<IProductionOrder> {}
+
   export type Document = IProductionOrder & {
-    enterprise: Pick<IEnterprise, "id" | "short_name">,
-    product: Pick<IProduct, "id" | "name" | "bom" | "process_execution" | "created_at" | "color" | "description">,
-    input: Pick<IInput, "id" | "name">[]
-  }
-  export type Output = IProductionOrder & { product: Product, enterprise: Pick<IEnterprise, "id" | "short_name"> } | undefined
+    enterprise: Pick<IEnterprise, "id" | "short_name">;
+    product: Pick<
+      IProduct,
+      | "id"
+      | "name"
+      | "process_execution"
+      | "created_at"
+      | "color"
+      | "description"
+    > & {
+      technology: Pick<ITechnology, "name" | "id">;
+      category: Pick<IProductCategory, "name" | "id">;
+      bom: {
+        input_id: string;
+        quantity: number;
+        input_name: string;
+      }[];
+    };
+  };
+
+  export type Output =
+    | (IProductionOrder & {
+        product: Product;
+        enterprise: Pick<IEnterprise, "id" | "short_name">;
+      })
+    | undefined;
+
   export interface Product {
-    id: string
-    name: string
-    color: string
-    description: string
-    created_at: Date
-    process_execution?: IProduct["process_execution"]
-    bom?: {
-      input: {
-        id: string
-        name: string
-      }
-      quantity: number
-    }[]
+    id: string;
+    name: string;
+    color: string;
+    description: string;
+    created_at: Date;
+    process_execution?: IProduct["process_execution"];
+    technology: Pick<ITechnology, "name" | "id">;
+    category: Pick<IProductCategory, "name" | "id">;
+    bom: {
+      input_id: string;
+      quantity: number;
+      input_name: string;
+    }[];
   }
 }
 
@@ -43,43 +67,20 @@ class FindOneProductionOrderUsecase {
 
   @RemoveMongoId()
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    const aggregate = await this.repository.aggregate<Dto.Document>(this.pipeline(arg))
-    const [production_order] = await aggregate.toArray()
+    const aggregate = await this.repository.aggregate<Dto.Document>(
+      this.pipeline(arg)
+    );
+    const [production_order] = await aggregate.toArray();
 
-    if (!production_order) return undefined
+    if (!production_order) return undefined;
 
-    const { input: input_array, product, ...rest } = production_order
-
-    const transformedProduct: Dto.Product = {
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      color: product.color,
-      created_at: product.created_at,
-      process_execution: product.process_execution,
-      bom: product?.bom?.map((bomItem) => {
-        const matchedInput = input_array.find((inp) => inp.id === bomItem.input_id);
-        if (!matchedInput) return undefined
-        return {
-          input: {
-            id: bomItem.input_id,
-            name: matchedInput?.name!,
-          },
-          quantity: bomItem.quantity
-        };
-      }).filter((el): el is NonNullable<typeof el> => el !== undefined)
-    };
-
-    return {
-      ...rest,
-      product: transformedProduct
-    }
+    return production_order;
   }
 
   pipeline(input: Partial<IProductionOrder>) {
     return [
       {
-        $match: { active: true, ...input }
+        $match: { active: true, ...input },
       },
       {
         $lookup: {
@@ -93,10 +94,10 @@ class FindOneProductionOrderUsecase {
                 _id: 0,
                 id: 1,
                 short_name: 1,
-              }
-            }
-          ]
-        }
+              },
+            },
+          ],
+        },
       },
       {
         $lookup: {
@@ -106,38 +107,107 @@ class FindOneProductionOrderUsecase {
           localField: "product_id",
           pipeline: [
             {
+              $lookup: {
+                as: "technology",
+                from: "engineer-technology",
+                foreignField: "id",
+                localField: "technology_id",
+                pipeline: [
+                  {
+                    $project: {
+                      _id: 0,
+                      id: 1,
+                      name: 1,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $lookup: {
+                as: "category",
+                from: "product-category",
+                foreignField: "id",
+                localField: "category_id",
+                pipeline: [
+                  {
+                    $project: {
+                      _id: 0,
+                      id: 1,
+                      name: 1,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                path: "$bom",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: "input",
+                localField: "bom.input_id",
+                foreignField: "id",
+                as: "bom_input",
+              },
+            },
+            {
+              $unwind: {
+                path: "$bom_input",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
               $project: {
-                _id: 0,
-                id: 1,
+                _id: 1,
                 name: 1,
+                technology_id: 1,
+                technology: { $first: "$technology" },
+                category: { $first: "$category" },
                 bom: 1,
                 process_execution: 1,
                 color: 1,
                 description: 1,
-                created_at: 1
-              }
-            }
-          ]
-        }
-      },
-      {
-        $lookup: {
-          as: "input",
-          from: "input",
-          foreignField: "id",
-          localField: "product.bom.input_id",
-          pipeline: [
+                created_at: 1,
+                bom_input: 1,
+              },
+            },
             {
-              $project: { _id: 0, id: 1, name: 1 }
-            }
-          ]
-        }
+              $group: {
+                _id: "$id",
+                name: { $first: "$name" },
+                category_id: {
+                  $first: "$category_id",
+                },
+                technology: { $first: "$technology" },
+                category: { $first: "$category" },
+                bom: {
+                  $push: {
+                    input_id: "$bom.input_id",
+                    quantity: "$bom.quantity",
+                    input_name: "$bom_input.name",
+                  },
+                },
+                process_execution: {
+                  $first: "$process_execution",
+                },
+                color: { $first: "$color" },
+                description: {
+                  $first: "$description",
+                },
+                created_at: { $first: "$created_at" },
+              },
+            },
+          ],
+        },
       },
       {
         $project: {
           product: { $first: "$product" },
           enterprise: { $first: "$enterprise" },
-          input: 1,
           id: 1,
           client_id: 1,
           proposal_id: 1,
@@ -150,9 +220,9 @@ class FindOneProductionOrderUsecase {
           stage: 1,
           priority: 1,
           created_at: 1,
-        }
-      }
-    ]
+        },
+      },
+    ];
   }
 }
 

@@ -3,7 +3,9 @@
 import {
   IClient,
   IProduct,
+  IProductCategory,
   IProductionOrder,
+  ITechnology,
 } from "@/app/lib/@backend/domain";
 import { ProductionOrderPdfTemplate } from "@/app/lib/@frontend/pdf/templates/production-order-pdf-template";
 import { useBuildPdf } from "@/app/lib/@frontend/pdf/use-build-pdf";
@@ -11,23 +13,23 @@ import { Button } from "@/app/lib/@frontend/ui/component";
 import { PrinterIcon } from "@heroicons/react/24/outline";
 
 type PrintProductionOrderProps = {
-  productionOrder: IProductionOrder
+  productionOrder: IProductionOrder;
   product: {
-    id: string
-    name: string
-    color: string
-    description: string
-    created_at: Date
-    process_execution?: IProduct["process_execution"]
+    id: string;
+    name: string;
+    color: string;
+    description: string;
+    created_at: Date;
+    technology: Pick<ITechnology, "name" | "id">;
+    category: Pick<IProductCategory, "name" | "id">;
+    process_execution?: IProduct["process_execution"];
     bom?: {
-      input: {
-        id: string
-        name: string
-      }
-      quantity: number
-    }[]
-  }
-  client: IClient
+      input_id: string;
+      input_name: string;
+      quantity: number;
+    }[];
+  };
+  client: IClient;
 };
 
 export function PrintProductionOrder({

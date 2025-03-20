@@ -22,3 +22,5 @@ export * from "./toggle";
 export * from "./error";
 export * from "./button-group";
 export * from "./back-button";
+export * from "./progress-bar";
+export * from "./dialog";
