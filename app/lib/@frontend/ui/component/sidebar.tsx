@@ -154,13 +154,14 @@ const navigation: NavItem[] = [
           },
         ],
       },
-      // {
-      //   name: "Ordens de configuração",
-      //   children: [
-      //     { name: "Gestão", pathname: "/production/production-order/management" },
-      //     { name: "Kanban", pathname: "/production/production-order/kanban" },
-      //   ],
-      // },
+      {
+        name: "Ferramentas",
+        children: [
+          { name: "Configurador", pathname: "/production/configurator" },
+          { name: "Auto test", pathname: "/production/auto-test" },
+          { name: "Identificador", pathname: "/production/id-writer" },
+        ],
+      },
     ],
   },
   {

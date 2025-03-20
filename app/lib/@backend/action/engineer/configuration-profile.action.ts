@@ -9,6 +9,7 @@ import {
   updateOneConfigurationProfileUsecase,
 } from "@/app/lib/@backend/usecase";
 import { IConfigurationProfile } from "@/app/lib/@backend/domain";
+import { Filter } from "mongodb";
 
 export async function createOneConfigurationProfile(
   input: Omit<
@@ -40,7 +41,7 @@ export async function deleteOneConfigurationProfileById(query: { id: string }) {
 }
 
 export async function findManyConfigurationProfile(
-  query: Partial<IConfigurationProfile>
+  query: Filter<IConfigurationProfile>
 ) {
   return await findManyConfigurationProfileUsecase.execute(query);
 }

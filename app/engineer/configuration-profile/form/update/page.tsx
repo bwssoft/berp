@@ -35,7 +35,7 @@ export default async function Page(props: Props) {
 
   const [clients, technologies, client, technology] = await Promise.all([
     findManyClient({}),
-    findManyTechnology(),
+    findManyTechnology({}),
     findOneClient({ id: configurationProfile.client_id }),
     findOneTechnology({ id: configurationProfile.technology_id }),
   ]);

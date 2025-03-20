@@ -9,7 +9,7 @@ export default async function Page() {
   const [inputs, categories, technologies] = await Promise.all([
     findManyInput({}),
     findManyProductCategory({}),
-    findManyTechnology(),
+    findManyTechnology({}),
   ]);
   return (
     <div>
