@@ -112,7 +112,7 @@ export const useNB2 = () => {
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            await sleep(10000);
+            await sleep(1000);
             const response = await sendMultipleMessages({
               transport: port,
               messages,

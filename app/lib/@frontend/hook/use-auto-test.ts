@@ -101,7 +101,7 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
 
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
-    (async () => {
+    const interval = setInterval(async () => {
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
         const identified = await handleIdentificationProcess(ports);
@@ -114,8 +114,11 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
       } else if (!isIdentifying.current && !ports.length) {
         setIdentified([]);
       }
-    })();
-  }, [ports]);
+    }, 5000); // 5000 ms = 5 segundos
+
+    // Limpeza: limpa o intervalo quando o componente é desmontado ou quando as dependências mudarem
+    return () => clearInterval(interval);
+  }, [ports, handleIdentificationProcess]);
 
   return {
     autotest,
