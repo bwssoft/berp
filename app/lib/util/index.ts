@@ -15,3 +15,5 @@ export * from "./sleep";
 export * from "./compare-object";
 export * from "./typed-object-entries";
 export * from "./is-imei";
+export * from "./is-iccid";
+export * from "./get-random-number";

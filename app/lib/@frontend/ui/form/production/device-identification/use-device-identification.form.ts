@@ -4,11 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const serial = z.coerce
-  .string({ message: "This field is required." })
-  .min(15, { message: "At least 15 characters." })
-  .max(15, { message: "Maximum 15 characters." })
-  .refine(isImei, { message: "Enter a valid imei." });
+const serial = z.coerce.string({ message: "This field is required." });
+// .min(15, { message: "At least 15 characters." })
+// .max(15, { message: "Maximum 15 characters." })
+// .refine(isImei, { message: "Enter a valid imei." });
 
 const schema = z.object({
   serial,

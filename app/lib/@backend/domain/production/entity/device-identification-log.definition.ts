@@ -15,6 +15,7 @@ export interface IDeviceIdentificationLog {
     imei: string;
     firmware: string;
     iccid?: string;
+    serial?: string;
   };
   technology: {
     id: string;

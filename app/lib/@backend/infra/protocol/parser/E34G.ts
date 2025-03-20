@@ -102,24 +102,28 @@ interface Status {
   [key: string]: string;
 }
 
-export interface AutoTest {
-  ACELC: string;
-  ACELP: string;
-  BATT_VOLT: string;
-  CHARGER: string;
-  FW: string;
-  GPS: string;
-  GPSf: string;
-  GSM: string;
-  IC: string;
-  ID_ACEL: string;
-  ID_MEM: string;
-  IN1: string;
-  IN2: string;
-  LTE: string;
-  OUT: string;
-  SN: string;
-  VCC: string;
+export namespace E34G {
+  export interface AutoTest {
+    ACELC: string;
+    ACELP: string;
+    BATT_VOLT: string;
+    CHARGER: string;
+    FW: string;
+    GPS: string;
+    GPSf: string;
+    GSM: string;
+    IC: string;
+    ID_ACEL: string;
+    ID_MEM: string;
+    IN1: string;
+    IN2: string;
+    LTE: string;
+    OUT: string;
+    SN: string;
+    VCC: string;
+    SIMHW: string;
+    MEM: string;
+  }
 }
 
 export class E34GParser {
@@ -469,14 +473,14 @@ export class E34GParser {
     return Number(input);
   }
 
-  static auto_test(input: string): AutoTest | undefined {
+  static auto_test(input: string): E34G.AutoTest | undefined {
     if (!input.startsWith("SN:")) return undefined;
     const splited = input.split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
-      acc[key as keyof AutoTest] = value;
+      acc[key as keyof E34G.AutoTest] = value;
       return acc;
-    }, {} as AutoTest);
+    }, {} as E34G.AutoTest);
   }
 
   /*

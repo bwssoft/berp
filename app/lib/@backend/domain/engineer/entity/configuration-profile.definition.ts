@@ -4,7 +4,10 @@ export interface IConfigurationProfile {
   use_case: EUseCase;
   name: string;
   type: EType;
-  config: Config;
+  config: {
+    general: GeneralConfig;
+    specific?: E3Plus4GConfig | E3PlusConfig;
+  };
   optional_functions?: Record<string, boolean>;
   created_at: Date;
   user_id: string;
@@ -41,50 +44,75 @@ export enum EType {
   OTHER = "OTHER",
 }
 
-type Config = {
+type DNS = {
+  address: string;
+  port: number;
+};
+
+type IP = {
+  ip: string;
+  port: number;
+};
+
+type APN = {
+  address: string;
+  user: string;
+  password?: string;
+};
+
+type GeneralConfig = {
+  ip_primary?: IP;
+  ip_secondary?: IP;
+  dns_primary?: DNS;
+  dns_secondary?: DNS;
+  apn?: APN;
+  data_transmission_on?: number;
+  data_transmission_off?: number;
+  keep_alive?: number;
+};
+
+export type E3PlusConfig = {
   password?: {
     old?: string;
     new?: string;
   };
-  ip_primary?: {
-    ip?: string;
-    port?: number;
-  };
-  ip_secondary?: {
-    ip?: string;
-    port?: number;
-  };
-  dns?: {
-    address?: string;
-    port?: number;
-  };
-  apn?: {
-    address?: string;
-    user?: string;
-    password?: string;
-  };
-  data_transmission_on?: number
-  data_transmission_off?: number
   timezone?: number;
   lock_type?: number;
   odometer?: number;
-  keep_alive?: number;
   accelerometer_sensitivity?: number;
   economy_mode?: number;
+  sensitivity_adjustment?: number;
   lbs_position?: boolean;
   cornering_position_update?: boolean;
   ignition_alert_power_cut?: boolean;
   gprs_failure_alert?: boolean;
   led?: boolean;
   virtual_ignition?: boolean;
-  sensitivity_adjustment?: number;
   work_mode?: string;
   operation_mode?: boolean;
-  sleep?: number;
+  optional_functions?: Record<string, boolean>;
   max_speed?: number;
+  sleep?: number;
+};
 
+export type E3Plus4GConfig = {
+  password?: {
+    old?: string;
+    new?: string;
+  };
+  timezone?: number;
+  lock_type?: number;
+  odometer?: number;
+  economy_mode?: number;
+  sensitivity_adjustment?: number;
+  lbs_position?: boolean;
+  cornering_position_update?: boolean;
+  led?: boolean;
+  virtual_ignition?: boolean;
   virtual_ignition_by_voltage?: boolean;
   virtual_ignition_by_movement?: boolean;
+  optional_functions?: Record<string, boolean>;
+  max_speed?: number;
   communication_type?: string;
   protocol_type?: string;
   anti_theft?: boolean;

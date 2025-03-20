@@ -72,7 +72,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       // obtain device profile after configuration process
       const profileResult = await handleGetProfile(ports);
 
-      delete configuration_profile.config?.password;
+      delete configuration_profile.config?.specific?.password;
 
       // check if each message sent has response and configured to the desired profile
       const result = configurationResult
@@ -88,9 +88,16 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
             (el) => el.port === port
           );
 
-          const { difference } = checkWithDifference(
-            configuration_profile.config,
-            profileAfterConfiguration?.response
+          if (!profileAfterConfiguration?.config) return undefined;
+
+          const { difference: generalDiff } = checkWithDifference(
+            configuration_profile.config?.general,
+            profileAfterConfiguration?.config?.general
+          );
+
+          const { difference: specificDiff } = checkWithDifference(
+            configuration_profile.config?.specific,
+            profileAfterConfiguration?.config?.specific
           );
 
           const configuration_log: Omit<
@@ -127,9 +134,12 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
               end_time,
               init_time,
             },
-            not_configured: difference,
-            raw_rofile: profileAfterConfiguration?.raw,
-            processed_profile: profileAfterConfiguration?.response,
+            not_configured: {
+              general: generalDiff,
+              specific: specificDiff,
+            },
+            raw_profile: profileAfterConfiguration.raw as [string, string][],
+            parsed_profile: profileAfterConfiguration.config,
           };
 
           return configuration_log;

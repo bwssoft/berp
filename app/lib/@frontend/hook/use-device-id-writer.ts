@@ -62,7 +62,7 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
 
       if (!equipment || !technology) return undefined;
 
-      await sleep(500);
+      await sleep(1000);
 
       const deviceIdentification = await handleGetIdentification(port);
 

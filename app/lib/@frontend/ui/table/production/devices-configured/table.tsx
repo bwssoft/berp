@@ -1,6 +1,5 @@
 "use client";
 
-import { ISerialPort } from "@/app/lib/@frontend/hook/use-serial-port";
 import { DataTable } from "../../../component";
 import { columns } from "./columns";
 
@@ -9,6 +8,7 @@ interface Props {
     id: string;
     equipment: {
       imei: string;
+      serial?: string;
       iccid?: string;
     };
     is_configured: boolean;

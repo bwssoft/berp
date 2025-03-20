@@ -11,35 +11,31 @@ export type ConfigurationMetadata = {
   commands: ConfigurationCommand[];
 };
 
-export type DeviceProfile = IConfigurationProfile["config"];
+export type ParsedProfile = IConfigurationProfile["config"];
 
-export type DeviceNativeProfile = {
-  check?: string;
-  dns?: string;
-  cxip?: string;
-  status?: string;
-};
+export type RawProfile = [string, string][]; // [["status", "SN="]]
 
 export interface IConfigurationLog {
   id: string;
   profile: {
     id: string;
     name: string;
-    config: DeviceProfile; // perfil desejado aplicado no dispositivo
+    config: ParsedProfile; // perfil desejado aplicado no dispositivo
   };
   equipment: {
     imei: string;
     firmware: string;
     iccid?: string;
+    serial?: string;
   };
   technology: {
     id: string;
     name: string;
   };
   // Perfil retornado pelo dispositivo após a configuração (processo de double-check)
-  processed_profile?: DeviceProfile;
+  parsed_profile?: ParsedProfile;
   // Dados brutos obtidos do dispositivo (ex: resposta dos comandos "CHECK", "CXIP" e "STATUS")
-  raw_rofile?: DeviceNativeProfile;
+  raw_profile?: [string, string][];
   // Flag que indica se todos os comandos foram aplicados com sucesso
   is_configured: boolean;
   // Agrupa os dados de porta, tempos e comandos enviados durante a configuração
@@ -52,7 +48,12 @@ export interface IConfigurationLog {
   };
   // Mapeia cada chave do perfil com os valores desejados e os efetivamente aplicados,
   // facilitando a verificação das diferenças (ex: { desired: 60, actual: 0 })
-  not_configured: {
-    [K in keyof DeviceProfile]?: { value1: any; value2: any };
+  not_configured?: {
+    general?: {
+      [K in keyof ParsedProfile["general"]]?: { value1: any; value2: any };
+    };
+    specific?: {
+      [K in keyof ParsedProfile["specific"]]?: { value1: any; value2: any };
+    };
   };
 }

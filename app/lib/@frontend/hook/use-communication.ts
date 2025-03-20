@@ -114,5 +114,6 @@ export function useCommunication<Transport>(props: Props<Transport>) {
 
   return {
     sendMultipleMessages,
+    sendSingleMessage,
   };
 }

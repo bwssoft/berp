@@ -101,7 +101,6 @@ export const useE3Plus = () => {
               transport: port,
               messages,
             });
-            console.log("response", response);
             return { port, response };
           } catch (error) {
             console.error("[ERROR] handleIdentificationProcess", error);
@@ -126,17 +125,32 @@ export const useE3Plus = () => {
               transport: port,
               messages,
             });
-            const processed_check = E3Parser.check(check);
+            const {
+              data_transmission_off,
+              data_transmission_on,
+              ...processed_check
+            } = E3Parser.check(check) ?? {};
             const ip_primary = E3Parser.ip_primary(cxip);
             const ip_secondary = E3Parser.ip_secondary(cxip);
             const dns = E3Parser.dns(cxip);
-            const response = {
-              ...(processed_check ?? {}),
-              ip_primary,
-              ip_secondary,
-              dns,
+            return {
+              port,
+              config: {
+                general: {
+                  ip_primary,
+                  ip_secondary,
+                  data_transmission_off,
+                  data_transmission_on,
+                  dns_primary: dns,
+                },
+                specific: processed_check,
+              },
+              raw: [
+                ["check", check],
+                ["cxip", cxip],
+                ["status", status],
+              ],
             };
-            return { port, response, raw: { check, cxip, status } };
           } catch (error) {
             console.error("[ERROR] handleGetProfile", error);
             return { port };

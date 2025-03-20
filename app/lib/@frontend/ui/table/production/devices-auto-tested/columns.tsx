@@ -17,6 +17,7 @@ const text = {
 export const columns: ColumnDef<{
   equipment: {
     imei: string;
+    serial?: string;
     iccid?: string;
   };
   is_successful: boolean;
@@ -37,6 +38,16 @@ export const columns: ColumnDef<{
             {label}
           </div>
         </div>
+      );
+    },
+  },
+  {
+    header: "Serial",
+    accessorKey: "equipment",
+    cell: ({ row }) => {
+      const device = row.original;
+      return (
+        <p title={device.equipment.serial}>{device.equipment.serial ?? "--"}</p>
       );
     },
   },

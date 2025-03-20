@@ -1,6 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { E34GEncoder, E34GParser } from "../../@backend/infra/protocol";
-import { isIccid, typedObjectEntries } from "../../util";
+import { useCallback } from "react";
+import {
+  E34GEncoder,
+  E34GParser,
+  NB2Parser,
+} from "../../@backend/infra/protocol";
+import {
+  generateImei,
+  getRandomInt,
+  isIccid,
+  isImei,
+  sleep,
+  typedObjectEntries,
+} from "../../util";
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { IConfigurationProfile } from "../../@backend/domain";
@@ -55,13 +66,19 @@ const generateMessages = (
   return response;
 };
 
-export const useE3Plus4G = () => {
+export const useNB2 = () => {
   const { ports, openPort, closePort, getReader, writeToPort, requestPort } =
     useSerialPort({});
 
   // hook that handles communication process, like retries, delay between messages
   const { sendMultipleMessages } = useCommunication<ISerialPort>({
-    openTransport: openPort,
+    openTransport: async (transport) => {
+      await openPort(transport, {
+        baudRate: 115200,
+        stopBits: 2,
+        bufferSize: 1000000,
+      });
+    },
     closeTransport: closePort,
     sendMessage: async (port, message, timeout) => {
       const reader = await getReader(port);
@@ -73,7 +90,7 @@ export const useE3Plus4G = () => {
       return response;
     },
     options: {
-      delayBetweenMessages: 100,
+      delayBetweenMessages: 200,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -83,13 +100,19 @@ export const useE3Plus4G = () => {
   const handleIdentificationProcess = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "IMEI", key: "imei", transform: E34GParser.imei },
-        { message: "ICCID", key: "iccid", transform: E34GParser.iccid },
-        { message: "ET", key: "firmware", transform: E34GParser.firmware },
+        { message: "RIMEI\r\n", key: "imei", transform: NB2Parser.imei },
+        { message: "ICCID\r\n", key: "iccid", transform: NB2Parser.iccid },
+        { message: "RINS\r\n", key: "serial", transform: NB2Parser.serial },
+        {
+          message: "RINS\r\n",
+          key: "firmware",
+          transform: () => "firmware#00",
+        },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
           try {
+            await sleep(10000);
             const response = await sendMultipleMessages({
               transport: port,
               messages,
@@ -107,27 +130,95 @@ export const useE3Plus4G = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "CHECK", key: "check" },
-        { message: "CXIP", key: "cxip" },
-        { message: "STATUS", key: "status" },
+        { message: "\r\n", key: "odometer", transform: NB2Parser.odometer },
+        {
+          message: "\r\n",
+          key: "data_transmission_on",
+          transform: NB2Parser.data_transmission_on,
+        },
+        {
+          message: "\r\n",
+          key: "data_transmission_off",
+          transform: NB2Parser.data_transmission_off,
+        },
+        { message: "\r\n", key: "sleep", transform: NB2Parser.sleep },
+        { message: "\r\n", key: "keep_alive", transform: NB2Parser.keep_alive },
+        { message: "\r\n", key: "ip_primary", transform: NB2Parser.ip_primary },
+        {
+          message: "\r\n",
+          key: "ip_secondary",
+          transform: NB2Parser.ip_secondary,
+        },
+        {
+          message: "\r\n",
+          key: "dns_primary",
+          transform: NB2Parser.dns_primary,
+        },
+        {
+          message: "\r\n",
+          key: "dns_secondary",
+          transform: NB2Parser.dns_secondary,
+        },
+        { message: "\r\n", key: "apn", transform: NB2Parser.apn },
+        {
+          message: "\r\n",
+          key: "first_voltage",
+          transform: NB2Parser.first_voltage,
+        },
+        {
+          message: "\r\n",
+          key: "second_voltage",
+          transform: NB2Parser.second_voltage,
+        },
+        { message: "\r\n", key: "angle", transform: NB2Parser.angle },
+        { message: "\r\n", key: "speed", transform: NB2Parser.speed },
+        {
+          message: "\r\n",
+          key: "accelerometer_sensitivity_on",
+          transform: NB2Parser.accelerometer_sensitivity_on,
+        },
+        {
+          message: "\r\n",
+          key: "accelerometer_sensitivity_off",
+          transform: NB2Parser.accelerometer_sensitivity_off,
+        },
+        {
+          message: "\r\n",
+          key: "accelerometer_sensitivity_violated",
+          transform: NB2Parser.accelerometer_sensitivity_violated,
+        },
+        {
+          message: "\r\n",
+          key: "maximum_acceleration",
+          transform: NB2Parser.maximum_acceleration,
+        },
+        {
+          message: "\r\n",
+          key: "maximum_deceleration",
+          transform: NB2Parser.maximum_deceleration,
+        },
+        { message: "\r\n", key: "input_1", transform: NB2Parser.input_1 },
+        { message: "\r\n", key: "input_2", transform: NB2Parser.input_2 },
+        { message: "\r\n", key: "input_3", transform: NB2Parser.input_3 },
+        { message: "\r\n", key: "input_4", transform: NB2Parser.input_4 },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            const { check, cxip, status } = await sendMultipleMessages({
+            const {
+              data_transmission_on,
+              data_transmission_off,
+              ip_primary,
+              ip_secondary,
+              apn,
+              keep_alive,
+              dns_primary,
+              dns_secondary,
+              ...specific
+            } = await sendMultipleMessages({
               transport: port,
               messages,
             });
-            const {
-              data_transmission_off,
-              data_transmission_on,
-              ...processed_check
-            } = E34GParser.check(check) ?? {};
-            const processed_status = E34GParser.status(status);
-            const ip_primary = E34GParser.ip_primary(cxip);
-            const ip_secondary = E34GParser.ip_secondary(cxip);
-            const dns = E34GParser.dns(cxip);
-            const horimeter = E34GParser.horimeter(processed_status.HR);
             return {
               port,
               config: {
@@ -136,18 +227,14 @@ export const useE3Plus4G = () => {
                   ip_secondary,
                   data_transmission_off,
                   data_transmission_on,
-                  dns_primary: dns,
+                  dns_primary,
+                  dns_secondary,
+                  apn,
+                  keep_alive,
                 },
-                specific: {
-                  ...processed_check,
-                  horimeter,
-                },
+                specific,
               },
-              raw: [
-                ["check", check],
-                ["cxip", cxip],
-                ["status", status],
-              ],
+              raw: [],
             };
           } catch (error) {
             console.error("[ERROR] handleGetProfile", error);
@@ -200,8 +287,8 @@ export const useE3Plus4G = () => {
       const messages = [
         {
           key: "autotest",
-          message: "AUTOTEST",
-          transform: E34GParser.auto_test,
+          message: "AUTOTEST\r\n",
+          transform: NB2Parser.auto_test,
           timeout: 25000,
         },
       ] as const;
@@ -217,19 +304,26 @@ export const useE3Plus4G = () => {
             const { autotest } = response;
 
             const analysis = {
-              SIMHW: isIccid(autotest?.["IC"] ?? ""),
+              ACELC: (autotest?.["ACELC"] ?? "").length > 0 ? true : false,
+              ACELP: autotest?.["ACELP"] === "OK" ? true : false,
+              BATT_VOLT: !isNaN(Number(autotest?.["BATT_VOLT"] ?? NaN)),
+              CHARGER: autotest?.["CHARGER"] === "OK" ? true : false,
+              FW: (autotest?.["FW"] ?? "").length > 0 ? true : false,
               GPS: autotest?.["GPS"] === "OK" ? true : false,
+              GPSf: autotest?.["GPSf"] === "OK" ? true : false,
+              IC: isIccid(autotest?.["IC"] ?? ""),
+              ID_ACEL: (autotest?.["ID_ACEL"] ?? "").length > 0 ? true : false,
+              ID_MEM: (autotest?.["ID_MEM"] ?? "").length > 0 ? true : false,
+              IM: isImei(autotest?.["IM"] ?? ""),
               IN1: autotest?.["IN1"] === "OK" ? true : false,
               IN2: autotest?.["IN2"] === "OK" ? true : false,
+              MDM: autotest?.["MDM"] === "OK" ? true : false,
               OUT: autotest?.["OUT"] === "OK" ? true : false,
-              ACELP: autotest?.["ACELP"] === "OK" ? true : false,
-              VCC: autotest?.["VCC"] === "OK" ? true : false,
-              CHARGER: autotest?.["CHARGER"] === "OK" ? true : false,
-              MEM:
-                autotest?.["ID_MEM"]?.length && autotest?.["ID_MEM"]?.length > 0
-                  ? true
-                  : false,
+              RSI: autotest?.["RSI"] === "OK" ? true : false,
+              SN: (autotest?.["SN"] ?? "").length > 0 ? true : false,
+              VCC: !isNaN(Number(autotest?.["VCC"] ?? NaN)),
             };
+
             const end_time = Date.now();
             return {
               port,
@@ -249,11 +343,16 @@ export const useE3Plus4G = () => {
     [sendMultipleMessages]
   );
   const handleDeviceIdentificationProcess = useCallback(
-    async (port: ISerialPort, identifier: string) => {
+    async (port: ISerialPort, serial: string) => {
+      const imei = await handleGetRandomImei();
       const messages = [
         {
           key: "identifier",
-          message: `13041SETSN,${identifier}`,
+          message: `WINS=${serial}\r\n`,
+        },
+        {
+          key: "imei",
+          message: `WIMEI=${imei}\r\n`,
         },
       ] as const;
       try {
@@ -280,14 +379,14 @@ export const useE3Plus4G = () => {
   const handleGetIdentification = useCallback(
     async (port: ISerialPort) => {
       const messages = [
-        { message: "IMEI", key: "imei", transform: E34GParser.imei },
+        { message: "RINS\r\n", key: "serial", transform: NB2Parser.serial },
       ] as const;
       try {
         const response = await sendMultipleMessages({
           transport: port,
           messages,
         });
-        return { port, response: response.imei };
+        return { port, response: response.serial };
       } catch (error) {
         console.error("[ERROR] handleGetIdentification", error);
         return { port };
@@ -295,6 +394,9 @@ export const useE3Plus4G = () => {
     },
     [sendMultipleMessages]
   );
+  const handleGetRandomImei = async () => {
+    return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
+  };
 
   return {
     ports,

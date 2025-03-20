@@ -17,6 +17,7 @@ const text = {
 export const columns: ColumnDef<{
   equipment: {
     imei: string;
+    serial?: string;
   };
   current_id?: string;
   is_successful: boolean;
@@ -54,7 +55,10 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const device = row.original;
       return (
-        <p title={device.equipment.imei}>{device.equipment.imei ?? "--"}</p>
+        <>
+          <p>{device.equipment.imei ?? "--"}</p>
+          <p>{device.equipment.serial ?? "--"}</p>
+        </>
       );
     },
   },

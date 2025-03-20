@@ -1,4 +1,4 @@
-import { AutoTest } from "../../../infra/protocol";
+import { E34G, NB2 } from "../../../infra/protocol";
 
 export type AutoTestCommand = {
   request: string;
@@ -11,12 +11,17 @@ export type AutoTestMetadata = {
   commands: AutoTestCommand[];
 };
 
+type Analysis = {
+  [K in keyof NB2.AutoTest | keyof E34G.AutoTest]?: boolean;
+};
+
 export interface IAutoTestLog {
   id: string;
   equipment: {
     imei: string;
     firmware: string;
     iccid?: string;
+    serial?: string;
   };
   technology: {
     id: string;
@@ -24,7 +29,7 @@ export interface IAutoTestLog {
   };
   is_successful: boolean;
   metadata: AutoTestMetadata;
-  analysis: { [key in keyof AutoTest]?: boolean };
+  analysis: Analysis;
   created_at: Date;
   user_id: string;
 }

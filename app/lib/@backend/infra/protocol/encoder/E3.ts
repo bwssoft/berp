@@ -35,7 +35,6 @@ export class E3Encoder {
   static encoder(props: Encoder): string | undefined {
     const { command, args } = props;
     const commands = E3Encoder.commands();
-    console.log("command", command);
     return commands[command](args as any);
   }
 
