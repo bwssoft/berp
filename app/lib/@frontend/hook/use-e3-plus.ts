@@ -101,7 +101,7 @@ export const useE3Plus = () => {
               transport: port,
               messages,
             });
-            return { port, response };
+            return { port, response: { ...response, serial: response.imei } };
           } catch (error) {
             console.error("[ERROR] handleIdentificationProcess", error);
             return { port };
@@ -234,7 +234,7 @@ export const useE3Plus = () => {
     async (port: ISerialPort, identifier: string) => {
       const messages = [
         {
-          key: "identifier",
+          key: "imei",
           message: `13041SETSN,${identifier}`,
         },
       ] as const;
@@ -270,7 +270,7 @@ export const useE3Plus = () => {
           transport: port,
           messages,
         });
-        return { port, response: response.imei };
+        return { port, response: { ...response, serial: response.imei } };
       } catch (error) {
         console.error("[ERROR] handleGetIdentification", error);
         return { port };

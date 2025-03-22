@@ -22,7 +22,7 @@ export const columns: ColumnDef<{
     serial?: string;
     iccid?: string;
   };
-  is_configured: boolean;
+  status: boolean;
   profile: {
     name: string;
     id: string;
@@ -33,8 +33,8 @@ export const columns: ColumnDef<{
     accessorKey: "checked",
     cell: ({ row }) => {
       const device = row.original;
-      const status = device.is_configured ? "configured" : "error";
-      const label = device.is_configured ? "Configurado" : "Não Configurado";
+      const status = device.status ? "configured" : "error";
+      const label = device.status ? "Configurado" : "Não Configurado";
       return (
         <div className="flex items-center gap-1">
           <div className={cn(statuses[status], "flex-none rounded-full p-1")}>

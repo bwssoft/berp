@@ -21,7 +21,7 @@ export function DeviceIdentificationLogDescription({ data }: Props) {
     );
   }
   const formattedCreatedAt = new Date(data.created_at).toLocaleString();
-  const { Icon, statusClass, text } = getStatusProps(data.is_successful);
+  const { Icon, statusClass, text } = getStatusProps(data.status);
 
   return (
     <div>
@@ -44,55 +44,40 @@ export function DeviceIdentificationLogDescription({ data }: Props) {
             </dd>
           </div>
 
-          {/* Current ID */}
-          {data.current_id && (
+          {/* Old ID */}
+          {data.before && (
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
               <dt className="text-sm/6 font-medium text-gray-900">
-                Current Identification
+                Before Identification
               </dt>
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {data.current_id}
+                {data.before.imei}
+              </dd>
+              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                {data.before.serial ?? "--"}
               </dd>
             </div>
           )}
 
-          {/* Equipment Information */}
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">
-              Equipment IMEI
-            </dt>
-            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {data.equipment.imei}
-            </dd>
-          </div>
-          {data.equipment.serial && (
+          {/* Current ID */}
+          {data.after && (
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">Serial</dt>
+              <dt className="text-sm/6 font-medium text-gray-900">
+                After Identification
+              </dt>
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {data.equipment.serial}
+                {data.after.imei ?? "--"}
+              </dd>
+              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                {data.after.serial ?? "--"}
               </dd>
             </div>
           )}
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">Firmware</dt>
-            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {data.equipment.firmware}
-            </dd>
-          </div>
-          {data.equipment.iccid && (
-            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">ICCID</dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {data.equipment.iccid}
-              </dd>
-            </div>
-          )}
-
           {/* Technology */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">Technology</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {data.technology.name}
+              {data.technology.system_name}
             </dd>
           </div>
 
@@ -108,7 +93,7 @@ export function DeviceIdentificationLogDescription({ data }: Props) {
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">User ID</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {data.user_id}
+              {data.user.name}
             </dd>
           </div>
 

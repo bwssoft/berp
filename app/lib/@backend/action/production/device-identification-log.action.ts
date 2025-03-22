@@ -7,9 +7,15 @@ import {
 } from "@/app/lib/@backend/usecase";
 
 export async function createOneDeviceIdentificationLog(
-  input: Omit<IDeviceIdentificationLog, "id" | "created_at" | "user_id">
+  input: Omit<IDeviceIdentificationLog, "id" | "created_at" | "user">
 ) {
-  const _input = { ...input, user_id: crypto.randomUUID() };
+  const _input = {
+    ...input,
+    user: {
+      id: crypto.randomUUID(),
+      name: crypto.randomUUID(),
+    },
+  };
   return await createOneDeviceIdentificationLogUsecase.execute(_input);
 }
 

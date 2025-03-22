@@ -23,15 +23,15 @@ export const columns: ColumnDef<{
     serial?: string;
     iccid?: string;
   };
-  is_successful: boolean;
+  status: boolean;
 }>[] = [
   {
     header: "Configurado",
     accessorKey: "checked",
     cell: ({ row }) => {
       const { original } = row;
-      const status = original.is_successful ? "success" : "error";
-      const label = original.is_successful ? "Sucesso" : "Falha";
+      const status = original.status ? "success" : "error";
+      const label = original.status ? "Sucesso" : "Falha";
       return (
         <div className="flex items-center gap-1">
           <div className={cn(statuses[status], "flex-none rounded-full p-1")}>

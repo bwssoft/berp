@@ -61,7 +61,7 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
 
         if (!equipment || !technology) return undefined;
 
-        const log: Omit<IAutoTestLog, "id" | "created_at" | "user_id"> = {
+        const log: Omit<IAutoTestLog, "id" | "created_at" | "user"> = {
           analysis,
           equipment: {
             imei: equipment.imei!,
@@ -69,7 +69,7 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
             serial: equipment.serial,
             iccid: equipment.iccid,
           },
-          is_successful: Object.entries(analysis).every(
+          status: Object.entries(analysis).every(
             ([_, value]) => value === true
           ),
           metadata: {
@@ -82,7 +82,7 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
           },
           technology: {
             id: technology.id,
-            name: technology.name.brand,
+            system_name: technology.name.system,
           },
         };
 

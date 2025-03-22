@@ -15,20 +15,23 @@ const text = {
   error: "text-rose-800",
 };
 export const columns: ColumnDef<{
-  equipment: {
+  before: {
     imei: string;
     serial?: string;
   };
-  current_id?: string;
-  is_successful: boolean;
+  after?: {
+    imei?: string;
+    serial?: string;
+  };
+  status: boolean;
 }>[] = [
   {
     header: "Configurado",
     accessorKey: "checked",
     cell: ({ row }) => {
       const device = row.original;
-      const status = device.is_successful ? "success" : "error";
-      const label = device.is_successful ? "Sucesso" : "Falha";
+      const status = device.status ? "success" : "error";
+      const label = device.status ? "Sucesso" : "Falha";
       return (
         <div className="flex items-center gap-1">
           <div className={cn(statuses[status], "flex-none rounded-full p-1")}>
@@ -43,22 +46,19 @@ export const columns: ColumnDef<{
   },
   {
     header: "Atual",
-    accessorKey: "current_id",
+    accessorKey: "after",
     cell: ({ row }) => {
       const device = row.original;
-      return <p title={device.current_id}>{device.current_id ?? "--"}</p>;
+      return <p title={device.after?.serial}>{device.after?.serial ?? "--"}</p>;
     },
   },
   {
-    header: "Anterior",
-    accessorKey: "equipment",
+    header: "Antes",
+    accessorKey: "before",
     cell: ({ row }) => {
       const device = row.original;
       return (
-        <>
-          <p>{device.equipment.imei ?? "--"}</p>
-          <p>{device.equipment.serial ?? "--"}</p>
-        </>
+        <p title={device.before?.serial}>{device.before?.serial ?? "--"}</p>
       );
     },
   },

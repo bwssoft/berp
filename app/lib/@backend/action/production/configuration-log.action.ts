@@ -8,18 +8,27 @@ import {
 } from "@/app/lib/@backend/usecase";
 
 export async function createOneConfigurationLog(
-  input: Omit<IConfigurationLog, "id" | "created_at" | "user_id">
+  input: Omit<IConfigurationLog, "id" | "created_at" | "user">
 ) {
-  const _input = { ...input, user_id: crypto.randomUUID() };
+  const _input = {
+    ...input,
+    user: {
+      id: crypto.randomUUID(),
+      name: crypto.randomUUID(),
+    },
+  };
   return await createOneConfigurationLogUsecase.execute(_input);
 }
 
 export async function createManyConfigurationLog(
-  input: Omit<IConfigurationLog, "id" | "created_at" | "user_id">[]
+  input: Omit<IConfigurationLog, "id" | "created_at" | "user">[]
 ) {
   const _input = input.map((i) => ({
     ...i,
-    user_id: crypto.randomUUID(),
+    user: {
+      id: crypto.randomUUID(),
+      name: crypto.randomUUID(),
+    },
   }));
   return await createManyConfigurationLogUsecase.execute(_input);
 }

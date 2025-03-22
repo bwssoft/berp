@@ -11,7 +11,7 @@ interface Props {
       serial?: string;
       iccid?: string;
     };
-    is_configured: boolean;
+    status: boolean;
     profile: {
       name: string;
       id: string;
@@ -25,7 +25,7 @@ export function DevicesConfiguredTable(props: Props) {
       columns={columns}
       data={data}
       mobileDisplayValue={(data) =>
-        `${data.equipment.imei} ${data.is_configured ? "Configurado" : "Não Configurado"}`
+        `${data.equipment.imei} ${data.status ? "Configurado" : "Não Configurado"}`
       }
       mobileKeyExtractor={() => Math.random().toString()}
       className="mt-5 w-full"

@@ -347,7 +347,7 @@ export const useNB2 = () => {
       const imei = await handleGetRandomImei();
       const messages = [
         {
-          key: "identifier",
+          key: "serial",
           message: `WINS=${serial}\r\n`,
         },
         {
@@ -380,13 +380,14 @@ export const useNB2 = () => {
     async (port: ISerialPort) => {
       const messages = [
         { message: "RINS\r\n", key: "serial", transform: NB2Parser.serial },
+        { message: "RIMEI\r\n", key: "imei", transform: NB2Parser.imei },
       ] as const;
       try {
         const response = await sendMultipleMessages({
           transport: port,
           messages,
         });
-        return { port, response: response.serial };
+        return { port, response };
       } catch (error) {
         console.error("[ERROR] handleGetIdentification", error);
         return { port };

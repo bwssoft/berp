@@ -30,18 +30,12 @@ export interface IConfigurationLog {
   };
   technology: {
     id: string;
+    system_name: string;
+  };
+  user: {
+    id: string;
     name: string;
   };
-  // Perfil retornado pelo dispositivo após a configuração (processo de double-check)
-  parsed_profile?: ParsedProfile;
-  // Dados brutos obtidos do dispositivo (ex: resposta dos comandos "CHECK", "CXIP" e "STATUS")
-  raw_profile?: [string, string][];
-  // Flag que indica se todos os comandos foram aplicados com sucesso
-  is_configured: boolean;
-  // Agrupa os dados de porta, tempos e comandos enviados durante a configuração
-  metadata: ConfigurationMetadata;
-  created_at: Date;
-  user_id: string;
   double_check: {
     need: boolean;
     has: boolean;
@@ -56,4 +50,13 @@ export interface IConfigurationLog {
       [K in keyof ParsedProfile["specific"]]?: { value1: any; value2: any };
     };
   };
+  // Perfil retornado pelo dispositivo após a configuração (processo de double-check)
+  parsed_profile?: ParsedProfile;
+  // Dados brutos obtidos do dispositivo (ex: resposta dos comandos "CHECK", "CXIP" e "STATUS")
+  raw_profile?: [string, string][];
+  // Flag que indica se todos os comandos foram aplicados com sucesso
+  status: boolean;
+  // Agrupa os dados de porta, tempos e comandos enviados durante a configuração
+  metadata: ConfigurationMetadata;
+  created_at: Date;
 }

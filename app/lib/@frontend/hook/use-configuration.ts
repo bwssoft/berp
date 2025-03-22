@@ -102,7 +102,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
           const configuration_log: Omit<
             IConfigurationLog,
-            "id" | "created_at" | "user_id"
+            "id" | "created_at" | "user"
           > = {
             profile: {
               id: configuration_profile.id,
@@ -111,7 +111,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
             },
             technology: {
               id: technology.id,
-              name: technology.name.brand,
+              system_name: technology.name.system,
             },
             equipment: {
               imei: equipment.imei!,
@@ -123,7 +123,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
               has: false,
               need: true,
             },
-            is_configured: Object.entries(response ?? {}).every(
+            status: Object.entries(response ?? {}).every(
               ([_, value]) => typeof value !== "undefined"
             ),
             metadata: {

@@ -11,19 +11,23 @@ export type DeviceIdentificationMetadata = {
 
 export interface IDeviceIdentificationLog {
   id: string;
-  equipment: {
+  before: {
     imei: string;
-    firmware: string;
-    iccid?: string;
+    serial: string;
+  };
+  after?: {
+    imei?: string;
     serial?: string;
   };
   technology: {
     id: string;
+    system_name: string;
+  };
+  user: {
+    id: string;
     name: string;
   };
-  current_id?: string;
-  is_successful: boolean;
+  status: boolean;
   metadata: DeviceIdentificationMetadata;
   created_at: Date;
-  user_id: string;
 }

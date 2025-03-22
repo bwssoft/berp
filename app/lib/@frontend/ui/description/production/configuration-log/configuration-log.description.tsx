@@ -22,7 +22,7 @@ export function ConfigurationLogDescription({ data }: Props) {
   }
 
   const formattedCreatedAt = new Date(data.created_at).toLocaleString();
-  const { Icon, statusClass, text } = getStatusProps(data.is_configured);
+  const { Icon, statusClass, text } = getStatusProps(data.status);
 
   return (
     <div>
@@ -89,7 +89,7 @@ export function ConfigurationLogDescription({ data }: Props) {
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">Technology</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {data.technology.name}
+              {data.technology.system_name}
             </dd>
           </div>
 
@@ -116,7 +116,7 @@ export function ConfigurationLogDescription({ data }: Props) {
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">User ID</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {data.user_id}
+              {data.user.name}
             </dd>
           </div>
 

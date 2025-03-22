@@ -11,7 +11,7 @@ interface Props {
       serial?: string;
       iccid?: string;
     };
-    is_successful: boolean;
+    status: boolean;
   }[];
 }
 export function DevicesAutoTestedTable(props: Props) {

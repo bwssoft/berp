@@ -25,11 +25,14 @@ export interface IAutoTestLog {
   };
   technology: {
     id: string;
+    system_name: string;
+  };
+  user: {
+    id: string;
     name: string;
   };
-  is_successful: boolean;
+  status: boolean;
   metadata: AutoTestMetadata;
   analysis: Analysis;
   created_at: Date;
-  user_id: string;
 }

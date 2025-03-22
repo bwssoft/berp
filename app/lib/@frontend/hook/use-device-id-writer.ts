@@ -66,31 +66,27 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
 
       const deviceIdentification = await handleGetIdentification(port);
 
-      const log: Omit<
-        IDeviceIdentificationLog,
-        "id" | "created_at" | "user_id"
-      > = {
-        equipment: {
-          imei: equipment.imei!,
-          firmware: equipment.firmware!,
-          serial: equipment.serial,
-          iccid: equipment.iccid,
-        },
-        current_id: deviceIdentification.response,
-        is_successful: id === deviceIdentification.response,
-        metadata: {
-          commands: messages.map(({ key, message }) => ({
-            request: message,
-            response: response[key as keyof typeof response],
-          })),
-          end_time,
-          init_time,
-        },
-        technology: {
-          id: technology.id,
-          name: technology.name.brand,
-        },
-      };
+      const log: Omit<IDeviceIdentificationLog, "id" | "created_at" | "user"> =
+        {
+          before: {
+            imei: equipment.imei!,
+            serial: equipment.serial!,
+          },
+          after: deviceIdentification?.response,
+          status: id === deviceIdentification?.response?.serial,
+          metadata: {
+            commands: messages.map(({ key, message }) => ({
+              request: message,
+              response: response[key as keyof typeof response],
+            })),
+            end_time,
+            init_time,
+          },
+          technology: {
+            id: technology.id,
+            system_name: technology.name.system,
+          },
+        };
 
       // save result on database
       const dataSavedOnDb = await createOneDeviceIdentificationLog(log);
