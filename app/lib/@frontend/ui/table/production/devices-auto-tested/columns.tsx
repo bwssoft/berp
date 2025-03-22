@@ -2,6 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
+import Link from "next/link";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",
@@ -15,6 +17,7 @@ const text = {
   error: "text-rose-800",
 };
 export const columns: ColumnDef<{
+  id: string;
   equipment: {
     imei: string;
     serial?: string;
@@ -26,9 +29,9 @@ export const columns: ColumnDef<{
     header: "Configurado",
     accessorKey: "checked",
     cell: ({ row }) => {
-      const device = row.original;
-      const status = device.is_successful ? "success" : "error";
-      const label = device.is_successful ? "Sucesso" : "Falha";
+      const { original } = row;
+      const status = original.is_successful ? "success" : "error";
+      const label = original.is_successful ? "Sucesso" : "Falha";
       return (
         <div className="flex items-center gap-1">
           <div className={cn(statuses[status], "flex-none rounded-full p-1")}>
@@ -45,9 +48,11 @@ export const columns: ColumnDef<{
     header: "Serial",
     accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
+      const { original } = row;
       return (
-        <p title={device.equipment.serial}>{device.equipment.serial ?? "--"}</p>
+        <p title={original.equipment.serial}>
+          {original.equipment.serial ?? "--"}
+        </p>
       );
     },
   },
@@ -55,9 +60,9 @@ export const columns: ColumnDef<{
     header: "Imei",
     accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
+      const original = row.original;
       return (
-        <p title={device.equipment.imei}>{device.equipment.imei ?? "--"}</p>
+        <p title={original.equipment.imei}>{original.equipment.imei ?? "--"}</p>
       );
     },
   },
@@ -65,9 +70,29 @@ export const columns: ColumnDef<{
     header: "Iccid",
     accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
+      const original = row.original;
       return (
-        <p title={device.equipment.iccid}>{device.equipment.iccid ?? "--"}</p>
+        <p title={original.equipment.iccid}>
+          {original.equipment.iccid ?? "--"}
+        </p>
+      );
+    },
+  },
+  {
+    header: "Ação",
+    accessorKey: "equipment",
+    cell: ({ row }) => {
+      const { original } = row;
+      return (
+        <Link
+          href={`/production/auto-test/log?${original.id}`}
+          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        >
+          <ArrowTopRightOnSquareIcon
+            aria-hidden="true"
+            className="-ml-0.5 size-5"
+          />
+        </Link>
       );
     },
   },

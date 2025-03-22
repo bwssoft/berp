@@ -5,6 +5,7 @@ import { DataTable } from "../../../component";
 
 interface Props {
   data: {
+    id: string;
     equipment: {
       imei: string;
       serial?: string;

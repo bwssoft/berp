@@ -4,6 +4,7 @@ import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import {
   createManyConfigurationLogUsecase,
   createOneConfigurationLogUsecase,
+  findOneConfigurationLogUsecase,
 } from "@/app/lib/@backend/usecase";
 
 export async function createOneConfigurationLog(
@@ -21,4 +22,10 @@ export async function createManyConfigurationLog(
     user_id: crypto.randomUUID(),
   }));
   return await createManyConfigurationLogUsecase.execute(_input);
+}
+
+export async function findOneConfigurationLog(
+  input: Partial<IConfigurationLog>
+) {
+  return await findOneConfigurationLogUsecase.execute(input);
 }
