@@ -16,6 +16,7 @@ interface Props {
       name: string;
       id: string;
     };
+    created_at: Date;
   }[];
 }
 export function DevicesConfiguredTable(props: Props) {

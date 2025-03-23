@@ -12,6 +12,7 @@ interface Props {
       iccid?: string;
     };
     status: boolean;
+    created_at: Date;
   }[];
 }
 export function DevicesAutoTestedTable(props: Props) {

@@ -4,6 +4,7 @@ import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import {
   createManyConfigurationLogUsecase,
   createOneConfigurationLogUsecase,
+  findManyConfigurationLogUsecase,
   findOneConfigurationLogUsecase,
 } from "@/app/lib/@backend/usecase";
 
@@ -37,4 +38,10 @@ export async function findOneConfigurationLog(
   input: Partial<IConfigurationLog>
 ) {
   return await findOneConfigurationLogUsecase.execute(input);
+}
+
+export async function findManyConfigurationLog(
+  input: Partial<IConfigurationLog>
+) {
+  return await findManyConfigurationLogUsecase.execute(input);
 }

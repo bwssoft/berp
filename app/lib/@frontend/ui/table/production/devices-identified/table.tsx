@@ -14,6 +14,8 @@ interface Props {
       serial?: string;
     };
     status: boolean;
+    id: string;
+    created_at: Date;
   }[];
 }
 export function DevicesIdentifiedTable(props: Props) {

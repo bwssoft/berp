@@ -1,7 +1,9 @@
 "use client";
 
 import { cn } from "@/app/lib/util";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",
@@ -27,6 +29,7 @@ export const columns: ColumnDef<{
     name: string;
     id: string;
   };
+  created_at: Date;
 }>[] = [
   {
     header: "Configurado",
@@ -83,6 +86,32 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const device = row.original;
       return device.profile.name ?? "--";
+    },
+  },
+  {
+    header: "Criado em",
+    accessorKey: "created_at",
+    cell: ({ row }) => {
+      const { original } = row;
+      return original.created_at.toLocaleString();
+    },
+  },
+  {
+    header: "Ação",
+    accessorKey: "equipment",
+    cell: ({ row }) => {
+      const { original } = row;
+      return (
+        <Link
+          href={`/production/configurator/log/${original.id}`}
+          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        >
+          <ArrowTopRightOnSquareIcon
+            aria-hidden="true"
+            className="-ml-0.5 size-5"
+          />
+        </Link>
+      );
     },
   },
 ];

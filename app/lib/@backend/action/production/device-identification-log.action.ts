@@ -3,6 +3,7 @@
 import { IDeviceIdentificationLog } from "@/app/lib/@backend/domain";
 import {
   createOneDeviceIdentificationLogUsecase,
+  findManyDeviceIdentificationLogUsecase,
   findOneDeviceIdentificationLogUsecase,
 } from "@/app/lib/@backend/usecase";
 
@@ -23,4 +24,10 @@ export async function findOneDeviceIdentificationLog(
   input: Partial<IDeviceIdentificationLog>
 ) {
   return await findOneDeviceIdentificationLogUsecase.execute(input);
+}
+
+export async function findManyDeviceIdentificationLog(
+  input: Partial<IDeviceIdentificationLog>
+) {
+  return await findManyDeviceIdentificationLogUsecase.execute(input);
 }

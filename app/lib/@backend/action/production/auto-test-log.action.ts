@@ -3,8 +3,10 @@
 import { IAutoTestLog } from "@/app/lib/@backend/domain";
 import {
   createManyAutoTestLogUsecase,
+  findManyAutoTestLogUsecase,
   findOneAutoTestLogUsecase,
 } from "@/app/lib/@backend/usecase";
+import { Filter } from "mongodb";
 
 export async function createManyAutoTestLog(
   input: Omit<IAutoTestLog, "id" | "created_at" | "user">[]
@@ -21,4 +23,8 @@ export async function createManyAutoTestLog(
 
 export async function findOneAutoTestLog(input: Partial<IAutoTestLog>) {
   return await findOneAutoTestLogUsecase.execute(input);
+}
+
+export async function findManyAutoTestLog(input: Filter<IAutoTestLog>) {
+  return await findManyAutoTestLogUsecase.execute(input);
 }

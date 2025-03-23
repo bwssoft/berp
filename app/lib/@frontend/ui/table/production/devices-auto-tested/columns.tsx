@@ -24,6 +24,7 @@ export const columns: ColumnDef<{
     iccid?: string;
   };
   status: boolean;
+  created_at: Date;
 }>[] = [
   {
     header: "Configurado",
@@ -79,19 +80,24 @@ export const columns: ColumnDef<{
     },
   },
   {
+    header: "Criado em",
+    accessorKey: "created_at",
+    cell: ({ row }) => {
+      const iput = row.original;
+      return iput.created_at.toLocaleString();
+    },
+  },
+  {
     header: "Ação",
     accessorKey: "equipment",
     cell: ({ row }) => {
       const { original } = row;
       return (
         <Link
-          href={`/production/auto-test/log?${original.id}`}
-          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          href={`/production/auto-test/log/${original.id}`}
+          className="flex justify-center rounded bg-white px-1 py-2 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
         >
-          <ArrowTopRightOnSquareIcon
-            aria-hidden="true"
-            className="-ml-0.5 size-5"
-          />
+          <ArrowTopRightOnSquareIcon aria-hidden="true" className="size-5" />
         </Link>
       );
     },
