@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import { cn } from "@/app/lib/util";
@@ -6,9 +6,10 @@ import { cn } from "@/app/lib/util";
 interface Props {
   onChange?: (arg: boolean) => void;
   value?: boolean;
+  title?: (boolean: boolean) => string;
 }
 export function Toggle(props: Props) {
-  const { onChange, value } = props;
+  const { onChange, value, title } = props;
   const [enabled, setEnabled] = useState(false);
 
   const handleChange = (arg: boolean) => {
@@ -22,6 +23,7 @@ export function Toggle(props: Props) {
 
   return (
     <Switch
+      title={title?.(enabled)}
       checked={enabled}
       onChange={handleChange}
       className={cn(

@@ -33,17 +33,23 @@ export function DataTableDesktop<TData, TValue>({
   });
 
   return (
-    <div {...rest} className={cn("rounded-md bg-white", className)}>
-      <div className="relative w-full overflow-auto">
+    <div
+      {...rest}
+      className={cn(
+        "rounded-md bg-white shadow-md ring-1 ring-black/5",
+        className
+      )}
+    >
+      <div className="relative overflow-hidden sm:rounded-lg">
         <table className="w-full caption-bottom text-sm">
-          <thead className="[&_tr]:border-b bg-white border-b-1 border-b-gray-200">
+          <thead className="bg-gray-50">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <th
                       key={header.id}
-                      className="px-6 py-3 text-left text-sm font-semibold text-gray-900"
+                      className="px-6 py-3 text-left text-sm font-medium leading-6 text-gray-900"
                     >
                       {header.isPlaceholder
                         ? null
@@ -57,7 +63,7 @@ export function DataTableDesktop<TData, TValue>({
               </tr>
             ))}
           </thead>
-          <tbody className="[&_tr:last-child]:border-0 divide-y divide-gray-200 bg-white">
+          <tbody className="divide-y divide-gray-200 bg-white">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <tr
