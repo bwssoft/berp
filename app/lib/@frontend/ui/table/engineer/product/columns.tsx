@@ -21,7 +21,7 @@ export const columns: ColumnDef<IProduct>[] = [
     },
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const product = row.original;

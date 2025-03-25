@@ -14,7 +14,7 @@ export const columns: ColumnDef<ICommand>[] = [
     accessorKey: "data",
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const command = row.original;

@@ -21,7 +21,7 @@ export const columns: ColumnDef<IProposal & { client: IClient }>[] = [
     },
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const proposal = row.original;

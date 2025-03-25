@@ -27,7 +27,7 @@ export const columns: ColumnDef<Type>[] = [
     },
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const request_to_update = row.original;

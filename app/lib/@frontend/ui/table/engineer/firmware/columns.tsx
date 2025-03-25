@@ -14,7 +14,7 @@ export const columns: ColumnDef<IFirmware>[] = [
     accessorKey: "version",
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const firmware = row.original;

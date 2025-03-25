@@ -20,7 +20,7 @@ export const columns: ColumnDef<Row>[] = [
     },
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const device = row.original;

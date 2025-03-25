@@ -67,7 +67,7 @@ export const columns: ColumnDef<{
     },
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const { original } = row;

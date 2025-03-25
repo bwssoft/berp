@@ -14,7 +14,7 @@ export const columns: ColumnDef<IClient>[] = [
     },
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const iput = row.original;

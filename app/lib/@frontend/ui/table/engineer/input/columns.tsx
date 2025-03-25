@@ -21,7 +21,7 @@ export const columns: ColumnDef<IInput>[] = [
     accessorKey: "measure_unit",
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const input = row.original;

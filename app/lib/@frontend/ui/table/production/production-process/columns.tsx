@@ -9,7 +9,7 @@ export const columns: ColumnDef<IProductionProcess>[] = [
     accessorKey: "name",
   },
   {
-    header: "Criado em",
+    header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
       const productionProcess = row.original;
