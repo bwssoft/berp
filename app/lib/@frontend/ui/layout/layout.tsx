@@ -15,7 +15,7 @@ export function Layout(props: Props) {
 
   return (
     <ReactQueryClientProvider>
-      <html lang="en" className="h-full bg-white">
+      <html lang="en" className="h-full bg-gray-50">
         <body className={cn(inter.className, "h-full")}>
           <div>
             {withSideBar ? <SideBar /> : <></>}

@@ -42,7 +42,7 @@ export function DataTableDesktop<TData, TValue>({
     >
       <div className="relative overflow-hidden sm:rounded-lg">
         <table className="w-full caption-bottom text-sm">
-          <thead className="bg-gray-50 border-b border-1 border-black/5">
+          <thead className="bg-gray-100 border-b border-1 border-black/5">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
