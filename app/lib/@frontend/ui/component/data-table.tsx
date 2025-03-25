@@ -42,7 +42,7 @@ export function DataTableDesktop<TData, TValue>({
     >
       <div className="relative overflow-hidden sm:rounded-lg">
         <table className="w-full caption-bottom text-sm">
-          <thead className="bg-gray-50">
+          <thead className="bg-gray-50 border-b border-1 border-black/5">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -78,7 +78,7 @@ export function DataTableDesktop<TData, TValue>({
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="whitespace-nowrap align-middle px-6 py-4 text-sm text-gray-500"
+                      className="whitespace-nowrap align-middle px-6 py-2 text-sm text-gray-500"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
