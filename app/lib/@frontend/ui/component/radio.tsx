@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
 
@@ -30,13 +30,16 @@ export function Radio<T>(props: {
       )}
       <div className="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
         {data.map((op, opIdx) => (
-          <div key={opIdx} className="relative flex items-start justify-start py-4">
+          <div
+            key={opIdx}
+            className="relative flex items-start justify-start py-4"
+          >
             <div className="mr-3 flex h-6 items-center">
               <input
                 id={`radio-${keyExtractor(op)}`}
                 name="plan"
                 type="radio"
-                className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600"
                 checked={
                   selectedValue &&
                   valueExtractor(op) === valueExtractor(selectedValue)

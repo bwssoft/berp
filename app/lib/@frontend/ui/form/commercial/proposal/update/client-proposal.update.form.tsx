@@ -93,7 +93,7 @@ export function ProposalUpdateForm(props: Props) {
               </label>
               <select
                 id="client_id"
-                className="block w-full rounded-md border-0 py-2 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="block w-full rounded-md border-0 py-2 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                 {...register("client_id")}
                 onChange={(e) => {
                   const selectedOption =
@@ -127,7 +127,7 @@ export function ProposalUpdateForm(props: Props) {
                 <textarea
                   id="description"
                   rows={3}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                   defaultValue={""}
                   {...register("description")}
                 />
@@ -171,7 +171,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="postal_code"
                       autoComplete="postal_code"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("billing_address.postal_code")}
                     />
                   </div>
@@ -188,7 +188,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="country"
                       autoComplete="country"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("billing_address.country")}
                     />
                   </div>
@@ -205,7 +205,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="street"
                       autoComplete="street"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("billing_address.street")}
                     />
                   </div>
@@ -222,7 +222,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="district"
                       autoComplete="district"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("billing_address.district")}
                     />
                   </div>
@@ -239,7 +239,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="city"
                       autoComplete="address-level2"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("billing_address.city")}
                     />
                   </div>
@@ -256,7 +256,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="state"
                       autoComplete="address-level1"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("billing_address.state")}
                     />
                   </div>
@@ -279,7 +279,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="postal_code"
                       autoComplete="postal_code"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("delivery_address.postal_code")}
                     />
                   </div>
@@ -296,7 +296,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="country"
                       autoComplete="country"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("delivery_address.country")}
                     />
                   </div>
@@ -313,7 +313,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="street"
                       autoComplete="street"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("delivery_address.street")}
                     />
                   </div>
@@ -330,7 +330,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="district"
                       autoComplete="district"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("delivery_address.district")}
                     />
                   </div>
@@ -347,7 +347,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="city"
                       autoComplete="address-level2"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("delivery_address.city")}
                     />
                   </div>
@@ -364,7 +364,7 @@ export function ProposalUpdateForm(props: Props) {
                       type="text"
                       id="state"
                       autoComplete="address-level1"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       {...register("delivery_address.state")}
                     />
                   </div>
@@ -447,7 +447,7 @@ export function ProposalUpdateForm(props: Props) {
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <Button
           type="submit"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           Salvar Proposta
         </Button>
@@ -659,7 +659,7 @@ function Scenario({
                         type="text"
                         id="name"
                         autoComplete="name"
-                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                         placeholder="Nome do cenário"
                         {...register(`scenarios.${hookFormScenarioIndex}.name`)}
                       />
@@ -673,7 +673,7 @@ function Scenario({
                       </label>
                       <select
                         id="currency"
-                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                         {...register(
                           `scenarios.${hookFormScenarioIndex}.currency`
                         )}
@@ -697,7 +697,7 @@ function Scenario({
                       <textarea
                         id="description"
                         rows={3}
-                        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                         defaultValue={""}
                         {...register(
                           `scenarios.${hookFormScenarioIndex}.description`
@@ -755,7 +755,7 @@ function Scenario({
                               )}
                               <select
                                 id="negotiation_type"
-                                className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                                className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-xs sm:leading-6"
                                 {...register(
                                   `scenarios.${hookFormScenarioIndex}.line_items.${index}.negotiation_type_id`
                                 )}
@@ -780,7 +780,7 @@ function Scenario({
                               )}
                               <select
                                 id="product_id"
-                                className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                                className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-xs sm:leading-6"
                                 {...register(
                                   `scenarios.${hookFormScenarioIndex}.line_items.${index}.product_id`
                                 )}
@@ -806,7 +806,7 @@ function Scenario({
                               <input
                                 type="number"
                                 id="quantity"
-                                className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                                className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 sm:text-xs sm:leading-6"
                                 placeholder="Quantidade"
                                 {...register(
                                   `scenarios.${hookFormScenarioIndex}.line_items.${index}.quantity`
@@ -833,7 +833,7 @@ function Scenario({
                                 <input
                                   type="text"
                                   id="unit_price"
-                                  className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                                  className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 sm:text-xs sm:leading-6"
                                   placeholder="0.00"
                                   {...register(
                                     `scenarios.${hookFormScenarioIndex}.line_items.${index}.unit_price`
@@ -861,7 +861,7 @@ function Scenario({
                                 <input
                                   type="text"
                                   id="discount"
-                                  className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                                  className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 sm:text-xs sm:leading-6"
                                   placeholder="0.00"
                                   {...register(
                                     `scenarios.${hookFormScenarioIndex}.line_items.${index}.discount`
@@ -889,7 +889,7 @@ function Scenario({
                                 <input
                                   type="text"
                                   id="total_price"
-                                  className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                  className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
                                   placeholder="0.00"
                                   disabled
                                   {...register(
@@ -971,7 +971,7 @@ function Scenario({
                       </label>
                       <select
                         id="currency"
-                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-xs sm:leading-6"
                         {...register(
                           `scenarios.${hookFormScenarioIndex}.freight.type`
                         )}
@@ -999,7 +999,7 @@ function Scenario({
                         <input
                           type="text"
                           id="value"
-                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                           placeholder="0.00"
                           aria-describedby="value-currency"
                           {...register(
@@ -1059,7 +1059,7 @@ function Scenario({
                         <input
                           type="text"
                           id="value"
-                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-xs sm:leading-6"
                           placeholder="0.00"
                           aria-describedby="value-currency"
                           {...register(
@@ -1091,7 +1091,7 @@ function Scenario({
                         <input
                           type="text"
                           id="value"
-                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-xs sm:leading-6"
                           placeholder="0.00"
                           aria-describedby="value-currency"
                           {...register(
@@ -1123,7 +1123,7 @@ function Scenario({
                         <input
                           type="text"
                           id="value"
-                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-xs sm:leading-6"
                           placeholder="0.00"
                           aria-describedby="value-currency"
                           {...register(
@@ -1155,7 +1155,7 @@ function Scenario({
                         <input
                           type="text"
                           id="value"
-                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-xs sm:leading-6"
                           placeholder="0.00"
                           aria-describedby="value-currency"
                           {...register(
@@ -1372,7 +1372,7 @@ function Scenario({
                                       {stepIdx !== steps.length - 1 ? (
                                         <div
                                           aria-hidden="true"
-                                          className="absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5 bg-indigo-600"
+                                          className="absolute left-4 top-4 -ml-px mt-0.5 h-full w-0.5 bg-blue-600"
                                         />
                                       ) : null}
                                       <a
@@ -1380,7 +1380,7 @@ function Scenario({
                                         className="group relative flex items-start"
                                       >
                                         <span className="flex h-9 items-center">
-                                          <span className="relative z-10 flex size-8 items-center justify-center rounded-full bg-indigo-600 group-hover:bg-indigo-800">
+                                          <span className="relative z-10 flex size-8 items-center justify-center rounded-full bg-blue-600 group-hover:bg-blue-800">
                                             <CheckIcon
                                               aria-hidden="true"
                                               className="size-5 text-white"
@@ -1414,12 +1414,12 @@ function Scenario({
                                           aria-hidden="true"
                                           className="flex h-9 items-center"
                                         >
-                                          <span className="relative z-10 flex size-8 items-center justify-center rounded-full border-2 border-indigo-600 bg-white">
-                                            <span className="size-2.5 rounded-full bg-indigo-600" />
+                                          <span className="relative z-10 flex size-8 items-center justify-center rounded-full border-2 border-blue-600 bg-white">
+                                            <span className="size-2.5 rounded-full bg-blue-600" />
                                           </span>
                                         </span>
                                         <span className="ml-4 flex min-w-0 flex-col">
-                                          <span className="text-sm font-medium text-indigo-600">
+                                          <span className="text-sm font-medium text-blue-600">
                                             {step.name}
                                           </span>
                                           <span className="text-sm text-gray-500">

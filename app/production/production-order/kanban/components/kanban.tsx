@@ -19,8 +19,8 @@ import { useDrag, useDrop } from "react-dnd";
 const ItemType = "CARD";
 
 type CustomProductionOrder = IProductionOrder & {
-  product: Pick<IProduct, "id" | "name" | "color">
-  enterprise: Pick<IEnterprise, "id" | "short_name">
+  product: Pick<IProduct, "id" | "name" | "color">;
+  enterprise: Pick<IEnterprise, "id" | "short_name">;
 };
 
 interface CardProps {
@@ -30,7 +30,7 @@ interface CardProps {
 }
 
 const stageColor = {
-  in_approval: "bg-indigo-200",
+  in_approval: "bg-blue-200",
   in_warehouse: "bg-purple-200",
   to_produce: "bg-slate-200",
   producing: "bg-yellow-200",
@@ -61,9 +61,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
     >
       <div className="w-full flex flex-col justify-between">
         <div className="w-full flex justify-between items-center">
-          <p>
-            OP-{order.code.toString().padStart(5, "0")}
-          </p>
+          <p>OP-{order.code.toString().padStart(5, "0")}</p>
           <p className="text-gray-400">
             {order.enterprise.short_name.toUpperCase()}
           </p>
@@ -86,10 +84,8 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
           className={`rounded-full w-4 h-4 mr-2`}
         ></div>
         <p>
-          <span>
-            {order.total_quantity}{" "}
-          </span>
-          - {order.product.name.toUpperCase()}
+          <span>{order.total_quantity} </span>-{" "}
+          {order.product.name.toUpperCase()}
         </p>
       </div>
 
@@ -122,7 +118,6 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
           <ArrowUpRightIcon width={16} height={16} />
         </Link>
       </div>
-
     </div>
   );
 };
@@ -140,9 +135,11 @@ const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
     drop: async (item: { id: string }) => {
       const currentOrder = await findOneProductionOrder({
         id: item.id,
-      })
+      });
 
-      {/* TODO: Refazer logica para atualizar o 'stage' de uma OP */ }
+      {
+        /* TODO: Refazer logica para atualizar o 'stage' de uma OP */
+      }
 
       // const productionOrderHaveSteps =
       //   currentOrder?.production_process !== undefined;
@@ -170,12 +167,14 @@ const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
         await updateOneProductionOrderById(
           { id: currentOrder.id },
           {
-            stage: stage as EProductionOrderStage
+            stage: stage as EProductionOrderStage,
           }
         );
       }
 
-      {/* TODO: Refazer logica para atualizar o status do pedido da omie relacionado */ }
+      {
+        /* TODO: Refazer logica para atualizar o status do pedido da omie relacionado */
+      }
 
       // if (currentOrder && stage === "completed") {
       //   await updateSaleOrderStatus({
@@ -194,8 +193,9 @@ const Column: React.FC<ColumnProps> = ({ stage, title, orders, moveCard }) => {
       <div className="flex flex-row justify-between items-center mb-2 mx-1">
         <div className="flex items-center">
           <h2
-            className={`${stageColor[stage as keyof typeof stageColor]
-              } text-sm w-max px-1 rounded mr-2 text-gray-600 font-bold`}
+            className={`${
+              stageColor[stage as keyof typeof stageColor]
+            } text-sm w-max px-1 rounded mr-2 text-gray-600 font-bold`}
           >
             {title.toUpperCase()}
           </h2>

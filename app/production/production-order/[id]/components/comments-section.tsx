@@ -59,7 +59,7 @@ export function CommentsSection() {
 
         <div className="w-full flex flex-col gap-2 mt-3">
           <Textarea placeholder="Insira um novo comentário" />
-          <Button className="w-fit bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+          <Button className="w-fit bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500">
             Enviar comentário
           </Button>
         </div>

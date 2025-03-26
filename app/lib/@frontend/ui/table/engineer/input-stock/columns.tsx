@@ -52,7 +52,7 @@ export const columns: ColumnDef<{
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
             href={`/input/analysis?id=${stock.input.id}`}
-            className="text-indigo-600 hover:text-indigo-900"
+            className="text-blue-600 hover:text-blue-900"
           >
             Analisar
           </Link>

@@ -48,10 +48,11 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
               {financial_order?.id ? (
                 <div>
                   <div className="mt-12 px-4 sm:px-0">
-                    <p className="mt-1 max-w-2xl text-sm/6 text-gray-500">PV Nº {financial_order.code}</p>
+                    <p className="mt-1 max-w-2xl text-sm/6 text-gray-500">
+                      PV Nº {financial_order.code}
+                    </p>
                   </div>
                   {financial_order.line_items_processed.map((line, idx) => (
-
                     <div
                       key={line.enterprise_id + idx}
                       className="mt-6 border-t border-gray-100"
@@ -90,7 +91,7 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
                           <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                             <select
                               id="installment_quantity"
-                              className="block w-full rounded-md border-0 py-2 pl-2 text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                              className="block w-full rounded-md border-0 py-2 pl-2 text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-xs sm:leading-6"
                               {...register(
                                 `line_items_processed.${idx}.installment_quantity`
                               )}
@@ -111,12 +112,14 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
                           </dt>
                           <div className="relative rounded-md shadow-sm w-full">
                             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                              <span className="text-gray-500 sm:text-xs">R$</span>
+                              <span className="text-gray-500 sm:text-xs">
+                                R$
+                              </span>
                             </div>
                             <input
                               type="text"
                               id="entry_amout"
-                              className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-700 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                              className="block w-full rounded-md border-0 py-1.5 pl-10 pr-12 text-gray-700 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-xs sm:leading-6"
                               placeholder="0.00"
                               aria-describedby="value-currency"
                               {...register(
@@ -135,12 +138,11 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
                         </div>
                       </dl>
                     </div>
-
                   ))}
                   <div className="mt-6 flex items-center justify-end gap-x-6">
                     <Button
                       type="submit"
-                      className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     >
                       Salvar PV Nº {financial_order.code}
                     </Button>
@@ -163,10 +165,11 @@ export function FinancialOrderFromProposalCreateForm(props: Props) {
                       <p className="mt-3 text-sm md:ml-6 md:mt-0">
                         <button
                           type="button"
-                          onClick={() => createFinancialOrderFromProposal({
-                            proposal_id: proposal_id,
-                            scenario_id: scenario_id,
-                          })
+                          onClick={() =>
+                            createFinancialOrderFromProposal({
+                              proposal_id: proposal_id,
+                              scenario_id: scenario_id,
+                            })
                           }
                           className="whitespace-nowrap font-medium text-gray-700 hover:text-gray-600"
                         >

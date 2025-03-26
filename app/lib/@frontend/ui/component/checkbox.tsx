@@ -9,7 +9,7 @@ export function Checkbox(props: Props) {
       <div className="flex h-6 items-center">
         <input
           type="checkbox"
-          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
           {...props}
         />
       </div>

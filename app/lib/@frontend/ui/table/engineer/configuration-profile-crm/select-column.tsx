@@ -33,10 +33,10 @@ export const SelectColumn = (props: Props) => {
   return (
     <div className="pr-2">
       {selected ? (
-        <p className="text-indigo-600 hover:text-indigo-900">Selecionado</p>
+        <p className="text-blue-600 hover:text-blue-900">Selecionado</p>
       ) : (
         <button
-          className="text-indigo-600 hover:text-indigo-900"
+          className="text-blue-600 hover:text-blue-900"
           onClick={handleClick}
         >
           Selecionar

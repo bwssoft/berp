@@ -12,7 +12,7 @@ export default function InputCategoryCreateBOMPage() {
             <a
               href={"/xlsx/create-input-category-from-file.xlsx"}
               download={"create-input-category-from-file.xlsx"}
-              className="text-indigo-600 hover:text-indigo-500 underline underline-offset-2 hover:cursor-pointer"
+              className="text-blue-600 hover:text-blue-500 underline underline-offset-2 hover:cursor-pointer"
             >
               Baixe o modelo
             </a>{" "}

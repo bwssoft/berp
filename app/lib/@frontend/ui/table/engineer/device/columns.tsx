@@ -36,7 +36,7 @@ export const columns: ColumnDef<Row>[] = [
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link
             href={`/device/form/update?id=${device.id}`}
-            className="text-indigo-600 hover:text-indigo-900"
+            className="text-blue-600 hover:text-blue-900"
           >
             Editar
           </Link>
@@ -60,7 +60,7 @@ export const columns: ColumnDef<Row>[] = [
           >
             <button
               type="submit"
-              className="text-indigo-600 hover:text-indigo-900 px-0 py-0"
+              className="text-blue-600 hover:text-blue-900 px-0 py-0"
             >
               Deletar
             </button>

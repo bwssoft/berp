@@ -39,7 +39,7 @@ export const columns: ColumnDef<IProductCategory>[] = [
           >
             <button
               type="submit"
-              className="text-indigo-600 hover:text-indigo-900 px-0 py-0"
+              className="text-blue-600 hover:text-blue-900 px-0 py-0"
             >
               Deletar
             </button>

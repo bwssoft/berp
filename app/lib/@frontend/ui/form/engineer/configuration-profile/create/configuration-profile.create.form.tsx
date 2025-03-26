@@ -37,7 +37,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                 <select
                   id="client_id"
                   {...register("client_id")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                   onChange={(e) => {
                     const selectedOption =
                       e.target.options[e.target.selectedIndex];
@@ -68,7 +68,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                 </label>
                 <select
                   id="use_case"
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                   {...register("use_case")}
                 >
                   <option value="">Selecione um caso de uso</option>
@@ -91,7 +91,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                 <select
                   id="type"
                   {...register("type")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                   onChange={(e) => {
                     const selectedOption =
                       e.target.options[e.target.selectedIndex];
@@ -119,7 +119,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                 <select
                   id="technology_id"
                   {...register("technology_id")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                   onChange={(e) => {
                     const selectedOption =
                       e.target.options[e.target.selectedIndex];
@@ -173,7 +173,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.apn.address")}
                       id="apn_address"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="bws.br"
                     />
                   </div>
@@ -187,7 +187,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.apn.user")}
                       id="apn_address"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="bws"
                     />
                   </div>
@@ -201,7 +201,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.apn.password")}
                       id="apn_password"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="bws"
                     />
                   </div>
@@ -224,7 +224,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.ip_primary.ip")}
                       id="primary_ip"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="127.0.0.1"
                     />
                   </div>
@@ -238,7 +238,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.ip_primary.port")}
                       id="primary_ip_port"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="3000"
                     />
                   </div>
@@ -254,7 +254,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.ip_secondary.ip")}
                       id="secondary_ip"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="127.0.0.1"
                     />
                   </div>
@@ -268,7 +268,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.ip_secondary.port")}
                       id="secondary_ip_port"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="3001"
                     />
                   </div>
@@ -291,7 +291,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.dns_primary.address")}
                       id="dns_address"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="bwfleets.com"
                     />
                   </div>
@@ -305,7 +305,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.dns_primary.port")}
                       id="dns_port"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="3000"
                     />
                   </div>
@@ -328,7 +328,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       {...register("general.data_transmission_on")}
                       id="data_transmission.on"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="60"
                     />
                   </div>
@@ -342,7 +342,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <input
                       id="data_transmission.off"
                       {...register("general.data_transmission_off")}
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="7200"
                     />
                   </div>
@@ -361,7 +361,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                   type="text"
                   id="keep_alive"
                   {...register("general.keep_alive")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                   placeholder="60"
                 />
               </div>
@@ -379,7 +379,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
         </button>
         <Button
           type="submit"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           Salvar
         </Button>

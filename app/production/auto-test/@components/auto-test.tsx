@@ -52,7 +52,7 @@ export function AutoTestPanel(props: Props) {
             <div className="flex gap-2">
               <Button
                 variant="default"
-                className="h-fit bg-indigo-600 hover:bg-indigo-500"
+                className="h-fit bg-blue-600 hover:bg-blue-500"
                 onClick={() => handleAutoTest()}
               >
                 Auto Test{" "}

@@ -51,7 +51,7 @@ export const columns: ColumnDef<{
           <div className="px-2">
             <Link
               href={`/crm/configuration-profile/form/update?id=${profile.id}`}
-              className="text-indigo-600 hover:text-indigo-900"
+              className="text-blue-600 hover:text-blue-900"
             >
               Editar
             </Link>
@@ -62,7 +62,7 @@ export const columns: ColumnDef<{
               onClick={() =>
                 generateConfigurationProfileLinkForClient(profile.id)
               }
-              className="text-indigo-600 hover:text-indigo-900"
+              className="text-blue-600 hover:text-blue-900"
             >
               Link
             </button>
@@ -75,7 +75,7 @@ export const columns: ColumnDef<{
             >
               <button
                 type="submit"
-                className="text-indigo-600 hover:text-indigo-900"
+                className="text-blue-600 hover:text-blue-900"
               >
                 Arquivar
               </button>

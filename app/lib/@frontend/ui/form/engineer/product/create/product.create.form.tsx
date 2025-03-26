@@ -42,7 +42,7 @@ export function ProductCreateForm(props: Props) {
                   Nome
                 </label>
                 <div className="mt-2">
-                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600">
                     <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
                       Produto:
                     </span>
@@ -68,7 +68,7 @@ export function ProductCreateForm(props: Props) {
                   <select
                     id="category"
                     {...register("category")}
-                    className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.code}>
@@ -89,7 +89,7 @@ export function ProductCreateForm(props: Props) {
                   <select
                     id="technology_id"
                     {...register("technology_id")}
-                    className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
                   >
                     {technologies.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -110,7 +110,7 @@ export function ProductCreateForm(props: Props) {
                   <input
                     id="color"
                     type="color"
-                    className="block w-full rounded-md border-0 py-1 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent"
+                    className="block w-full rounded-md border-0 py-1 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent"
                     {...register("color")}
                   />
                 </div>
@@ -129,7 +129,7 @@ export function ProductCreateForm(props: Props) {
                     step={"0.05"}
                     {...register("price")}
                     onWheel={(e) => (e.target as HTMLInputElement).blur()}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
@@ -144,7 +144,7 @@ export function ProductCreateForm(props: Props) {
                   <textarea
                     id="description"
                     rows={3}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                     defaultValue={""}
                     {...register("description")}
                   />
@@ -185,7 +185,7 @@ export function ProductCreateForm(props: Props) {
                         )}
                         <input
                           id="process_execution_step"
-                          className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 sm:text-xs sm:leading-6"
                           placeholder={`${index + 1}ª Etapa`}
                           {...register(`process_execution.${index}.step`)}
                         />
@@ -252,7 +252,7 @@ export function ProductCreateForm(props: Props) {
                         )}
                         <select
                           id="input_id"
-                          className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-xs sm:leading-6"
                           {...register(`bom.${index}.input_id`)}
                         >
                           {inputs.map((p) => (
@@ -276,7 +276,7 @@ export function ProductCreateForm(props: Props) {
                         <input
                           type="number"
                           id="quantity"
-                          className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 sm:text-xs sm:leading-6"
+                          className="block w-full rounded-md border-0 py-1.5 px-5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 sm:text-xs sm:leading-6"
                           placeholder="Quantidade"
                           {...register(`bom.${index}.quantity`)}
                         />
@@ -324,7 +324,7 @@ export function ProductCreateForm(props: Props) {
           </button>
           <Button
             type="submit"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           >
             Salvar
           </Button>

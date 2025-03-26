@@ -36,7 +36,7 @@ export function DeviceIdentificationForm(props: {
       <Button
         disabled={disabled}
         variant="default"
-        className="h-fit whitespace-nowrap bg-indigo-600 hover:bg-indigo-500"
+        className="h-fit whitespace-nowrap bg-blue-600 hover:bg-blue-500"
         type="submit"
       >
         Send
