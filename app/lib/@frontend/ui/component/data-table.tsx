@@ -49,7 +49,7 @@ export function DataTableDesktop<TData, TValue>({
                   return (
                     <th
                       key={header.id}
-                      className="px-6 py-3 text-left text-sm font-medium leading-6 text-gray-900"
+                      className="px-6 py-2 text-left text-sm font-medium leading-6 text-gray-900"
                     >
                       {header.isPlaceholder
                         ? null

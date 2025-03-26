@@ -11,7 +11,7 @@ export function SearchProfileForm(props: Props) {
 
   return (
     <form className="w-full">
-      <div className="border border-gray-900/10 px-4 py-6 rounded-lg shadow-md bg-white">
+      <div className="border border-gray-900/10 p-4 rounded-lg shadow-md bg-white">
         <div className="flex gap-2 items-end">
           <Input
             label="Perfil"
