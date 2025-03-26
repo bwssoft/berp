@@ -11,7 +11,9 @@ import {
 } from "@headlessui/react";
 import {
   AdjustmentsHorizontalIcon,
+  AdjustmentsVerticalIcon,
   Bars3Icon,
+  BookOpenIcon,
   BriefcaseIcon,
   ChevronRightIcon,
   ClipboardIcon,
@@ -23,6 +25,7 @@ import {
   RectangleGroupIcon,
   RectangleStackIcon,
   UsersIcon,
+  ViewColumnsIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -48,13 +51,25 @@ type NavItem = {
 const navigation: NavItem[] = [
   { name: "Dashboard", icon: HomeIcon, pathname: "/" },
   {
-    name: "Times",
-    icon: UsersIcon,
+    name: "Admin",
+    icon: AdjustmentsVerticalIcon,
+    pathname: "/admin",
     children: [
-      { name: "Software" },
-      { name: "Engenharia" },
-      { name: "Recursos Humanos" },
-      { name: "Suporte" },
+      {
+        name: "Usuários",
+        icon: UsersIcon,
+        pathname: "/admin/user",
+      },
+      {
+        name: "Perfil",
+        icon: BookOpenIcon,
+        pathname: "/admin/profile",
+      },
+      {
+        name: "Controle de Acesso",
+        icon: ViewColumnsIcon,
+        pathname: "/admin/access-control",
+      },
     ],
   },
   {
