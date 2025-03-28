@@ -1,17 +1,19 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { inputCategoryRepository } from "@/app/lib/@backend/infra"
-import { IInputCategoryRepository } from "@/app/lib/@backend/domain"
+import { singleton } from "@/app/lib/util/singleton";
+import { inputCategoryRepository } from "@/app/lib/@backend/infra";
+import { IInputCategoryRepository } from "@/app/lib/@backend/domain";
 
 class FindAllInputCategoriesUseCase {
-  repository: IInputCategoryRepository
+  repository: IInputCategoryRepository;
 
   constructor() {
-    this.repository = inputCategoryRepository
+    this.repository = inputCategoryRepository;
   }
 
   async execute() {
-    return await this.repository.findAll()
+    return await this.repository.findAll({});
   }
 }
 
-export const findAllInputCategoriesUseCase = singleton(FindAllInputCategoriesUseCase)
+export const findAllInputCategoriesUseCase = singleton(
+  FindAllInputCategoriesUseCase
+);

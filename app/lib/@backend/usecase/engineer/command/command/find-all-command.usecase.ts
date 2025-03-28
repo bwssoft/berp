@@ -1,7 +1,7 @@
 import { ICommandRepository } from "@/app/lib/@backend/domain";
 import { commandRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
+import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 
 class FindAllCommandUsecase {
   repository: ICommandRepository;
@@ -12,7 +12,7 @@ class FindAllCommandUsecase {
 
   @RemoveMongoId()
   async execute() {
-    return await this.repository.findAll();
+    return await this.repository.findAll({});
   }
 }
 

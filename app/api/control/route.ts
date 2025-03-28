@@ -107,9 +107,9 @@ export async function GET() {
     // Filhos de Engenharia - Controle de acesso
     {
       id: nanoid(),
-      name: "Perfil",
-      description: "Perfil",
-      code: "admin:access_control",
+      name: "Controle de Acesso",
+      description: "Controle de Acesso",
+      code: "admin:control",
       parent_code: "admin",
     },
     {
@@ -117,16 +117,16 @@ export async function GET() {
       name: "Visualizar",
       description:
         "Permite acesso à tela de consulta de controles de acessos do sistema, podendo consultar os controles existentes e os perfis vinculados em cada controle.",
-      code: "admin:access_control:view",
-      parent_code: "admin:access_control",
+      code: "admin:control:view",
+      parent_code: "admin:control",
     },
     {
       id: nanoid(),
       name: "Controle",
       description:
         "Permite acesso ao campo ‘Perfil’ e ao botão ‘Pesquisar’ da tela, podendo o usuário aplicar um perfil específico e consequentemente adicionar ou remover acessos aos perfis do sistema.",
-      code: "admin:access_control:update",
-      parent_code: "admin:access_control",
+      code: "admin:control:update",
+      parent_code: "admin:control",
     },
     // Engenharia (nível superior)
     {

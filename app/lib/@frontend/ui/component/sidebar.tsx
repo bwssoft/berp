@@ -54,23 +54,6 @@ const navigation: NavItem[] = [
     name: "Admin",
     icon: AdjustmentsVerticalIcon,
     pathname: "/admin",
-    children: [
-      {
-        name: "Usuários",
-        icon: UsersIcon,
-        pathname: "/admin/user",
-      },
-      {
-        name: "Perfil",
-        icon: BookOpenIcon,
-        pathname: "/admin/profile",
-      },
-      {
-        name: "Controle de Acesso",
-        icon: ViewColumnsIcon,
-        pathname: "/admin/access-control",
-      },
-    ],
   },
   {
     name: "Engenharia",

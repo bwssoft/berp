@@ -1,16 +1,18 @@
 import { IControl } from "../@backend/domain";
 
+export type ControlTree = (IControl & { children: ControlTree })[];
+
 // Função para montar a árvore de hierarquia dos controles
-function buildControlTree(controls: IControl[]): IControl[] {
+function buildControlTree(controls: IControl[]): ControlTree {
   // Lookup para mapear cada controle pelo seu código e inicializa o campo "children"
   const lookup: {
-    [key: string]: IControl & { children: (IControl & { children: any[] })[] };
+    [key: string]: ControlTree[number];
   } = {};
   controls.forEach((control) => {
     lookup[control.code] = { ...control, children: [] };
   });
 
-  const tree: (IControl & { children: any[] })[] = [];
+  const tree: ControlTree = [];
 
   // Monta a árvore: se o controle possui parent_code, é adicionado como filho do pai; caso contrário, é elemento de nível superior
   controls.forEach((control) => {

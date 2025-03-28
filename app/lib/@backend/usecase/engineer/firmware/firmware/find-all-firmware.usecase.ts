@@ -1,7 +1,7 @@
 import { IFirmwareRepository } from "@/app/lib/@backend/domain";
 import { firmwareRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
+import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 
 class FindAllFirmwareUsecase {
   repository: IFirmwareRepository;
@@ -12,7 +12,7 @@ class FindAllFirmwareUsecase {
 
   @RemoveMongoId()
   async execute() {
-    return await this.repository.findAll();
+    return await this.repository.findAll({});
   }
 }
 

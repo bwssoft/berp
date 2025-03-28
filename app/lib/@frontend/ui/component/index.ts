@@ -24,3 +24,4 @@ export * from "./button-group";
 export * from "./back-button";
 export * from "./progress-bar";
 export * from "./dialog";
+export * from "./grid-list";

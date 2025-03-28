@@ -1,7 +1,11 @@
 "use server";
 
 import { IProfile } from "@/app/lib/@backend/domain";
-import { createOneProfileUsecase, findManyProfileUsecase } from "../../usecase";
+import {
+  createOneProfileUsecase,
+  findManyProfileUsecase,
+  findOneProfileUsecase,
+} from "../../usecase";
 import { Filter } from "mongodb";
 
 export async function createOneProfile(
@@ -12,4 +16,8 @@ export async function createOneProfile(
 
 export async function findManyProfile(input: Filter<IProfile>) {
   return await findManyProfileUsecase.execute(input);
+}
+
+export async function findOneProfile(input: Filter<IProfile>) {
+  return await findOneProfileUsecase.execute(input);
 }

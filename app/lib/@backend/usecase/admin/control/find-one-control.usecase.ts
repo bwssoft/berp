@@ -2,14 +2,13 @@ import { IControl, IControlRepository } from "@/app/lib/@backend/domain";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { controlRepository } from "@/app/lib/@backend/infra";
-import { Filter } from "mongodb";
 
 namespace Dto {
-  export interface Input extends Filter<IControl> {}
-  export type Output = IControl[];
+  export interface Input extends Partial<IControl> {}
+  export type Output = IControl | null;
 }
 
-class FindManyControlUsecase {
+class FindOneControlUsecase {
   repository: IControlRepository;
 
   constructor() {
@@ -18,8 +17,8 @@ class FindManyControlUsecase {
 
   @RemoveMongoId()
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    return await this.repository.findAll(arg, 20);
+    return await this.repository.findOne(arg);
   }
 }
 
-export const findManyControlUsecase = singleton(FindManyControlUsecase);
+export const findOneControlUsecase = singleton(FindOneControlUsecase);
