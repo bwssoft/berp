@@ -22,24 +22,66 @@ export namespace NB2 {
 }
 
 export class NB2Parser {
-  static serial(input: string) {
-    if (!input.includes("RINS=")) return undefined;
-    const serial = input.split("RINS=")?.[1].replace(/\s+/g, "");
-    return serial.length ? serial : undefined;
+  /**
+   * Extrai o valor do serial de uma string que contém "RINS=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do serial.
+   * @returns O valor do serial ou undefined se o formato não for válido.
+   */
+  static serial(input: string): string | undefined {
+    const parts = input.split("RINS=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
   }
 
-  static imei(input: string) {
-    if (!input.includes("RIMEI=")) return undefined;
-    const imei = input.split("RIMEI=")?.[1].replace(/\s+/g, "");
-    return imei.length ? imei : undefined;
+  /**
+   * Extrai o valor do imei de uma string que contém "RIMEI=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do imei.
+   * @returns O valor do imei ou undefined se o formato não for válido.
+   */
+  static imei(input: string): string | undefined {
+    const parts = input.split("RIMEI=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
   }
 
-  static iccid(input: string) {
-    if (!input.includes("ICCID=")) return undefined;
-    const iccid = input.split("ICCID=")?.[1].replace(/\s+/g, "");
-    return iccid.length ? iccid : undefined;
+  /**
+   * Extrai o valor do iccid de uma string que contém "ICCID=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do iccid.
+   * @returns O valor do iccid ou undefined se o formato não for válido.
+   */
+  static iccid(input: string): string | undefined {
+    const parts = input.split("ICCID=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
   }
 
+  /**
+   * Extrai um objeto da resposta do comando auto test.
+   *
+   * @param input - A string que contém a informação do autotest.
+   * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
+   */
   static auto_test(input: string): NB2.AutoTest | undefined {
     if (!input.startsWith("SN:")) return undefined;
     const splited = input.split(",");
@@ -50,18 +92,93 @@ export class NB2Parser {
     }, {} as NB2.AutoTest);
   }
 
-  static odometer() {
-    return "" as any;
+  /**
+   * Extrai o valor do odômetro de uma string que contém "RODM=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do odômetro.
+   * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
+   */
+  static odometer(input: string): number | undefined {
+    const parts = input.split("RODM=");
+    if (parts.length < 2) return undefined;
+
+    const odometerValue = parts[1].trim();
+
+    const value = parseFloat(odometerValue);
+
+    return isNaN(value) ? undefined : value / 10;
   }
-  static data_transmission_on() {
-    return "" as any;
+
+  /**
+   * Extrai o valor do tempo de transmissão de ignição ligada de uma string que contém "RCE=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do tempo de transmissão de ignição ligada.
+   * @returns O valor numérico do do tempo de transmissão de ignição ligada ou undefined se o formato não for válido.
+   */
+  static data_transmission_on(input: string): number | undefined {
+    const parts = input.split("RCN=");
+    if (parts.length < 2) return undefined;
+
+    const dataTransmissionOn = parts[1].trim();
+
+    const value = parseFloat(dataTransmissionOn);
+
+    return isNaN(value) ? undefined : value;
   }
-  static data_transmission_off() {
-    return "" as any;
+
+  /**
+   * Extrai o valor do tempo de transmissão de ignição desligada de uma string que contém "RCW=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do tempo de transmissão de ignição desligada.
+   * @returns O valor numérico do do tempo de transmissão de ignição desligada ou undefined se o formato não for válido.
+   */
+  static data_transmission_off(input: string): number | undefined {
+    const parts = input.split("RCW=");
+    if (parts.length < 2) return undefined;
+
+    const dataTransmissionOff = parts[1].trim();
+
+    const value = parseFloat(dataTransmissionOff);
+
+    return isNaN(value) ? undefined : value;
   }
-  static sleep() {
-    return "" as any;
+
+  /**
+   * Extrai o valor do tempo de sleep de uma string que contém "RCN=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do tempo de transmissão em evento.
+   * @returns O valor numérico do do tempo de transmissão em evento ou undefined se o formato não for válido.
+   */
+  static data_transmission_event(input: string): number | undefined {
+    const parts = input.split("RCE=");
+
+    if (parts.length < 2) return undefined;
+
+    const dataTransmissionEvent = parts[1].trim();
+
+    const value = parseFloat(dataTransmissionEvent);
+
+    return isNaN(value) ? undefined : value;
   }
+
+  /**
+   * Extrai o valor do tempo de sleep de uma string que contém "RCS=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do tempo de sleep.
+   * @returns O valor numérico do do tempo de sleep ou undefined se o formato não for válido.
+   */
+  static sleep(input: string): number | undefined {
+    const parts = input.split("RCS=");
+
+    if (parts.length < 2) return undefined;
+
+    const dataTransmissionEvent = parts[1].trim();
+
+    const value = parseFloat(dataTransmissionEvent);
+
+    return isNaN(value) ? undefined : value;
+  }
+
   static keep_alive() {
     return "" as any;
   }
