@@ -14,13 +14,13 @@ export function ChooseProfileForm(props: Props) {
 
   return (
     <form className="w-full">
-      <div className="border border-gray-900/10 p-4 rounded-lg shadow-md bg-white">
+      <div className="ring-1 ring-inset ring-gray-900/10 rounded-md shadow-sm bg-white py-2 sm:py-4 lg:py-6 px-4 sm:px-6 lg:px-8">
         <div className="sm:w-96">
           <label
             htmlFor="username"
             className="block text-sm/6 font-medium text-gray-900"
           >
-            Perfil
+            Selecione um perfil
           </label>
           <div className="mt-2">
             <Combobox
@@ -31,7 +31,7 @@ export function ChooseProfileForm(props: Props) {
               type="single"
               onSearchChange={handleSearchProfile}
               defaultValue={profile ? [profile] : []}
-              placeholder="Escolha o perfil"
+              placeholder="Escolha uma opção"
             />
           </div>
         </div>
