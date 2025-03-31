@@ -76,17 +76,18 @@ export default async function Example(props: Props) {
                     <p className="hover:text-gray-500 px-2">Ver Perfis</p>
                   </div>
                 </div>
-                {!profile?.locked_control_code.includes(control.code) && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute right-6 top-6 flex gap-2"
-                  >
-                    <div className="mt-1 flex items-center text-xs text-green-600">
-                      <CheckCircleIcon className="w-4 h-4 mr-1" />
-                      Presente no perfil
-                    </div>
-                  </span>
-                )}
+                {profile &&
+                  !profile?.locked_control_code.includes(control.code) && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute right-6 top-6 flex gap-2"
+                    >
+                      <div className="mt-1 flex items-center text-xs text-green-600">
+                        <CheckCircleIcon className="w-4 h-4 mr-1" />
+                        Presente no perfil
+                      </div>
+                    </span>
+                  )}
               </li>
             ))}
           </ul>
