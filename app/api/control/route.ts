@@ -427,7 +427,7 @@ export async function GET() {
     },
   ];
 
-  await controlRepository.createMany(controls);
+  // await controlRepository.createMany(controls);
 
   // Monta a árvore de controles do módulo admin
   const controlTree = buildControlTree(controls);
