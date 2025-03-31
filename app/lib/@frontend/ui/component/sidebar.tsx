@@ -58,77 +58,78 @@ const navigation: NavItem[] = [
   {
     name: "Engenharia",
     icon: RectangleStackIcon,
-    children: [
-      {
-        name: "Insumos",
-        icon: FolderIcon,
-        children: [
-          { name: "Gestão", pathname: "/engineer/input/management" },
-          {
-            name: "Categorias",
-            pathname: "/engineer/input/category",
-          },
-          { name: "Entradas e Saídas", pathname: "/engineer/input/enter-exit" },
-          { name: "Estoque", pathname: "/engineer/input/stock" },
-          { name: "Análise", pathname: "/engineer/input/analysis" },
-        ],
-      },
-      {
-        name: "Produtos",
-        icon: RectangleGroupIcon,
-        children: [
-          { name: "Gestão", pathname: "/engineer/product/management" },
-          {
-            name: "Categorias",
-            pathname: "/engineer/product/category",
-          },
-          {
-            name: "Entradas e Saídas",
-            pathname: "/engineer/product/enter-exit",
-          },
-          { name: "Estoque", pathname: "/engineer/product/stock" },
-          { name: "Análise", pathname: "/engineer/product/analysis" },
-          {
-            name: "Fichas técnicas",
-            pathname: "/engineer/technical-sheet/management",
-          },
-        ],
-      },
-      {
-        name: "Equipamentos",
-        icon: CpuChipIcon,
-        pathname: "/engineer/device/management",
-      },
-      {
-        name: "Firmware",
-        icon: CloudArrowUpIcon,
-        children: [
-          { name: "Gestão", pathname: "/engineer/firmware/management" },
-          {
-            name: "Requisições para atualização",
-            pathname: "/engineer/firmware/request-to-update",
-          },
-        ],
-      },
-      {
-        name: "Comandos",
-        icon: CommandLineIcon,
-        children: [
-          { name: "Gestão", pathname: "/engineer/command/management" },
-          { name: "Agendamento", pathname: "/engineer/command/schedule" },
-        ],
-      },
-      {
-        name: "Perfil de configuração",
-        icon: AdjustmentsHorizontalIcon,
-        children: [
-          {
-            name: "Gestão",
-            pathname: "/engineer/configuration-profile/management",
-          },
-        ],
-      },
-    ],
+    pathname: "/engineer",
+    // children: [
+    //   {
+    //     name: "Insumos",
+    //     icon: FolderIcon,
+    //     children: [
+    //       { name: "Gestão", pathname: "/engineer/input/management" },
+    //       {
+    //         name: "Categorias",
+    //         pathname: "/engineer/input/category",
+    //       },
+    //       { name: "Entradas e Saídas", pathname: "/engineer/input/enter-exit" },
+    //       { name: "Estoque", pathname: "/engineer/input/stock" },
+    //       { name: "Análise", pathname: "/engineer/input/analysis" },
+    //     ],
+    //   },
+    //   {
+    //     name: "Produtos",
+    //     icon: RectangleGroupIcon,
+    //     children: [
+    //       { name: "Gestão", pathname: "/engineer/product/management" },
+    //       {
+    //         name: "Categorias",
+    //         pathname: "/engineer/product/category",
+    //       },
+    //       {
+    //         name: "Entradas e Saídas",
+    //         pathname: "/engineer/product/enter-exit",
+    //       },
+    //       { name: "Estoque", pathname: "/engineer/product/stock" },
+    //       { name: "Análise", pathname: "/engineer/product/analysis" },
+    //       {
+    //         name: "Fichas técnicas",
+    //         pathname: "/engineer/technical-sheet/management",
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     name: "Equipamentos",
+    //     icon: CpuChipIcon,
+    //     pathname: "/engineer/device/management",
+    //   },
+    //   {
+    //     name: "Firmware",
+    //     icon: CloudArrowUpIcon,
+    //     children: [
+    //       { name: "Gestão", pathname: "/engineer/firmware/management" },
+    //       {
+    //         name: "Requisições para atualização",
+    //         pathname: "/engineer/firmware/request-to-update",
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     name: "Comandos",
+    //     icon: CommandLineIcon,
+    //     children: [
+    //       { name: "Gestão", pathname: "/engineer/command/management" },
+    //       { name: "Agendamento", pathname: "/engineer/command/schedule" },
+    //     ],
+    //   },
+    //   {
+    //     name: "Perfil de configuração",
+    //     icon: AdjustmentsHorizontalIcon,
+    //     children: [
+    //       {
+    //         name: "Gestão",
+    //         pathname: "/engineer/configuration-profile/management",
+    //       },
+    //     ],
+    //   },
+    // ],
   },
   {
     name: "Produção",
