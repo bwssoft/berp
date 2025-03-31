@@ -134,42 +134,43 @@ const navigation: NavItem[] = [
   {
     name: "Produção",
     icon: ClipboardIcon,
-    children: [
-      {
-        name: "Ordens de produção",
-        children: [
-          {
-            name: "Dashboard",
-            pathname: "/production/production-order/dashboard",
-          },
-          {
-            name: "Gestão",
-            pathname: "/production/production-order/management",
-          },
-          { name: "Kanban", pathname: "/production/production-order/kanban" },
-          {
-            name: "Processos",
-            pathname: "/production/production-process/management",
-          },
-        ],
-      },
-      {
-        name: "Ferramentas",
-        children: [
-          { name: "Configurador", pathname: "/production/configurator" },
-          { name: "Auto test", pathname: "/production/auto-test" },
-          { name: "Identificador", pathname: "/production/id-writer" },
-        ],
-      },
-      {
-        name: "Logs",
-        children: [
-          { name: "Configurador", pathname: "/production/configurator/log" },
-          { name: "Auto test", pathname: "/production/auto-test/log" },
-          { name: "Identificador", pathname: "/production/id-writer/log" },
-        ],
-      },
-    ],
+    pathname: "/production",
+    // children: [
+    //   {
+    //     name: "Ordens de produção",
+    //     children: [
+    //       {
+    //         name: "Dashboard",
+    //         pathname: "/production/production-order/dashboard",
+    //       },
+    //       {
+    //         name: "Gestão",
+    //         pathname: "/production/production-order/management",
+    //       },
+    //       { name: "Kanban", pathname: "/production/production-order/kanban" },
+    //       {
+    //         name: "Processos",
+    //         pathname: "/production/production-process/management",
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     name: "Ferramentas",
+    //     children: [
+    //       { name: "Configurador", pathname: "/production/configurator" },
+    //       { name: "Auto test", pathname: "/production/auto-test" },
+    //       { name: "Identificador", pathname: "/production/id-writer" },
+    //     ],
+    //   },
+    //   {
+    //     name: "Logs",
+    //     children: [
+    //       { name: "Configurador", pathname: "/production/configurator/log" },
+    //       { name: "Auto test", pathname: "/production/auto-test/log" },
+    //       { name: "Identificador", pathname: "/production/id-writer/log" },
+    //     ],
+    //   },
+    // ],
   },
   {
     name: "Comercial",
