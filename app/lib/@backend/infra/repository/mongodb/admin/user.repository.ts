@@ -1,4 +1,4 @@
-import { IUser } from "@/app/lib/@backend/domain/user/user.definition";
+import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
