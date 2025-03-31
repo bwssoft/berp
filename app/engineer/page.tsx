@@ -63,7 +63,7 @@ const actions = [
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
     description:
-      "Visualize e gerencie os produtos finais resultantes do processo de engenharia.",
+      "Visualize e gerencie os produtos finais resultantes do processo da Engenharia.",
   },
   {
     title: "Ficha Técnica",

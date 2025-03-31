@@ -13,7 +13,7 @@ export async function GET() {
       description: "Admin",
       code: "admin",
     },
-    // Filhos de Engenharia - Usuários
+    // Filhos da Engenharia - Usuários
     {
       id: nanoid(),
       name: "Usuário",
@@ -72,7 +72,7 @@ export async function GET() {
       code: "admin:user:password-reset",
       parent_code: "admin:user",
     },
-    // Filhos de Engenharia - Perfil
+    // Filhos da Engenharia - Perfil
     {
       id: nanoid(),
       name: "Perfil",
@@ -104,7 +104,7 @@ export async function GET() {
       code: "admin:profile:inactive",
       parent_code: "admin:profile",
     },
-    // Filhos de Engenharia - Controle de acesso
+    // Filhos da Engenharia - Controle de acesso
     {
       id: nanoid(),
       name: "Controle de Acesso",
@@ -135,7 +135,7 @@ export async function GET() {
       description: "Engenharia",
       code: "engineer",
     },
-    // Filhos de Engenharia - Insumos
+    // Filhos da Engenharia - Insumos
     {
       id: nanoid(),
       name: "Insumos",
@@ -179,7 +179,7 @@ export async function GET() {
       parent_code: "engineer:input",
     },
 
-    // Filhos de Engenharia - Produtos
+    // Filhos da Engenharia - Produtos
     {
       id: nanoid(),
       name: "Produtos",
@@ -230,7 +230,7 @@ export async function GET() {
       parent_code: "engineer:product",
     },
 
-    // Filhos de Engenharia - Equipamentos
+    // Filhos da Engenharia - Equipamentos
     {
       id: nanoid(),
       name: "Equipamentos",
@@ -239,7 +239,7 @@ export async function GET() {
       parent_code: "engineer",
     },
 
-    // Filhos de Engenharia - Firmware
+    // Filhos da Engenharia - Firmware
     {
       id: nanoid(),
       name: "Firmware",
@@ -262,7 +262,7 @@ export async function GET() {
       parent_code: "engineer:firmware",
     },
 
-    // Filhos de Engenharia - Comandos
+    // Filhos da Engenharia - Comandos
     {
       id: nanoid(),
       name: "Comandos",
@@ -285,7 +285,7 @@ export async function GET() {
       parent_code: "engineer:command",
     },
 
-    // Filhos de Engenharia - Perfil de configuração
+    // Filhos da Engenharia - Perfil de configuração
     {
       id: nanoid(),
       name: "Perfil de configuração",

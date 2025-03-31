@@ -174,10 +174,11 @@ const navigation: NavItem[] = [
   {
     name: "Comercial",
     icon: BriefcaseIcon,
-    children: [
-      { name: "Clientes", pathname: "/commercial/client" },
-      { name: "Propostas", pathname: "/commercial/proposal" },
-    ],
+    pathname: "/commercial",
+    // children: [
+    //   { name: "Clientes", pathname: "/commercial/client" },
+    //   { name: "Propostas", pathname: "/commercial/proposal" },
+    // ],
   },
 
   // {
