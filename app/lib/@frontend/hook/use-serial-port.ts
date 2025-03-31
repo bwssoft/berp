@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -56,7 +58,10 @@ export const useSerialPort = (props: Props) => {
   };
 
   //SerialPort
-  const openPort = async (port: ISerialPort, options: SerialOptions = { baudRate: 115200, bufferSize: 1000000 }) => {
+  const openPort = async (
+    port: ISerialPort,
+    options: SerialOptions = { baudRate: 115200, bufferSize: 1000000 }
+  ) => {
     try {
       await port.open(options);
     } catch (e) {

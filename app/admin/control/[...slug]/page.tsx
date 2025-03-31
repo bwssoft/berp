@@ -1,8 +1,11 @@
 import {
+  countControl,
   findManyControl,
   findOneControl,
   findOneProfile,
 } from "@/app/lib/@backend/action";
+import { IProfile } from "@/app/lib/@backend/domain";
+import { SetLockedProfileForm } from "@/app/lib/@frontend/ui/form";
 import { buildControlTree, cn, ControlTree } from "@/app/lib/util";
 import {
   Disclosure,
@@ -35,9 +38,10 @@ export default async function Example(props: Props) {
       </div>
     );
 
-  const [profile, controls] = await Promise.all([
+  const [profile, controls, totalControlsOnModule] = await Promise.all([
     findOneProfile({ id: slug[1] }),
     findManyControl({ parent_code: { $regex: control.code, $options: "i" } }),
+    countControl({ parent_code: { $regex: control.code, $options: "i" } }),
   ]);
 
   const control_tree = buildControlTree(controls);
@@ -46,7 +50,8 @@ export default async function Example(props: Props) {
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Controle de Acesso - {control.name} - {profile?.name ?? ""}
+            Controle de Acesso - {control.name}{" "}
+            {profile?.name ? `- ${profile.name}` : ""}
           </h1>
           <p className="mt-2 text-sm text-gray-700">
             Tela para o gerenciamento de acessos que cada perfil pode fazer.
@@ -60,9 +65,9 @@ export default async function Example(props: Props) {
         {control_tree.map((control, index) => (
           <li
             key={control.id + index}
-            className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow"
+            className="col-span-1  rounded-lg bg-white shadow"
           >
-            {renderControlTree(control)}
+            {renderControlTree(control, profile, totalControlsOnModule)}
           </li>
         ))}
       </ul>
@@ -72,12 +77,20 @@ export default async function Example(props: Props) {
 
 //ACORDION BSOFT
 
-const renderControlTree = (control: ControlTree[number]) => {
+const renderControlTree = (
+  control: ControlTree[number],
+  profile: IProfile | null,
+  totalControlsOnModule: number
+) => {
   const has_children = control.children.length > 0;
   return (
     <Disclosure key={control.id}>
-      <DisclosureButton className="w-full p-6 group flex justify-between  items-center gap-2">
-        {control.name}
+      <DisclosureButton className="border-b border-gray-200 w-full p-6 group flex justify-between items-center gap-2">
+        <SetLockedProfileForm
+          control={control}
+          profile={profile}
+          totalControlsOnModule={totalControlsOnModule}
+        />
         {has_children ? (
           <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
         ) : (
@@ -87,7 +100,9 @@ const renderControlTree = (control: ControlTree[number]) => {
       {has_children ? (
         <div>
           <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0">
-            {control.children.map((c) => renderControlTree(c))}
+            {control.children.map((c) =>
+              renderControlTree(c, profile, totalControlsOnModule)
+            )}
           </DisclosurePanel>
         </div>
       ) : (
