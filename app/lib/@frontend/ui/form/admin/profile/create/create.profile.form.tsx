@@ -5,7 +5,10 @@ import { useCreateProfileForm } from "./use-create.device.form";
 export function CreateProfileForm() {
   const { handleSubmit, register } = useCreateProfileForm();
   return (
-    <form action={() => handleSubmit()}>
+    <form
+      action={() => handleSubmit()}
+      className="mt-10 bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10"
+    >
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -19,7 +22,7 @@ export function CreateProfileForm() {
               <div className="mt-2">
                 <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 sm:max-w-md">
                   <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
-                    Nome:
+                    Perfil:
                   </span>
                   <input
                     {...register("name")}

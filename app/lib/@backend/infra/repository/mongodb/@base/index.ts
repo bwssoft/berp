@@ -53,6 +53,11 @@ export class BaseRepository<Entity extends object>
       .toArray();
   }
 
+  async count(params: Filter<Entity> = {}) {
+    const db = await this.connect();
+    return await db.collection<Entity>(this.collection).countDocuments(params);
+  }
+
   async updateOne(query: Filter<Entity>, value: UpdateFilter<Entity>) {
     const db = await this.connect();
     return await db.collection<Entity>(this.collection).updateOne(query, value);
