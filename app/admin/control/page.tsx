@@ -1,14 +1,7 @@
 import { findManyControl, findOneProfile } from "@/app/lib/@backend/action";
-import { Button } from "@/app/lib/@frontend/ui/component";
 import { ChooseProfileForm } from "@/app/lib/@frontend/ui/form";
 import { cn } from "@/app/lib/util";
-import { Badge } from "@bwsoft/badge";
-import {
-  ArrowRightIcon,
-  CheckCircleIcon,
-  IdentificationIcon,
-  LinkIcon,
-} from "@heroicons/react/24/outline";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 interface Props {
