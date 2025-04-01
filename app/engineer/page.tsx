@@ -65,15 +65,6 @@ const actions = [
     description:
       "Visualize e gerencie os produtos finais resultantes do processo da Engenharia.",
   },
-  {
-    title: "Ficha Técnica",
-    href: "/engineer/technical-sheet/management",
-    icon: ClipboardDocumentListIcon, // Representa documentação técnica
-    iconForeground: "text-cyan-700",
-    iconBackground: "bg-cyan-50",
-    description:
-      "Organize e consulte as fichas técnicas dos produtos e processos.",
-  },
 ];
 
 export default function Page() {

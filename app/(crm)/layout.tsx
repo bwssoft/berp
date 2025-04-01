@@ -1,9 +1,5 @@
-import {
-  BackButton,
-  CrmLayout,
-  Toaster,
-} from "@/app/lib/@frontend/ui/component";
-import "../../globals.css";
+import { CrmLayout, Toaster } from "@/app/lib/@frontend/ui/component";
+import "../globals.css";
 
 export default function RootLayout({
   children,

@@ -1,5 +1,5 @@
 import { findOneTechnology } from "@/app/lib/@backend/action";
-import { AutoTestPanel } from "../@components/auto-test";
+import { AutoTestPanel } from "./@components/auto-test";
 
 interface Props {
   searchParams: {
