@@ -25,7 +25,7 @@ class ActiveUserUsecase {
     const { id, active } = input;
 
     try {
-      const updated = await this.repository.updateOne({ id }, { active });
+      const updated = await this.repository.updateOne({ id }, { $set: { active } })
 
       if (!updated) {
         return { success: false, error: "Usuário não encontrado ou não atualizado." };
