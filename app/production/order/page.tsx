@@ -8,7 +8,7 @@ import {
 const actions = [
   {
     title: "Gestão",
-    href: "/production/production-order/management",
+    href: "/production/order/management",
     icon: ClipboardDocumentCheckIcon,
     iconForeground: "text-indigo-700",
     iconBackground: "bg-indigo-50",
@@ -17,7 +17,7 @@ const actions = [
   },
   {
     title: "Dashboard",
-    href: "/production/production-order/dashboard",
+    href: "/production/order/dashboard",
     icon: ChartBarIcon,
     iconForeground: "text-green-700",
     iconBackground: "bg-green-50",
@@ -26,7 +26,7 @@ const actions = [
   },
   {
     title: "Kanban",
-    href: "/production/production-order/kanban",
+    href: "/production/order/kanban",
     icon: ViewColumnsIcon,
     iconForeground: "text-amber-700",
     iconBackground: "bg-amber-50",

@@ -212,24 +212,16 @@ export async function GET() {
       id: nanoid(),
       name: "Estoque",
       description: "Estoque de Produtos",
-      code: "engineer:product:inventory",
+      code: "engineer:product:stock",
       parent_code: "engineer:product",
     },
     {
       id: nanoid(),
       name: "Análise",
       description: "Análise de Produtos",
-      code: "engineer:product:analyse",
+      code: "engineer:product:analysis",
       parent_code: "engineer:product",
     },
-    {
-      id: nanoid(),
-      name: "Fichas técnicas",
-      description: "Fichas técnicas de Produtos",
-      code: "engineer:product:technical_sheets",
-      parent_code: "engineer:product",
-    },
-
     // Filhos da Engenharia - Equipamentos
     {
       id: nanoid(),
@@ -258,7 +250,7 @@ export async function GET() {
       id: nanoid(),
       name: "Requisições para atualização",
       description: "Requisições para atualização de Firmware",
-      code: "engineer:firmware:requisicoes-atualizacao",
+      code: "engineer:firmware:request-to-update",
       parent_code: "engineer:firmware",
     },
 
@@ -281,7 +273,7 @@ export async function GET() {
       id: nanoid(),
       name: "Agendamento",
       description: "Agendamento de Comandos",
-      code: "engineer:command:agendamento",
+      code: "engineer:command:schedule",
       parent_code: "engineer:command",
     },
 
@@ -337,93 +329,80 @@ export async function GET() {
       code: "production:order:kanban",
       parent_code: "production:order",
     },
+    // Filhos de Produção - Processos
     {
       id: nanoid(),
       name: "Processos",
-      description: "Processos de Ordens de produção",
-      code: "production:order:process",
-      parent_code: "production:order",
-    },
-    // Filhos de Produção - Ferramentas
-    {
-      id: nanoid(),
-      name: "Ferramentas",
-      description: "Ferramentas",
-      code: "production:tool",
+      description: "Processos",
+      code: "production:process",
       parent_code: "production",
     },
+    // Filhos de Produção - Configurador
     {
       id: nanoid(),
       name: "Configurador",
       description: "Configurador",
-      code: "production:tool:configurator",
-      parent_code: "production:tool",
-    },
-    {
-      id: nanoid(),
-      name: "Auto test",
-      description: "Auto test",
-      code: "production:tool:auto-test",
-      parent_code: "production:tool",
-    },
-    {
-      id: nanoid(),
-      name: "Identificador",
-      description: "Identificador",
-      code: "production:tool:identifier",
-      parent_code: "production:tool",
-    },
-    // Filhos de Produção - Logs
-    {
-      id: nanoid(),
-      name: "Logs",
-      description: "Logs",
-      code: "production:logs",
+      code: "production:configurator",
       parent_code: "production",
     },
     {
       id: nanoid(),
-      name: "Configurador",
+      name: "Logs do Configurador",
       description: "Logs do Configurador",
-      code: "production:logs:configurator",
-      parent_code: "production:logs",
+      code: "production:configurator:log",
+      parent_code: "production:configurator",
     },
+    // Filhos de Produção - Auto Test
     {
       id: nanoid(),
       name: "Auto test",
-      description: "Logs do Auto test",
-      code: "production:logs:auto-test",
-      parent_code: "production:logs",
+      description: "Auto test",
+      code: "production:auto-test",
+      parent_code: "production",
     },
     {
       id: nanoid(),
-      name: "Identificador",
-      description: "Logs do Identificador",
-      code: "production:logs:identifier",
-      parent_code: "production:logs",
+      name: "Logs do Auto teste",
+      description: "Logs do Auto teste",
+      code: "production:auto-test:log",
+      parent_code: "production:auto-test",
     },
-
+    // Filhos de Produção - Identificador
+    {
+      id: nanoid(),
+      name: "Identificador",
+      description: "Identificador",
+      code: "production:identifier",
+      parent_code: "production",
+    },
+    {
+      id: nanoid(),
+      name: "Logs do Identificador",
+      description: "Logs do Identificador",
+      code: "production:identifier:log",
+      parent_code: "production:identifier",
+    },
     // Comercial (nível superior)
     {
       id: nanoid(),
       name: "Comercial",
       description: "Comercial",
-      code: "comercial",
+      code: "commercial",
     },
     // Filhos de Comercial
     {
       id: nanoid(),
       name: "Clientes",
       description: "Clientes",
-      code: "comercial:client",
-      parent_code: "comercial",
+      code: "commercial:client",
+      parent_code: "commercial",
     },
     {
       id: nanoid(),
       name: "Propostas",
       description: "Propostas",
-      code: "comercial:proposal",
-      parent_code: "comercial",
+      code: "commercial:proposal",
+      parent_code: "commercial",
     },
   ];
 
