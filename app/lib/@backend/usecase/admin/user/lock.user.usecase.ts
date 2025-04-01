@@ -9,7 +9,8 @@ export namespace Dto {
     };
 
     export type Output = {
-        ok: boolean;
+        success: boolean;
+        error?: string;
     };
 }
 
@@ -22,15 +23,17 @@ export class LockUserUsecase {
 
     async execute(input: Dto.Input): Promise<Dto.Output> {
         const { id, lock } = input;
-
         const filter: Filter<{ id: string }> = { id };
+        const update = { $set: { lock } };
 
-        const update = {
-            $set: { lock },
-        };
-
-        const result = await this.repository.updateOne(filter, update);
-
-        return { ok: result.modifiedCount > 0 };
+        try {
+            const result = await this.repository.updateOne(filter, update);
+            return { success: result.modifiedCount > 0 };
+        } catch (err) {
+            return {
+                success: false,
+                error: err instanceof Error ? err.message : JSON.stringify(err),
+            };
+        }
     }
 }
