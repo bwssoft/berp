@@ -1,0 +1,22 @@
+name: STAGING
+on:
+  pull_request:
+    branches:
+      - staging
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  enforce-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR is from develop
+        run: |
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          HEAD_BRANCH="${{ github.event.pull_request.head.ref }}"
+          if [[ "$BASE_BRANCH" == "staging" && "$HEAD_BRANCH" != "develop" ]]; then
+            echo "❌ Pull Requests para a branch 'staging' só podem vir da branch 'develop'."
+            exit 1
+          fi

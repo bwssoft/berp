@@ -1,8 +1,7 @@
 import { findManyControl, findOneProfile } from "@/app/lib/@backend/action";
-import { Button } from "@/app/lib/@frontend/ui/component";
 import { ChooseProfileForm } from "@/app/lib/@frontend/ui/form";
 import { cn } from "@/app/lib/util";
-import { ViewColumnsIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 interface Props {
@@ -32,36 +31,61 @@ export default async function Example(props: Props) {
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <ChooseProfileForm profile={profile} />
       </div>
-      <ul
-        role="list"
-        className="mt-10 px-4 sm:px-6 lg:px-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-      >
-        {controls.map((control) => (
-          <Link
-            href={`/admin/control/${control.id}/${profile?.id ?? ""}`}
-            key={control.id}
+      <div className="mt-10 px-4 sm:px-6 lg:px-8">
+        <div className="p-4 sm:p-6 lg:p-8 ring-1 ring-inset ring-gray-900/10 rounded-md shadow-sm bg-white">
+          {profile?.name ? (
+            <h1 className="text-base font-semibold leading-7 text-gray-900">
+              Perfil: {profile?.name}
+            </h1>
+          ) : (
+            <h1 className="text-base font-semibold leading-7 text-gray-900">
+              Listagem dos módulos
+            </h1>
+          )}
+          <div className="mt-4 border-b border-gray-900/10" />
+          <ul
+            role="list"
+            className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
-            <li
-              key={control.id}
-              className="group relative p-6 col-span-1 rounded-lg bg-white shadow hover:cursor-pointer hover:shadow-md"
-            >
-              <div className="mt-8">
-                <h3 className="text-base font-semibold text-gray-900">
-                  {control.name}
-                </h3>
-              </div>
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute right-6 top-6 text-gray-300 group-hover:text-gray-400"
+            {controls.map((control) => (
+              <li
+                key={control.id}
+                className={cn(
+                  "group relative p-6 bg-white col-span-1 rounded-lg shadow ring-1 ring-inset ring-gray-900/10"
+                )}
               >
-                <svg fill="currentColor" viewBox="0 0 24 24" className="size-6">
-                  <path d="M20 4h1a1 1 0 00-1-1v1zm-1 12a1 1 0 102 0h-2zM8 3a1 1 0 000 2V3zM3.293 19.293a1 1 0 101.414 1.414l-1.414-1.414zM19 4v12h2V4h-2zm1-1H8v2h12V3zm-.707.293l-16 16 1.414 1.414 16-16-1.414-1.414z" />
-                </svg>
-              </span>
-            </li>
-          </Link>
-        ))}
-      </ul>
+                <div>
+                  <h3 className="text-base font-semibold text-gray-900">
+                    {control.name}
+                  </h3>
+                  <div className="w-fit mt-2 flex divide-x-2 divide-gray-300 text-sm text-gray-400 hover:cursor-pointer">
+                    <Link
+                      href={`/admin/control/${control.id}/${profile?.id ?? ""}`}
+                      key={control.id}
+                      className="hover:text-gray-500 pr-2"
+                    >
+                      Detalhes
+                    </Link>
+                    <p className="hover:text-gray-500 px-2">Ver Perfis</p>
+                  </div>
+                </div>
+                {profile &&
+                  !profile?.locked_control_code.includes(control.code) && (
+                    <span
+                      aria-hidden="true"
+                      className="absolute right-6 top-6 flex gap-2"
+                    >
+                      <div className="mt-1 flex items-center text-xs text-green-600">
+                        <CheckCircleIcon className="w-4 h-4 mr-1" />
+                        Presente no perfil
+                      </div>
+                    </span>
+                  )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }

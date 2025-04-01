@@ -10,22 +10,8 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import {
-  AdjustmentsHorizontalIcon,
-  AdjustmentsVerticalIcon,
   Bars3Icon,
-  BookOpenIcon,
-  BriefcaseIcon,
   ChevronRightIcon,
-  ClipboardIcon,
-  CloudArrowUpIcon,
-  CommandLineIcon,
-  CpuChipIcon,
-  FolderIcon,
-  HomeIcon,
-  RectangleGroupIcon,
-  RectangleStackIcon,
-  UsersIcon,
-  ViewColumnsIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -37,7 +23,7 @@ import {
 } from "react";
 import { useIsOnPathname } from "../../hook/is-on-pathname";
 
-type NavItem = {
+export type NavItem = {
   name: string;
   icon?: ForwardRefExoticComponent<
     Omit<SVGProps<SVGSVGElement>, "ref"> & {
@@ -48,148 +34,6 @@ type NavItem = {
   pathname?: string;
   children?: NavItem[];
 };
-const navigation: NavItem[] = [
-  { name: "Dashboard", icon: HomeIcon, pathname: "/" },
-  {
-    name: "Admin",
-    icon: AdjustmentsVerticalIcon,
-    pathname: "/admin",
-  },
-  {
-    name: "Engenharia",
-    icon: RectangleStackIcon,
-    children: [
-      {
-        name: "Insumos",
-        icon: FolderIcon,
-        children: [
-          { name: "Gestão", pathname: "/engineer/input/management" },
-          {
-            name: "Categorias",
-            pathname: "/engineer/input/category",
-          },
-          { name: "Entradas e Saídas", pathname: "/engineer/input/enter-exit" },
-          { name: "Estoque", pathname: "/engineer/input/stock" },
-          { name: "Análise", pathname: "/engineer/input/analysis" },
-        ],
-      },
-      {
-        name: "Produtos",
-        icon: RectangleGroupIcon,
-        children: [
-          { name: "Gestão", pathname: "/engineer/product/management" },
-          {
-            name: "Categorias",
-            pathname: "/engineer/product/category",
-          },
-          {
-            name: "Entradas e Saídas",
-            pathname: "/engineer/product/enter-exit",
-          },
-          { name: "Estoque", pathname: "/engineer/product/stock" },
-          { name: "Análise", pathname: "/engineer/product/analysis" },
-          {
-            name: "Fichas técnicas",
-            pathname: "/engineer/technical-sheet/management",
-          },
-        ],
-      },
-      {
-        name: "Equipamentos",
-        icon: CpuChipIcon,
-        pathname: "/engineer/device/management",
-      },
-      {
-        name: "Firmware",
-        icon: CloudArrowUpIcon,
-        children: [
-          { name: "Gestão", pathname: "/engineer/firmware/management" },
-          {
-            name: "Requisições para atualização",
-            pathname: "/engineer/firmware/request-to-update",
-          },
-        ],
-      },
-      {
-        name: "Comandos",
-        icon: CommandLineIcon,
-        children: [
-          { name: "Gestão", pathname: "/engineer/command/management" },
-          { name: "Agendamento", pathname: "/engineer/command/schedule" },
-        ],
-      },
-      {
-        name: "Perfil de configuração",
-        icon: AdjustmentsHorizontalIcon,
-        children: [
-          {
-            name: "Gestão",
-            pathname: "/engineer/configuration-profile/management",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Produção",
-    icon: ClipboardIcon,
-    children: [
-      {
-        name: "Ordens de produção",
-        children: [
-          {
-            name: "Dashboard",
-            pathname: "/production/production-order/dashboard",
-          },
-          {
-            name: "Gestão",
-            pathname: "/production/production-order/management",
-          },
-          { name: "Kanban", pathname: "/production/production-order/kanban" },
-          {
-            name: "Processos",
-            pathname: "/production/production-process/management",
-          },
-        ],
-      },
-      {
-        name: "Ferramentas",
-        children: [
-          { name: "Configurador", pathname: "/production/configurator" },
-          { name: "Auto test", pathname: "/production/auto-test" },
-          { name: "Identificador", pathname: "/production/id-writer" },
-        ],
-      },
-      {
-        name: "Logs",
-        children: [
-          { name: "Configurador", pathname: "/production/configurator/log" },
-          { name: "Auto test", pathname: "/production/auto-test/log" },
-          { name: "Identificador", pathname: "/production/id-writer/log" },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Comercial",
-    icon: BriefcaseIcon,
-    children: [
-      { name: "Clientes", pathname: "/commercial/client" },
-      { name: "Propostas", pathname: "/commercial/proposal" },
-    ],
-  },
-
-  // {
-  //   name: "Ferramentas",
-  //   icon: WrenchIcon,
-  //   children: [
-  //     { name: "Configurador", pathname: "#" },
-  //     { name: "Calculadora de Estoque", pathname: "#" },
-  //   ],
-  // },
-  // { name: "Calendário", icon: CalendarIcon },
-  // { name: "Relatórios", icon: ChartPieIcon },
-];
 
 const getPaddingClass = (depth: number) => {
   switch (depth) {
@@ -204,44 +48,49 @@ const getPaddingClass = (depth: number) => {
   }
 };
 
-export function SideBar() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const isOnPathname = useIsOnPathname();
+interface Props {
+  navigation: any[];
+}
+const renderNavItem = (
+  item: NavItem,
+  isOnPathname: (href?: string) => boolean,
+  depth = 0
+) => {
+  const paddingLeft = getPaddingClass(depth);
 
-  const renderNavItem = (item: NavItem, depth = 0) => {
-    const paddingLeft = getPaddingClass(depth); // Calcula o padding-left baseado na profundidade
-    return (
-      <li key={item.name}>
-        {!item?.children ? (
-          <Link
-            href={item.pathname ?? "#"}
-            className={cn(
-              isOnPathname(item.pathname)
-                ? "bg-gray-50"
-                : "hover:bg-gray-50 pl-",
-              "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700",
-              paddingLeft // Adiciona padding-left baseado na profundidade
-            )}
-          >
-            {item.icon && (
-              <item.icon
-                className="h-6 w-6 shrink-0 text-gray-400"
-                aria-hidden="true"
-              />
-            )}
-            {item.name}
-          </Link>
-        ) : (
-          <Disclosure as="div">
-            {({ open }) => (
-              <>
-                <DisclosureButton
+  return (
+    <li key={item.name}>
+      {!item?.children ? (
+        <Link
+          href={item.pathname ?? "#"}
+          className={cn(
+            isOnPathname(item.pathname) ? "bg-gray-50" : "hover:bg-gray-50",
+            "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700",
+            paddingLeft
+          )}
+        >
+          {item.icon && (
+            <item.icon
+              className="h-6 w-6 shrink-0 text-gray-400"
+              aria-hidden="true"
+            />
+          )}
+          {item.name}
+        </Link>
+      ) : (
+        <Disclosure as="div">
+          {({ open }) => (
+            <>
+              <div className="flex items-center">
+                {/* Área clicável para redirecionamento */}
+                <Link
+                  href={item.pathname ?? "#"}
                   className={cn(
                     isOnPathname(item.pathname)
                       ? "bg-gray-50"
                       : "hover:bg-gray-50",
-                    "flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm font-semibold leading-6 text-gray-700",
-                    paddingLeft // Adiciona padding-left baseado na profundidade
+                    "flex flex-1 items-center gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700",
+                    paddingLeft
                   )}
                 >
                   {item?.icon && (
@@ -251,27 +100,36 @@ export function SideBar() {
                     />
                   )}
                   {item.name}
+                </Link>
+
+                {/* Botão apenas para expandir/recolher */}
+                <DisclosureButton className="p-2 rounded-md hover:bg-gray-50">
                   <ChevronRightIcon
                     className={cn(
                       open ? "rotate-90 text-gray-500" : "text-gray-400",
-                      "ml-auto h-5 w-5 shrink-0"
+                      "h-5 w-5 shrink-0"
                     )}
                     aria-hidden="true"
                   />
                 </DisclosureButton>
-                <Disclosure.Panel as="ul" className="mt-1">
-                  {item?.children?.map((subItem) =>
-                    renderNavItem(subItem, depth + 1)
-                  )}
-                </Disclosure.Panel>
-              </>
-            )}
-          </Disclosure>
-        )}
-      </li>
-    );
-  };
+              </div>
 
+              <Disclosure.Panel as="ul" className="mt-1">
+                {item?.children?.map((subItem) =>
+                  renderNavItem(subItem, isOnPathname, depth + 1)
+                )}
+              </Disclosure.Panel>
+            </>
+          )}
+        </Disclosure>
+      )}
+    </li>
+  );
+};
+export function SideBar(props: Props) {
+  const { navigation } = props;
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isOnPathname = useIsOnPathname();
   return (
     <>
       <div>
@@ -322,18 +180,22 @@ export function SideBar() {
                   </TransitionChild>
                   {/* Sidebar component, swap this element with another sidebar if you like */}
                   <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
-                    <div className="flex h-16 shrink-0 items-center">
-                      <img
-                        className="h-8 w-auto"
-                        src="/bcube-logo.svg"
-                        alt="Bcube"
-                      />
-                    </div>
+                    <Link href={"/home"}>
+                      <div className="flex h-16 shrink-0 items-center">
+                        <img
+                          className="h-8 w-auto"
+                          src="/bcube-logo.svg"
+                          alt="Bcube"
+                        />
+                      </div>
+                    </Link>
                     <nav className="flex flex-1 flex-col">
                       <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
                           <ul role="list" className="-mx-2 space-y-1">
-                            {navigation.map((item) => renderNavItem(item))}
+                            {navigation.map((item) =>
+                              renderNavItem(item, isOnPathname)
+                            )}
                           </ul>
                         </li>
                       </ul>
@@ -349,18 +211,22 @@ export function SideBar() {
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
-            <div className="flex h-16 shrink-0 items-center">
-              <img
-                className="h-8 w-auto"
-                src="/bcube-logo.svg"
-                alt="Your Company"
-              />
-            </div>
+            <Link href="/home">
+              <div className="flex h-16 shrink-0 items-center">
+                <img
+                  className="h-8 w-auto"
+                  src="/bcube-logo.svg"
+                  alt="Your Company"
+                />
+              </div>
+            </Link>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
                   <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => renderNavItem(item))}
+                    {navigation.map((item) =>
+                      renderNavItem(item, isOnPathname)
+                    )}
                   </ul>
                 </li>
                 <li className="-mx-6 mt-auto">

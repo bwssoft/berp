@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { IAutoTestLog, ITechnology } from "../../@backend/domain";
 import { ISerialPort } from "./use-serial-port";

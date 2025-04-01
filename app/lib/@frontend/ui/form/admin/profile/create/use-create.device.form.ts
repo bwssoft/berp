@@ -1,4 +1,4 @@
-import { createOneProfile } from "@/app/lib/@backend/action";
+import { createOneProfile, findManyControl } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -27,6 +27,8 @@ export function useCreateProfileForm() {
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
+      const controls = await findManyControl({}, 200);
+      data.locked_control_code = controls.map(({ code }) => code);
       await createOneProfile(data);
       toast({
         title: "Sucesso!",
