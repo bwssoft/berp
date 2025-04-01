@@ -28,7 +28,7 @@ const actions = [
   },
   {
     title: "Entradas e Saídas",
-    href: "/engineer/input/enter-exit",
+    href: "/engineer/input/transaction",
     icon: ArrowsRightLeftIcon, // Representa movimentações de estoque
     iconForeground: "text-indigo-700",
     iconBackground: "bg-indigo-50",

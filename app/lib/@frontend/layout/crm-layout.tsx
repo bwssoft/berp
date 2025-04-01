@@ -1,4 +1,4 @@
-import { BackButton } from "../component";
+import { BackButton } from "../ui/component";
 
 interface Props {
   children: React.ReactNode;

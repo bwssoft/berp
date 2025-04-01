@@ -9,7 +9,7 @@ export * from "./checkbox-editable";
 export * from "./data-table";
 export * from "../form";
 export * from "./input-file";
-export * from "../layout";
+export * from "../../layout";
 export * from "./radio";
 export * from "./select";
 export * from "./sidebar";

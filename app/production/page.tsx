@@ -1,17 +1,16 @@
 import {
   WrenchScrewdriverIcon, // Auto Test
-  Cog6ToothIcon, // Configurador
-  IdentificationIcon, // Identificador
   ClipboardDocumentListIcon, // Ordem de Produção
-  BuildingLibraryIcon, // Processo Produtivo
+  BuildingLibraryIcon,
+  DocumentArrowDownIcon, // Processo Produtivo
 } from "@heroicons/react/24/outline";
 
 import { GridList } from "../lib/@frontend/ui/component";
 
 const actions = [
   {
-    title: "Auto Test",
-    href: "/production/auto-test",
+    title: "Ferrametas",
+    href: "/production/tool",
     icon: WrenchScrewdriverIcon,
     iconForeground: "text-blue-700",
     iconBackground: "bg-blue-50",
@@ -19,26 +18,17 @@ const actions = [
       "Execute testes automáticos para validar dispositivos durante o processo de produção.",
   },
   {
-    title: "Configurador",
-    href: "/production/configurator",
-    icon: Cog6ToothIcon,
-    iconForeground: "text-amber-700",
-    iconBackground: "bg-amber-50",
+    title: "Logs",
+    href: "/production/log",
+    icon: DocumentArrowDownIcon,
+    iconForeground: "text-blue-700",
+    iconBackground: "bg-blue-50",
     description:
-      "Configure parâmetros e definições técnicas dos dispositivos na linha de montagem.",
-  },
-  {
-    title: "Identificador",
-    href: "/production/id-writer",
-    icon: IdentificationIcon,
-    iconForeground: "text-cyan-700",
-    iconBackground: "bg-cyan-50",
-    description:
-      "Grave identificações únicas nos dispositivos como parte do processo produtivo.",
+      "Visualize/Analise os resultados da utilização das ferramentas.",
   },
   {
     title: "Ordem de Produção",
-    href: "/production/production-order",
+    href: "/production/order",
     icon: ClipboardDocumentListIcon,
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
@@ -47,7 +37,7 @@ const actions = [
   },
   {
     title: "Processo Produtivo",
-    href: "/production/production-process/management",
+    href: "/production/process/management",
     icon: BuildingLibraryIcon,
     iconForeground: "text-emerald-700",
     iconBackground: "bg-emerald-50",
