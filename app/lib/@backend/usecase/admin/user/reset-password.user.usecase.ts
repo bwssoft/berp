@@ -13,7 +13,8 @@ export namespace Dto {
     };
 
     export type Output = {
-        ok: boolean;
+        success: boolean;
+        error?: string;
     };
 }
 
@@ -33,7 +34,7 @@ class ResetPasswordUserUsecase {
             const user = await this.repository.findOne({ id });
 
             if (!user) {
-                return { ok: false };
+                return { success: false, error: "Usuário não encontrado." };
             }
 
             const temporaryPassword = generateRandomPassword();
@@ -52,10 +53,12 @@ class ResetPasswordUserUsecase {
                 attachments: [],
             });
 
-            return { ok: true };
+            return { success: true };
         } catch (err) {
-            console.error("Erro ao redefinir senha:", err);
-            return { ok: false };
+            return {
+                success: false,
+                error: err instanceof Error ? err.message : JSON.stringify(err),
+            };
         }
     }
 }
