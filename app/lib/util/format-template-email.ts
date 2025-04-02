@@ -1,5 +1,5 @@
 import { render } from "@react-email/components";
-import WelcomeTemplate  from "../@backend/infra/template/Welcome-template";
+import WelcomeTemplate from "../@backend/infra/template/welcometemplate";
 
 interface WelcomeTemplateProps {
   name: string;

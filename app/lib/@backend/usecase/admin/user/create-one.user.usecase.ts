@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { generateRandomPassword } from "@/app/lib/util/generateRandomPassword"
+import { generateRandomPassword } from "@/app/lib/util/generate-random-password"
 import { IUserRepository } from "../../../domain/admin/repository/user.repository.interface";
 import { userRepository } from "../../../infra/repository/mongodb/admin/user.repository";
 import { IUser } from "../../../domain/admin/entity/user.definition";
@@ -7,7 +7,7 @@ import { hash } from "bcrypt"
 import { randomInt } from "crypto"
 import { IBMessageGateway } from "../../../domain/@shared/gateway/bmessage.gateway.interface";
 import { bmessageGateway } from "../../../infra/gateway/bmessage/bmessage.gateway";
-import { formatWelcomeEmail } from "@/app/lib/util/formatTemplateEmail";
+import { formatWelcomeEmail } from "@/app/lib/util/format-template-email";
 
 class CreateOneUserUsecase {
   repository: IUserRepository
