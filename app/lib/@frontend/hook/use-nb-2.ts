@@ -52,13 +52,7 @@ const generateMessages = (
   profile: IConfigurationProfile
 ): Record<ConfigKeys, string> => {
   const response = {} as Record<ConfigKeys, string>;
-  const optional_functions_to_remove = profile.optional_functions
-    ? Object.entries(profile.optional_functions)
-        .filter(([_, value]) => value === false)
-        .map(([key]) => key)
-    : [];
   Object.entries(profile.config).forEach(([message, args]) => {
-    if (optional_functions_to_remove.includes(message)) return;
     const _message = E34GEncoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
@@ -140,6 +134,11 @@ export const useNB2 = () => {
           message: "\r\n",
           key: "data_transmission_off",
           transform: NB2Parser.data_transmission_off,
+        },
+        {
+          message: "\r\n",
+          key: "data_transmission_event",
+          transform: NB2Parser.data_transmission_event,
         },
         { message: "\r\n", key: "sleep", transform: NB2Parser.sleep },
         { message: "\r\n", key: "keep_alive", transform: NB2Parser.keep_alive },

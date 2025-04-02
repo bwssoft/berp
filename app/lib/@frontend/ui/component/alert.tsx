@@ -9,9 +9,11 @@ interface Props {
   title: string;
   description?: string;
   variant: "success" | "info" | "attention" | "ghost";
+  className?: string;
 }
+
 export function Alert(props: Props) {
-  const { title, description, variant } = props;
+  const { title, description, variant, className } = props;
   const IconComponent = style[variant].icon.component;
   const iconClassName = style[variant].icon.className;
   const titleClassName = style[variant].title;
@@ -20,7 +22,7 @@ export function Alert(props: Props) {
 
   return (
     <>
-      <div className={cn("rounded-md p-4", backgroundClassName)}>
+      <div className={cn("rounded-md p-4", backgroundClassName, className)}>
         <div className="flex">
           <div className="flex-shrink-0">
             <IconComponent className={cn("h-5 w-5", iconClassName)} />

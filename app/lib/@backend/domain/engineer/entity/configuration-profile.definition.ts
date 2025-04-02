@@ -4,15 +4,16 @@ export interface IConfigurationProfile {
   use_case: EUseCase;
   name: string;
   type: EType;
-  config: {
-    general: GeneralConfig;
-    specific?: E3Plus4GConfig | E3PlusConfig;
-  };
-  optional_functions?: Record<string, boolean>;
+  config: Config;
   created_at: Date;
   user_id: string;
   technology_id: string;
   validation: Validation;
+}
+
+interface Config {
+  general: GeneralConfig;
+  specific?: E3Plus4GConfig | E3PlusConfig;
 }
 
 interface Validation {
