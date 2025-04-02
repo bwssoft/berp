@@ -2,49 +2,64 @@ import { singleton } from "@/app/lib/util/singleton";
 import { generateRandomPassword } from "@/app/lib/util/generate-random-password";
 import { IUserRepository } from "../../../domain/admin/repository/user.repository.interface";
 import { userRepository } from "../../../infra/repository/mongodb/admin/user.repository";
-import { IUser } from "../../../domain/admin/entity/user.definition";
 import { hash } from "bcrypt";
 import { randomInt } from "crypto";
 import { IBMessageGateway } from "../../../domain/@shared/gateway/bmessage.gateway.interface";
 import { bmessageGateway } from "../../../infra/gateway/bmessage/bmessage.gateway";
-import { formatWelcomeEmail } from "@/app/lib/util/format-template-email";
+import { formatResetPasswordEmail } from "@/app/lib/util/format-template-reset-passwor-email";
 
-class CreateOneUserUsecase {
-    repository: IUserRepository;
-    bmessageGateway: IBMessageGateway;
+export namespace Dto {
+    export type Input = {
+        id: string;
+    };
+
+    export type Output = {
+        success: boolean;
+        error?: string;
+    };
+}
+
+class ResetPasswordUserUsecase {
+    private repository: IUserRepository;
+    private bmessageGateway: IBMessageGateway;
 
     constructor() {
         this.repository = userRepository;
         this.bmessageGateway = bmessageGateway;
     }
 
-    async execute(input: Omit<IUser, "id" | "created_at" | "password">) {
-        const temporaryPassword = generateRandomPassword();
-        const randomSalt = randomInt(10, 16);
+    async execute(input: Dto.Input): Promise<Dto.Output> {
+        const { id } = input;
 
-        const passwordHash = await hash(temporaryPassword, randomSalt);
-
-        const user = Object.assign(input, {
-            created_at: new Date(),
-            id: crypto.randomUUID(),
-            password: passwordHash,
-        });
-
-        // 1º passo, criar o usuario (ok)
-        // 2º passo, enviar o email com a senha gerada (implementar)
         try {
-            await this.repository.create(user);
-            const html = await formatWelcomeEmail({
+            const user = await this.repository.findOne({ id });
+
+            if (!user) {
+                return { success: false, error: "Usuário não encontrado." };
+            }
+
+            const temporaryPassword = generateRandomPassword();
+            const salt = randomInt(10, 16);
+            const hashedPassword = await hash(temporaryPassword, salt);
+
+            await this.repository.updateOne(
+                { id },
+                { $set: { password: hashedPassword } }
+            );
+
+            const html = await formatResetPasswordEmail({
                 name: user.name,
                 username: user.username,
                 password: temporaryPassword,
             });
+
             await this.bmessageGateway.html({
                 to: user.email,
-                subject: "BCube – Primeiro acesso ",
+                subject: "BCube – Reset de senha",
                 html,
                 attachments: [],
             });
+
             return { success: true };
         } catch (err) {
             return {
@@ -55,4 +70,4 @@ class CreateOneUserUsecase {
     }
 }
 
-export const createOneUserUsecase = singleton(CreateOneUserUsecase);
+export const resetPasswordUserUsecase = singleton(ResetPasswordUserUsecase);
