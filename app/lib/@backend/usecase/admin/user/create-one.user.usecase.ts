@@ -7,6 +7,7 @@ import { hash } from "bcrypt"
 import { randomInt } from "crypto"
 import { IBMessageGateway } from "../../../domain/@shared/gateway/bmessage.gateway.interface";
 import { bmessageGateway } from "../../../infra/gateway/bmessage/bmessage.gateway";
+import { formatWelcomeEmail } from "@/app/lib/util/formatTemplateEmail";
 
 class CreateOneUserUsecase {
   repository: IUserRepository
@@ -34,7 +35,12 @@ class CreateOneUserUsecase {
     // 2º passo, enviar o email com a senha gerada (implementar)
     try {
       await this.repository.create(user)
-      await this.bmessageGateway.html({ to: user.email, subject: "Bem vindo", html: `Sua senha temporária é: ${temporaryPassword}`, attachments: [] });
+      const html = await formatWelcomeEmail({
+        name: user.name,
+        username: user.username,
+        password: temporaryPassword,
+      });
+      await this.bmessageGateway.html({ to: user.email, subject: "BCube – Primeiro acesso ", html, attachments: [] });
       return { success: true };
     } catch (err) {
       return { success: false, error: err instanceof Error ? err.message : JSON.stringify(err) };
