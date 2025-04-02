@@ -26,7 +26,7 @@ const proto = grpc.loadPackageDefinition(packageDefinition) as unknown as ProtoG
 const BMessageService = proto.mail.MailService;
 
 class BMessageGateway implements IBMessageGateway {
-    private client: MailServiceClient; // qual o tipo que eu coloco aqui
+    private client: MailServiceClient;
 
     constructor() {
         this.client = new BMessageService(

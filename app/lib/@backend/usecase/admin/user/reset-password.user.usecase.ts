@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { generateRandomPassword } from "@/app/lib/util/generateRandomPassword";
+import { generateRandomPassword } from "@/app/lib/util/generate-random-password";
 import { IUserRepository } from "../../../domain/admin/repository/user.repository.interface";
 import { userRepository } from "../../../infra/repository/mongodb/admin/user.repository";
 import { hash } from "bcrypt";
