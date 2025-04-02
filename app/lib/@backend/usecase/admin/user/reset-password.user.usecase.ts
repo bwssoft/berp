@@ -6,6 +6,7 @@ import { hash } from "bcrypt";
 import { randomInt } from "crypto";
 import { IBMessageGateway } from "../../../domain/@shared/gateway/bmessage.gateway.interface";
 import { bmessageGateway } from "../../../infra/gateway/bmessage/bmessage.gateway";
+import { formatResetPasswordEmail } from "@/app/lib/util/format-template-reset-passwor-email";
 
 export namespace Dto {
     export type Input = {
@@ -46,10 +47,16 @@ class ResetPasswordUserUsecase {
                 { $set: { password: hashedPassword } }
             );
 
+            const html = await formatResetPasswordEmail({
+                name: user.name,
+                username: user.username,
+                password: temporaryPassword,
+            });
+
             await this.bmessageGateway.html({
                 to: user.email,
-                subject: "Redefinição de Senha",
-                html: `Sua nova senha é: ${temporaryPassword}`,
+                subject: "BCube – Reset de senha",
+                html,
                 attachments: [],
             });
 
