@@ -1,5 +1,5 @@
 import { render } from "@react-email/components";
-import TemplateEmail  from "../@backend/infra/template/template-email";
+import WelcomeTemplate  from "../@backend/infra/template/Welcome-template";
 
 interface WelcomeTemplateProps {
   name: string;
@@ -9,7 +9,7 @@ interface WelcomeTemplateProps {
 
 export async function formatWelcomeEmail(props: WelcomeTemplateProps): Promise<string> {
   const template = await render(
-    TemplateEmail({
+    WelcomeTemplate({
       nome: props.name,
       usuario: props.username,
       senhaProvisoria: props.password

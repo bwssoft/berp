@@ -32,7 +32,7 @@ export default function WelcomeTemplate({
         <Body className="bg-[#f4f4f5] text-[#212121] font-sans mb-10">
           <Container className="bg-white shadow-md rounded-lg overflow-hidden max-w-xl mx-auto my-8">
             {/* Header com logo */}
-            <Section className="bg-white py-5 flex items-center justify-center">
+            <Section className="bg-[#1f2937] py-5 flex items-center justify-center">
               <Img
                 src="https://firebasestorage.googleapis.com/v0/b/hybridserver-48c11.appspot.com/o/bcube-logo.svg?alt=media&token=832f3498-a386-4d12-9f59-7b8188733593"
                 width="60"
