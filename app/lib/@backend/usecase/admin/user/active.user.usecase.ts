@@ -1,6 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { userRepository } from "../../../infra/repository/mongodb/admin/user.repository";
 import { IUserRepository } from "../../../domain/admin/repository/user.repository.interface";
+import { resetPasswordUserUsecase } from "./reset-password.user.usecase";
 
 namespace Dto {
   export type Input = {
@@ -33,7 +34,11 @@ class ActiveUserUsecase {
 
       // Se ativar o usuário, deve resetar a senha
       if (active) {
-        // Implementar caso de uso de reset de senha
+          const reset = await resetPasswordUserUsecase.execute({ id });
+
+          if (!reset.success) {
+            return { success: false, error: reset.error };
+          }
       }
 
       return { success: true };
