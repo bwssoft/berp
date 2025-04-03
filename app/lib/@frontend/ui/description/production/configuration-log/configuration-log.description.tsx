@@ -1,6 +1,5 @@
 import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import { getStatusProps } from "@/app/lib/util";
-import { PaperClipIcon } from "@heroicons/react/20/solid";
 import React from "react";
 
 interface Props {
@@ -95,12 +94,9 @@ export function ConfigurationLogDescription({ data }: Props) {
 
           {/* Double Check */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">
-              Double Check
-            </dt>
+            <dt className="text-sm/6 font-medium text-gray-900">Was checked</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-              Needed: {data.double_check.need ? "Yes" : "No"} | Completed:{" "}
-              {data.double_check.has ? "Yes" : "No"}
+              {data.checked ? "Yes" : "No"}
             </dd>
           </div>
 

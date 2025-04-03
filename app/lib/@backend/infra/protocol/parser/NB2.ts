@@ -113,7 +113,7 @@ export class NB2Parser {
    * Extrai o valor do tempo de transmissão de ignição ligada de uma string que contém "RCE=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de transmissão de ignição ligada.
-   * @returns O valor numérico do do tempo de transmissão de ignição ligada ou undefined se o formato não for válido.
+   * @returns O valor numérico do tempo de transmissão de ignição ligada ou undefined se o formato não for válido.
    */
   static data_transmission_on(input: string): number | undefined {
     const parts = input.split("RCN=");
@@ -130,7 +130,7 @@ export class NB2Parser {
    * Extrai o valor do tempo de transmissão de ignição desligada de uma string que contém "RCW=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de transmissão de ignição desligada.
-   * @returns O valor numérico do do tempo de transmissão de ignição desligada ou undefined se o formato não for válido.
+   * @returns O valor numérico do tempo de transmissão de ignição desligada ou undefined se o formato não for válido.
    */
   static data_transmission_off(input: string): number | undefined {
     const parts = input.split("RCW=");
@@ -147,7 +147,7 @@ export class NB2Parser {
    * Extrai o valor do tempo de sleep de uma string que contém "RCN=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de transmissão em evento.
-   * @returns O valor numérico do do tempo de transmissão em evento ou undefined se o formato não for válido.
+   * @returns O valor numérico do tempo de transmissão em evento ou undefined se o formato não for válido.
    */
   static data_transmission_event(input: string): number | undefined {
     const parts = input.split("RCE=");
@@ -165,7 +165,7 @@ export class NB2Parser {
    * Extrai o valor do tempo de sleep de uma string que contém "RCS=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de sleep.
-   * @returns O valor numérico do do tempo de sleep ou undefined se o formato não for válido.
+   * @returns O valor numérico do tempo de sleep ou undefined se o formato não for válido.
    */
   static sleep(input: string): number | undefined {
     const parts = input.split("RCS=");
@@ -179,51 +179,265 @@ export class NB2Parser {
     return isNaN(value) ? undefined : value;
   }
 
-  static keep_alive() {
-    return "" as any;
+  /**
+   * Extrai o valor do tempo de keep alive de uma string que contém "RCK=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do tempo de keep alive.
+   * @returns O valor numérico do tempo de keep alive ou undefined se o formato não for válido.
+   */
+  static keep_alive(input: string): number | undefined {
+    const parts = input.split("RCK=");
+
+    if (parts.length < 2) return undefined;
+
+    const keep_alive = parts[1].trim();
+
+    const value = parseFloat(keep_alive);
+
+    return isNaN(value) ? undefined : value;
   }
-  static ip_primary() {
-    return "" as any;
+
+  /**
+   * Extrai o valor do ip primário de uma string que contém "RIP1=0.0.0.0:7001"
+   *
+   * @param input - A string que contém a informação do ip primário.
+   * @returns O valor numérico do ip primário ou undefined se o formato não for válido.
+   */
+  static ip_primary(input: string) {
+    const parts = input.split("RIP1=");
+    if (parts.length < 2) return undefined;
+    const [ip, port] = parts[1].split(":");
+    if (!ip || !port) return undefined;
+    return {
+      ip,
+      port: Number(port),
+    };
   }
-  static ip_secondary() {
-    return "" as any;
+  /**
+   * Extrai o valor do ip secundário de uma string que contém "RIP2=3.208.166.39:7001"
+   *
+   * @param input - A string que contém a informação do ip secundário.
+   * @returns O valor numérico do ip secundário ou undefined se o formato não for válido.
+   */
+  static ip_secondary(input: string) {
+    const parts = input.split("RIP2=");
+    if (parts.length < 2) return undefined;
+    const [ip, port] = parts[1].split(":");
+    if (!ip || !port) return undefined;
+    return {
+      ip,
+      port: Number(port),
+    };
   }
-  static dns_primary() {
-    return "" as any;
+  /**
+   * Extrai o valor do dns primário de uma string que contém "RID1=gw.dev.bws-infra.com:7001"
+   *
+   * @param input - A string que contém a informação do dns primário.
+   * @returns O valor numérico do dns primário ou undefined se o formato não for válido.
+   */
+  static dns_primary(input: string) {
+    const parts = input.split("RID1=");
+    if (parts.length < 2) return undefined;
+    const [address, port] = parts[1].split(":");
+    if (!address || !port) return undefined;
+    return {
+      address,
+      port: Number(port),
+    };
   }
-  static dns_secondary() {
-    return "" as any;
+  /**
+   * Extrai o valor do dns secundário de uma string que contém "RID2=gw.bws-infra.com:7001"
+   *
+   * @param input - A string que contém a informação do dns secundário.
+   * @returns O valor numérico do dns secundário ou undefined se o formato não for válido.
+   */
+  static dns_secondary(input: string) {
+    const parts = input.split("RID2=");
+    if (parts.length < 2) return undefined;
+    const [address, port] = parts[1].split(":");
+    if (!address || !port) return undefined;
+    return {
+      address,
+      port: Number(port),
+    };
   }
-  static apn() {
-    return "" as any;
+  /**
+   * Extrai o valor da apn de uma string que contém "RIAP=nbiot.arqia.br,arqia,arqia"
+   *
+   * @param input - A string que contém a informação da apn.
+   * @returns O valor numérico da apn ou undefined se o formato não for válido.
+   */
+  static apn(input: string) {
+    const parts = input.split("RIAP=");
+    if (parts.length < 2) return undefined;
+    const [address, user, password] = parts[1].split(",");
+    if (!address || !user) return undefined;
+    return {
+      address,
+      user,
+      password,
+    };
   }
-  static first_voltage() {
-    return "" as any;
+
+  /**
+   * Extrai o valor da tensão 12V de uma string que contém "RIG12=110,150"
+   *
+   * @param input - A string que contém a informação da tensão 12V.
+   * @returns O valor numérico da tensão 12V ou undefined se o formato não for válido.
+   */
+  static first_voltage(input: string) {
+    const parts = input.split("RIG12=");
+    if (parts.length < 2) return undefined;
+    const [initial, final] = parts[1].split(",");
+    if (!initial || !final) return undefined;
+    return {
+      initial: parseFloat(initial),
+      final: parseFloat(final),
+    };
   }
-  static second_voltage() {
-    return "" as any;
+
+  /**
+   * Extrai o valor da tensão 24V de uma string que contém "RIG24=276,281"
+   *
+   * @param input - A string que contém a informação da tensão 24V.
+   * @returns O valor numérico da tensão 24V ou undefined se o formato não for válido.
+   */
+  static second_voltage(input: string) {
+    const parts = input.split("RIG24=");
+    if (parts.length < 2) return undefined;
+    const [initial, final] = parts[1].split(",");
+    if (!initial || !final) return undefined;
+    return {
+      initial: parseFloat(initial),
+      final: parseFloat(final),
+    };
   }
-  static angle() {
-    return "" as any;
+  /**
+   * Extrai o valor do ângulo de uma string que contém "RFA=30"
+   *
+   * @param input - A string que contém a informação do ângulo.
+   * @returns O valor numérico do ângulo ou undefined se o formato não for válido.
+   */
+  static angle(input: string) {
+    const parts = input.split("RFA=");
+
+    if (parts.length < 2) return undefined;
+
+    const angle = parts[1].trim();
+
+    const value = parseFloat(angle);
+
+    return isNaN(value) ? undefined : value;
   }
-  static speed() {
-    return "" as any;
+
+  /**
+   * Extrai o valor da velocidade de uma string que contém "RFV=100"
+   *
+   * @param input - A string que contém a informação da velocidade.
+   * @returns O valor numérico da velocidade ou undefined se o formato não for válido.
+   */
+  static speed(input: string) {
+    const parts = input.split("RFV=");
+
+    if (parts.length < 2) return undefined;
+
+    const speed = parts[1].trim();
+
+    const value = parseFloat(speed);
+
+    return isNaN(value) ? undefined : value;
   }
-  static accelerometer_sensitivity_on() {
-    return "" as any;
+
+  /**
+   * Extrai o valor da sensibilidade do acelerometro quando ligado de uma string que contém "RFTON=2"
+   *
+   * @param input - A string que contém a informação da sensibilidade do acelerometro quando ligado.
+   * @returns O valor numérico da sensibilidade do acelerometro quando ligado ou undefined se o formato não for válido.
+   */
+  static accelerometer_sensitivity_on(input: string) {
+    const parts = input.split("RFTON=");
+
+    if (parts.length < 2) return undefined;
+
+    const speed = parts[1].trim();
+
+    const value = parseFloat(speed);
+
+    return isNaN(value) ? undefined : value;
   }
-  static accelerometer_sensitivity_off() {
-    return "" as any;
+
+  /**
+   * Extrai o valor da sensibilidade do acelerometro quando desligado de uma string que contém "RFTOF=3"
+   *
+   * @param input - A string que contém a informação da sensibilidade do acelerometro quando desligado.
+   * @returns O valor numérico da sensibilidade do acelerometro quando desligado ou undefined se o formato não for válido.
+   */
+  static accelerometer_sensitivity_off(input: string) {
+    const parts = input.split("RFTOF=");
+
+    if (parts.length < 2) return undefined;
+
+    const speed = parts[1].trim();
+
+    const value = parseFloat(speed);
+
+    return isNaN(value) ? undefined : value;
   }
-  static accelerometer_sensitivity_violated() {
-    return "" as any;
+
+  /**
+   * Extrai o valor da sensibilidade do acelerometro quando violado de uma string que contém "RFAV=150"
+   *
+   * @param input - A string que contém a informação da sensibilidade do acelerometro quando violado.
+   * @returns O valor numérico da sensibilidade do acelerometro quando violado ou undefined se o formato não for válido.
+   */
+  static accelerometer_sensitivity_violated(input: string) {
+    const parts = input.split("RFAV=");
+
+    if (parts.length < 2) return undefined;
+
+    const speed = parts[1].trim();
+
+    const value = parseFloat(speed);
+
+    return isNaN(value) ? undefined : value;
   }
-  static maximum_acceleration() {
-    return "" as any;
+
+  /**
+   * Extrai o valor da aceleração máxima de uma string que contém "RFMA=50"
+   *
+   * @param input - A string que contém a informação da aceleração máxima.
+   * @returns O valor numérico da aceleração máxima ou undefined se o formato não for válido.
+   */
+  static maximum_acceleration(input: string) {
+    const parts = input.split("RFMA=");
+
+    if (parts.length < 2) return undefined;
+
+    const speed = parts[1].trim();
+
+    const value = parseFloat(speed);
+
+    return isNaN(value) ? undefined : value;
   }
-  static maximum_deceleration() {
-    return "" as any;
+
+  /**
+   * Extrai o valor da desaceleração máxima de uma string que contém "RFMD=45"
+   *
+   * @param input - A string que contém a informação da desaceleração máxima.
+   * @returns O valor numérico da desaceleração máxima ou undefined se o formato não for válido.
+   */
+  static maximum_deceleration(input: string) {
+    const parts = input.split("RFMD=");
+
+    if (parts.length < 2) return undefined;
+
+    const speed = parts[1].trim();
+
+    const value = parseFloat(speed);
+
+    return isNaN(value) ? undefined : value;
   }
+
   static input_1() {
     return "" as any;
   }
