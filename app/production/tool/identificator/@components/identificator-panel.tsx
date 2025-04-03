@@ -3,7 +3,7 @@
 import { ITechnology } from "@/app/lib/@backend/domain";
 import { Button, Input } from "@/app/lib/@frontend/ui/component";
 import {
-  DeviceIdentificationForm,
+  IdentificationForm,
   TechnologySearchForm,
 } from "@/app/lib/@frontend/ui/form";
 import {
@@ -18,10 +18,9 @@ interface Props {
 export function IdWriterPanel(props: Props) {
   const { technology } = props;
 
-  const { identified, process, handleDeviceIdentification, requestPort } =
-    useDeviceIdWriter({
-      technology,
-    });
+  const { identified, process, identify, requestPort } = useDeviceIdWriter({
+    technology,
+  });
 
   return (
     <>
@@ -53,10 +52,7 @@ export function IdWriterPanel(props: Props) {
             <DevicesDetectedTable data={identified} />
           </div>
           <div className="flex justify-between gap-2">
-            <DeviceIdentificationForm
-              onSubmit={handleDeviceIdentification}
-              disabled={false}
-            />
+            <IdentificationForm onSubmit={identify} disabled={false} />
             <Button
               variant="outline"
               className="h-fit whitespace-nowrap "

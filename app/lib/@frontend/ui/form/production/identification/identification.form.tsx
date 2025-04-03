@@ -1,9 +1,9 @@
 "use client";
 
 import { Button, Input } from "../../../component";
-import { useImeiWriterForm } from "./use-device-identification.form";
+import { useImeiWriterForm } from "./use-identification.form";
 
-export function DeviceIdentificationForm(props: {
+export function IdentificationForm(props: {
   onSubmit: (imeiForWriting: string) => Promise<void>;
   disabled: boolean;
 }) {

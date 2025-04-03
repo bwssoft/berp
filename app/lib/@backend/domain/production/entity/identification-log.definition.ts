@@ -1,15 +1,15 @@
-export type DeviceIdentificationCommand = {
+export type IdentificationCommand = {
   request: string;
   response?: string;
 };
 
-export type DeviceIdentificationMetadata = {
+export type IdentificationMetadata = {
   init_time: number;
   end_time: number;
-  commands: DeviceIdentificationCommand[];
+  commands: IdentificationCommand[];
 };
 
-export interface IDeviceIdentificationLog {
+export interface IIdentificationLog {
   id: string;
   before: {
     imei: string;
@@ -28,6 +28,6 @@ export interface IDeviceIdentificationLog {
     name: string;
   };
   status: boolean;
-  metadata: DeviceIdentificationMetadata;
+  metadata: IdentificationMetadata;
   created_at: Date;
 }

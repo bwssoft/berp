@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   IAutoTestLog,
-  IDeviceIdentificationLog,
+  IIdentificationLog,
   ITechnology,
 } from "../../@backend/domain";
 import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
-import { createOneDeviceIdentificationLog } from "../../@backend/action";
+import { createOneIdentificationLog } from "../../@backend/action";
 import { sleep } from "../../util";
 
 namespace Namespace {
@@ -28,7 +28,7 @@ namespace Namespace {
     serial?: string | undefined;
   }
 
-  export interface DeviceIdentification extends IDeviceIdentificationLog {}
+  export interface Identification extends IIdentificationLog {}
 }
 
 export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
@@ -36,26 +36,26 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
   const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
   const isIdentifying = useRef(false);
 
-  const [process, setProcess] = useState<Namespace.DeviceIdentification[]>([]);
+  const [process, setProcess] = useState<Namespace.Identification[]>([]);
   const isWriting = useRef(false);
 
   // hook that handle interactions with devices
   const {
     ports,
-    handleIdentificationProcess,
-    handleDeviceIdentificationProcess,
+    handleDetection,
+    handleIdentification,
     requestPort,
     handleGetIdentification,
   } = useTechnology(technology);
 
   // function that handle the identification process, check if the process was successful and save result on database
-  const handleDeviceIdentification = useCallback(
+  const identify = useCallback(
     async (id: string) => {
       isWriting.current = true;
 
       // run identification
       const { port, response, messages, end_time, init_time } =
-        await handleDeviceIdentificationProcess(ports[0], id);
+        await handleIdentification(ports[0], id);
 
       // check if each message sent has response
       if (!response || !messages || !end_time || !init_time) return undefined;
@@ -66,39 +66,44 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
 
       await sleep(1000);
 
-      const deviceIdentification = await handleGetIdentification(port);
+      const identification = await handleGetIdentification(port);
 
-      const log: Omit<IDeviceIdentificationLog, "id" | "created_at" | "user"> =
-        {
-          before: {
-            imei: equipment.imei!,
-            serial: equipment.serial!,
-          },
-          after: deviceIdentification?.response,
-          status: id === deviceIdentification?.response?.serial,
-          metadata: {
-            commands: messages.map(({ key, message }) => ({
-              request: message,
-              response: response[key as keyof typeof response],
-            })),
-            end_time,
-            init_time,
-          },
-          technology: {
-            id: technology.id,
-            system_name: technology.name.system,
-          },
-        };
+      const log: Omit<IIdentificationLog, "id" | "created_at" | "user"> = {
+        before: {
+          imei: equipment.imei!,
+          serial: equipment.serial!,
+        },
+        after: identification?.response,
+        status: id === identification?.response?.serial,
+        metadata: {
+          commands: messages.map(({ key, message }) => ({
+            request: message,
+            response: response[key as keyof typeof response],
+          })),
+          end_time,
+          init_time,
+        },
+        technology: {
+          id: technology.id,
+          system_name: technology.name.system,
+        },
+      };
 
       // save result on database
-      const dataSavedOnDb = await createOneDeviceIdentificationLog(log);
+      const dataSavedOnDb = await createOneIdentificationLog(log);
 
       // update state with process result
       setProcess((prev) => prev.concat(dataSavedOnDb));
 
       isWriting.current = false;
     },
-    [identified, ports, technology]
+    [
+      handleGetIdentification,
+      handleIdentification,
+      identified,
+      ports,
+      technology,
+    ]
   );
 
   // useEffect used to identify devices when connected via serial ports
@@ -106,7 +111,7 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
     const interval = setInterval(async () => {
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
-        const identified = await handleIdentificationProcess(ports);
+        const identified = await handleDetection(ports);
         setIdentified(
           identified
             .filter((el) => el.response !== undefined)
@@ -120,12 +125,12 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
 
     // Limpeza: limpa o intervalo quando o componente é desmontado ou quando as dependências mudarem
     return () => clearInterval(interval);
-  }, [ports, handleIdentificationProcess]);
+  }, [ports, handleDetection]);
 
   return {
     process,
     identified,
-    handleDeviceIdentification,
+    identify,
     requestPort,
   };
 };

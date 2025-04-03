@@ -1,5 +1,5 @@
 import { findOneTechnology } from "@/app/lib/@backend/action";
-import { IdWriterPanel } from "./@components/id-writer-panel";
+import { IdWriterPanel } from "./@components/identificator-panel";
 
 interface Props {
   searchParams: {

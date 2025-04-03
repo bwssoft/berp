@@ -15,7 +15,7 @@ interface Props {
 export function AutoTestPanel(props: Props) {
   const { technology } = props;
 
-  const { identified, autotest, handleAutoTest, requestPort } = useAutoTest({
+  const { identified, autoTest, test, requestPort } = useAutoTest({
     technology,
   });
 
@@ -53,7 +53,7 @@ export function AutoTestPanel(props: Props) {
               <Button
                 variant="default"
                 className="h-fit bg-blue-600 hover:bg-blue-500"
-                onClick={() => handleAutoTest()}
+                onClick={() => test()}
               >
                 Auto Test{" "}
               </Button>
@@ -80,7 +80,7 @@ export function AutoTestPanel(props: Props) {
             </p>
           </div>
           <div className="mt-6">
-            <DevicesAutoTestedTable data={autotest} />
+            <DevicesAutoTestedTable data={autoTest} />
           </div>
         </div>
       </div>

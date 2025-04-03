@@ -1,10 +1,10 @@
-import { findManyDeviceIdentificationLog } from "@/app/lib/@backend/action";
+import { findManyIdentificationLog } from "@/app/lib/@backend/action";
 import { DevicesIdentifiedTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
 export default async function Example() {
-  const deviceIdentificationLog = await findManyDeviceIdentificationLog({});
+  const identificationLog = await findManyIdentificationLog({});
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -26,7 +26,7 @@ export default async function Example() {
         </Link>
       </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <DevicesIdentifiedTable data={deviceIdentificationLog} />
+        <DevicesIdentifiedTable data={identificationLog} />
       </div>
     </div>
   );

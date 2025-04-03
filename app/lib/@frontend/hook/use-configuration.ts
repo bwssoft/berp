@@ -43,14 +43,14 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
   // hook that handle interactions with devices
   const {
     ports,
-    handleIdentificationProcess,
-    handleConfigurationProcess,
+    handleDetection,
+    handleConfiguration,
     handleGetProfile,
     requestPort,
   } = useTechnology(technology);
 
   // function that handle the configuration process, check if the process was successful and save result on database
-  const handleConfiguration = useCallback(
+  const configure = useCallback(
     async (configuration_profile: IConfigurationProfile | null) => {
       if (configuration_profile === null) {
         toast({
@@ -64,7 +64,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       isConfiguring.current = true;
 
       // configure devices
-      const configurationResult = await handleConfigurationProcess(
+      const configurationResult = await handleConfiguration(
         identified
           .filter((i) => i.equipment.imei && i.equipment.firmware)
           .map(({ port }) => port),
@@ -161,7 +161,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
     const interval = setInterval(async () => {
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
-        const identified = await handleIdentificationProcess(ports);
+        const identified = await handleDetection(ports);
         setIdentified(
           identified
             .filter((el) => el.response !== undefined)
@@ -175,12 +175,12 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
     // Limpeza: limpa o intervalo quando o componente é desmontado ou quando as dependências mudarem
     return () => clearInterval(interval);
-  }, [ports, handleIdentificationProcess]);
+  }, [ports, handleDetection]);
 
   return {
     configured,
     identified,
-    handleConfiguration,
+    configure,
     requestPort,
   };
 };

@@ -91,7 +91,7 @@ export const useNB2 = () => {
   });
 
   // functions to interact with E34G via serial port
-  const handleIdentificationProcess = useCallback(
+  const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
         { message: "RIMEI\r\n", key: "imei", transform: NB2Parser.imei },
@@ -113,7 +113,7 @@ export const useNB2 = () => {
             });
             return { port, response };
           } catch (error) {
-            console.error("[ERROR] handleIdentificationProcess", error);
+            console.error("[ERROR] handleDetection", error);
             return { port };
           }
         })
@@ -244,7 +244,7 @@ export const useNB2 = () => {
     },
     [sendMultipleMessages]
   );
-  const handleConfigurationProcess = useCallback(
+  const handleConfiguration = useCallback(
     async (
       ports: ISerialPort[],
       configuration_profile: IConfigurationProfile
@@ -273,7 +273,7 @@ export const useNB2 = () => {
               end_time,
             };
           } catch (error) {
-            console.error("[ERROR] handleConfigurationProcess", error);
+            console.error("[ERROR] handleConfiguration", error);
             return { port };
           }
         })
@@ -281,7 +281,7 @@ export const useNB2 = () => {
     },
     [sendMultipleMessages]
   );
-  const handleAutoTestProcess = useCallback(
+  const handleAutoTest = useCallback(
     async (ports: ISerialPort[]) => {
       return await Promise.all(
         ports.map(async (port) => {
@@ -380,7 +380,7 @@ export const useNB2 = () => {
             resultTemplate.end_time = Date.now();
             return resultTemplate;
           } catch (error) {
-            console.error("[ERROR] handleAutoTestProcess", error);
+            console.error("[ERROR] handleAutoTest", error);
             resultTemplate.end_time = Date.now();
             return resultTemplate;
           }
@@ -389,7 +389,7 @@ export const useNB2 = () => {
     },
     [sendMultipleMessages]
   );
-  const handleDeviceIdentificationProcess = useCallback(
+  const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
       const imei = await handleGetRandomImei();
       const messages = [
@@ -417,7 +417,7 @@ export const useNB2 = () => {
           end_time,
         };
       } catch (error) {
-        console.error("[ERROR] handleDeviceIdentificationProcess", error);
+        console.error("[ERROR] handleIdentification", error);
         return { port };
       }
     },
@@ -448,12 +448,12 @@ export const useNB2 = () => {
 
   return {
     ports,
-    handleIdentificationProcess,
+    handleIdentification,
     handleGetProfile,
-    handleConfigurationProcess,
+    handleConfiguration,
     requestPort,
-    handleAutoTestProcess,
-    handleDeviceIdentificationProcess,
+    handleAutoTest,
+    handleDetection,
     handleGetIdentification,
   };
 };

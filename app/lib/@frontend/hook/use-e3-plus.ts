@@ -81,7 +81,7 @@ export const useE3Plus = () => {
   });
 
   // functions to interact with E3 via serial port
-  const handleIdentificationProcess = useCallback(
+  const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
         { message: "IMEI", key: "imei", transform: E3Parser.imei },
@@ -97,7 +97,7 @@ export const useE3Plus = () => {
             });
             return { port, response: { ...response, serial: response.imei } };
           } catch (error) {
-            console.error("[ERROR] handleIdentificationProcess", error);
+            console.error("[ERROR] handleDetection", error);
             return { port };
           }
         })
@@ -158,7 +158,7 @@ export const useE3Plus = () => {
     },
     [sendMultipleMessages]
   );
-  const handleConfigurationProcess = useCallback(
+  const handleConfiguration = useCallback(
     async (
       ports: ISerialPort[],
       configuration_profile: IConfigurationProfile
@@ -187,7 +187,7 @@ export const useE3Plus = () => {
               end_time,
             };
           } catch (error) {
-            console.error("[ERROR] handleConfigurationProcess", error);
+            console.error("[ERROR] handleConfiguration", error);
             return { port };
           }
         })
@@ -196,7 +196,7 @@ export const useE3Plus = () => {
     [sendMultipleMessages]
   );
 
-  const handleAutoTestProcess = useCallback(
+  const handleAutoTest = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
         { key: "autotest", message: "AUTOTEST", timeout: 25000 },
@@ -221,7 +221,7 @@ export const useE3Plus = () => {
               status,
             };
           } catch (error) {
-            console.error("[ERROR] handleAutoTestProcess", error);
+            console.error("[ERROR] handleAutoTest", error);
             return { port };
           }
         })
@@ -230,7 +230,7 @@ export const useE3Plus = () => {
     [sendMultipleMessages]
   );
 
-  const handleDeviceIdentificationProcess = useCallback(
+  const handleIdentification = useCallback(
     async (port: ISerialPort, identifier: string) => {
       const messages = [
         {
@@ -253,7 +253,7 @@ export const useE3Plus = () => {
           end_time,
         };
       } catch (error) {
-        console.error("[ERROR] handleDeviceIdentificationProcess", error);
+        console.error("[ERROR] handleIdentification", error);
         return { port };
       }
     },
@@ -281,12 +281,12 @@ export const useE3Plus = () => {
 
   return {
     ports,
-    handleIdentificationProcess,
+    handleIdentification,
     handleGetProfile,
-    handleConfigurationProcess,
+    handleConfiguration,
     requestPort,
-    handleAutoTestProcess,
-    handleDeviceIdentificationProcess,
+    handleAutoTest,
+    handleDetection,
     handleGetIdentification,
   };
 };
