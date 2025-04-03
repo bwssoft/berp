@@ -24,9 +24,9 @@ export interface IConfigurationLog {
   };
   equipment: {
     imei: string;
+    serial: string;
     firmware: string;
     iccid?: string;
-    serial?: string;
   };
   technology: {
     id: string;
@@ -36,10 +36,7 @@ export interface IConfigurationLog {
     id: string;
     name: string;
   };
-  double_check: {
-    need: boolean;
-    has: boolean;
-  };
+  checked: boolean;
   // Mapeia cada chave do perfil com os valores desejados e os efetivamente aplicados,
   // facilitando a verificação das diferenças (ex: { desired: 60, actual: 0 })
   not_configured?: {

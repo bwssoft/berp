@@ -48,13 +48,7 @@ const generateMessages = (
   profile: IConfigurationProfile
 ): Record<ConfigKeys, string> => {
   const response = {} as Record<ConfigKeys, string>;
-  const optional_functions_to_remove = profile.optional_functions
-    ? Object.entries(profile.optional_functions)
-        .filter(([_, value]) => value === false)
-        .map(([key]) => key)
-    : [];
   Object.entries(profile.config).forEach(([message, args]) => {
-    if (optional_functions_to_remove.includes(message)) return;
     const _message = E3Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
@@ -128,6 +122,8 @@ export const useE3Plus = () => {
             const {
               data_transmission_off,
               data_transmission_on,
+              apn,
+              keep_alive,
               ...processed_check
             } = E3Parser.check(check) ?? {};
             const ip_primary = E3Parser.ip_primary(cxip);
@@ -142,6 +138,8 @@ export const useE3Plus = () => {
                   data_transmission_off,
                   data_transmission_on,
                   dns_primary: dns,
+                  apn,
+                  keep_alive,
                 },
                 specific: processed_check,
               },
@@ -211,6 +209,7 @@ export const useE3Plus = () => {
               transport: port,
               messages,
             });
+            const status = Object.values({}).every(Boolean);
             const end_time = Date.now();
             return {
               port,
@@ -219,6 +218,7 @@ export const useE3Plus = () => {
               init_time,
               end_time,
               analysis: {},
+              status,
             };
           } catch (error) {
             console.error("[ERROR] handleAutoTestProcess", error);
