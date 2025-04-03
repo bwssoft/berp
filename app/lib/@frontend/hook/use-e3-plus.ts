@@ -209,6 +209,7 @@ export const useE3Plus = () => {
               transport: port,
               messages,
             });
+            const status = Object.values({}).every(Boolean);
             const end_time = Date.now();
             return {
               port,
@@ -217,6 +218,7 @@ export const useE3Plus = () => {
               init_time,
               end_time,
               analysis: {},
+              status,
             };
           } catch (error) {
             console.error("[ERROR] handleAutoTestProcess", error);

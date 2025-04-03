@@ -55,41 +55,51 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
 
     // check if each message sent has response
     const result = autoTestResult
-      .map(({ port, response, messages, end_time, init_time, analysis }) => {
-        if (!response || !messages || !end_time || !init_time || !analysis)
-          return undefined;
-
-        const { equipment } = identified.find((el) => el.port === port) ?? {};
-
-        if (!equipment || !technology) return undefined;
-
-        const log: Omit<IAutoTestLog, "id" | "created_at" | "user"> = {
+      .map(
+        ({
+          port,
+          response,
+          messages,
+          end_time,
+          init_time,
           analysis,
-          equipment: {
-            imei: equipment.imei!,
-            firmware: equipment.firmware!,
-            serial: equipment.serial,
-            iccid: equipment.iccid,
-          },
-          status: Object.entries(analysis).every(
-            ([_, value]) => value === true
-          ),
-          metadata: {
-            commands: messages.map(({ key, message }) => ({
-              request: message,
-              response: response[key as keyof typeof response],
-            })),
-            end_time,
-            init_time,
-          },
-          technology: {
-            id: technology.id,
-            system_name: technology.name.system,
-          },
-        };
+          status,
+        }) => {
+          if (!response || !messages || !end_time || !init_time || !analysis)
+            return undefined;
 
-        return log;
-      })
+          const { equipment } = identified.find((el) => el.port === port) ?? {};
+
+          if (!equipment || !technology) return undefined;
+
+          const analysisEntries = Object.entries(analysis);
+
+          const log: Omit<IAutoTestLog, "id" | "created_at" | "user"> = {
+            analysis,
+            equipment: {
+              imei: equipment.imei!,
+              firmware: equipment.firmware!,
+              serial: equipment.serial,
+              iccid: equipment.iccid,
+            },
+            status,
+            metadata: {
+              commands: messages.map(({ key, message }) => ({
+                request: message,
+                response: response[key as keyof typeof response],
+              })),
+              end_time,
+              init_time,
+            },
+            technology: {
+              id: technology.id,
+              system_name: technology.name.system,
+            },
+          };
+
+          return log;
+        }
+      )
       .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
     // save result on database
@@ -99,11 +109,12 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
     setAutoTest((prev) => prev.concat(dataSavedOnDb));
 
     isAutoTesting.current = false;
-  }, [identified, ports, technology]);
+  }, [handleAutoTestProcess, identified, technology]);
 
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     const interval = setInterval(async () => {
+      if (isAutoTesting.current) return;
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
         const identified = await handleIdentificationProcess(ports);

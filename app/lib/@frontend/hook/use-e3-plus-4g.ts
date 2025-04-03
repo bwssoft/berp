@@ -228,6 +228,7 @@ export const useE3Plus4G = () => {
                   ? true
                   : false,
             };
+            const status = Object.values(analysis).every(Boolean);
             const end_time = Date.now();
             return {
               port,
@@ -236,6 +237,7 @@ export const useE3Plus4G = () => {
               analysis,
               init_time,
               end_time,
+              status,
             };
           } catch (error) {
             console.error("[ERROR] handleAutoTestProcess", error);
