@@ -26,11 +26,9 @@ export default async function Page(props: Props) {
             Auto Teste
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Ferramenta para testar
-            <a href="#" className="text-gray-900">
-              dispositivos IoT.
-            </a>{" "}
-            Data de hoje:{" "}
+            Ferramenta para testar{" "}
+            <span className="text-gray-900">dispositivos IoT.</span> Data de
+            hoje:{" "}
             <time dateTime={date.toLocaleDateString()}>
               {date.toLocaleDateString()}
             </time>
