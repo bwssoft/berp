@@ -9,7 +9,7 @@ import { GridList } from "../lib/@frontend/ui/component";
 
 const actions = [
   {
-    title: "Ferrametas",
+    title: "Ferramentas",
     href: "/production/tool",
     icon: WrenchScrewdriverIcon,
     iconForeground: "text-blue-700",

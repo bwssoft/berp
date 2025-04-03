@@ -30,8 +30,8 @@ export const columns: ColumnDef<{
   created_at: Date;
 }>[] = [
   {
-    header: "Configurado",
-    accessorKey: "checked",
+    header: "Status",
+    accessorKey: "status",
     cell: ({ row }) => {
       const device = row.original;
       const status = device.status ? "success" : "error";
