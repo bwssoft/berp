@@ -118,13 +118,10 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
             equipment: {
               imei: equipment.imei!,
               firmware: equipment.firmware!,
-              serial: equipment.serial,
+              serial: equipment.serial!,
               iccid: equipment.iccid,
             },
-            double_check: {
-              has: false,
-              need: true,
-            },
+            checked: false,
             status: Object.entries(response ?? {}).every(
               ([_, value]) => typeof value !== "undefined"
             ),

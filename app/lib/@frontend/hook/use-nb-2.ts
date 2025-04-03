@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import {
   E34GEncoder,
   E34GParser,
+  NB2,
   NB2Parser,
 } from "../../@backend/infra/protocol";
 import {
@@ -52,13 +53,7 @@ const generateMessages = (
   profile: IConfigurationProfile
 ): Record<ConfigKeys, string> => {
   const response = {} as Record<ConfigKeys, string>;
-  const optional_functions_to_remove = profile.optional_functions
-    ? Object.entries(profile.optional_functions)
-        .filter(([_, value]) => value === false)
-        .map(([key]) => key)
-    : [];
   Object.entries(profile.config).forEach(([message, args]) => {
-    if (optional_functions_to_remove.includes(message)) return;
     const _message = E34GEncoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
@@ -76,7 +71,6 @@ export const useNB2 = () => {
       await openPort(transport, {
         baudRate: 115200,
         stopBits: 2,
-        bufferSize: 1000000,
       });
     },
     closeTransport: closePort,
@@ -140,6 +134,11 @@ export const useNB2 = () => {
           message: "\r\n",
           key: "data_transmission_off",
           transform: NB2Parser.data_transmission_off,
+        },
+        {
+          message: "\r\n",
+          key: "data_transmission_event",
+          transform: NB2Parser.data_transmission_event,
         },
         { message: "\r\n", key: "sleep", transform: NB2Parser.sleep },
         { message: "\r\n", key: "keep_alive", transform: NB2Parser.keep_alive },
@@ -284,58 +283,106 @@ export const useNB2 = () => {
   );
   const handleAutoTestProcess = useCallback(
     async (ports: ISerialPort[]) => {
-      const messages = [
-        {
-          key: "autotest",
-          message: "AUTOTEST\r\n",
-          transform: NB2Parser.auto_test,
-          timeout: 25000,
-        },
-      ] as const;
       return await Promise.all(
         ports.map(async (port) => {
+          const resultTemplate = {
+            port,
+            response: {} as Record<string, NB2.AutoTest | string | undefined>,
+            messages: [
+              { key: "start", message: "START\r\n" },
+              { key: "autotest_1", message: "AUTOTEST" },
+              { key: "autotest_2", message: "AUTOTEST" },
+              { key: "autotest_3", message: "AUTOTEST" },
+              { key: "autotest_4", message: "AUTOTEST" },
+              { key: "autotest_5", message: "AUTOTEST" },
+            ],
+            analysis: {} as Record<string, boolean>,
+            init_time: Date.now(),
+            end_time: 0,
+            status: false,
+          };
+
           try {
-            const init_time = Date.now();
-            const response = await sendMultipleMessages({
+            // 1. Envia comando START
+            const startResponse = await sendMultipleMessages({
               transport: port,
-              messages,
+              messages: [{ key: "start", message: "START\r\n" }] as const,
             });
+            resultTemplate.response["start"] = startResponse.start;
 
-            const { autotest } = response;
+            // 2. Configuração do loop de AUTOTEST
+            const autotestTimeout = 25000; // 25s timeout total
+            const startTime = Date.now();
+            let remainingAttempts = 5;
 
-            const analysis = {
-              ACELC: (autotest?.["ACELC"] ?? "").length > 0 ? true : false,
-              ACELP: autotest?.["ACELP"] === "OK" ? true : false,
-              BATT_VOLT: !isNaN(Number(autotest?.["BATT_VOLT"] ?? NaN)),
-              CHARGER: autotest?.["CHARGER"] === "OK" ? true : false,
-              FW: (autotest?.["FW"] ?? "").length > 0 ? true : false,
-              GPS: autotest?.["GPS"] === "OK" ? true : false,
-              GPSf: autotest?.["GPSf"] === "OK" ? true : false,
-              IC: isIccid(autotest?.["IC"] ?? ""),
-              ID_ACEL: (autotest?.["ID_ACEL"] ?? "").length > 0 ? true : false,
-              ID_MEM: (autotest?.["ID_MEM"] ?? "").length > 0 ? true : false,
-              IM: isImei(autotest?.["IM"] ?? ""),
-              IN1: autotest?.["IN1"] === "OK" ? true : false,
-              IN2: autotest?.["IN2"] === "OK" ? true : false,
-              MDM: autotest?.["MDM"] === "OK" ? true : false,
-              OUT: autotest?.["OUT"] === "OK" ? true : false,
-              RSI: autotest?.["RSI"] === "OK" ? true : false,
-              SN: (autotest?.["SN"] ?? "").length > 0 ? true : false,
-              VCC: !isNaN(Number(autotest?.["VCC"] ?? NaN)),
-            };
+            while (
+              remainingAttempts > 0 &&
+              Date.now() - startTime < autotestTimeout
+            ) {
+              const key = `autotest_${5 - remainingAttempts + 1}`;
+              try {
+                await sleep(2000); // Intervalo entre tentativas
 
-            const end_time = Date.now();
-            return {
-              port,
-              response,
-              messages,
-              analysis,
-              init_time,
-              end_time,
-            };
+                const autotestResponse = await sendMultipleMessages({
+                  transport: port,
+                  messages: [
+                    {
+                      key,
+                      message: "AUTOTEST",
+                      transform: NB2Parser.auto_test,
+                    },
+                  ] as const,
+                });
+
+                const autotest = autotestResponse[key];
+
+                if (!autotest) continue;
+
+                resultTemplate.analysis = {
+                  ACELC: Boolean(autotest["ACELC"]?.length),
+                  ACELP: autotest["ACELP"] === "OK",
+                  BATT_VOLT: !isNaN(Number(autotest["BATT_VOLT"])),
+                  CHARGER: autotest["CHARGER"] === "OK",
+                  FW: Boolean(autotest["FW"]?.length),
+                  GPS: autotest["GPS"] === "OK",
+                  GPSf: autotest["GPSf"] === "OK",
+                  IC: isIccid(autotest["IC"] ?? ""),
+                  ID_ACEL: Boolean(autotest["ID_ACEL"]?.length),
+                  ID_MEM: Boolean(autotest["ID_MEM"]?.length),
+                  IM: isImei(autotest["IM"] ?? ""),
+                  IN1: autotest["IN1"] === "OK",
+                  IN2: autotest["IN2"] === "OK",
+                  MDM: autotest["MDM"] === "OK",
+                  OUT: autotest["OUT"] === "OK",
+                  RSI: autotest["RSI"] === "OK",
+                  SN: Boolean(autotest["SN"]?.length),
+                  VCC: !isNaN(Number(autotest["VCC"])),
+                };
+
+                const statusValues = Object.values(resultTemplate.analysis);
+
+                resultTemplate.status =
+                  statusValues.length > 0 &&
+                  Object.values(resultTemplate.analysis).every(Boolean);
+
+                resultTemplate.response[key] = autotest;
+
+                if (resultTemplate.status) break;
+              } catch (error) {
+                console.warn(
+                  `Attempt ${5 - remainingAttempts + 1} failed`,
+                  error
+                );
+              }
+              remainingAttempts--;
+            }
+
+            resultTemplate.end_time = Date.now();
+            return resultTemplate;
           } catch (error) {
             console.error("[ERROR] handleAutoTestProcess", error);
-            return { port };
+            resultTemplate.end_time = Date.now();
+            return resultTemplate;
           }
         })
       );

@@ -1,6 +1,6 @@
 type APN = {
-  address?: string;
-  user?: string;
+  address: string;
+  user: string;
   password?: string;
 };
 
@@ -209,7 +209,7 @@ export class E3Parser {
    */
   static apn(input: string): APN | undefined {
     const [address, user, password] = input.split(",");
-    if (!address) {
+    if (!address || !user) {
       return undefined;
     }
     return {

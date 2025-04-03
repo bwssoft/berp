@@ -41,13 +41,7 @@ const generateMessages = (
   profile: IConfigurationProfile
 ): Record<ConfigKeys, string> => {
   const response = {} as Record<ConfigKeys, string>;
-  const optional_functions_to_remove = profile.optional_functions
-    ? Object.entries(profile.optional_functions)
-        .filter(([_, value]) => value === false)
-        .map(([key]) => key)
-    : [];
   Object.entries(profile.config).forEach(([message, args]) => {
-    if (optional_functions_to_remove.includes(message)) return;
     const _message = E34GEncoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
@@ -121,6 +115,8 @@ export const useE3Plus4G = () => {
             const {
               data_transmission_off,
               data_transmission_on,
+              apn,
+              keep_alive,
               ...processed_check
             } = E34GParser.check(check) ?? {};
             const processed_status = E34GParser.status(status);
@@ -137,6 +133,8 @@ export const useE3Plus4G = () => {
                   data_transmission_off,
                   data_transmission_on,
                   dns_primary: dns,
+                  apn,
+                  keep_alive,
                 },
                 specific: {
                   ...processed_check,
@@ -230,6 +228,7 @@ export const useE3Plus4G = () => {
                   ? true
                   : false,
             };
+            const status = Object.values(analysis).every(Boolean);
             const end_time = Date.now();
             return {
               port,
@@ -238,6 +237,7 @@ export const useE3Plus4G = () => {
               analysis,
               init_time,
               end_time,
+              status,
             };
           } catch (error) {
             console.error("[ERROR] handleAutoTestProcess", error);
