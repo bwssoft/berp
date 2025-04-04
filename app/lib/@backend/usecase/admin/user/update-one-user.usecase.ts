@@ -12,7 +12,7 @@ class UpdateOneUserUsecase {
 
     async execute(
         query: { id: string },
-        value: Omit<IUser, "id" | "created_at">
+        value: Partial<Omit<IUser, "id" | "created_at">>
     ) {
         return await this.repository.updateOne(query, { $set: value });
     }
