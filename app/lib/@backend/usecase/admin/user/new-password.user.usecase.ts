@@ -6,7 +6,12 @@ import { randomInt } from "crypto";
 
 namespace Dto {
     export type Input = { id: string; password: string } 
-    export type Output = { success: boolean; error?: string; } 
+    export type Output = { 
+        success: boolean; 
+        error?: {
+            global?: string
+        }
+    } 
 }
 
 class NewPasswordUserUsecase {
@@ -27,7 +32,12 @@ class NewPasswordUserUsecase {
             return { success: true };
         } catch (err) {
             console.error(err);
-            return { success: false, error: err instanceof Error ? err.message : JSON.stringify(err)};
+            return { 
+                success: false, 
+                error: {
+                   global: err instanceof Error ? err.message : JSON.stringify(err),
+                },
+            };
         }
 
     }
