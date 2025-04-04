@@ -7,8 +7,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+// domínios permitido para usuários internos
 const allowedDomains = [
-    "@bws.com.br",
+    "@bwsiot.com",
+    "@bwstechnology.com",
+    "@mgctechnology.com",
+    "@icb.com"
 ];
 
 export const schema = z.object({
@@ -16,13 +20,13 @@ export const schema = z.object({
     email: z.string().email("Email inválido!"),
     name: z.string(),
     active: z.boolean(),
-    internal: z.boolean(),
+    external: z.boolean(),
     image: z.string().optional(),
     profile_id: z.array(z.string()),
     username: z.string(),
   }).refine((data) => {
-    // se active igual a true é usuario externo, se for false é usuário interno
-    if (!data.internal) {
+    // se externo igual a true é usuario externo, se for false é usuário interno
+    if (!data.external) {
       // se for usuário interno
       const emailLower = data.email.toLowerCase();
       return allowedDomains.some((domain) => emailLower.endsWith(domain));
@@ -46,7 +50,7 @@ export function useCreateOneUserForm() {
     } = useForm<Schema>({
         resolver: zodResolver(schema),
         defaultValues: {
-            active: true, // Por default o checkbox deve estar desmarcado para usuário interno e marcado para usuário externo.
+            external: false, // Por default o checkbox deve estar desmarcado para usuário interno e marcado para usuário externo.
         },
     });
 
@@ -58,7 +62,7 @@ export function useCreateOneUserForm() {
     const activeProfiles = profiles.data?.filter((p) => p.active) ?? [];
 
     const handleSubmit = hookFormSubmit(async (data) => {
-        const {success, error} = await createOneUser({
+        const { success, error } = await createOneUser({
             ...data, image: "",
             lock: false
         });
@@ -74,8 +78,8 @@ export function useCreateOneUserForm() {
             Object.entries(error).forEach(([key, message]) => {
                 if (key !== "global" && message) {
                     setError(key as keyof Schema, {
-                    type: "manual",
-                    message: message as string,
+                        type: "manual",
+                        message: message as string,
                     });
                 }
             });
