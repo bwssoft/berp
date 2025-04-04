@@ -31,7 +31,7 @@ export function CreateOneUserForm() {
             <div className="md:col-span-2">
                 <Controller 
                     control={control}
-                    name="active"
+                    name="internal"
                     render={({ field }) => (
                         <Checkbox
                             checked={field.value}
@@ -46,13 +46,13 @@ export function CreateOneUserForm() {
 
             <Input 
                 label="CPF" 
-                {...register("cpf")} 
+                {...register("cpf")}
                 error={errors.cpf?.message}
             />
 
             <Input 
                 label="Nome completo" 
-                {...register("name")} 
+                {...register("name")}
                 error={errors.name?.message}
 
             />
@@ -60,19 +60,19 @@ export function CreateOneUserForm() {
             <Input 
                 label="Email" 
                 type="email" 
-                {...register("email")} 
+                {...register("email")}
                 error={errors.email?.message}
             />
 
             <Input 
                 label="Usuário" 
-                {...register("username")} 
+                {...register("username")}
                 error={errors.username?.message}
             />
 
             <Input 
                 label="Imagem (URL)" 
-                {...register("image")} 
+                {...register("image")}
                 error={errors.image?.message}
             />
 

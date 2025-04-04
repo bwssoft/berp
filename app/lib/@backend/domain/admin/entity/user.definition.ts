@@ -10,5 +10,6 @@ export interface IUser {
     lock: boolean;
     active: boolean;
     image: string;
+    internal: boolean
     created_at: Date;
 }

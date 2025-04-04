@@ -4,7 +4,6 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -17,12 +16,13 @@ export const schema = z.object({
     email: z.string().email("Email inválido!"),
     name: z.string(),
     active: z.boolean(),
+    internal: z.boolean(),
     image: z.string().optional(),
     profile_id: z.array(z.string()),
     username: z.string(),
   }).refine((data) => {
     // se active igual a true é usuario externo, se for false é usuário interno
-    if (!data.active) {
+    if (!data.internal) {
       // se for usuário interno
       const emailLower = data.email.toLowerCase();
       return allowedDomains.some((domain) => emailLower.endsWith(domain));
