@@ -13,7 +13,7 @@ const schema = z
       .regex(/[A-Z]/, "A senha deve conter ao menos uma letra maiúscula")
       .regex(/[a-z]/, "A senha deve conter ao menos uma letra minúscula")
       .regex(/[0-9]/, "A senha deve conter ao menos um número")
-      .regex(/[!@#$%*()_=+\/{}\^~?"`:;.,<>]/, "A senha deve conter ao menos um caractere especial"),
+      .regex(/[\!\@\#\$\%\*\(\)_=\+\/\{\}\^\~\?\"`\:\;\.\,\<\>\&]/, "A senha deve conter ao menos um caractere especial"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
