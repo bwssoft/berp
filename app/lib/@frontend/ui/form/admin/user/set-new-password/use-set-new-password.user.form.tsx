@@ -16,7 +16,7 @@ const schema = z
       .regex(/[\!\@\#\$\%\*\(\)_=\+\/\{\}\^\~\?\"`\:\;\.\,\<\>\&]/, "A senha deve conter ao menos um caractere especial"),
     confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password !== data.confirmPassword, {
     message: "As senhas não coincidem",
     path: ["confirmPassword"],
   });
