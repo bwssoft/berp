@@ -9,6 +9,28 @@ import { IBMessageGateway } from "../../../domain/@shared/gateway/bmessage.gatew
 import { bmessageGateway } from "../../../infra/gateway/bmessage/bmessage.gateway";
 import { formatWelcomeEmail } from "@/app/lib/util/format-template-email";
 
+namespace Dto {
+    export type Input = {
+      id: string;
+      active: boolean;
+    };
+  
+    export type Output = {
+      success: boolean;
+      error?: {
+        global?: string;
+        username?: string;
+        name?: string;
+        cpf?: string;
+        email?: string;
+        profile_id?: string[];
+        lock?: boolean;
+        active?: boolean;
+        image?: string;
+      };
+    };
+}
+
 class CreateOneUserUsecase {
     repository: IUserRepository;
     bmessageGateway: IBMessageGateway;
@@ -18,7 +40,7 @@ class CreateOneUserUsecase {
         this.bmessageGateway = bmessageGateway;
     }
 
-    async execute(input: Omit<IUser, "id" | "created_at" | "password">) {
+    async execute(input: Omit<IUser, "id" | "created_at" | "password">): Promise<Dto.Output> {
         const temporaryPassword = generateRandomPassword();
         const randomSalt = randomInt(10, 16);
 
@@ -30,8 +52,13 @@ class CreateOneUserUsecase {
             password: passwordHash,
         });
 
+        const cpfExists = await this.repository.findOne({ cpf: user.cpf });
+        if(cpfExists) return { success: false, error: { cpf: "CPF já cadastrado para outro usuário!" } };
+
+        const usernameExists = await this.repository.findOne({ username: user.username });
+        if(usernameExists) return { success: false, error: { username: "Usuário já utilizado em outro cadastro!" } };
+
         // 1º passo, criar o usuario (ok)
-        // 2º passo, enviar o email com a senha gerada (implementar)
         try {
             await this.repository.create(user);
             const html = await formatWelcomeEmail({
@@ -39,6 +66,7 @@ class CreateOneUserUsecase {
                 username: user.username,
                 password: temporaryPassword,
             });
+            // 2º passo, enviar o email com a senha gerada (implementar)
             await this.bmessageGateway.html({
                 to: user.email,
                 subject: "BCube – Primeiro acesso ",
@@ -49,8 +77,10 @@ class CreateOneUserUsecase {
         } catch (err) {
             return {
                 success: false,
-                error: err instanceof Error ? err.message : JSON.stringify(err),
-            };
+                error: {
+                  global: err instanceof Error ? err.message : JSON.stringify(err),
+                },
+              };
         }
     }
 }
