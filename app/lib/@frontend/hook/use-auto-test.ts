@@ -68,8 +68,6 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
 
           if (!equipment || !technology) return undefined;
 
-          const analysisEntries = Object.entries(analysis);
-
           const log: Omit<IAutoTestLog, "id" | "created_at" | "user"> = {
             analysis,
             equipment: {

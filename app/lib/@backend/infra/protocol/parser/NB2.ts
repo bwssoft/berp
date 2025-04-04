@@ -110,7 +110,7 @@ export class NB2Parser {
   }
 
   /**
-   * Extrai o valor do tempo de transmissão de ignição ligada de uma string que contém "RCE=" seguido de um número.
+   * Extrai o valor do tempo de transmissão de ignição ligada de uma string que contém "RCN=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de transmissão de ignição ligada.
    * @returns O valor numérico do tempo de transmissão de ignição ligada ou undefined se o formato não for válido.
@@ -144,7 +144,7 @@ export class NB2Parser {
   }
 
   /**
-   * Extrai o valor do tempo de sleep de uma string que contém "RCN=" seguido de um número.
+   * Extrai o valor do tempo de sleep de uma string que contém "RCE=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de transmissão em evento.
    * @returns O valor numérico do tempo de transmissão em evento ou undefined se o formato não for válido.

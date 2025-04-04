@@ -48,7 +48,10 @@ const generateMessages = (
   profile: IConfigurationProfile
 ): Record<ConfigKeys, string> => {
   const response = {} as Record<ConfigKeys, string>;
-  Object.entries(profile.config).forEach(([message, args]) => {
+  Object.entries({
+    ...profile.config.general,
+    ...profile.config.specific,
+  }).forEach(([message, args]) => {
     const _message = E3Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
@@ -128,18 +131,18 @@ export const useE3Plus = () => {
             } = E3Parser.check(check) ?? {};
             const ip_primary = E3Parser.ip_primary(cxip);
             const ip_secondary = E3Parser.ip_secondary(cxip);
-            const dns = E3Parser.dns(cxip);
+            const dns_primary = E3Parser.dns(cxip);
             return {
               port,
               config: {
                 general: {
+                  data_transmission_on,
+                  data_transmission_off,
                   ip_primary,
                   ip_secondary,
-                  data_transmission_off,
-                  data_transmission_on,
-                  dns_primary: dns,
                   apn,
                   keep_alive,
+                  dns_primary,
                 },
                 specific: processed_check,
               },
@@ -179,12 +182,19 @@ export const useE3Plus = () => {
               messages: configurationCommands,
             });
             const end_time = Date.now();
+            const responseEntries = Object.entries(response ?? {});
+            const status =
+              responseEntries.length > 0 &&
+              responseEntries.every(
+                ([_, value]) => typeof value !== "undefined"
+              );
             return {
               port,
               response,
               messages: configurationCommands,
               init_time,
               end_time,
+              status,
             };
           } catch (error) {
             console.error("[ERROR] handleConfiguration", error);

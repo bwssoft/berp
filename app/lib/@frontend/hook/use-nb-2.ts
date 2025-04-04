@@ -53,7 +53,10 @@ const generateMessages = (
   profile: IConfigurationProfile
 ): Record<ConfigKeys, string> => {
   const response = {} as Record<ConfigKeys, string>;
-  Object.entries(profile.config).forEach(([message, args]) => {
+  Object.entries({
+    ...profile.config.general,
+    ...profile.config.specific,
+  }).forEach(([message, args]) => {
     const _message = E34GEncoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
@@ -124,82 +127,90 @@ export const useNB2 = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "\r\n", key: "odometer", transform: NB2Parser.odometer },
+        { message: "RODM\r\n", key: "odometer", transform: NB2Parser.odometer },
         {
-          message: "\r\n",
+          message: "RCN\r\n",
           key: "data_transmission_on",
           transform: NB2Parser.data_transmission_on,
         },
         {
-          message: "\r\n",
+          message: "RCW\r\n",
           key: "data_transmission_off",
           transform: NB2Parser.data_transmission_off,
         },
         {
-          message: "\r\n",
+          message: "RCE\r\n",
           key: "data_transmission_event",
           transform: NB2Parser.data_transmission_event,
         },
-        { message: "\r\n", key: "sleep", transform: NB2Parser.sleep },
-        { message: "\r\n", key: "keep_alive", transform: NB2Parser.keep_alive },
-        { message: "\r\n", key: "ip_primary", transform: NB2Parser.ip_primary },
+        { message: "RCS\r\n", key: "sleep", transform: NB2Parser.sleep },
         {
-          message: "\r\n",
+          message: "RCK\r\n",
+          key: "keep_alive",
+          transform: NB2Parser.keep_alive,
+        },
+        {
+          message: "RIP1\r\n",
+          key: "ip_primary",
+          transform: NB2Parser.ip_primary,
+        },
+        {
+          message: "RIP2\r\n",
           key: "ip_secondary",
           transform: NB2Parser.ip_secondary,
         },
         {
-          message: "\r\n",
+          message: "RID1\r\n",
           key: "dns_primary",
           transform: NB2Parser.dns_primary,
         },
         {
-          message: "\r\n",
+          message: "RID2\r\n",
           key: "dns_secondary",
           transform: NB2Parser.dns_secondary,
         },
-        { message: "\r\n", key: "apn", transform: NB2Parser.apn },
+        { message: "RIAP\r\n", key: "apn", transform: NB2Parser.apn },
         {
-          message: "\r\n",
+          message: "RIG12\r\n",
           key: "first_voltage",
           transform: NB2Parser.first_voltage,
         },
         {
-          message: "\r\n",
+          message: "RIG24\r\n",
           key: "second_voltage",
           transform: NB2Parser.second_voltage,
         },
-        { message: "\r\n", key: "angle", transform: NB2Parser.angle },
-        { message: "\r\n", key: "speed", transform: NB2Parser.speed },
+        { message: "RFA\r\n", key: "angle", transform: NB2Parser.angle },
+        { message: "RFV\r\n", key: "speed", transform: NB2Parser.speed },
         {
-          message: "\r\n",
+          message: "RFTON\r\n",
           key: "accelerometer_sensitivity_on",
           transform: NB2Parser.accelerometer_sensitivity_on,
         },
         {
-          message: "\r\n",
+          message: "RFTOF\r\n",
           key: "accelerometer_sensitivity_off",
           transform: NB2Parser.accelerometer_sensitivity_off,
         },
         {
-          message: "\r\n",
+          message: "RFAV\r\n",
           key: "accelerometer_sensitivity_violated",
           transform: NB2Parser.accelerometer_sensitivity_violated,
         },
         {
-          message: "\r\n",
+          message: "RFMA\r\n",
           key: "maximum_acceleration",
           transform: NB2Parser.maximum_acceleration,
         },
         {
-          message: "\r\n",
+          message: "RFMD\r\n",
           key: "maximum_deceleration",
           transform: NB2Parser.maximum_deceleration,
         },
-        { message: "\r\n", key: "input_1", transform: NB2Parser.input_1 },
-        { message: "\r\n", key: "input_2", transform: NB2Parser.input_2 },
-        { message: "\r\n", key: "input_3", transform: NB2Parser.input_3 },
-        { message: "\r\n", key: "input_4", transform: NB2Parser.input_4 },
+        { message: "RIN1\r\n", key: "input_1", transform: NB2Parser.input_1 },
+        { message: "RIN2\r\n", key: "input_2", transform: NB2Parser.input_2 },
+        { message: "RIN3\r\n", key: "input_3", transform: NB2Parser.input_3 },
+        { message: "RIN4\r\n", key: "input_4", transform: NB2Parser.input_4 },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -222,14 +233,14 @@ export const useNB2 = () => {
               port,
               config: {
                 general: {
+                  data_transmission_on,
+                  data_transmission_off,
                   ip_primary,
                   ip_secondary,
-                  data_transmission_off,
-                  data_transmission_on,
-                  dns_primary,
-                  dns_secondary,
                   apn,
                   keep_alive,
+                  dns_primary,
+                  dns_secondary,
                 },
                 specific,
               },
@@ -265,12 +276,19 @@ export const useNB2 = () => {
               messages: configurationCommands,
             });
             const end_time = Date.now();
+            const responseEntries = Object.entries(response ?? {});
+            const status =
+              responseEntries.length > 0 &&
+              responseEntries.every(
+                ([_, value]) => typeof value !== "undefined"
+              );
             return {
               port,
               response,
               messages: configurationCommands,
               init_time,
               end_time,
+              status,
             };
           } catch (error) {
             console.error("[ERROR] handleConfiguration", error);

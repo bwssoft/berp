@@ -78,7 +78,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
       // check if each message sent has response and configured to the desired profile
       const result = configurationResult
-        .map(({ port, response, messages, end_time, init_time }) => {
+        .map(({ port, response, messages, end_time, init_time, status }) => {
           if (!response || !messages || !end_time || !init_time)
             return undefined;
 
@@ -122,9 +122,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
               iccid: equipment.iccid,
             },
             checked: false,
-            status: Object.entries(response ?? {}).every(
-              ([_, value]) => typeof value !== "undefined"
-            ),
+            status,
             metadata: {
               commands: messages.map(({ key, message }) => ({
                 request: message,
