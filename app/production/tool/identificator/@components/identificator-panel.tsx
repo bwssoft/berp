@@ -10,15 +10,15 @@ import {
   DevicesDetectedTable,
   DevicesIdentifiedTable,
 } from "@/app/lib/@frontend/ui/table";
-import { useDeviceIdWriter } from "@/app/lib/@frontend/hook";
+import { useIdentification } from "@/app/lib/@frontend/hook";
 
 interface Props {
   technology: ITechnology | null;
 }
-export function IdWriterPanel(props: Props) {
+export function IdentificationPanel(props: Props) {
   const { technology } = props;
 
-  const { identified, process, identify, requestPort } = useDeviceIdWriter({
+  const { identified, process, identify, requestPort } = useIdentification({
     technology,
   });
 

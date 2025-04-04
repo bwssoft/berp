@@ -65,8 +65,8 @@ const navigation = [
       },
       {
         name: "Identificador",
-        pathname: "/production/tool/id-writer",
-        code: "production:id-writer",
+        pathname: "/production/tool/identificator",
+        code: "production:identificator",
         icon: IdentificationIcon,
       },
     ],
@@ -90,8 +90,8 @@ const navigation = [
       },
       {
         name: "Identificador",
-        pathname: "/production/log/id-writer",
-        code: "production:id-writer",
+        pathname: "/production/log/identificator",
+        code: "production:identificator",
         icon: IdentificationIcon,
       },
     ],

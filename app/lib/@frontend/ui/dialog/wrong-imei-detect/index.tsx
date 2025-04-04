@@ -25,7 +25,7 @@ export const WrongImeiDetectedDialog = (props: Props) => {
           setOpen={(value) => {
             if (!value) {
               setWrongImeiDetected(false);
-              router.push(`/imei-writer/E3+4G`);
+              router.push(`/production/tool/identificator`);
             } else {
               setWrongImeiDetected(true);
             }
@@ -58,7 +58,7 @@ export const WrongImeiDetectedDialog = (props: Props) => {
               type="button"
               onClick={() => {
                 setWrongImeiDetected(false);
-                router.push(`/imei-writer/E3+4G`);
+                router.push(`/production/tool/identificator`);
               }}
               className="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:col-start-2"
             >

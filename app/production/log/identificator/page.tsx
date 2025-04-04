@@ -1,5 +1,8 @@
-import { findManyConfigurationLog } from "@/app/lib/@backend/action";
-import { DevicesConfiguredTable } from "@/app/lib/@frontend/ui/component";
+import { findManyIdentificationLog } from "@/app/lib/@backend/action";
+import {
+  DevicesIdentifiedTable,
+  IdentificationLogSearchForm,
+} from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 
@@ -7,40 +10,40 @@ interface Props {
   searchParams: {
     equipment_imei?: string;
     equipment_serial?: string;
-    equipment_iccid?: string;
     technology_name?: string;
-    profile_name?: string;
     status?: string[];
     user_name?: boolean;
     start_date?: Date;
     end_date?: Date;
   };
 }
-
 export default async function Example({ searchParams }: Props) {
-  const configurationLog = await findManyConfigurationLog(query(searchParams));
+  const autoTestLog = await findManyIdentificationLog(query(searchParams));
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div>
           <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Log de configuração
+            Log de identificação
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Uma lista de todos os registros de configuração.
+            Uma lista de todos os registros de identificação.
           </p>
         </div>
 
         <Link
-          href="/production/tool/configurator"
+          href="/production/tool/identificator"
           className="ml-auto flex items-center gap-x-1 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           <PlusIcon className="-ml-1.5 h-5 w-5" aria-hidden="true" />
-          Nova configuração
+          Nova Identificação
         </Link>
       </div>
+      <div className="mt-6 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
+        <IdentificationLogSearchForm />
+      </div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <DevicesConfiguredTable data={configurationLog} />
+        <DevicesIdentifiedTable data={autoTestLog} />
       </div>
     </div>
   );
@@ -49,10 +52,8 @@ export default async function Example({ searchParams }: Props) {
 const query = ({
   equipment_imei,
   equipment_serial,
-  equipment_iccid,
-  technology_name,
-  profile_name,
   status,
+  technology_name,
   user_name,
   start_date,
   end_date,
@@ -64,17 +65,18 @@ const query = ({
   const orConditions = [];
   if (equipment_imei) {
     orConditions.push({
-      "equipment.imei": { $regex: equipment_imei, $options: "i" },
+      "after.imei": { $regex: equipment_imei, $options: "i" },
+    });
+    orConditions.push({
+      "before.imei": { $regex: equipment_imei, $options: "i" },
     });
   }
   if (equipment_serial) {
     orConditions.push({
-      "equipment.serial": { $regex: equipment_serial, $options: "i" },
+      "after.serial": { $regex: equipment_serial, $options: "i" },
     });
-  }
-  if (equipment_iccid) {
     orConditions.push({
-      "equipment.iccid": { $regex: equipment_iccid, $options: "i" },
+      "before.serial": { $regex: equipment_serial, $options: "i" },
     });
   }
   if (technology_name) {
@@ -85,11 +87,6 @@ const query = ({
   if (user_name) {
     orConditions.push({
       "user.name": { $regex: user_name, $options: "i" },
-    });
-  }
-  if (profile_name) {
-    orConditions.push({
-      "profile.name": { $regex: profile_name, $options: "i" },
     });
   }
 

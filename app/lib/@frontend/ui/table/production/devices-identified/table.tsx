@@ -16,6 +16,9 @@ interface Props {
     status: boolean;
     id: string;
     created_at: Date;
+    technology: {
+      system_name: string;
+    };
   }[];
 }
 export function DevicesIdentifiedTable(props: Props) {

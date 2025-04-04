@@ -1,5 +1,6 @@
 "use client";
 
+import { technologyConstants } from "@/app/lib/constant";
 import { cn } from "@/app/lib/util";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { ColumnDef } from "@tanstack/react-table";
@@ -30,6 +31,9 @@ export const columns: ColumnDef<{
     id: string;
   };
   created_at: Date;
+  technology: {
+    system_name: string;
+  };
 }>[] = [
   {
     header: "Status",
@@ -77,6 +81,19 @@ export const columns: ColumnDef<{
       const device = row.original;
       return (
         <p title={device.equipment.iccid}>{device.equipment.iccid ?? "--"}</p>
+      );
+    },
+  },
+  {
+    header: "Tecnologia",
+    accessorKey: "technology",
+    cell: ({ row }) => {
+      const { original } = row;
+      return (
+        technologyConstants.name[
+          original.technology
+            .system_name as keyof typeof technologyConstants.name
+        ] ?? "Unknown"
       );
     },
   },

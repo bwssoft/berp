@@ -17,6 +17,9 @@ interface Props {
       id: string;
     };
     created_at: Date;
+    technology: {
+      system_name: string;
+    };
   }[];
 }
 export function DevicesConfiguredTable(props: Props) {

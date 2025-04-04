@@ -33,11 +33,11 @@ export function ConfigurationLogDescription({ data }: Props) {
           Detailed configuration log from the device.
         </p>
       </div>
-      <div className="mt-6 border-t border-gray-100">
-        <dl className="divide-y divide-gray-100">
+      <div className="mt-6 border-t border-gray-300">
+        <dl className="divide-y divide-gray-300">
           {/* Configuration Status */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">Test Result</dt>
+            <dt className="text-sm/6 font-medium text-gray-900">Result</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 flex items-center">
               <Icon className={`h-5 w-5 ${statusClass}`} />
               <span className={`mr-2 ${statusClass}`}>{text}</span>
@@ -54,9 +54,7 @@ export function ConfigurationLogDescription({ data }: Props) {
 
           {/* Equipment Information */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">
-              Equipment IMEI
-            </dt>
+            <dt className="text-sm/6 font-medium text-gray-900">IMEI</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
               {data.equipment.imei}
             </dd>
@@ -133,7 +131,7 @@ export function ConfigurationLogDescription({ data }: Props) {
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                 <ul
                   role="list"
-                  className="divide-y divide-gray-100 rounded-md border border-gray-200"
+                  className="divide-y divide-gray-300 rounded-md border border-gray-200"
                 >
                   {data.metadata.commands.map((cmd, idx) => (
                     <li

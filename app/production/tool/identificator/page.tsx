@@ -1,5 +1,5 @@
 import { findOneTechnology } from "@/app/lib/@backend/action";
-import { IdWriterPanel } from "./@components/identificator-panel";
+import { IdentificationPanel } from "./@components/identificator-panel";
 
 interface Props {
   searchParams: {
@@ -37,7 +37,7 @@ export default async function Page(props: Props) {
           </p>
         </div>
       </div>
-      <IdWriterPanel technology={technology} />
+      <IdentificationPanel technology={technology} />
     </div>
   );
 }

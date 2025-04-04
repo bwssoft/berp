@@ -1,6 +1,6 @@
 import { isImei } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -15,8 +15,8 @@ const schema = z.object({
 
 export type Schema = z.infer<typeof schema>;
 
-export function useImeiWriterForm(props: {
-  onSubmit: (imeiForWriting: string) => Promise<void>;
+export function useIdentificationForm(props: {
+  onSubmit: (id: string) => Promise<void>;
 }) {
   const { onSubmit } = props;
 
@@ -42,32 +42,32 @@ export function useImeiWriterForm(props: {
 
   // estado, função e use effect para lidar com o auto focus no input a partir de dois apertos na tecla espaço
   const [lastPressTime, setLastPressTime] = useState<number | null>(null);
-  const inputImeiRef = useRef<HTMLInputElement | null>(null);
-  const handleKeyDown = (event: KeyboardEvent) => {
+  const inputIdRef = useRef<HTMLInputElement | null>(null);
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.code === "Space") {
       const currentTime = new Date().getTime();
       if (lastPressTime && currentTime - lastPressTime < 300) {
         event.preventDefault();
-        if (inputImeiRef.current) {
-          inputImeiRef.current?.focus();
-          inputImeiRef.current.value = "";
+        if (inputIdRef.current) {
+          inputIdRef.current?.focus();
+          inputIdRef.current.value = "";
           setValue("serial", "");
         }
       }
       setLastPressTime(currentTime);
     }
-  };
+  }, []);
 
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let imei = event.target.value;
+    let id = event.target.value;
     if (
-      imei.startsWith("E3+4GÇ") ||
-      imei.startsWith("E3+4G:") ||
-      imei.startsWith("E3+4Gç")
+      id.startsWith("E3+4GÇ") ||
+      id.startsWith("E3+4G:") ||
+      id.startsWith("E3+4Gç")
     ) {
-      imei = imei.replace(/E3\+4G|:|Ç|ç/g, "");
+      id = id.replace(/E3\+4G|:|Ç|ç/g, "");
     }
-    setValue("serial", imei, { shouldValidate: true });
+    setValue("serial", id, { shouldValidate: true });
   };
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export function useImeiWriterForm(props: {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [lastPressTime]);
+  }, [handleKeyDown, lastPressTime]);
 
   return {
     register,
@@ -84,7 +84,7 @@ export function useImeiWriterForm(props: {
     control,
     setValue,
     reset: hookFormReset,
-    inputImeiRef,
+    inputIdRef,
     handleChangeInput,
     serial,
   };

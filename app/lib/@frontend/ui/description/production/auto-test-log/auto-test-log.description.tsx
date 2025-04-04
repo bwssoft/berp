@@ -1,6 +1,5 @@
 import { IAutoTestLog } from "@/app/lib/@backend/domain";
-import { cn, getStatusProps } from "@/app/lib/util";
-import { CheckIcon, PaperClipIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { getStatusProps } from "@/app/lib/util";
 import React from "react";
 
 interface Props {
@@ -36,11 +35,11 @@ export function AutoTestLogDescription({ data }: Props) {
           Detailed information of the automatic test log.
         </p>
       </div>
-      <div className="mt-6 border-t border-gray-100">
-        <dl className="divide-y divide-gray-100">
+      <div className="mt-6 border-t border-gray-200">
+        <dl className="divide-y divide-gray-200">
           {/* Test Result */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">Test Result</dt>
+            <dt className="text-sm/6 font-medium text-gray-900">Result</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 flex items-center">
               <Icon className={`h-5 w-5 ${statusClass}`} />
               <span className={`mr-2 ${statusClass}`}>{text}</span>
@@ -71,9 +70,7 @@ export function AutoTestLogDescription({ data }: Props) {
 
           {/* Equipment Information */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">
-              Equipment IMEI
-            </dt>
+            <dt className="text-sm/6 font-medium text-gray-900">IMEI</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
               {data.equipment.imei}
             </dd>
@@ -142,7 +139,7 @@ export function AutoTestLogDescription({ data }: Props) {
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                 <ul
                   role="list"
-                  className="divide-y divide-gray-100 rounded-md border border-gray-200"
+                  className="divide-y divide-gray-200 rounded-md border border-gray-200"
                 >
                   {data.metadata.commands.map((cmd, idx) => (
                     <li

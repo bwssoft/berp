@@ -1,21 +1,21 @@
 "use client";
 
 import { Button, Input } from "../../../component";
-import { useImeiWriterForm } from "./use-identification.form";
+import { useIdentificationForm } from "./use-identification.form";
 
 export function IdentificationForm(props: {
-  onSubmit: (imeiForWriting: string) => Promise<void>;
+  onSubmit: (id: string) => Promise<void>;
   disabled: boolean;
 }) {
   const { onSubmit, disabled } = props;
   const {
     handleSubmit,
     errors,
-    inputImeiRef,
+    inputIdRef,
     register,
     handleChangeInput,
     serial,
-  } = useImeiWriterForm({
+  } = useIdentificationForm({
     onSubmit,
   });
   return (
@@ -29,7 +29,7 @@ export function IdentificationForm(props: {
         value={serial}
         label="Enter serial to writing"
         placeholder="Field to insert serial"
-        ref={inputImeiRef}
+        ref={inputIdRef}
         error={errors["serial"]?.message ?? ""}
         onChange={handleChangeInput}
       />

@@ -2,15 +2,13 @@ import { findOneIdentificationLog } from "@/app/lib/@backend/action";
 import { IdentificationLogDescription } from "@/app/lib/@frontend/ui/description";
 
 interface Props {
-  searchParams: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default async function Page(props: Props) {
-  const {
-    searchParams: { id },
-  } = props;
+export default async function Page({ params }: Props) {
+  const { id } = await params;
 
   const autoTestLog = await findOneIdentificationLog({ id });
 

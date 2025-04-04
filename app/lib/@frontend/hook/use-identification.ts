@@ -12,7 +12,7 @@ import { createOneIdentificationLog } from "../../@backend/action";
 import { sleep } from "../../util";
 
 namespace Namespace {
-  export interface useDeviceIdWriterProps {
+  export interface useIdentificationProps {
     technology: ITechnology | null;
   }
 
@@ -31,7 +31,7 @@ namespace Namespace {
   export interface Identification extends IIdentificationLog {}
 }
 
-export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
+export const useIdentification = (props: Namespace.useIdentificationProps) => {
   const { technology } = props;
   const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
   const isIdentifying = useRef(false);
@@ -64,7 +64,7 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
 
       if (!equipment || !technology) return undefined;
 
-      await sleep(1000);
+      await sleep(5000);
 
       const identification = await handleGetIdentification(port);
 
@@ -109,6 +109,7 @@ export const useDeviceIdWriter = (props: Namespace.useDeviceIdWriterProps) => {
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     const interval = setInterval(async () => {
+      if (isWriting.current) return;
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
         const identified = await handleDetection(ports);

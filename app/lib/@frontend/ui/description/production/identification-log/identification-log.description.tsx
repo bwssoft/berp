@@ -32,11 +32,11 @@ export function IdentificationLogDescription({ data }: Props) {
           Detailed identification log from the device.
         </p>
       </div>
-      <div className="mt-6 border-t border-gray-100">
-        <dl className="divide-y divide-gray-100">
+      <div className="mt-6 border-t border-gray-200">
+        <dl className="divide-y divide-gray-200">
           {/* Result */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">Test Result</dt>
+            <dt className="text-sm/6 font-medium text-gray-900">Result</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 flex items-center">
               <Icon className={`h-5 w-5 ${statusClass}`} />
               <span className={`mr-2 ${statusClass}`}>{text}</span>
@@ -49,11 +49,9 @@ export function IdentificationLogDescription({ data }: Props) {
               <dt className="text-sm/6 font-medium text-gray-900">
                 Before Identification
               </dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {data.before.imei}
-              </dd>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {data.before.serial ?? "--"}
+              <dd className="flex flex-col mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <p>{data.before.serial}</p>
+                <p>{data.before.imei}</p>
               </dd>
             </div>
           )}
@@ -64,11 +62,9 @@ export function IdentificationLogDescription({ data }: Props) {
               <dt className="text-sm/6 font-medium text-gray-900">
                 After Identification
               </dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {data.after.imei ?? "--"}
-              </dd>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {data.after.serial ?? "--"}
+              <dd className="flex flex-col mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <p>{data.after.serial ?? "--"}</p>
+                <p>{data.after.imei ?? "--"}</p>
               </dd>
             </div>
           )}
@@ -113,7 +109,7 @@ export function IdentificationLogDescription({ data }: Props) {
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                 <ul
                   role="list"
-                  className="divide-y divide-gray-100 rounded-md border border-gray-200"
+                  className="divide-y divide-gray-200 rounded-md border border-gray-200"
                 >
                   {data.metadata.commands.map((cmd, idx) => (
                     <li

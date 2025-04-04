@@ -5,6 +5,7 @@ import { cn } from "@/app/lib/util";
 import Link from "next/link";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../../component";
+import { technologyConstants } from "@/app/lib/constant";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",
@@ -26,6 +27,9 @@ export const columns: ColumnDef<{
   };
   status: boolean;
   created_at: Date;
+  technology: {
+    system_name: string;
+  };
 }>[] = [
   {
     header: "Status",
@@ -77,6 +81,19 @@ export const columns: ColumnDef<{
         <p title={original.equipment.iccid}>
           {original.equipment.iccid ?? "--"}
         </p>
+      );
+    },
+  },
+  {
+    header: "Tecnologia",
+    accessorKey: "technology",
+    cell: ({ row }) => {
+      const { original } = row;
+      return (
+        technologyConstants.name[
+          original.technology
+            .system_name as keyof typeof technologyConstants.name
+        ] ?? "Unknown"
       );
     },
   },
