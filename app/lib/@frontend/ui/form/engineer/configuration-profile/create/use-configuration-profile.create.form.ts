@@ -18,13 +18,6 @@ const data_transmission = z.coerce
   .max(65535, { message: "O valor deve ser no máximo 65535" })
   .optional();
 
-const ip = z.string().ip({ message: "IP inválido." }).optional();
-
-const port = z.coerce
-  .number()
-  .positive({ message: "O valor deve ser positivo" })
-  .optional();
-
 const sensitivity_adjustment = z.coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
@@ -32,7 +25,7 @@ const sensitivity_adjustment = z.coerce
   .max(1000, { message: "O valor deve ser no máximo 1000" })
   .optional();
 
-const keep_alive = z.coerce
+const keepAliveSchema = z.coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
   .min(60, { message: "O valor deve ser no mínimo 60" })
@@ -83,12 +76,12 @@ const ack = z.coerce
 // Esquemas básicos
 const dnsSchema = z.object({
   address: z.string(),
-  port: z.number().min(0).max(65535),
+  port: z.coerce.number().min(0).max(65535),
 });
 
 const ipSchema = z.object({
   ip: z.string().ip(),
-  port: z.number().min(0).max(65535),
+  port: z.coerce.number().min(0).max(65535),
 });
 
 const apnSchema = z.object({
@@ -104,9 +97,9 @@ export const generalConfigSchema = z.object({
   dns_primary: dnsSchema.optional(),
   dns_secondary: dnsSchema.optional(),
   apn: apnSchema.optional(),
-  data_transmission_on: z.number().optional(),
-  data_transmission_off: z.number().optional(),
-  keep_alive: z.number().optional(),
+  data_transmission_on: z.coerce.number().optional(),
+  data_transmission_off: z.coerce.number().optional(),
+  keep_alive: keepAliveSchema.optional(),
 });
 
 // Esquema para E3Plus
@@ -118,7 +111,6 @@ export const e3PlusConfigSchema = z.object({
     })
     .optional(),
   timezone: z.number().optional(),
-  // ... outros campos do E3Plus
 });
 
 // Esquema para E3Plus4G
@@ -177,7 +169,6 @@ export const e3Plus4GConfigSchema = z.object({
 
 // Esquema principal
 export const schema = z.object({
-  id: z.string(),
   client_id: z.string(),
   technology_id: z.string(),
   use_case: z.nativeEnum(EUseCase),
@@ -255,13 +246,14 @@ export function useConfigurationProfileCreateForm(props: Props) {
         });
       }
     },
-    () => {
+    (error) => {
       toast({
         title: "Erro de Validação",
         description:
           "Por favor, corrija os erros no formulário antes de submeter.",
         variant: "error",
       });
+      console.log("error", error);
     }
   );
 
@@ -269,7 +261,13 @@ export function useConfigurationProfileCreateForm(props: Props) {
     type?: string;
     technology?: string;
     document?: string;
-  }) => setName((prev) => Object.assign(prev, props));
+  }) => {
+    setName((prev) => {
+      const state = Object.assign(prev, props);
+      methods.setValue("name", formatConfigurationProfileName(state));
+      return state;
+    });
+  };
 
   return {
     methods,
