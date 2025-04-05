@@ -7,6 +7,7 @@ import {
   findManyConfigurationLogUsecase,
   findOneConfigurationLogUsecase,
 } from "@/app/lib/@backend/usecase";
+import { Filter } from "mongodb";
 
 export async function createOneConfigurationLog(
   input: Omit<IConfigurationLog, "id" | "created_at" | "user">
@@ -41,7 +42,7 @@ export async function findOneConfigurationLog(
 }
 
 export async function findManyConfigurationLog(
-  input: Partial<IConfigurationLog>
+  input: Filter<IConfigurationLog>
 ) {
   return await findManyConfigurationLogUsecase.execute(input);
 }

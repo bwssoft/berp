@@ -1,19 +1,19 @@
 import { findManyAutoTestLog } from "@/app/lib/@backend/action";
-import {
-  AutoTestLogSearchForm,
-  DevicesAutoTestedTable,
-} from "@/app/lib/@frontend/ui/component";
+import { IAutoTestLog } from "@/app/lib/@backend/domain";
+import { AutoTestLogSearchForm } from "@/app/lib/@frontend/ui/form";
+import { DevicesAutoTestedTable } from "@/app/lib/@frontend/ui/table";
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { Filter } from "mongodb";
 import Link from "next/link";
 
 interface Props {
   searchParams: {
-    equipment_imei?: string;
-    equipment_serial?: string;
-    equipment_iccid?: string;
-    technology_name?: string;
+    query?: string;
+
+    equipment?: string;
+    technology?: string;
     status?: string[];
-    user_name?: boolean;
+    user?: string;
     start_date?: Date;
     end_date?: Date;
   };
@@ -50,68 +50,81 @@ export default async function Example({ searchParams }: Props) {
   );
 }
 
-const query = ({
-  equipment_imei,
-  equipment_serial,
-  equipment_iccid,
-  status,
-  technology_name,
-  user_name,
-  start_date,
-  end_date,
-}: Props["searchParams"]) => {
-  // Inicializa a query como um objeto vazio
-  const query: any = {};
+function query(props: Props["searchParams"]): Filter<IAutoTestLog> {
+  const conditions: Filter<IAutoTestLog>[] = [];
 
-  // Monta as condições de busca para os campos de equipamentos e tecnologia
-  const orConditions = [];
-  if (equipment_imei) {
-    orConditions.push({
-      "equipment.imei": { $regex: equipment_imei, $options: "i" },
-    });
-  }
-  if (equipment_serial) {
-    orConditions.push({
-      "equipment.serial": { $regex: equipment_serial, $options: "i" },
-    });
-  }
-  if (equipment_iccid) {
-    orConditions.push({
-      "equipment.iccid": { $regex: equipment_iccid, $options: "i" },
-    });
-  }
-  if (technology_name) {
-    orConditions.push({
-      "technology.system_name": { $regex: technology_name, $options: "i" },
-    });
-  }
-  if (user_name) {
-    orConditions.push({
-      "user.name": { $regex: user_name, $options: "i" },
+  // Filtro geral com o parâmetro 'query'
+  if (props.query) {
+    const regex = { $regex: props.query, $options: "i" };
+    conditions.push({
+      $or: [
+        { "technology.system_name": regex },
+        { "equipment.imei": regex },
+        { "equipment.firmware": regex },
+        { "equipment.iccid": regex },
+        { "equipment.serial": regex },
+        { "user.name": regex },
+      ],
     });
   }
 
-  // Só adiciona o operador $or se houver alguma condição definida
-  if (orConditions.length > 0) {
-    query.$or = orConditions;
+  // Filtro específico para 'equipment'
+  if (props.equipment) {
+    const eqRegex = { $regex: props.equipment, $options: "i" };
+    conditions.push({
+      $or: [
+        { "equipment.imei": eqRegex },
+        { "equipment.serial": eqRegex },
+        { "equipment.iccid": eqRegex },
+        { "equipment.firmware": eqRegex },
+      ],
+    });
   }
 
-  // Adiciona a condição de status se o array existir e possuir itens
-  if (status && status.length > 0) {
-    query.status = {
-      $in: (status ?? []).map((i) => (i === "false" ? false : true)),
-    };
+  // Filtro específico para 'user'
+  if (props.user) {
+    const eqRegex = { $regex: props.user, $options: "i" };
+    conditions.push({ "user.name": eqRegex });
   }
 
-  // Adiciona as condições de data
-  if (start_date || end_date) {
-    query.created_at = {};
-    if (start_date) {
-      query.created_at.$gte = start_date;
+  // Filtro específico para 'technology'
+  if (props.technology) {
+    const eqRegex = { $regex: props.technology, $options: "i" };
+    conditions.push({ "technology.system_name": eqRegex });
+  }
+
+  // Filtro específico para 'status'
+  if (props.status) {
+    // Converte as strings para booleanos ("true" => true, "false" => false)
+    const statusBooleans = props.status.map((s) => s === "true");
+    conditions.push({
+      status: { $in: statusBooleans },
+    });
+  }
+
+  // Filtro para intervalo de datas em 'created_at'
+  if (props.start_date || props.end_date) {
+    const dateFilter: { $gte?: Date; $lte?: Date } = {};
+    if (props.start_date) {
+      dateFilter.$gte = props.start_date;
     }
-    if (end_date) {
-      query.created_at.$lte = end_date;
+    if (props.end_date) {
+      dateFilter.$lte = props.end_date;
     }
+    conditions.push({
+      created_at: dateFilter,
+    });
   }
-  return query;
-};
+
+  // Combina as condições utilizando $and se houver mais de uma
+  if (conditions.length === 1) {
+    return conditions[0];
+  }
+
+  if (conditions.length > 1) {
+    return { $and: conditions };
+  }
+
+  // Retorna um filtro vazio se não houver condições
+  return {};
+}

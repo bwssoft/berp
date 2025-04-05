@@ -5,9 +5,10 @@ import {
 import { identificationLogRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { Filter } from "mongodb";
 
 namespace Dto {
-  export interface Input extends Partial<IIdentificationLog> {}
+  export interface Input extends Filter<IIdentificationLog> {}
 
   export type Output = IIdentificationLog[];
 }

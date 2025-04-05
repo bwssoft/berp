@@ -6,6 +6,7 @@ import {
   findManyIdentificationLogUsecase,
   findOneIdentificationLogUsecase,
 } from "@/app/lib/@backend/usecase";
+import { Filter } from "mongodb";
 
 export async function createOneIdentificationLog(
   input: Omit<IIdentificationLog, "id" | "created_at" | "user">
@@ -27,7 +28,7 @@ export async function findOneIdentificationLog(
 }
 
 export async function findManyIdentificationLog(
-  input: Partial<IIdentificationLog>
+  input: Filter<IIdentificationLog>
 ) {
   return await findManyIdentificationLogUsecase.execute(input);
 }
