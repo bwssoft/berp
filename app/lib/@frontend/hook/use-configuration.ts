@@ -151,12 +151,13 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
       isConfiguring.current = false;
     },
-    [identified, ports, technology]
+    [handleConfiguration, handleGetProfile, identified, ports, technology]
   );
 
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     const interval = setInterval(async () => {
+      if (isConfiguring.current) return;
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
         const identified = await handleDetection(ports);
