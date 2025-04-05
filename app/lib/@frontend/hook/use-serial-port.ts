@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Props {
   handleConnection?: (port: ISerialPort) => void;
@@ -12,29 +12,35 @@ export const useSerialPort = (props: Props) => {
   const [ports, setPorts] = useState<ISerialPort[]>([]);
   const isFirstRendering = useRef(true); // Referência para controlar a primeira execução
 
+  const handleConnect = useCallback(
+    (e: Event) => {
+      const target = e.target as ISerialPort | null;
+      if (!target) return;
+      setPorts((prev) => [...prev, target]);
+      handleConnection?.(target);
+    },
+    [handleConnection]
+  );
+
+  const handleDisconnect = useCallback(
+    (e: Event) => {
+      const target = e.target as ISerialPort | null;
+      if (!target) return;
+      setPorts((prev) => prev.filter((el) => el !== target));
+      handleDisconnection?.(target);
+    },
+    [handleDisconnection]
+  );
+
   useEffect(() => {
     // if (isFirstRendering.current) {
     //   isFirstRendering.current = false
     if (typeof window !== "undefined" && "serial" in navigator) {
       const _navigator = navigator as INavigator;
 
-      _navigator.serial.getPorts().then(async (ports) => {
+      _navigator.serial.getPorts().then((ports) => {
         setPorts(ports);
       });
-
-      const handleConnect = (e: Event) => {
-        const target = e.target as ISerialPort | null;
-        if (!target) return;
-        setPorts((prev) => [...prev, target]);
-        handleConnection?.(target);
-      };
-
-      const handleDisconnect = (e: Event) => {
-        const target = e.target as ISerialPort | null;
-        if (!target) return;
-        setPorts((prev) => prev.filter((el) => el !== target));
-        handleDisconnection?.(target);
-      };
 
       _navigator.serial.addEventListener("connect", handleConnect);
       _navigator.serial.addEventListener("disconnect", handleDisconnect);
@@ -45,7 +51,7 @@ export const useSerialPort = (props: Props) => {
       };
     }
     // }
-  }, [handleConnection, handleDisconnection]);
+  }, [handleConnect, handleConnection, handleDisconnect, handleDisconnection]);
 
   //Serial
   const requestPort = async () => {
@@ -58,10 +64,7 @@ export const useSerialPort = (props: Props) => {
   };
 
   //SerialPort
-  const openPort = async (
-    port: ISerialPort,
-    options: SerialOptions = { baudRate: 115200, bufferSize: 1000000 }
-  ) => {
+  const openPort = async (port: ISerialPort, options: SerialOptions) => {
     try {
       await port.open(options);
     } catch (e) {
@@ -101,7 +104,6 @@ export const useSerialPort = (props: Props) => {
         error instanceof Error
           ? error
           : new Error("Error when forgetting serial port");
-      console.error(errorMessage);
       throw errorMessage;
     }
   };
@@ -117,7 +119,7 @@ export const useSerialPort = (props: Props) => {
   };
 
   const getReader = async (port: ISerialPort) => {
-    if (!port.readable) {
+    if (!port?.readable) {
       console.error("Readable stream not available");
       return;
     }
@@ -127,7 +129,7 @@ export const useSerialPort = (props: Props) => {
       return;
     }
 
-    const reader = port.readable?.getReader();
+    const reader = port.readable.getReader();
 
     return reader;
   };
@@ -139,13 +141,12 @@ export const useSerialPort = (props: Props) => {
     }
 
     try {
-      const writer = port.writable?.getWriter();
+      const writer = port.writable.getWriter();
       if (!writer) {
         throw new Error("Writer not available");
       }
       const encoder = new TextEncoder();
-      const message = `${data}`;
-      await writer.write(encoder.encode(message));
+      await writer.write(encoder.encode(data));
       writer.releaseLock();
     } catch (error) {
       console.error("Error writing to port", error);
