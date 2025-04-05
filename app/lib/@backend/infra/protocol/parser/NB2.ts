@@ -77,14 +77,33 @@ export class NB2Parser {
   }
 
   /**
+   * Extrai o valor do firmware de uma string que contém "RFW=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do firmware.
+   * @returns O valor do firmware ou undefined se o formato não for válido.
+   */
+  static firmware(input: string): string | undefined {
+    const parts = input.split("RFW=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  /**
    * Extrai um objeto da resposta do comando auto test.
    *
    * @param input - A string que contém a informação do autotest.
    * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
    */
   static auto_test(input: string): NB2.AutoTest | undefined {
-    if (!input.startsWith("SN:")) return undefined;
-    const splited = input.split(",");
+    const parts = input.split("AUTOTEST=");
+    if (parts.length < 2) return undefined;
+    const splited = parts[1].split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
       acc[key as keyof NB2.AutoTest] = value;

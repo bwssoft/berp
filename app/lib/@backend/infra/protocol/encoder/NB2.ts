@@ -19,6 +19,12 @@ type Voltage = {
   final: string;
 };
 
+type Encoder =
+  | { command: "apn"; args: APN }
+  | { command: "ip_primary"; args: IP }
+  | { command: "ip_secondary"; args: IP }
+  | { command: "dns_primary"; args: DNS };
+
 export class NB2Encoder {
   static serial(input: string): string | undefined {
     if (!input || typeof input !== "string") return undefined;
@@ -118,5 +124,37 @@ export class NB2Encoder {
   static accelerometer_sensitivity_violated(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFAV=${input}\r\n`;
+  }
+
+  static commands() {
+    return {
+      serial: NB2Encoder.serial,
+      imei: NB2Encoder.imei,
+      odometer: NB2Encoder.odometer,
+      data_transmission_on: NB2Encoder.data_transmission_on,
+      data_transmission_off: NB2Encoder.data_transmission_off,
+      data_transmission_event: NB2Encoder.data_transmission_event,
+      sleep: NB2Encoder.sleep,
+      keep_alive: NB2Encoder.keep_alive,
+      ip_primary: NB2Encoder.ip_primary,
+      ip_secondary: NB2Encoder.ip_secondary,
+      dns_primary: NB2Encoder.dns_primary,
+      dns_secondary: NB2Encoder.dns_secondary,
+      apn: NB2Encoder.apn,
+      first_voltage: NB2Encoder.first_voltage,
+      second_voltage: NB2Encoder.second_voltage,
+      angle: NB2Encoder.angle,
+      speed: NB2Encoder.speed,
+      accelerometer_sensitivity_on: NB2Encoder.accelerometer_sensitivity_on,
+      accelerometer_sensitivity_off: NB2Encoder.accelerometer_sensitivity_off,
+      accelerometer_sensitivity_violated:
+        NB2Encoder.accelerometer_sensitivity_violated,
+    };
+  }
+
+  static encoder(props: Encoder): string | undefined {
+    const { command, args } = props;
+    const commands = NB2Encoder.commands();
+    return commands[command](args as any);
   }
 }
