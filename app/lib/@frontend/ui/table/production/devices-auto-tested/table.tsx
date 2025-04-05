@@ -13,6 +13,9 @@ interface Props {
     };
     status: boolean;
     created_at: Date;
+    technology: {
+      system_name: string;
+    };
   }[];
 }
 export function DevicesAutoTestedTable(props: Props) {
