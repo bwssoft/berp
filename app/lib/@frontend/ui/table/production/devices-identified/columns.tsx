@@ -19,11 +19,11 @@ const text = {
   error: "text-rose-800",
 };
 export const columns: ColumnDef<{
-  before: {
+  equipment: {
     imei: string;
     serial?: string;
   };
-  after?: {
+  identification?: {
     imei?: string;
     serial?: string;
   };
@@ -55,19 +55,25 @@ export const columns: ColumnDef<{
   },
   {
     header: "Atual",
-    accessorKey: "after",
+    accessorKey: "identification",
     cell: ({ row }) => {
       const device = row.original;
-      return <p title={device.after?.serial}>{device.after?.serial ?? "--"}</p>;
+      return (
+        <p title={device.identification?.serial}>
+          {device.identification?.serial ?? "--"}
+        </p>
+      );
     },
   },
   {
     header: "Antes",
-    accessorKey: "before",
+    accessorKey: "equipment",
     cell: ({ row }) => {
       const device = row.original;
       return (
-        <p title={device.before?.serial}>{device.before?.serial ?? "--"}</p>
+        <p title={device.equipment?.serial}>
+          {device.equipment?.serial ?? "--"}
+        </p>
       );
     },
   },

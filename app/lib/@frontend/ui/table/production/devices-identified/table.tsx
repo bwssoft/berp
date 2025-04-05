@@ -5,11 +5,11 @@ import { DataTable } from "../../../component";
 
 interface Props {
   data: {
-    before: {
+    equipment: {
       imei: string;
       serial: string;
     };
-    after?: {
+    identifitaction?: {
       imei?: string;
       serial?: string;
     };
@@ -27,7 +27,7 @@ export function DevicesIdentifiedTable(props: Props) {
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => data.before.serial}
+      mobileDisplayValue={(data) => data.equipment.serial}
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full"
     />
