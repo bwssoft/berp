@@ -15,6 +15,12 @@ export type ParsedProfile = IConfigurationProfile["config"];
 
 export type RawProfile = [string, string][]; // [["status", "SN="]]
 
+export type ProfileDiff = { value1: any; value2: any };
+
+type NestedProfileDiff<T> = T extends object
+  ? ProfileDiff | { [K in keyof T]?: NestedProfileDiff<T[K]> }
+  : ProfileDiff;
+
 export interface IConfigurationLog {
   id: string;
   profile: {
@@ -40,12 +46,8 @@ export interface IConfigurationLog {
   // Mapeia cada chave do perfil com os valores desejados e os efetivamente aplicados,
   // facilitando a verificação das diferenças (ex: { desired: 60, actual: 0 })
   not_configured?: {
-    general?: {
-      [K in keyof ParsedProfile["general"]]?: { value1: any; value2: any };
-    };
-    specific?: {
-      [K in keyof ParsedProfile["specific"]]?: { value1: any; value2: any };
-    };
+    general?: NestedProfileDiff<ParsedProfile["general"]>;
+    specific?: NestedProfileDiff<ParsedProfile["specific"]>;
   };
   // Perfil retornado pelo dispositivo após a configuração (processo de double-check)
   parsed_profile?: ParsedProfile;
