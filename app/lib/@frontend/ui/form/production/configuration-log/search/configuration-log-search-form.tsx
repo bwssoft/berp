@@ -1,10 +1,10 @@
 "use client";
 
-import { useIdentificationLogSearchForm } from "./use-search-identification-form";
+import { useConfiguratonLogSearchForm } from "./use-configuration-log-search-form";
 import { Input } from "../../../../component";
 
-export function IdentificationLogSearchForm() {
-  const { handleQuickSearch } = useIdentificationLogSearchForm();
+export function ConfigurationLogSearchForm() {
+  const { handleQuickSearch } = useConfiguratonLogSearchForm();
 
   return (
     <form>
@@ -12,7 +12,7 @@ export function IdentificationLogSearchForm() {
         <div className="border-b border-gray-900/10 pb-6">
           <Input
             onChange={handleQuickSearch}
-            label="Pesquisar registros de identificação"
+            label="Pesquisar registros de configuração"
             placeholder="Busque pelo equipamento, cliente, usuário tecnologia."
             className="sm:w-96"
           />

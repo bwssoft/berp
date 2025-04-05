@@ -12,8 +12,8 @@ export function AutoTestLogSearchForm() {
         <div className="border-b border-gray-900/10 pb-6">
           <Input
             onChange={handleQuickSearch}
-            label="Pesquise por um registro"
-            placeholder="Busque por qualquer dado do registro."
+            label="Pesquisar registros de auto teste"
+            placeholder="Busque pelo equipamento, cliente, usuário tecnologia."
             className="sm:w-96"
           />
         </div>

@@ -1,7 +1,7 @@
 import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 import { ChangeEvent } from "react";
 
-export const useIdentificationLogSearchForm = () => {
+export const useConfiguratonLogSearchForm = () => {
   const { handleParamsChange } = useHandleParamsChange();
 
   const handleQuickSearch = useDebounce((e: ChangeEvent<HTMLInputElement>) => {

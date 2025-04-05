@@ -6,11 +6,7 @@ export const useAutoTestLogSearchForm = () => {
 
   const handleQuickSearch = useDebounce((e: ChangeEvent<HTMLInputElement>) => {
     handleParamsChange({
-      equipment_imei: e.target.value,
-      equipment_serial: e.target.value,
-      equipment_iccid: e.target.value,
-      user_name: e.target.value,
-      technology_name: e.target.value,
+      query: e.target.value,
     });
   }, 200);
 
