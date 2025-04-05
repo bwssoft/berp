@@ -8,14 +8,17 @@ import { z } from "zod";
 import { formatConfigurationProfileName } from "../util";
 
 const password = z
-  .string()
-  .max(6, { message: "A senha deve ter no máximo 6 caracteres." })
+  .object({
+    old: z.string().optional(),
+    new: z.string().optional(),
+  })
   .optional();
 
-const data_transmission = z.coerce
+const sleep = z.coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
-  .max(65535, { message: "O valor deve ser no máximo 65535" })
+  .min(1, { message: "O valor deve ser no mínimmo 1" })
+  .max(5, { message: "O valor deve ser no máximo 5" })
   .optional();
 
 const sensitivity_adjustment = z.coerce
@@ -104,23 +107,28 @@ export const generalConfigSchema = z.object({
 
 // Esquema para E3Plus
 export const e3PlusConfigSchema = z.object({
-  password: z
-    .object({
-      old: z.string().optional(),
-      new: z.string().optional(),
-    })
-    .optional(),
+  password: password,
   timezone: z.number().optional(),
+  lock_type: z.coerce.number().optional(),
+  odometer: odometer,
+  accelerometer_sensitivity: z.coerce.number().optional(),
+  economy_mode: z.coerce.number().optional(),
+  sensitivity_adjustment: sensitivity_adjustment,
+  lbs_position: z.coerce.boolean().optional().default(false),
+  cornering_position_update: z.coerce.boolean().optional().default(false),
+  ignition_alert_power_cut: z.coerce.boolean().optional().default(false),
+  gprs_failure_alert: z.coerce.boolean().optional().default(false),
+  led: z.coerce.boolean().optional().default(false),
+  virtual_ignition: z.coerce.boolean().optional().default(false),
+  work_mode: z.string().optional(),
+  operation_mode: z.coerce.boolean().optional(),
+  max_speed: max_speed,
+  sleep: sleep,
 });
 
 // Esquema para E3Plus4G
 export const e3Plus4GConfigSchema = z.object({
-  password: z
-    .object({
-      old: z.string().optional(),
-      new: z.string().optional(),
-    })
-    .optional(),
+  password: password,
   timezone: z.coerce.number().optional(),
   lock_type: z.coerce.number().optional(),
   odometer: odometer,
