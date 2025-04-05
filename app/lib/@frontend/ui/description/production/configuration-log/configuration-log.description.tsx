@@ -59,20 +59,21 @@ export function ConfigurationLogDescription({ data }: Props) {
               {data.equipment.imei}
             </dd>
           </div>
-          {data.equipment.serial && (
-            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">Serial</dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                {data.equipment.serial}
-              </dd>
-            </div>
-          )}
+
+          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+            <dt className="text-sm/6 font-medium text-gray-900">Serial</dt>
+            <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+              {data.equipment.serial}
+            </dd>
+          </div>
+
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">Firmware</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
               {data.equipment.firmware}
             </dd>
           </div>
+
           {data.equipment.iccid && (
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
               <dt className="text-sm/6 font-medium text-gray-900">ICCID</dt>
@@ -108,7 +109,7 @@ export function ConfigurationLogDescription({ data }: Props) {
 
           {/* User ID */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm/6 font-medium text-gray-900">User ID</dt>
+            <dt className="text-sm/6 font-medium text-gray-900">User</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
               {data.user.name}
             </dd>
@@ -166,8 +167,8 @@ export function ConfigurationLogDescription({ data }: Props) {
               <dt className="text-sm/6 font-medium text-gray-900">
                 Parsed Profile
               </dt>
-              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                <pre className="whitespace-pre-wrap text-sm/6 text-gray-700">
+              <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 py-4 pl-4 pr-5 rounded-md border border-gray-200">
+                <pre className="whitespace-pre-wrap">
                   {JSON.stringify(data.parsed_profile, null, 2)}
                 </pre>
               </dd>
@@ -195,86 +196,20 @@ export function ConfigurationLogDescription({ data }: Props) {
           {/* Not Configured */}
           {data.not_configured && (
             <>
-              {data.not_configured.general &&
-                Object.keys(data.not_configured.general).length > 0 && (
-                  <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt className="text-sm/6 font-medium text-gray-900">
-                      Not Configured (General)
-                    </dt>
-                    <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      <ul className="list-disc pl-5">
-                        {Object.entries(data.not_configured.general).map(
-                          ([key, diff]) => {
-                            const typedDiff = diff as {
-                              value1: any;
-                              value2: any;
-                            };
+              <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                <dt className="text-sm/6 font-medium text-gray-900">
+                  Not Configured
+                </dt>
+                <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 py-4 pl-4 pr-5 rounded-md border border-gray-200">
+                  {data.not_configured.general && (
+                    <DiffRenderer diff={data.not_configured.general} />
+                  )}
 
-                            return (
-                              <li key={key} className="mb-2">
-                                <span className="font-medium">{key}:</span>
-                                <div className="ml-2">
-                                  <div>
-                                    Desired:{" "}
-                                    <pre className="inline">
-                                      {JSON.stringify(typedDiff.value1)}
-                                    </pre>
-                                  </div>
-                                  <div>
-                                    Actual:{" "}
-                                    <pre className="inline">
-                                      {JSON.stringify(typedDiff.value2)}
-                                    </pre>
-                                  </div>
-                                </div>
-                              </li>
-                            );
-                          }
-                        )}
-                      </ul>
-                    </dd>
-                  </div>
-                )}
-              {data.not_configured.specific &&
-                Object.keys(data.not_configured.specific).length > 0 && (
-                  <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt className="text-sm/6 font-medium text-gray-900">
-                      Not Configured (Specific)
-                    </dt>
-                    <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      <ul className="list-disc pl-5">
-                        {Object.entries(data.not_configured.specific).map(
-                          ([key, diff]) => {
-                            const typedDiff = diff as {
-                              value1: any;
-                              value2: any;
-                            };
-
-                            return (
-                              <li key={key} className="mb-2">
-                                <span className="font-medium">{key}:</span>
-                                <div className="ml-2">
-                                  <div>
-                                    Desired:{" "}
-                                    <pre className="inline">
-                                      {JSON.stringify(typedDiff.value1)}
-                                    </pre>
-                                  </div>
-                                  <div>
-                                    Actual:{" "}
-                                    <pre className="inline">
-                                      {JSON.stringify(typedDiff.value2)}
-                                    </pre>
-                                  </div>
-                                </div>
-                              </li>
-                            );
-                          }
-                        )}
-                      </ul>
-                    </dd>
-                  </div>
-                )}
+                  {data.not_configured.specific && (
+                    <DiffRenderer diff={data.not_configured.specific} />
+                  )}
+                </dd>
+              </div>
             </>
           )}
         </dl>
@@ -282,3 +217,34 @@ export function ConfigurationLogDescription({ data }: Props) {
     </div>
   );
 }
+
+interface DiffRendererProps {
+  diff: any;
+}
+
+const DiffRenderer = ({ diff }: DiffRendererProps) => {
+  // Se diff for do tipo ProfileDiff, renderiza os valores.
+  if ("value1" in diff && "value2" in diff) {
+    return (
+      <div className="ml-2">
+        <div>
+          Desired: <span className="inline">{JSON.stringify(diff.value1)}</span>
+        </div>
+        <div>
+          Actual: <span className="inline">{JSON.stringify(diff.value2)}</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <ul className="pl-5">
+      {Object.entries(diff).map(([key, subDiff]) => (
+        <li key={key} className="mb-2">
+          <span className="font-medium">{key}:</span>
+          <DiffRenderer diff={subDiff} />
+        </li>
+      ))}
+    </ul>
+  );
+};
