@@ -1,10 +1,5 @@
 import { useCallback } from "react";
-import {
-  E34GEncoder,
-  E34GParser,
-  NB2,
-  NB2Parser,
-} from "../../@backend/infra/protocol";
+import { NB2, NB2Parser, NB2Encoder } from "../../@backend/infra/protocol";
 import {
   generateImei,
   getRandomInt,
@@ -21,6 +16,7 @@ type ConfigKeys = keyof IConfigurationProfile["config"];
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
+  command: string,
   timeout: number = 500
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
@@ -33,12 +29,14 @@ const readResponse = async (
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
+
       const chunk = decoder.decode(value);
       buffer += chunk;
+
       let lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
       for (const line of lines) {
-        if (line.length > 0) {
+        if (line.length > 0 && line.includes(command.replace("\r\n", ""))) {
           return line;
         }
       }
@@ -57,7 +55,7 @@ const generateMessages = (
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([message, args]) => {
-    const _message = E34GEncoder.encoder({ command: message, args } as any);
+    const _message = NB2Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
   });
@@ -81,13 +79,13 @@ export const useNB2 = () => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
       await writeToPort(port, message);
-      const response = await readResponse(reader, timeout);
+      const response = await readResponse(reader, message, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 200,
+      delayBetweenMessages: 550,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -101,15 +99,14 @@ export const useNB2 = () => {
         { message: "ICCID\r\n", key: "iccid", transform: NB2Parser.iccid },
         { message: "RINS\r\n", key: "serial", transform: NB2Parser.serial },
         {
-          message: "RINS\r\n",
+          message: "RFW\r\n",
           key: "firmware",
-          transform: () => "firmware#00",
+          transform: NB2Parser.firmware,
         },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            await sleep(1000);
             const response = await sendMultipleMessages({
               transport: port,
               messages,
@@ -356,14 +353,18 @@ export const useNB2 = () => {
 
                 if (!autotest) continue;
 
+                const BATT_VOLT = Number(autotest["BATT_VOLT"]);
+                const VCC = Number(autotest["VCC"]);
+
                 resultTemplate.analysis = {
                   ACELC: Boolean(autotest["ACELC"]?.length),
                   ACELP: autotest["ACELP"] === "OK",
-                  BATT_VOLT: !isNaN(Number(autotest["BATT_VOLT"])),
+                  BATT_VOLT:
+                    !isNaN(BATT_VOLT) && BATT_VOLT <= 43 && BATT_VOLT >= 40,
                   CHARGER: autotest["CHARGER"] === "OK",
                   FW: Boolean(autotest["FW"]?.length),
                   GPS: autotest["GPS"] === "OK",
-                  GPSf: autotest["GPSf"] === "OK",
+                  // GPSf: autotest["GPSf"] === "OK",
                   IC: isIccid(autotest["IC"] ?? ""),
                   ID_ACEL: Boolean(autotest["ID_ACEL"]?.length),
                   ID_MEM: Boolean(autotest["ID_MEM"]?.length),
@@ -374,7 +375,7 @@ export const useNB2 = () => {
                   OUT: autotest["OUT"] === "OK",
                   RSI: autotest["RSI"] === "OK",
                   SN: Boolean(autotest["SN"]?.length),
-                  VCC: !isNaN(Number(autotest["VCC"])),
+                  VCC: !isNaN(VCC) && VCC <= 130 && VCC >= 120,
                 };
 
                 const statusValues = Object.values(resultTemplate.analysis);

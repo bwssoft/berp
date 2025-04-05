@@ -9,13 +9,14 @@ type ConfigKeys = keyof IConfigurationProfile["config"];
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
-  command: string
+  command: string,
+  timeout: number = 500
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
   let foundCommandResponse = false;
   const timeoutPromise = new Promise<undefined>((resolve) =>
-    setTimeout(() => resolve(undefined), 500)
+    setTimeout(() => resolve(undefined), timeout)
   );
 
   const readPromise = (async () => {
@@ -65,19 +66,23 @@ export const useE3Plus = () => {
 
   // hook that handles communication process, like retries, delay between messages
   const { sendMultipleMessages } = useCommunication<ISerialPort>({
-    openTransport: openPort,
+    openTransport: async (transport) => {
+      await openPort(transport, {
+        baudRate: 115200,
+      });
+    },
     closeTransport: closePort,
-    sendMessage: async (port, message) => {
+    sendMessage: async (port, message, timeout) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
       await writeToPort(port, message);
-      const response = await readResponse(reader, message);
+      const response = await readResponse(reader, message, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 100,
+      delayBetweenMessages: 550,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },

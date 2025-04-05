@@ -58,7 +58,11 @@ export const useE3Plus4G = () => {
 
   // hook that handles communication process, like retries, delay between messages
   const { sendMultipleMessages } = useCommunication<ISerialPort>({
-    openTransport: openPort,
+    openTransport: async (transport) => {
+      await openPort(transport, {
+        baudRate: 115200,
+      });
+    },
     closeTransport: closePort,
     sendMessage: async (port, message, timeout) => {
       const reader = await getReader(port);
@@ -70,7 +74,7 @@ export const useE3Plus4G = () => {
       return response;
     },
     options: {
-      delayBetweenMessages: 100,
+      delayBetweenMessages: 550,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
