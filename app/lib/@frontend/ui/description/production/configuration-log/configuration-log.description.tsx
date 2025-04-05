@@ -33,8 +33,8 @@ export function ConfigurationLogDescription({ data }: Props) {
           Detailed configuration log from the device.
         </p>
       </div>
-      <div className="mt-6 border-t border-gray-300">
-        <dl className="divide-y divide-gray-300">
+      <div className="mt-6 border-t border-gray-200">
+        <dl className="divide-y divide-gray-200">
           {/* Configuration Status */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">Result</dt>
@@ -48,7 +48,7 @@ export function ConfigurationLogDescription({ data }: Props) {
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">Profile</dt>
             <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {data.profile.name} (ID: {data.profile.id})
+              {data.profile.name}
             </dd>
           </div>
 
@@ -131,7 +131,7 @@ export function ConfigurationLogDescription({ data }: Props) {
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                 <ul
                   role="list"
-                  className="divide-y divide-gray-300 rounded-md border border-gray-200"
+                  className="divide-y divide-gray-200 rounded-md border border-gray-200"
                 >
                   {data.metadata.commands.map((cmd, idx) => (
                     <li
@@ -209,10 +209,24 @@ export function ConfigurationLogDescription({ data }: Props) {
                               value1: any;
                               value2: any;
                             };
+
                             return (
-                              <li key={key}>
-                                {key}: Desired {typedDiff.value1} vs Actual{" "}
-                                {typedDiff.value2}
+                              <li key={key} className="mb-2">
+                                <span className="font-medium">{key}:</span>
+                                <div className="ml-2">
+                                  <div>
+                                    Desired:{" "}
+                                    <pre className="inline">
+                                      {JSON.stringify(typedDiff.value1)}
+                                    </pre>
+                                  </div>
+                                  <div>
+                                    Actual:{" "}
+                                    <pre className="inline">
+                                      {JSON.stringify(typedDiff.value2)}
+                                    </pre>
+                                  </div>
+                                </div>
                               </li>
                             );
                           }
@@ -235,10 +249,24 @@ export function ConfigurationLogDescription({ data }: Props) {
                               value1: any;
                               value2: any;
                             };
+
                             return (
-                              <li key={key}>
-                                {key}: Desired {typedDiff.value1} vs Actual{" "}
-                                {typedDiff.value2}
+                              <li key={key} className="mb-2">
+                                <span className="font-medium">{key}:</span>
+                                <div className="ml-2">
+                                  <div>
+                                    Desired:{" "}
+                                    <pre className="inline">
+                                      {JSON.stringify(typedDiff.value1)}
+                                    </pre>
+                                  </div>
+                                  <div>
+                                    Actual:{" "}
+                                    <pre className="inline">
+                                      {JSON.stringify(typedDiff.value2)}
+                                    </pre>
+                                  </div>
+                                </div>
                               </li>
                             );
                           }
