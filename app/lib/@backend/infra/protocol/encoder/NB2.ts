@@ -87,7 +87,7 @@ export class NB2Encoder {
   }
 
   static apn(input: APN): string | undefined {
-    if (!input.address || input.user) return undefined;
+    if (!input.address || !input.user) return undefined;
     return `WIAP=${input.address},${input.user},${input.password}\r\n`;
   }
 
