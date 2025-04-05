@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { sleep } from "../../util";
 
 interface Props {
   handleConnection?: (port: ISerialPort) => void;
@@ -10,7 +11,6 @@ interface Props {
 export const useSerialPort = (props: Props) => {
   const { handleDisconnection, handleConnection } = props;
   const [ports, setPorts] = useState<ISerialPort[]>([]);
-  const isFirstRendering = useRef(true); // Referência para controlar a primeira execução
 
   const handleConnect = useCallback(
     (e: Event) => {
@@ -67,6 +67,8 @@ export const useSerialPort = (props: Props) => {
   const openPort = async (port: ISerialPort, options: SerialOptions) => {
     try {
       await port.open(options);
+      await sleep(500);
+      // await port.setSignals({ dataTerminalReady: true });
     } catch (e) {
       console.error("on open port", e);
     }
