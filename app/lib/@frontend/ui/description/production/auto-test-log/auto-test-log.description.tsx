@@ -132,16 +132,16 @@ export function AutoTestLogDescription({ data }: Props) {
             </dd>
           </div>
 
-          {/* Metadata - Commands */}
-          {data.metadata.commands && data.metadata.commands.length > 0 && (
+          {/* Metadata - messages */}
+          {data.metadata.messages && data.metadata.messages.length > 0 && (
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              <dt className="text-sm/6 font-medium text-gray-900">Commands</dt>
+              <dt className="text-sm/6 font-medium text-gray-900">Messages</dt>
               <dd className="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                 <ul
                   role="list"
                   className="divide-y divide-gray-200 rounded-md border border-gray-200"
                 >
-                  {data.metadata.commands.map((cmd, idx) => (
+                  {data.metadata.messages.map((cmd, idx) => (
                     <li
                       key={idx}
                       className="flex items-center justify-between py-4 pl-4 pr-5 text-sm/6"

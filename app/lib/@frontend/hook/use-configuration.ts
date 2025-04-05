@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  IClient,
   IConfigurationLog,
   IConfigurationProfile,
   ITechnology,
@@ -15,6 +16,7 @@ import { useTechnology } from "./use-technology";
 namespace Namespace {
   export interface UseConfigurationProps {
     technology: ITechnology | null;
+    client?: IClient | null;
   }
 
   export interface Identified {
@@ -33,7 +35,7 @@ namespace Namespace {
 }
 
 export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
-  const { technology } = props;
+  const { technology, client } = props;
   const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
   const isIdentifying = useRef(false);
 
@@ -124,7 +126,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
             checked: false,
             status,
             metadata: {
-              commands: messages.map(({ key, message }) => ({
+              messages: messages.map(({ key, message }) => ({
                 request: message,
                 response: response[key],
               })),
@@ -137,6 +139,14 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
             },
             raw_profile: profileAfterConfiguration.raw as [string, string][],
             parsed_profile: profileAfterConfiguration.config,
+            client: client
+              ? {
+                  id: client.id,
+                  trade_name: client.trade_name,
+                  company_name: client.company_name,
+                  document: client.document.value,
+                }
+              : null,
           };
 
           return configuration_log;

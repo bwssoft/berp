@@ -1,11 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  IAutoTestLog,
-  IIdentificationLog,
-  ITechnology,
-} from "../../@backend/domain";
+import { IIdentificationLog, ITechnology } from "../../@backend/domain";
 import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
 import { createOneIdentificationLog } from "../../@backend/action";
@@ -69,14 +65,16 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
       const identification = await handleGetIdentification(port);
 
       const log: Omit<IIdentificationLog, "id" | "created_at" | "user"> = {
-        before: {
+        equipment: {
           imei: equipment.imei!,
           serial: equipment.serial!,
+          firmware: equipment.firmware!,
+          iccid: equipment.iccid,
         },
-        after: identification?.response,
+        identification: identification?.response,
         status: id === identification?.response?.serial,
         metadata: {
-          commands: messages.map(({ key, message }) => ({
+          messages: messages.map(({ key, message }) => ({
             request: message,
             response: response[key as keyof typeof response],
           })),

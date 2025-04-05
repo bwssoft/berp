@@ -73,12 +73,12 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
             equipment: {
               imei: equipment.imei!,
               firmware: equipment.firmware!,
-              serial: equipment.serial,
+              serial: equipment.serial!,
               iccid: equipment.iccid,
             },
             status,
             metadata: {
-              commands: messages.map(({ key, message }) => ({
+              messages: messages.map(({ key, message }) => ({
                 request: message,
                 response: response[key as keyof typeof response],
               })),
