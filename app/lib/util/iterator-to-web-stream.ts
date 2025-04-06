@@ -4,15 +4,22 @@ export function iteratorToWebStream<T>(
 ): ReadableStream<T> {
   return new ReadableStream({
     async pull(controller) {
-      const { value, done } = await iterator.next();
-      if (done) {
-        controller.close();
-      } else {
-        controller.enqueue(value);
+      try {
+        const { value, done } = await iterator.next();
+        if (done) {
+          console.log("Iterator finalizado, fechando stream.");
+          controller.close();
+        } else {
+          console.log("Iterator retornou um chunk.");
+          controller.enqueue(value);
+        }
+      } catch (error) {
+        console.error("Erro durante o pull do iterator:", error);
+        controller.error(error);
       }
     },
     cancel(reason) {
-      // Caso necessário, encerre o stream do Node
+      console.log("ReadableStream cancelado. Motivo:", reason);
       if (typeof iterator.return === "function") {
         iterator.return();
       }
