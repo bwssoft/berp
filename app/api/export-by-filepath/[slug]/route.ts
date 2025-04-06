@@ -21,7 +21,7 @@ export async function GET(
 
     // Define o nome do arquivo para download com base no filepath
     const fileName = path.basename(filePath);
-
+    console.log("fileName", fileName);
     // Configura os headers para download
     const headers = new Headers();
     headers.set("Content-Disposition", `attachment; filename="${fileName}"`);
@@ -53,7 +53,7 @@ export async function GET(
 
     // Encadeia o webStream ao transformStream
     const finalStream = webStream.pipeThrough(transformStream);
-
+    console.log("return");
     return new Response(finalStream, { headers });
   } catch (error) {
     console.error("[API ROUTE - EXPORT BY FILEPATH]", error);
