@@ -41,7 +41,10 @@ const generateMessages = (
   profile: IConfigurationProfile
 ): Record<ConfigKeys, string> => {
   const response = {} as Record<ConfigKeys, string>;
-  Object.entries(profile.config).forEach(([message, args]) => {
+  Object.entries({
+    ...profile.config.general,
+    ...profile.config.specific,
+  }).forEach(([message, args]) => {
     const _message = E34GEncoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
@@ -55,7 +58,11 @@ export const useE3Plus4G = () => {
 
   // hook that handles communication process, like retries, delay between messages
   const { sendMultipleMessages } = useCommunication<ISerialPort>({
-    openTransport: openPort,
+    openTransport: async (transport) => {
+      await openPort(transport, {
+        baudRate: 115200,
+      });
+    },
     closeTransport: closePort,
     sendMessage: async (port, message, timeout) => {
       const reader = await getReader(port);
@@ -67,14 +74,14 @@ export const useE3Plus4G = () => {
       return response;
     },
     options: {
-      delayBetweenMessages: 100,
+      delayBetweenMessages: 550,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
   });
 
   // functions to interact with E34G via serial port
-  const handleIdentificationProcess = useCallback(
+  const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
         { message: "IMEI", key: "imei", transform: E34GParser.imei },
@@ -90,7 +97,7 @@ export const useE3Plus4G = () => {
             });
             return { port, response: { ...response, serial: response.imei } };
           } catch (error) {
-            console.error("[ERROR] handleIdentificationProcess", error);
+            console.error("[ERROR] handleDetection", error);
             return { port };
           }
         })
@@ -122,19 +129,19 @@ export const useE3Plus4G = () => {
             const processed_status = E34GParser.status(status);
             const ip_primary = E34GParser.ip_primary(cxip);
             const ip_secondary = E34GParser.ip_secondary(cxip);
-            const dns = E34GParser.dns(cxip);
+            const dns_primary = E34GParser.dns(cxip);
             const horimeter = E34GParser.horimeter(processed_status.HR);
             return {
               port,
               config: {
                 general: {
+                  data_transmission_on,
+                  data_transmission_off,
                   ip_primary,
                   ip_secondary,
-                  data_transmission_off,
-                  data_transmission_on,
-                  dns_primary: dns,
                   apn,
                   keep_alive,
+                  dns_primary,
                 },
                 specific: {
                   ...processed_check,
@@ -156,7 +163,7 @@ export const useE3Plus4G = () => {
     },
     [sendMultipleMessages]
   );
-  const handleConfigurationProcess = useCallback(
+  const handleConfiguration = useCallback(
     async (
       ports: ISerialPort[],
       configuration_profile: IConfigurationProfile
@@ -177,15 +184,22 @@ export const useE3Plus4G = () => {
               messages: configurationCommands,
             });
             const end_time = Date.now();
+            const responseEntries = Object.entries(response ?? {});
+            const status =
+              responseEntries.length > 0 &&
+              responseEntries.every(
+                ([_, value]) => typeof value !== "undefined"
+              );
             return {
               port,
               response,
               messages: configurationCommands,
               init_time,
               end_time,
+              status,
             };
           } catch (error) {
-            console.error("[ERROR] handleConfigurationProcess", error);
+            console.error("[ERROR] handleConfiguration", error);
             return { port };
           }
         })
@@ -193,7 +207,7 @@ export const useE3Plus4G = () => {
     },
     [sendMultipleMessages]
   );
-  const handleAutoTestProcess = useCallback(
+  const handleAutoTest = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
         {
@@ -240,7 +254,7 @@ export const useE3Plus4G = () => {
               status,
             };
           } catch (error) {
-            console.error("[ERROR] handleAutoTestProcess", error);
+            console.error("[ERROR] handleAutoTest", error);
             return { port };
           }
         })
@@ -248,7 +262,7 @@ export const useE3Plus4G = () => {
     },
     [sendMultipleMessages]
   );
-  const handleDeviceIdentificationProcess = useCallback(
+  const handleIdentification = useCallback(
     async (port: ISerialPort, identifier: string) => {
       const messages = [
         {
@@ -271,7 +285,7 @@ export const useE3Plus4G = () => {
           end_time,
         };
       } catch (error) {
-        console.error("[ERROR] handleDeviceIdentificationProcess", error);
+        console.error("[ERROR] handleIdentification", error);
         return { port };
       }
     },
@@ -298,12 +312,12 @@ export const useE3Plus4G = () => {
 
   return {
     ports,
-    handleIdentificationProcess,
+    handleIdentification,
     handleGetProfile,
-    handleConfigurationProcess,
+    handleConfiguration,
     requestPort,
-    handleAutoTestProcess,
-    handleDeviceIdentificationProcess,
+    handleAutoTest,
+    handleDetection,
     handleGetIdentification,
   };
 };

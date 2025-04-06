@@ -4,6 +4,7 @@ import {
   BulkWriteResult,
   DeleteResult,
   Filter,
+  FindCursor,
   FindOptions,
   InsertManyResult,
   InsertOneResult,
@@ -43,4 +44,5 @@ export interface IBaseRepository<Entity extends object> {
     operations: (client: MongoClient) => Promise<void>,
     options?: TransactionOptions
   ): Promise<void>;
+  findCursor(filter: Filter<Entity>): Promise<FindCursor<WithId<Entity>>>;
 }

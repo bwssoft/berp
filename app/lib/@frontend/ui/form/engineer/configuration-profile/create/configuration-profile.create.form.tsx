@@ -7,6 +7,7 @@ import { Button } from "../../../../component";
 import { GeneralConfigurationProfileForm } from "../config/general.configuration-profile.form";
 import { SpecificE3Plus4GConfigurationProfileForm } from "../config/specific.e3-plus-4g.configuration-profile.form";
 import { Controller, FormProvider } from "react-hook-form";
+import { SpecificE3PlusConfigurationProfileForm } from "../config/specific.e3-plus.configuration-profile.form";
 
 interface Props {
   clients: IClient[];
@@ -175,6 +176,11 @@ export function ConfigurationProfileCreateForm(props: Props) {
         <GeneralConfigurationProfileForm />
         {technology?.name.system === "DM_E3_PLUS_4G" ? (
           <SpecificE3Plus4GConfigurationProfileForm />
+        ) : (
+          <></>
+        )}
+        {technology?.name.system === "DM_E3_PLUS" ? (
+          <SpecificE3PlusConfigurationProfileForm />
         ) : (
           <></>
         )}

@@ -24,7 +24,7 @@ const actions = [
   },
   {
     title: "Identificador",
-    href: "/production/log/id-writer",
+    href: "/production/log/identificator",
     icon: IdentificationIcon,
     iconForeground: "text-cyan-700",
     iconBackground: "bg-cyan-50",

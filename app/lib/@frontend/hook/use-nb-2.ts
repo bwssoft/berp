@@ -1,10 +1,5 @@
 import { useCallback } from "react";
-import {
-  E34GEncoder,
-  E34GParser,
-  NB2,
-  NB2Parser,
-} from "../../@backend/infra/protocol";
+import { NB2, NB2Parser, NB2Encoder } from "../../@backend/infra/protocol";
 import {
   generateImei,
   getRandomInt,
@@ -21,6 +16,7 @@ type ConfigKeys = keyof IConfigurationProfile["config"];
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
+  command: string,
   timeout: number = 500
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
@@ -33,12 +29,14 @@ const readResponse = async (
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
+
       const chunk = decoder.decode(value);
       buffer += chunk;
+
       let lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
       for (const line of lines) {
-        if (line.length > 0) {
+        if (line.length > 0 && line.includes(command.replace("\r\n", ""))) {
           return line;
         }
       }
@@ -53,8 +51,11 @@ const generateMessages = (
   profile: IConfigurationProfile
 ): Record<ConfigKeys, string> => {
   const response = {} as Record<ConfigKeys, string>;
-  Object.entries(profile.config).forEach(([message, args]) => {
-    const _message = E34GEncoder.encoder({ command: message, args } as any);
+  Object.entries({
+    ...profile.config.general,
+    ...profile.config.specific,
+  }).forEach(([message, args]) => {
+    const _message = NB2Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
   });
@@ -78,42 +79,41 @@ export const useNB2 = () => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
       await writeToPort(port, message);
-      const response = await readResponse(reader, timeout);
+      const response = await readResponse(reader, message, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 200,
+      delayBetweenMessages: 550,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
   });
 
   // functions to interact with E34G via serial port
-  const handleIdentificationProcess = useCallback(
+  const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
         { message: "RIMEI\r\n", key: "imei", transform: NB2Parser.imei },
         { message: "ICCID\r\n", key: "iccid", transform: NB2Parser.iccid },
         { message: "RINS\r\n", key: "serial", transform: NB2Parser.serial },
         {
-          message: "RINS\r\n",
+          message: "RFW\r\n",
           key: "firmware",
-          transform: () => "firmware#00",
+          transform: NB2Parser.firmware,
         },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            await sleep(1000);
             const response = await sendMultipleMessages({
               transport: port,
               messages,
             });
             return { port, response };
           } catch (error) {
-            console.error("[ERROR] handleIdentificationProcess", error);
+            console.error("[ERROR] handleDetection", error);
             return { port };
           }
         })
@@ -124,82 +124,90 @@ export const useNB2 = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "\r\n", key: "odometer", transform: NB2Parser.odometer },
+        { message: "RODM\r\n", key: "odometer", transform: NB2Parser.odometer },
         {
-          message: "\r\n",
+          message: "RCN\r\n",
           key: "data_transmission_on",
           transform: NB2Parser.data_transmission_on,
         },
         {
-          message: "\r\n",
+          message: "RCW\r\n",
           key: "data_transmission_off",
           transform: NB2Parser.data_transmission_off,
         },
         {
-          message: "\r\n",
+          message: "RCE\r\n",
           key: "data_transmission_event",
           transform: NB2Parser.data_transmission_event,
         },
-        { message: "\r\n", key: "sleep", transform: NB2Parser.sleep },
-        { message: "\r\n", key: "keep_alive", transform: NB2Parser.keep_alive },
-        { message: "\r\n", key: "ip_primary", transform: NB2Parser.ip_primary },
+        { message: "RCS\r\n", key: "sleep", transform: NB2Parser.sleep },
         {
-          message: "\r\n",
+          message: "RCK\r\n",
+          key: "keep_alive",
+          transform: NB2Parser.keep_alive,
+        },
+        {
+          message: "RIP1\r\n",
+          key: "ip_primary",
+          transform: NB2Parser.ip_primary,
+        },
+        {
+          message: "RIP2\r\n",
           key: "ip_secondary",
           transform: NB2Parser.ip_secondary,
         },
         {
-          message: "\r\n",
+          message: "RID1\r\n",
           key: "dns_primary",
           transform: NB2Parser.dns_primary,
         },
         {
-          message: "\r\n",
+          message: "RID2\r\n",
           key: "dns_secondary",
           transform: NB2Parser.dns_secondary,
         },
-        { message: "\r\n", key: "apn", transform: NB2Parser.apn },
+        { message: "RIAP\r\n", key: "apn", transform: NB2Parser.apn },
         {
-          message: "\r\n",
+          message: "RIG12\r\n",
           key: "first_voltage",
           transform: NB2Parser.first_voltage,
         },
         {
-          message: "\r\n",
+          message: "RIG24\r\n",
           key: "second_voltage",
           transform: NB2Parser.second_voltage,
         },
-        { message: "\r\n", key: "angle", transform: NB2Parser.angle },
-        { message: "\r\n", key: "speed", transform: NB2Parser.speed },
+        { message: "RFA\r\n", key: "angle", transform: NB2Parser.angle },
+        { message: "RFV\r\n", key: "speed", transform: NB2Parser.speed },
         {
-          message: "\r\n",
+          message: "RFTON\r\n",
           key: "accelerometer_sensitivity_on",
           transform: NB2Parser.accelerometer_sensitivity_on,
         },
         {
-          message: "\r\n",
+          message: "RFTOF\r\n",
           key: "accelerometer_sensitivity_off",
           transform: NB2Parser.accelerometer_sensitivity_off,
         },
         {
-          message: "\r\n",
+          message: "RFAV\r\n",
           key: "accelerometer_sensitivity_violated",
           transform: NB2Parser.accelerometer_sensitivity_violated,
         },
         {
-          message: "\r\n",
+          message: "RFMA\r\n",
           key: "maximum_acceleration",
           transform: NB2Parser.maximum_acceleration,
         },
         {
-          message: "\r\n",
+          message: "RFMD\r\n",
           key: "maximum_deceleration",
           transform: NB2Parser.maximum_deceleration,
         },
-        { message: "\r\n", key: "input_1", transform: NB2Parser.input_1 },
-        { message: "\r\n", key: "input_2", transform: NB2Parser.input_2 },
-        { message: "\r\n", key: "input_3", transform: NB2Parser.input_3 },
-        { message: "\r\n", key: "input_4", transform: NB2Parser.input_4 },
+        { message: "RIN1\r\n", key: "input_1", transform: NB2Parser.input_1 },
+        { message: "RIN2\r\n", key: "input_2", transform: NB2Parser.input_2 },
+        { message: "RIN3\r\n", key: "input_3", transform: NB2Parser.input_3 },
+        { message: "RIN4\r\n", key: "input_4", transform: NB2Parser.input_4 },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -222,14 +230,14 @@ export const useNB2 = () => {
               port,
               config: {
                 general: {
+                  data_transmission_on,
+                  data_transmission_off,
                   ip_primary,
                   ip_secondary,
-                  data_transmission_off,
-                  data_transmission_on,
-                  dns_primary,
-                  dns_secondary,
                   apn,
                   keep_alive,
+                  dns_primary,
+                  dns_secondary,
                 },
                 specific,
               },
@@ -244,7 +252,7 @@ export const useNB2 = () => {
     },
     [sendMultipleMessages]
   );
-  const handleConfigurationProcess = useCallback(
+  const handleConfiguration = useCallback(
     async (
       ports: ISerialPort[],
       configuration_profile: IConfigurationProfile
@@ -265,15 +273,22 @@ export const useNB2 = () => {
               messages: configurationCommands,
             });
             const end_time = Date.now();
+            const responseEntries = Object.entries(response ?? {});
+            const status =
+              responseEntries.length > 0 &&
+              responseEntries.every(
+                ([_, value]) => typeof value !== "undefined"
+              );
             return {
               port,
               response,
               messages: configurationCommands,
               init_time,
               end_time,
+              status,
             };
           } catch (error) {
-            console.error("[ERROR] handleConfigurationProcess", error);
+            console.error("[ERROR] handleConfiguration", error);
             return { port };
           }
         })
@@ -281,7 +296,7 @@ export const useNB2 = () => {
     },
     [sendMultipleMessages]
   );
-  const handleAutoTestProcess = useCallback(
+  const handleAutoTest = useCallback(
     async (ports: ISerialPort[]) => {
       return await Promise.all(
         ports.map(async (port) => {
@@ -338,14 +353,18 @@ export const useNB2 = () => {
 
                 if (!autotest) continue;
 
+                const BATT_VOLT = Number(autotest["BATT_VOLT"]);
+                const VCC = Number(autotest["VCC"]);
+
                 resultTemplate.analysis = {
                   ACELC: Boolean(autotest["ACELC"]?.length),
                   ACELP: autotest["ACELP"] === "OK",
-                  BATT_VOLT: !isNaN(Number(autotest["BATT_VOLT"])),
+                  BATT_VOLT:
+                    !isNaN(BATT_VOLT) && BATT_VOLT <= 43 && BATT_VOLT >= 40,
                   CHARGER: autotest["CHARGER"] === "OK",
                   FW: Boolean(autotest["FW"]?.length),
                   GPS: autotest["GPS"] === "OK",
-                  GPSf: autotest["GPSf"] === "OK",
+                  // GPSf: autotest["GPSf"] === "OK",
                   IC: isIccid(autotest["IC"] ?? ""),
                   ID_ACEL: Boolean(autotest["ID_ACEL"]?.length),
                   ID_MEM: Boolean(autotest["ID_MEM"]?.length),
@@ -356,7 +375,7 @@ export const useNB2 = () => {
                   OUT: autotest["OUT"] === "OK",
                   RSI: autotest["RSI"] === "OK",
                   SN: Boolean(autotest["SN"]?.length),
-                  VCC: !isNaN(Number(autotest["VCC"])),
+                  VCC: !isNaN(VCC) && VCC <= 130 && VCC >= 120,
                 };
 
                 const statusValues = Object.values(resultTemplate.analysis);
@@ -380,7 +399,7 @@ export const useNB2 = () => {
             resultTemplate.end_time = Date.now();
             return resultTemplate;
           } catch (error) {
-            console.error("[ERROR] handleAutoTestProcess", error);
+            console.error("[ERROR] handleAutoTest", error);
             resultTemplate.end_time = Date.now();
             return resultTemplate;
           }
@@ -389,7 +408,7 @@ export const useNB2 = () => {
     },
     [sendMultipleMessages]
   );
-  const handleDeviceIdentificationProcess = useCallback(
+  const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
       const imei = await handleGetRandomImei();
       const messages = [
@@ -417,7 +436,7 @@ export const useNB2 = () => {
           end_time,
         };
       } catch (error) {
-        console.error("[ERROR] handleDeviceIdentificationProcess", error);
+        console.error("[ERROR] handleIdentification", error);
         return { port };
       }
     },
@@ -448,12 +467,12 @@ export const useNB2 = () => {
 
   return {
     ports,
-    handleIdentificationProcess,
+    handleIdentification,
     handleGetProfile,
-    handleConfigurationProcess,
+    handleConfiguration,
     requestPort,
-    handleAutoTestProcess,
-    handleDeviceIdentificationProcess,
+    handleAutoTest,
+    handleDetection,
     handleGetIdentification,
   };
 };
