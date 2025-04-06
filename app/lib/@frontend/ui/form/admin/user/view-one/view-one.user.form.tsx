@@ -26,7 +26,7 @@ export function ViewOneUserForm({ user, profiles }: Props) {
                 label="Perfis"
                 name="profiles"
                 data={profiles}
-                value={profiles.find((p) => p.id === user.profile_id)}
+                value={profiles.find((p) => user.profile_id.includes(p.id))}
                 keyExtractor={(item) => item.id}
                 valueExtractor={(item) => item.name}
             />

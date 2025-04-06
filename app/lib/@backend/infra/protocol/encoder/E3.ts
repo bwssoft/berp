@@ -27,17 +27,9 @@ type Encoder =
   | { command: "apn"; args: APN }
   | { command: "ip_primary"; args: IP }
   | { command: "ip_secondary"; args: IP }
-  | { command: "dns"; args: DNS }
-  | { command: "password"; args: Password }
-  | { command: "timezone"; args: Timezone };
+  | { command: "dns_primary"; args: DNS };
 
 export class E3Encoder {
-  static encoder(props: Encoder): string | undefined {
-    const { command, args } = props;
-    const commands = E3Encoder.commands();
-    return commands[command](args as any);
-  }
-
   //comands
   static apn(props: APN): string | undefined {
     if (!props?.address) {
@@ -56,7 +48,7 @@ export class E3Encoder {
     return `IP2#${props.ip}#${props.port}#`;
   }
 
-  static dns(props: DNS): string | undefined {
+  static dns_primary(props: DNS): string | undefined {
     if (!props?.address || !props?.port) {
       return undefined;
     }
@@ -220,7 +212,7 @@ export class E3Encoder {
       apn: E3Encoder.apn,
       ip_primary: E3Encoder.ip_primary,
       ip_secondary: E3Encoder.ip_secondary,
-      dns: E3Encoder.dns,
+      dns_primary: E3Encoder.dns_primary,
       password: E3Encoder.password,
       timezone: E3Encoder.timezone,
       lock_type: E3Encoder.lock_type,
@@ -242,6 +234,12 @@ export class E3Encoder {
       sleep: E3Encoder.sleep,
       max_speed: E3Encoder.max_speed,
     };
+  }
+
+  static encoder(props: Encoder): string | undefined {
+    const { command, args } = props;
+    const commands = E3Encoder.commands();
+    return commands[command](args as any);
   }
 }
 

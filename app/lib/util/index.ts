@@ -19,3 +19,4 @@ export * from "./is-iccid";
 export * from "./get-random-number";
 export * from "./get-status-prop";
 export * from "./build-control-tree";
+export * from "./iterator-to-web-stream";
