@@ -2,47 +2,48 @@ import {
   IConfigurationLog,
   IConfigurationLogRepository,
 } from "@/app/lib/@backend/domain";
-import { configurationLogRepository } from "@/app/lib/@backend/infra";
+import {
+  configurationLogRepository,
+  firebaseGateway,
+} from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { Filter } from "mongodb";
 import ExcelJS from "exceljs";
-import path from "path";
-import fs from "fs";
+import { PassThrough } from "stream";
+import { IFirebaseGateway } from "@/app/lib/@backend/domain/@shared/gateway";
 
 namespace Dto {
   // A entrada é um filtro para selecionar os logs desejados.
   export interface Input extends Filter<IConfigurationLog> {}
-
-  // A saída é o caminho do arquivo Excel gerado.
+  // A saída é a URL do arquivo Excel armazenado no Firebase.
   export type Output = string;
 }
 
 class ExportConfigurationLogUsecase {
   repository: IConfigurationLogRepository;
+  gateway: IFirebaseGateway;
 
   constructor() {
     this.repository = configurationLogRepository;
+    this.gateway = firebaseGateway;
   }
 
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    // Define o diretório onde os arquivos exportados serão salvos.
-    const exportDir = path.join("/tmp", "exports");
-    if (!fs.existsSync(exportDir)) {
-      fs.mkdirSync(exportDir);
-    }
+    // Cria um stream do tipo PassThrough para capturar os dados do Excel
+    const passThroughStream = new PassThrough();
 
-    const filePath = path.join(
-      exportDir,
-      `export.configuration-log.${Date.now()}.xlsx`
-    );
+    // Gera o nome do arquivo
+    const fileName = `export.configuration-log.${Date.now()}.xlsx`;
 
-    // Cria um workbook utilizando o WorkbookWriter (modo streaming)
+    // Cria o workbook utilizando o stream (em vez de filename)
     const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({
-      filename: filePath,
+      stream: passThroughStream,
+      useStyles: true,
+      useSharedStrings: true,
     });
     const worksheet = workbook.addWorksheet("ConfigurationLogs");
 
-    // Adiciona a linha de cabeçalho – ajuste os campos conforme a estrutura do IConfigurationLog
+    // Adiciona a linha de cabeçalho
     worksheet
       .addRow([
         "Status",
@@ -56,14 +57,11 @@ class ExportConfigurationLogUsecase {
       ])
       .commit();
 
-    // Obtém os documentos via cursor para processar os dados em fluxo contínuo.
-    // Observe que é necessário que o repositório exponha um método como `findCursor`
-    // que retorne um AsyncIterable dos documentos.
+    // Obtém os documentos via cursor (AsyncIterable)
     const cursor = await this.repository.findCursor(arg);
     cursor.batchSize(1000);
 
-    // Itera sobre os documentos e adiciona cada um como uma linha na planilha.
-    // Ajuste a extração dos campos conforme a estrutura do seu log.
+    // Itera sobre os documentos e adiciona cada um como linha na planilha
     for await (const doc of cursor) {
       worksheet
         .addRow([
@@ -81,8 +79,38 @@ class ExportConfigurationLogUsecase {
 
     // Finaliza a escrita do arquivo
     await workbook.commit();
-    return filePath;
+
+    // Converte o conteúdo do stream para um Buffer
+    const fileBuffer = await streamToBuffer(passThroughStream);
+
+    // Converte o Buffer para um Blob com o MIME type do Excel
+    const fileBlob = new Blob([fileBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const file = new File([fileBlob], fileName, {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    // Envia o arquivo para o Firebase Storage via gateway.
+    // Aqui reutilizamos o método uploadFile, que espera um File;
+    // fazemos um cast para File (em ambiente Node pode ser necessário polyfill)
+    const bucket = "bcube/production/configuration-log/"; // Nome ou caminho do bucket desejado
+    const uploadResult = await this.gateway.uploadFile(file, bucket);
+
+    // Retorna a URL do arquivo no Firebase Storage
+    return uploadResult.url;
   }
+}
+
+// Função auxiliar para coletar os dados do stream em um Buffer
+function streamToBuffer(stream: PassThrough): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    stream.on("data", (chunk: Buffer) => chunks.push(chunk));
+    stream.on("end", () => resolve(Buffer.concat(chunks)));
+    stream.on("error", reject);
+  });
 }
 
 export const exportConfigurationLogUsecase = singleton(
