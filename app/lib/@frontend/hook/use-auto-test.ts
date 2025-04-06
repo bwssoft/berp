@@ -7,7 +7,7 @@ import { useTechnology } from "./use-technology";
 import { createManyAutoTestLog } from "../../@backend/action/production/auto-test-log.action";
 
 namespace Namespace {
-  export interface UseConfigurationProps {
+  export interface UseAutoTestProps {
     technology: ITechnology | null;
   }
 
@@ -23,31 +23,27 @@ namespace Namespace {
     serial?: string | undefined;
   }
 
-  export interface Configuration extends IAutoTestLog {}
+  export interface AutoTest extends IAutoTestLog {}
 }
 
-export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
+export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
   const { technology } = props;
   const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
   const isIdentifying = useRef(false);
 
-  const [autotest, setAutoTest] = useState<Namespace.Configuration[]>([]);
+  const [autoTest, setAutoTest] = useState<Namespace.AutoTest[]>([]);
   const isAutoTesting = useRef(false);
 
   // hook that handle interactions with devices
-  const {
-    ports,
-    handleIdentificationProcess,
-    handleAutoTestProcess,
-    requestPort,
-  } = useTechnology(technology);
+  const { ports, handleDetection, handleAutoTest, requestPort } =
+    useTechnology(technology);
 
   // function that handle the auto test process, check if the process was successful and save result on database
-  const handleAutoTest = useCallback(async () => {
+  const test = useCallback(async () => {
     isAutoTesting.current = true;
 
     // run auto test devices
-    const autoTestResult = await handleAutoTestProcess(
+    const autoTestResult = await handleAutoTest(
       identified
         .filter((i) => i.equipment.imei && i.equipment.firmware)
         .map(({ port }) => port)
@@ -72,19 +68,17 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
 
           if (!equipment || !technology) return undefined;
 
-          const analysisEntries = Object.entries(analysis);
-
           const log: Omit<IAutoTestLog, "id" | "created_at" | "user"> = {
             analysis,
             equipment: {
               imei: equipment.imei!,
               firmware: equipment.firmware!,
-              serial: equipment.serial,
+              serial: equipment.serial!,
               iccid: equipment.iccid,
             },
             status,
             metadata: {
-              commands: messages.map(({ key, message }) => ({
+              messages: messages.map(({ key, message }) => ({
                 request: message,
                 response: response[key as keyof typeof response],
               })),
@@ -109,7 +103,7 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
     setAutoTest((prev) => prev.concat(dataSavedOnDb));
 
     isAutoTesting.current = false;
-  }, [handleAutoTestProcess, identified, technology]);
+  }, [handleAutoTest, identified, technology]);
 
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
@@ -117,7 +111,7 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
       if (isAutoTesting.current) return;
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
-        const identified = await handleIdentificationProcess(ports);
+        const identified = await handleDetection(ports);
         setIdentified(
           identified
             .filter((el) => el.response !== undefined)
@@ -131,12 +125,12 @@ export const useAutoTest = (props: Namespace.UseConfigurationProps) => {
 
     // Limpeza: limpa o intervalo quando o componente é desmontado ou quando as dependências mudarem
     return () => clearInterval(interval);
-  }, [ports, handleIdentificationProcess]);
+  }, [ports, handleDetection]);
 
   return {
-    autotest,
+    autoTest,
     identified,
-    handleAutoTest,
+    test,
     requestPort,
   };
 };
