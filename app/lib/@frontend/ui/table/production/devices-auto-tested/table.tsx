@@ -8,7 +8,8 @@ interface Props {
     id: string;
     equipment: {
       imei: string;
-      serial?: string;
+      serial: string;
+      firmware: string;
       iccid?: string;
     };
     status: boolean;
@@ -24,7 +25,7 @@ export function DevicesAutoTestedTable(props: Props) {
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => data.equipment.imei}
+      mobileDisplayValue={(data) => data.equipment.serial}
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full"
     />

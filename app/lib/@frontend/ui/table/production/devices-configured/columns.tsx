@@ -1,36 +1,31 @@
 "use client";
 
-import { technologyConstants } from "@/app/lib/constant";
-import { cn } from "@/app/lib/util";
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { ColumnDef } from "@tanstack/react-table";
+import { cn } from "@/app/lib/util";
 import Link from "next/link";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../../component";
+import { technologyConstants } from "@/app/lib/constant";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",
-  configured: "text-green-500 bg-green-800/20",
+  success: "text-green-500 bg-green-800/20",
   error: "text-rose-500 bg-rose-800/20",
 };
 
 const text = {
   progress: "text-gray-800",
-  configured: "text-green-800",
+  success: "text-green-800",
   error: "text-rose-800",
 };
-
 export const columns: ColumnDef<{
   id: string;
   equipment: {
-    imei: string;
-    serial?: string;
+    serial: string;
+    firmware: string;
     iccid?: string;
   };
   status: boolean;
-  profile: {
-    name: string;
-    id: string;
-  };
   created_at: Date;
   technology: {
     system_name: string;
@@ -40,9 +35,9 @@ export const columns: ColumnDef<{
     header: "Status",
     accessorKey: "status",
     cell: ({ row }) => {
-      const device = row.original;
-      const status = device.status ? "configured" : "error";
-      const label = device.status ? "Configurado" : "Não Configurado";
+      const { original } = row;
+      const status = original.status ? "success" : "error";
+      const label = original.status ? "Sucesso" : "Falha";
       return (
         <div className="flex items-center gap-1">
           <div className={cn(statuses[status], "flex-none rounded-full p-1")}>
@@ -59,19 +54,11 @@ export const columns: ColumnDef<{
     header: "Serial",
     accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
+      const { original } = row;
       return (
-        <p title={device.equipment.serial}>{device.equipment.serial ?? "--"}</p>
-      );
-    },
-  },
-  {
-    header: "Imei",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const device = row.original;
-      return (
-        <p title={device.equipment.imei}>{device.equipment.imei ?? "--"}</p>
+        <p title={original.equipment.serial}>
+          {original.equipment.serial ?? "--"}
+        </p>
       );
     },
   },
@@ -79,9 +66,11 @@ export const columns: ColumnDef<{
     header: "Iccid",
     accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
+      const original = row.original;
       return (
-        <p title={device.equipment.iccid}>{device.equipment.iccid ?? "--"}</p>
+        <p title={original.equipment.iccid}>
+          {original.equipment.iccid ?? "--"}
+        </p>
       );
     },
   },
@@ -99,19 +88,19 @@ export const columns: ColumnDef<{
     },
   },
   {
-    header: "Nome do perfil",
-    accessorKey: "profile",
+    header: "Firmware",
+    accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
-      return device.profile.name ?? "--";
+      const { original } = row;
+      return original.equipment.firmware;
     },
   },
   {
     header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const { original } = row;
-      return original.created_at.toLocaleString();
+      const iput = row.original;
+      return iput.created_at.toLocaleString();
     },
   },
   {

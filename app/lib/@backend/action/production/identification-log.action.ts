@@ -5,6 +5,7 @@ import {
   createOneIdentificationLogUsecase,
   findManyIdentificationLogUsecase,
   findOneIdentificationLogUsecase,
+  exportIdentificationLogUsecase,
 } from "@/app/lib/@backend/usecase";
 import { Filter } from "mongodb";
 
@@ -31,4 +32,10 @@ export async function findManyIdentificationLog(
   input: Filter<IIdentificationLog>
 ) {
   return await findManyIdentificationLogUsecase.execute(input);
+}
+
+export async function exportIdentificationLog(
+  input: Filter<IIdentificationLog>
+) {
+  return await exportIdentificationLogUsecase.execute(input);
 }

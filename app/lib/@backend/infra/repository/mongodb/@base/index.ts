@@ -53,6 +53,11 @@ export class BaseRepository<Entity extends object>
       .toArray();
   }
 
+  async findCursor(params: Filter<Entity> = {}) {
+    const db = await this.connect();
+    return db.collection<Entity>(this.collection).find(params);
+  }
+
   async count(params: Filter<Entity> = {}) {
     const db = await this.connect();
     return await db.collection<Entity>(this.collection).countDocuments(params);

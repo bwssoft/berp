@@ -1,25 +1,25 @@
 "use client";
 
+import { useConfigurationLogSearchForm } from "./use-search.configuration-log.form";
 import { Button, Input } from "../../../../component";
 import { Filter } from "mongodb";
-import { IIdentificationLog } from "@/app/lib/@backend/domain";
+import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import { useIdentificationLogSearchForm } from "./use-search.identification-log.form";
 
 interface Props {
-  filter: Filter<IIdentificationLog>;
+  filter: Filter<IConfigurationLog>;
 }
-export function IdentificationLogSearchForm(props: Props) {
+export function ConfigurationLogSearchForm(props: Props) {
   const { filter } = props;
-  const { handleQuickSearch, handleExport } = useIdentificationLogSearchForm();
+  const { handleQuickSearch, handleExport } = useConfigurationLogSearchForm();
 
   return (
     <div className="w-full flex justify-between items-end">
       <form>
         <Input
           onChange={handleQuickSearch}
-          label="Pesquisar registros de identificação"
-          placeholder="Busque pelo equipamento, usuário, tecnologia."
+          label="Pesquisar registros de configuração"
+          placeholder="Busque pelo equipamento, cliente, usuário, tecnologia e perfil."
           className="sm:w-96"
         />
       </form>

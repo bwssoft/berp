@@ -1,1 +1,1 @@
-export * from "./configuration-log-search-form";
+export * from "./search.configuration-log.form";

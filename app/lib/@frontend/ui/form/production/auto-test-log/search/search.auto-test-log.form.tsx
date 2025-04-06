@@ -1,24 +1,24 @@
 "use client";
 
+import { useAutoTestLogSearchForm } from "./use-search.auto-test-log.form";
 import { Button, Input } from "../../../../component";
 import { Filter } from "mongodb";
-import { IIdentificationLog } from "@/app/lib/@backend/domain";
+import { IAutoTestLog } from "@/app/lib/@backend/domain";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import { useIdentificationLogSearchForm } from "./use-search.identification-log.form";
 
 interface Props {
-  filter: Filter<IIdentificationLog>;
+  filter: Filter<IAutoTestLog>;
 }
-export function IdentificationLogSearchForm(props: Props) {
+export function AutoTestLogSearchForm(props: Props) {
   const { filter } = props;
-  const { handleQuickSearch, handleExport } = useIdentificationLogSearchForm();
+  const { handleQuickSearch, handleExport } = useAutoTestLogSearchForm();
 
   return (
     <div className="w-full flex justify-between items-end">
       <form>
         <Input
           onChange={handleQuickSearch}
-          label="Pesquisar registros de identificação"
+          label="Pesquisar registros de auto teste"
           placeholder="Busque pelo equipamento, usuário, tecnologia."
           className="sm:w-96"
         />

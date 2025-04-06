@@ -21,8 +21,8 @@ const text = {
 export const columns: ColumnDef<{
   id: string;
   equipment: {
-    imei: string;
-    serial?: string;
+    serial: string;
+    firmware: string;
     iccid?: string;
   };
   status: boolean;
@@ -63,16 +63,6 @@ export const columns: ColumnDef<{
     },
   },
   {
-    header: "Imei",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const original = row.original;
-      return (
-        <p title={original.equipment.imei}>{original.equipment.imei ?? "--"}</p>
-      );
-    },
-  },
-  {
     header: "Iccid",
     accessorKey: "equipment",
     cell: ({ row }) => {
@@ -95,6 +85,14 @@ export const columns: ColumnDef<{
             .system_name as keyof typeof technologyConstants.name
         ] ?? "Unknown"
       );
+    },
+  },
+  {
+    header: "Firmware",
+    accessorKey: "equipment",
+    cell: ({ row }) => {
+      const { original } = row;
+      return original.equipment.firmware;
     },
   },
   {

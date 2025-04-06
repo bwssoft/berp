@@ -6,10 +6,10 @@ import { DataTable } from "../../../component";
 interface Props {
   data: {
     equipment: {
-      imei: string;
       serial: string;
+      firmware: string;
     };
-    identifitaction?: {
+    identification?: {
       imei?: string;
       serial?: string;
     };

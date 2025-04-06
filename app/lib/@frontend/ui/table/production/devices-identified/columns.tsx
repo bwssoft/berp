@@ -19,16 +19,16 @@ const text = {
   error: "text-rose-800",
 };
 export const columns: ColumnDef<{
+  id: string;
   equipment: {
-    imei: string;
-    serial?: string;
+    serial: string;
+    firmware: string;
+    iccid?: string;
   };
   identification?: {
-    imei?: string;
     serial?: string;
   };
   status: boolean;
-  id: string;
   created_at: Date;
   technology: {
     system_name: string;
@@ -38,9 +38,9 @@ export const columns: ColumnDef<{
     header: "Status",
     accessorKey: "status",
     cell: ({ row }) => {
-      const device = row.original;
-      const status = device.status ? "success" : "error";
-      const label = device.status ? "Sucesso" : "Falha";
+      const { original } = row;
+      const status = original.status ? "success" : "error";
+      const label = original.status ? "Sucesso" : "Falha";
       return (
         <div className="flex items-center gap-1">
           <div className={cn(statuses[status], "flex-none rounded-full p-1")}>
@@ -54,25 +54,25 @@ export const columns: ColumnDef<{
     },
   },
   {
-    header: "Atual",
-    accessorKey: "identification",
+    header: "Antes",
+    accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
+      const { original } = row;
       return (
-        <p title={device.identification?.serial}>
-          {device.identification?.serial ?? "--"}
+        <p title={original.equipment.serial}>
+          {original.equipment.serial ?? "--"}
         </p>
       );
     },
   },
   {
-    header: "Antes",
+    header: "Depois",
     accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
+      const { original } = row;
       return (
-        <p title={device.equipment?.serial}>
-          {device.equipment?.serial ?? "--"}
+        <p title={original?.identification?.serial}>
+          {original?.identification?.serial ?? "--"}
         </p>
       );
     },
@@ -91,11 +91,19 @@ export const columns: ColumnDef<{
     },
   },
   {
+    header: "Firmware",
+    accessorKey: "equipment",
+    cell: ({ row }) => {
+      const { original } = row;
+      return original.equipment.firmware;
+    },
+  },
+  {
     header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const { original } = row;
-      return original.created_at.toLocaleString();
+      const iput = row.original;
+      return iput.created_at.toLocaleString();
     },
   },
   {
