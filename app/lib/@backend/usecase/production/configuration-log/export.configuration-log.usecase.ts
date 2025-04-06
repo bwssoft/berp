@@ -26,10 +26,11 @@ class ExportConfigurationLogUsecase {
 
   async execute(arg: Dto.Input): Promise<Dto.Output> {
     // Define o diretório onde os arquivos exportados serão salvos.
-    const exportDir = path.join(__dirname, "exports");
+    const exportDir = path.join("/tmp", "exports");
     if (!fs.existsSync(exportDir)) {
       fs.mkdirSync(exportDir);
     }
+
     const filePath = path.join(
       exportDir,
       `export.configuration-log.${Date.now()}.xlsx`
