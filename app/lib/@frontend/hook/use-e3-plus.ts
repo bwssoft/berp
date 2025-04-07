@@ -9,13 +9,14 @@ type ConfigKeys = keyof IConfigurationProfile["config"];
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
-  command: string
+  command: string,
+  timeout: number = 500
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
   let foundCommandResponse = false;
   const timeoutPromise = new Promise<undefined>((resolve) =>
-    setTimeout(() => resolve(undefined), 500)
+    setTimeout(() => resolve(undefined), timeout)
   );
 
   const readPromise = (async () => {
@@ -48,7 +49,10 @@ const generateMessages = (
   profile: IConfigurationProfile
 ): Record<ConfigKeys, string> => {
   const response = {} as Record<ConfigKeys, string>;
-  Object.entries(profile.config).forEach(([message, args]) => {
+  Object.entries({
+    ...profile.config.general,
+    ...profile.config.specific,
+  }).forEach(([message, args]) => {
     const _message = E3Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
@@ -62,26 +66,30 @@ export const useE3Plus = () => {
 
   // hook that handles communication process, like retries, delay between messages
   const { sendMultipleMessages } = useCommunication<ISerialPort>({
-    openTransport: openPort,
+    openTransport: async (transport) => {
+      await openPort(transport, {
+        baudRate: 115200,
+      });
+    },
     closeTransport: closePort,
-    sendMessage: async (port, message) => {
+    sendMessage: async (port, message, timeout) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
       await writeToPort(port, message);
-      const response = await readResponse(reader, message);
+      const response = await readResponse(reader, message, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 100,
+      delayBetweenMessages: 550,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
   });
 
   // functions to interact with E3 via serial port
-  const handleIdentificationProcess = useCallback(
+  const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
         { message: "IMEI", key: "imei", transform: E3Parser.imei },
@@ -97,7 +105,7 @@ export const useE3Plus = () => {
             });
             return { port, response: { ...response, serial: response.imei } };
           } catch (error) {
-            console.error("[ERROR] handleIdentificationProcess", error);
+            console.error("[ERROR] handleDetection", error);
             return { port };
           }
         })
@@ -128,18 +136,18 @@ export const useE3Plus = () => {
             } = E3Parser.check(check) ?? {};
             const ip_primary = E3Parser.ip_primary(cxip);
             const ip_secondary = E3Parser.ip_secondary(cxip);
-            const dns = E3Parser.dns(cxip);
+            const dns_primary = E3Parser.dns(cxip);
             return {
               port,
               config: {
                 general: {
+                  data_transmission_on,
+                  data_transmission_off,
                   ip_primary,
                   ip_secondary,
-                  data_transmission_off,
-                  data_transmission_on,
-                  dns_primary: dns,
                   apn,
                   keep_alive,
+                  dns_primary,
                 },
                 specific: processed_check,
               },
@@ -158,7 +166,7 @@ export const useE3Plus = () => {
     },
     [sendMultipleMessages]
   );
-  const handleConfigurationProcess = useCallback(
+  const handleConfiguration = useCallback(
     async (
       ports: ISerialPort[],
       configuration_profile: IConfigurationProfile
@@ -179,15 +187,22 @@ export const useE3Plus = () => {
               messages: configurationCommands,
             });
             const end_time = Date.now();
+            const responseEntries = Object.entries(response ?? {});
+            const status =
+              responseEntries.length > 0 &&
+              responseEntries.every(
+                ([_, value]) => typeof value !== "undefined"
+              );
             return {
               port,
               response,
               messages: configurationCommands,
               init_time,
               end_time,
+              status,
             };
           } catch (error) {
-            console.error("[ERROR] handleConfigurationProcess", error);
+            console.error("[ERROR] handleConfiguration", error);
             return { port };
           }
         })
@@ -196,7 +211,7 @@ export const useE3Plus = () => {
     [sendMultipleMessages]
   );
 
-  const handleAutoTestProcess = useCallback(
+  const handleAutoTest = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
         { key: "autotest", message: "AUTOTEST", timeout: 25000 },
@@ -221,7 +236,7 @@ export const useE3Plus = () => {
               status,
             };
           } catch (error) {
-            console.error("[ERROR] handleAutoTestProcess", error);
+            console.error("[ERROR] handleAutoTest", error);
             return { port };
           }
         })
@@ -230,7 +245,7 @@ export const useE3Plus = () => {
     [sendMultipleMessages]
   );
 
-  const handleDeviceIdentificationProcess = useCallback(
+  const handleIdentification = useCallback(
     async (port: ISerialPort, identifier: string) => {
       const messages = [
         {
@@ -253,7 +268,7 @@ export const useE3Plus = () => {
           end_time,
         };
       } catch (error) {
-        console.error("[ERROR] handleDeviceIdentificationProcess", error);
+        console.error("[ERROR] handleIdentification", error);
         return { port };
       }
     },
@@ -281,12 +296,12 @@ export const useE3Plus = () => {
 
   return {
     ports,
-    handleIdentificationProcess,
+    handleIdentification,
     handleGetProfile,
-    handleConfigurationProcess,
+    handleConfiguration,
     requestPort,
-    handleAutoTestProcess,
-    handleDeviceIdentificationProcess,
+    handleAutoTest,
+    handleDetection,
     handleGetIdentification,
   };
 };

@@ -7,8 +7,8 @@ interface Props {
   data: {
     id: string;
     equipment: {
-      imei: string;
-      serial?: string;
+      firmware: string;
+      serial: string;
       iccid?: string;
     };
     status: boolean;
@@ -17,6 +17,9 @@ interface Props {
       id: string;
     };
     created_at: Date;
+    technology: {
+      system_name: string;
+    };
   }[];
 }
 export function DevicesConfiguredTable(props: Props) {
@@ -25,12 +28,9 @@ export function DevicesConfiguredTable(props: Props) {
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) =>
-        `${data.equipment.imei} ${data.status ? "Configurado" : "Não Configurado"}`
-      }
+      mobileDisplayValue={(data) => data.equipment.serial}
       mobileKeyExtractor={() => Math.random().toString()}
-      className="mt-5 w-full"
-      // theadClassName="[&_tr]:border-b bg-white border-b-1 border-b-gray-200"
+      className="w-full"
     />
   );
 }

@@ -8,21 +8,17 @@ import { z } from "zod";
 import { formatConfigurationProfileName } from "../util";
 
 const password = z
-  .string()
-  .max(6, { message: "A senha deve ter no máximo 6 caracteres." })
+  .object({
+    old: z.string().optional(),
+    new: z.string().optional(),
+  })
   .optional();
 
-const data_transmission = z.coerce
+const sleep = z.coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
-  .max(65535, { message: "O valor deve ser no máximo 65535" })
-  .optional();
-
-const ip = z.string().ip({ message: "IP inválido." }).optional();
-
-const port = z.coerce
-  .number()
-  .positive({ message: "O valor deve ser positivo" })
+  .min(1, { message: "O valor deve ser no mínimmo 1" })
+  .max(5, { message: "O valor deve ser no máximo 5" })
   .optional();
 
 const sensitivity_adjustment = z.coerce
@@ -32,7 +28,7 @@ const sensitivity_adjustment = z.coerce
   .max(1000, { message: "O valor deve ser no máximo 1000" })
   .optional();
 
-const keep_alive = z.coerce
+const keepAliveSchema = z.coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
   .min(60, { message: "O valor deve ser no mínimo 60" })
@@ -83,12 +79,12 @@ const ack = z.coerce
 // Esquemas básicos
 const dnsSchema = z.object({
   address: z.string(),
-  port: z.number().min(0).max(65535),
+  port: z.coerce.number().min(0).max(65535),
 });
 
 const ipSchema = z.object({
   ip: z.string().ip(),
-  port: z.number().min(0).max(65535),
+  port: z.coerce.number().min(0).max(65535),
 });
 
 const apnSchema = z.object({
@@ -104,31 +100,35 @@ export const generalConfigSchema = z.object({
   dns_primary: dnsSchema.optional(),
   dns_secondary: dnsSchema.optional(),
   apn: apnSchema.optional(),
-  data_transmission_on: z.number().optional(),
-  data_transmission_off: z.number().optional(),
-  keep_alive: z.number().optional(),
+  data_transmission_on: z.coerce.number().optional(),
+  data_transmission_off: z.coerce.number().optional(),
+  keep_alive: keepAliveSchema.optional(),
 });
 
 // Esquema para E3Plus
 export const e3PlusConfigSchema = z.object({
-  password: z
-    .object({
-      old: z.string().optional(),
-      new: z.string().optional(),
-    })
-    .optional(),
+  password: password,
   timezone: z.number().optional(),
-  // ... outros campos do E3Plus
+  lock_type: z.coerce.number().optional(),
+  odometer: odometer,
+  accelerometer_sensitivity: z.coerce.number().optional(),
+  economy_mode: z.coerce.number().optional(),
+  sensitivity_adjustment: sensitivity_adjustment,
+  lbs_position: z.coerce.boolean().optional().default(false),
+  cornering_position_update: z.coerce.boolean().optional().default(false),
+  ignition_alert_power_cut: z.coerce.boolean().optional().default(false),
+  gprs_failure_alert: z.coerce.boolean().optional().default(false),
+  led: z.coerce.boolean().optional().default(false),
+  virtual_ignition: z.coerce.boolean().optional().default(false),
+  work_mode: z.string().optional(),
+  operation_mode: z.coerce.boolean().optional(),
+  max_speed: max_speed,
+  sleep: sleep,
 });
 
 // Esquema para E3Plus4G
 export const e3Plus4GConfigSchema = z.object({
-  password: z
-    .object({
-      old: z.string().optional(),
-      new: z.string().optional(),
-    })
-    .optional(),
+  password: password,
   timezone: z.coerce.number().optional(),
   lock_type: z.coerce.number().optional(),
   odometer: odometer,
@@ -177,7 +177,6 @@ export const e3Plus4GConfigSchema = z.object({
 
 // Esquema principal
 export const schema = z.object({
-  id: z.string(),
   client_id: z.string(),
   technology_id: z.string(),
   use_case: z.nativeEnum(EUseCase),
@@ -255,13 +254,14 @@ export function useConfigurationProfileCreateForm(props: Props) {
         });
       }
     },
-    () => {
+    (error) => {
       toast({
         title: "Erro de Validação",
         description:
           "Por favor, corrija os erros no formulário antes de submeter.",
         variant: "error",
       });
+      console.log("error", error);
     }
   );
 
@@ -269,7 +269,13 @@ export function useConfigurationProfileCreateForm(props: Props) {
     type?: string;
     technology?: string;
     document?: string;
-  }) => setName((prev) => Object.assign(prev, props));
+  }) => {
+    setName((prev) => {
+      const state = Object.assign(prev, props);
+      methods.setValue("name", formatConfigurationProfileName(state));
+      return state;
+    });
+  };
 
   return {
     methods,

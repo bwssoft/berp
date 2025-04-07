@@ -36,11 +36,11 @@ export function DataTableDesktop<TData, TValue>({
     <div
       {...rest}
       className={cn(
-        "rounded-md bg-white shadow-md ring-1 ring-black/5",
+        "rounded-md bg-white shadow-md ring-1 ring-black/5 overflow-x-auto", // Adicionei overflow-x-auto aqui
         className
       )}
     >
-      <div className="relative overflow-hidden sm:rounded-lg">
+      <div className="relative sm:rounded-lg min-w-max">
         <table className="w-full caption-bottom text-sm">
           <thead className="bg-gray-100 border-b border-1 border-black/5">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -49,7 +49,7 @@ export function DataTableDesktop<TData, TValue>({
                   return (
                     <th
                       key={header.id}
-                      className="px-6 py-2 text-left text-sm font-medium leading-6 text-gray-900"
+                      className="px-6 py-2 text-left text-sm font-medium leading-6 text-gray-900 whitespace-nowrap" // Adicionei whitespace-nowrap
                     >
                       {header.isPlaceholder
                         ? null

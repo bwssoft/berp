@@ -5,9 +5,10 @@ import {
 import { configurationLogRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { Filter } from "mongodb";
 
 namespace Dto {
-  export interface Input extends Partial<IConfigurationLog> {}
+  export interface Input extends Filter<IConfigurationLog> {}
 
   export type Output = IConfigurationLog[];
 }
