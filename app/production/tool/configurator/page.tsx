@@ -35,11 +35,9 @@ export default async function Page(props: Props) {
             Configurador
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            Ferramenta para configurar
-            <a href="#" className="text-gray-900">
-              dispositivos IoT.
-            </a>{" "}
-            Data de hoje:{" "}
+            Ferramenta para configurar{" "}
+            <span className="text-gray-900">dispositivos IoT.</span> Data de
+            hoje:{" "}
             <time dateTime={date.toLocaleDateString()}>
               {date.toLocaleDateString()}
             </time>

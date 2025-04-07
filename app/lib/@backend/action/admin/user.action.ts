@@ -1,10 +1,18 @@
 "use server";
-
+import { Filter } from "mongodb";
 import { IUser } from "../../domain/admin/entity/user.definition";
-import { createOneUserUsecase, newPasswordUserUsecase } from "../../usecase";
+import {
+    createOneUserUsecase,
+    findOneUserUsecase,
+    updateOneUserUsecase,
+} from "../../usecase";
 import { resetPasswordUserUsecase } from "../../usecase/admin/user/reset-password.user.usecase";
 
-export const createOneUser = async (data: Omit<IUser, "id" | "created_at" | "password">) => {
+type UpdateUserData = Partial<Omit<IUser, "id" | "created_at">>;
+
+export const createOneUser = async (
+    data: Omit<IUser, "id" | "created_at" | "password">
+) => {
     return await createOneUserUsecase.execute(data);
 };
 
@@ -14,6 +22,10 @@ export const resetPasswordUser = async () => {
     });
 };
 
-export const updateUserPassword = async (data: { id: string; password: string }) => {
-    return await newPasswordUserUsecase.execute(data);
+export const findOneUser = async (filter: Filter<IUser>) => {
+    return await findOneUserUsecase.execute(filter);
+};
+
+export const updateOneUser = async (id: string, data: UpdateUserData) => {
+    return await updateOneUserUsecase.execute({ id }, data);
 };

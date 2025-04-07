@@ -5,6 +5,7 @@ import { cn } from "@/app/lib/util";
 import Link from "next/link";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../../component";
+import { technologyConstants } from "@/app/lib/constant";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",
@@ -20,12 +21,15 @@ const text = {
 export const columns: ColumnDef<{
   id: string;
   equipment: {
-    imei: string;
-    serial?: string;
+    serial: string;
+    firmware: string;
     iccid?: string;
   };
   status: boolean;
   created_at: Date;
+  technology: {
+    system_name: string;
+  };
 }>[] = [
   {
     header: "Status",
@@ -59,16 +63,6 @@ export const columns: ColumnDef<{
     },
   },
   {
-    header: "Imei",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const original = row.original;
-      return (
-        <p title={original.equipment.imei}>{original.equipment.imei ?? "--"}</p>
-      );
-    },
-  },
-  {
     header: "Iccid",
     accessorKey: "equipment",
     cell: ({ row }) => {
@@ -78,6 +72,27 @@ export const columns: ColumnDef<{
           {original.equipment.iccid ?? "--"}
         </p>
       );
+    },
+  },
+  {
+    header: "Tecnologia",
+    accessorKey: "technology",
+    cell: ({ row }) => {
+      const { original } = row;
+      return (
+        technologyConstants.name[
+          original.technology
+            .system_name as keyof typeof technologyConstants.name
+        ] ?? "Unknown"
+      );
+    },
+  },
+  {
+    header: "Firmware",
+    accessorKey: "equipment",
+    cell: ({ row }) => {
+      const { original } = row;
+      return original.equipment.firmware;
     },
   },
   {
