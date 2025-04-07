@@ -32,45 +32,24 @@ export function useLoginUserForm() {
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
-    try {
-      const formData = new FormData();
-      formData.set("username", data.username);
-      formData.set("password", data.password);
+    const formData = new FormData();
+    formData.set("username", data.username);
+    formData.set("password", data.password);
 
-      const login = await authenticate(undefined, formData);
+    const login = await authenticate(undefined, formData);
 
-      if (login.success) {
-        toast({
-          title: "Sucesso!",
-          description: "Login realizado com sucesso.",
-          variant: "success",
-        })
-      }
-    } catch (error) {
-      if (error instanceof AuthError) {
-        switch (error.type) {
-          case "CredentialsSignin":
-            toast({
-              title: "Erro!",
-              description: "Credenciais inválidas",
-              variant: "error",
-            });
-            break;
-          default:
-            toast({
-              title: "Erro!",
-              description: "Ocorreu um erro durante o login.",
-              variant: "error",
-            });
-            break;
-        }
-      } else {
-        toast({
-          title: "Erro!",
-          description: "Ocorreu um erro inesperado",
-          variant: "error",
-        });
-      }
+    if (login.success) {
+      toast({
+        title: "Sucesso!",
+        description: "Login realizado com sucesso.",
+        variant: "success",
+      });
+    } else {
+      toast({
+        title: "Erro!",
+        description: login.error ?? "Algo deu errado",
+        variant: "error",
+      });
     }
   });
 
