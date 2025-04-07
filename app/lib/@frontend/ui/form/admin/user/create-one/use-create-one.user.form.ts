@@ -19,7 +19,6 @@ export const schema = z.object({
     cpf: z.string().min(11, "CPF obrigatório").refine((value) => isValidCPF(value), "CPF inválido"),
     email: z.string().email("Email inválido!"),
     name: z.string(),
-    active: z.boolean(),
     external: z.boolean(),
     image: z.string().optional(),
     profile_id: z.array(z.string()),
@@ -64,6 +63,7 @@ export function useCreateOneUserForm() {
     const handleSubmit = hookFormSubmit(async (data) => {
         const { success, error } = await createOneUser({
             ...data, image: "",
+            active: true,
             lock: false
         });
         if(success) {

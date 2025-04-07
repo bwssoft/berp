@@ -1,42 +1,43 @@
+"use server";
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import postgres from 'postgres';
 import { IUser } from './app/lib/@backend/domain/admin/entity/user.definition';
-import { findManyUserUsecase } from './app/lib/@backend/usecase';
- 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
- 
-async function getUser(email: string): Promise<IUser | undefined> {
+import { findOneUser } from './app/lib/@backend/action';
+
+async function getUser(username: string): Promise<IUser | undefined> {
   try {
-    const user = await findManyUserUsecase.execute({ email });
-    return user[0];
+    const user = await findOneUser({ username });
+    return user ?? undefined;
   } catch (error) {
-    console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
   }
 }
- 
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
       async authorize(credentials) {
+
         const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(6) })
+          .object({ username: z.string(), password: z.string().min(6) })
           .safeParse(credentials);
 
-          if (parsedCredentials.success) {
-            const { email, password } = parsedCredentials.data;
-            const user = await getUser(email);
-            if (!user) return null;
-            const passwordsMatch = await bcrypt.compare(password, user.password);
-   
-            if (passwordsMatch) return user;
-          }
- 
+        if (!parsedCredentials.success) {
+          return null;
+        }
+
+        const { username, password } = parsedCredentials.data;
+
+        const user = await getUser(username);
+
+        if (!user) return null;
+
+        const passwordsMatch = await bcrypt.compare(password, user.password);
+
+        if (passwordsMatch) return user;
         return null;
       },
     }),

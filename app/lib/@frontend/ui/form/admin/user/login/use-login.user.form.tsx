@@ -37,13 +37,15 @@ export function useLoginUserForm() {
       formData.set("username", data.username);
       formData.set("password", data.password);
 
-      await authenticate(undefined, formData);
+      const login = await authenticate(undefined, formData);
 
-      toast({
-        title: "Sucesso!",
-        description: "Login realizado com sucesso",
-        variant: "success",
-      });
+      if (!login) {
+        toast({
+          title: "Sucesso!",
+          description: "Login realizado com sucesso.",
+          variant: "success",
+        })
+      }
     } catch (error) {
       if (error instanceof AuthError) {
         switch (error.type) {
