@@ -33,10 +33,11 @@ const updateSchema = z
         profile_id: z.array(z.string()),
         username: z.string(),
         lock: z.boolean().optional(),
+        external: z.boolean().optional(),
     })
     .refine(
         (data) => {
-            if (!data.active) {
+            if (!data.external) {
                 const emailLower = data.email.toLowerCase();
                 return allowedDomains.some((domain) =>
                     emailLower.endsWith(domain)
@@ -84,9 +85,7 @@ export function useUpdateOneUserForm(user: IUser) {
                 name: user.name,
                 active: user.active,
                 image: user.image,
-                profile_id: Array.isArray(user.profile_id)
-                    ? user.profile_id
-                    : [user.profile_id],
+                profile_id: user.profile_id,
                 username: user.username,
                 lock: user.lock,
             });

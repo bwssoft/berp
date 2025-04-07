@@ -96,13 +96,6 @@ export function UpdateOneUserForm({ user }: UpdateOneUserFormProps) {
             disabled={isLocked}
           />
 
-          <Input
-            label="Imagem (URL)"
-            {...register("image")}
-            error={errors.image?.message}
-            disabled={isLocked}
-          />
-
           <Controller
             control={control}
             name="profile_id"
