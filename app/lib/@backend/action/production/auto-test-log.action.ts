@@ -3,6 +3,7 @@
 import { IAutoTestLog } from "@/app/lib/@backend/domain";
 import {
   createManyAutoTestLogUsecase,
+  exportAutoTestLogUsecase,
   findManyAutoTestLogUsecase,
   findOneAutoTestLogUsecase,
 } from "@/app/lib/@backend/usecase";
@@ -27,4 +28,8 @@ export async function findOneAutoTestLog(input: Partial<IAutoTestLog>) {
 
 export async function findManyAutoTestLog(input: Filter<IAutoTestLog>) {
   return await findManyAutoTestLogUsecase.execute(input);
+}
+
+export async function exportAutoTestLog(input: Filter<IAutoTestLog>) {
+  return await exportAutoTestLogUsecase.execute(input);
 }

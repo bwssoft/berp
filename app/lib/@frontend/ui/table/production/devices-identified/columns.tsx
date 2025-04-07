@@ -4,6 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
 import Link from "next/link";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
+import { Button } from "../../../component";
+import { technologyConstants } from "@/app/lib/constant";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",
@@ -17,25 +19,28 @@ const text = {
   error: "text-rose-800",
 };
 export const columns: ColumnDef<{
-  before: {
-    imei: string;
-    serial?: string;
+  id: string;
+  equipment: {
+    serial: string;
+    firmware: string;
+    iccid?: string;
   };
-  after?: {
-    imei?: string;
+  identification?: {
     serial?: string;
   };
   status: boolean;
-  id: string;
   created_at: Date;
+  technology: {
+    system_name: string;
+  };
 }>[] = [
   {
     header: "Status",
     accessorKey: "status",
     cell: ({ row }) => {
-      const device = row.original;
-      const status = device.status ? "success" : "error";
-      const label = device.status ? "Sucesso" : "Falha";
+      const { original } = row;
+      const status = original.status ? "success" : "error";
+      const label = original.status ? "Sucesso" : "Falha";
       return (
         <div className="flex items-center gap-1">
           <div className={cn(statuses[status], "flex-none rounded-full p-1")}>
@@ -49,29 +54,56 @@ export const columns: ColumnDef<{
     },
   },
   {
-    header: "Atual",
-    accessorKey: "after",
+    header: "Antes",
+    accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
-      return <p title={device.after?.serial}>{device.after?.serial ?? "--"}</p>;
+      const { original } = row;
+      return (
+        <p title={original.equipment.serial}>
+          {original.equipment.serial ?? "--"}
+        </p>
+      );
     },
   },
   {
-    header: "Antes",
-    accessorKey: "before",
+    header: "Depois",
+    accessorKey: "equipment",
     cell: ({ row }) => {
-      const device = row.original;
+      const { original } = row;
       return (
-        <p title={device.before?.serial}>{device.before?.serial ?? "--"}</p>
+        <p title={original?.identification?.serial}>
+          {original?.identification?.serial ?? "--"}
+        </p>
       );
+    },
+  },
+  {
+    header: "Tecnologia",
+    accessorKey: "technology",
+    cell: ({ row }) => {
+      const { original } = row;
+      return (
+        technologyConstants.name[
+          original.technology
+            .system_name as keyof typeof technologyConstants.name
+        ] ?? "Unknown"
+      );
+    },
+  },
+  {
+    header: "Firmware",
+    accessorKey: "equipment",
+    cell: ({ row }) => {
+      const { original } = row;
+      return original.equipment.firmware;
     },
   },
   {
     header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const { original } = row;
-      return original.created_at.toLocaleString();
+      const iput = row.original;
+      return iput.created_at.toLocaleString();
     },
   },
   {
@@ -80,14 +112,10 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const { original } = row;
       return (
-        <Link
-          href={`/production/id-writter/log/${original.id}`}
-          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        >
-          <ArrowTopRightOnSquareIcon
-            aria-hidden="true"
-            className="-ml-0.5 size-5"
-          />
+        <Link href={`/production/log/identificator/${original.id}`}>
+          <Button variant="ghost">
+            <ArrowTopRightOnSquareIcon aria-hidden="true" className="size-5" />
+          </Button>
         </Link>
       );
     },

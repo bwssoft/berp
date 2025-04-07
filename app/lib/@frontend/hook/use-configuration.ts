@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  IClient,
   IConfigurationLog,
   IConfigurationProfile,
   ITechnology,
@@ -15,6 +16,7 @@ import { useTechnology } from "./use-technology";
 namespace Namespace {
   export interface UseConfigurationProps {
     technology: ITechnology | null;
+    client?: IClient | null;
   }
 
   export interface Identified {
@@ -33,7 +35,7 @@ namespace Namespace {
 }
 
 export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
-  const { technology } = props;
+  const { technology, client } = props;
   const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
   const isIdentifying = useRef(false);
 
@@ -43,14 +45,14 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
   // hook that handle interactions with devices
   const {
     ports,
-    handleIdentificationProcess,
-    handleConfigurationProcess,
+    handleDetection,
+    handleConfiguration,
     handleGetProfile,
     requestPort,
   } = useTechnology(technology);
 
   // function that handle the configuration process, check if the process was successful and save result on database
-  const handleConfiguration = useCallback(
+  const configure = useCallback(
     async (configuration_profile: IConfigurationProfile | null) => {
       if (configuration_profile === null) {
         toast({
@@ -64,7 +66,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       isConfiguring.current = true;
 
       // configure devices
-      const configurationResult = await handleConfigurationProcess(
+      const configurationResult = await handleConfiguration(
         identified
           .filter((i) => i.equipment.imei && i.equipment.firmware)
           .map(({ port }) => port),
@@ -78,7 +80,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
       // check if each message sent has response and configured to the desired profile
       const result = configurationResult
-        .map(({ port, response, messages, end_time, init_time }) => {
+        .map(({ port, response, messages, end_time, init_time, status }) => {
           if (!response || !messages || !end_time || !init_time)
             return undefined;
 
@@ -122,11 +124,9 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
               iccid: equipment.iccid,
             },
             checked: false,
-            status: Object.entries(response ?? {}).every(
-              ([_, value]) => typeof value !== "undefined"
-            ),
+            status,
             metadata: {
-              commands: messages.map(({ key, message }) => ({
+              messages: messages.map(({ key, message }) => ({
                 request: message,
                 response: response[key],
               })),
@@ -139,6 +139,14 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
             },
             raw_profile: profileAfterConfiguration.raw as [string, string][],
             parsed_profile: profileAfterConfiguration.config,
+            client: client
+              ? {
+                  id: client.id,
+                  trade_name: client.trade_name,
+                  company_name: client.company_name,
+                  document: client.document.value,
+                }
+              : null,
           };
 
           return configuration_log;
@@ -153,15 +161,16 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
       isConfiguring.current = false;
     },
-    [identified, ports, technology]
+    [handleConfiguration, handleGetProfile, identified, ports, technology]
   );
 
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     const interval = setInterval(async () => {
+      if (isConfiguring.current) return;
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
-        const identified = await handleIdentificationProcess(ports);
+        const identified = await handleDetection(ports);
         setIdentified(
           identified
             .filter((el) => el.response !== undefined)
@@ -175,12 +184,12 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
     // Limpeza: limpa o intervalo quando o componente é desmontado ou quando as dependências mudarem
     return () => clearInterval(interval);
-  }, [ports, handleIdentificationProcess]);
+  }, [ports, handleDetection]);
 
   return {
     configured,
     identified,
-    handleConfiguration,
+    configure,
     requestPort,
   };
 };
