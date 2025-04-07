@@ -39,7 +39,7 @@ export function useLoginUserForm() {
 
       const login = await authenticate(undefined, formData);
 
-      if (!login) {
+      if (login.success) {
         toast({
           title: "Sucesso!",
           description: "Login realizado com sucesso.",

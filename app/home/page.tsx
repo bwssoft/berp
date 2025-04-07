@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { LoginUserForm } from "../lib/@frontend/ui/form/admin/user/login/login.user.form";
 
 export default function Home() {
   return (
@@ -83,7 +82,6 @@ export default function Home() {
             Gerencie os comandos.
           </p>
         </Link>
-        <LoginUserForm />
       </div>
     </main>
   );
