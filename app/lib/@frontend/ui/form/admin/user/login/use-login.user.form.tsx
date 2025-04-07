@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook";
-import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
+import { authenticate } from "@/app/lib/@backend/action";
 
 const schema = z.object({
   username: z.string(),
@@ -33,18 +33,17 @@ export function useLoginUserForm() {
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
-      await signIn("credentials", {
-        redirect: true,
-        redirectTo: "/home",
-        ...data,
-      });
+      const formData = new FormData();
+      formData.set("username", data.username);
+      formData.set("password", data.password);
+
+      await authenticate(undefined, formData);
 
       toast({
         title: "Sucesso!",
         description: "Login realizado com sucesso",
         variant: "success",
       });
-
     } catch (error) {
       if (error instanceof AuthError) {
         switch (error.type) {
