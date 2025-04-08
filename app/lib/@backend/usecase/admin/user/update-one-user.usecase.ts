@@ -1,7 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IUserRepository } from "../../../domain/admin/repository/user.repository.interface";
-import { userRepository } from "../../../infra/repository/mongodb/admin/user.repository";
-import { IUser } from "../../../domain/admin/entity/user.definition";
+import { IUser, IUserRepository } from "@/app/lib/@backend/domain";
+import { userRepository } from "@/app/lib/@backend/infra";
 
 class UpdateOneUserUsecase {
     repository: IUserRepository;

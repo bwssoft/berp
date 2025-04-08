@@ -1,6 +1,6 @@
 import { Filter } from "mongodb";
-import type { IUserRepository } from "../../../domain/admin/repository/user.repository.interface";
-import { userRepository } from "../../../infra/repository/mongodb/admin/user.repository";
+import { userRepository } from "@/app/lib/@backend/infra";
+import { IUserRepository } from "@/app/lib/@backend/domain";
 
 export namespace Dto {
     export type Input = { id: string; lock: boolean };

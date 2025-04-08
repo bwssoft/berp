@@ -1,5 +1,5 @@
-import { IUserRepository } from "../../../domain/admin/repository/user.repository.interface";
-import { userRepository } from "../../../infra/repository/mongodb/admin/user.repository";
+import { IUserRepository } from "@/app/lib/@backend/domain";
+import { userRepository } from "@/app/lib/@backend/infra";
 import { resetPasswordUserUsecase } from "./reset-password.user.usecase";
 
 namespace Dto {
@@ -30,10 +30,14 @@ class RequestNewPasswordUserUsecase {
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error.message : JSON.stringify(error)
+                error:
+                    error instanceof Error
+                        ? error.message
+                        : JSON.stringify(error),
             };
         }
     }
 }
 
-export const requestNewPasswordUserUsecase = new RequestNewPasswordUserUsecase();
+export const requestNewPasswordUserUsecase =
+    new RequestNewPasswordUserUsecase();
