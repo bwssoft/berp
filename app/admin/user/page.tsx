@@ -1,5 +1,7 @@
 import { findManyProfile, findManyUser } from "@/app/lib/@backend/action";
+import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
 import { SearchProfileForm } from "@/app/lib/@frontend/ui/form";
+import { AuditTable } from "@/app/lib/@frontend/ui/table/admin/audit";
 import { UserTable } from "@/app/lib/@frontend/ui/table/admin/user";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
@@ -10,6 +12,10 @@ interface Props {
 export default async function Example(props: Props) {
   const { searchParams } = props;
   const users = await findManyUser({});
+  const audit = await findManyAudit({});
+  
+
+  console.log(" o que tem em audir ",audit)
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -34,7 +40,7 @@ export default async function Example(props: Props) {
         <SearchProfileForm />
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <UserTable data={users} />
+        <AuditTable data={audit}/>
       </div>
     </div>
   );
