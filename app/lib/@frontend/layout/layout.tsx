@@ -7,7 +7,6 @@ interface Props {
 
 export function Layout(props: Props) {
   const { children, navigation } = props;
-
   return (
     <div>
       <SideBar navigation={navigation} />

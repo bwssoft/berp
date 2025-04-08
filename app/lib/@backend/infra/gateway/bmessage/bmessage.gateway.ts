@@ -43,7 +43,7 @@ class BMessageGateway implements IBMessageGateway {
                     return reject(new Error("Erro ao enviar email via gRPC"));
                 }
         
-                console.log("Email enviado com sucesso!");
+                console.info("Email enviado com sucesso!");
                 resolve();
             });
         });

@@ -3,26 +3,31 @@ import { Inter } from "next/font/google";
 import { ReactQueryClientProvider } from "../providers/QueryClientProvider";
 import { Toaster } from "../ui/component";
 import HolyLoader from "holy-loader";
+import { AuthProvider } from "../context";
+import { IUser } from "../../@backend/domain";
 
 const inter = Inter({ subsets: ["latin"] });
 
 interface Props {
   children: React.ReactNode;
+  user: Partial<IUser> | null;
 }
 
 export function Root(props: Props) {
-  const { children } = props;
+  const { children, user } = props;
 
   return (
     <html lang="en" className="h-full bg-gray-50">
       <ReactQueryClientProvider>
-        <HolyLoader
-          color="linear-gradient(to right, #FFB80E, #FF1BD4, #0FAAEC)"
-          speed={250}
-          easing="linear"
-          showSpinner
-        />
-        <body className={cn(inter.className, "h-full")}>{children}</body>
+        <AuthProvider user={user}>
+          <HolyLoader
+            color="linear-gradient(to right, #FFB80E, #FF1BD4, #0FAAEC)"
+            speed={250}
+            easing="linear"
+            showSpinner
+          />
+          <body className={cn(inter.className, "h-full")}>{children}</body>
+        </AuthProvider>
       </ReactQueryClientProvider>
       <Toaster />
     </html>

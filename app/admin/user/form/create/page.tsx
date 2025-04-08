@@ -13,7 +13,7 @@ export default async function Page() {
           </p>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+      <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <CreateOneUserForm />
       </div>
     </div>

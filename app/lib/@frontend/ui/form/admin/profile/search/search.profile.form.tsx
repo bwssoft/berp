@@ -4,9 +4,7 @@ import { useSearchProfileForm } from "./use-search.profile.form";
 import { Button, Input } from "../../../../component";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 
-interface Props {}
-export function SearchProfileForm(props: Props) {
-  const {} = props;
+export function SearchProfileForm() {
   const { handleChangeProfileName } = useSearchProfileForm();
 
   return (

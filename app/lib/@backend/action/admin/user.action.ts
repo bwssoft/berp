@@ -10,15 +10,18 @@ import {
   updateOneUserUsecase,
   findManyUserUsecase,
   resetPasswordUserUsecase,
+  requestNewPasswordUserUsecase,
 } from "../../usecase";
 import { revalidatePath } from "next/cache";
 
 type UpdateUserData = Partial<Omit<IUser, "id" | "created_at">>;
 
 export const createOneUser = async (
-  data: Omit<IUser, "id" | "created_at" | "password">
+  data: Omit<IUser, "id" | "created_at" | "password" | "temporary_password">
 ) => {
-  return await createOneUserUsecase.execute(data);
+  const result = await createOneUserUsecase.execute(data);
+  revalidatePath("/admin/user");
+  return result;
 };
 
 export const resetPasswordUser = async (props: { id: string }) => {
@@ -52,5 +55,10 @@ export const lockUser = async (data: { id: string; lock: boolean }) => {
 export const setUserActive = async (data: { id: string; active: boolean }) => {
   const result = await activeUserUsecase.execute(data);
   revalidatePath(`/admin/user/form/update?id=${data.id}`);
+  return result;
+};
+
+export const requestNewPassword = async (data: { email: string }) => {
+  const result = await requestNewPasswordUserUsecase.execute(data);
   return result;
 };

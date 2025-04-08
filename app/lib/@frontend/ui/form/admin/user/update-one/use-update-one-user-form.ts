@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +9,7 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { findManyProfile, updateOneUser } from "@/app/lib/@backend/action";
 import { IUser } from "@/app/lib/@backend/domain";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
+import { useRouter } from "next/navigation";
 
 const allowedDomains = [
   "@bwsiot.com",
@@ -28,7 +28,7 @@ const updateSchema = z
     email: z.string().email("Email inválido!"),
     name: z.string(),
     active: z.boolean(),
-    image: z.string().optional(),
+    image: z.string().optional().nullable(),
     profile_id: z.array(z.string()),
     username: z.string(),
     lock: z.boolean().optional(),
@@ -59,7 +59,7 @@ export function useUpdateOneUserForm(user: IUser) {
     queryFn: () => findManyProfile({}),
   });
   const profiles = allProfiles?.filter((p) => p.active) ?? [];
-
+  const router = useRouter();
   const {
     register,
     handleSubmit: hookSubmit,
@@ -101,6 +101,10 @@ export function useUpdateOneUserForm(user: IUser) {
     }
   }
 
+  function handleBackPage() {
+    router.back();
+  }
+
   return {
     profiles,
     register,
@@ -109,5 +113,6 @@ export function useUpdateOneUserForm(user: IUser) {
     userData: user,
     handleSubmit,
     handleCancelEdit,
+    handleBackPage,
   };
 }

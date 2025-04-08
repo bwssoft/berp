@@ -13,7 +13,9 @@ import { revalidatePath } from "next/cache";
 export async function createOneProfile(
   input: Omit<IProfile, "id" | "created_at">
 ) {
-  await createOneProfileUsecase.execute(input);
+  const result = await createOneProfileUsecase.execute(input);
+  revalidatePath("/admin/profile");
+  return result;
 }
 
 export async function findManyProfile(input: Filter<IProfile>) {
