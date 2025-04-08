@@ -3,6 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook";
 import { requestNewPassword } from "@/app/lib/@backend/action";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   email: z.string(),
@@ -11,6 +12,8 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export function useRequestNewPasswordUserForm() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -28,6 +31,7 @@ export function useRequestNewPasswordUserForm() {
         description: "Nova senha requisitada com sucesso.",
         variant: "success",
       });
+      router.push(`/login`);
     } else {
       setError("email", { message: result.error ?? "Algo deu erro" });
       toast({

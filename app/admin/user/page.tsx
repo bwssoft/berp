@@ -1,5 +1,4 @@
-import { findManyProfile, findManyUser } from "@/app/lib/@backend/action";
-import { SearchProfileForm } from "@/app/lib/@frontend/ui/form";
+import { findManyUser } from "@/app/lib/@backend/action";
 import { UserTable } from "@/app/lib/@frontend/ui/table/admin/user";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
@@ -8,7 +7,6 @@ interface Props {
   searchParams: {};
 }
 export default async function Example(props: Props) {
-  const { searchParams } = props;
   const users = await findManyUser({});
   return (
     <div>
@@ -29,9 +27,6 @@ export default async function Example(props: Props) {
           <PlusIcon className="-ml-1.5 h-5 w-5" aria-hidden="true" />
           Novo Usuário
         </Link>
-      </div>
-      <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <SearchProfileForm />
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
         <UserTable data={users} />

@@ -1,3 +1,5 @@
+"use client";
+
 import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 import { useCallback, ChangeEvent } from "react";
 

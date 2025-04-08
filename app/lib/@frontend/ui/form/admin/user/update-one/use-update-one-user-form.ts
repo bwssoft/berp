@@ -28,7 +28,7 @@ const updateSchema = z
     email: z.string().email("Email inválido!"),
     name: z.string(),
     active: z.boolean(),
-    image: z.string().optional(),
+    image: z.string().optional().nullable(),
     profile_id: z.array(z.string()),
     username: z.string(),
     lock: z.boolean().optional(),
