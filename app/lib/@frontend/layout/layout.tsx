@@ -5,7 +5,7 @@ interface Props {
   navigation: (NavItem & { code?: string })[];
 }
 
-export async function Layout(props: Props) {
+export function Layout(props: Props) {
   const { children, navigation } = props;
   return (
     <div>
