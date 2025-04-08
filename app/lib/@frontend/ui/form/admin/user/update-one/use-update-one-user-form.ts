@@ -75,9 +75,7 @@ export function useUpdateOneUserForm(user: IUser) {
                 name: user.name,
                 active: user.active,
                 image: user.image,
-                profile_id: Array.isArray(user.profile_id)
-                    ? user.profile_id
-                    : [user.profile_id],
+                profile_id: user.profile_id,
                 username: user.username,
                 lock: user.lock,
                 external: user.external,
@@ -121,7 +119,6 @@ export function useUpdateOneUserForm(user: IUser) {
     }
 
     return {
-        isLoadingUser: false,
         profiles,
         register,
         control,

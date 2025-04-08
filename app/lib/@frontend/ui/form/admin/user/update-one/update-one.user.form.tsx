@@ -5,12 +5,8 @@ import { Controller } from "react-hook-form";
 
 import { IUser } from "@/app/lib/@backend/domain";
 import { useUpdateOneUserForm } from "./use-update-one-user-form";
-import { useLockUserDialog } from "../../../../dialog/admin/user/lock/uselock.user.dialog";
-import { LockUserDialog } from "../../../../dialog/admin/user/lock/lock.user.dialog.";
-import { useActiveUserDialog } from "../../../../dialog/admin/user/inactive/use.active.user.dialog";
-import { useResetPasswordUserDialog } from "../../../../dialog/admin/user/resetPassword/use.reset-password.user.dialog";
-import { ActiveUserDialog } from "../../../../dialog/admin/user/inactive/active.user.dialog.";
-import { ResetPasswordUserDialog } from "../../../../dialog/admin/user/resetPassword/reset-password.user.dialog";
+import { ActiveUserDialog, LockUserDialog, ResetPasswordUserDialog, useActiveUserDialog, useLockUserDialog, useResetPasswordUserDialog } from "../../../../dialog";
+
 
 interface Props {
   user: IUser;
@@ -24,7 +20,7 @@ export function UpdateOneUserForm({ user }: Props) {
     errors,
     profiles,
     userData,
-    isLoadingUser,
+
     handleSubmit,
     handleCancelEdit,
   } = useUpdateOneUserForm(user);
@@ -43,7 +39,6 @@ export function UpdateOneUserForm({ user }: Props) {
     userId: userData.id,
   });
 
-  if (isLoadingUser) return <div>Carregando dados do usuário…</div>;
 
   const isLocked = userData.lock;
   const isActive = userData.active;
