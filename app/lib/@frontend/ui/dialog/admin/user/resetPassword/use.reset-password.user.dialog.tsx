@@ -2,16 +2,15 @@
 
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { lockUser } from "@/app/lib/@backend/action/admin/user.action";
+import { resetPasswordUser } from "@/app/lib/@backend/action/admin/user.action";
 import { toast } from "@/app/lib/@frontend/hook";
 
 interface Params {
   userId: string;
-  willLock: boolean;
   onSuccess?: () => void;
 }
 
-export function useLockUserDialog({ userId, willLock, onSuccess }: Params) {
+export function useResetPasswordUserDialog({ userId, onSuccess }: Params) {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const qc = useQueryClient();
@@ -19,13 +18,11 @@ export function useLockUserDialog({ userId, willLock, onSuccess }: Params) {
   const confirm = async () => {
     setIsLoading(true);
     try {
-      await lockUser({ id: userId, lock: willLock });
+      await resetPasswordUser();
 
       toast({
         title: "Sucesso!",
-        description: willLock
-          ? "Usuário bloqueado com sucesso."
-          : "Usuário desbloqueado com sucesso.",
+        description: "Reset de senha realizado com sucesso.",
         variant: "success",
       });
 
@@ -36,7 +33,7 @@ export function useLockUserDialog({ userId, willLock, onSuccess }: Params) {
       console.error(err);
       toast({
         title: "Erro",
-        description: "Não foi possível alterar o estado do usuário.",
+        description: "Não foi possível resetar a senha do usuário.",
         variant: "error",
       });
     } finally {

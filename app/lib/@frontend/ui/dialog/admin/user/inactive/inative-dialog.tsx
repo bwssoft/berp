@@ -1,1 +1,0 @@
-//criar dialog do inativo

@@ -2,16 +2,16 @@
 
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { lockUser } from "@/app/lib/@backend/action/admin/user.action";
+import { setUserActive } from "@/app/lib/@backend/action/admin/user.action";
 import { toast } from "@/app/lib/@frontend/hook";
 
 interface Params {
   userId: string;
-  willLock: boolean;
+  willActivate: boolean;
   onSuccess?: () => void;
 }
 
-export function useLockUserDialog({ userId, willLock, onSuccess }: Params) {
+export function useActiveUserDialog({ userId, willActivate, onSuccess }: Params) {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const qc = useQueryClient();
@@ -19,13 +19,13 @@ export function useLockUserDialog({ userId, willLock, onSuccess }: Params) {
   const confirm = async () => {
     setIsLoading(true);
     try {
-      await lockUser({ id: userId, lock: willLock });
+      await setUserActive({ id: userId, active: willActivate });
 
       toast({
         title: "Sucesso!",
-        description: willLock
-          ? "Usuário bloqueado com sucesso."
-          : "Usuário desbloqueado com sucesso.",
+        description: willActivate
+          ? "Usuário ativado com sucesso."
+          : "Usuário inativado com sucesso.",
         variant: "success",
       });
 

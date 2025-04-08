@@ -6,27 +6,27 @@ interface Props {
   setOpen: (v: boolean) => void;
   confirm: () => void;
   isLoading: boolean;
-  willLock: boolean;
+  willActivate: boolean;
 }
 
-export function LockUserDialog({
+export function ActiveUserDialog({
   open,
   setOpen,
   confirm,
   isLoading,
-  willLock,
+  willActivate,
 }: Props) {
   return (
     <Dialog open={open} setOpen={setOpen}>
       <div className="p-4">
         <h2 className="text-lg font-semibold">
-          {willLock ? "Bloquear Usuário" : "Desbloquear Usuário"}
+          {willActivate ? "Ativar Usuário" : "Inativar Usuário"}
         </h2>
 
         <p className="mt-2 text-sm text-gray-600">
-          {willLock
-            ? "Você tem certeza que deseja bloquear este usuário? Uma vez bloqueado o usuário não poderá acessar o sistema, não será possível realizar reset de senha e edição de dados."
-            : "Você tem certeza de que deseja desbloquear este usuário? Após o desbloqueio o usuário poderá acessar normalmente o sistema sem necessidade de reset de senha."}
+          {willActivate
+            ? "Você tem certeza de que deseja ativar este usuário? Um reset de senha automático será realizado e enviado para o email que consta no cadastro do usuário."
+            : "Você tem certeza de que deseja inativar este usuário? O usuário não poderá mais acessar o sistema, fazer reset de senha ou alterar seus dados."}
         </p>
 
         <div className="mt-6 flex justify-end gap-2">
@@ -38,7 +38,7 @@ export function LockUserDialog({
             Cancelar
           </Button>
           <Button variant="default" onClick={confirm} disabled={isLoading}>
-            {willLock ? "Bloquear" : "Desbloquear"}
+            {willActivate ? "Ativar" : "Inativar"}
           </Button>
         </div>
       </div>
