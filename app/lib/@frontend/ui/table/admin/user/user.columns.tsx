@@ -2,7 +2,8 @@ import { Badge } from "@bwsoft/badge";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../../../component";
 import { IUser } from "@/app/lib/@backend/domain";
-import { ClockIcon, UsersIcon } from "@heroicons/react/24/outline";
+import { ClockIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export const columns: ColumnDef<IUser>[] = [
   { header: "Nome", accessorKey: "name" },
@@ -45,13 +46,15 @@ export const columns: ColumnDef<IUser>[] = [
           >
             <ClockIcon className="size-5" />
           </Button>
-          <Button
-            title="Usuários"
-            onClick={() => alert("redireciona para a pagina de editar um usuario")}
-            className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          >
-            <UsersIcon className="size-5" />
-          </Button>
+          <Link href={`/admin/user/form/update?id=${original.id}`}>
+            <Button
+              title="Usuários"
+              variant="ghost"
+              className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              <PencilSquareIcon className="size-5" />
+            </Button>
+          </Link>
         </td>
       );
     },

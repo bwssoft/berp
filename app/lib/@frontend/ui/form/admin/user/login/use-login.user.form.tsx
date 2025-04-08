@@ -9,7 +9,7 @@ const schema = z.object({
   username: z.string(),
   password: z
     .string()
-    .min(8, "A senha deve ter no mínimo 8 caracteres")
+    .min(6, "A senha deve ter no mínimo 8 caracteres")
     .max(32, "A senha deve ter no máximo 32 caracteres")
     .regex(/[A-Z]/, "A senha deve conter ao menos uma letra maiúscula")
     .regex(/[a-z]/, "A senha deve conter ao menos uma letra minúscula")
