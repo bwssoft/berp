@@ -1,5 +1,6 @@
 import { findManyProfile, findManyUser } from "@/app/lib/@backend/action";
 import { SearchProfileForm } from "@/app/lib/@frontend/ui/form";
+import { SearchUserForm } from "@/app/lib/@frontend/ui/form/admin/user/search-form/search.user.form";
 import { UserTable } from "@/app/lib/@frontend/ui/table/admin/user";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
@@ -9,7 +10,9 @@ interface Props {
 }
 export default async function Example(props: Props) {
   const { searchParams } = props;
-  const users = await findManyUser({});
+  console.log(searchParams)
+  const users = await findManyUser({ ...searchParams });
+  
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -31,7 +34,7 @@ export default async function Example(props: Props) {
         </Link>
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <SearchProfileForm />
+        <SearchUserForm />
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
         <UserTable data={users} />
