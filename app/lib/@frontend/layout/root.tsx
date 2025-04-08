@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { ReactQueryClientProvider } from "../providers/QueryClientProvider";
 import { Toaster } from "../ui/component";
 import HolyLoader from "holy-loader";
+import { auth } from "@/auth";
+import { AuthProvider } from "../context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,8 +12,9 @@ interface Props {
   children: React.ReactNode;
 }
 
-export function Root(props: Props) {
+export async function Root(props: Props) {
   const { children } = props;
+  const session = await auth();
 
   return (
     <html lang="en" className="h-full bg-gray-50">
@@ -22,7 +25,9 @@ export function Root(props: Props) {
           easing="linear"
           showSpinner
         />
-        <body className={cn(inter.className, "h-full")}>{children}</body>
+        <AuthProvider user={session?.user ?? null}>
+          <body className={cn(inter.className, "h-full")}>{children}</body>
+        </AuthProvider>
       </ReactQueryClientProvider>
       <Toaster />
     </html>
