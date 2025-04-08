@@ -14,9 +14,8 @@ export const useIdentificationLogSearchForm = () => {
   }, 200);
 
   const handleExport = async (filter: Filter<IIdentificationLog>) => {
-    const filePath = await exportIdentificationLog(filter);
-    const downloadUrl = `/api/export-by-filepath/${encodeURIComponent(filePath)}`;
-    window.location.href = downloadUrl;
+    const url = await exportIdentificationLog(filter);
+    window.location.href = url;
   };
   return {
     handleQuickSearch,

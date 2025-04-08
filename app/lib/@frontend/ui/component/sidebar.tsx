@@ -22,6 +22,8 @@ import {
   useState,
 } from "react";
 import { useIsOnPathname } from "../../hook/is-on-pathname";
+import { logout } from "@/app/lib/@backend/action";
+import { IUser } from "@/app/lib/@backend/domain";
 
 export type NavItem = {
   name: string;
@@ -50,6 +52,7 @@ const getPaddingClass = (depth: number) => {
 
 interface Props {
   navigation: any[];
+  user: Partial<IUser>;
 }
 const renderNavItem = (
   item: NavItem,
@@ -127,7 +130,7 @@ const renderNavItem = (
   );
 };
 export function SideBar(props: Props) {
-  const { navigation } = props;
+  const { navigation, user } = props;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isOnPathname = useIsOnPathname();
   return (
@@ -240,7 +243,7 @@ export function SideBar(props: Props) {
                       alt=""
                     />
                     <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Oswaldo Conti-Bosso</span>
+                    <span aria-hidden="true">{user.name}</span>
                   </a>
                 </li>
               </ul>
