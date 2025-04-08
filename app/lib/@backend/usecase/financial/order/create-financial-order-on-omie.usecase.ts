@@ -109,7 +109,6 @@ class CreateFinancialOrderOnOmieUsecase {
       //       })
       //     }
       //   }
-      //   console.log(JSON.stringify(order, null, 2))
       //   // await this.proposalGateway.insertOne(order)
       // }))
     } catch (err) {

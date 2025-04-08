@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button, Input } from "../../../../component";
 import { useLoginUserForm } from "./use-login.user.form";
 
@@ -7,7 +8,7 @@ export function LoginUserForm() {
   const { handleSubmit, register, errors } = useLoginUserForm();
 
   return (
-    <form onSubmit={handleSubmit} className="mt-10 space-y-6">
+    <form onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 gap-6">
         <Input
           label="Usuário"
@@ -24,13 +25,16 @@ export function LoginUserForm() {
         />
       </div>
 
-      <div className="flex justify-end">
-        <button type="button" className="text-sm text-blue-600 hover:underline">
+      <div className="flex justify-end mt-6">
+        <Link
+          href="/forget-password"
+          className="text-sm text-blue-600 hover:underline"
+        >
           Esqueci minha senha
-        </button>
+        </Link>
       </div>
 
-      <div className="flex items-center justify-end gap-x-4">
+      <div className="flex items-center justify-end gap-x-4 mt-6">
         <Button type="button" variant="ghost">
           Cancelar
         </Button>

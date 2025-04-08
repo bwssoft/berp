@@ -10,6 +10,7 @@ import {
   updateOneUserUsecase,
   findManyUserUsecase,
   resetPasswordUserUsecase,
+  requestNewPasswordUserUsecase,
 } from "../../usecase";
 import { revalidatePath } from "next/cache";
 
@@ -52,5 +53,10 @@ export const lockUser = async (data: { id: string; lock: boolean }) => {
 export const setUserActive = async (data: { id: string; active: boolean }) => {
   const result = await activeUserUsecase.execute(data);
   revalidatePath(`/admin/user/form/update?id=${data.id}`);
+  return result;
+};
+
+export const requestNewPassword = async (data: { email: string }) => {
+  const result = await requestNewPasswordUserUsecase.execute(data);
   return result;
 };
