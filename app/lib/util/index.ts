@@ -20,3 +20,6 @@ export * from "./get-random-number";
 export * from "./get-status-prop";
 export * from "./build-control-tree";
 export * from "./iterator-to-web-stream";
+export * from "./generate-random-password";
+export * from "./format-template-email";
+export * from "./format-template-reset-passwor-email";

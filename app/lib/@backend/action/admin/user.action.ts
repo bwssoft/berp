@@ -1,19 +1,62 @@
 "use server";
-
+import { Filter } from "mongodb";
 import { IUser } from "../../domain/admin/entity/user.definition";
-import { createOneUserUsecase, newPasswordUserUsecase } from "../../usecase";
-import { resetPasswordUserUsecase } from "../../usecase/admin/user/reset-password.user.usecase";
+import {
+  activeUserUsecase,
+  createOneUserUsecase,
+  newPasswordUserUsecase,
+  lockUserUsecase,
+  findOneUserUsecase,
+  updateOneUserUsecase,
+  findManyUserUsecase,
+  resetPasswordUserUsecase,
+  requestNewPasswordUserUsecase,
+} from "../../usecase";
+import { revalidatePath } from "next/cache";
 
-export const createOneUser = async (data: Omit<IUser, "id" | "created_at" | "password">) => {
-    return await createOneUserUsecase.execute(data);
+type UpdateUserData = Partial<Omit<IUser, "id" | "created_at">>;
+
+export const createOneUser = async (
+  data: Omit<IUser, "id" | "created_at" | "password">
+) => {
+  return await createOneUserUsecase.execute(data);
 };
 
-export const resetPasswordUser = async () => {
-    await resetPasswordUserUsecase.execute({
-        id: "9cbe760c-6fd7-4137-ab6d-3be9427445ad",
-    });
+export const resetPasswordUser = async (props: { id: string }) => {
+  await resetPasswordUserUsecase.execute(props);
 };
 
-export const updateUserPassword = async (data: { id: string; password: string }) => {
-    return await newPasswordUserUsecase.execute(data);
+export const updateUserPassword = async (data: {
+  id: string;
+  password: string;
+}) => {
+  return await newPasswordUserUsecase.execute(data);
+};
+export const findOneUser = async (filter: Filter<IUser>) => {
+  return await findOneUserUsecase.execute(filter);
+};
+
+export const findManyUser = async (filter: Filter<IUser>) => {
+  return await findManyUserUsecase.execute(filter);
+};
+
+export const updateOneUser = async (id: string, data: UpdateUserData) => {
+  return await updateOneUserUsecase.execute({ id }, data);
+};
+
+export const lockUser = async (data: { id: string; lock: boolean }) => {
+  const result = await lockUserUsecase(data);
+  revalidatePath(`/admin/user/form/update?id=${data.id}`);
+  return result;
+};
+
+export const setUserActive = async (data: { id: string; active: boolean }) => {
+  const result = await activeUserUsecase.execute(data);
+  revalidatePath(`/admin/user/form/update?id=${data.id}`);
+  return result;
+};
+
+export const requestNewPassword = async (data: { email: string }) => {
+  const result = await requestNewPasswordUserUsecase.execute(data);
+  return result;
 };
