@@ -121,7 +121,6 @@ export function useUpdateOneUserForm(user: IUser) {
     }
 
     return {
-        isLoadingUser: false,
         profiles,
         register,
         control,

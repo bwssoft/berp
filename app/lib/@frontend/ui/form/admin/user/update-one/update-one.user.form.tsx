@@ -20,7 +20,7 @@ export function UpdateOneUserForm({ user }: Props) {
     errors,
     profiles,
     userData,
-    isLoadingUser,
+
     handleSubmit,
     handleCancelEdit,
   } = useUpdateOneUserForm(user);
@@ -39,7 +39,6 @@ export function UpdateOneUserForm({ user }: Props) {
     userId: userData.id,
   });
 
-  if (isLoadingUser) return <div>Carregando dados do usuário…</div>;
 
   const isLocked = userData.lock;
   const isActive = userData.active;
