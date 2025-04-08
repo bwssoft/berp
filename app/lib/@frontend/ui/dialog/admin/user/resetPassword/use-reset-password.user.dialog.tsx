@@ -18,7 +18,7 @@ export function useResetPasswordUserDialog({ userId, onSuccess }: Params) {
   const confirm = async () => {
     setIsLoading(true);
     try {
-      await resetPasswordUser();
+      await resetPasswordUser({ id: userId });
 
       toast({
         title: "Sucesso!",

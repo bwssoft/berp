@@ -12,119 +12,102 @@ import { IUser } from "@/app/lib/@backend/domain";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 
 const allowedDomains = [
-    "@bwsiot.com",
-    "@bwstechnology.com",
-    "@mgctechnology.com",
-    "@icb.com",
+  "@bwsiot.com",
+  "@bwstechnology.com",
+  "@mgctechnology.com",
+  "@icb.com",
 ];
 
 const updateSchema = z
-    .object({
-        id: z.string().optional(),
-        cpf: z
-            .string()
-            .min(11, "CPF obrigatório")
-            .refine(isValidCPF, "CPF inválido"),
-        email: z.string().email("Email inválido!"),
-        name: z.string(),
-        active: z.boolean(),
-        image: z.string().optional(),
-        profile_id: z.array(z.string()),
-        username: z.string(),
-        lock: z.boolean().optional(),
-        external: z.boolean().optional(),
-    })
-    .refine(
-        (data) =>
-            data.external ||
-            allowedDomains.some((d) => data.email.toLowerCase().endsWith(d)),
-        {
-            path: ["email"],
-            message: "Obrigatório informar um email com domínio interno!",
-        }
-    );
+  .object({
+    id: z.string().optional(),
+    cpf: z
+      .string()
+      .min(11, "CPF obrigatório")
+      .refine(isValidCPF, "CPF inválido"),
+    email: z.string().email("Email inválido!"),
+    name: z.string(),
+    active: z.boolean(),
+    image: z.string().optional(),
+    profile_id: z.array(z.string()),
+    username: z.string(),
+    lock: z.boolean().optional(),
+    external: z.boolean().optional(),
+  })
+  .refine(
+    (data) => {
+      // se externo igual a true é usuario externo, se for false é usuário interno
+      if (!data.external) {
+        // se for usuário interno
+        const emailLower = data.email.toLowerCase();
+        return allowedDomains.some((domain) => emailLower.endsWith(domain));
+      }
+      return true; // se for externo, qualquer e-mail é aceito
+    },
+    {
+      path: ["email"],
+      message: "Obrigatório informar um email com domínio interno!",
+    }
+  );
 
 export type UpdateUserSchema = z.infer<typeof updateSchema>;
 
 export function useUpdateOneUserForm(user: IUser) {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
+  const { data: allProfiles } = useQuery({
+    queryKey: ["findManyProfiles"],
+    queryFn: () => findManyProfile({}),
+  });
+  const profiles = allProfiles?.filter((p) => p.active) ?? [];
 
-    const { data: allProfiles } = useQuery({
-        queryKey: ["findManyProfiles"],
-        queryFn: () => findManyProfile({}),
-    });
-    const profiles = allProfiles?.filter((p) => p.active) ?? [];
+  const {
+    register,
+    handleSubmit: hookSubmit,
+    control,
+    formState: { errors, isDirty },
+    reset,
+  } = useForm<UpdateUserSchema>({
+    resolver: zodResolver(updateSchema),
+    defaultValues: user,
+  });
 
-    const {
-        register,
-        handleSubmit: hookSubmit,
-        control,
-        formState: { errors, isDirty },
-        reset,
-    } = useForm<UpdateUserSchema>({
-        resolver: zodResolver(updateSchema),
-        defaultValues: { active: true, profile_id: [] },
-    });
+  const handleSubmit = hookSubmit(async (data) => {
+    try {
+      if (!data.id) throw new Error("ID não informado");
 
-    React.useEffect(() => {
-        if (user) {
-            reset({
-                id: user.id,
-                cpf: user.cpf,
-                email: user.email,
-                name: user.name,
-                active: user.active,
-                image: user.image,
-                profile_id: user.profile_id,
-                username: user.username,
-                lock: user.lock,
-                external: user.external,
-            });
-        }
-    }, [user, reset]);
+      await updateOneUser(data.id, data);
 
-    const handleSubmit = hookSubmit(async (data) => {
-        try {
-            if (!data.id) throw new Error("ID não informado");
-
-            await updateOneUser(data.id, data);
-
-            toast({
-                title: "Sucesso!",
-                description: "Usuário atualizado com sucesso",
-                variant: "success",
-            });
-            queryClient.invalidateQueries({
-                queryKey: ["findOneUser", user.id],
-            });
-        } catch (err) {
-            console.error(err);
-            toast({
-                title: "Erro",
-                description: "Não foi possível atualizar o usuário",
-                variant: "error",
-            });
-        }
-    });
-
-    function handleCancelEdit() {
-        if (isDirty && user) {
-            reset({
-                ...user,
-                profile_id: Array.isArray(user.profile_id)
-                    ? user.profile_id
-                    : [user.profile_id],
-            });
-        }
+      toast({
+        title: "Sucesso!",
+        description: "Usuário atualizado com sucesso",
+        variant: "success",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["findOneUser", user.id],
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o usuário",
+        variant: "error",
+      });
     }
+  });
 
-    return {
-        profiles,
-        register,
-        control,
-        errors,
-        userData: user,
-        handleSubmit,
-        handleCancelEdit,
-    };
+  function handleCancelEdit() {
+    if (isDirty && user) {
+      reset(user);
+    }
+  }
+
+  return {
+    profiles,
+    register,
+    control,
+    errors,
+    userData: user,
+    handleSubmit,
+    handleCancelEdit,
+  };
 }

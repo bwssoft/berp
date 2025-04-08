@@ -1,26 +1,30 @@
+"use client";
+
 import { Button, Checkbox, Input } from "../../../../component";
 import { Combobox } from "@bwsoft/combobox";
 import { Controller } from "react-hook-form";
-
-
 import { IUser } from "@/app/lib/@backend/domain";
 import { useUpdateOneUserForm } from "./use-update-one-user-form";
-import { ActiveUserDialog, LockUserDialog, ResetPasswordUserDialog, useActiveUserDialog, useLockUserDialog, useResetPasswordUserDialog } from "../../../../dialog";
-
+import {
+  ActiveUserDialog,
+  LockUserDialog,
+  ResetPasswordUserDialog,
+  useActiveUserDialog,
+  useLockUserDialog,
+  useResetPasswordUserDialog,
+} from "../../../../dialog";
 
 interface Props {
   user: IUser;
 }
 
 export function UpdateOneUserForm({ user }: Props) {
-
   const {
     register,
     control,
     errors,
     profiles,
     userData,
-
     handleSubmit,
     handleCancelEdit,
   } = useUpdateOneUserForm(user);
@@ -39,27 +43,35 @@ export function UpdateOneUserForm({ user }: Props) {
     userId: userData.id,
   });
 
-
   const isLocked = userData.lock;
   const isActive = userData.active;
 
   return (
     <>
-      <h1 className="text-xl font-bold mb-4">
-        Edição de Usuário – {userData.name ?? ""}
-      </h1>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="flex gap-2">
-          <Button variant="secondary" onClick={lockDialog.openDialog}>
+      <form onSubmit={handleSubmit} className="space-y-4 w-full">
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            onClick={lockDialog.openDialog}
+            type="button"
+          >
             {isLocked ? "Desbloquear Usuário" : "Bloquear Usuário"}
           </Button>
 
-          <Button variant="secondary" onClick={resetPasswordDialog.openDialog} disabled={isLocked}>
+          <Button
+            variant="secondary"
+            onClick={resetPasswordDialog.openDialog}
+            disabled={isLocked}
+            type="button"
+          >
             Reset de Senha
           </Button>
 
-          <Button variant="secondary" onClick={activeDialog.openDialog}>
+          <Button
+            variant="secondary"
+            onClick={activeDialog.openDialog}
+            type="button"
+          >
             {isActive ? "Inativar" : "Ativar"}
           </Button>
         </div>
@@ -68,13 +80,14 @@ export function UpdateOneUserForm({ user }: Props) {
           <div className="md:col-span-2">
             <Controller
               control={control}
-              name="active"
+              name="external"
               render={({ field }) => (
                 <Checkbox
                   checked={field.value}
                   onChange={field.onChange}
                   onBlur={field.onBlur}
                   name={field.name}
+                  defaultChecked={field.value}
                   label="Usuário Externo"
                   disabled={isLocked}
                 />
@@ -120,6 +133,9 @@ export function UpdateOneUserForm({ user }: Props) {
                 className="mt-2"
                 type="multiple"
                 data={profiles ?? []}
+                defaultValue={profiles.filter((el) =>
+                  field.value.includes(el.id)
+                )}
                 error={errors.profile_id?.message}
                 onOptionChange={(items) => {
                   field.onChange(items.map((item) => item.id));
@@ -133,10 +149,10 @@ export function UpdateOneUserForm({ user }: Props) {
         </div>
 
         <div className="flex gap-2 justify-end mt-4">
-          <Button variant="secondary" onClick={handleCancelEdit}>
+          <Button variant="secondary" onClick={handleCancelEdit} type="button">
             Voltar
           </Button>
-          <Button variant="secondary" onClick={handleCancelEdit}>
+          <Button variant="secondary" onClick={handleCancelEdit} type="button">
             Cancelar
           </Button>
           <Button variant="default">Salvar</Button>

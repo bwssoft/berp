@@ -2,7 +2,7 @@ import { Filter } from "mongodb";
 import { userRepository } from "@/app/lib/@backend/infra";
 import { IUserRepository } from "@/app/lib/@backend/domain";
 
-export namespace Dto {
+namespace Dto {
     export type Input = { id: string; lock: boolean };
     export type Output = { success: boolean; error?: string };
 }

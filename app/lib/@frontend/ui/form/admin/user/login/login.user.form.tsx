@@ -25,10 +25,7 @@ export function LoginUserForm() {
       </div>
 
       <div className="flex justify-end">
-        <button
-          type="button"
-          className="text-sm text-blue-600 hover:underline"
-        >
+        <button type="button" className="text-sm text-blue-600 hover:underline">
           Esqueci minha senha
         </button>
       </div>
@@ -37,9 +34,7 @@ export function LoginUserForm() {
         <Button type="button" variant="ghost">
           Cancelar
         </Button>
-        <Button type="submit">
-          Salvar
-        </Button>
+        <Button type="submit">Login</Button>
       </div>
     </form>
   );

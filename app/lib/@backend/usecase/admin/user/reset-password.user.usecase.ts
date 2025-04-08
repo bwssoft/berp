@@ -9,7 +9,7 @@ import { randomInt } from "crypto";
 import { IBMessageGateway, IUserRepository } from "@/app/lib/@backend/domain";
 import { userRepository, bmessageGateway } from "@/app/lib/@backend/infra";
 
-export namespace Dto {
+namespace Dto {
     export type Input = {
         id: string;
     };
