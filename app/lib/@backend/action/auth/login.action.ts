@@ -1,20 +1,22 @@
-import { signIn } from "@/auth";
+"use server";
+
+import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 
 interface AuthResponse {
   success: boolean;
   error?: string;
 }
 
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData
-): Promise<AuthResponse> {
+export async function authenticate(data: {
+  password: string;
+  username: string;
+}): Promise<AuthResponse> {
   try {
     await signIn("credentials", {
-      username: formData.get("username") as string,
-      password: formData.get("password") as string,
-      redirect: true,
+      redirect: false,
+      ...data,
     });
     return { success: true };
   } catch (error) {
@@ -32,10 +34,14 @@ export async function authenticate(
           };
       }
     }
-
     return {
       success: false,
       error: "Erro inesperado.",
     };
   }
+}
+
+export async function logout(): Promise<void> {
+  await signOut({ redirect: false });
+  redirect("/login");
 }

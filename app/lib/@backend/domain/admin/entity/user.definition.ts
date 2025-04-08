@@ -5,11 +5,11 @@ export interface IUser {
   cpf: string;
   email: string;
   password: string;
-  password_request_token?: string | null;
+  temporary_password: boolean;
   profile_id: string[];
   lock: boolean;
   active: boolean;
-  image: string;
+  image?: string | null;
   external: boolean;
   created_at: Date;
 }

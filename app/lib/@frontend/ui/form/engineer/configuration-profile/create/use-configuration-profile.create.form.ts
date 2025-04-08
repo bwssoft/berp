@@ -261,7 +261,6 @@ export function useConfigurationProfileCreateForm(props: Props) {
           "Por favor, corrija os erros no formulário antes de submeter.",
         variant: "error",
       });
-      console.log("error", error);
     }
   );
 

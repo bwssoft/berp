@@ -1,5 +1,8 @@
 import type { NextAuthConfig } from "next-auth";
 
+const protectRoutes = ["/home", "/admin", "/engineer", "/commercial"];
+const unprotectRoutes = ["/login", "/forget-password", "/set-password"];
+
 export const authConfig = {
   pages: {
     signIn: "/login",
@@ -7,28 +10,18 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isLoginPage = nextUrl.pathname.startsWith("/login");
+      const path = nextUrl.pathname;
 
-      // Routes accessible by employees only
-      const isAuthRoutes =
-        nextUrl.pathname === "/" ||
-        nextUrl.pathname.startsWith("/home") ||
-        nextUrl.pathname.startsWith("/admin") ||
-        nextUrl.pathname.startsWith("/engineer") ||
-        nextUrl.pathname.startsWith("/commercial");
+      const isOnProtectRoute =
+        protectRoutes.some((r) => path.startsWith(r)) || path === "/";
+      const isOnUnprotectRoute = unprotectRoutes.some((r) =>
+        path.startsWith(r)
+      );
 
-      // Redirect unauthenticated users trying to access auth routes
-      if (!isAuthRoutes && !isLoggedIn) return;
-
-      if (isAuthRoutes && !isLoggedIn && !isLoginPage) {
-        return Response.redirect(new URL("/login", nextUrl));
+      if (isOnUnprotectRoute) return true;
+      if (isOnProtectRoute) {
+        return isLoggedIn;
       }
-
-      if (isLoggedIn && isLoginPage) {
-        return Response.redirect(new URL("/", nextUrl));
-      }
-      
-
       return true;
     },
     jwt({ user, token }) {
@@ -36,12 +29,17 @@ export const authConfig = {
         token = Object.assign(token, {
           id: user.id,
           profile_id: user.profile_id,
+          temporary_password: user.temporary_password,
+          name: user.name,
         });
       }
       return token;
     },
     session({ session, token }) {
       session.user.id = String(token.id);
+      session.user.profile_id = token.profile_id as string[];
+      session.user.temporary_password = token.temporary_password as boolean;
+      session.user.name = token.name as string;
       return session;
     },
   },
