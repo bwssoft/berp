@@ -2,7 +2,10 @@
 import { Filter } from "mongodb";
 import { IUser } from "../../domain/admin/entity/user.definition";
 import {
+    activeUserUsecase,
     createOneUserUsecase,
+    newPasswordUserUsecase,
+    lockUserUsecase,
     findOneUserUsecase,
     updateOneUserUsecase,
 } from "../../usecase";
@@ -22,10 +25,24 @@ export const resetPasswordUser = async () => {
     });
 };
 
+export const updateUserPassword = async (data: {
+    id: string;
+    password: string;
+}) => {
+    return await newPasswordUserUsecase.execute(data);
+};
 export const findOneUser = async (filter: Filter<IUser>) => {
     return await findOneUserUsecase.execute(filter);
 };
 
 export const updateOneUser = async (id: string, data: UpdateUserData) => {
     return await updateOneUserUsecase.execute({ id }, data);
+};
+
+export const lockUser = async (data: { id: string; lock: boolean }) => {
+    return await lockUserUsecase(data);
+};
+
+export const setUserActive = async (data: { id: string; active: boolean }) => {
+    return await activeUserUsecase.execute(data);
 };

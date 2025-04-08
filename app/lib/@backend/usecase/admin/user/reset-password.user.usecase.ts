@@ -1,12 +1,13 @@
-import { singleton } from "@/app/lib/util/singleton";
-import { generateRandomPassword } from "@/app/lib/util/generate-random-password";
-import { IUserRepository } from "../../../domain/admin/repository/user.repository.interface";
-import { userRepository } from "../../../infra/repository/mongodb/admin/user.repository";
+import {
+    singleton,
+    generateRandomPassword,
+    formatResetPasswordEmail,
+} from "@/app/lib/util";
+
 import { hash } from "bcrypt";
 import { randomInt } from "crypto";
-import { IBMessageGateway } from "../../../domain/@shared/gateway/bmessage.gateway.interface";
-import { bmessageGateway } from "../../../infra/gateway/bmessage/bmessage.gateway";
-import { formatResetPasswordEmail } from "@/app/lib/util/format-template-reset-passwor-email";
+import { IBMessageGateway, IUserRepository } from "@/app/lib/@backend/domain";
+import { userRepository, bmessageGateway } from "@/app/lib/@backend/infra";
 
 export namespace Dto {
     export type Input = {

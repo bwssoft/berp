@@ -1,38 +1,47 @@
-import { Controller } from "react-hook-form";
-import { Button, Checkbox, Dialog, Input } from "../../../../component";
+import { Button, Checkbox, Input } from "../../../../component";
 import { Combobox } from "@bwsoft/combobox";
-import { useUpdateOneUserForm } from "./use-update-one-user-form";
+import { Controller } from "react-hook-form";
+
+
 import { IUser } from "@/app/lib/@backend/domain";
+import { useUpdateOneUserForm } from "./use-update-one-user-form";
+import { ActiveUserDialog, LockUserDialog, ResetPasswordUserDialog, useActiveUserDialog, useLockUserDialog, useResetPasswordUserDialog } from "../../../../dialog";
 
 
-interface UpdateOneUserFormProps {
+interface Props {
   user: IUser;
 }
 
-export function UpdateOneUserForm({ user }: UpdateOneUserFormProps) {
+export function UpdateOneUserForm({ user }: Props) {
+
   const {
-    isLoadingUser,
     register,
     control,
     errors,
     profiles,
-    isDirty,
     userData,
+
     handleSubmit,
     handleCancelEdit,
   } = useUpdateOneUserForm(user);
 
-  if (isLoadingUser) {
-    return <div>Carregando dados do usuário...</div>;
-  }
+  const lockDialog = useLockUserDialog({
+    userId: userData.id,
+    willLock: !userData.lock,
+  });
+
+  const activeDialog = useActiveUserDialog({
+    userId: userData.id,
+    willActivate: !userData.active,
+  });
+
+  const resetPasswordDialog = useResetPasswordUserDialog({
+    userId: userData.id,
+  });
+
 
   const isLocked = userData.lock;
-  const blockButtonLabel = isLocked ? "Desbloquear Usuário" : "Bloquear Usuário";
-
   const isActive = userData.active;
-  const activeButtonLabel = isActive ? "Inativar" : "Ativar";
-
-  const canResetPassword = !isLocked;
 
   return (
     <>
@@ -41,12 +50,18 @@ export function UpdateOneUserForm({ user }: UpdateOneUserFormProps) {
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="gap-2 flex">
-          <Button variant="secondary">{blockButtonLabel}</Button>
-          <Button variant="secondary" disabled={!canResetPassword}>
+      <div className="flex gap-2">
+          <Button variant="secondary" onClick={lockDialog.openDialog}>
+            {isLocked ? "Desbloquear Usuário" : "Bloquear Usuário"}
+          </Button>
+
+          <Button variant="secondary" onClick={resetPasswordDialog.openDialog} disabled={isLocked}>
             Reset de Senha
           </Button>
-          <Button variant="secondary">{activeButtonLabel}</Button>
+
+          <Button variant="secondary" onClick={activeDialog.openDialog}>
+            {isActive ? "Inativar" : "Ativar"}
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -127,6 +142,29 @@ export function UpdateOneUserForm({ user }: UpdateOneUserFormProps) {
           <Button variant="default">Salvar</Button>
         </div>
       </form>
+
+      <LockUserDialog
+        open={lockDialog.open}
+        setOpen={lockDialog.setOpen}
+        confirm={lockDialog.confirm}
+        isLoading={lockDialog.isLoading}
+        willLock={!isLocked}
+      />
+
+      <ActiveUserDialog
+        open={activeDialog.open}
+        setOpen={activeDialog.setOpen}
+        confirm={activeDialog.confirm}
+        isLoading={activeDialog.isLoading}
+        willActivate={!isActive}
+      />
+
+      <ResetPasswordUserDialog
+        open={resetPasswordDialog.open}
+        setOpen={resetPasswordDialog.setOpen}
+        confirm={resetPasswordDialog.confirm}
+        isLoading={resetPasswordDialog.isLoading}
+      />
     </>
   );
 }

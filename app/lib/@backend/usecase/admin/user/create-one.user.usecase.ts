@@ -1,33 +1,36 @@
-import { singleton } from "@/app/lib/util/singleton";
-import { generateRandomPassword } from "@/app/lib/util/generate-random-password";
-import { IUserRepository } from "../../../domain/admin/repository/user.repository.interface";
-import { userRepository } from "../../../infra/repository/mongodb/admin/user.repository";
-import { IUser } from "../../../domain/admin/entity/user.definition";
-import { hash } from "bcrypt";
+import {
+    formatWelcomeEmail,
+    generateRandomPassword,
+    singleton,
+} from "@/app/lib/util";
+import {
+    IBMessageGateway,
+    IUser,
+    IUserRepository,
+} from "@/app/lib/@backend/domain";
+import { bmessageGateway, userRepository } from "@/app/lib/@backend/infra";
 import { randomInt } from "crypto";
-import { IBMessageGateway } from "../../../domain/@shared/gateway/bmessage.gateway.interface";
-import { bmessageGateway } from "../../../infra/gateway/bmessage/bmessage.gateway";
-import { formatWelcomeEmail } from "@/app/lib/util/format-template-email";
+import { hash } from "bcrypt";
 
 namespace Dto {
     export type Input = {
-      id: string;
-      active: boolean;
+        id: string;
+        active: boolean;
     };
-  
+
     export type Output = {
-      success: boolean;
-      error?: {
-        global?: string;
-        username?: string;
-        name?: string;
-        cpf?: string;
-        email?: string;
-        profile_id?: string[];
-        lock?: boolean;
-        active?: boolean;
-        image?: string;
-      };
+        success: boolean;
+        error?: {
+            global?: string;
+            username?: string;
+            name?: string;
+            cpf?: string;
+            email?: string;
+            profile_id?: string[];
+            lock?: boolean;
+            active?: boolean;
+            image?: string;
+        };
     };
 }
 
@@ -40,7 +43,9 @@ class CreateOneUserUsecase {
         this.bmessageGateway = bmessageGateway;
     }
 
-    async execute(input: Omit<IUser, "id" | "created_at" | "password">): Promise<Dto.Output> {
+    async execute(
+        input: Omit<IUser, "id" | "created_at" | "password">
+    ): Promise<Dto.Output> {
         const temporaryPassword = generateRandomPassword();
         const randomSalt = randomInt(10, 16);
 
@@ -53,10 +58,20 @@ class CreateOneUserUsecase {
         });
 
         const cpfExists = await this.repository.findOne({ cpf: user.cpf });
-        if(cpfExists) return { success: false, error: { cpf: "CPF já cadastrado para outro usuário!" } };
+        if (cpfExists)
+            return {
+                success: false,
+                error: { cpf: "CPF já cadastrado para outro usuário!" },
+            };
 
-        const usernameExists = await this.repository.findOne({ username: user.username });
-        if(usernameExists) return { success: false, error: { username: "Usuário já utilizado em outro cadastro!" } };
+        const usernameExists = await this.repository.findOne({
+            username: user.username,
+        });
+        if (usernameExists)
+            return {
+                success: false,
+                error: { username: "Usuário já utilizado em outro cadastro!" },
+            };
 
         // 1º passo, criar o usuario (ok)
         try {
@@ -78,9 +93,12 @@ class CreateOneUserUsecase {
             return {
                 success: false,
                 error: {
-                  global: err instanceof Error ? err.message : JSON.stringify(err),
+                    global:
+                        err instanceof Error
+                            ? err.message
+                            : JSON.stringify(err),
                 },
-              };
+            };
         }
     }
 }

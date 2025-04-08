@@ -1,16 +1,15 @@
+"use client";
+
 import * as React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "@/app/lib/@frontend/hook";
-import { findManyProfile } from "@/app/lib/@backend/action";
-import { updateOneUser } from "@/app/lib/@backend/action/admin/user.action";
-import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
+import { findManyProfile, updateOneUser } from "@/app/lib/@backend/action";
 import { IUser } from "@/app/lib/@backend/domain";
-import { UpdateResult } from "mongodb";
+import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 
 const allowedDomains = [
     "@bwsiot.com",
@@ -25,7 +24,7 @@ const updateSchema = z
         cpf: z
             .string()
             .min(11, "CPF obrigatório")
-            .refine((value) => isValidCPF(value), "CPF inválido"),
+            .refine(isValidCPF, "CPF inválido"),
         email: z.string().email("Email inválido!"),
         name: z.string(),
         active: z.boolean(),
@@ -36,15 +35,9 @@ const updateSchema = z
         external: z.boolean().optional(),
     })
     .refine(
-        (data) => {
-            if (!data.external) {
-                const emailLower = data.email.toLowerCase();
-                return allowedDomains.some((domain) =>
-                    emailLower.endsWith(domain)
-                );
-            }
-            return true;
-        },
+        (data) =>
+            data.external ||
+            allowedDomains.some((d) => data.email.toLowerCase().endsWith(d)),
         {
             path: ["email"],
             message: "Obrigatório informar um email com domínio interno!",
@@ -60,20 +53,17 @@ export function useUpdateOneUserForm(user: IUser) {
         queryKey: ["findManyProfiles"],
         queryFn: () => findManyProfile({}),
     });
-    const activeProfiles = allProfiles?.filter((p) => p.active) ?? [];
+    const profiles = allProfiles?.filter((p) => p.active) ?? [];
 
     const {
         register,
-        handleSubmit: hookFormSubmit,
+        handleSubmit: hookSubmit,
         control,
         formState: { errors, isDirty },
         reset,
     } = useForm<UpdateUserSchema>({
         resolver: zodResolver(updateSchema),
-        defaultValues: {
-            active: true,
-            profile_id: [],
-        },
+        defaultValues: { active: true, profile_id: [] },
     });
 
     React.useEffect(() => {
@@ -88,25 +78,17 @@ export function useUpdateOneUserForm(user: IUser) {
                 profile_id: user.profile_id,
                 username: user.username,
                 lock: user.lock,
+                external: user.external,
             });
         }
     }, [user, reset]);
 
-    const { mutateAsync: mutateUpdate } = useMutation<
-        UpdateResult<IUser>,
-        AxiosError,
-        UpdateUserSchema
-    >({
-        mutationFn: async (formData) => {
-            const { id, ...value } = formData;
-            if (!id) throw new Error("ID não informado");
-
-            return updateOneUser(id, value);
-        },
-    });
-    const handleSubmit = hookFormSubmit(async (formData) => {
+    const handleSubmit = hookSubmit(async (data) => {
         try {
-            await mutateUpdate(formData);
+            if (!data.id) throw new Error("ID não informado");
+
+            await updateOneUser(data.id, data);
+
             toast({
                 title: "Sucesso!",
                 description: "Usuário atualizado com sucesso",
@@ -114,10 +96,9 @@ export function useUpdateOneUserForm(user: IUser) {
             });
             queryClient.invalidateQueries({
                 queryKey: ["findOneUser", user.id],
-                exact: true,
             });
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            console.error(err);
             toast({
                 title: "Erro",
                 description: "Não foi possível atualizar o usuário",
@@ -137,18 +118,12 @@ export function useUpdateOneUserForm(user: IUser) {
         }
     }
 
-    const [showBlockModal, setShowBlockModal] = React.useState(false);
-
     return {
-        isLoadingUser: false,
-        profiles: activeProfiles,
+        profiles,
         register,
         control,
         errors,
-        isDirty,
-        showBlockModal,
         userData: user,
-
         handleSubmit,
         handleCancelEdit,
     };
