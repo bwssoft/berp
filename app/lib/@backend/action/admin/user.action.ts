@@ -17,7 +17,7 @@ import { revalidatePath } from "next/cache";
 type UpdateUserData = Partial<Omit<IUser, "id" | "created_at">>;
 
 export const createOneUser = async (
-  data: Omit<IUser, "id" | "created_at" | "password">
+  data: Omit<IUser, "id" | "created_at" | "password" | "temporary_password">
 ) => {
   return await createOneUserUsecase.execute(data);
 };

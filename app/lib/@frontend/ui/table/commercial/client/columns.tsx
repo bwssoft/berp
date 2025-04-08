@@ -34,7 +34,7 @@ export const columns: ColumnDef<IClient>[] = [
           >
             Editar
           </Link>
-          <form action={() => deleteOneClientById({ id: input.id! })}>
+          <form onSubmit={() => deleteOneClientById({ id: input.id! })}>
             <button
               type="submit"
               className="text-blue-600 hover:text-blue-900 px-0 py-0"

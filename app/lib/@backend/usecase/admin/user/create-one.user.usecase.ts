@@ -44,7 +44,7 @@ class CreateOneUserUsecase {
   }
 
   async execute(
-    input: Omit<IUser, "id" | "created_at" | "password">
+    input: Omit<IUser, "id" | "created_at" | "password" | "temporary_password">
   ): Promise<Dto.Output> {
     const temporaryPassword = generateRandomPassword();
     const randomSalt = randomInt(10, 16);

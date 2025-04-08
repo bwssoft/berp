@@ -8,7 +8,7 @@ interface Props {
 
 export async function Layout(props: Props) {
   const { children, navigation } = props;
-  const session = await auth();
+  const session = { user: {} };
   if (!session?.user)
     return (
       <div>
