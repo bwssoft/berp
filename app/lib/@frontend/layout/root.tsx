@@ -5,6 +5,7 @@ import { Toaster } from "../ui/component";
 import HolyLoader from "holy-loader";
 import { AuthProvider } from "../context";
 import { IProfile, IUser } from "../../@backend/domain";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,15 +20,17 @@ export function Root(props: Props) {
   return (
     <html lang="en" className="h-full bg-gray-50">
       <ReactQueryClientProvider>
-        <AuthProvider user={user}>
-          <HolyLoader
-            color="linear-gradient(to right, #FFB80E, #FF1BD4, #0FAAEC)"
-            speed={250}
-            easing="linear"
-            showSpinner
-          />
-          <body className={cn(inter.className, "h-full")}>{children}</body>
-        </AuthProvider>
+        <SessionProvider>
+          <AuthProvider user={user}>
+            <HolyLoader
+              color="linear-gradient(to right, #FFB80E, #FF1BD4, #0FAAEC)"
+              speed={250}
+              easing="linear"
+              showSpinner
+            />
+            <body className={cn(inter.className, "h-full")}>{children}</body>
+          </AuthProvider>
+        </SessionProvider>
       </ReactQueryClientProvider>
       <Toaster />
     </html>

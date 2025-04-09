@@ -6,7 +6,7 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import { findOneProfile, findOneUser } from "./app/lib/@backend/action";
 
-export const { auth, signIn, signOut } = NextAuth({
+const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -38,3 +38,8 @@ export const { auth, signIn, signOut } = NextAuth({
     }),
   ],
 });
+
+const GET = handlers.GET;
+const POST = handlers.POST;
+
+export { auth, signIn, signOut, GET, POST };
