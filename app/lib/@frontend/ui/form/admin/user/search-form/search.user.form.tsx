@@ -1,10 +1,9 @@
 // app/lib/@frontend/ui/form/admin/user/search-form/search.user.form.tsx
 "use client";
 
-import { Button, Input } from "../../../../component";
+import { Button, Input, Modal, Combobox } from "../../../../component";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import { useSearchUserForm } from "./use-search.user.form";
-import { Combobox } from "@bwsoft/combobox";
 import { Controller } from "react-hook-form";
 
 export function SearchUserForm() {
@@ -22,7 +21,7 @@ export function SearchUserForm() {
   } = useSearchUserForm();
 
   return (
-      <form onSubmit={onSubmit} className="w-full space-y-2">
+      <div className="w-full space-y-2">
         <div className="border border-gray-900/10 p-4 rounded-lg shadow-md bg-white">
           <div className="flex gap-2 items-end">
             <Input
@@ -43,9 +42,8 @@ export function SearchUserForm() {
           </div>
         </div>
 
-        {isModalOpen && (
-          // <Modal title="Pesquisa Detalhada" onClose={toggleModal}>
-          <>
+        <Modal position="left"  title="Pesquisa Detalhada" onClose={toggleModal} open={isModalOpen}>
+          <form onSubmit={onSubmit}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
               <Input
                 label="Nome"
@@ -107,6 +105,7 @@ export function SearchUserForm() {
                     }
                     error={fieldState.error?.message}
                     keyExtractor={(item) => item.id}
+                    className="w-full z-50 "
                     displayValueGetter={(item) => item.name}
                   />
                 )}
@@ -120,9 +119,8 @@ export function SearchUserForm() {
                 Limpar
               </Button>
             </div>
-          </>
-        )}
-        {/* </Modal> */}
-      </form>
+          </form>
+       </Modal>
+      </div>
   );
 }

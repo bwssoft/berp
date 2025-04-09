@@ -10,3 +10,4 @@ export * from "./use-technology";
 export * from "./use-communication";
 export * from "./use-configuration";
 export * from "./use-identification";
+export * from "./use-click-outside";

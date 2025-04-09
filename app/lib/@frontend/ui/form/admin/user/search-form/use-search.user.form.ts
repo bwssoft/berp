@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 import { findManyProfile } from "@/app/lib/@backend/action";
+import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";
 
 const schema = z.object({
   quick: z.string().optional(),
@@ -67,7 +68,7 @@ export const useSearchUserForm = () => {
       string | boolean | (string | boolean)[] | undefined
     > = {
       name: data.name,
-      cpf: data.cpf,
+      cpf: removeSpecialCharacters(String(data.cpf)),
       profile_id: data.profile_id,
       username: data.username,
       email: data.email,
@@ -79,7 +80,14 @@ export const useSearchUserForm = () => {
 
   const onReset = () => {
     reset();
-    handleParamsChange({});
+    handleParamsChange({
+      name: undefined,
+      cpf: undefined,
+      profile_id: undefined,
+      username: undefined,
+      email: undefined,
+      active: undefined,
+    });
   };
 
   const handleChangeQuickSearch = useDebounce(

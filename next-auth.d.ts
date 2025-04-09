@@ -1,4 +1,5 @@
 import { DefaultSession, DefaultUser } from "next-auth";
+import { IProfile } from "./app/lib/@backend/domain";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -7,7 +8,8 @@ declare module "next-auth" {
       created_at: Date;
       id: string;
       name: string;
-      profile_id: string[];
+      profile: { id: string; name: string }[];
+      current_profile: IProfile;
       temporary_password: boolean;
     };
   }
@@ -17,7 +19,8 @@ declare module "next-auth" {
     created_at: Date;
     id: string;
     name: string;
-    profile_id: string[];
+    profile: { id: string; name: string }[];
+    current_profile: IProfile;
     temporary_password: boolean;
   }
 }

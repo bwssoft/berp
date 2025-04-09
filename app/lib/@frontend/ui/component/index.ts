@@ -25,3 +25,6 @@ export * from "./back-button";
 export * from "./progress-bar";
 export * from "./dialog";
 export * from "./grid-list";
+export * from "./combobox";
+export * from "./popover";
+export * from "./modal";
