@@ -1,23 +1,43 @@
 "use client";
 
 import React, { createContext, useContext } from "react";
-import { IUser } from "../../@backend/domain";
+import { IProfile, IUser } from "../../@backend/domain";
+import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
+
+type AuthUser = Partial<IUser> & { current_profile: IProfile };
 
 interface AuthContextType {
-  user: Partial<IUser> | null;
+  user: AuthUser | undefined;
+  profile: IProfile | undefined;
+  changeProfile: (input: IProfile) => void;
 }
 
-const AuthContext = createContext<AuthContextType>({ user: null });
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({
-  user,
+  session,
   children,
 }: {
-  user: Partial<IUser> | null;
+  session: Session | null;
   children: React.ReactNode;
 }) => {
+  const { data, update } = useSession();
+  const changeProfile = async (input: IProfile) => {
+    await update({
+      user: { ...data?.user, current_profile: input },
+    });
+  };
   return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        user: data?.user ?? session?.user,
+        profile: data?.user?.current_profile ?? session?.user?.current_profile,
+        changeProfile,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 };
 
