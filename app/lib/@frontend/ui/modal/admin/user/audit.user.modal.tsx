@@ -1,31 +1,25 @@
 "use client";
+
 import React from "react";
 import { Modal, ModalBody, ModalContent, ModalFooter } from "../../../component/modal";
 import { AuditTable} from "../../../table/admin/audit";
-import { IAudit } from "@/app/lib/@backend/domain";
-
+import { IAudit, IUser } from "@/app/lib/@backend/domain";
+import { cn } from "@/app/lib/util";
 
 interface AuditUserModalProps {
   open: boolean;
   closeModal: () => void;
   auditData: IAudit[];
+  user?: Pick<IUser, "id" | "name">
 }
 
-export default function AuditUserModal({ open, closeModal, auditData }: AuditUserModalProps) {
+export function AuditUserModal({ open, closeModal, auditData, user }: AuditUserModalProps) {
   return (
-    <Modal open={open} onClose={closeModal} title="Histórico de Alterações" className="bg-white" position="center">
+    <Modal open={open} onClose={closeModal} title={cn("Histórico de Alterações - ", user?.name)} className="bg-white" position="center">
       <ModalContent>
         <ModalBody>
           <AuditTable data={auditData} />
         </ModalBody>
-        <ModalFooter>
-          <button
-            onClick={closeModal}
-            className="rounded bg-red-500 px-4 py-2 text-white"
-          >
-            Fechar
-          </button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );
