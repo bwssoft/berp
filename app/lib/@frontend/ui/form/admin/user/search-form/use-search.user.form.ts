@@ -1,28 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 import { findManyProfile } from "@/app/lib/@backend/action";
 
 const schema = z.object({
+  quick: z.string().optional(),
+
   name: z.string().optional(),
   cpf: z.string().optional(),
   profile_id: z.array(z.string()).optional(),
   username: z.string().optional(),
   email: z.string().optional(),
   active: z
-  .array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      value: z.boolean()
-    })
-  )
-  .optional(),
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        value: z.boolean(),
+      })
+    )
+    .optional(),
 });
 
 export type SearchUserFormValues = z.infer<typeof schema>;
@@ -60,21 +62,17 @@ export const useSearchUserForm = () => {
   const toggleModal = () => setIsModalOpen((prev) => !prev);
 
   const onSubmit = handleSubmit((data) => {
-
-  
-    const params: Record<string, string | boolean | (string | boolean)[] | undefined> = {
+    const params: Record<
+      string,
+      string | boolean | (string | boolean)[] | undefined
+    > = {
       name: data.name,
       cpf: data.cpf,
       profile_id: data.profile_id,
       username: data.username,
       email: data.email,
-      active:
-        data.active && data.active.length > 0
-          ? data.active.map((item) => item.value)
-          : undefined,
+      active: data.active?.map(({ value }) => value),
     };
-    
-  
     handleParamsChange(params);
     toggleModal();
   });
@@ -83,6 +81,15 @@ export const useSearchUserForm = () => {
     reset();
     handleParamsChange({});
   };
+
+  const handleChangeQuickSearch = useDebounce(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      handleParamsChange({
+        quick: e.target.value,
+      });
+    },
+    300
+  );
 
   return {
     register,
@@ -95,6 +102,7 @@ export const useSearchUserForm = () => {
     profiles,
     onSubmit,
     onReset,
-    control
+    control,
+    handleChangeQuickSearch,
   };
 };

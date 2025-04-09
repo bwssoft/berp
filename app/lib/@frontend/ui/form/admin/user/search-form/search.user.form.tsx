@@ -17,7 +17,8 @@ export function SearchUserForm() {
     onReset,
     setValue,
     control,
-    errors
+    errors,
+    handleChangeQuickSearch
   } = useSearchUserForm();
 
   return (
@@ -28,7 +29,7 @@ export function SearchUserForm() {
               label="Nome ou CPF"
               placeholder="Digite e busque pelo nome do usuário ou CPF"
               containerClassname="sm:w-96"
-              {...register("name")}
+              onChange={handleChangeQuickSearch}
             />
             <Button
               type="button"
@@ -98,8 +99,8 @@ export function SearchUserForm() {
                       field.onChange(
                         items.some((i) => i.id === "")
                           ? [
-                              { id: "ativo", name: "Ativo" },
-                              { id: "inativo", name: "Inativo" },
+                              { id: "ativo", name: "Ativo", value: true },
+                              { id: "inativo", name: "Inativo", value: false },
                             ]
                           : items
                       )

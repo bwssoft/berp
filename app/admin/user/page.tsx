@@ -1,16 +1,28 @@
 import { findManyUser } from "@/app/lib/@backend/action";
+import { IUser } from "@/app/lib/@backend/domain";
 import { SearchUserForm } from "@/app/lib/@frontend/ui/form/admin/user/search-form/search.user.form";
 import { UserTable } from "@/app/lib/@frontend/ui/table/admin/user";
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { Filter } from "mongodb";
 import Link from "next/link";
 
 interface Props {
-  searchParams: {};
+  searchParams: {
+    quick?: string;
+
+    name?: string;
+    cpf?: string;
+    profile_id?: string[] | string;
+    username?: string;
+    email?: string;
+    active?: string[] | string;
+    start_date?: Date;
+    end_date?: Date;
+  };
 }
 export default async function Example(props: Props) {
   const { searchParams } = props;
-  console.log(searchParams);
-  const users = await findManyUser({ ...searchParams });
+  const users = await findManyUser(query(searchParams));
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -39,4 +51,72 @@ export default async function Example(props: Props) {
       </div>
     </div>
   );
+}
+
+function query(props: Props["searchParams"]): Filter<IUser> {
+  const conditions: Filter<IUser>[] = [];
+
+  if (props.quick) {
+    const regex = { $regex: props.quick, $options: "i" };
+    conditions.push({
+      $or: [
+        { cpf: regex },
+        { username: regex },
+        { email: regex },
+        { name: regex },
+        { "profile.name": regex },
+      ],
+    });
+  }
+
+  if (props.name) {
+    const regex = { $regex: props.name, $options: "i" };
+    conditions.push({ name: regex });
+  }
+
+  if (props.cpf) {
+    const regex = { $regex: props.cpf, $options: "i" };
+    conditions.push({ cpf: regex });
+  }
+
+  if (props.username) {
+    const regex = { $regex: props.username, $options: "i" };
+    conditions.push({ username: regex });
+  }
+
+  if (props.email) {
+    const regex = { $regex: props.email, $options: "i" };
+    conditions.push({ email: regex });
+  }
+
+  if (props.profile_id) {
+    const profile_id =
+      typeof props.profile_id === "string"
+        ? [props.profile_id]
+        : props.profile_id;
+    conditions.push({ "profile.id": { $in: profile_id } });
+  }
+
+  if (props.active) {
+    // Converte as strings para booleanos ("true" => true, "false" => false)
+    const statusBooleans =
+      typeof props.active === "string"
+        ? [props.active === "true"]
+        : props.active.map((s) => s === "true");
+    conditions.push({
+      active: { $in: statusBooleans },
+    });
+  }
+
+  // Combina as condições utilizando $and se houver mais de uma
+  if (conditions.length === 1) {
+    return conditions[0];
+  }
+
+  if (conditions.length > 1) {
+    return { $and: conditions };
+  }
+
+  // Retorna um filtro vazio se não houver condições
+  return {};
 }
