@@ -4,13 +4,13 @@ import { ReactQueryClientProvider } from "../providers/QueryClientProvider";
 import { Toaster } from "../ui/component";
 import HolyLoader from "holy-loader";
 import { AuthProvider } from "../context";
-import { IUser } from "../../@backend/domain";
+import { IProfile, IUser } from "../../@backend/domain";
 
 const inter = Inter({ subsets: ["latin"] });
 
 interface Props {
   children: React.ReactNode;
-  user: Partial<IUser> | null;
+  user: (Partial<IUser> & { current_profile: IProfile }) | null;
 }
 
 export function Root(props: Props) {
