@@ -1,12 +1,10 @@
 // app/lib/@frontend/ui/form/admin/user/search-form/search.user.form.tsx
 "use client";
 
-import { Button, Input } from "../../../../component";
+import { Button, Input, Modal, Combobox } from "../../../../component";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import { useSearchUserForm } from "./use-search.user.form";
-import { Combobox } from "@bwsoft/combobox";
 import { Controller } from "react-hook-form";
-import { Modal } from "../../../../component/modal";
 
 export function SearchUserForm() {
   const {
@@ -23,7 +21,7 @@ export function SearchUserForm() {
   } = useSearchUserForm();
 
   return (
-      <form onSubmit={onSubmit} className="w-full space-y-2">
+      <div className="w-full space-y-2">
         <div className="border border-gray-900/10 p-4 rounded-lg shadow-md bg-white">
           <div className="flex gap-2 items-end">
             <Input
@@ -44,7 +42,7 @@ export function SearchUserForm() {
           </div>
         </div>
 
-        <Modal position="left" className="bg-white"  title="Pesquisa Detalhada" onClose={toggleModal} open={isModalOpen}>
+        <Modal position="left"  title="Pesquisa Detalhada" onClose={toggleModal} open={isModalOpen}>
           <form onSubmit={onSubmit}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
               <Input
@@ -123,6 +121,6 @@ export function SearchUserForm() {
             </div>
           </form>
        </Modal>
-      </form>
+      </div>
   );
 }
