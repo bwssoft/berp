@@ -6,7 +6,7 @@ export interface IUser {
   email: string;
   password: string;
   temporary_password: boolean;
-  profile_id: string[];
+  profile: { id: string; name: string }[];
   lock: boolean;
   active: boolean;
   image?: string | null;

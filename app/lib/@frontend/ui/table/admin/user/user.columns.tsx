@@ -21,7 +21,14 @@ export const columns: ColumnDef<IUser>[] = [
       );
     },
   },
-  { header: "Perfil", accessorKey: "profile_id" },
+  {
+    header: "Perfil",
+    accessorKey: "profile",
+    cell: ({ row }) => {
+      const user = row.original;
+      return user.profile.map(({ name }) => name).join(", ");
+    },
+  },
   {
     header: "Data de criação",
     accessorKey: "created_at",
