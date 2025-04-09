@@ -6,6 +6,7 @@ import { Button, Toggle } from "../../../component";
 import React from "react";
 import { UserLinkedProfileModal } from "../../../modal/admin/profile";
 import { useUserLinkedProfileModal } from "../../../modal/admin/profile/user-linked/use-user-linked.profile.modal";
+import { ProfileAction } from "./profile.action";
 
 export const columns: ColumnDef<IProfile>[] = [
   { header: "Perfil", accessorKey: "name" },
@@ -36,7 +37,7 @@ export const columns: ColumnDef<IProfile>[] = [
     accessorKey: "created_at",
     cell: ({ row }) => {
       const { original } = row;
-      const { openModalUserLinkedProfile } = useUserLinkedProfileModal()
+      const { openModalUserLinkedProfile } = useUserLinkedProfileModal();
 
       return (
         <td className="flex gap-2 items-center">
@@ -61,9 +62,7 @@ export const columns: ColumnDef<IProfile>[] = [
             onChange={() => alert("activeInactiveProfile({id})")}
             title={(value) => (value ? "Inativar" : "Ativar")}
           />
-          <UserLinkedProfileModal 
-            nameProfile={original.name} 
-          />
+          <UserLinkedProfileModal nameProfile={original.name} />
         </td>
       );
     },

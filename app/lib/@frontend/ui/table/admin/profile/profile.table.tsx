@@ -10,12 +10,14 @@ interface Props {
 export function ProfileTable(props: Props) {
   const { data } = props;
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      mobileDisplayValue={(data) => data.name}
-      mobileKeyExtractor={(data) => data.created_at?.toISOString()}
-      className="w-full"
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={data}
+        mobileDisplayValue={(data) => data.name}
+        mobileKeyExtractor={(data) => data.created_at?.toISOString()}
+        className="w-full"
+      />
+    </>
   );
 }
