@@ -61,16 +61,16 @@ export function CreateOneUserForm() {
 
           <Controller
             control={control}
-            name="profile_id"
+            name="profile"
             render={({ field }) => (
               <Combobox
                 label="Perfis"
                 className="mt-2"
                 type="multiple"
                 data={profiles ?? []}
-                error={errors.profile_id?.message}
+                error={errors.profile?.message}
                 onOptionChange={(items) => {
-                  field.onChange(items.map((item) => item.id));
+                  field.onChange(items);
                 }}
                 keyExtractor={(item) => item.id}
                 displayValueGetter={(item) => item.name}

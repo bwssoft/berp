@@ -29,7 +29,7 @@ const updateSchema = z
     name: z.string(),
     active: z.boolean(),
     image: z.string().optional().nullable(),
-    profile_id: z.array(z.string()),
+    profile: z.array(z.object({ id: z.string(), name: z.string() })),
     username: z.string(),
     lock: z.boolean().optional(),
     external: z.boolean().optional(),
