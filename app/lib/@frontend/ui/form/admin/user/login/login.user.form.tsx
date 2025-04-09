@@ -8,7 +8,7 @@ export function LoginUserForm() {
   const { handleSubmit, register, errors } = useLoginUserForm();
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form action={() => handleSubmit()}>
       <div className="grid grid-cols-1 gap-6">
         <Input
           label="Usuário"
