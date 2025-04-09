@@ -11,9 +11,11 @@ export function useUserLinkedProfileModal(nameProfile?: string) {
     queryFn: () => findManyUser({"profile.name": nameProfile}),
   }).data;
 
+  const openModalUserLinkedProfile = () => {setOpen(true)};
+
   return {
     users,
-    openModalUserLinkedProfile: () => setOpen(true),
+    openModalUserLinkedProfile,
     setOpen,
     open
   };

@@ -6,20 +6,16 @@ import { useProfileLinkedControlModal } from "./use-profile-linked.control.modal
 import { ProfileTable } from "../../../table";
 
 interface Props {
-  open: boolean;
   codeControl: string
-  onClose: () => void;
 }
 
 export function ProfileLinkedControlModal({
-    open,
     codeControl,
-    onClose,
   }: Props) {
-      const { profiles } = useProfileLinkedControlModal(codeControl)
+      const { profiles, setOpen, open } = useProfileLinkedControlModal(codeControl)
   
     return (
-      <Modal position="center" title="Perfis relacionados ao controle de acesso" open={open} onClose={onClose} >
+      <Modal position="center" title="Perfis relacionados ao controle de acesso" open={open} onClose={() => setOpen(prev => !prev)} >
         <ModalBody>
           <ModalContent className="overflow-y-scroll max-h-[70vh]">
               <ProfileTable data={profiles ?? []}/>

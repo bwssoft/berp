@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ProfileLinkedControlModal } from "../../../../modal";
 import { useState } from "react";
+import { useProfileLinkedControlModal } from "../../../../modal/admin/control/use-profile-linked.control.modal";
 
 interface Props {
   control: IControl;
@@ -20,7 +21,7 @@ interface Props {
 export function SetLockedProfileForm(props: Props) {
   const { control, profile } = props;
   const { handleLocked } = useSetLockedProfileForm(props);
-  const [openControlCode, setOpenControlCode ] = useState(false)
+  const { openModalProfileLinkedControl } = useProfileLinkedControlModal()
 
   return (
     <form className="flex justify-between w-full items-center">
@@ -52,7 +53,7 @@ export function SetLockedProfileForm(props: Props) {
           title="Perfis"
           onClick={(e) => {
             e.preventDefault();
-            setOpenControlCode(prev => !prev)
+            openModalProfileLinkedControl()
           }}
           className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
         >
@@ -69,8 +70,6 @@ export function SetLockedProfileForm(props: Props) {
         )}
       </div>
       <ProfileLinkedControlModal 
-        onClose={() => {setOpenControlCode(prev => !prev)}} 
-        open={openControlCode} 
         codeControl={control.code}
       />
     </form>
