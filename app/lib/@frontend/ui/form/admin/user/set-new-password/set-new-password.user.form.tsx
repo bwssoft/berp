@@ -7,21 +7,21 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
   const { register, handleSubmit, errors } = useSetNewPasswordUserForm(userId);
 
   return (
-    <form onSubmit={handleSubmit} className="mt-10">
-      <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8">
+    <form onSubmit={handleSubmit}>
+      <div className="grid grid-cols-1 gap-x-6 gap-y-8">
         <div className="flex items-end gap-2">
-            <div className="flex-1">
-                <Input
-                label="Senha"
-                type="password"
-                {...register("password")}
-                error={errors.password?.message}
-                />
-            </div>
-            <InformationCircleIcon
-                className="w-5 h-9 text-gray-500 cursor-pointer"
-                title="A senha deve conter: 8-32 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 símbolo."
+          <div className="flex-1">
+            <Input
+              label="Senha"
+              type="password"
+              {...register("password")}
+              error={errors.password?.message}
             />
+          </div>
+          <InformationCircleIcon
+            className="w-5 h-9 text-gray-500 cursor-pointer"
+            title="A senha deve conter: 8-32 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 símbolo."
+          />
         </div>
 
         <Input
@@ -36,9 +36,7 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
         <Button type="button" variant="ghost">
           Cancelar
         </Button>
-        <Button type="submit">
-          Salvar
-        </Button>
+        <Button type="submit">Salvar</Button>
       </div>
     </form>
   );

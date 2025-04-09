@@ -27,11 +27,11 @@ class NewPasswordUserUsecase {
 
         const salt = randomInt(10, 16);
         const hashedPassword = await hash(password, salt);
-
+        
         try {
             await this.repository.updateOne(
                 { id },
-                { $set: { password: hashedPassword } }
+                { $set: { password: hashedPassword, temporary_password: false } }
             );
             return { success: true };
         } catch (err) {

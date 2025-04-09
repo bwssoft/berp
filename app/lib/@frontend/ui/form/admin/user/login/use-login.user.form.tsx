@@ -2,8 +2,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook";
-import { AuthError } from "next-auth";
 import { authenticate } from "@/app/lib/@backend/action";
+import { auth } from "@/auth";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   username: z.string(),
@@ -23,6 +24,8 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export function useLoginUserForm() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -32,11 +35,7 @@ export function useLoginUserForm() {
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
-    const formData = new FormData();
-    formData.set("username", data.username);
-    formData.set("password", data.password);
-
-    const login = await authenticate(undefined, formData);
+    const login = await authenticate(data);
 
     if (login.success) {
       toast({
@@ -44,6 +43,12 @@ export function useLoginUserForm() {
         description: "Login realizado com sucesso.",
         variant: "success",
       });
+      const session = await auth();
+      if (session?.user.temporary_password) {
+        router.push(`/set-password?id=${session.user.id}`);
+      } else {
+        router.push("/home");
+      }
     } else {
       toast({
         title: "Erro!",

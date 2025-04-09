@@ -22,6 +22,7 @@ import {
   useState,
 } from "react";
 import { useIsOnPathname } from "../../hook/is-on-pathname";
+import { useAuth } from "../../context";
 
 export type NavItem = {
   name: string;
@@ -130,6 +131,7 @@ export function SideBar(props: Props) {
   const { navigation } = props;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isOnPathname = useIsOnPathname();
+  const { user } = useAuth();
   return (
     <>
       <div>
@@ -240,7 +242,7 @@ export function SideBar(props: Props) {
                       alt=""
                     />
                     <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Oswaldo Conti-Bosso</span>
+                    <span aria-hidden="true">{user?.name}</span>
                   </a>
                 </li>
               </ul>

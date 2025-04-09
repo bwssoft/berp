@@ -1,10 +1,12 @@
+import { auth } from "@/auth";
 import "./globals.css";
 import { Root } from "./lib/@frontend/layout";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <Root>{children}</Root>;
+  const session = await auth();
+  return <Root user={session?.user ?? null}>{children}</Root>;
 }
