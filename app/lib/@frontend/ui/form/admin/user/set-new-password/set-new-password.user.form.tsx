@@ -7,7 +7,7 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
   const { register, handleSubmit, errors } = useSetNewPasswordUserForm(userId);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form action={() => handleSubmit()}>
       <div className="grid grid-cols-1 gap-x-6 gap-y-8">
         <div className="flex items-end gap-2">
           <div className="flex-1">
