@@ -25,7 +25,7 @@ export const schema = z
     name: z.string(),
     external: z.boolean(),
     image: z.string().optional(),
-    profile_id: z.array(z.string()),
+    profile: z.array(z.object({name: z.string(), id: z.string()})),
     username: z.string(),
   })
   .refine(
