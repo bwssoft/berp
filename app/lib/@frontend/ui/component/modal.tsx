@@ -4,8 +4,6 @@ import React, { ReactNode } from "react"
 import { Dialog, DialogCloseButton, DialogContent, DialogVariantsProps,DialogHeader  } from "./dialog-to-modal"
 import { cn } from "@/app/lib/util"
 
-
-
 export type ModalProps = DialogVariantsProps & {
 	children: ReactNode
 	className?: string
