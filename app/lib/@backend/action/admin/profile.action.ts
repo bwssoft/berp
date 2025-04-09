@@ -2,6 +2,7 @@
 
 import { IProfile } from "@/app/lib/@backend/domain";
 import {
+  activeProfileUsecase,
   createOneProfileUsecase,
   findManyProfileUsecase,
   findOneProfileUsecase,
@@ -33,4 +34,10 @@ export async function setLockedControl(input: {
 }) {
   await setLockedControlProfileUsecase.execute(input);
   revalidatePath("/admin/control");
+}
+
+export async function activeProfile(input: { id: string; active: boolean }) {
+  const result = await activeProfileUsecase.execute(input);
+  revalidatePath("/admin/profile");
+  return result;
 }

@@ -1,35 +1,68 @@
-import { singleton } from "@/app/lib/util"
-import { IProfileRepository } from "../../../domain"
-import { profileRepository } from "../../../infra"
+import { singleton } from "@/app/lib/util";
+import { IProfileRepository, IUserRepository } from "../../../domain";
+import { profileRepository, userRepository } from "../../../infra";
 
 namespace Dto {
-    export type Input = {
-      id: string
-      active: boolean
-    }
-    export type Output = { success: boolean, error?: string }
-  }
+  export type Input = {
+    id: string;
+    active: boolean;
+  };
+  export type Output = { success: boolean; error?: string };
+}
 
 class ActiveProfileUsecase {
-    repository: IProfileRepository
-    constructor() {
-        this.repository = profileRepository
-    }
+  profileRepository: IProfileRepository;
+  userRepository: IUserRepository;
 
-    async execute(input: Dto.Input): Promise<Dto.Output> {
-        const { id, active } = input
+  constructor() {
+    this.profileRepository = profileRepository;
+    this.userRepository = userRepository;
+  }
 
-        try {
-            const profile = await this.repository.updateOne({ id }, { $set: { active} } );
-            if(!profile) {
-                return { success: false, error: "Perfil nao encontrado ou não atualizado." }
-            }
+  async execute(input: Dto.Input): Promise<Dto.Output> {
+    const { id, active } = input;
 
-            return { success: true }
-        } catch (err) {
-            return { success: false, error: err instanceof Error ? err.message : JSON.stringify(err) }
+    try {
+      // Buscar pelo perfil
+      const profile = await this.profileRepository.findOne({ id });
+
+      // Caso o perfil não exista
+      if (!profile) {
+        return {
+          success: false,
+          error: "Perfil não encontrado.",
+        };
+      }
+
+      // Caso for a caso de uso de inativar, checar se existem usuários vinculados a esse perfil
+      if (!active) {
+        const userWithProfile = await this.userRepository.findAll(
+          {
+            "profile.id": input.id,
+          },
+          2
+        );
+
+        if (userWithProfile.length) {
+          return {
+            success: false,
+            error:
+              "Atenção! Não é possível inativar um perfil com usuários vinculados.",
+          };
         }
+      }
+
+      // Atualizar o perfil
+      await this.profileRepository.updateOne({ id }, { $set: { active } });
+
+      return { success: true };
+    } catch (err) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : JSON.stringify(err),
+      };
     }
+  }
 }
 
 export const activeProfileUsecase = singleton(ActiveProfileUsecase);
