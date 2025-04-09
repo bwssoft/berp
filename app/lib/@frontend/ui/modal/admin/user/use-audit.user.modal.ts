@@ -1,26 +1,30 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+
+import { useCallback, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
 
 export function useAuditModal() {
     const [open, setOpen] = useState(false);
 
-    const [auditData, setAuditData] = useState([]);
-
     const openModal = useCallback(() => setOpen(true), []);
     const closeModal = useCallback(() => setOpen(false), []);
 
-    useEffect(() => {
-        async function fetchAudit() {
-            try {
-                const data = await findManyAudit({});
-                setAuditData(data);
-            } catch (error) {
-                console.error("Erro ao buscar auditorias:", error);
-            }
-        }
-        fetchAudit();
-    }, []);
+    const {
+        data: auditData = [],
+        error,
+        refetch,
+    } = useQuery({
+        queryKey: ["audit"],
+        queryFn: () => findManyAudit({}),
+    });
 
-    return { open, auditData, openModal, closeModal };
+    return {
+        open,
+        auditData,
+        openModal,
+        closeModal,
+        error,
+        refetch,
+    };
 }
