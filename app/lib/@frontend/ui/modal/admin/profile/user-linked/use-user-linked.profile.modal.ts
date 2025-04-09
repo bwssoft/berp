@@ -1,22 +1,31 @@
 "use client"
 import { findManyUser } from "@/app/lib/@backend/action";
+import { IProfile } from "@/app/lib/@backend/domain";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import { useCallback, useState } from "react";
 
-export function useUserLinkedProfileModal(nameProfile?: string) {
-  const [open, setOpen] = React.useState(false);
+export function useUserLinkedProfileModal() {
+  const [open, setOpen] = useState(false);
+  const openModal = useCallback(() => setOpen(true), []);
+  const closeModal = useCallback(() => setOpen(false), []);
+
+  const [profile, setProfile] = useState<Pick<IProfile, "id" | "name">>()
+  const handleProfileSelection = useCallback((profile: Pick<IProfile, "id" | "name">) => {
+    setProfile(profile)
+    setOpen(true)
+  },[])
   
   const users = useQuery({
-    queryKey: ['findManyUsers', nameProfile],
-    queryFn: () => findManyUser({"profile.name": nameProfile}),
-  }).data;
-
-  const openModalUserLinkedProfile = () => {setOpen(true)};
+    queryKey: ['findManyUsers', profile],
+    queryFn: () => findManyUser({"profile.name": profile?.name}),
+  }).data ?? [];
 
   return {
     users,
-    openModalUserLinkedProfile,
-    setOpen,
-    open
+    handleProfileSelection,
+    openModal,
+    closeModal,
+    open,
+    profile
   };
 }

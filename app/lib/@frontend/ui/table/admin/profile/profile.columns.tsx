@@ -4,11 +4,12 @@ import { Badge } from "@bwsoft/badge";
 import { ClockIcon, UsersIcon } from "@heroicons/react/24/outline";
 import { Button, Toggle } from "../../../component";
 import React from "react";
-import { UserLinkedProfileModal } from "../../../modal/admin/profile";
-import { useUserLinkedProfileModal } from "../../../modal/admin/profile/user-linked/use-user-linked.profile.modal";
-import { ProfileAction } from "./profile.action";
 
-export const columns: ColumnDef<IProfile>[] = [
+interface Props {
+  openActiveDialog: (id: string, value: boolean) => void;
+  openUserModal: (profile: Pick<IProfile, "id" | "name">) => void;
+}
+export const columns = (props: Props): ColumnDef<IProfile>[] => [
   { header: "Perfil", accessorKey: "name" },
   {
     header: "Status",
@@ -37,8 +38,6 @@ export const columns: ColumnDef<IProfile>[] = [
     accessorKey: "created_at",
     cell: ({ row }) => {
       const { original } = row;
-      const { openModalUserLinkedProfile } = useUserLinkedProfileModal();
-
       return (
         <td className="flex gap-2 items-center">
           <Button
@@ -52,17 +51,23 @@ export const columns: ColumnDef<IProfile>[] = [
           </Button>
           <Button
             title="Usuários"
-            onClick={() => (openModalUserLinkedProfile(), console.log("aaaa"))}
+            onClick={() => props.openUserModal({id: original.id, name: original.name})}
             className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           >
             <UsersIcon className="size-5" />
           </Button>
-          <Toggle
-            value={original.active}
-            onChange={() => alert("activeInactiveProfile({id})")}
-            title={(value) => (value ? "Inativar" : "Ativar")}
-          />
-          <UserLinkedProfileModal nameProfile={original.name} />
+          <button
+            onClick={() =>
+              props.openActiveDialog(original.id, !original.active)
+            }
+          >
+            <Toggle
+              value={original.active}
+              disabled={true}
+              title={(value) => (value ? "Inativar" : "Ativar")}
+              className="pointer-events-none"
+            />
+          </button>
         </td>
       );
     },
