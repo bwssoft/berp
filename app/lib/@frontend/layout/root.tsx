@@ -4,24 +4,24 @@ import { ReactQueryClientProvider } from "../providers/QueryClientProvider";
 import { Toaster } from "../ui/component";
 import HolyLoader from "holy-loader";
 import { AuthProvider } from "../context";
-import { IProfile, IUser } from "../../@backend/domain";
 import { SessionProvider } from "next-auth/react";
+import { Session } from "next-auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
 interface Props {
   children: React.ReactNode;
-  user: (Partial<IUser> & { current_profile: IProfile }) | null;
+  session: Session | null;
 }
 
 export function Root(props: Props) {
-  const { children, user } = props;
+  const { children, session } = props;
 
   return (
     <html lang="en" className="h-full bg-gray-50">
       <ReactQueryClientProvider>
         <SessionProvider>
-          <AuthProvider user={user}>
+          <AuthProvider session={session}>
             <HolyLoader
               color="linear-gradient(to right, #FFB80E, #FF1BD4, #0FAAEC)"
               speed={250}

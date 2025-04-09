@@ -38,8 +38,6 @@ const { auth, signIn, signOut, handlers } = NextAuth({
     }),
   ],
 });
-
-const GET = handlers.GET;
-const POST = handlers.POST;
+const { GET, POST } = handlers;
 
 export { auth, signIn, signOut, GET, POST };
