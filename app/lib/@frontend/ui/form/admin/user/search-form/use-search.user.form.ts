@@ -67,7 +67,7 @@ export const useSearchUserForm = () => {
       string | boolean | (string | boolean)[] | undefined
     > = {
       name: data.name,
-      cpf: data.cpf,
+      cpf: removeSpecialCharacters(String(data.cpf)),
       profile_id: data.profile_id,
       username: data.username,
       email: data.email,
@@ -79,7 +79,14 @@ export const useSearchUserForm = () => {
 
   const onReset = () => {
     reset();
-    handleParamsChange({});
+    handleParamsChange({
+      name: undefined,
+      cpf: undefined,
+      profile_id: undefined,
+      username: undefined,
+      email: undefined,
+      active: undefined,
+    });
   };
 
   const handleChangeQuickSearch = useDebounce(

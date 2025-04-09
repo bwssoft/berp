@@ -6,6 +6,7 @@ import { FunnelIcon } from "@heroicons/react/24/outline";
 import { useSearchUserForm } from "./use-search.user.form";
 import { Combobox } from "@bwsoft/combobox";
 import { Controller } from "react-hook-form";
+import { Modal } from "../../../../component/modal";
 
 export function SearchUserForm() {
   const {
@@ -43,9 +44,8 @@ export function SearchUserForm() {
           </div>
         </div>
 
-        {isModalOpen && (
-          // <Modal title="Pesquisa Detalhada" onClose={toggleModal}>
-          <>
+        <Modal position="left" className="bg-white"  title="Pesquisa Detalhada" onClose={toggleModal} open={isModalOpen}>
+          <form onSubmit={onSubmit}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
               <Input
                 label="Nome"
@@ -107,6 +107,7 @@ export function SearchUserForm() {
                     }
                     error={fieldState.error?.message}
                     keyExtractor={(item) => item.id}
+                    className="w-full z-50 "
                     displayValueGetter={(item) => item.name}
                   />
                 )}
@@ -120,9 +121,8 @@ export function SearchUserForm() {
                 Limpar
               </Button>
             </div>
-          </>
-        )}
-        {/* </Modal> */}
+          </form>
+       </Modal>
       </form>
   );
 }
