@@ -5,6 +5,7 @@ import { ClockIcon, UsersIcon } from "@heroicons/react/24/outline";
 import { Button, Toggle } from "../../../component";
 import React from "react";
 import { UserLinkedProfileModal } from "../../../modal/admin/profile";
+import { useUserLinkedProfileModal } from "../../../modal/admin/profile/user-linked/use-user-linked.profile.modal";
 
 export const columns: ColumnDef<IProfile>[] = [
   { header: "Perfil", accessorKey: "name" },
@@ -35,7 +36,8 @@ export const columns: ColumnDef<IProfile>[] = [
     accessorKey: "created_at",
     cell: ({ row }) => {
       const { original } = row;
-      const [openModal, setOpenModal] = React.useState(false);
+      const { openModalUserLinkedProfile } = useUserLinkedProfileModal()
+
       return (
         <td className="flex gap-2 items-center">
           <Button
@@ -49,7 +51,7 @@ export const columns: ColumnDef<IProfile>[] = [
           </Button>
           <Button
             title="Usuários"
-            onClick={() => (setOpenModal(prev => !prev))}
+            onClick={() => (openModalUserLinkedProfile())}
             className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           >
             <UsersIcon className="size-5" />
@@ -60,8 +62,6 @@ export const columns: ColumnDef<IProfile>[] = [
             title={(value) => (value ? "Inativar" : "Ativar")}
           />
           <UserLinkedProfileModal 
-            onClose={() => setOpenModal(prev => !prev)} 
-            open={openModal} 
             nameProfile={original.name} 
           />
         </td>
