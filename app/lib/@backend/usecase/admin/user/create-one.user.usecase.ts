@@ -65,6 +65,13 @@ class CreateOneUserUsecase {
         error: { cpf: "CPF já cadastrado para outro usuário!" },
       };
 
+    const emailExists = await this.repository.findOne({ email: user.email });
+    if (emailExists)
+      return {
+        success: false,
+        error: { email: "Email já cadastrado para outro usuário!" },
+      };
+
     const usernameExists = await this.repository.findOne({
       username: user.username,
     });
