@@ -72,6 +72,7 @@ export function CreateOneUserForm() {
                 onOptionChange={(items) => {
                   field.onChange(items);
                 }}
+                value={field.value}
                 keyExtractor={(item) => item.id}
                 displayValueGetter={(item) => item.name}
               />

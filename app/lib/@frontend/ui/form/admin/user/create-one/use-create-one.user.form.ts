@@ -57,7 +57,8 @@ export function useCreateOneUserForm() {
     control,
     formState: { errors },
     setError,
-    reset
+    reset,
+    watch
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -116,7 +117,7 @@ export function useCreateOneUserForm() {
         name: undefined,
         username: undefined,
         image: "",
-        profile: undefined,
+        profile: [],
       });
   }
 
