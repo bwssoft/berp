@@ -11,6 +11,7 @@ export type AuditMetadata = {
 
 export enum AuditDomain {
     user = "user",
+    profile = "profile",
 }
 
 export interface AuditUser {

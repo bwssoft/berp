@@ -129,28 +129,27 @@ export function UpdateOneUserForm({ user }: Props) {
               disabled={isLocked}
             />
 
-            <Controller
-              control={control}
-              name="profile_id"
-              render={({ field }) => (
-                <Combobox
-                  label="Perfis"
-                  className="mt-2"
-                  type="multiple"
-                  data={profiles ?? []}
-                  defaultValue={profiles.filter((el) =>
-                    field.value.includes(el.id)
-                  )}
-                  error={errors.profile_id?.message}
-                  onOptionChange={(items) => {
-                    field.onChange(items.map((item) => item.id));
-                  }}
-                  keyExtractor={(item) => item.id}
-                  displayValueGetter={(item) => item.name}
-                  disabled={isLocked}
-                />
-              )}
-            />
+
+          <Controller
+            control={control}
+            name="profile"
+            render={({ field }) => (
+              <Combobox
+                label="Perfis"
+                className="mt-2"
+                type="multiple"
+                data={profiles ?? []}
+                error={errors.profile?.message}
+                defaultValue={profiles.filter(p => field.value.some(el => el.id === p.id))}
+                onOptionChange={(items) => {
+                  field.onChange(items);
+                }}
+                keyExtractor={(item) => item.id}
+                displayValueGetter={(item) => item.name}
+                disabled={isLocked}
+              />
+            )}
+          />
           </div>
         </div>
 

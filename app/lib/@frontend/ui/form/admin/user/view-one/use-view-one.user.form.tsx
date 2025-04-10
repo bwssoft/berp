@@ -1,9 +1,13 @@
-import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import { findOneProfile } from "@/app/lib/@backend/action";
+import { useAuth } from "@/app/lib/@frontend/context";
 
-export function useViewOneUserForm(initialData: IUser) {
+export function useViewOneUserForm() {
+  const { changeProfile, profile } = useAuth();
 
-
-  return {
-  
+  const handleChangeProfile = async (id: string) => {
+    const profile = await findOneProfile({ id });
+    profile && changeProfile(profile);
   };
+
+  return { handleChangeProfile, profile };
 }

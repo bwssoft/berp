@@ -5,7 +5,11 @@ import { IUser } from "@/app/lib/@backend/domain";
 import { ClockIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
-export const columns: ColumnDef<IUser>[] = [
+interface Props {
+  openAuditModal: (user: Pick<IUser, "name" | "id">) => void
+}
+
+export const columns = (props: Props): ColumnDef<IUser>[] => [
   { header: "Nome", accessorKey: "name" },
   {
     header: "Status",
@@ -21,7 +25,14 @@ export const columns: ColumnDef<IUser>[] = [
       );
     },
   },
-  { header: "Perfil", accessorKey: "profile_id" },
+  {
+    header: "Perfil",
+    accessorKey: "profile",
+    cell: ({ row }) => {
+      const user = row.original;
+      return user.profile.map(({ name }) => name).join(", ");
+    },
+  },
   {
     header: "Data de criação",
     accessorKey: "created_at",
@@ -39,9 +50,7 @@ export const columns: ColumnDef<IUser>[] = [
         <td className="flex gap-2 items-center">
           <Button
             title="Histórico"
-            onClick={() =>
-              alert("Modal com histórico de alterações desse usuario")
-            }
+            onClick={() => props.openAuditModal({name: original.name, id: original.id}) }
             className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           >
             <ClockIcon className="size-5" />
