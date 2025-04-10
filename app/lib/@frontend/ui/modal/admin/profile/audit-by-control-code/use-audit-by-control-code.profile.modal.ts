@@ -1,6 +1,6 @@
 "use client";
 import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
-import { AuditDomain, IControl } from "@/app/lib/@backend/domain";
+import { AuditDomain, AuditType, IControl } from "@/app/lib/@backend/domain";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 
@@ -26,6 +26,7 @@ export function useAuditByControlCodeProfileModal() {
         findManyAudit({
           domain: AuditDomain.profile,
           "metadata.field": "locked_control_code",
+          type: AuditType.update,
           $or: [
             { "metadata.before": { $in: [control?.code] } },
             { "metadata.after": { $in: [control?.code] } },

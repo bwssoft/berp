@@ -1,6 +1,12 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProfile, IProfileRepository } from "@/app/lib/@backend/domain";
+import {
+  AuditDomain,
+  IProfile,
+  IProfileRepository,
+} from "@/app/lib/@backend/domain";
 import { profileRepository } from "@/app/lib/@backend/infra";
+import { createOneAuditUsecase } from "../audit";
+import { auth } from "@/auth";
 
 class CreateOneProfileUsecase {
   repository: IProfileRepository;
@@ -24,6 +30,17 @@ class CreateOneProfileUsecase {
         };
       }
       await this.repository.create(_input);
+
+      const session = await auth();
+      const { name, email, id: user_id } = session?.user!;
+      await createOneAuditUsecase.execute({
+        after: _input,
+        before: {},
+        domain: AuditDomain.profile,
+        user: { email, name, id: user_id },
+        action: "Perfil cadastrado",
+      });
+
       return { success: true };
     } catch (err) {
       return {
