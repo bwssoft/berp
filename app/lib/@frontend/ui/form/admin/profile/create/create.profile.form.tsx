@@ -3,7 +3,9 @@ import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useCreateProfileForm } from "./use-create.device.form";
 
 export function CreateProfileForm() {
-  const { handleSubmit, register, handleBackPage, reset } = useCreateProfileForm();
+  const { handleSubmit, register, handleBackPage, reset, errors } =
+    useCreateProfileForm();
+
   return (
     <form
       action={() => handleSubmit()}
@@ -31,6 +33,7 @@ export function CreateProfileForm() {
                   className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                   placeholder="Desenvolvimento"
                 />
+                {errors.name?.message ? <p>{errors.name.message}</p> : <></>}
               </div>
             </div>
           </div>
@@ -38,24 +41,23 @@ export function CreateProfileForm() {
       </div>
 
       <div className="mt-6 flex items-center justify-between gap-x-6">
-
         <div>
-           <Button variant="ghost" onClick={handleBackPage} type="button">
-              Voltar
-            </Button>
+          <Button variant="ghost" onClick={handleBackPage} type="button">
+            Voltar
+          </Button>
         </div>
         <div className="flex gap-2">
-            <Button variant="secondary" 
+          <Button
+            variant="secondary"
             onClick={(event) => {
               event.preventDefault();
               reset();
-            }} type="button">
-              Cancelar
-            </Button>
-          <Button
-            type="submit"
-            variant="default"
+            }}
+            type="button"
           >
+            Cancelar
+          </Button>
+          <Button type="submit" variant="default">
             Salvar
           </Button>
         </div>

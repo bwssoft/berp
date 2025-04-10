@@ -10,11 +10,29 @@ class CreateOneProfileUsecase {
   }
 
   async execute(input: Omit<IProfile, "id" | "created_at">) {
-    const client = Object.assign(input, {
+    const _input = Object.assign(input, {
       created_at: new Date(),
       id: crypto.randomUUID(),
     });
-    return await this.repository.create(client);
+
+    try {
+      const profile = await this.repository.findOne({ name: input.name });
+      if (profile) {
+        return {
+          success: false,
+          error: { name: "Nome já cadastrado para outro perfil!" },
+        };
+      }
+      await this.repository.create(_input);
+      return { success: true };
+    } catch (err) {
+      return {
+        success: false,
+        error: {
+          global: err instanceof Error ? err.message : JSON.stringify(err),
+        },
+      };
+    }
   }
 }
 
