@@ -26,6 +26,16 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     },
   },
   {
+    header: "Tipo do usuário",
+    accessorKey: "document",
+    cell: ({ row }) => {
+      const { original } = row;
+      return (
+        <p>{original.external ? "Externo" : "Interno"}</p>
+      );
+    },
+  },
+  {
     header: "Perfil",
     accessorKey: "profile",
     cell: ({ row }) => {
