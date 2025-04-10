@@ -6,3 +6,4 @@ export * from "./configuration";
 export * from "./auto-test";
 export * from "./tailwind-colors";
 export * from "./technology";
+export * from "./user";

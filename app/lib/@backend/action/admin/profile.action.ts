@@ -31,6 +31,7 @@ export async function setLockedControl(input: {
   id: string;
   locked_control_code: string[];
   operation: "add" | "remove";
+  control_name: string;
 }) {
   await setLockedControlProfileUsecase.execute(input);
   revalidatePath("/admin/control");

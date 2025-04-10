@@ -1,6 +1,12 @@
 import { singleton } from "@/app/lib/util";
-import { IProfileRepository, IUserRepository } from "../../../domain";
+import {
+  AuditDomain,
+  IProfileRepository,
+  IUserRepository,
+} from "../../../domain";
 import { profileRepository, userRepository } from "../../../infra";
+import { auth } from "@/auth";
+import { createOneAuditUsecase } from "../audit";
 
 namespace Dto {
   export type Input = {
@@ -52,8 +58,32 @@ class ActiveProfileUsecase {
         }
       }
 
+      const before = await this.profileRepository.findOne({ id: input.id });
+      if (!before)
+        return {
+          success: false,
+          error: "Profile not found.",
+        };
+
       // Atualizar o perfil
       await this.profileRepository.updateOne({ id }, { $set: { active } });
+
+      const after = await this.profileRepository.findOne({ id: input.id });
+      if (!after)
+        return {
+          success: false,
+          error: "Profile not found.",
+        };
+
+      const session = await auth();
+      const { name, email, id: user_id } = session?.user!;
+      await createOneAuditUsecase.execute({
+        after,
+        before,
+        domain: AuditDomain.profile,
+        user: { email, name, id: user_id },
+        action: `Perfil ${input.active ? "ativado" : "inativado"}`,
+      });
 
       return { success: true };
     } catch (err) {

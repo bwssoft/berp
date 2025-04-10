@@ -1,6 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProfileRepository } from "@/app/lib/@backend/domain";
+import { AuditDomain, IProfileRepository } from "@/app/lib/@backend/domain";
 import { profileRepository } from "@/app/lib/@backend/infra";
+import { createOneAuditUsecase } from "../audit";
+import { auth } from "@/auth";
 
 // Dto
 namespace Dto {
@@ -8,8 +10,9 @@ namespace Dto {
     id: string;
     locked_control_code: string[];
     operation: "add" | "remove";
+    control_name: string;
   };
-  export type Output = { success: boolean; error?: Error };
+  export type Output = { success: boolean; error?: string };
 }
 
 // Usecase
@@ -23,12 +26,33 @@ class SetLockedControlProfileUsecase {
   async execute(input: Dto.Input): Promise<Dto.Output> {
     try {
       const value = this.buildValue(input);
+      const before = await this.repository.findOne({ id: input.id });
+      if (!before)
+        return {
+          success: false,
+          error: "Profile not found.",
+        };
       await this.repository.updateOne({ id: input.id }, value);
+      const after = await this.repository.findOne({ id: input.id });
+      if (!after)
+        return {
+          success: false,
+          error: "Profile not found.",
+        };
+      const session = await auth();
+      const { name, email, id } = session?.user!;
+      await createOneAuditUsecase.execute({
+        after,
+        before,
+        domain: AuditDomain.profile,
+        user: { email, id, name },
+        action: `Acesso '${input.control_name}' ${input.operation === "add" ? "removido" : "liberado"} para o perfil '${before.name}'`,
+      });
       return { success: true };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error : new Error(String(error)),
+        error: error instanceof Error ? error.message : JSON.stringify(error),
       };
     }
   }
