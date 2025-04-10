@@ -4,7 +4,7 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { userConstants } from "@/app/lib/constant";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -45,7 +45,6 @@ export const schema = z
 export type Schema = z.infer<typeof schema>;
 
 export function useCreateOneUserForm() {
-  const queryClient = useQueryClient();
   const router = useRouter();
 
   const {
@@ -79,13 +78,11 @@ export function useCreateOneUserForm() {
       lock: false,
     });
     if (success) {
+      router.back();
       toast({
         title: "Sucesso!",
         description: "Usuário registrado com sucesso!",
         variant: "success",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["findManyUser", data.cpf],
       });
     } else if (error) {
       Object.entries(error).forEach(([key, message]) => {
