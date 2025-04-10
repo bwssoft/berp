@@ -4,6 +4,7 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -48,6 +49,7 @@ export type Schema = z.infer<typeof schema>;
 
 export function useCreateOneUserForm() {
   const queryClient = useQueryClient();
+  const router = useRouter();
   
   const {
     register,
@@ -55,6 +57,7 @@ export function useCreateOneUserForm() {
     control,
     formState: { errors },
     setError,
+    reset
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -105,11 +108,30 @@ export function useCreateOneUserForm() {
     }
   });
 
+  function handleCancelEdit() {
+      reset({
+        cpf: undefined, 
+        external: false,
+        email: undefined,
+        name: undefined,
+        username: undefined,
+        image: "",
+        profile: undefined,
+      });
+  }
+
+  function handleBackPage() {
+    router.back();
+  }
+
+
   return {
     handleSubmit,
     register,
     control,
     profiles: activeProfiles,
     errors,
+    handleBackPage,
+    handleCancelEdit
   };
 }
