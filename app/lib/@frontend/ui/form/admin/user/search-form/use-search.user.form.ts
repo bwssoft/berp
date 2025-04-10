@@ -26,6 +26,15 @@ const schema = z.object({
       })
     )
     .optional(),
+  external: z
+  .array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      value: z.boolean(),
+    })
+  )
+  .optional(),
 });
 
 export type SearchUserFormValues = z.infer<typeof schema>;
@@ -50,6 +59,7 @@ export const useSearchUserForm = () => {
       username: "",
       email: "",
       active: undefined,
+      external: undefined
     },
   });
 
@@ -73,6 +83,7 @@ export const useSearchUserForm = () => {
       username: data.username,
       email: data.email,
       active: data.active?.map(({ value }) => value),
+      external: data.external?.map(({ value }) => value),
     };
     handleParamsChange(params);
     toggleModal();
@@ -81,12 +92,13 @@ export const useSearchUserForm = () => {
   const onReset = () => {
     reset();
     handleParamsChange({
-      name: undefined,
-      cpf: undefined,
-      profile_id: undefined,
-      username: undefined,
-      email: undefined,
+      name: "",
+      cpf: "",
+      profile_id: "",
+      username: "",
+      email: "",
       active: undefined,
+      external: undefined
     });
   };
 
