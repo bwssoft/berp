@@ -1,6 +1,7 @@
 import { createOneProfile, findManyControl } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -13,6 +14,8 @@ const schema = z.object({
 export type Schema = z.infer<typeof schema>;
 
 export function useCreateProfileForm() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -63,8 +66,13 @@ export function useCreateProfileForm() {
     }
   });
 
+  function handleBackPage() {
+    router.back();
+  }
+
   return {
     register,
+    handleBackPage,
     handleSubmit,
     errors,
     control,
