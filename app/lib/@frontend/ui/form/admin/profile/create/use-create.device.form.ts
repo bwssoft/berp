@@ -19,6 +19,7 @@ export function useCreateProfileForm() {
     formState: { errors },
     control,
     setValue,
+    setError,
     reset: hookFormReset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
@@ -29,12 +30,30 @@ export function useCreateProfileForm() {
       //fazer a request
       const controls = await findManyControl({}, 200);
       data.locked_control_code = controls.map(({ code }) => code);
-      await createOneProfile(data);
-      toast({
-        title: "Sucesso!",
-        description: "Perfil registrado com sucesso!",
-        variant: "success",
-      });
+      const { success, error } = await createOneProfile(data);
+      if (success) {
+        toast({
+          title: "Sucesso!",
+          description: "Perfil registrado com sucesso!",
+          variant: "success",
+        });
+      } else if (error) {
+        Object.entries(error).forEach(([key, message]) => {
+          if (key !== "global" && message) {
+            setError(key as keyof Schema, {
+              type: "manual",
+              message: message as string,
+            });
+          }
+        });
+        if (error.global) {
+          toast({
+            title: "Erro!",
+            description: error.global,
+            variant: "error",
+          });
+        }
+      }
     } catch (e) {
       toast({
         title: "Erro!",
