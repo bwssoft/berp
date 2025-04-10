@@ -13,6 +13,8 @@ class UpdateOneUserUsecase {
         query: { id: string },
         value: Partial<Omit<IUser, "id" | "created_at">>
     ) {
+        try {
+
         const emailExists = await this.repository.findOne({
             email: value.email,
             id: { $ne: query.id },
@@ -30,7 +32,7 @@ class UpdateOneUserUsecase {
         if (cpfExists)
             return {
                 success: false,
-                error: { email: "CPF já cadastrado em outro usuário!" },
+                error: { cpf: "CPF já cadastrado em outro usuário!" },
             };
 
         const userNameExists = await this.repository.findOne({
@@ -40,15 +42,17 @@ class UpdateOneUserUsecase {
         if (userNameExists)
             return {
                 success: false,
-                error: { email: "Username já cadastrado para outro usuário!" },
+                error: { username: "Username já cadastrado para outro usuário!" },
             };
 
-        try {
-            return await this.repository.updateOne(query, { $set: value });
+            await this.repository.updateOne(query, { $set: value });
+            return {success: true}
         } catch (error) {
             return {
                 success: false,
-                error: error,
+                error: {
+                    global: error instanceof Error ? error.message : JSON.stringify(error),
+                }
             };
         }
     }
