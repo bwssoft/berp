@@ -4,15 +4,8 @@ import {
   findOneControl,
   findOneProfile,
 } from "@/app/lib/@backend/action";
-import { IProfile } from "@/app/lib/@backend/domain";
-import { SetLockedProfileForm } from "@/app/lib/@frontend/ui/form";
-import { buildControlTree, cn, ControlTree } from "@/app/lib/util";
-import {
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-} from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { SubModuleControlList } from "@/app/lib/@frontend/ui/list/admin/sub-module.control.list";
+import { buildControlTree } from "@/app/lib/util";
 
 interface Props {
   params: Promise<{
@@ -38,7 +31,7 @@ export default async function Example(props: Props) {
       </div>
     );
 
-  const [profile, controls, totalControlsOnModule] = await Promise.all([
+  const [profile, controls, total_controls_on_module] = await Promise.all([
     findOneProfile({ id: slug[1] }),
     findManyControl({ parent_code: { $regex: control.code, $options: "i" } }),
     countControl({ parent_code: { $regex: control.code, $options: "i" } }),
@@ -58,56 +51,11 @@ export default async function Example(props: Props) {
           </p>
         </div>
       </div>
-      <ul
-        role="list"
-        className="mt-10 px-4 sm:px-6 lg:px-8 flex flex-col space-y-2"
-      >
-        {control_tree.map((control, index) => (
-          <li
-            key={control.id + index}
-            className="col-span-1  rounded-lg bg-white shadow"
-          >
-            {renderControlTree(control, profile, totalControlsOnModule)}
-          </li>
-        ))}
-      </ul>
+      <SubModuleControlList
+        controlTree={control_tree}
+        totalControlsOnModule={total_controls_on_module}
+        profile={profile}
+      />
     </div>
   );
 }
-
-//ACORDION BSOFT
-
-const renderControlTree = (
-  control: ControlTree[number],
-  profile: IProfile | null,
-  totalControlsOnModule: number
-) => {
-  const has_children = control.children.length > 0;
-  return (
-    <Disclosure key={control.id}>
-      <DisclosureButton className="border-b border-gray-200 w-full p-6 group flex justify-between items-center gap-2">
-        <SetLockedProfileForm
-          control={control}
-          profile={profile}
-          totalControlsOnModule={totalControlsOnModule}
-        />
-        {has_children ? (
-          <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
-        ) : (
-          <></>
-        )}
-      </DisclosureButton>
-      {has_children ? (
-        <div>
-          <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0">
-            {control.children.map((c) =>
-              renderControlTree(c, profile, totalControlsOnModule)
-            )}
-          </DisclosurePanel>
-        </div>
-      ) : (
-        <></>
-      )}
-    </Disclosure>
-  );
-};
