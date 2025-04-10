@@ -22,11 +22,11 @@ export const schema = z
       .min(11, "CPF obrigatório")
       .refine((value) => isValidCPF(value), "CPF inválido"),
     email: z.string().email("Email inválido!"),
-    name: z.string(),
+    name: z.string().min(2, "Obrigatório informar um nome"),
     external: z.boolean(),
     image: z.string().optional(),
     profile: z.array(z.object({name: z.string(), id: z.string()})),
-    username: z.string(),
+    username: z.string().min(3, "Obrigatório informar um nome de usuário"),
   })
   .refine(
     (data) => {
