@@ -1,24 +1,26 @@
 "use client";
-import { UserTable } from "../../../table/admin/user";
 import { Modal, ModalBody, ModalContent } from "../../../component/modal";
-import { use } from "react";
-import { useProfileLinkedControlModal } from "./use-profile-linked.control.modal";
 import { ProfileTable } from "../../../table";
+import { IControl, IProfile } from "@/app/lib/@backend/domain";
 
 interface Props {
-  codeControl: string
+  open: boolean;
+  closeModal: () => void;
+  control?: Pick<IControl, "id" | "name">
+  profiles: IProfile[]
 }
 
 export function ProfileLinkedControlModal({
-    codeControl,
-  }: Props) {
-      const { profiles, setOpen, open } = useProfileLinkedControlModal(codeControl)
-  
+  open,
+  closeModal,
+  control,
+  profiles
+  }: Props) { 
     return (
-      <Modal position="center" title="Perfis relacionados ao controle de acesso" open={open} onClose={() => setOpen(prev => !prev)} >
+      <Modal position="center" title={`Perfis relacionados ao controle de acesso - ${control?.name}`} open={open} onClose={closeModal} >
         <ModalBody>
           <ModalContent className="overflow-y-scroll max-h-[70vh]">
-              <ProfileTable data={profiles ?? []}/>
+              <ProfileTable data={profiles}/>
           </ModalContent>
         </ModalBody>
       </Modal>

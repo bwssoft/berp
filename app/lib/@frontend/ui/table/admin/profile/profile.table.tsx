@@ -4,8 +4,10 @@ import { IProfile } from "@/app/lib/@backend/domain";
 import { columns } from "./profile.columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { ActiveProfileDialog, useActiveProfileDialog } from "../../../dialog";
-import { useUserLinkedProfileModal } from "../../../modal/admin/profile/user-linked/use-user-linked.profile.modal";
-import { UserLinkedProfileModal } from "../../../modal";
+import {
+  UserLinkedProfileModal,
+  useUserLinkedProfileModal,
+} from "../../../modal";
 
 interface Props {
   data: IProfile[];
