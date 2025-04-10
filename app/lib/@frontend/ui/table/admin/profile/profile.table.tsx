@@ -8,6 +8,10 @@ import {
   UserLinkedProfileModal,
   useUserLinkedProfileModal,
 } from "../../../modal";
+import {
+  AuditProfileModal,
+  useAuditProfileModal,
+} from "../../../modal/admin/profile/audit-profile";
 
 interface Props {
   data: IProfile[];
@@ -16,6 +20,7 @@ export function ProfileTable(props: Props) {
   const { data } = props;
   const activeDialog = useActiveProfileDialog();
   const userModal = useUserLinkedProfileModal();
+  const audtiModal = useAuditProfileModal();
 
   return (
     <>
@@ -23,6 +28,7 @@ export function ProfileTable(props: Props) {
         columns={columns({
           openActiveDialog: activeDialog.handleOpen,
           openUserModal: userModal.handleProfileSelection,
+          openAuditModal: audtiModal.handleProfileSelection,
         })}
         data={data}
         mobileDisplayValue={(data) => data.name}
@@ -43,6 +49,13 @@ export function ProfileTable(props: Props) {
         closeModal={userModal.closeModal}
         open={userModal.open}
         profile={userModal.profile}
+      />
+
+      <AuditProfileModal
+        audits={audtiModal.auditData}
+        closeModal={audtiModal.closeModal}
+        open={audtiModal.open}
+        profile={audtiModal.profile}
       />
     </>
   );
