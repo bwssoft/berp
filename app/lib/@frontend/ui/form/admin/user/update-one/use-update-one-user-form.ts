@@ -4,19 +4,12 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
 import { toast } from "@/app/lib/@frontend/hook";
 import { findManyProfile, updateOneUser } from "@/app/lib/@backend/action";
 import { IUser } from "@/app/lib/@backend/domain";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useRouter } from "next/navigation";
-
-const allowedDomains = [
-    "@bwsiot.com",
-    "@bwstechnology.com",
-    "@mgctechnology.com",
-    "@icb.com",
-];
+import { userConstants } from "@/app/lib/constant";
 
 const updateSchema = z
     .object({
@@ -40,9 +33,8 @@ const updateSchema = z
         (data) => {
             if (!data.external) {
                 const emailLower = data.email.toLowerCase();
-                return allowedDomains.some((domain) =>
-                    emailLower.endsWith(domain)
-                );
+                return userConstants.allowedDomains.some((domain) => emailLower.endsWith(domain));
+                
             }
             return true;
         },

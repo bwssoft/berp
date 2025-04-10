@@ -33,8 +33,12 @@ export function CreateProfileForm() {
                   className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                   placeholder="Desenvolvimento"
                 />
-                {errors.name?.message ? <p>{errors.name.message}</p> : <></>}
               </div>
+              {errors.name?.message ? (
+                <p className="text-sm text-red-500">{errors.name.message}</p>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </div>
