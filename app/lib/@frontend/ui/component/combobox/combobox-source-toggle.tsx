@@ -40,3 +40,5 @@ export const ComboboxViewToggle = React.forwardRef<
     </div>
   );
 });
+
+ComboboxViewToggle.displayName = "ComboboxViewToggle";
