@@ -23,7 +23,7 @@ const { auth, signIn, signOut, handlers } = NextAuth({
 
         const user = await findOneUser({ username });
 
-        if (!user) return null;
+        if (!user || !user.active || user.lock) return null;
 
         const profile = await findOneProfile({ id: user.profile[0].id });
 
