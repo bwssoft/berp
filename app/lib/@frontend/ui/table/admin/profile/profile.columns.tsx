@@ -8,6 +8,7 @@ import React from "react";
 interface Props {
   openActiveDialog: (id: string, value: boolean) => void;
   openUserModal: (profile: Pick<IProfile, "id" | "name">) => void;
+  openAuditModal: (profile: Pick<IProfile, "id" | "name">) => void;
 }
 export const columns = (props: Props): ColumnDef<IProfile>[] => [
   { header: "Perfil", accessorKey: "name" },
@@ -43,7 +44,7 @@ export const columns = (props: Props): ColumnDef<IProfile>[] => [
           <Button
             title="Histórico"
             onClick={() =>
-              alert("Modal com histórico de alterações nesse perfil")
+              props.openAuditModal({ id: original.id, name: original.name })
             }
             className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           >
@@ -51,7 +52,9 @@ export const columns = (props: Props): ColumnDef<IProfile>[] => [
           </Button>
           <Button
             title="Usuários"
-            onClick={() => props.openUserModal({id: original.id, name: original.name})}
+            onClick={() =>
+              props.openUserModal({ id: original.id, name: original.name })
+            }
             className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           >
             <UsersIcon className="size-5" />
