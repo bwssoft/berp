@@ -1,20 +1,13 @@
 import { findManyProfile } from "@/app/lib/@backend/action";
 import { createOneUser } from "@/app/lib/@backend/action/admin/user.action";
 import { toast } from "@/app/lib/@frontend/hook";
+import { userConstants } from "@/app/lib/constant";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-// domínios permitido para usuários internos
-const allowedDomains = [
-  "@bwsiot.com",
-  "@bwstechnology.com",
-  "@mgctechnology.com",
-  "@icb.com",
-];
 
 export const schema = z
   .object({
@@ -26,7 +19,9 @@ export const schema = z
     name: z.string().min(2, "Obrigatório informar um nome"),
     external: z.boolean(),
     image: z.string().optional(),
-    profile: z.array(z.object({name: z.string(), id: z.string()})),
+    profile: z
+      .array(z.object({ id: z.string(), name: z.string() }))
+      .min(1, "Selecione pelo menos um perfil"),
     username: z.string().min(3, "Obrigatório informar um nome de usuário"),
   })
   .refine(
@@ -35,7 +30,9 @@ export const schema = z
       if (!data.external) {
         // se for usuário interno
         const emailLower = data.email.toLowerCase();
-        return allowedDomains.some((domain) => emailLower.endsWith(domain));
+        return userConstants.allowedDomains.some((domain) =>
+          emailLower.endsWith(domain)
+        );
       }
       return true; // se for externo, qualquer e-mail é aceito
     },
@@ -50,7 +47,7 @@ export type Schema = z.infer<typeof schema>;
 export function useCreateOneUserForm() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  
+
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -58,11 +55,12 @@ export function useCreateOneUserForm() {
     formState: { errors },
     setError,
     reset,
-    watch
+    watch,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
       external: false, // Por default o checkbox deve estar desmarcado para usuário interno e marcado para usuário externo.
+      profile: [],
     },
   });
 
@@ -110,21 +108,20 @@ export function useCreateOneUserForm() {
   });
 
   function handleCancelEdit() {
-      reset({
-        cpf: undefined, 
-        external: false,
-        email: undefined,
-        name: undefined,
-        username: undefined,
-        image: "",
-        profile: [],
-      });
+    reset({
+      cpf: "",
+      external: false,
+      email: "",
+      name: "",
+      username: "",
+      image: "",
+      profile: [],
+    });
   }
 
   function handleBackPage() {
     router.back();
   }
-
 
   return {
     handleSubmit,
@@ -133,6 +130,6 @@ export function useCreateOneUserForm() {
     profiles: activeProfiles,
     errors,
     handleBackPage,
-    handleCancelEdit
+    handleCancelEdit,
   };
 }
