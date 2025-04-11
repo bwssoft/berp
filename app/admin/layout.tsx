@@ -14,24 +14,8 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const {user} = useAuth()
-  
-  const menuListItem: any[] = [
-    { 
-      name: "Sair", 
-      onClick: () => {
-        logout()
-      }
-    }, 
-    { 
-      name: "Perfil", 
-      href: `/admin/user/form/view?id=${user?.id}`
-    }
-  ];
-
-  return <Layout menuListItem={menuListItem} navigation={navigation}>{children}</Layout>;
+  return <Layout navigation={navigation}>{children}</Layout>;
 }
-
 
 const navigation: any[] = [
   {
