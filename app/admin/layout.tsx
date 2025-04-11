@@ -6,6 +6,8 @@ import {
   UsersIcon,
   ViewColumnsIcon,
 } from "@heroicons/react/24/outline";
+import { logout } from "../lib/@backend/action";
+import { useAuth } from "../lib/@frontend/context";
 
 export default function AdminLayout({
   children,
