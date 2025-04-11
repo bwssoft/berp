@@ -107,6 +107,7 @@ export function UpdateOneUserForm({ user }: Props) {
                             {...register("cpf")}
                             error={errors.cpf?.message}
                             disabled={isLocked}
+                            placeholder="Digite o CPF"
                         />
 
                         <Input
@@ -114,6 +115,7 @@ export function UpdateOneUserForm({ user }: Props) {
                             {...register("name")}
                             error={errors.name?.message}
                             disabled={isLocked}
+                            placeholder="Digite o nome completo"
                         />
 
                         <Input
@@ -122,6 +124,7 @@ export function UpdateOneUserForm({ user }: Props) {
                             {...register("email")}
                             error={errors.email?.message}
                             disabled={isLocked}
+                            placeholder="Digite o Email"
                         />
 
                         <Input
@@ -129,6 +132,7 @@ export function UpdateOneUserForm({ user }: Props) {
                             {...register("username")}
                             error={errors.username?.message}
                             disabled={isLocked}
+                            placeholder="Digite o nome de Usuário"
                         />
 
                         <Controller

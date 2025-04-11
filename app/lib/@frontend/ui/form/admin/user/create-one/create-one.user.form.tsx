@@ -12,7 +12,7 @@ export function CreateOneUserForm() {
   return (
     <form
       action={() => handleSubmit()}
-      className="bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10"
+      className="bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10 w-full"
     >
       <div className="border-b border-gray-900/10 pb-6">
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
