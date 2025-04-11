@@ -14,11 +14,13 @@ import { randomInt } from "crypto";
 import { hash } from "bcrypt";
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../audit";
+import { userObjectRepository } from "../../../infra/repository/s3/admin/user/user.s3.repository";
 
 namespace Dto {
   export type Input = {
     id: string;
     active: boolean;
+    formData: FormData;
   };
 
   export type Output = {
@@ -32,7 +34,7 @@ namespace Dto {
       profile_id?: string[];
       lock?: boolean;
       active?: boolean;
-      image?: string;
+      image?: File[] | File;
     };
   };
 }
@@ -47,7 +49,9 @@ class CreateOneUserUsecase {
   }
 
   async execute(
-    input: Omit<IUser, "id" | "created_at" | "password" | "temporary_password">
+    input: Omit<IUser, "id" | "created_at" | "password" | "temporary_password"> & {
+      formData: FormData;
+    }
   ): Promise<Dto.Output> {
     const temporaryPassword = generateRandomPassword();
     const randomSalt = randomInt(10, 16);
@@ -84,9 +88,30 @@ class CreateOneUserUsecase {
         error: { username: "Usuário já utilizado em outro cadastro!" },
       };
 
-    // 1º passo, criar o usuario (ok)
+      
     try {
       await this.repository.create(user);
+
+      // carrega todas as imagens(blob) que retornou do formData
+      const files = input.formData.getAll("file") as File[];
+
+      for (const file of files) {
+        if (file instanceof Blob) {
+          // arrayBuffer transforma o blob em buffer, isso significa que ele le o blob e transforma em buffer, e buffer é um array
+          const buffer = await file.arrayBuffer();
+      
+          const payload = {
+            data: Buffer.from(buffer),
+            key: `${user.id}/${file.name}`,
+          };
+          
+          // envia as imagens do formData pro s3 utilizado o repository do s3
+          await userObjectRepository.create(payload);
+          console.log(`Arquivo "${file.name}" enviado com sucesso!`);
+        }
+      }      
+        
+        
       const html = await formatWelcomeEmail({
         name: user.name,
         username: user.username,

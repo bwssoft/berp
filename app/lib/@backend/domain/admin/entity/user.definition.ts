@@ -9,7 +9,7 @@ export interface IUser {
   profile: { id: string; name: string }[];
   lock: boolean;
   active: boolean;
-  image?: string | null;
+  image?: File[] | File;
   external: boolean;
   created_at: Date;
 }
