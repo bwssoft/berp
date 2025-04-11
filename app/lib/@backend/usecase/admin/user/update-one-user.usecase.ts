@@ -92,6 +92,7 @@ class UpdateOneUserUsecase {
         after,
         domain: AuditDomain.user,
         user: { name, id, email },
+        action: `Usuário '${after.name}' atualizado`,
       });
 
       return { success: true };
