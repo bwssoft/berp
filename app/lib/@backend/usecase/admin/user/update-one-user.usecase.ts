@@ -94,7 +94,7 @@ class UpdateOneUserUsecase {
         user: { name, id, email },
       });
 
-      return result;
+      return { success: true };
     } catch (error) {
       return {
         success: false,
