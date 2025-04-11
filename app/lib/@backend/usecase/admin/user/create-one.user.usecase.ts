@@ -4,6 +4,7 @@ import {
   singleton,
 } from "@/app/lib/util";
 import {
+  AuditDomain,
   IBMessageGateway,
   IUser,
   IUserRepository,
@@ -11,6 +12,8 @@ import {
 import { bmessageGateway, userRepository } from "@/app/lib/@backend/infra";
 import { randomInt } from "crypto";
 import { hash } from "bcrypt";
+import { auth } from "@/auth";
+import { createOneAuditUsecase } from "../audit";
 
 namespace Dto {
   export type Input = {
@@ -95,6 +98,16 @@ class CreateOneUserUsecase {
         subject: "BCube – Primeiro acesso ",
         html,
         attachments: [],
+      });
+
+      const session = await auth();
+      const { name, email, id: user_id } = session?.user!;
+      await createOneAuditUsecase.execute({
+        after: user,
+        before: {},
+        domain: AuditDomain.user,
+        user: { email, name, id: user_id },
+        action: `Usuário '${user.name}' cadastrado`,
       });
       return { success: true };
     } catch (err) {
