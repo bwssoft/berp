@@ -32,10 +32,16 @@ export function CreateOneUserForm() {
             />
           </div>
 
-          <Input label="CPF" {...register("cpf")} error={errors.cpf?.message} />
+          <Input
+            label="CPF"
+            placeholder="Digite o CPF"
+            {...register("cpf")}
+            error={errors.cpf?.message}
+          />
 
           <Input
             label="Nome completo"
+            placeholder="Digite o nome completo"
             {...register("name")}
             error={errors.name?.message}
           />
@@ -43,18 +49,21 @@ export function CreateOneUserForm() {
           <Input
             label="Email"
             type="email"
+            placeholder="Digite o email"
             {...register("email")}
             error={errors.email?.message}
           />
 
           <Input
             label="Usuário"
+            placeholder="Digite o nome de usuário"
             {...register("username")}
             error={errors.username?.message}
           />
 
           <Input
             label="Imagem (URL)"
+            placeholder="Cole a URL da imagem"
             {...register("image")}
             error={errors.image?.message}
           />
@@ -75,6 +84,7 @@ export function CreateOneUserForm() {
                 value={field.value}
                 keyExtractor={(item) => item.id}
                 displayValueGetter={(item) => item.name}
+                placeholder="Selecione um ou mais perfis"
               />
             )}
           />
@@ -82,16 +92,16 @@ export function CreateOneUserForm() {
       </div>
 
       <div className="flex gap-2 justify-end mt-6">
-          <div className="flex gap-2">
-              <Button
-                  variant="secondary"
-                  onClick={handleCancelEdit}
-                  type="button"
-              >
-                  Cancelar
-              </Button>
-              <Button type="submit" variant="default">Salvar</Button>
-          </div>
+        <div className="flex gap-2">
+          <Button
+            variant="secondary"
+            onClick={handleCancelEdit}
+            type="button"
+          >
+            Cancelar
+          </Button>
+          <Button type="submit" variant="default">Salvar</Button>
+        </div>
       </div>
     </form>
   );
