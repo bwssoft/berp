@@ -111,6 +111,38 @@ export function SearchUserForm() {
                 )}
               />
 
+              <Controller
+                name="external"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <Combobox
+                    label="Externo/Interno"
+                    type="multiple"
+                    data={[
+                      { id: "", name: "Todos", value: false },
+                      { id: "1", name: "externo", value: true },
+                      { id: "2", name: "interno", value: false },
+                    ]}
+                    value={field.value ?? []}
+                    defaultValue={[]}
+                    onOptionChange={(items) =>
+                      field.onChange(
+                        items.some((i) => i.id === "")
+                          ? [
+                              { id: "1", name: "externo", value: true },
+                              { id: "2", name: "interno", value: false },
+                            ]
+                          : items
+                      )
+                    }
+                    error={fieldState.error?.message}
+                    keyExtractor={(item) => item.id}
+                    className="w-full z-50 "
+                    displayValueGetter={(item) => item.name}
+                  />
+                )}
+              />
+
             </div>
 
             <div className="flex justify-end gap-2 mt-4">
@@ -120,7 +152,7 @@ export function SearchUserForm() {
               </Button>
             </div>
           </form>
-       </Modal>
+      </Modal>
       </div>
   );
 }

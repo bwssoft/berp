@@ -13,7 +13,7 @@ import { userConstants } from "@/app/lib/constant";
 
 const updateSchema = z
     .object({
-        id: z.string().optional(),
+        id: z.string(),
         cpf: z
             .string()
             .min(11, "CPF obrigatório")
@@ -47,7 +47,6 @@ const updateSchema = z
 export type UpdateUserSchema = z.infer<typeof updateSchema>;
 
 export function useUpdateOneUserForm(user: IUser) {
-    const queryClient = useQueryClient();
     const { data: allProfiles } = useQuery({
         queryKey: ["findManyProfiles"],
         queryFn: () => findManyProfile({}),
@@ -60,33 +59,43 @@ export function useUpdateOneUserForm(user: IUser) {
         control,
         formState: { errors, isDirty },
         reset,
+        setError
     } = useForm<UpdateUserSchema>({
         resolver: zodResolver(updateSchema),
         defaultValues: user,
     });
 
     const handleSubmit = hookSubmit(async (data) => {
-        try {
-            if (!data.id) throw new Error("ID não informado");
 
-            await updateOneUser(data.id, data);
+            const {success, error } = await updateOneUser(data.id, data);
 
-            toast({
-                title: "Sucesso!",
-                description: "Usuário atualizado com sucesso",
-                variant: "success",
-            });
-            queryClient.invalidateQueries({
-                queryKey: ["findOneUser", user.id],
-            });
-        } catch (err) {
-            console.error(err);
-            toast({
-                title: "Erro",
-                description: "Não foi possível atualizar o usuário",
-                variant: "error",
-            });
-        }
+            if(success){
+                toast({
+                    title: "Sucesso!",
+                    description: "Usuário atualizado com sucesso",
+                    variant: "success",
+                });
+            }else if(error){
+                Object.entries(error).forEach(([key, message]) => {
+                    if (key !== "global" && message) {
+                        setError(key as keyof UpdateUserSchema, {
+                        type: "manual",
+                        message: message as string,
+                        });
+                    }
+                    });
+
+                    if (error.global) {
+                    toast({
+                        title: "Erro!",
+                        description: error.global,
+                        variant: "error",
+                    });
+                    }
+            }
+            
+
+
     });
 
     function handleCancelEdit() {

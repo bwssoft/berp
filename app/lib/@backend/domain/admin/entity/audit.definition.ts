@@ -1,6 +1,6 @@
 export enum AuditType {
     create = "create",
-    update = "updated",
+    update = "update",
 }
 
 export type AuditMetadata = {

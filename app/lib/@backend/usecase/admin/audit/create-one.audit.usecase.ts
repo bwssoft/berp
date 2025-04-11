@@ -12,6 +12,7 @@ import { randomUUID } from "crypto";
 
 namespace Dto {
     export type Input<Before = object, After = object> = {
+        action: string
         before: Before;
         after: After;
         domain: AuditDomain;
@@ -35,7 +36,7 @@ class CreateOneAuditUsecase {
     async execute<Before extends object, After extends object>(
         input: Dto.Input<Before, After>
     ): Promise<Dto.Output> {
-        const { before, after, domain, user } = input;
+        const { before, after, domain, user, action } = input;
 
         const metadata: AuditMetadata[] = [];
 
@@ -53,10 +54,10 @@ class CreateOneAuditUsecase {
 
         const audit: IAudit = {
             id: randomUUID(),
-            affected_entity_id: (after as any).id ?? "unknown",
+            affected_entity_id: (after as any).id,
             domain,
-            type: metadata.length === 0 ? AuditType.create : AuditType.update,
-            action: metadata.length === 0 ? "create" : "update",
+            type: Object.keys(before).length === 0 ? AuditType.create : AuditType.update,
+            action: action,
             metadata,
             created_at: new Date(),
             user,

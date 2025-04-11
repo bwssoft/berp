@@ -18,6 +18,7 @@ interface Props {
     active?: string[] | string;
     start_date?: Date;
     end_date?: Date;
+    external?: string[] | string;
   };
 }
 export default async function Example(props: Props) {
@@ -105,6 +106,16 @@ function query(props: Props["searchParams"]): Filter<IUser> {
         : props.active.map((s) => s === "true");
     conditions.push({
       active: { $in: statusBooleans },
+    });
+  }
+
+  if (props.external) {
+    const externalBooleans =
+      typeof props.external === "string"
+        ? [props.external === "true"]
+        : props.external.map((s) => s === "true");
+    conditions.push({
+      external: { $in: externalBooleans },
     });
   }
 

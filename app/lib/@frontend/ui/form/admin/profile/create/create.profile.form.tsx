@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
-import { useCreateProfileForm } from "./use-create.device.form";
+import { useCreateProfileForm } from "./use-create.profile.form";
 
 export function CreateProfileForm() {
   const { handleSubmit, register, handleBackPage, reset, errors } =

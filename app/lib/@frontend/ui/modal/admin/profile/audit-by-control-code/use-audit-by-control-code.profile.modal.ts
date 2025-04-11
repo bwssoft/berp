@@ -1,6 +1,6 @@
 "use client";
 import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
-import { AuditDomain, IControl } from "@/app/lib/@backend/domain";
+import { AuditDomain, AuditType, IControl } from "@/app/lib/@backend/domain";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 
@@ -22,15 +22,27 @@ export function useAuditByControlCodeProfileModal() {
   const audits =
     useQuery({
       queryKey: ["findManyAudit", control],
-      queryFn: () =>
-        findManyAudit({
+      queryFn: async () => {
+        const allow = await findManyAudit({
           domain: AuditDomain.profile,
           "metadata.field": "locked_control_code",
-          $or: [
-            { "metadata.before": { $in: [control?.code] } },
-            { "metadata.after": { $in: [control?.code] } },
-          ],
-        }),
+          type: AuditType.update,
+          "metadata.before": { $in: [control?.code] },
+          "metadata.after": { $nin: [control?.code] },
+        });
+
+        const block = await findManyAudit({
+          domain: AuditDomain.profile,
+          "metadata.field": "locked_control_code",
+          type: AuditType.update,
+          "metadata.before": { $nin: [control?.code] },
+          "metadata.after": { $in: [control?.code] },
+        });
+
+        return [...allow, ...block].sort(
+          (a, b) => b.created_at.getTime() - a.created_at.getTime()
+        );
+      },
     }).data ?? [];
 
   return {
