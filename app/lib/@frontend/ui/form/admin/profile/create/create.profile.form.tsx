@@ -3,7 +3,7 @@ import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useCreateProfileForm } from "./use-create.profile.form";
 
 export function CreateProfileForm() {
-  const { handleSubmit, register, handleBackPage, reset, errors } =
+  const { handleSubmit, register, reset, errors } =
     useCreateProfileForm();
 
   return (
@@ -44,12 +44,7 @@ export function CreateProfileForm() {
         </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-between gap-x-6">
-        <div>
-          <Button variant="ghost" onClick={handleBackPage} type="button">
-            Voltar
-          </Button>
-        </div>
+      <div className="mt-6 flex items-center justify-end gap-x-6">
         <div className="flex gap-2">
           <Button
             variant="secondary"

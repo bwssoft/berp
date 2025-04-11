@@ -6,7 +6,7 @@ import { useCreateOneUserForm } from "./use-create-one.user.form";
 import { Combobox } from "@bwsoft/combobox";
 
 export function CreateOneUserForm() {
-  const { handleSubmit, register, control, profiles, errors, handleCancelEdit, handleBackPage } =
+  const { handleSubmit, register, control, profiles, errors, handleCancelEdit } =
     useCreateOneUserForm();
 
   return (
@@ -81,16 +81,7 @@ export function CreateOneUserForm() {
         </div>
       </div>
 
-      <div className="flex gap-2 justify-between mt-6">
-          <div>
-              <Button
-                  variant="ghost"
-                  onClick={handleBackPage}
-                  type="button"
-              >
-                  Voltar
-              </Button>
-          </div>
+      <div className="flex gap-2 justify-end mt-6">
           <div className="flex gap-2">
               <Button
                   variant="secondary"

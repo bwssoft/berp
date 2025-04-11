@@ -65,15 +65,11 @@ export function useCreateProfileForm() {
         variant: "error",
       });
     }
-  });
-
-  function handleBackPage() {
     router.back();
-  }
+  });
 
   return {
     register,
-    handleBackPage,
     handleSubmit,
     errors,
     control,
