@@ -22,16 +22,27 @@ export function useAuditByControlCodeProfileModal() {
   const audits =
     useQuery({
       queryKey: ["findManyAudit", control],
-      queryFn: () =>
-        findManyAudit({
+      queryFn: async () => {
+        const allow = await findManyAudit({
           domain: AuditDomain.profile,
           "metadata.field": "locked_control_code",
           type: AuditType.update,
-          $or: [
-            { "metadata.before": { $in: [control?.code] } },
-            { "metadata.after": { $in: [control?.code] } },
-          ],
-        }),
+          "metadata.before": { $in: [control?.code] },
+          "metadata.after": { $nin: [control?.code] },
+        });
+
+        const block = await findManyAudit({
+          domain: AuditDomain.profile,
+          "metadata.field": "locked_control_code",
+          type: AuditType.update,
+          "metadata.before": { $nin: [control?.code] },
+          "metadata.after": { $in: [control?.code] },
+        });
+
+        return [...allow, ...block].sort(
+          (a, b) => b.created_at.getTime() - a.created_at.getTime()
+        );
+      },
     }).data ?? [];
 
   return {
