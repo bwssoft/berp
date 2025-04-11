@@ -6,14 +6,32 @@ import {
   UsersIcon,
   ViewColumnsIcon,
 } from "@heroicons/react/24/outline";
+import { logout } from "../lib/@backend/action";
+import { useAuth } from "../lib/@frontend/context";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <Layout navigation={navigation}>{children}</Layout>;
+  const {user} = useAuth()
+  
+  const menuListItem: any[] = [
+    { 
+      name: "Sair", 
+      onClick: () => {
+        logout()
+      }
+    }, 
+    { 
+      name: "Perfil", 
+      href: `/admin/user/form/view?id=${user?.id}`
+    }
+  ];
+
+  return <Layout menuListItem={menuListItem} navigation={navigation}>{children}</Layout>;
 }
+
 
 const navigation: any[] = [
   {
