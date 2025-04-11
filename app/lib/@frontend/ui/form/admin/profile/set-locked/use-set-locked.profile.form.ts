@@ -35,6 +35,7 @@ export function useSetLockedProfileForm(props: Props) {
           id: profile.id,
           locked_control_code: lockedCodes,
           operation: !arg ? "add" : "remove",
+          control_name: control.name,
         });
 
         toast({
