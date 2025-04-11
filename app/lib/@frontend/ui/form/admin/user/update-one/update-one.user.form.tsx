@@ -154,20 +154,12 @@ export function UpdateOneUserForm({ user }: Props) {
                     </div>
                 </div>
 
-                <div className="flex gap-2 justify-between mt-6">
-                    <div>
-                        <Button
-                            variant="ghost"
-                            onClick={handleBackPage}
-                            type="button"
-                        >
-                            Voltar
-                        </Button>
-                    </div>
+                <div className="flex gap-2  mt-6 justify-end">
+                  
                     <div className="flex gap-2">
                         <Button
                             variant="secondary"
-                            onClick={handleCancelEdit}
+                            onClick={handleBackPage}
                             type="button"
                         >
                             Cancelar
