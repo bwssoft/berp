@@ -3,7 +3,7 @@ import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useCreateProfileForm } from "./use-create.profile.form";
 
 export function CreateProfileForm() {
-  const { handleSubmit, register, reset, errors } =
+  const { handleSubmit, register, handleCancelCreate, errors } =
     useCreateProfileForm();
 
   return (
@@ -48,10 +48,7 @@ export function CreateProfileForm() {
         <div className="flex gap-2">
           <Button
             variant="secondary"
-            onClick={(event) => {
-              event.preventDefault();
-              reset();
-            }}
+            onClick={handleCancelCreate}
             type="button"
           >
             Cancelar

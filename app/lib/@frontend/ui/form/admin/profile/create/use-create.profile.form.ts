@@ -22,6 +22,7 @@ export function useCreateProfileForm() {
     formState: { errors },
     control,
     setValue,
+    reset,
     setError,
     reset: hookFormReset,
   } = useForm<Schema>({
@@ -68,12 +69,21 @@ export function useCreateProfileForm() {
     router.back();
   });
 
+  function handleCancelCreate() {
+    reset({
+      active: undefined,
+      name: "",
+      locked_control_code: [],
+    });
+    router.back();
+  }
+
   return {
     register,
     handleSubmit,
     errors,
     control,
     setValue,
-    reset: hookFormReset,
+    handleCancelCreate,
   };
 }
