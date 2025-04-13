@@ -1,7 +1,7 @@
 "use client";
 
 import { ITechnology } from "@/app/lib/@backend/domain";
-import { Button, ProgressBar, Spinner } from "@/app/lib/@frontend/ui/component";
+import { Button, Spinner } from "@/app/lib/@frontend/ui/component";
 import {
   DevicesAutoTestedTable,
   DevicesDetectedTable,
