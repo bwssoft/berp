@@ -123,9 +123,6 @@ export function useCreateOneUserForm() {
       image: "",
       profile: [],
     });
-  }
-
-  function handleBackPage() {
     router.back();
   }
 
@@ -135,7 +132,6 @@ export function useCreateOneUserForm() {
     control,
     profiles: activeProfiles,
     errors,
-    handleBackPage,
     handleCancelEdit,
   };
 }

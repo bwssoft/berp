@@ -5,20 +5,13 @@ import { Button, Checkbox, Combobox, FileUpload, Input } from "../../../../compo
 import { useCreateOneUserForm } from "./use-create-one.user.form";
 
 export function CreateOneUserForm() {
-  const {
-    handleSubmit,
-    register,
-    control,
-    profiles,
-    errors,
-    handleCancelEdit,
-    handleBackPage,
-  } = useCreateOneUserForm();
+  const { handleSubmit, register, control, profiles, errors, handleCancelEdit } =
+    useCreateOneUserForm();
 
   return (
     <form
       action={() => handleSubmit()}
-      className="bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10"
+      className="bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10 w-full"
     >
       <div className="border-b border-gray-900/10 pb-6">
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
@@ -60,20 +53,25 @@ export function CreateOneUserForm() {
             label="CPF"
             {...register("cpf")}
             error={errors.cpf?.message}
+            placeholder="Digite o CPF"
           />
+
           <Input
             label="Nome completo"
+            placeholder="Digite o nome completo"
             {...register("name")}
             error={errors.name?.message}
           />
           <Input
             label="Email"
             type="email"
+            placeholder="Digite o email"
             {...register("email")}
             error={errors.email?.message}
           />
           <Input
             label="Usuário"
+            placeholder="Digite o nome de usuário"
             {...register("username")}
             error={errors.username?.message}
           />
@@ -94,18 +92,16 @@ export function CreateOneUserForm() {
         </div>
       </div>
 
-      <div className="flex gap-2 justify-between mt-6">
-        <Button variant="ghost" onClick={handleBackPage} type="button">
-          Voltar
-        </Button>
-
+      <div className="flex gap-2 justify-end mt-6">
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={handleCancelEdit} type="button">
+          <Button
+            variant="secondary"
+            onClick={handleCancelEdit}
+            type="button"
+          >
             Cancelar
           </Button>
-          <Button type="submit" variant="default">
-            Salvar
-          </Button>
+          <Button type="submit" variant="default">Salvar</Button>
         </div>
       </div>
     </form>
