@@ -17,9 +17,14 @@ import { revalidatePath } from "next/cache";
 type UpdateUserData = Partial<Omit<IUser, "id" | "created_at">>;
 
 export const createOneUser = async (
-  data: Omit<IUser, "id" | "created_at" | "password" | "temporary_password">
+  data: Omit<IUser, "id" | "created_at" | "password" | "temporary_password">,
+  formData: FormData
 ) => {
-  const result = await createOneUserUsecase.execute(data);
+  const result = await createOneUserUsecase.execute({
+    ...data,
+    formData,
+  });
+
   revalidatePath("/admin/user");
   return result;
 };
@@ -43,7 +48,9 @@ export const findManyUser = async (filter: Filter<IUser>) => {
 };
 
 export const updateOneUser = async (id: string, data: UpdateUserData) => {
-  return await updateOneUserUsecase.execute({ id }, data);
+  const result = await updateOneUserUsecase.execute({ id }, data);
+  revalidatePath(`/admin/user/form/update?id=${id}`);
+  return result;
 };
 
 export const lockUser = async (data: { id: string; lock: boolean }) => {

@@ -10,6 +10,7 @@ import { IUser } from "@/app/lib/@backend/domain";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useRouter } from "next/navigation";
 import { userConstants } from "@/app/lib/constant";
+import { useEffect } from "react";
 
 const updateSchema = z
     .object({
@@ -21,7 +22,9 @@ const updateSchema = z
         email: z.string().email("Email inválido!"),
         name: z.string(),
         active: z.boolean(),
-        image: z.string().optional().nullable(),
+        image: z.object({
+            key: z.string()
+        }).optional(),
         profile: z
             .array(z.object({ id: z.string(), name: z.string() }))
             .min(1, "Selecione pelo menos um perfil"),
@@ -107,6 +110,10 @@ export function useUpdateOneUserForm(user: IUser) {
     function handleBackPage() {
         router.back();
     }
+
+    useEffect(() => {
+        reset(user)
+    }, [reset, user])
 
     return {
         profiles,

@@ -48,17 +48,20 @@ export function SearchUserForm() {
               <Input
                 label="Nome"
                 {...register("name")}
+                 placeholder="Digite o nome"
                 error={errors.name?.message}
               />
               <Input
                 label="CPF"
                 {...register("cpf")}
+                placeholder="Digite o CPF do usuário"
                 error={errors.cpf?.message}
               />
               <Combobox
                 label="Perfil"
                 type="multiple"
                 defaultValue={[]}
+                placeholder="Selecione um ou mais perfis"
                 data={[{ id: "", name: "Todos" }, ...profiles]}
                 error={errors.profile_id?.message}
                 onOptionChange={(items) => {
@@ -71,11 +74,13 @@ export function SearchUserForm() {
               <Input
                 label="Usuário"
                 {...register("username")}
+                placeholder="Digite o nome de usuário"
                 error={errors.username?.message}
               />
               <Input
                 label="Email"
                 {...register("email")}
+                placeholder="Digite o email"
                 error={errors.email?.message}
               />
 
@@ -85,6 +90,7 @@ export function SearchUserForm() {
                 render={({ field, fieldState }) => (
                   <Combobox
                     label="Status"
+                    placeholder="Selecione o status"
                     type="multiple"
                     data={[
                       { id: "", name: "Todos", value: false },
@@ -124,6 +130,7 @@ export function SearchUserForm() {
                       { id: "2", name: "interno", value: false },
                     ]}
                     value={field.value ?? []}
+                    placeholder="Selecione o tipo de usuário"
                     defaultValue={[]}
                     onOptionChange={(items) =>
                       field.onChange(
@@ -146,10 +153,13 @@ export function SearchUserForm() {
             </div>
 
             <div className="flex justify-end gap-2 mt-4">
-              <Button type="submit">Pesquisar</Button>
-              <Button variant="ghost" type="button" onClick={onReset}>
+              <Button variant="ghost" type="button" onClick={() => {
+                onReset()
+                toggleModal()
+              }}>
                 Limpar
               </Button>
+              <Button type="submit">Pesquisar</Button>
             </div>
           </form>
       </Modal>

@@ -1,3 +1,4 @@
+"use client";
 import { findManyProfile } from "@/app/lib/@backend/action";
 import { createOneUser } from "@/app/lib/@backend/action/admin/user.action";
 import { toast } from "@/app/lib/@frontend/hook";
@@ -18,7 +19,7 @@ export const schema = z
     email: z.string().email("Email inválido!"),
     name: z.string().min(2, "Obrigatório informar um nome"),
     external: z.boolean(),
-    image: z.string().optional(),
+    image: z.any(),
     profile: z
       .array(z.object({ id: z.string(), name: z.string() }))
       .min(1, "Selecione pelo menos um perfil"),
@@ -71,12 +72,20 @@ export function useCreateOneUserForm() {
   const activeProfiles = profiles.data?.filter((p) => p.active) ?? [];
 
   const handleSubmit = hookFormSubmit(async (data) => {
+    const formData = new FormData();
+    // envia as imagens por formData
+    if (Array.isArray(data.image)) {
+      data.image.forEach((file) => {
+        formData.append("file", file);
+      });
+    }
+
     const { success, error } = await createOneUser({
       ...data,
-      image: "",
       active: true,
       lock: false,
-    });
+      image: undefined,
+    }, formData);
     if (success) {
       router.back();
       toast({
@@ -114,9 +123,6 @@ export function useCreateOneUserForm() {
       image: "",
       profile: [],
     });
-  }
-
-  function handleBackPage() {
     router.back();
   }
 
@@ -126,7 +132,6 @@ export function useCreateOneUserForm() {
     control,
     profiles: activeProfiles,
     errors,
-    handleBackPage,
     handleCancelEdit,
   };
 }

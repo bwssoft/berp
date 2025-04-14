@@ -13,7 +13,7 @@ interface Props {
 export default function NavBar({menuListItem}:Props) {
   return (
     <Disclosure as="nav" className="bg-white shadow-sm">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-16">
         <div className="flex h-16 justify-between">
           <div className="flex">
           </div>
