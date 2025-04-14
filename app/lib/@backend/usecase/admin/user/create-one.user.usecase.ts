@@ -90,26 +90,26 @@ class CreateOneUserUsecase {
 
       
     try {
-      await this.repository.create(user);
+      let payload = null;
 
-      // carrega todas as imagens(blob) que retornou do formData
-      const files = input.formData.getAll("file") as File[];
+      // carrega a imagem(blob) que retornou do formData
+      const file = input.formData.get("file") as File;
 
-      for (const file of files) {
-        if (file instanceof Blob) {
-          // arrayBuffer transforma o blob em buffer, isso significa que ele le o blob e transforma em buffer, e buffer é um array
-          const buffer = await file.arrayBuffer();
-      
-          const payload = {
-            data: Buffer.from(buffer),
-            key: `${user.id}/${file.name}`,
-          };
-          
-          // envia as imagens do formData pro s3 utilizado o repository do s3
-          await userObjectRepository.create(payload);
-          console.log(`Arquivo "${file.name}" enviado com sucesso!`);
-        }
-      }      
+      if (file instanceof Blob) {
+        // arrayBuffer transforma o blob em buffer, isso significa que ele le o blob e transforma em buffer, e buffer é um array
+        const buffer = await file.arrayBuffer();
+    
+        const key = `${user.id}/${file.name}`;
+    
+        payload = {
+          data: Buffer.from(buffer),
+          key,
+        };
+        
+        // envia as imagens do formData pro s3 utilizado o repository do s3
+        await userObjectRepository.create(payload);
+        console.log(`Arquivo "${file.name}" enviado com sucesso!`);
+      }
         
         
       const html = await formatWelcomeEmail({
@@ -117,13 +117,23 @@ class CreateOneUserUsecase {
         username: user.username,
         password: temporaryPassword,
       });
-      // 2º passo, enviar o email com a senha gerada (implementar)
+      
+      // 2º passo, enviar o email com a senha gerada
       await this.bmessageGateway.html({
         to: user.email,
         subject: "BCube – Primeiro acesso ",
         html,
         attachments: [],
       });
+
+      // 3º passo, cria o usuário e salva a imagem
+      await this.repository.create({
+        ...user,
+        image: {
+          key: payload?.key,
+        },
+      });
+
 
       const session = await auth();
       const { name, email, id: user_id } = session?.user!;
