@@ -48,7 +48,9 @@ export const findManyUser = async (filter: Filter<IUser>) => {
 };
 
 export const updateOneUser = async (id: string, data: UpdateUserData) => {
-  return await updateOneUserUsecase.execute({ id }, data);
+  const result = await updateOneUserUsecase.execute({ id }, data);
+  revalidatePath(`/admin/user/form/update?id=${id}`);
+  return result;
 };
 
 export const lockUser = async (data: { id: string; lock: boolean }) => {
