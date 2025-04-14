@@ -18,6 +18,8 @@ export namespace NB2 {
     RSI: string; //"OK"
     SN: string; //"16868634"
     VCC: string; //"48"
+    TEMP: string; //"25"
+    DEV: string; // "DM_BWS_NB2"
   }
 }
 
