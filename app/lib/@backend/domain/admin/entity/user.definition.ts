@@ -10,7 +10,7 @@ export interface IUser {
   lock: boolean;
   active: boolean;
   image?: {
-    key?: string;
+    key: string;
   };
   external: boolean;
   created_at: Date;

@@ -31,10 +31,10 @@ namespace Dto {
       name?: string;
       cpf?: string;
       email?: string;
-      profile_id?: string[];
-      lock?: boolean;
-      active?: boolean;
-      image?: File[] | File;
+      profile_id?: string
+      lock?: string;
+      active?: string;
+      image?: string
     };
   };
 }
@@ -108,7 +108,13 @@ class CreateOneUserUsecase {
         
         // envia as imagens do formData pro s3 utilizado o repository do s3
         await userObjectRepository.create(payload);
-        console.log(`Arquivo "${file.name}" enviado com sucesso!`);
+      }
+
+      if(!payload) {
+        return {
+          success: false,
+          error: { image: "Failed to save image!" },
+        }
       }
         
         
@@ -130,10 +136,9 @@ class CreateOneUserUsecase {
       await this.repository.create({
         ...user,
         image: {
-          key: payload?.key,
+          key: payload.key,
         },
       });
-
 
       const session = await auth();
       const { name, email, id: user_id } = session?.user!;

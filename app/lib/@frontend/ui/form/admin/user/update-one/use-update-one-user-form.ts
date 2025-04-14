@@ -21,7 +21,9 @@ const updateSchema = z
         email: z.string().email("Email inválido!"),
         name: z.string(),
         active: z.boolean(),
-        image: z.string().optional().nullable(),
+        image: z.object({
+            key: z.string()
+        }).optional(),
         profile: z
             .array(z.object({ id: z.string(), name: z.string() }))
             .min(1, "Selecione pelo menos um perfil"),

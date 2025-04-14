@@ -1,12 +1,24 @@
 "use client";
 
 import { Controller } from "react-hook-form";
-import { Button, Checkbox, Combobox, FileUpload, Input } from "../../../../component";
+import {
+  Button,
+  Checkbox,
+  Combobox,
+  FileUpload,
+  Input,
+} from "../../../../component";
 import { useCreateOneUserForm } from "./use-create-one.user.form";
 
 export function CreateOneUserForm() {
-  const { handleSubmit, register, control, profiles, errors, handleCancelEdit } =
-    useCreateOneUserForm();
+  const {
+    handleSubmit,
+    register,
+    control,
+    profiles,
+    errors,
+    handleCancelEdit,
+  } = useCreateOneUserForm();
 
   return (
     <form
@@ -37,6 +49,7 @@ export function CreateOneUserForm() {
                 <Combobox
                   label="Perfis"
                   type="multiple"
+                  placeholder="Selecione os perfis para esse usuário"
                   className="mt-1 text-left"
                   data={profiles ?? []}
                   error={errors.profile?.message}
@@ -83,8 +96,9 @@ export function CreateOneUserForm() {
             name="image"
             render={({ field }) => (
               <FileUpload
+                label="Imagem de perfil"
                 handleFile={field.onChange}
-                multiple
+                multiple={false}
                 accept={"jpeg, jpg, png"}
               />
             )}
@@ -94,14 +108,12 @@ export function CreateOneUserForm() {
 
       <div className="flex gap-2 justify-end mt-6">
         <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            onClick={handleCancelEdit}
-            type="button"
-          >
+          <Button variant="secondary" onClick={handleCancelEdit} type="button">
             Cancelar
           </Button>
-          <Button type="submit" variant="default">Salvar</Button>
+          <Button type="submit" variant="default">
+            Salvar
+          </Button>
         </div>
       </div>
     </form>
