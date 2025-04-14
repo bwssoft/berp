@@ -355,8 +355,10 @@ export const useNB2 = () => {
 
                 const BATT_VOLT = Number(autotest["BATT_VOLT"]);
                 const VCC = Number(autotest["VCC"]);
+                const TEMP = Number(autotest["TEMP"]);
 
                 resultTemplate.analysis = {
+                  DEV: autotest["DEV"] === "DM_BWS_NB2",
                   ACELC: Boolean(autotest["ACELC"]?.length),
                   ACELP: autotest["ACELP"] === "OK",
                   BATT_VOLT:
@@ -376,6 +378,7 @@ export const useNB2 = () => {
                   RSI: autotest["RSI"] === "OK",
                   SN: Boolean(autotest["SN"]?.length),
                   VCC: !isNaN(VCC) && VCC <= 130 && VCC >= 120,
+                  TEMP: !isNaN(TEMP) && TEMP <= 26 && TEMP >= 24,
                 };
 
                 const statusValues = Object.values(resultTemplate.analysis);

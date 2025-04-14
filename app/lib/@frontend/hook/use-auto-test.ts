@@ -26,6 +26,61 @@ namespace Namespace {
   export interface AutoTest extends IAutoTestLog {}
 }
 
+const mapAutoTestResultToLog = (
+  result: {
+    port: ISerialPort;
+    response?: any;
+    messages?: ReadonlyArray<{ key: string; message: string }>;
+    end_time?: number;
+    init_time?: number;
+    analysis?: any;
+    status?: boolean;
+  },
+  detected: Namespace.Identified[],
+  technology: ITechnology
+): Omit<IAutoTestLog, "id" | "created_at" | "user"> | undefined => {
+  // Verifica campos obrigatórios
+  if (
+    !result.response ||
+    !result.messages ||
+    !result.end_time ||
+    !result.init_time ||
+    !result.analysis ||
+    typeof result.status !== "boolean"
+  ) {
+    return undefined;
+  }
+
+  const equipment = detected.find(
+    (device) => device.port === result.port
+  )?.equipment;
+
+  if (!equipment) return undefined;
+
+  return {
+    analysis: result.analysis,
+    equipment: {
+      imei: equipment.imei!,
+      firmware: equipment.firmware!,
+      serial: equipment.serial!,
+      iccid: equipment.iccid,
+    },
+    status: result.status,
+    metadata: {
+      messages: result.messages.map(({ key, message }) => ({
+        request: message,
+        response: result.response[key],
+      })),
+      end_time: result.end_time,
+      init_time: result.init_time,
+    },
+    technology: {
+      id: technology.id,
+      system_name: technology.name.system,
+    },
+  };
+};
+
 export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
   const { technology } = props;
   const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
@@ -34,13 +89,20 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
   const [autoTest, setAutoTest] = useState<Namespace.AutoTest[]>([]);
   const isAutoTesting = useRef(false);
 
+  const [detectionProgress, setDetectionProgress] = useState(false);
+  const [autoTestProgress, setAutoTestProgress] = useState(false);
+
   // hook that handle interactions with devices
   const { ports, handleDetection, handleAutoTest, requestPort } =
     useTechnology(technology);
 
   // function that handle the auto test process, check if the process was successful and save result on database
   const test = useCallback(async () => {
+    if (!technology) return;
+
+    // update isAutoTesting reference to true to prevent multiple auto test processes
     isAutoTesting.current = true;
+    setAutoTestProgress(true);
 
     // run auto test devices
     const autoTestResult = await handleAutoTest(
@@ -51,49 +113,7 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
 
     // check if each message sent has response
     const result = autoTestResult
-      .map(
-        ({
-          port,
-          response,
-          messages,
-          end_time,
-          init_time,
-          analysis,
-          status,
-        }) => {
-          if (!response || !messages || !end_time || !init_time || !analysis)
-            return undefined;
-
-          const { equipment } = identified.find((el) => el.port === port) ?? {};
-
-          if (!equipment || !technology) return undefined;
-
-          const log: Omit<IAutoTestLog, "id" | "created_at" | "user"> = {
-            analysis,
-            equipment: {
-              imei: equipment.imei!,
-              firmware: equipment.firmware!,
-              serial: equipment.serial!,
-              iccid: equipment.iccid,
-            },
-            status,
-            metadata: {
-              messages: messages.map(({ key, message }) => ({
-                request: message,
-                response: response[key as keyof typeof response],
-              })),
-              end_time,
-              init_time,
-            },
-            technology: {
-              id: technology.id,
-              system_name: technology.name.system,
-            },
-          };
-
-          return log;
-        }
-      )
+      .map((log) => mapAutoTestResultToLog(log, identified, technology))
       .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
     // save result on database
@@ -103,34 +123,42 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
     setAutoTest((prev) => prev.concat(dataSavedOnDb));
 
     isAutoTesting.current = false;
+    setAutoTestProgress(false);
   }, [handleAutoTest, identified, technology]);
 
-  // useEffect used to identify devices when connected via serial ports
-  useEffect(() => {
-    const interval = setInterval(async () => {
+  const detect = useCallback(
+    (ports: ISerialPort[]) => {
       if (isAutoTesting.current) return;
-      if (!isIdentifying.current && ports.length) {
-        isIdentifying.current = true;
-        const identified = await handleDetection(ports);
+      if (isIdentifying.current && ports.length) return;
+      isIdentifying.current = true;
+      setDetectionProgress(true);
+      handleDetection(ports).then((identified) => {
         setIdentified(
           identified
             .filter((el) => el.response !== undefined)
             .map(({ port, response }) => ({ port, equipment: response! }))
         );
+        setDetectionProgress(false);
         isIdentifying.current = false;
-      } else if (!isIdentifying.current && !ports.length) {
-        setIdentified([]);
-      }
-    }, 5000); // 5000 ms = 5 segundos
+      });
+    },
+    [handleDetection]
+  );
 
-    // Limpeza: limpa o intervalo quando o componente é desmontado ou quando as dependências mudarem
+  // useEffect used to identify devices when connected via serial ports
+  useEffect(() => {
+    const interval = setInterval(() => detect(ports), 5000); // 5000 ms = 5 segundos
     return () => clearInterval(interval);
-  }, [ports, handleDetection]);
+  }, [ports, detect]);
 
   return {
     autoTest,
     identified,
     test,
     requestPort,
+    progress: {
+      autoTest: autoTestProgress,
+      detection: detectionProgress,
+    },
   };
 };

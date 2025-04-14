@@ -1,7 +1,7 @@
 "use client";
 
 import { ITechnology } from "@/app/lib/@backend/domain";
-import { Button } from "@/app/lib/@frontend/ui/component";
+import { Button, Spinner } from "@/app/lib/@frontend/ui/component";
 import {
   DevicesAutoTestedTable,
   DevicesDetectedTable,
@@ -15,7 +15,7 @@ interface Props {
 export function AutoTestPanel(props: Props) {
   const { technology } = props;
 
-  const { identified, autoTest, test, requestPort } = useAutoTest({
+  const { identified, autoTest, test, requestPort, progress } = useAutoTest({
     technology,
   });
 
@@ -39,13 +39,18 @@ export function AutoTestPanel(props: Props) {
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div className="bg-white shadow-md rounded-md p-6">
           <div className="border-b border-gray-900/10 pb-6">
-            <h1 className="text-base font-semibold leading-7 text-gray-900">
-              Etapa 2: Portas
-            </h1>
-            <p className="mt-2 text-sm text-gray-700">
-              Uma lista de todas as portas conectadas vinculadas ao equipamento
-              identificado
-            </p>
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-base font-semibold leading-7 text-gray-900">
+                  Etapa 2: Portas
+                </h1>
+                <p className="mt-2 text-sm text-gray-700">
+                  Uma lista de todas as portas conectadas vinculadas ao
+                  equipamento identificado
+                </p>
+              </div>
+              {progress.detection && <Spinner />}
+            </div>
           </div>
           <div className="mt-6">
             <DevicesDetectedTable data={identified} />
@@ -72,12 +77,17 @@ export function AutoTestPanel(props: Props) {
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
         <div className="bg-white shadow-md rounded-md p-6">
           <div className="border-b border-gray-900/10 pb-6">
-            <h1 className="text-base font-semibold leading-7 text-gray-900">
-              Etapa 3: Verificação
-            </h1>
-            <p className="mt-2 text-sm text-gray-700">
-              Uma lista de todos os equipamentos testados.
-            </p>
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-base font-semibold leading-7 text-gray-900">
+                  Etapa 3: Verificação
+                </h1>
+                <p className="mt-2 text-sm text-gray-700">
+                  Uma lista de todos os equipamentos testados.
+                </p>
+              </div>
+              {progress.autoTest && <Spinner />}
+            </div>
           </div>
           <div className="mt-6">
             <DevicesAutoTestedTable data={autoTest} />
