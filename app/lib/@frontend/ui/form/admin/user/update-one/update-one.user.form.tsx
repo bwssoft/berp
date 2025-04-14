@@ -1,7 +1,6 @@
 "use client";
 
-import { Button, Checkbox, Input } from "../../../../component";
-import { Combobox } from "@bwsoft/combobox";
+import { Button, Checkbox, Input, Combobox, FileUpload } from "../../../../component";
 import { Controller } from "react-hook-form";
 import { IUser } from "@/app/lib/@backend/domain";
 import { useUpdateOneUserForm } from "./use-update-one-user-form";
@@ -84,20 +83,39 @@ export function UpdateOneUserForm({ user }: Props) {
                     </div>
 
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="md:col-span-2">
+                        <div className="sm:col-span-2 flex flex-col gap-4">
                             <Controller
                                 control={control}
                                 name="external"
                                 render={({ field }) => (
-                                    <Checkbox
-                                        checked={field.value}
-                                        onChange={field.onChange}
-                                        onBlur={field.onBlur}
-                                        name={field.name}
-                                        defaultChecked={field.value}
-                                        label="Usuário Externo"
-                                        disabled={isLocked}
-                                    />
+                                <Checkbox
+                                    checked={field.value}
+                                    onChange={field.onChange}
+                                    onBlur={field.onBlur}
+                                    disabled={isLocked}
+                                    name={field.name}
+                                    label="Usuário externo"
+                                />
+                                )}
+                            />
+                
+                            <Controller
+                                control={control}
+                                name="profile"
+                                render={({ field }) => (
+                                <Combobox
+                                    label="Perfis"
+                                    type="multiple"
+                                    placeholder="Selecione os perfis desse usuário"
+                                    className="mt-1 text-left"
+                                    data={profiles ?? []}
+                                    error={errors.profile?.message}
+                                    onOptionChange={field.onChange}
+                                    value={field.value}
+                                    keyExtractor={(item) => item.id}
+                                    displayValueGetter={(item) => item.name}
+                                    disabled={isLocked}
+                                />
                                 )}
                             />
                         </div>
@@ -135,27 +153,21 @@ export function UpdateOneUserForm({ user }: Props) {
                             placeholder="Digite o nome de Usuário"
                         />
 
+                    </div>
+                    {!isLocked && <div className="mt-6">
                         <Controller
                             control={control}
-                            name="profile"
+                            name="image"
                             render={({ field }) => (
-                                <Combobox
-                                    label="Perfis"
-                                    className="mt-2"
-                                    type="multiple"
-                                    data={profiles ?? []}
-                                    error={errors.profile?.message}
-                                    value={field.value || []}
-                                    onOptionChange={(items) => {
-                                        field.onChange(items);
-                                    }}
-                                    keyExtractor={(item) => item.id}
-                                    displayValueGetter={(item) => item.name}
-                                    disabled={isLocked}
+                                <FileUpload
+                                    label="Imagem de perfil"
+                                    handleFile={field.onChange}
+                                    multiple={false}
+                                    accept={"jpeg, jpg, png"}
                                 />
                             )}
                         />
-                    </div>
+                    </div>}
                 </div>
 
                 <div className="flex gap-2  mt-6 justify-end">

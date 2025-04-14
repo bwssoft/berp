@@ -1,13 +1,24 @@
 "use client";
 
 import { Controller } from "react-hook-form";
-import { Button, Checkbox, Input } from "../../../../component";
+import {
+  Button,
+  Checkbox,
+  Combobox,
+  FileUpload,
+  Input,
+} from "../../../../component";
 import { useCreateOneUserForm } from "./use-create-one.user.form";
-import { Combobox } from "@bwsoft/combobox";
 
 export function CreateOneUserForm() {
-  const { handleSubmit, register, control, profiles, errors, handleCancelEdit } =
-    useCreateOneUserForm();
+  const {
+    handleSubmit,
+    register,
+    control,
+    profiles,
+    errors,
+    handleCancelEdit,
+  } = useCreateOneUserForm();
 
   return (
     <form
@@ -16,7 +27,7 @@ export function CreateOneUserForm() {
     >
       <div className="border-b border-gray-900/10 pb-6">
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
-          <div className="md:col-span-2">
+          <div className="sm:col-span-2 flex flex-col gap-4">
             <Controller
               control={control}
               name="external"
@@ -30,13 +41,32 @@ export function CreateOneUserForm() {
                 />
               )}
             />
+
+            <Controller
+              control={control}
+              name="profile"
+              render={({ field }) => (
+                <Combobox
+                  label="Perfis"
+                  type="multiple"
+                  placeholder="Selecione os perfis para esse usuário"
+                  className="mt-1 text-left"
+                  data={profiles ?? []}
+                  error={errors.profile?.message}
+                  onOptionChange={field.onChange}
+                  value={field.value}
+                  keyExtractor={(item) => item.id}
+                  displayValueGetter={(item) => item.name}
+                />
+              )}
+            />
           </div>
 
           <Input
             label="CPF"
-            placeholder="Digite o CPF"
             {...register("cpf")}
             error={errors.cpf?.message}
+            placeholder="Digite o CPF"
           />
 
           <Input
@@ -45,7 +75,6 @@ export function CreateOneUserForm() {
             {...register("name")}
             error={errors.name?.message}
           />
-
           <Input
             label="Email"
             type="email"
@@ -53,38 +82,24 @@ export function CreateOneUserForm() {
             {...register("email")}
             error={errors.email?.message}
           />
-
           <Input
             label="Usuário"
             placeholder="Digite o nome de usuário"
             {...register("username")}
             error={errors.username?.message}
           />
+        </div>
 
-          <Input
-            label="Imagem (URL)"
-            placeholder="Cole a URL da imagem"
-            {...register("image")}
-            error={errors.image?.message}
-          />
-
+        <div className="mt-6">
           <Controller
             control={control}
-            name="profile"
+            name="image"
             render={({ field }) => (
-              <Combobox
-                label="Perfis"
-                className="mt-2"
-                type="multiple"
-                data={profiles ?? []}
-                error={errors.profile?.message}
-                onOptionChange={(items) => {
-                  field.onChange(items);
-                }}
-                value={field.value}
-                keyExtractor={(item) => item.id}
-                displayValueGetter={(item) => item.name}
-                placeholder="Selecione um ou mais perfis"
+              <FileUpload
+                label="Imagem de perfil"
+                handleFile={field.onChange}
+                multiple={false}
+                accept={"jpeg, jpg, png"}
               />
             )}
           />
@@ -93,14 +108,12 @@ export function CreateOneUserForm() {
 
       <div className="flex gap-2 justify-end mt-6">
         <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            onClick={handleCancelEdit}
-            type="button"
-          >
+          <Button variant="secondary" onClick={handleCancelEdit} type="button">
             Cancelar
           </Button>
-          <Button type="submit" variant="default">Salvar</Button>
+          <Button type="submit" variant="default">
+            Salvar
+          </Button>
         </div>
       </div>
     </form>
