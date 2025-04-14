@@ -153,10 +153,13 @@ export function SearchUserForm() {
             </div>
 
             <div className="flex justify-end gap-2 mt-4">
-              <Button type="submit">Pesquisar</Button>
-              <Button variant="secondary" type="button" onClick={toggleModal}>
-                Cancelar
+              <Button variant="ghost" type="button" onClick={() => {
+                onReset()
+                toggleModal()
+              }}>
+                Limpar
               </Button>
+              <Button type="submit">Pesquisar</Button>
             </div>
           </form>
       </Modal>

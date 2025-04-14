@@ -10,6 +10,7 @@ import { IUser } from "@/app/lib/@backend/domain";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useRouter } from "next/navigation";
 import { userConstants } from "@/app/lib/constant";
+import { useEffect } from "react";
 
 const updateSchema = z
     .object({
@@ -109,6 +110,10 @@ export function useUpdateOneUserForm(user: IUser) {
     function handleBackPage() {
         router.back();
     }
+
+    useEffect(() => {
+        reset(user)
+    }, [reset, user])
 
     return {
         profiles,
