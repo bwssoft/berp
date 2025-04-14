@@ -11,7 +11,7 @@ export const useTechnology = (technology: ITechnology | null) => {
     return e3Plus4G;
   } else if (technology?.name.system === "DM_E3_PLUS") {
     return e3Plus;
-  } else if (technology?.name.system === "DM_NB_2") {
+  } else if (technology?.name.system === "DM_BWS_NB2") {
     return nb2;
   } else {
     return e3Plus4G;
