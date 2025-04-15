@@ -3,7 +3,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { logout, updateUserPassword } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
-import { useRouter } from "next/navigation";
 
 const schema = z
   .object({
