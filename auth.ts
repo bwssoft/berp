@@ -31,7 +31,7 @@ const { auth, signIn, signOut, handlers } = NextAuth({
 
         const passwordsMatch = await bcrypt.compare(password, user.password);
 
-        if (passwordsMatch) return { ...user, current_profile: profile };
+        if (passwordsMatch) return { ...user, current_profile: profile, image: null };
 
         return null;
       },
