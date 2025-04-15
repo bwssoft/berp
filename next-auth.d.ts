@@ -11,10 +11,11 @@ declare module "next-auth" {
       profile: { id: string; name: string }[];
       current_profile: IProfile;
       temporary_password: boolean;
+      image?: { key: string };
     };
   }
 
-  interface User {
+  interface User extends DefaultUser {
     email: string;
     created_at: Date;
     id: string;
@@ -22,5 +23,6 @@ declare module "next-auth" {
     profile: { id: string; name: string }[];
     current_profile: IProfile;
     temporary_password: boolean;
+    image?: { key: string };
   }
 }
