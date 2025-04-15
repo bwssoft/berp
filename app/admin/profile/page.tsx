@@ -8,10 +8,10 @@ import Link from "next/link";
 
 interface Props {
   searchParams: {
-    profile_name?: string;
+    quick?: string;
+
     profile_id?: string[];
-    user_id?: string;
-    status?: string[];
+    active?: string[];
   };
 }
 export default async function Example(props: Props) {
@@ -47,9 +47,44 @@ export default async function Example(props: Props) {
   );
 }
 
-const query = (params: Props["searchParams"]): Filter<IProfile> => {
-  const query: Filter<IProfile> = {};
-  if (params.profile_name)
-    query.name = { $regex: params.profile_name, $options: "i" };
-  return query;
-};
+function query(props: Props["searchParams"]): Filter<IProfile> {
+  const conditions: Filter<IProfile>[] = [];
+
+  if (props.quick) {
+    const regex = { $regex: props.quick, $options: "i" };
+    conditions.push({
+      name: regex,
+    });
+  }
+
+  if (props.profile_id) {
+    const profile_id =
+      typeof props.profile_id === "string"
+        ? [props.profile_id]
+        : props.profile_id;
+    conditions.push({ id: { $in: profile_id } });
+  }
+
+  if (props.active) {
+    // Converte as strings para booleanos ("true" => true, "false" => false)
+    const statusBooleans =
+      typeof props.active === "string"
+        ? [props.active === "true"]
+        : props.active.map((s) => s === "true");
+    conditions.push({
+      active: { $in: statusBooleans },
+    });
+  }
+
+  // Combina as condições utilizando $and se houver mais de uma
+  if (conditions.length === 1) {
+    return conditions[0];
+  }
+
+  if (conditions.length > 1) {
+    return { $and: conditions };
+  }
+
+  // Retorna um filtro vazio se não houver condições
+  return {};
+}

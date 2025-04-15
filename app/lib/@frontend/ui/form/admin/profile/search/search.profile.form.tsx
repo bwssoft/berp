@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Button,
-  Input,
-  Modal,
-  Combobox,
-} from "../../../../component";
+import { Button, Input, Modal, Combobox } from "../../../../component";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import { Controller } from "react-hook-form";
 import { useSearchProfileForm } from "./use-search.profile.form";
@@ -13,6 +8,7 @@ import { useSearchProfileForm } from "./use-search.profile.form";
 export function SearchProfileForm() {
   const {
     register,
+    users,
     profiles,
     isModalOpen,
     toggleModal,
@@ -22,6 +18,8 @@ export function SearchProfileForm() {
     control,
     setValue,
     handleChangeProfileName,
+    handleProfileUser,
+    handleSearchUser,
   } = useSearchProfileForm();
 
   return (
@@ -54,20 +52,28 @@ export function SearchProfileForm() {
       >
         <form onSubmit={onSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
-            <Combobox
-              label="Perfil"
-              type="multiple"
-              defaultValue={[]}
-              data={[...profiles]}
-              error={errors.profile_id?.message}
-              onOptionChange={(items) =>
-                setValue(
-                  "profile_id",
-                  items.map((i) => i.id)
-                )
-              }
-              keyExtractor={(item) => item.id}
-              displayValueGetter={(item) => item.name}
+            <Controller
+              name="profile"
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  label="Perfil"
+                  type="multiple"
+                  data={[...profiles]}
+                  defaultValue={field.value}
+                  error={errors.profile?.message}
+                  onSearchChange={handleProfileUser}
+                  keyExtractor={(item) => item.id}
+                  displayValueGetter={(item) => item.name}
+                  placeholder="Digite e busque pelo nome do perfil"
+                  onOptionChange={(items) =>
+                    setValue(
+                      "profile",
+                      items.map((i) => ({ id: i.id, name: i.name }))
+                    )
+                  }
+                />
+              )}
             />
             <Controller
               name="active"
@@ -96,24 +102,46 @@ export function SearchProfileForm() {
                   error={fieldState.error?.message}
                   keyExtractor={(item) => item.id}
                   className="w-full z-50"
+                  placeholder="Selecione o status"
                   displayValueGetter={(item) => item.name}
                 />
               )}
             />
 
-            <Input
-              label="Usuário"
-              {...register("username")}
-              error={errors.username?.message}
+            <Controller
+              name="user"
+              control={control}
+              render={({field}) => (
+                <Combobox
+                  label="Usuários"
+                  type="multiple"
+                  data={[...users]}
+                  error={errors.user?.message}
+                  onSearchChange={handleSearchUser}
+                  defaultValue={field.value}
+                  keyExtractor={(item) => item.id}
+                  displayValueGetter={(item) => item.name}
+                  placeholder="Digite e busque pelo nome do usuário"
+                  onOptionChange={(items) =>
+                    setValue(
+                      "user",
+                      items.map((i) => ({ id: i.id, name: i.name, profile: i.profile }))
+                    )
+                  }
+                />
+              )}
             />
           </div>
 
           <div className="flex justify-end gap-2 mt-4">
-           
-            <Button variant="ghost" type="button" onClick={() =>{
-              onReset();
-              toggleModal();
-            }}>
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={() => {
+                onReset();
+                toggleModal();
+              }}
+            >
               Limpar
             </Button>
             <Button type="submit">Pesquisar</Button>
