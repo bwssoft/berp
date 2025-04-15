@@ -1,10 +1,13 @@
+"use client";
 import { cn } from "@/app/lib/util";
-import { forwardRef } from "react";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { forwardRef, useState } from "react";
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
   containerClassname?: string;
+  type?: string;
 }
 
 const Input = forwardRef<HTMLInputElement, Props>(
@@ -16,11 +19,16 @@ const Input = forwardRef<HTMLInputElement, Props>(
       placeholder,
       className,
       containerClassname,
+      type="text",
       error,
       ...rest
     },
     ref
   ) => {
+
+    const [seePassword, setSeePassword] = useState(false);
+    const [typeSelect, setTypeSelect] = useState("");
+
     return (
       <div className={cn("w-full", containerClassname)}>
         {label && (
@@ -32,8 +40,15 @@ const Input = forwardRef<HTMLInputElement, Props>(
           </label>
         )}
         <div className={cn(label && "mt-2 relative")}>
+          {type == "password" && (
+            seePassword ? (
+              <EyeIcon onClick={() => {setSeePassword(!seePassword), setTypeSelect("password")}} className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            ) : (
+              <EyeSlashIcon onClick={() => {setSeePassword(!seePassword), setTypeSelect("text")}} className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            )
+          )}
           <input
-            type="text"
+            type={typeSelect ? typeSelect : type}
             name={name}
             id={id}
             className={cn(
