@@ -34,6 +34,7 @@ export function useSetNewPasswordUserForm(userId: string) {
     setError,
     formState: { errors },
   } = useForm<Schema>({
+    mode: "onChange",
     resolver: zodResolver(schema),
   });
 
