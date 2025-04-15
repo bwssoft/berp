@@ -136,12 +136,12 @@ export const useSearchProfileForm = () => {
   );
 
   const handleSearchUser = useDebounce(
-    (input: string) => setProfileSearchTerm(input),
+    (input: string) => setUserSearchTerm(input),
     300
   );
 
-  const handleProfileUser = useDebounce(
-    (input: string) => setUserSearchTerm(input),
+  const handleSearchProflile = useDebounce(
+    (input: string) => setProfileSearchTerm(input),
     300
   );
 
@@ -159,6 +159,6 @@ export const useSearchProfileForm = () => {
     onReset,
     handleChangeProfileName,
     handleSearchUser,
-    handleProfileUser,
+    handleSearchProflile,
   };
 };
