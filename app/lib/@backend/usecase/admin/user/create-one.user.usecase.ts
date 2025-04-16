@@ -110,14 +110,6 @@ class CreateOneUserUsecase {
         await userObjectRepository.create(payload);
       }
 
-      if(!payload) {
-        return {
-          success: false,
-          error: { image: "Failed to save image!" },
-        }
-      }
-        
-        
       const html = await formatWelcomeEmail({
         name: user.name,
         username: user.username,
@@ -135,9 +127,9 @@ class CreateOneUserUsecase {
       // 3º passo, cria o usuário e salva a imagem
       await this.repository.create({
         ...user,
-        image: {
+        image: payload ? {
           key: payload.key,
-        },
+        }: undefined,
       });
 
       const session = await auth();
