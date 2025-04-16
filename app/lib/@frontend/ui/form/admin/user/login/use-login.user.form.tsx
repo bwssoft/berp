@@ -38,16 +38,16 @@ export function useLoginUserForm() {
     const login = await authenticate(data);
 
     if (login.success) {
-      toast({
-        title: "Sucesso!",
-        description: "Login realizado com sucesso.",
-        variant: "success",
-      });
       const session = await auth();
       if (session?.user.temporary_password) {
         router.push(`/set-password?id=${session.user.id}`);
       } else {
         router.push("/home");
+        toast({
+          title: "Sucesso!",
+          description: "Login realizado com sucesso.",
+          variant: "success",
+        });
       }
     } else {
       toast({

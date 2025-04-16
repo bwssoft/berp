@@ -35,9 +35,6 @@ export function LoginUserForm() {
       </div>
 
       <div className="flex items-center justify-end gap-x-4 mt-6">
-        <Button type="button" variant="ghost">
-          Cancelar
-        </Button>
         <Button type="submit">Login</Button>
       </div>
     </form>

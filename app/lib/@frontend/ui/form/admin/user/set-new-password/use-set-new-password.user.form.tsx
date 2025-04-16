@@ -31,9 +31,15 @@ export function useSetNewPasswordUserForm(userId: string) {
     register,
     handleSubmit: hookFormSubmit,
     setError,
+    watch,
     formState: { errors },
   } = useForm<Schema>({
+    mode: "onChange",
     resolver: zodResolver(schema),
+    defaultValues: {
+      confirmPassword: "",
+      password: ""
+    }
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
@@ -68,9 +74,40 @@ export function useSetNewPasswordUserForm(userId: string) {
     }
   });
 
+  const password = watch("password") || "";
+
+  const rules = [
+    {
+      label: "A senha deve ter no mínimo 8 caracteres.",
+      isValid: password.length >= 8,
+    },
+    {
+      label: "A senha deve ter no máximo 32 caracteres.",
+      isValid: password.length >= 8 && password.length <= 32,
+    },
+    {
+      label: "A senha deve conter uma letra minúscula.",
+      isValid: /[a-z]/.test(password),
+    },
+    {
+      label: "A senha deve conter uma letra maiúscula.",
+      isValid: /[A-Z]/.test(password),
+    },
+    {
+      label: "A senha deve conter ao menos um número.",
+      isValid: /[0-9]/.test(password),
+    },
+    {
+      label: "A senha deve ter ao menos um caractere especial.",
+      isValid: /[!@#$%*()_+=\[\]{}^~?:;"`<>,.&\\/]/.test(password),
+    },
+  ];
+
   return {
     register,
     handleSubmit,
     errors,
+    watch,
+    rules
   };
 }
