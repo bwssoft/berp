@@ -24,7 +24,6 @@ export function SearchProfileForm() {
 
   return (
     <div className="w-full space-y-2">
-      {/* pesquisa rápida */}
       <div className="border border-gray-900/10 p-4 rounded-lg shadow-md bg-white">
         <div className="flex gap-2 items-end">
           <Input
@@ -137,10 +136,7 @@ export function SearchProfileForm() {
             <Button
               variant="ghost"
               type="button"
-              onClick={() => {
-                onReset();
-                toggleModal();
-              }}
+              onClick={onReset}
             >
               Limpar
             </Button>
