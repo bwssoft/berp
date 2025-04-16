@@ -19,7 +19,7 @@ export const schema = z
     email: z.string().email("Email inválido!"),
     name: z.string().min(2, "Obrigatório informar um nome"),
     external: z.boolean(),
-    image: z.any(),
+    image: z.any().optional(),
     profile: z
       .array(z.object({ id: z.string(), name: z.string() }))
       .min(1, "Selecione pelo menos um perfil"),

@@ -68,7 +68,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       // configure devices
       const configurationResult = await handleConfiguration(
         identified
-          .filter((i) => i.equipment.imei && i.equipment.firmware)
+          .filter((i) => i.equipment.serial && i.equipment.firmware)
           .map(({ port }) => port),
         configuration_profile
       );
