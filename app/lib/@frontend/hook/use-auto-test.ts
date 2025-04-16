@@ -107,7 +107,7 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
     // run auto test devices
     const autoTestResult = await handleAutoTest(
       identified
-        .filter((i) => i.equipment.imei && i.equipment.firmware)
+        .filter((i) => i.equipment.serial && i.equipment.firmware)
         .map(({ port }) => port)
     );
 

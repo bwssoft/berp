@@ -64,22 +64,22 @@ export const columns: ColumnDef<{
     },
   },
   {
-    header: "Imei",
-    accessorKey: "imei",
-    cell: ({ row }) => {
-      const device = row.original;
-      return (
-        <p title={device.equipment.imei}>{device.equipment.imei ?? "--"}</p>
-      );
-    },
-  },
-  {
     header: "Serial",
     accessorKey: "serial",
     cell: ({ row }) => {
       const device = row.original;
       return (
         <p title={device.equipment.serial}>{device.equipment.serial ?? "--"}</p>
+      );
+    },
+  },
+  {
+    header: "Imei",
+    accessorKey: "imei",
+    cell: ({ row }) => {
+      const device = row.original;
+      return (
+        <p title={device.equipment.imei}>{device.equipment.imei ?? "--"}</p>
       );
     },
   },
