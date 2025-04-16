@@ -85,7 +85,6 @@ class UpdateOneUserUsecase {
         
         // envia as imagens do formData pro s3 utilizado o repository do s3
         await userObjectRepository.create(payload);
-        console.log('envio pro s3')
       }
 
       const result = await this.repository.updateOne(query, {
