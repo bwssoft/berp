@@ -88,19 +88,12 @@ class UpdateOneUserUsecase {
         console.log('envio pro s3')
       }
 
-      if(!payload) {
-        return {
-          success: false,
-          error: { image: "Failed to save image!" },
-        }
-      }
-
       const result = await this.repository.updateOne(query, {
         $set: {
           ...value,
-          image: {
-            key: payload.key
-          },
+          image: payload ? {
+            key: payload.key,
+          }: undefined,
         },
       });
 
