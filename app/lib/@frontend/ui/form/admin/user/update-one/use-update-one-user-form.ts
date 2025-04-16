@@ -67,8 +67,6 @@ export function useUpdateOneUserForm(user: IUser) {
         defaultValues: user,
     });
 
-    console.log(watch('image'))
-
     const handleSubmit = hookSubmit(async (data) => {
         const formData = new FormData();
         // envia as imagens por formData
