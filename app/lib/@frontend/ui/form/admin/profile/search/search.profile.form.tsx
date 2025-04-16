@@ -18,7 +18,7 @@ export function SearchProfileForm() {
     control,
     setValue,
     handleChangeProfileName,
-    handleProfileUser,
+    handleSearchProflile,
     handleSearchUser,
   } = useSearchProfileForm();
 
@@ -62,7 +62,7 @@ export function SearchProfileForm() {
                   data={[...profiles]}
                   defaultValue={field.value}
                   error={errors.profile?.message}
-                  onSearchChange={handleProfileUser}
+                  onSearchChange={handleSearchProflile}
                   keyExtractor={(item) => item.id}
                   displayValueGetter={(item) => item.name}
                   placeholder="Digite e busque pelo nome do perfil"
