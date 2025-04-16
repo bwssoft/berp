@@ -1,7 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { AuditDomain, IUser, IUserRepository } from "@/app/lib/@backend/domain";
-import { userRepository } from "@/app/lib/@backend/infra";
-import { userObjectRepository } from "../../../infra/repository/s3/admin/user/user.s3.repository";
+import { userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
 import { createOneAuditUsecase } from "../audit";
 import { auth } from "@/auth";
 
