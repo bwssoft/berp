@@ -1,8 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IUser, IUserRepository } from "@/app/lib/@backend/domain";
-import { userRepository } from "@/app/lib/@backend/infra";
-import { createOneAuditUsecase } from "@/app/lib/@backend/usecase/admin/audit";
-import { AuditDomain } from "@/app/lib/@backend/domain";
+import { AuditDomain, IUser, IUserRepository } from "@/app/lib/@backend/domain";
+import { userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
+import { createOneAuditUsecase } from "../audit";
 import { auth } from "@/auth";
 
 class UpdateOneUserUsecase {
@@ -14,7 +13,8 @@ class UpdateOneUserUsecase {
 
   async execute(
     query: { id: string },
-    value: Partial<Omit<IUser, "id" | "created_at">>
+    value: Partial<Omit<IUser, | "id" | "created_at">>,
+    formData: FormData
   ) {
     try {
       if (value.email) {
@@ -66,8 +66,33 @@ class UpdateOneUserUsecase {
         };
       }
 
+      let payload = null;
+
+      // carrega a imagem(blob) que retornou do formData
+      const file = formData.get("file") as File;
+
+      if (file instanceof Blob) {
+        // arrayBuffer transforma o blob em buffer, isso significa que ele le o blob e transforma em buffer, e buffer é um array
+        const buffer = await file.arrayBuffer();
+    
+        const key = `${query.id}/${file.name}`;
+    
+        payload = {
+          data: Buffer.from(buffer),
+          key,
+        };
+        
+        // envia as imagens do formData pro s3 utilizado o repository do s3
+        await userObjectRepository.create(payload);
+      }
+
       const result = await this.repository.updateOne(query, {
-        $set: value,
+        $set: {
+          ...value,
+          image: payload ? {
+            key: payload.key,
+          }: undefined,
+        },
       });
 
       if (!result.modifiedCount)

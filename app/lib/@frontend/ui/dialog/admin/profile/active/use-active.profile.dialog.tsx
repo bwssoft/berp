@@ -27,6 +27,7 @@ export function useActiveProfileDialog() {
       });
       queryClient.invalidateQueries({ queryKey: ["findManyProfile"] });
       setOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["findManyProfileAudit"] });
     } else {
       toast({
         title: "Error!",

@@ -3,7 +3,7 @@ import { IOmieAttachment } from "./@dto";
 import { OmieGateway } from "./@base";
 
 class AttachmentOmieGateway extends OmieGateway {
-  async findAll(idPedido: string) {
+  async findMany(idPedido: string) {
     const data = this.formatBody("ListarAnexo", {
       nId: idPedido,
       cTabela: "pedido-venda",

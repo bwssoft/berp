@@ -58,7 +58,7 @@ class CreateFinancialOrderOnOmieUsecase {
 
       // const products_id = product_with_omie_enterprise.map(({ products_to_order }) => products_to_order.map(p => p.product_id)).flat()
 
-      // const products = await productRepository.findAll({
+      // const products = await productRepository.findMany({
       //   id: { $in: products_id }
       // })
 
