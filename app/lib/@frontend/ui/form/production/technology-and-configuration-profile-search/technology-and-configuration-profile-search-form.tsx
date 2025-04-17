@@ -62,7 +62,7 @@ export function TechnologyAndConfigurationProfileSearchForm(props: Props) {
                   defaultValue={
                     configurationProfile ? [configurationProfile] : []
                   }
-                  placeholder="Escolha o perfil de confguração"
+                  placeholder="Escolha o perfil de configuração"
                 />
               </div>
             </div>
