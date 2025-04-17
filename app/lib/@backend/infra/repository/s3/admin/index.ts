@@ -1,0 +1,1 @@
+export * from "./user.s3.repository"

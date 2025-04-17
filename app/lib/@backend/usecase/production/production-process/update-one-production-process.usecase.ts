@@ -63,7 +63,7 @@ class UpdateOneProductionProcessUsecase {
 
     if (result.modifiedCount > 0 && value.steps) {
       const productionOrdersWithThisProductionProcess =
-        (await this.productionOrderRepository.findAll({
+        (await this.productionOrderRepository.findMany({
           "production_process.process_uuid": {
             $in: [query.id],
           },

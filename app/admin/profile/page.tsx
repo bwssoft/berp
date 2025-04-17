@@ -16,7 +16,8 @@ interface Props {
 }
 export default async function Example(props: Props) {
   const { searchParams } = props;
-  const profiles = await findManyProfile(query(searchParams));
+  const profiles = await findManyProfile(query(searchParams), { name: 1 });
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
