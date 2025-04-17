@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button, Input } from "../../../../component";
+import { Button, Input, PasswordInput } from "../../../../component";
 import { useLoginUserForm } from "./use-login.user.form";
 
 export function LoginUserForm() {
@@ -17,7 +17,7 @@ export function LoginUserForm() {
           error={errors.username?.message}
         />
 
-        <Input
+        <PasswordInput
           label="Senha"
           type="password"
           {...register("password")}

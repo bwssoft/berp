@@ -8,15 +8,25 @@ import { InputHTMLAttributes } from "react";
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   error?: string;            
   containerClassName?: string;
+  label?: string
 };
 
 export const PasswordInput = forwardRef<HTMLInputElement, Props>(
-  ({ error, className, containerClassName, ...rest }, ref) => {
+  ({ label, id, error, className, containerClassName, ...rest }, ref) => {
     const [visible, setVisible] = useState(false);
 
     return (
       <div className={cn("relative", containerClassName)}>
+        {label && (
+          <label
+            htmlFor={id}
+            className="block text-sm font-medium leading-6 text-gray-900"
+          >
+            {label}
+          </label>
+        )}
         <input
+          {...rest}
           ref={ref}
           type={visible ? "text" : "password"}
           className={cn(
@@ -24,13 +34,12 @@ export const PasswordInput = forwardRef<HTMLInputElement, Props>(
             error ? "border-red-500" : "border-gray-300",
             className
           )}
-          {...rest}
         />
 
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          className="absolute inset-y-0 right-0 flex items-center pr-3 focus:outline-none"
+          className="absolute top-9 right-3"
           tabIndex={-1}       
         >
           {visible ? (
