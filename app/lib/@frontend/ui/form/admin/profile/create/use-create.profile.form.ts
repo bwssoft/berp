@@ -66,7 +66,7 @@ export function useCreateProfileForm() {
         variant: "error",
       });
     }
-    router.back();
+    router.push("/admin/profile"); 
   });
 
   function handleCancelCreate() {

@@ -64,7 +64,7 @@ export function SearchProfileForm() {
                   onSearchChange={handleSearchProflile}
                   keyExtractor={(item) => item.id}
                   displayValueGetter={(item) => item.name}
-                  placeholder="Digite e busque pelo nome do perfil"
+                  placeholder="Selecione um perfil"
                   onOptionChange={(items) =>
                     setValue(
                       "profile",
@@ -120,7 +120,7 @@ export function SearchProfileForm() {
                   defaultValue={field.value}
                   keyExtractor={(item) => item.id}
                   displayValueGetter={(item) => item.name}
-                  placeholder="Digite e busque pelo nome do usuário"
+                  placeholder="Selecione um usuário"
                   onOptionChange={(items) =>
                     setValue(
                       "user",
