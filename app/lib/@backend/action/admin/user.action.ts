@@ -47,8 +47,8 @@ export const findManyUser = async (filter: Filter<IUser>) => {
   return await findManyUserUsecase.execute(filter);
 };
 
-export const updateOneUser = async (id: string, data: UpdateUserData) => {
-  const result = await updateOneUserUsecase.execute({ id }, data);
+export const updateOneUser = async (id: string, data: UpdateUserData, formData: FormData) => {
+  const result = await updateOneUserUsecase.execute({ id }, data, formData);
   revalidatePath(`/admin/user/form/update?id=${id}`);
   return result;
 };

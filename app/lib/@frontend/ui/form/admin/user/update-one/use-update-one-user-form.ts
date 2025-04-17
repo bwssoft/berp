@@ -22,9 +22,7 @@ const updateSchema = z
         email: z.string().email("Email inválido!"),
         name: z.string(),
         active: z.boolean(),
-        image: z.object({
-            key: z.string()
-        }).optional(),
+        image: z.any().optional(),
         profile: z
             .array(z.object({ id: z.string(), name: z.string() }))
             .min(1, "Selecione pelo menos um perfil"),
@@ -62,43 +60,50 @@ export function useUpdateOneUserForm(user: IUser) {
         control,
         formState: { errors, isDirty },
         reset,
-        setError
+        setError,
+        watch
     } = useForm<UpdateUserSchema>({
         resolver: zodResolver(updateSchema),
         defaultValues: user,
     });
 
     const handleSubmit = hookSubmit(async (data) => {
+        const formData = new FormData();
+        // envia as imagens por formData
+        if (Array.isArray(data.image)) {
+          data.image.forEach((file) => {
+            formData.append("file", file);
+          });
+        }
+        const {success, error } = await updateOneUser(data.id, {
+            ...data,
+            image: undefined,
+        }, formData);
 
-            const {success, error } = await updateOneUser(data.id, data);
-
-            if(success){
-                toast({
-                    title: "Sucesso!",
-                    description: "Usuário atualizado com sucesso",
-                    variant: "success",
+        if(success){
+            toast({
+                title: "Sucesso!",
+                description: "Usuário atualizado com sucesso",
+                variant: "success",
+            });
+        }else if(error){
+            Object.entries(error).forEach(([key, message]) => {
+                if (key !== "global" && message) {
+                    setError(key as keyof UpdateUserSchema, {
+                    type: "manual",
+                    message: message as string,
+                    });
+                }
                 });
-            }else if(error){
-                Object.entries(error).forEach(([key, message]) => {
-                    if (key !== "global" && message) {
-                        setError(key as keyof UpdateUserSchema, {
-                        type: "manual",
-                        message: message as string,
-                        });
-                    }
-                    });
 
-                    if (error.global) {
-                    toast({
-                        title: "Erro!",
-                        description: error.global,
-                        variant: "error",
-                    });
-                    }
-            }
-            
-
-
+                if (error.global) {
+                toast({
+                    title: "Erro!",
+                    description: error.global,
+                    variant: "error",
+                });
+                }
+        }
     });
 
     function handleCancelEdit() {
