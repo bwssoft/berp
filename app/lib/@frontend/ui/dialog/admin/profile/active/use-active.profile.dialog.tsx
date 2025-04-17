@@ -3,12 +3,15 @@
 import { toast } from "@/app/lib/@frontend/hook";
 import { activeProfile } from "@/app/lib/@backend/action";
 import { useCallback, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function useActiveProfileDialog() {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [id, setId] = useState<string>();
   const [activate, setActivate] = useState<boolean>(false);
+
+  const queryClient = useQueryClient();
 
   const confirm = useCallback(async () => {
     if (!id) return;
@@ -23,6 +26,7 @@ export function useActiveProfileDialog() {
         variant: "success",
       });
       setOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["findManyProfileAudit"] });
     } else {
       toast({
         title: "Error!",
