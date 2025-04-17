@@ -25,6 +25,7 @@ export function useActiveProfileDialog() {
           : "Perfil inativado com sucesso.",
         variant: "success",
       });
+      queryClient.invalidateQueries({ queryKey: ["findManyProfile"] });
       setOpen(false);
       queryClient.invalidateQueries({ queryKey: ["findManyProfileAudit"] });
     } else {

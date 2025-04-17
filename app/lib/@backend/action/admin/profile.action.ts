@@ -43,5 +43,6 @@ export async function setLockedControl(input: {
 export async function activeProfile(input: { id: string; active: boolean }) {
   const result = await activeProfileUsecase.execute(input);
   revalidatePath("/admin/profile");
+  revalidatePath("/admin/control");
   return result;
 }
