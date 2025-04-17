@@ -35,7 +35,7 @@ class AnalyseProposalScenarioUsecase {
 
       const result: Output = [];
 
-      const rules = await this.ruleRepository.findAll({});
+      const rules = await this.ruleRepository.findMany({});
 
       const scenarioEnterprise = this.getOmieEnterprise(scenario, rules);
 
