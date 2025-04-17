@@ -98,32 +98,38 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
 
   // function that handle the auto test process, check if the process was successful and save result on database
   const test = useCallback(async () => {
-    if (!technology) return;
+    try {
+      if (!technology) return;
 
-    // update isAutoTesting reference to true to prevent multiple auto test processes
-    isAutoTesting.current = true;
-    setAutoTestProgress(true);
+      // update isAutoTesting reference to true to prevent multiple auto test processes
+      isAutoTesting.current = true;
+      setAutoTestProgress(true);
 
-    // run auto test devices
-    const autoTestResult = await handleAutoTest(
-      identified
-        .filter((i) => i.equipment.serial && i.equipment.firmware)
-        .map(({ port }) => port)
-    );
+      // run auto test devices
+      const autoTestResult = await handleAutoTest(
+        identified
+          .filter((i) => i.equipment.serial && i.equipment.firmware)
+          .map(({ port }) => port)
+      );
 
-    // check if each message sent has response
-    const result = autoTestResult
-      .map((log) => mapAutoTestResultToLog(log, identified, technology))
-      .filter((el): el is NonNullable<typeof el> => el !== undefined);
+      // check if each message sent has response
+      const result = autoTestResult
+        .map((log) => mapAutoTestResultToLog(log, identified, technology))
+        .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
-    // save result on database
-    const dataSavedOnDb = await createManyAutoTestLog(result);
+      // save result on database
+      const dataSavedOnDb = await createManyAutoTestLog(result);
 
-    // update state with configuration process result
-    setAutoTest((prev) => prev.concat(dataSavedOnDb));
+      // update state with configuration process result
+      setAutoTest((prev) => prev.concat(dataSavedOnDb));
 
-    isAutoTesting.current = false;
-    setAutoTestProgress(false);
+      isAutoTesting.current = false;
+      setAutoTestProgress(false);
+    } catch (error) {
+      console.error("Error during auto test:", error);
+      isAutoTesting.current = false;
+      setAutoTestProgress(false);
+    }
   }, [handleAutoTest, identified, technology]);
 
   const detect = useCallback(

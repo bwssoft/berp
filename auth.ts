@@ -21,7 +21,7 @@ const { auth, signIn, signOut, handlers } = NextAuth({
 
         const { username, password } = parsedCredentials.data;
 
-        const user = await findOneUser({ username });
+        const user = await findOneUser({ $or: [{ email: username }, { username }] });
 
         if (!user || !user.active || user.lock) return null;
 
