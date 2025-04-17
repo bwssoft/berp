@@ -22,7 +22,7 @@ class FindManyIdentificationLogUsecase {
 
   @RemoveMongoId()
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    const result = await this.repository.findAll(arg);
+    const result = await this.repository.findMany(arg);
     return result;
   }
 }

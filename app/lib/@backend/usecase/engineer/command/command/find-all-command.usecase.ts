@@ -12,7 +12,7 @@ class FindAllCommandUsecase {
 
   @RemoveMongoId()
   async execute() {
-    return await this.repository.findAll({});
+    return await this.repository.findMany({});
   }
 }
 
