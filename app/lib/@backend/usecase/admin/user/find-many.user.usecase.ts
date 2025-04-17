@@ -14,7 +14,7 @@ class FindManyUserUsecase {
 
     @RemoveFields("_id", "password")
     async execute(input: Filter<IUser>) {
-        return await this.repository.findAll(input);
+        return await this.repository.findMany(input);
     }
 }
 

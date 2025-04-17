@@ -13,7 +13,7 @@ class FindManyProductUsecase {
 
   @RemoveMongoId()
   async execute(input: Filter<IProduct>) {
-    return await this.repository.findAll(input);
+    return await this.repository.findMany(input);
   }
 }
 

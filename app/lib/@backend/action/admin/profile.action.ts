@@ -19,8 +19,11 @@ export async function createOneProfile(
   return result;
 }
 
-export async function findManyProfile(input: Filter<IProfile>) {
-  return await findManyProfileUsecase.execute(input);
+export async function findManyProfile(
+  filter: Filter<IProfile>,
+  sort?: Record<string, 1 | -1>
+) {
+  return await findManyProfileUsecase.execute({ filter, sort });
 }
 
 export async function findOneProfile(input: Filter<IProfile>) {

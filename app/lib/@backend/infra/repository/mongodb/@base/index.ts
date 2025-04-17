@@ -5,6 +5,7 @@ import {
   Filter,
   FindOptions,
   MongoClient,
+  Sort,
   TransactionOptions,
   UpdateFilter,
 } from "mongodb";
@@ -43,13 +44,13 @@ export class BaseRepository<Entity extends object>
       .findOne(params, options);
   }
 
-  async findAll(params: Filter<Entity> = {}, limit = 10) {
+  async findMany(params: Filter<Entity> = {}, limit = 10, sort: Sort = {_id: -1}) {
     const db = await this.connect();
     return await db
       .collection<Entity>(this.collection)
       .find(params)
       .limit(limit)
-      .sort({ _id: -1 })
+      .sort(sort)
       .toArray();
   }
 
