@@ -1,6 +1,6 @@
 "use client";
 import { CheckCircleIcon, InformationCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { Button, Input } from "../../../../component";
+import { Button, Input, PasswordInput } from "../../../../component";
 import { useSetNewPasswordUserForm } from "./use-set-new-password.user.form";
 
 export function SetNewPasswordUserForm({ userId }: { userId: string }) {
@@ -11,9 +11,8 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
       <div className="grid grid-cols-1 gap-x-6 gap-y-8">
         <div className="flex items-end gap-2">
           <div className="flex-1">
-            <Input
+            <PasswordInput
               label="Senha"
-              type="password"
               {...register("password")}
               error={errors.password?.message}
             />
@@ -41,9 +40,8 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
           ))}
         </div>
 
-        <Input
+        <PasswordInput
           label="Confirme sua senha"
-          type="password"
           {...register("confirmPassword")}
           error={errors.confirmPassword?.message}
         />
