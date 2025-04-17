@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { config } from "@/app/lib/config";
-import { BaseObjectRepository } from "../../@base";
+import { BaseObjectRepository } from "../@base";
 
 class UserObjectRepository extends BaseObjectRepository<Buffer> {
   constructor() {

@@ -50,9 +50,6 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        <Button type="button" variant="ghost">
-          Cancelar
-        </Button>
         <Button type="submit">Salvar</Button>
       </div>
     </form>

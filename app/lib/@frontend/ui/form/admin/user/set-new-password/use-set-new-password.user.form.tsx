@@ -14,9 +14,9 @@ const schema = z
       .regex(/[a-z]/, "A senha deve conter ao menos uma letra minúscula")
       .regex(/[0-9]/, "A senha deve conter ao menos um número")
       .regex(
-        /[\!\@\#\$\%\*\(\)_=\+\/\{\}\^\~\?\"`\:\;\.\,\<\>\&]/,
+        /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>\/?`~]/,
         "A senha deve conter ao menos um caractere especial"
-      ),
+      ),      
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -34,6 +34,7 @@ export function useSetNewPasswordUserForm(userId: string) {
     watch,
     formState: { errors },
   } = useForm<Schema>({
+    mode: "onChange",
     resolver: zodResolver(schema),
     defaultValues: {
       confirmPassword: "",
@@ -98,7 +99,7 @@ export function useSetNewPasswordUserForm(userId: string) {
     },
     {
       label: "A senha deve ter ao menos um caractere especial.",
-      isValid: /[!@#$%*()_+=\[\]{}^~?:;"`<>,.&\\/]/.test(password),
+      isValid: /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>\/?`~]/.test(password),
     },
   ];
 
