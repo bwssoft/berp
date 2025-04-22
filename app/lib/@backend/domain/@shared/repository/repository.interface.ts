@@ -22,7 +22,7 @@ export interface IBaseRepository<Entity extends object> {
     params: Filter<Entity>,
     options?: FindOptions<Entity>
   ): Promise<Entity | null>;
-  findAll(params: Filter<Entity>, limit?: number): Promise<WithId<Entity>[]>;
+  findMany(params: Filter<Entity>, limit?: number, sort?: Record<string, 1 | -1>): Promise<WithId<Entity>[]>;
   count(params: Filter<Entity>): Promise<number>;
   updateOne(
     query: Filter<Entity>,

@@ -18,7 +18,7 @@ class FindManyControlUsecase {
 
   @RemoveMongoId()
   async execute(arg: Dto.Input, limit?: number): Promise<Dto.Output> {
-    return await this.repository.findAll(arg, limit ?? 20);
+    return await this.repository.findMany(arg, limit ?? 20);
   }
 }
 
