@@ -9,12 +9,11 @@ import {
   IUser,
   IUserRepository,
 } from "@/app/lib/@backend/domain";
-import { bmessageGateway, userRepository } from "@/app/lib/@backend/infra";
+import { bmessageGateway, userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
 import { randomInt } from "crypto";
 import { hash } from "bcrypt";
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../audit";
-import { userObjectRepository } from "../../../infra/repository/s3/admin/user/user.s3.repository";
 
 namespace Dto {
   export type Input = {

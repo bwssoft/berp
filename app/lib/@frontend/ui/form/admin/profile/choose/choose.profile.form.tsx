@@ -20,7 +20,7 @@ export function ChooseProfileForm(props: Props) {
             htmlFor="username"
             className="block text-sm/6 font-medium text-gray-900"
           >
-            Selecione um perfil
+            Perfil
           </label>
           <div className="mt-2">
             <Combobox

@@ -24,7 +24,6 @@ export function SearchProfileForm() {
 
   return (
     <div className="w-full space-y-2">
-      {/* pesquisa rápida */}
       <div className="border border-gray-900/10 p-4 rounded-lg shadow-md bg-white">
         <div className="flex gap-2 items-end">
           <Input
@@ -65,7 +64,7 @@ export function SearchProfileForm() {
                   onSearchChange={handleSearchProflile}
                   keyExtractor={(item) => item.id}
                   displayValueGetter={(item) => item.name}
-                  placeholder="Digite e busque pelo nome do perfil"
+                  placeholder="Selecione um perfil"
                   onOptionChange={(items) =>
                     setValue(
                       "profile",
@@ -121,7 +120,7 @@ export function SearchProfileForm() {
                   defaultValue={field.value}
                   keyExtractor={(item) => item.id}
                   displayValueGetter={(item) => item.name}
-                  placeholder="Digite e busque pelo nome do usuário"
+                  placeholder="Selecione um usuário"
                   onOptionChange={(items) =>
                     setValue(
                       "user",
@@ -137,10 +136,7 @@ export function SearchProfileForm() {
             <Button
               variant="ghost"
               type="button"
-              onClick={() => {
-                onReset();
-                toggleModal();
-              }}
+              onClick={onReset}
             >
               Limpar
             </Button>

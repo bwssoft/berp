@@ -15,7 +15,7 @@ class FindManyAuditUsecase {
 
     @RemoveMongoId()
     async execute(input: Dto.Input): Promise<Dto.Output> {
-        return await this.repository.findAll(input);
+        return await this.repository.findMany(input);
     }
 }
 
