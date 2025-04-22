@@ -18,7 +18,7 @@ class FindManyProfileUsecase {
 
   @RemoveMongoId()
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    return await this.repository.findAll(arg);
+    return await this.repository.findMany(arg.filter, undefined, arg.sort ?? { name: -1 });
   }
 }
 
