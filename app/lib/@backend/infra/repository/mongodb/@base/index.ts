@@ -9,6 +9,7 @@ import {
     UpdateFilter,
 } from "mongodb";
 import clientPromise from "./config";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/IPagination.interface";
 
 type Constructor = {
     collection: string;
@@ -43,24 +44,27 @@ export class BaseRepository<Entity extends object>
             .findOne(params, options);
     }
 
-    async findAll(params: Filter<Entity> = {}, limit = 10, page = 1) {
+    async findAll(
+        params: Filter<Entity> = {},
+        limit = 10,
+        page = 1
+    ): Promise<PaginationResult<Entity>> {
         const db = await this.connect();
-        // pegsar a quantidade total de documentos
-        // dividir a quantidade total de documentos pelo valor do limit para saber a quantidade de paginas totais
-        // retornar documentos, total de paginas e a pagina atual
-        const count = await db
+
+        const totalDocs = await db
             .collection<Entity>(this.collection)
             .countDocuments(params);
+
         const docs = await db
             .collection<Entity>(this.collection)
             .find(params)
-            .limit(limit)
             .sort({ _id: -1 })
             .skip((page - 1) * limit)
+            .limit(limit)
             .toArray();
-        const pages = count / limit;
+
         return {
-            pages,
+            pages: Math.ceil(totalDocs / limit),
             docs,
         };
     }

@@ -1,11 +1,10 @@
-// PaginationTailwind.tsx
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 
 interface PaginationProps {
-  totalPages: number;   // número total de páginas
-  totalItems: number;   // número total de registros
-  limit: number;        // itens por página
+  totalPages: number;   
+  totalItems: number;   
+  limit: number;        
 }
 
 export function PaginationTailwind({
