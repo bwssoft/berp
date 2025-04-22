@@ -13,9 +13,7 @@ import { PassThrough } from "stream";
 import { IFirebaseGateway } from "@/app/lib/@backend/domain/@shared/gateway";
 
 namespace Dto {
-  // A entrada é um filtro para selecionar os logs desejados.
   export interface Input extends Filter<IAutoTestLog> {}
-  // A saída é a URL do arquivo Excel armazenado no Firebase.
   export type Output = string;
 }
 
@@ -29,13 +27,20 @@ class ExportAutoTestLogUsecase {
   }
 
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    // Cria um stream do tipo PassThrough para capturar os dados do Excel
+    // 1. Prepara o PassThrough e o coletor de chunks
     const passThroughStream = new PassThrough();
+    const chunks: Buffer[] = [];
+    passThroughStream.on("data", (chunk: Buffer) => chunks.push(chunk));
 
-    // Gera o nome do arquivo
+    const bufferPromise = new Promise<Buffer>((resolve, reject) => {
+      passThroughStream.on("end", () => resolve(Buffer.concat(chunks)));
+      passThroughStream.on("error", reject);
+    });
+
+    // 2. Gera nome do arquivo
     const fileName = `export.auto-test-log.${Date.now()}.xlsx`;
 
-    // Cria o workbook utilizando o stream (em vez de filename)
+    // 3. Cria o workbook apontando para o PassThrough
     const workbook = new ExcelJS.stream.xlsx.WorkbookWriter({
       stream: passThroughStream,
       useStyles: true,
@@ -43,7 +48,7 @@ class ExportAutoTestLogUsecase {
     });
     const worksheet = workbook.addWorksheet("AutoTestLogs");
 
-    // Adiciona a linha de cabeçalho
+    // Cabeçalho
     worksheet
       .addRow([
         "Status",
@@ -57,11 +62,10 @@ class ExportAutoTestLogUsecase {
       ])
       .commit();
 
-    // Obtém os documentos via cursor (AsyncIterable)
+    // 4. Itera sobre o cursor e adiciona linhas
     const cursor = await this.repository.findCursor(arg);
     cursor.batchSize(1000);
 
-    // Itera sobre os documentos e adiciona cada um como linha na planilha
     for await (const doc of cursor) {
       worksheet
         .addRow([
@@ -77,40 +81,26 @@ class ExportAutoTestLogUsecase {
         .commit();
     }
 
-    // Finaliza a escrita do arquivo
+    // 5. Finaliza o workbook e sinaliza o fim do PassThrough
     await workbook.commit();
+    passThroughStream.end();
 
-    // Converte o conteúdo do stream para um Buffer
-    const fileBuffer = await streamToBuffer(passThroughStream);
+    // 6. Aguarda o buffer completo
+    const fileBuffer = await bufferPromise;
 
-    // Converte o Buffer para um Blob com o MIME type do Excel
+    // 7. Converte Buffer → Blob → File e faz upload
     const fileBlob = new Blob([fileBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-
     const file = new File([fileBlob], fileName, {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    // Envia o arquivo para o Firebase Storage via gateway.
-    // Aqui reutilizamos o método uploadFile, que espera um File;
-    // fazemos um cast para File (em ambiente Node pode ser necessário polyfill)
-    const bucket = "bcube/production/auto-test-log/"; // Nome ou caminho do bucket desejado
+    const bucket = "bcube/production/auto-test-log/";
     const uploadResult = await this.gateway.uploadFile(file, bucket);
 
-    // Retorna a URL do arquivo no Firebase Storage
     return uploadResult.url;
   }
-}
-
-// Função auxiliar para coletar os dados do stream em um Buffer
-function streamToBuffer(stream: PassThrough): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    stream.on("data", (chunk: Buffer) => chunks.push(chunk));
-    stream.on("end", () => resolve(Buffer.concat(chunks)));
-    stream.on("error", reject);
-  });
 }
 
 export const exportAutoTestLogUsecase = singleton(ExportAutoTestLogUsecase);
