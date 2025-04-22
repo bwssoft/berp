@@ -8,8 +8,10 @@ import {
   useAuditUserModal,
 } from "@/app/lib/@frontend/ui/modal";
 
+
 interface Props {
   data: IUser[];
+  pagination: IPagination
 }
 export function UserTable(props: Props) {
   const { data } = props;
