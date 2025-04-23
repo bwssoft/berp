@@ -82,54 +82,59 @@ const renderControlTree = (
   openAuditModal: (props: { id: string; name: string; code: string }) => void
 ) => {
   const has_children = control.children.length > 0;
+  console.log({control})
   return (
     <Disclosure key={control.id}>
       <DisclosureButton className="border-b border-gray-200 w-full p-6 group flex justify-between items-center gap-2">
         <p className="flex gap-2">
           {control.name}
-          <span>
-            <InformationCircleIcon
-              className="size-5"
-              title={control.description}
-            />
-          </span>
+          {!has_children && (
+            <span>
+              <InformationCircleIcon
+                className="size-5"
+                title={control.description}
+              />
+            </span>
+          )}
         </p>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              title="Histórico"
-              onClick={() => {
-                openAuditModal({
-                  id: control.id,
-                  name: control.name,
-                  code: control.code,
-                });
-              }}
-              className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              <ClockIcon className="size-5" />
-            </Button>
-            <Button
-              type="button"
-              title="Perfis"
-              onClick={() =>
-                openProfileModal({
-                  id: control.id,
-                  name: control.name,
-                  code: control.code,
-                })
-              }
-              className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              <IdentificationIcon className="size-5" />
-            </Button>
-            <SetLockedProfileForm
-              control={control}
-              profile={profile}
-              totalControlsOnModule={totalControlsOnModule}
-            />
-          </div>
+          {!has_children && (
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                title="Histórico"
+                onClick={() => {
+                  openAuditModal({
+                    id: control.id,
+                    name: control.name,
+                    code: control.code,
+                  });
+                }}
+                className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              >
+                <ClockIcon className="size-5" />
+              </Button>
+              <Button
+                type="button"
+                title="Perfis"
+                onClick={() =>
+                  openProfileModal({
+                    id: control.id,
+                    name: control.name,
+                    code: control.code,
+                  })
+                }
+                className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              >
+                <IdentificationIcon className="size-5" />
+              </Button>
+              <SetLockedProfileForm
+                control={control}
+                profile={profile}
+                totalControlsOnModule={totalControlsOnModule}
+              />
+            </div>
+          )}
           {has_children ? (
             <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
           ) : (
