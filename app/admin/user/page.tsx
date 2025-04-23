@@ -45,7 +45,7 @@ export default async function Example(props: Props) {
         </Link>
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <SearchUserForm />
+        {/* <SearchUserForm /> */}
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
         <UserTable data={users} />

@@ -1,26 +1,33 @@
-import { useState } from "react";
+// app/lib/@frontend/ui/component/pagination.tsx
+import { useMemo } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 
 interface PaginationProps {
-  totalPages: number;   
-  totalItems: number;   
-  limit: number;        
+  currentPage: number;
+  totalPages:  number;
+  totalItems:  number;
+  limit:       number;
+  onPageChange: (page: number) => void;
 }
 
 export function PaginationTailwind({
+  currentPage,
   totalPages,
   totalItems,
   limit,
+  onPageChange,
 }: PaginationProps) {
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const goTo = (page: number) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
+  /* ---------- navegação ---------- */
+  const goTo = (p: number) => {
+    if (p < 1 || p > totalPages) return;
+    onPageChange(p);
   };
 
-  const visiblePages = (): (number | "ellipsis")[] => {
-    if (totalPages <= 7) return [...Array(totalPages)].map((_, i) => i + 1);
+  /* ---------- páginas visíveis ---------- */
+  const visiblePages = useMemo<(number | "ellipsis")[]>(() => {
+    if (totalPages <= 7)
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
 
     const pages: (number | "ellipsis")[] = [];
     const show = (p: number) => pages.push(p);
@@ -29,21 +36,23 @@ export function PaginationTailwind({
     if (currentPage > 4) pages.push("ellipsis");
 
     const start = Math.max(2, currentPage - 1);
-    const end = Math.min(totalPages - 1, currentPage + 1);
+    const end   = Math.min(totalPages - 1, currentPage + 1);
     for (let p = start; p <= end; p++) show(p);
 
     if (currentPage < totalPages - 3) pages.push("ellipsis");
     show(totalPages);
 
     return pages;
-  };
+  }, [currentPage, totalPages]);
 
+  /* ---------- intervalo exibido ---------- */
   const firstItem = (currentPage - 1) * limit + 1;
-  const lastItem = Math.min(currentPage * limit, totalItems);
+  const lastItem  = Math.min(currentPage * limit, totalItems);
 
+  /* ---------- JSX ---------- */
   return (
     <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-      {/* Mobile — aparece apenas em telas < 640 px */}
+      {/* Mobile */}
       <div className="flex flex-1 justify-between sm:hidden">
         <button
           onClick={() => goTo(currentPage - 1)}
@@ -61,68 +70,58 @@ export function PaginationTailwind({
         </button>
       </div>
 
+      {/* Desktop */}
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        
 
-        <div>
-          <p className="text-sm text-gray-700">
-            Showing{" "}
-            <span className="font-medium">{firstItem}</span> to{" "}
-            <span className="font-medium">{lastItem}</span> of{" "}
-            <span className="font-medium">{totalItems}</span>{" "}
-            {totalItems === 1 ? "result" : "results"}
-          </p>
-        </div>
-
-        <div>
-          <nav
-            className="isolate inline-flex -space-x-px rounded-md shadow-xs"
-            aria-label="Pagination"
+        <nav
+          className="isolate inline-flex -space-x-px rounded-md shadow-xs"
+          aria-label="Pagination"
+        >
+          {/* Prev */}
+          <button
+            onClick={() => goTo(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 disabled:opacity-40"
           >
-            {/* Prev */}
-            <button
-              onClick={() => goTo(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 disabled:opacity-40"
-            >
-              <span className="sr-only">Previous</span>
-              <ChevronLeftIcon className="size-5" aria-hidden="true" />
-            </button>
+            <span className="sr-only">Previous</span>
+            <ChevronLeftIcon className="size-5" aria-hidden="true" />
+          </button>
 
-            {visiblePages().map((p, idx) =>
-              p === "ellipsis" ? (
-                <span
-                  key={`e-${idx}`}
-                  className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-gray-300 ring-inset"
-                >
-                  …
-                </span>
-              ) : (
-                <button
-                  key={p}
-                  onClick={() => goTo(p)}
-                  aria-current={p === currentPage ? "page" : undefined}
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 ${
-                    p === currentPage
-                      ? "z-10 bg-indigo-600 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      : "text-gray-900 hover:bg-gray-50"
-                  } ${
-                    p === 1 ? "" : p === totalPages ? "" : "" 
-                  }`}
-                >
-                  {p}
-                </button>
-              )
-            )}
-            <button
-              onClick={() => goTo(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 disabled:opacity-40"
-            >
-              <span className="sr-only">Next</span>
-              <ChevronRightIcon className="size-5" aria-hidden="true" />
-            </button>
-          </nav>
-        </div>
+          {visiblePages.map((p, idx) =>
+            p === "ellipsis" ? (
+              <span
+                key={`e-${idx}`}
+                className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-gray-300 ring-inset"
+              >
+                …
+              </span>
+            ) : (
+              <button
+                key={p}
+                onClick={() => goTo(p)}
+                aria-current={p === currentPage ? "page" : undefined}
+                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 ${
+                  p === currentPage
+                    ? "z-10 bg-indigo-600 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    : "text-gray-900 hover:bg-gray-50"
+                }`}
+              >
+                {p}
+              </button>
+            )
+          )}
+
+          {/* Next */}
+          <button
+            onClick={() => goTo(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 disabled:opacity-40"
+          >
+            <span className="sr-only">Next</span>
+            <ChevronRightIcon className="size-5" aria-hidden="true" />
+          </button>
+        </nav>
       </div>
     </div>
   );

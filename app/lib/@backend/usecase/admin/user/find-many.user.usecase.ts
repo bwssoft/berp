@@ -13,8 +13,13 @@ class FindManyUserUsecase {
     }
 
     @RemoveFields("_id", "password")
-    async execute(input: Filter<IUser>) {
-        return await this.repository.findAll(input);
+    async execute(
+        filter: Filter<IUser> = {},
+        page = 1, // ← novo
+        limit = 10 // ← novo
+    ) {
+        // A assinatura do repositório já é findAll(filter, limit, page)
+        return this.repository.findAll(filter, limit, page);
     }
 }
 
