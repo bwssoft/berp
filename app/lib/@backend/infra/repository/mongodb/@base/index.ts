@@ -5,6 +5,7 @@ import {
     Filter,
     FindOptions,
     MongoClient,
+    Sort,
     TransactionOptions,
     UpdateFilter,
 } from "mongodb";
@@ -22,50 +23,50 @@ export class BaseRepository<Entity extends object>
     protected collection: string;
     protected db: string;
 
-    constructor(args: Constructor) {
-        this.collection = args.collection;
-        this.db = args.db;
+    constructor({ collection, db }: Constructor) {
+        this.collection = collection;
+        this.db = db;
     }
 
     async create(data: Entity) {
         const db = await this.connect();
-        return await db.collection(this.collection).insertOne(data);
+        return db.collection(this.collection).insertOne(data);
     }
 
     async createMany(data: Entity[]) {
         const db = await this.connect();
-        return await db.collection(this.collection).insertMany(data);
+        return db.collection(this.collection).insertMany(data);
     }
 
     async findOne(params: Filter<Entity>, options?: FindOptions<Entity>) {
         const db = await this.connect();
-        return await db
-            .collection<Entity>(this.collection)
-            .findOne(params, options);
+        return db.collection<Entity>(this.collection).findOne(params, options);
     }
 
-    async findAll(
+    async findMany(
         params: Filter<Entity> = {},
         limit = 10,
-        page = 1
+        page = 1,
+        sort: Sort = { _id: -1 }
     ): Promise<PaginationResult<Entity>> {
         const db = await this.connect();
-
         const totalDocs = await db
             .collection<Entity>(this.collection)
             .countDocuments(params);
-
         const docs = await db
             .collection<Entity>(this.collection)
             .find(params)
-            .sort({ _id: -1 })
+            .sort(sort)
             .skip((page - 1) * limit)
             .limit(limit)
             .toArray();
-
+        const totalPages = Math.ceil(totalDocs / limit);
         return {
-            pages: Math.ceil(totalDocs / limit),
             docs,
+            total: totalDocs,
+            pages: totalPages,
+            totalPages,
+            limit,
         };
     }
 
@@ -76,46 +77,32 @@ export class BaseRepository<Entity extends object>
 
     async count(params: Filter<Entity> = {}) {
         const db = await this.connect();
-        return await db
-            .collection<Entity>(this.collection)
-            .countDocuments(params);
+        return db.collection<Entity>(this.collection).countDocuments(params);
     }
 
     async updateOne(query: Filter<Entity>, value: UpdateFilter<Entity>) {
         const db = await this.connect();
-        return await db
-            .collection<Entity>(this.collection)
-            .updateOne(query, value);
+        return db.collection<Entity>(this.collection).updateOne(query, value);
     }
 
     async updateMany(query: Filter<Entity>, value: UpdateFilter<Entity>) {
         const db = await this.connect();
-        return await db
-            .collection<Entity>(this.collection)
-            .updateMany(query, value);
+        return db.collection<Entity>(this.collection).updateMany(query, value);
     }
 
     async updateBulk(
         operations: { query: Filter<Entity>; value: UpdateFilter<Entity> }[]
     ) {
-        const _operations = operations.map((operation) => {
-            const { query, value } = operation;
-            return {
-                updateMany: {
-                    filter: query,
-                    update: value,
-                },
-            };
-        });
+        const _operations = operations.map(({ query, value }) => ({
+            updateMany: { filter: query, update: value },
+        }));
         const db = await this.connect();
-        return await db
-            .collection<Entity>(this.collection)
-            .bulkWrite(_operations);
+        return db.collection<Entity>(this.collection).bulkWrite(_operations);
     }
 
     async deleteOne(query: Filter<Entity>) {
         const db = await this.connect();
-        return await db.collection<Entity>(this.collection).deleteOne(query);
+        return db.collection<Entity>(this.collection).deleteOne(query);
     }
 
     async aggregate<T extends object>(
@@ -130,26 +117,20 @@ export class BaseRepository<Entity extends object>
         operations: (client: MongoClient) => Promise<void>,
         options: TransactionOptions = {}
     ): Promise<void> {
-        const client = await clientPromise; // Conexão com o MongoDB
-        const session = client.startSession(); // Inicia a sessão
-
+        const client = await clientPromise;
+        const session = client.startSession();
         try {
-            // Use session.withTransaction para gerenciar tudo
             await session.withTransaction(async () => {
-                await operations(client); // Passa a sessão para as operações
+                await operations(client);
             }, options);
             await session.commitTransaction();
-        } catch (error) {
-            console.error("Transaction error:", error);
-            throw error; // Repassa o erro para o chamador
         } finally {
-            session.endSession(); // Certifique-se de encerrar a sessão
+            session.endSession();
         }
     }
 
     async connect() {
         const client = await clientPromise;
-        const db = client.db(this.db);
-        return db;
+        return client.db(this.db);
     }
 }

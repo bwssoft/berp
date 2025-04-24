@@ -23,11 +23,12 @@ export interface IBaseRepository<Entity extends object> {
         params: Filter<Entity>,
         options?: FindOptions<Entity>
     ): Promise<Entity | null>;
-    findAll(
+    findMany(
         params: Filter<Entity>,
         limit?: number,
         page?: number
     ): Promise<PaginationResult<Entity>>;
+    count(params: Filter<Entity>): Promise<number>;
     count(params: Filter<Entity>): Promise<number>;
     updateOne(
         query: Filter<Entity>,

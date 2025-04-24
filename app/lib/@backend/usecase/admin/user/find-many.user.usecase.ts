@@ -19,7 +19,7 @@ class FindManyUserUsecase {
         limit = 10 // ← novo
     ) {
         // A assinatura do repositório já é findAll(filter, limit, page)
-        return this.repository.findAll(filter, limit, page);
+        return this.repository.findMany(filter, limit, page);
     }
 }
 

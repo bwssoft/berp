@@ -2,7 +2,7 @@ import { userRepository } from "@/app/lib/@backend/infra";
 import { hashSync } from "bcrypt";
 
 export async function GET(request: Request) {
-  let users = await userRepository.findAll({
+  let users = await userRepository.findMany({
     username: { $regex: "sf_mp", $options: "i" },
   });
   await Promise.all(users.map((item) => {

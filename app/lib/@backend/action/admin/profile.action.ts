@@ -19,8 +19,11 @@ export async function createOneProfile(
   return result;
 }
 
-export async function findManyProfile(input: Filter<IProfile>) {
-  return await findManyProfileUsecase.execute(input);
+export async function findManyProfile(
+  filter: Filter<IProfile>,
+  sort?: Record<string, 1 | -1>
+) {
+  return await findManyProfileUsecase.execute({ filter, sort });
 }
 
 export async function findOneProfile(input: Filter<IProfile>) {
@@ -40,5 +43,6 @@ export async function setLockedControl(input: {
 export async function activeProfile(input: { id: string; active: boolean }) {
   const result = await activeProfileUsecase.execute(input);
   revalidatePath("/admin/profile");
+  revalidatePath("/admin/control");
   return result;
 }

@@ -378,7 +378,7 @@ export const useNB2 = () => {
                   RSI: autotest["RSI"] === "OK",
                   SN: Boolean(autotest["SN"]?.length),
                   VCC: !isNaN(VCC) && VCC <= 130 && VCC >= 120,
-                  TEMP: !isNaN(TEMP) && TEMP <= 26 && TEMP >= 24,
+                  TEMP: !isNaN(TEMP) && TEMP <= 28 && TEMP >= 23,
                 };
 
                 const statusValues = Object.values(resultTemplate.analysis);
