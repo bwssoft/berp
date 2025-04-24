@@ -67,7 +67,10 @@ export const useSearchUserForm = () => {
 
     const { data: profiles = [] } = useQuery({
         queryKey: ["findManyProfiles"],
-        queryFn: () => findManyProfile({}),
+        queryFn: async () => {
+            const { docs } = await findManyProfile({}, 1, 0);
+            return docs;
+        },
     });
 
     const toggleModal = () => setIsModalOpen((prev) => !prev);
