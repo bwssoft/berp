@@ -39,22 +39,23 @@ export function UserTable() {
 
   return (
     <>
-     <div className="mt-4">
-      <DataTable
-        columns={columns({ openAuditModal: modal.handleUserSelection })}
-        data={docs}
-        mobileDisplayValue={(u) => u.name}
-        mobileKeyExtractor={(u) => u._id.toString()}
-      />
-
-     
-        <PaginationTailwind
-          currentPage={page}
-          totalPages={pages}
-          totalItems={total}
-          limit={PAGE_SIZE}
-          onPageChange={handlePageChange}
+      <div className="w-full">
+        <DataTable
+          columns={columns({ openAuditModal: modal.handleUserSelection })}
+          data={docs}
+          mobileDisplayValue={(u) => u.name}
+          mobileKeyExtractor={(u) => u._id.toString()}
         />
+  
+        <div>
+          <PaginationTailwind
+            currentPage={page}
+            totalPages={pages}
+            totalItems={total}
+            limit={PAGE_SIZE}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
 
       <AuditUserModal
@@ -65,4 +66,5 @@ export function UserTable() {
       />
     </>
   );
+  
 }

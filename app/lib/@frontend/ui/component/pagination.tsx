@@ -51,7 +51,7 @@ export function PaginationTailwind({
 
   /* ---------- JSX ---------- */
   return (
-    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+    <div className="flex items-center w-full shadow-md border-t justify-between rounded-b-lg bg-white border-gray-200  px-4 py-3 sm:px-6">
       {/* Mobile */}
       <div className="flex flex-1 justify-between sm:hidden">
         <button
@@ -71,9 +71,7 @@ export function PaginationTailwind({
       </div>
 
       {/* Desktop */}
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-        
-
+      <div className="hidden sm:flex sm:w-full sm:justify-end">
         <nav
           className="isolate inline-flex -space-x-px rounded-md shadow-xs"
           aria-label="Pagination"
