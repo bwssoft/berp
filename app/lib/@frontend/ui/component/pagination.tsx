@@ -71,7 +71,11 @@ export function PaginationTailwind({
       </div>
 
       {/* Desktop */}
-      <div className="hidden sm:flex sm:w-full sm:justify-end">
+      <div className="hidden sm:flex sm:w-full sm:justify-between">
+        <div className="hidden sm:block text-gray-600 text-sm font-medium">
+          Exibindo <span className="font-semibold">{firstItem}</span> a <span className="font-semibold">{lastItem}</span> de <span className="font-semibold">{totalItems}</span> resultados
+        </div>
+        
         <nav
           className="isolate inline-flex -space-x-px rounded-md shadow-xs"
           aria-label="Pagination"
