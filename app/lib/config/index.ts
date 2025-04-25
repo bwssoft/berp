@@ -5,9 +5,6 @@ const OmieSecretSchema = z.object({
     key: z.string(),
     secret: z.string(),
 });
-const EnviromentPublicSchema = z.object({
-    BCUBE_VERSION: z.string().optional(),
-});
 
 const EnviromentsSchema = z.object({
     OMIE_SECRETS: z.record(z.nativeEnum(OmieEnterpriseEnum), OmieSecretSchema),
@@ -16,11 +13,6 @@ const EnviromentsSchema = z.object({
     AWS_REGION: z.string(),
     AWS_S3_ACCESS_KEY: z.string(),
     AWS_S3_SECRET_KEY: z.string(),
-});
-
-export const publicConfig = EnviromentPublicSchema.parse({
-    bcubeVersion:
-        process.env.NEXT_PUBLIC_BCUBE_VERSION || "versão não definida",
 });
 
 export const config = EnviromentsSchema.parse({
