@@ -10,7 +10,7 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export function PaginationTailwind({
+export function Pagination({
   currentPage,
   totalPages,
   totalItems,

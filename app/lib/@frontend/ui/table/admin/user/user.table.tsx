@@ -5,7 +5,7 @@ import { IUser } from "@/app/lib/@backend/domain";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./user.columns";
 import { AuditUserModal, useAuditUserModal } from "@/app/lib/@frontend/ui/modal";
-import { PaginationTailwind } from "../../../component/pagination";
+import { Pagination} from "../../../component/pagination";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
 
@@ -35,7 +35,7 @@ export function UserTable({ data }: Props) {
           mobileKeyExtractor={(u) => u.id.toString()}
         />
 
-        <PaginationTailwind
+        <Pagination
           currentPage={currentPage}
           totalPages={pages}
           totalItems={total}
