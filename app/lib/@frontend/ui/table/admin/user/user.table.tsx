@@ -1,6 +1,6 @@
 "use client";
 
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/IPagination.interface";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { IUser } from "@/app/lib/@backend/domain";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./user.columns";

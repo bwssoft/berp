@@ -14,7 +14,7 @@ import {
     UpdateResult,
     WithId,
 } from "mongodb";
-import { PaginationResult } from "./IPagination.interface";
+import { PaginationResult } from "./pagination.interface";
 
 export interface IBaseRepository<Entity extends object> {
     create(data: Entity): Promise<InsertOneResult<Entity>>;

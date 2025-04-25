@@ -3,7 +3,7 @@ import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { profileRepository } from "@/app/lib/@backend/infra";
 import { Filter } from "mongodb";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/IPagination.interface";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
     export interface Input {

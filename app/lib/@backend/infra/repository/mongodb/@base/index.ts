@@ -10,7 +10,7 @@ import {
     UpdateFilter,
 } from "mongodb";
 import clientPromise from "./config";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/IPagination.interface";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 type Constructor = {
     collection: string;
