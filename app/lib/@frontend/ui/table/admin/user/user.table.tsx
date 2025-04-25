@@ -7,6 +7,7 @@ import { columns } from "./user.columns";
 import { AuditUserModal, useAuditUserModal } from "@/app/lib/@frontend/ui/modal";
 import { PaginationTailwind } from "../../../component/pagination";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
 
 const PAGE_SIZE = 10;
 
@@ -23,7 +24,7 @@ export function UserTable({ data }: Props) {
   const currentPage  = pageParam ? Math.max(1, Number(pageParam)) : 1;
 
   const modal = useAuditUserModal();
-
+const rorro = useHandleParamsChange
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", String(newPage));

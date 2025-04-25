@@ -9,7 +9,7 @@ import Link from "next/link";
 interface Props {
   searchParams: {
     quick?: string;
-
+    page?:string;
     name?: string;
     cpf?: string;
     profile_id?: string[] | string;
@@ -22,8 +22,9 @@ interface Props {
   };
 }
 export default async function Example(props: Props) {
-  const { searchParams } = props;
-  const users = await findManyUser(query(searchParams));
+  const { searchParams: { page, ...rest } } = props
+  const _page = page?.length && Number(page)
+  const users = await findManyUser(query(rest), _page);
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

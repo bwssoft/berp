@@ -18,7 +18,6 @@ export function PaginationTailwind({
   onPageChange,
 }: PaginationProps) {
 
-  /* ---------- navegação ---------- */
   const goTo = (p: number) => {
     if (p < 1 || p > totalPages) return;
     onPageChange(p);
