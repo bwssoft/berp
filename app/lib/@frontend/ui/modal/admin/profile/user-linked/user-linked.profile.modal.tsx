@@ -21,7 +21,7 @@ export function UserLinkedProfileModal({ users, open, closeModal, profile }: Pro
     >
       <ModalBody>
         <ModalContent className="overflow-y-scroll max-h-[70vh]">
-          <UserTable data={users} />
+          <UserTable  data={users} />
         </ModalContent>
       </ModalBody>
     </Modal>
