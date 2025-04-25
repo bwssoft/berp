@@ -15,10 +15,13 @@ export function useUserLinkedProfileModal() {
     setOpen(true)
   },[])
   
-  const users = useQuery({
-    queryKey: ['findManyUsers', profile],
-    queryFn: () => findManyUser({"profile.name": profile?.name}),
-  }).data ?? [];
+  const { data: users = [] } = useQuery({
+    queryKey: ["findManyUsers", profile],
+    queryFn: async () => {
+      const {docs} = await findManyUser({"profile.name": profile?.name},1, 0)
+      return docs;
+    },
+  }) ?? [];
 
   return {
     users,

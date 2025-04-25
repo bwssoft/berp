@@ -81,8 +81,8 @@ export const useSearchProfileForm = () => {
       if (profileSearchTerm.trim() !== "") {
         filter["name"] = { $regex: profileSearchTerm, $options: "i" };
       }
-
-      return await findManyProfile(filter);
+      const {docs} = await findManyProfile(filter, 1, 0);
+      return docs
     },
   });
 
@@ -95,7 +95,8 @@ export const useSearchProfileForm = () => {
         filter["name"] = { $regex: userSearchTerm, $options: "i" };
       }
 
-      return await findManyUser(filter);
+      const {docs} = await findManyUser(filter, 1, 0);
+      return docs;
     },
   });
 
@@ -113,7 +114,7 @@ export const useSearchProfileForm = () => {
       active: data.active?.map(({ value }) => value),
     };
 
-    handleParamsChange(params);
+    handleParamsChange({...params});
     toggleModal();
   });
 
