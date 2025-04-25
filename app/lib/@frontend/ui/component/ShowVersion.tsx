@@ -1,9 +1,12 @@
-import {config} from "../../../../lib/config"
-export function ShowVersion(){
-  return(
-   <div className="font-extralight justify-center m-auto">
-    <p>Versão 0.0.1</p>
-    {/* <p>{config.BCUBE_VERSION}</p> */}
-   </div> 
-  )
+"use client"
+
+import { publicConfig } from "@/app/lib/config";
+
+
+export function ShowVersion() {
+  return (
+    <div className="font-extralight justify-center m-auto">
+      <p>{publicConfig.BCUBE_VERSION}</p>
+    </div>
+  );
 }
