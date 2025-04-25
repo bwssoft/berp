@@ -19,17 +19,11 @@ export function UserTable({ data }: Props) {
   const { docs, pages = 1, total = 0, limit = PAGE_SIZE } = data;
 
   const searchParams = useSearchParams();
-  const router       = useRouter();
-  const pageParam    = searchParams.get("page");
-  const currentPage  = pageParam ? Math.max(1, Number(pageParam)) : 1;
-
-  const modal = useAuditUserModal();
-const rorro = useHandleParamsChange
-  const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(newPage));
-    router.replace(`?${params.toString()}`, { scroll: false });
-  };
+  const pageParam = searchParams.get("page");
+  const currentPage = pageParam ? Math.max(1, Number(pageParam)) : 1;
+  
+  const { handleParamsChange } = useHandleParamsChange();
+  const handlePageChange = (page: number) => handleParamsChange({ page })
 
   return (
     <>

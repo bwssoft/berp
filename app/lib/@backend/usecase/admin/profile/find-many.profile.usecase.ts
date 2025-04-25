@@ -24,11 +24,11 @@ class FindManyProfileUsecase {
 
     @RemoveMongoId()
     async execute(arg: Dto.Input): Promise<Dto.Output> {
-        const filter = arg.filter ?? {};
-        const page = arg.page ?? 1;
-        const limit = arg.limit ?? 10;
-        const sort = arg.sort ?? { name: -1 };
-        return await this.repository.findMany(filter, limit, page);
+        return await this.repository.findMany(
+            arg.filter ?? {},
+            arg.limit,
+            arg.page
+        );
     }
 }
 

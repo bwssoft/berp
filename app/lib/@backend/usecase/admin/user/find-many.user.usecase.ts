@@ -14,7 +14,6 @@ class FindManyUserUsecase {
 
     @RemoveFields("_id", "password")
     async execute(filter: Filter<IUser> = {}, page = 1, limit = 10) {
-        console.log("asdasdsadadwefas", page);
         return await this.repository.findMany(filter, limit, page);
     }
 }
