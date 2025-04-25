@@ -1,4 +1,3 @@
-// app/lib/@frontend/ui/form/admin/user/search-form/search.user.form.tsx
 "use client";
 
 import { Button, Input, Modal, Combobox } from "../../../../component";
@@ -17,7 +16,8 @@ export function SearchUserForm() {
     setValue,
     control,
     errors,
-    handleChangeQuickSearch
+    handleChangeQuickSearch,
+    handleSearchProfile
   } = useSearchUserForm();
 
   return (
@@ -60,10 +60,12 @@ export function SearchUserForm() {
               <Combobox
                 label="Perfil"
                 type="multiple"
+                onSearchChange={handleSearchProfile}
                 defaultValue={[]}
                 placeholder="Selecione um ou mais perfis"
                 data={[{ id: "", name: "Todos" }, ...profiles]}
                 error={errors.profile_id?.message}
+                
                 onOptionChange={(items) => {
                   const ids = items.map((item) => item.id);
                   setValue("profile_id", ids);
@@ -156,7 +158,7 @@ export function SearchUserForm() {
               <Button variant="ghost" type="button" onClick={onReset}>
                 Limpar
               </Button>
-              <Button type="submit">Pesquisar</Button>
+              <Button onClick={()=>{console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBB", profiles)}} type="submit">Pesquisar</Button>
             </div>
           </form>
       </Modal>

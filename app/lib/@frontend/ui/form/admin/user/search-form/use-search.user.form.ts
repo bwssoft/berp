@@ -41,6 +41,7 @@ export type SearchUserFormValues = z.infer<typeof schema>;
 
 export const useSearchUserForm = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchProfileTerm, setSearchProfileTerm] = useState<string>("");
 
     const {
         register,
@@ -66,13 +67,31 @@ export const useSearchUserForm = () => {
     const { handleParamsChange } = useHandleParamsChange();
 
     const { data: profiles = [] } = useQuery({
-        queryKey: ["findManyProfiles"],
+        queryKey: ["findManyProfiles", searchProfileTerm],
         queryFn: async () => {
-            const { docs } = await findManyProfile({}, 1, 0);
+            const filter: Record<string, any> = {};
+
+            if (searchProfileTerm.trim() !== "") {
+                filter["name"] = { $regex: searchProfileTerm, $options: "i" };
+            }
+
+            const { docs } = await findManyProfile(filter, 1, 0);
             return docs;
         },
     });
 
+    const filteredProfiles = searchProfileTerm
+        ? profiles.filter((profile) =>
+              profile.name
+                  .toLowerCase()
+                  .includes(searchProfileTerm.toLowerCase())
+          )
+        : profiles;
+
+    const handleSearchProfile = (input: string) => {
+        setSearchProfileTerm(input);
+        handleParamsChange({ page: 1 });
+    };
     const toggleModal = () => setIsModalOpen((prev) => !prev);
 
     const onSubmit = handleSubmit((data) => {
@@ -90,6 +109,11 @@ export const useSearchUserForm = () => {
         };
         handleParamsChange(params);
         toggleModal();
+
+        console.log(
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            profiles
+        );
     });
 
     const onReset = () => {
@@ -122,7 +146,8 @@ export const useSearchUserForm = () => {
         errors,
         isModalOpen,
         toggleModal,
-        profiles,
+        profiles: filteredProfiles,
+        handleSearchProfile,
         onSubmit,
         onReset,
         control,
