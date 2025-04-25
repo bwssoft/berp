@@ -26,7 +26,8 @@ export interface IBaseRepository<Entity extends object> {
     findMany(
         params: Filter<Entity>,
         limit?: number,
-        page?: number
+        page?: number,
+        sort?: Record<string, 1 | -1>
     ): Promise<PaginationResult<Entity>>;
     count(params: Filter<Entity>): Promise<number>;
     count(params: Filter<Entity>): Promise<number>;

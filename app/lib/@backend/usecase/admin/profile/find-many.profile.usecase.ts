@@ -27,7 +27,8 @@ class FindManyProfileUsecase {
         return await this.repository.findMany(
             arg.filter ?? {},
             arg.limit,
-            arg.page
+            arg.page,
+            arg.sort
         );
     }
 }
