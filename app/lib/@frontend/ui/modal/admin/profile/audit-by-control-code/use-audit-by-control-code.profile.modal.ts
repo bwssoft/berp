@@ -1,6 +1,7 @@
 "use client";
 import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
-import { AuditDomain, AuditType, IControl } from "@/app/lib/@backend/domain";
+import { AuditDomain, AuditType, IAudit, IControl } from "@/app/lib/@backend/domain";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 
@@ -9,8 +10,7 @@ export function useAuditByControlCodeProfileModal() {
   const openModal = useCallback(() => setOpen(true), []);
   const closeModal = useCallback(() => setOpen(false), []);
 
-  const [control, setControl] =
-    useState<Pick<IControl, "id" | "name" | "code">>();
+  const [control, setControl] = useState<Pick<IControl, "id" | "name" | "code">>();
   const handleControlSelection = useCallback(
     (control: Pick<IControl, "id" | "name" | "code">) => {
       setControl(control);
@@ -19,31 +19,33 @@ export function useAuditByControlCodeProfileModal() {
     []
   );
 
-  const audits =
-    useQuery({
-      queryKey: ["findManyAudit", control],
-      queryFn: async () => {
-        const allow = await findManyAudit({
-          domain: AuditDomain.profile,
-          "metadata.field": "locked_control_code",
-          type: AuditType.update,
-          "metadata.before": { $in: [control?.code] },
-          "metadata.after": { $nin: [control?.code] },
-        });
+  const { data: audits = [] } = useQuery({
+    queryKey: ["findManyAudit", control],
+    queryFn: async () => {
+      const allowResponse = await findManyAudit({
+        domain: AuditDomain.profile,
+        "metadata.field": "locked_control_code",
+        type: AuditType.update,
+        "metadata.before": { $in: [control?.code] },
+        "metadata.after": { $nin: [control?.code] },
+      });
 
-        const block = await findManyAudit({
-          domain: AuditDomain.profile,
-          "metadata.field": "locked_control_code",
-          type: AuditType.update,
-          "metadata.before": { $nin: [control?.code] },
-          "metadata.after": { $in: [control?.code] },
-        });
+      const blockResponse = await findManyAudit({
+        domain: AuditDomain.profile,
+        "metadata.field": "locked_control_code",
+        type: AuditType.update,
+        "metadata.before": { $nin: [control?.code] },
+        "metadata.after": { $in: [control?.code] },
+      });
 
-        return [...allow, ...block].sort(
-          (a, b) => b.created_at.getTime() - a.created_at.getTime()
-        );
-      },
-    }).data ?? [];
+      const allow = Array.isArray(allowResponse) ? allowResponse : [];
+      const block = Array.isArray(blockResponse) ? blockResponse : [];
+
+      return [...allow, ...block].sort(
+        (a, b) => b.created_at.getTime() - a.created_at.getTime()
+      );
+    },
+  });
 
   return {
     audits,

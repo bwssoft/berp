@@ -1,4 +1,5 @@
 "use client";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { Modal, ModalBody, ModalContent } from "../../../component/modal";
 import { ProfileTable } from "../../../table";
 import { IControl, IProfile } from "@/app/lib/@backend/domain";
@@ -7,7 +8,7 @@ interface Props {
   open: boolean;
   closeModal: () => void;
   control?: Pick<IControl, "id" | "name">
-  profiles: IProfile[]
+  profiles: PaginationResult<IProfile>
 }
 
 export function ProfileLinkedControlModal({

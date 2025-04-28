@@ -43,14 +43,14 @@ export const findOneUser = async (filter: Filter<IUser>) => {
     return await findOneUserUsecase.execute(filter);
 };
 
-export const findManyUser = async (
+export async function findManyUser(
     filter: Filter<IUser> = {},
-    page = 1,
-    limit = 10
-) => {
-    // usecase já devolve PaginationResult<IUser>
-    return await findManyUserUsecase.execute(filter, page, limit);
-};
+    page?: number,
+    limit?: number,
+    sort?: Record<string, 1 | -1>
+) {
+    return await findManyUserUsecase.execute({ filter, page, limit, sort });
+}
 
 export const updateOneUser = async (
     id: string,
