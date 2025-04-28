@@ -21,8 +21,8 @@ export async function createOneProfile(
 
 export async function findManyProfile(
     filter: Filter<IProfile> = {},
-    page = 1,
-    limit = 10,
+    page?: number,
+    limit?: number,
     sort?: Record<string, 1 | -1>
 ) {
     return await findManyProfileUsecase.execute({ filter, page, limit, sort });
