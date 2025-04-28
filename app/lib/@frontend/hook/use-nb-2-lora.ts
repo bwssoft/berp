@@ -39,7 +39,7 @@ const readResponse = async (
       let lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
       for (const line of lines) {
-        console.log("line", line);
+        console.log("[NB2 LoRa readResponse]", line);
         if (line.length > 0 && line.includes(command.replace("\r\n", ""))) {
           return line;
         }
