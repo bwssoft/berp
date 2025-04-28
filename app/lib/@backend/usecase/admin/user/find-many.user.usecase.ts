@@ -13,8 +13,13 @@ class FindManyUserUsecase {
     }
 
     @RemoveFields("_id", "password")
-    async execute(filter: Filter<IUser> = {}, page = 1, limit = 10) {
-        return await this.repository.findMany(filter, limit, page);
+    async execute(arg: Dto.Input): Promise<Dto.Output> {
+        return await this.repository.findMany(
+            arg.filter ?? {},
+            arg.limit,
+            arg.page,
+            arg.sort
+        );
     }
 }
 
