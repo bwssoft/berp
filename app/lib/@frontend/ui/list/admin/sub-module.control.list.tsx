@@ -82,7 +82,6 @@ const renderControlTree = (
   openAuditModal: (props: { id: string; name: string; code: string }) => void
 ) => {
   const has_children = control.children.length > 0;
-  console.log({control})
   return (
     <Disclosure key={control.id}>
       <DisclosureButton className="border-b border-gray-200 w-full p-6 group flex justify-between items-center gap-2">
