@@ -22,6 +22,7 @@ namespace Namespace {
   export interface Identified {
     port: ISerialPort;
     equipment: Equipment;
+    status: "fully_identified" | "partially_identified" | "not_identified";
   }
 
   interface Equipment {
@@ -49,6 +50,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
     handleConfiguration,
     handleGetProfile,
     requestPort,
+    isIdentified,
   } = useTechnology(technology);
 
   // function that handle the configuration process, check if the process was successful and save result on database
@@ -174,7 +176,11 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
         setIdentified(
           identified
             .filter((el) => el.response !== undefined)
-            .map(({ port, response }) => ({ port, equipment: response! }))
+            .map(({ port, response }) => ({
+              port,
+              equipment: response!,
+              status: isIdentified(response!),
+            }))
         );
         isIdentifying.current = false;
       } else if (!isIdentifying.current && !ports.length) {
