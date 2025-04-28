@@ -17,7 +17,9 @@ export function SearchUserForm() {
     setValue,
     control,
     errors,
-    handleChangeQuickSearch
+    handleChangeProfileName,
+    handleSearchUser,
+    handleSearchProflile
   } = useSearchUserForm();
 
   return (
@@ -28,7 +30,7 @@ export function SearchUserForm() {
               label="Nome ou CPF"
               placeholder="Digite e busque pelo nome do usuário ou CPF"
               containerClassname="sm:w-96"
-              onChange={handleChangeQuickSearch}
+              onChange={handleChangeProfileName}
             />
             <Button
               type="button"
@@ -57,20 +59,29 @@ export function SearchUserForm() {
                 placeholder="Digite o CPF do usuário"
                 error={errors.cpf?.message}
               />
-              <Combobox
-                label="Perfil"
-                type="multiple"
-                defaultValue={[]}
-                placeholder="Selecione um ou mais perfis"
-                data={[{ id: "", name: "Todos" }, ...profiles]}
-                error={errors.profile_id?.message}
-                onOptionChange={(items) => {
-                  const ids = items.map((item) => item.id);
-                  setValue("profile_id", ids);
-                }}
-                keyExtractor={(item) => item.id}
-                displayValueGetter={(item) => item.name}
-              />
+              <Controller
+              name="profile"
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  label="Perfil"
+                  type="multiple"
+                  data={[...profiles]}
+                  defaultValue={field.value}
+                  error={errors.profile?.message}
+                  onSearchChange={handleSearchProflile}
+                  keyExtractor={(item) => item.id}
+                  displayValueGetter={(item) => item.name}
+                  placeholder="Selecione um perfil"
+                  onOptionChange={(items) =>
+                    setValue(
+                      "profile",
+                      items.map((i) => ({ id: i.id, name: i.name }))
+                    )
+                  }
+                />
+              )}
+            />
               <Input
                 label="Usuário"
                 {...register("username")}

@@ -1,12 +1,12 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
-import { findManyProfile } from "@/app/lib/@backend/action";
+import { findManyProfile, findManyUser } from "@/app/lib/@backend/action";
 import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";
 
 const schema = z.object({
@@ -14,9 +14,15 @@ const schema = z.object({
 
     name: z.string().optional(),
     cpf: z.string().optional(),
-    profile_id: z.array(z.string()).optional(),
+    profile: z.array(
+        z.object({
+            id: z.string(),
+            name: z.string(),
+        })
+    ),
     username: z.string().optional(),
     email: z.string().optional(),
+
     active: z
         .array(
             z.object({
@@ -37,11 +43,13 @@ const schema = z.object({
         .optional(),
 });
 
-export type SearchUserFormValues = z.infer<typeof schema>;
+export type SearchProfileFormValues = z.infer<typeof schema>;
 
 export const useSearchUserForm = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [profileSearchTerm, setProfileSearchTerm] = useState("");
+    const [userSearchTerm, setUserSearchTerm] = useState("");
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const {
         register,
         handleSubmit,
@@ -50,25 +58,43 @@ export const useSearchUserForm = () => {
         control,
         watch,
         formState: { errors },
-    } = useForm<SearchUserFormValues>({
+    } = useForm<SearchProfileFormValues>({
         resolver: zodResolver(schema),
         defaultValues: {
             name: "",
             cpf: "",
-            profile_id: [],
+            profile: [],
             username: "",
             email: "",
             active: undefined,
             external: undefined,
         },
     });
-
     const { handleParamsChange } = useHandleParamsChange();
 
     const { data: profiles = [] } = useQuery({
-        queryKey: ["findManyProfiles"],
+        queryKey: ["findManyProfiles", profileSearchTerm],
         queryFn: async () => {
-            const { docs } = await findManyProfile({}, 1, 0);
+            const filter: Record<string, any> = {};
+
+            if (profileSearchTerm.trim() !== "") {
+                filter["name"] = { $regex: profileSearchTerm, $options: "i" };
+            }
+            const { docs } = await findManyProfile(filter);
+            return docs;
+        },
+    });
+
+    const { data: users = [] } = useQuery({
+        queryKey: ["findManyUsers", userSearchTerm],
+        queryFn: async () => {
+            const filter: Record<string, any> = {};
+
+            if (userSearchTerm.trim() !== "") {
+                filter["name"] = { $regex: userSearchTerm, $options: "i" };
+            }
+
+            const { docs } = await findManyUser(filter);
             return docs;
         },
     });
@@ -82,13 +108,13 @@ export const useSearchUserForm = () => {
         > = {
             name: data.name,
             cpf: removeSpecialCharacters(String(data.cpf)),
-            profile_id: data.profile_id,
+            profile_id: [...(data.profile ?? [])?.map(({ id }) => id)].flat(),
             username: data.username,
             email: data.email,
             active: data.active?.map(({ value }) => value),
-            external: data.external?.map(({ value }) => value),
         };
-        handleParamsChange(params);
+
+        handleParamsChange({ ...params });
         toggleModal();
     });
 
@@ -105,7 +131,7 @@ export const useSearchUserForm = () => {
         });
     };
 
-    const handleChangeQuickSearch = useDebounce(
+    const handleChangeProfileName = useDebounce(
         (e: ChangeEvent<HTMLInputElement>) => {
             handleParamsChange({
                 quick: e.target.value,
@@ -114,8 +140,19 @@ export const useSearchUserForm = () => {
         300
     );
 
+    const handleSearchUser = useDebounce(
+        (input: string) => setUserSearchTerm(input),
+        300
+    );
+
+    const handleSearchProflile = useDebounce(
+        (input: string) => setProfileSearchTerm(input),
+        300
+    );
+
     return {
         register,
+        control,
         reset,
         setValue,
         watch,
@@ -123,9 +160,11 @@ export const useSearchUserForm = () => {
         isModalOpen,
         toggleModal,
         profiles,
+        users,
         onSubmit,
         onReset,
-        control,
-        handleChangeQuickSearch,
+        handleChangeProfileName,
+        handleSearchUser,
+        handleSearchProflile,
     };
 };
