@@ -81,7 +81,7 @@ export const useSearchProfileForm = () => {
       if (profileSearchTerm.trim() !== "") {
         filter["name"] = { $regex: profileSearchTerm, $options: "i" };
       }
-      const {docs} = await findManyProfile(filter, 1, 0);
+      const {docs} = await findManyProfile(filter);
       return docs
     },
   });
@@ -95,7 +95,7 @@ export const useSearchProfileForm = () => {
         filter["name"] = { $regex: userSearchTerm, $options: "i" };
       }
 
-      const {docs} = await findManyUser(filter, 1, 0);
+      const {docs} = await findManyUser(filter);
       return docs;
     },
   });
