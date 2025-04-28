@@ -14,6 +14,7 @@ namespace Namespace {
   export interface Identified {
     port: ISerialPort;
     equipment: Equipment;
+    status: "fully_identified" | "partially_identified" | "not_identified";
   }
 
   interface Equipment {
@@ -93,7 +94,7 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
   const [autoTestProgress, setAutoTestProgress] = useState(false);
 
   // hook that handle interactions with devices
-  const { ports, handleDetection, handleAutoTest, requestPort } =
+  const { ports, handleDetection, handleAutoTest, requestPort, isIdentified } =
     useTechnology(technology);
 
   // function that handle the auto test process, check if the process was successful and save result on database
@@ -142,7 +143,11 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
         setIdentified(
           identified
             .filter((el) => el.response !== undefined)
-            .map(({ port, response }) => ({ port, equipment: response! }))
+            .map(({ port, response }) => ({
+              port,
+              equipment: response!,
+              status: isIdentified(response!),
+            }))
         );
         setDetectionProgress(false);
         isIdentifying.current = false;
