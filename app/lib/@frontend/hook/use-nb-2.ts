@@ -468,7 +468,25 @@ export const useNB2 = () => {
     return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
   };
 
+  const isIdentified = (input: {
+    imei?: string;
+    iccid?: string;
+    serial?: string;
+    firmware?: string;
+  }) => {
+    const { serial, imei, iccid, firmware } = input;
+    const identified = [serial, imei, iccid, firmware];
+    if (identified.every((e) => e && e.length > 0)) {
+      return "fully_identified";
+    } else if (identified.some((e) => e && e.length > 0)) {
+      return "partially_identified";
+    } else {
+      return "not_identified";
+    }
+  };
+
   return {
+    isIdentified,
     ports,
     handleIdentification,
     handleGetProfile,
