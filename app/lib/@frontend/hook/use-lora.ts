@@ -459,7 +459,20 @@ export const useLora = () => {
     return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
   };
 
+  const isIdentified = (input: { serial?: string; firmware?: string }) => {
+    const { serial, firmware } = input;
+    const identified = [serial, firmware];
+    if (identified.every((e) => e && e.length > 0)) {
+      return "fully_identified";
+    } else if (identified.some((e) => e && e.length > 0)) {
+      return "partially_identified";
+    } else {
+      return "not_identified";
+    }
+  };
+
   return {
+    isIdentified,
     ports,
     handleIdentification,
     handleGetProfile,
