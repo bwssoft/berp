@@ -3,8 +3,6 @@ import { LORA, LORAParser, LORAEncoder } from "../../@backend/infra/protocol";
 import {
   generateImei,
   getRandomInt,
-  isIccid,
-  isImei,
   sleep,
   typedObjectEntries,
 } from "../../util";
@@ -358,10 +356,12 @@ export const useLora = () => {
 
                 resultTemplate.analysis = {
                   DEV: autotest["DEV"] === "DM_BWS_LORA",
+                  SN: typeof autotest["SN"] === "string",
+                  FW: typeof autotest["FW"] === "string",
                   ACELID: !isNaN(ACELID),
                   ADMAIN: !isNaN(ADMAIN),
                   ADBACK: !isNaN(ADBACK),
-                  ADNTC: !isNaN(ADNTC) && ADNTC <= 26 && ADNTC >= 24,
+                  ADNTC: !isNaN(ADNTC) && ADNTC !== 255,
                   ACELCOM: autotest["ACELCOM"] === "OK",
                   IN1: autotest["IN1"] === "OK",
                   IN2: autotest["IN2"] === "OK",

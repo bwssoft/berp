@@ -1,18 +1,20 @@
 export namespace LORA {
   export interface AutoTest {
-    DEV:string //DM_BWS_LORA,
-    ACELCOM:string //OK,
-    ACELID:string //23,
-    ADMAIN:string //122,
-    ADBACK:string //404,
-    ADNTC:string //24,
-    IN1:string //OK,
-    IN2:string //OK,
-    OUT1:string //OK,
-    CHARGER:string //OK,
-    GPSCOM:string //OK,
-    GPSVCC:string //OK,
-    GPSRST:string //OK
+    DEV: string; //DM_BWS_LORA,
+    SN: string; //FFFFFFFF,
+    FW: string; //BWSIot_Lora_V_01.00.00,
+    ACELCOM: string; //OK,
+    ACELID: string; //23,
+    ADMAIN: string; //122,
+    ADBACK: string; //404,
+    ADNTC: string; //24,
+    IN1: string; //OK,
+    IN2: string; //OK,
+    OUT1: string; //OK,
+    CHARGER: string; //OK,
+    GPSCOM: string; //OK,
+    GPSVCC: string; //OK,
+    GPSRST: string; //OK
   }
 }
 
