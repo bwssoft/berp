@@ -1,22 +1,21 @@
 import { IControl } from "../@backend/domain";
-import { PaginationResult } from "../@backend/domain/@shared/repository/pagination.interface";
 
 export type ControlTree = (IControl & { children: ControlTree })[];
 
 // Função para montar a árvore de hierarquia dos controles
-function buildControlTree(controls: PaginationResult<IControl>): ControlTree {
+function buildControlTree(controls: IControl[]): ControlTree {
   // Lookup para mapear cada controle pelo seu código e inicializa o campo "children"
   const lookup: {
     [key: string]: ControlTree[number];
   } = {};
-  controls.docs.forEach((control) => {
+  controls.forEach((control) => {
     lookup[control.code] = { ...control, children: [] };
   });
 
   const tree: ControlTree = [];
 
   // Monta a árvore: se o controle possui parent_code, é adicionado como filho do pai; caso contrário, é elemento de nível superior
-  controls.docs.forEach((control) => {
+  controls.forEach((control) => {
     if (control.parent_code) {
       const parent = lookup[control.parent_code];
       if (parent) {

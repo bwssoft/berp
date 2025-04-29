@@ -1,6 +1,5 @@
 "use client";
 import { Modal, ModalBody, ModalContent } from "../../../../component/modal";
-import { useAuditByControlCodeProfileModal } from "./use-audit-by-control-code.profile.modal";
 import { AuditTable } from "../../../../table/admin/audit";
 import { IAudit, IControl } from "@/app/lib/@backend/domain";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";

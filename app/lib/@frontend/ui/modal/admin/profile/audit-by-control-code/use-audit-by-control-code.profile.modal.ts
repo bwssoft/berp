@@ -1,6 +1,11 @@
 "use client";
 import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
-import { AuditDomain, AuditType, IAudit, IControl } from "@/app/lib/@backend/domain";
+import {
+  AuditDomain,
+  AuditType,
+  IAudit,
+  IControl,
+} from "@/app/lib/@backend/domain";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
@@ -10,7 +15,8 @@ export function useAuditByControlCodeProfileModal() {
   const openModal = useCallback(() => setOpen(true), []);
   const closeModal = useCallback(() => setOpen(false), []);
 
-  const [control, setControl] = useState<Pick<IControl, "id" | "name" | "code">>();
+  const [control, setControl] =
+    useState<Pick<IControl, "id" | "name" | "code">>();
   const handleControlSelection = useCallback(
     (control: Pick<IControl, "id" | "name" | "code">) => {
       setControl(control);
@@ -22,7 +28,7 @@ export function useAuditByControlCodeProfileModal() {
   const { data: audits = [] } = useQuery({
     queryKey: ["findManyAudit", control],
     queryFn: async () => {
-      const allowResponse = await findManyAudit({
+      const { docs: allowResponse } = await findManyAudit({
         domain: AuditDomain.profile,
         "metadata.field": "locked_control_code",
         type: AuditType.update,
@@ -30,7 +36,7 @@ export function useAuditByControlCodeProfileModal() {
         "metadata.after": { $nin: [control?.code] },
       });
 
-      const blockResponse = await findManyAudit({
+      const { docs: blockResponse } = await findManyAudit({
         domain: AuditDomain.profile,
         "metadata.field": "locked_control_code",
         type: AuditType.update,

@@ -50,23 +50,27 @@ export class BaseRepository<Entity extends object>
         sort: Sort = { _id: -1 }
     ): Promise<PaginationResult<Entity>> {
         const db = await this.connect();
+
         const totalDocs = await db
             .collection<Entity>(this.collection)
             .countDocuments(params);
+
         const chain = db
             .collection<Entity>(this.collection)
             .find(params)
             .sort(sort)
             .limit(limit);
+        
         if (typeof page === "number") chain.skip(page - 1);
 
         const docs = await chain.toArray();
+
         const totalPages = Math.ceil(totalDocs / limit);
+        
         return {
-            docs,
+            docs: docs as Entity[],
             total: totalDocs,
             pages: totalPages,
-            totalPages,
             limit,
         };
     }

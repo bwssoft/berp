@@ -21,7 +21,9 @@ export function UserTable({ data, currentPage = 1 }: Props) {
   
   const { handleParamsChange } = useHandleParamsChange();
   const handlePageChange = (page: number) => handleParamsChange({ page })
+
   const modal = useAuditUserModal();
+  
   return (
     <>
       <div className="w-full">
@@ -42,7 +44,7 @@ export function UserTable({ data, currentPage = 1 }: Props) {
       </div>
 
       <AuditUserModal
-        auditData={modal.auditData}
+        auditData={{ docs: modal.auditData }}
         closeModal={modal.closeModal}
         open={modal.open}
         user={modal.user}

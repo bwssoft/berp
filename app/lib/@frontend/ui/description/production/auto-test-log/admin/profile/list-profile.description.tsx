@@ -1,8 +1,9 @@
 import { IProfile } from "@/app/lib/@backend/domain";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { UsersIcon } from "@heroicons/react/24/outline";
 
 type Props = {
-  profiles: IProfile[];
+  profiles: PaginationResult<IProfile>
 };
 
 export function ListProfileDescription({ profiles }: Props) {
@@ -15,7 +16,7 @@ export function ListProfileDescription({ profiles }: Props) {
         <h2 className="text-center font-medium">Perfis</h2>
       </div>
       <ul role="list" className="divide-y divide-gray-200">
-        {profiles.map((profile) => (
+        {profiles.docs.map((profile) => (
           <li
             key={profile.id}
             className="flex justify-between gap-x-6 py-4 px-6"

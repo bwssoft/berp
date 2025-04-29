@@ -75,7 +75,7 @@ export function ModuleControlList(props: Props) {
       </ul>
 
       <ProfileLinkedControlModal
-        profiles={linkedControlModal.profiles || []} 
+        profiles={linkedControlModal.profiles}
         closeModal={linkedControlModal.closeModal}
         open={linkedControlModal.open}
         control={linkedControlModal.control}

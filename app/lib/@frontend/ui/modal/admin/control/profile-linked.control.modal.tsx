@@ -22,7 +22,7 @@ export function ProfileLinkedControlModal({
       <Modal position="center" title={`Perfis relacionados ao controle de acesso - ${control?.name}`} open={open} onClose={closeModal} >
         <ModalBody>
           <ModalContent className="overflow-y-scroll max-h-[70vh]">
-              <ListProfileDescription profiles={profiles}/>
+            <ListProfileDescription profiles={profiles}/>
           </ModalContent>
         </ModalBody>
       </Modal>
