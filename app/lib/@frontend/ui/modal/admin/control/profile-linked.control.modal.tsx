@@ -10,19 +10,21 @@ interface Props {
   closeModal: () => void;
   control?: Pick<IControl, "id" | "name">
   profiles: PaginationResult<IProfile>
+  isLoading?: boolean
 }
 
 export function ProfileLinkedControlModal({
   open,
   closeModal,
   control,
-  profiles
+  profiles,
+  isLoading
   }: Props) { 
     return (
       <Modal position="center" title={`Perfis relacionados ao controle de acesso - ${control?.name}`} open={open} onClose={closeModal} >
         <ModalBody>
           <ModalContent className="overflow-y-scroll max-h-[70vh]">
-            <ListProfileDescription profiles={profiles}/>
+            <ListProfileDescription isLoading={isLoading} profiles={profiles}/>
           </ModalContent>
         </ModalBody>
       </Modal>

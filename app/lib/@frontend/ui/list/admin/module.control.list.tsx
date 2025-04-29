@@ -79,6 +79,7 @@ export function ModuleControlList(props: Props) {
         closeModal={linkedControlModal.closeModal}
         open={linkedControlModal.open}
         control={linkedControlModal.control}
+        isLoading={linkedControlModal.isLoading}
       />
     </>
   );

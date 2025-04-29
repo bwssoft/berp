@@ -16,13 +16,14 @@ export function useProfileLinkedControlModal() {
     setOpen(true)
   },[])
 
-  const profiles = useQuery({
+  const {data: profiles, isLoading} = useQuery({
     queryKey: ['findManyProfiles', control],
     queryFn: () => findManyProfile({"locked_control_code": {$nin: [control?.code!]}}),
   })
 
   return {
-    profiles: (profiles.data ?? []) as PaginationResult<IProfile>,
+    profiles: profiles as PaginationResult<IProfile>,
+    isLoading,
     handleControlSelection,
     open,
     openModal,
