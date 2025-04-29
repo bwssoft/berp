@@ -16,7 +16,7 @@ export function ListProfileDescription({ profiles }: Props) {
         <h2 className="text-center font-medium">Perfis</h2>
       </div>
       <ul role="list" className="divide-y divide-gray-200">
-        {profiles.docs.map((profile) => (
+        {profiles?.docs?.map((profile) => (
           <li
             key={profile.id}
             className="flex justify-between gap-x-6 py-4 px-6"
