@@ -8,6 +8,7 @@ type Props = {
 };
 
 export function ListProfileDescription({ profiles, isLoading }: Props) {
+  const hasProfiles = !isLoading && Array.isArray(profiles?.docs) && profiles.docs.length > 0;
 
   return (
     <div className="bg-white w-full rounded-md shadow-md p-6">
@@ -22,13 +23,9 @@ export function ListProfileDescription({ profiles, isLoading }: Props) {
         <div className="text-center py-4 text-sm text-gray-500">
           Carregando perfis... <span className="animate-pulse">⏳</span>
         </div>
-      ) : profiles.docs.length === 0 ? (
-        <div className="text-center py-4 text-sm text-gray-500">
-          Nenhum perfil vinculado a este módulo.
-        </div>
-      ) : (
+      ) : hasProfiles ? (
         <ul role="list" className="divide-y divide-gray-200 mt-4">
-          {profiles.docs.map((profile) => (
+          {(profiles.docs ?? []).map((profile) => (
             <li
               key={profile.id}
               className="flex justify-between gap-x-6 py-4 px-6"
@@ -43,6 +40,10 @@ export function ListProfileDescription({ profiles, isLoading }: Props) {
             </li>
           ))}
         </ul>
+      ) : (
+        <div className="text-center py-4 text-sm text-gray-500">
+          Nenhum perfil vinculado a este módulo.
+        </div>
       )}
     </div>
   );
