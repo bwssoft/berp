@@ -2,15 +2,21 @@
 
 import { Modal, ModalBody, ModalContent } from "../../../../component/modal";
 import { IProfile, IUser } from "@/app/lib/@backend/domain";
+import { ListUserDescription } from "../../../../description";
 
 interface Props {
   open: boolean;
   closeModal: () => void;
-  profile?: Pick<IProfile, "id" | "name">
-  users: IUser[]
+  profile?: Pick<IProfile, "id" | "name">;
+  users: IUser[];
 }
 
-export function UserLinkedProfileModal({ users, open, closeModal, profile }: Props) {
+export function UserLinkedProfileModal({
+  users,
+  open,
+  closeModal,
+  profile,
+}: Props) {
   return (
     <Modal
       position="center"
@@ -20,8 +26,7 @@ export function UserLinkedProfileModal({ users, open, closeModal, profile }: Pro
     >
       <ModalBody>
         <ModalContent className="overflow-y-scroll max-h-[70vh]">
-          {/* O componente nao ta na develop ainda */}
-          {/* <ListUserDescription data={users} />   */}
+          <ListUserDescription users={users} />
         </ModalContent>
       </ModalBody>
     </Modal>

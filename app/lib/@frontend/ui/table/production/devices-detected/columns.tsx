@@ -10,12 +10,17 @@ const statuses = {
   not_identified: "text-rose-500 bg-rose-800/20",
 };
 
-const text = {
+const textColor = {
   fully_identified: "text-green-800",
   partially_identified: "text-yellow-800",
   not_identified: "text-rose-800",
 };
 
+const info = {
+  fully_identified: "Identificado",
+  partially_identified: "Parcialmente Identificado",
+  not_identified: "Não Identificado",
+};
 export const columns: ColumnDef<{
   equipment: {
     imei?: string | undefined;
@@ -23,28 +28,14 @@ export const columns: ColumnDef<{
     firmware?: string | undefined;
     serial?: string | undefined;
   };
+  status: "fully_identified" | "partially_identified" | "not_identified";
   port: ISerialPort;
 }>[] = [
   {
     header: "Identificado",
     accessorKey: "inIdentification",
     cell: ({ row }) => {
-      const device = row.original;
-      const not_identified =
-        !device.equipment.imei &&
-        !device.equipment.iccid &&
-        !device.equipment.serial &&
-        !device.equipment.firmware;
-      const is_identified =
-        device.equipment.imei &&
-        device.equipment.iccid &&
-        device.equipment.serial &&
-        device.equipment.firmware;
-      const status = is_identified
-        ? "fully_identified"
-        : not_identified
-          ? "not_identified"
-          : "partially_identified";
+      const status = row.original.status;
       return (
         <div className="flex items-center gap-1">
           <div
@@ -52,12 +43,10 @@ export const columns: ColumnDef<{
           >
             <div className="h-1.5 w-1.5 rounded-full bg-current" />
           </div>
-          <div className={cn("hidden font-semibold sm:block", text[status])}>
-            {is_identified
-              ? "Identificado"
-              : not_identified
-                ? "Não Identificado"
-                : "Parcialmente Identificado"}
+          <div
+            className={cn("hidden font-semibold sm:block", textColor[status])}
+          >
+            {info[status]}
           </div>
         </div>
       );

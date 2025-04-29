@@ -294,7 +294,24 @@ export const useE3Plus = () => {
     [sendMultipleMessages]
   );
 
+  const isIdentified = (input: {
+    imei?: string;
+    iccid?: string;
+    firmware?: string;
+  }) => {
+    const { imei, iccid, firmware } = input;
+    const identified = [imei, iccid, firmware];
+    if (identified.every((e) => e && e?.length > 0)) {
+      return "fully_identified";
+    } else if (identified.some((e) => e && e?.length > 0)) {
+      return "partially_identified";
+    } else {
+      return "not_identified";
+    }
+  };
+
   return {
+    isIdentified,
     ports,
     handleIdentification,
     handleGetProfile,

@@ -1,24 +1,30 @@
-export namespace LORA {
+export namespace NB2LORA {
   export interface AutoTest {
-    DEV: string; //DM_BWS_LORA,
-    SN: string; //FFFFFFFF,
-    FW: string; //BWSIot_Lora_V_01.00.00,
-    ACELCOM: string; //OK,
-    ACELID: string; //23,
-    ADMAIN: string; //122,
-    ADBACK: string; //404,
-    ADNTC: string; //24,
-    IN1: string; //OK,
-    IN2: string; //OK,
-    OUT1: string; //OK,
-    CHARGER: string; //OK,
-    GPSCOM: string; //OK,
-    GPSVCC: string; //OK,
-    GPSRST: string; //OK
+    DEV: string; //DM_BWS_NB2_LORA
+    SN: string; //FFFFFFFF
+    IC: string; //89554000000353233539
+    IM: string; //860197071276904
+    FW: string; //BWSIot_NB+LoRa_V_1.0.0_24/04/25
+    GPS: string; //OK
+    GPSf: string; //OK
+    MDM: string; //OK
+    RSSI: string; //OK
+    IN1: string; //OK
+    IN2: string; //OK
+    OUT: string; //OK
+    ACELC: string; //STK8321
+    ACELP: string; //OK
+    ID_ACEL: string; //35
+    ID_MEM: string; //20154016
+    VCC: string; //121
+    BATT_VOLT: string; //41
+    CHARGER: string; //OK
+    TEMP: string; //14
+    RF: string; //OK
   }
 }
 
-export class LORAParser {
+export class NB2LORAParser {
   /**
    * Extrai o valor do serial de uma string que contém "RINS=" seguido de um número.
    *
@@ -97,15 +103,15 @@ export class LORAParser {
    * @param input - A string que contém a informação do autotest.
    * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
    */
-  static auto_test(input: string): LORA.AutoTest | undefined {
+  static auto_test(input: string): NB2LORA.AutoTest | undefined {
     const parts = input.split("AUTOTEST=");
     if (parts.length < 2) return undefined;
     const splited = parts[1].split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
-      acc[key as keyof LORA.AutoTest] = value;
+      acc[key as keyof NB2LORA.AutoTest] = value;
       return acc;
-    }, {} as LORA.AutoTest);
+    }, {} as NB2LORA.AutoTest);
   }
 
   /**
