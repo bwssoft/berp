@@ -12,29 +12,56 @@ import {
   AuditProfileModal,
   useAuditProfileModal,
 } from "../../../modal/admin/profile/audit-profile";
+import { useSearchParams } from "next/navigation";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { Pagination } from "../../../component/pagination";
+
+
+const PAGE_SIZE = 10;
 
 interface Props {
-  data: IProfile[];
+  data: PaginationResult<IProfile>;
 }
+
 export function ProfileTable(props: Props) {
   const { data } = props;
   const activeDialog = useActiveProfileDialog();
   const userModal = useUserLinkedProfileModal();
   const audtiModal = useAuditProfileModal();
 
+  const { docs, pages = 1, total = 0, limit = PAGE_SIZE } = data;
+
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get("page");
+  const currentPage = pageParam ? Math.max(1, Number(pageParam)) : 1;
+  
+  const { handleParamsChange } = useHandleParamsChange();
+  const handlePageChange = (page: number) => handleParamsChange({ page })
+  
   return (
     <>
+    <div className="w-full">
       <DataTable
         columns={columns({
           openActiveDialog: activeDialog.handleOpen,
           openUserModal: userModal.handleProfileSelection,
           openAuditModal: audtiModal.handleProfileSelection,
         })}
-        data={data}
+        data={docs}
         mobileDisplayValue={(data) => data.name}
         mobileKeyExtractor={(data) => data.created_at?.toISOString()}
         className="w-full"
       />
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={pages}
+        totalItems={total}
+        limit={limit}
+        onPageChange={handlePageChange}
+      />
+    </div>
 
       <ActiveProfileDialog
         open={activeDialog.open}

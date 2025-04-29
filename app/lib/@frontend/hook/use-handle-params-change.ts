@@ -8,11 +8,15 @@ export function useHandleParamsChange() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  console.log("searchParams", searchParams);
+
   const handleParamsChange = useCallback(
     (paramsToUpdate: Record<string, any>) => {
       // Cria uma instância a partir dos parâmetros atuais
       const params = new URLSearchParams(searchParams.toString());
-
+  
+      params.set("page", "1");
+  
       Object.entries(paramsToUpdate).forEach(([key, value]) => {
         // Remove o parâmetro atual para evitar duplicatas
         params.delete(key);

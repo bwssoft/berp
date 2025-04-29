@@ -1,8 +1,14 @@
 import { useCallback } from "react";
-import { LORA, LORAParser, LORAEncoder } from "../../@backend/infra/protocol";
+import {
+  NB2LORA,
+  NB2LORAParser,
+  NB2LORAEncoder,
+} from "../../@backend/infra/protocol";
 import {
   generateImei,
   getRandomInt,
+  isIccid,
+  isImei,
   sleep,
   typedObjectEntries,
 } from "../../util";
@@ -30,11 +36,11 @@ const readResponse = async (
 
       const chunk = decoder.decode(value);
       buffer += chunk;
-
-      let lines = buffer.split("\r");
+      let lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
       for (const line of lines) {
-        if (line.length > 0 && line.includes(command.replace("\r", ""))) {
+        console.log("[NB2 LoRa readResponse]", line);
+        if (line.length > 0 && line.includes(command.replace("\r\n", ""))) {
           return line;
         }
       }
@@ -53,14 +59,14 @@ const generateMessages = (
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([message, args]) => {
-    const _message = LORAEncoder.encoder({ command: message, args } as any);
+    const _message = NB2LORAEncoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as ConfigKeys] = _message;
   });
   return response;
 };
 
-export const useLora = () => {
+export const useNB2Lora = () => {
   const { ports, openPort, closePort, getReader, writeToPort, requestPort } =
     useSerialPort({});
 
@@ -93,11 +99,13 @@ export const useLora = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "RINS\r", key: "serial", transform: LORAParser.serial },
+        { message: "RIMEI\r\n", key: "imei", transform: NB2LORAParser.imei },
+        { message: "ICCID\r\n", key: "iccid", transform: NB2LORAParser.iccid },
+        { message: "RINS\r\n", key: "serial", transform: NB2LORAParser.serial },
         {
-          message: "RFW\r",
+          message: "RFW\r\n",
           key: "firmware",
-          transform: LORAParser.firmware,
+          transform: NB2LORAParser.firmware,
         },
       ] as const;
       return await Promise.all(
@@ -120,90 +128,110 @@ export const useLora = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "RODM\r", key: "odometer", transform: LORAParser.odometer },
         {
-          message: "RCN\r",
+          message: "RODM\r\n",
+          key: "odometer",
+          transform: NB2LORAParser.odometer,
+        },
+        {
+          message: "RCN\r\n",
           key: "data_transmission_on",
-          transform: LORAParser.data_transmission_on,
+          transform: NB2LORAParser.data_transmission_on,
         },
         {
-          message: "RCW\r",
+          message: "RCW\r\n",
           key: "data_transmission_off",
-          transform: LORAParser.data_transmission_off,
+          transform: NB2LORAParser.data_transmission_off,
         },
         {
-          message: "RCE\r",
+          message: "RCE\r\n",
           key: "data_transmission_event",
-          transform: LORAParser.data_transmission_event,
+          transform: NB2LORAParser.data_transmission_event,
         },
-        { message: "RCS\r", key: "sleep", transform: LORAParser.sleep },
+        { message: "RCS\r\n", key: "sleep", transform: NB2LORAParser.sleep },
         {
-          message: "RCK\r",
+          message: "RCK\r\n",
           key: "keep_alive",
-          transform: LORAParser.keep_alive,
+          transform: NB2LORAParser.keep_alive,
         },
         {
-          message: "RIP1\r",
+          message: "RIP1\r\n",
           key: "ip_primary",
-          transform: LORAParser.ip_primary,
+          transform: NB2LORAParser.ip_primary,
         },
         {
-          message: "RIP2\r",
+          message: "RIP2\r\n",
           key: "ip_secondary",
-          transform: LORAParser.ip_secondary,
+          transform: NB2LORAParser.ip_secondary,
         },
         {
-          message: "RID1\r",
+          message: "RID1\r\n",
           key: "dns_primary",
-          transform: LORAParser.dns_primary,
+          transform: NB2LORAParser.dns_primary,
         },
         {
-          message: "RID2\r",
+          message: "RID2\r\n",
           key: "dns_secondary",
-          transform: LORAParser.dns_secondary,
+          transform: NB2LORAParser.dns_secondary,
         },
-        { message: "RIAP\r", key: "apn", transform: LORAParser.apn },
+        { message: "RIAP\r\n", key: "apn", transform: NB2LORAParser.apn },
         {
-          message: "RIG12\r",
+          message: "RIG12\r\n",
           key: "first_voltage",
-          transform: LORAParser.first_voltage,
+          transform: NB2LORAParser.first_voltage,
         },
         {
-          message: "RIG24\r",
+          message: "RIG24\r\n",
           key: "second_voltage",
-          transform: LORAParser.second_voltage,
+          transform: NB2LORAParser.second_voltage,
         },
-        { message: "RFA\r", key: "angle", transform: LORAParser.angle },
-        { message: "RFV\r", key: "speed", transform: LORAParser.speed },
+        { message: "RFA\r\n", key: "angle", transform: NB2LORAParser.angle },
+        { message: "RFV\r\n", key: "speed", transform: NB2LORAParser.speed },
         {
-          message: "RFTON\r",
+          message: "RFTON\r\n",
           key: "accelerometer_sensitivity_on",
-          transform: LORAParser.accelerometer_sensitivity_on,
+          transform: NB2LORAParser.accelerometer_sensitivity_on,
         },
         {
-          message: "RFTOF\r",
+          message: "RFTOF\r\n",
           key: "accelerometer_sensitivity_off",
-          transform: LORAParser.accelerometer_sensitivity_off,
+          transform: NB2LORAParser.accelerometer_sensitivity_off,
         },
         {
-          message: "RFAV\r",
+          message: "RFAV\r\n",
           key: "accelerometer_sensitivity_violated",
-          transform: LORAParser.accelerometer_sensitivity_violated,
+          transform: NB2LORAParser.accelerometer_sensitivity_violated,
         },
         {
-          message: "RFMA\r",
+          message: "RFMA\r\n",
           key: "maximum_acceleration",
-          transform: LORAParser.maximum_acceleration,
+          transform: NB2LORAParser.maximum_acceleration,
         },
         {
-          message: "RFMD\r",
+          message: "RFMD\r\n",
           key: "maximum_deceleration",
-          transform: LORAParser.maximum_deceleration,
+          transform: NB2LORAParser.maximum_deceleration,
         },
-        { message: "RIN1\r", key: "input_1", transform: LORAParser.input_1 },
-        { message: "RIN2\r", key: "input_2", transform: LORAParser.input_2 },
-        { message: "RIN3\r", key: "input_3", transform: LORAParser.input_3 },
-        { message: "RIN4\r", key: "input_4", transform: LORAParser.input_4 },
+        {
+          message: "RIN1\r\n",
+          key: "input_1",
+          transform: NB2LORAParser.input_1,
+        },
+        {
+          message: "RIN2\r\n",
+          key: "input_2",
+          transform: NB2LORAParser.input_2,
+        },
+        {
+          message: "RIN3\r\n",
+          key: "input_3",
+          transform: NB2LORAParser.input_3,
+        },
+        {
+          message: "RIN4\r\n",
+          key: "input_4",
+          transform: NB2LORAParser.input_4,
+        },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -298,14 +326,17 @@ export const useLora = () => {
         ports.map(async (port) => {
           const resultTemplate = {
             port,
-            response: {} as Record<string, LORA.AutoTest | string | undefined>,
+            response: {} as Record<
+              string,
+              NB2LORA.AutoTest | string | undefined
+            >,
             messages: [
-              { key: "start", message: "START\r" },
-              { key: "autotest_1", message: "AUTOTEST\r" },
-              { key: "autotest_2", message: "AUTOTEST\r" },
-              { key: "autotest_3", message: "AUTOTEST\r" },
-              { key: "autotest_4", message: "AUTOTEST\r" },
-              { key: "autotest_5", message: "AUTOTEST\r" },
+              { key: "start", message: "START\r\n" },
+              { key: "autotest_1", message: "AUTOTEST" },
+              { key: "autotest_2", message: "AUTOTEST" },
+              { key: "autotest_3", message: "AUTOTEST" },
+              { key: "autotest_4", message: "AUTOTEST" },
+              { key: "autotest_5", message: "AUTOTEST" },
             ],
             analysis: {} as Record<string, boolean>,
             init_time: Date.now(),
@@ -317,7 +348,7 @@ export const useLora = () => {
             // 1. Envia comando START
             const startResponse = await sendMultipleMessages({
               transport: port,
-              messages: [{ key: "start", message: "START\r" }] as const,
+              messages: [{ key: "start", message: "START\r\n" }] as const,
             });
             resultTemplate.response["start"] = startResponse.start;
 
@@ -339,8 +370,8 @@ export const useLora = () => {
                   messages: [
                     {
                       key,
-                      message: "AUTOTEST\r",
-                      transform: LORAParser.auto_test,
+                      message: "AUTOTEST",
+                      transform: NB2LORAParser.auto_test,
                     },
                   ] as const,
                 });
@@ -349,27 +380,33 @@ export const useLora = () => {
 
                 if (!autotest) continue;
 
-                const ACELID = Number(autotest["ACELID"]);
-                const ADMAIN = Number(autotest["ADMAIN"]);
-                const ADBACK = Number(autotest["ADBACK"]);
-                const ADNTC = Number(autotest["ADNTC"]);
+                const BATT_VOLT = Number(autotest["BATT_VOLT"]);
+                const VCC = Number(autotest["VCC"]);
+                const TEMP = Number(autotest["TEMP"]);
 
                 resultTemplate.analysis = {
-                  DEV: autotest["DEV"] === "DM_BWS_LORA",
-                  SN: typeof autotest["SN"] === "string",
-                  FW: typeof autotest["FW"] === "string",
-                  ACELID: !isNaN(ACELID),
-                  ADMAIN: !isNaN(ADMAIN),
-                  ADBACK: !isNaN(ADBACK),
-                  ADNTC: !isNaN(ADNTC) && ADNTC !== 255,
-                  ACELCOM: autotest["ACELCOM"] === "OK",
+                  DEV: autotest["DEV"] === "DM_BWS_NB2_LORA",
+                  ACELC: Boolean(autotest["ACELC"]?.length),
+                  ACELP: autotest["ACELP"] === "OK",
+                  BATT_VOLT:
+                    !isNaN(BATT_VOLT) && BATT_VOLT <= 43 && BATT_VOLT >= 40,
+                  CHARGER: autotest["CHARGER"] === "OK",
+                  FW: Boolean(autotest["FW"]?.length),
+                  GPS: autotest["GPS"] === "OK",
+                  // GPSf: autotest["GPSf"] === "OK",
+                  IC: isIccid(autotest["IC"] ?? ""),
+                  ID_ACEL: Boolean(autotest["ID_ACEL"]?.length),
+                  ID_MEM: Boolean(autotest["ID_MEM"]?.length),
+                  IM: isImei(autotest["IM"] ?? ""),
                   IN1: autotest["IN1"] === "OK",
                   IN2: autotest["IN2"] === "OK",
-                  OUT1: autotest["OUT1"] === "OK",
-                  CHARGER: autotest["CHARGER"] === "OK",
-                  GPSCOM: autotest["GPSCOM"] === "OK",
-                  GPSVCC: autotest["GPSVCC"] === "OK",
-                  GPSRST: autotest["GPSRST"] === "OK",
+                  MDM: autotest["MDM"] === "OK",
+                  OUT: autotest["OUT"] === "OK",
+                  RSSI: autotest["RSSI"] === "OK",
+                  SN: Boolean(autotest["SN"]?.length),
+                  VCC: !isNaN(VCC) && VCC <= 130 && VCC >= 120,
+                  TEMP: !isNaN(TEMP) && TEMP <= 28 && TEMP >= 23,
+                  RF: autotest["RF"] === "OK",
                 };
 
                 const statusValues = Object.values(resultTemplate.analysis);
@@ -408,11 +445,11 @@ export const useLora = () => {
       const messages = [
         {
           key: "serial",
-          message: `WINS=${serial}\r`,
+          message: `WINS=${serial}\r\n`,
         },
         {
           key: "imei",
-          message: `WIMEI=${imei}\r`,
+          message: `WIMEI=${imei}\r\n`,
         },
       ] as const;
       try {
@@ -439,8 +476,8 @@ export const useLora = () => {
   const handleGetIdentification = useCallback(
     async (port: ISerialPort) => {
       const messages = [
-        { message: "RINS\r", key: "serial", transform: LORAParser.serial },
-        { message: "RIMEI\r", key: "imei", transform: LORAParser.imei },
+        { message: "RINS\r\n", key: "serial", transform: NB2LORAParser.serial },
+        { message: "RIMEI\r\n", key: "imei", transform: NB2LORAParser.imei },
       ] as const;
       try {
         const response = await sendMultipleMessages({
@@ -459,9 +496,14 @@ export const useLora = () => {
     return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
   };
 
-  const isIdentified = (input: { serial?: string; firmware?: string }) => {
-    const { serial, firmware } = input;
-    const identified = [serial, firmware];
+  const isIdentified = (input: {
+    imei?: string;
+    iccid?: string;
+    serial?: string;
+    firmware?: string;
+  }) => {
+    const { serial, imei, iccid, firmware } = input;
+    const identified = [serial, imei, iccid, firmware];
     if (identified.every((e) => e && e.length > 0)) {
       return "fully_identified";
     } else if (identified.some((e) => e && e.length > 0)) {
