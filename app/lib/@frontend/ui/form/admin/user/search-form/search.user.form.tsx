@@ -1,4 +1,3 @@
-// app/lib/@frontend/ui/form/admin/user/search-form/search.user.form.tsx
 "use client";
 
 import { Button, Input, Modal, Combobox } from "../../../../component";
@@ -167,7 +166,7 @@ export function SearchUserForm() {
               <Button variant="ghost" type="button" onClick={onReset}>
                 Limpar
               </Button>
-              <Button type="submit">Pesquisar</Button>
+              <Button onClick={()=>{console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBB", profiles)}} type="submit">Pesquisar</Button>
             </div>
           </form>
       </Modal>

@@ -99,6 +99,18 @@ export const useSearchUserForm = () => {
         },
     });
 
+    const filteredProfiles = searchProfileTerm
+        ? profiles.filter((profile) =>
+              profile.name
+                  .toLowerCase()
+                  .includes(searchProfileTerm.toLowerCase())
+          )
+        : profiles;
+
+    const handleSearchProfile = (input: string) => {
+        setSearchProfileTerm(input);
+        handleParamsChange({ page: 1 });
+    };
     const toggleModal = () => setIsModalOpen((prev) => !prev);
 
     const onSubmit = handleSubmit((data) => {
@@ -116,6 +128,11 @@ export const useSearchUserForm = () => {
 
         handleParamsChange({ ...params });
         toggleModal();
+
+        console.log(
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            profiles
+        );
     });
 
     const onReset = () => {
