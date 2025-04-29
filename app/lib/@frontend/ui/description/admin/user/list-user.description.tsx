@@ -3,9 +3,10 @@ import { UsersIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   users: IUser[];
+  isLoading?: boolean;
 };
 
-export function ListUserDescription({ users }: Props) {
+export function ListUserDescription({ users, isLoading }: Props) {
   return (
     <div className="bg-white w-full rounded-md shadow-md">
       <div className="flex flex-col justify-center items-center gap-1">
@@ -14,22 +15,33 @@ export function ListUserDescription({ users }: Props) {
         </div>
         <h2 className="text-center font-medium">Usuários</h2>
       </div>
-      <ul role="list" className="divide-y divide-gray-200">
-        {users.map((person) => (
-          <li
-            key={person.email}
-            className="flex justify-between gap-x-6 py-4 px-6"
-          >
-            <div className="flex min-w-0 gap-x-4">
-              <div className="min-w-0 flex-auto">
-                <p className="truncate text-sm text-gray-500">
-                  {person.name}
-                </p>
+
+      {isLoading ? (
+        <div className="text-center py-4 text-sm text-gray-500">
+          Carregando usuários... <span className="animate-pulse">⏳</span>
+        </div>
+      ) : users.length === 0 ? (
+        <div className="text-center py-4 text-sm text-gray-500">
+          Nenhum usuário vinculado a este perfil.
+        </div>
+      ) : (
+        <ul role="list" className="divide-y divide-gray-200">
+          {users.map((person) => (
+            <li
+              key={person.email}
+              className="flex justify-between gap-x-6 py-4 px-6"
+            >
+              <div className="flex min-w-0 gap-x-4">
+                <div className="min-w-0 flex-auto">
+                  <p className="truncate text-sm text-gray-500">
+                    {person.name}
+                  </p>
+                </div>
               </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
