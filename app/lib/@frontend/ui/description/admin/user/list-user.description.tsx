@@ -3,9 +3,10 @@ import { UsersIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   users: IUser[];
+  isLoading?: boolean;
 };
 
-export function ListUserDescription({ users }: Props) {
+export function ListUserDescription({ users, isLoading }: Props) {
   return (
     <div className="bg-white w-full rounded-md shadow-md">
       <div className="flex flex-col justify-center items-center gap-1">
@@ -15,7 +16,11 @@ export function ListUserDescription({ users }: Props) {
         <h2 className="text-center font-medium">Usuários</h2>
       </div>
 
-      {users.length === 0 ? (
+      {isLoading ? (
+        <div className="text-center py-4 text-sm text-gray-500">
+          Carregando usuários... <span className="animate-pulse">⏳</span>
+        </div>
+      ) : users.length === 0 ? (
         <div className="text-center py-4 text-sm text-gray-500">
           Nenhum usuário vinculado a este perfil.
         </div>

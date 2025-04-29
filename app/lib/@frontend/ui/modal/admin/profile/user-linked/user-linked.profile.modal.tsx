@@ -9,6 +9,7 @@ interface Props {
   closeModal: () => void;
   profile?: Pick<IProfile, "id" | "name">;
   users: IUser[];
+  isLoading?: boolean;
 }
 
 export function UserLinkedProfileModal({
@@ -16,6 +17,7 @@ export function UserLinkedProfileModal({
   open,
   closeModal,
   profile,
+  isLoading,
 }: Props) {
   return (
     <Modal
@@ -26,7 +28,7 @@ export function UserLinkedProfileModal({
     >
       <ModalBody>
         <ModalContent className="overflow-y-scroll max-h-[70vh]">
-          <ListUserDescription users={users} />
+          <ListUserDescription isLoading={isLoading} users={users} />
         </ModalContent>
       </ModalBody>
     </Modal>

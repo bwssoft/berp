@@ -76,6 +76,7 @@ export function ProfileTable(props: Props) {
         closeModal={userModal.closeModal}
         open={userModal.open}
         profile={userModal.profile}
+        isLoading={userModal.isLoading}
       />
 
       <AuditProfileModal
