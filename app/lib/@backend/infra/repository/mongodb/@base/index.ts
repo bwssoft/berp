@@ -61,7 +61,7 @@ export class BaseRepository<Entity extends object>
             .sort(sort)
             .limit(limit);
         
-        if (typeof page === "number") chain.skip(page - 1);
+        if (typeof page === "number") chain.skip((page - 1) * limit);
 
         const docs = await chain.toArray();
 
