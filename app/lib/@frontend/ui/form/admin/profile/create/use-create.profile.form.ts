@@ -34,7 +34,7 @@ export function useCreateProfileForm() {
       //fazer a request
       const { success, error } = await createOneProfile(data);
       if (success) {
-        router.back();
+        router.push("/admin/profile");
         toast({
           title: "Sucesso!",
           description: "Perfil registrado com sucesso!",
