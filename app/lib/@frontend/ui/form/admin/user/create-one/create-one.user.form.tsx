@@ -99,7 +99,7 @@ export function CreateOneUserForm() {
                 label="Imagem de perfil"
                 handleFile={field.onChange}
                 multiple={false}
-                accept={"jpeg, jpg, png"}
+                accept={".jpeg, .jpg, .png"}
               />
             )}
           />
