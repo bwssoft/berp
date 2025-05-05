@@ -117,11 +117,6 @@ export const useSearchUserForm = () => {
 
         handleParamsChange({ ...params });
         toggleModal();
-
-        console.log(
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            profiles
-        );
     });
 
     const onReset = () => {

@@ -1,9 +1,9 @@
 "use client";
 
-import { Button, Input, Modal, Combobox } from "../../../../component";
 import { FunnelIcon } from "@heroicons/react/24/outline";
-import { useSearchUserForm } from "./use-search.user.form";
 import { Controller } from "react-hook-form";
+import { Button, Combobox, Input, Modal } from "../../../../component";
+import { useSearchUserForm } from "./use-search.user.form";
 
 export function SearchUserForm() {
   const {
@@ -17,7 +17,6 @@ export function SearchUserForm() {
     control,
     errors,
     handleChangeProfileName,
-    handleSearchUser,
     handleSearchProflile
   } = useSearchUserForm();
 
@@ -66,7 +65,7 @@ export function SearchUserForm() {
                   label="Perfil"
                   type="multiple"
                   data={[...profiles]}
-                  defaultValue={field.value}
+                  value={field.value}
                   error={errors.profile?.message}
                   onSearchChange={handleSearchProflile}
                   keyExtractor={(item) => item.id}
@@ -107,8 +106,7 @@ export function SearchUserForm() {
                       { id: "ativo", name: "Ativo", value: true },
                       { id: "inativo", name: "Inativo", value: false },
                     ]}
-                    value={field.value ?? []}
-                    defaultValue={[]}
+                    value={field.value}
                     onOptionChange={(items) =>
                       field.onChange(
                         items.some((i) => i.id === "")
@@ -139,7 +137,7 @@ export function SearchUserForm() {
                       { id: "1", name: "externo", value: true },
                       { id: "2", name: "interno", value: false },
                     ]}
-                    value={field.value ?? []}
+                    value={field.value}
                     placeholder="Selecione o tipo de usuário"
                     defaultValue={[]}
                     onOptionChange={(items) =>
@@ -166,7 +164,7 @@ export function SearchUserForm() {
               <Button variant="ghost" type="button" onClick={onReset}>
                 Limpar
               </Button>
-              <Button onClick={()=>{console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBB", profiles)}} type="submit">Pesquisar</Button>
+              <Button type="submit">Pesquisar</Button>
             </div>
           </form>
       </Modal>
