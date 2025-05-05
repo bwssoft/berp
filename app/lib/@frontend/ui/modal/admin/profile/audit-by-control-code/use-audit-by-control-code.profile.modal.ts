@@ -24,7 +24,11 @@ export function useAuditByControlCodeProfileModal() {
   const { data: audits } = useQuery({
     queryKey: ["findManyAudit", control, page],
     queryFn: async () => {
-      const { docs: allowResponse } = await findManyAudit(
+      const {
+        docs: allowResponse,
+        pages: allowPage = 0,
+        total: allowTotal = 0,
+      } = await findManyAudit(
         {
           domain: AuditDomain.profile,
           "metadata.field": "locked_control_code",
@@ -35,7 +39,11 @@ export function useAuditByControlCodeProfileModal() {
         page
       );
 
-      const { docs: blockResponse } = await findManyAudit(
+      const {
+        docs: blockResponse,
+        pages: blockPage = 0,
+        total: blockTotal = 0,
+      } = await findManyAudit(
         {
           domain: AuditDomain.profile,
           "metadata.field": "locked_control_code",
@@ -53,7 +61,11 @@ export function useAuditByControlCodeProfileModal() {
         (a, b) => b.created_at.getTime() - a.created_at.getTime()
       );
 
-      return { docs };
+      return {
+        docs,
+        pages: blockPage + allowPage,
+        total: blockTotal + allowTotal,
+      };
     },
   });
 
