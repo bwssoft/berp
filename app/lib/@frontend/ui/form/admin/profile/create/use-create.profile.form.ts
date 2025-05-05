@@ -1,4 +1,4 @@
-import { createOneProfile, findManyControl } from "@/app/lib/@backend/action";
+import { createOneProfile } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -32,8 +32,6 @@ export function useCreateProfileForm() {
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
-      const { docs: controls } = await findManyControl({}, 200);
-      data.locked_control_code = controls.map(({ code }) => code);
       const { success, error } = await createOneProfile(data);
       if (success) {
         router.push("/admin/profile");
@@ -66,7 +64,7 @@ export function useCreateProfileForm() {
         variant: "error",
       });
     }
-    router.push("/admin/profile"); 
+    router.push("/admin/profile");
   });
 
   function handleCancelCreate() {
