@@ -22,10 +22,14 @@ export function useAuditUserModal() {
         refetch,
     } = useQuery({
         queryKey: ["findManyUserAudit", user],
-        queryFn: () => findManyAudit({
-            domain: AuditDomain.user, 
-            affected_entity_id: user?.id
-        }),
+        queryFn: async () => {
+            const { docs } = await findManyAudit({
+                domain: AuditDomain.user, 
+                affected_entity_id: user?.id
+            })
+
+            return docs
+        },
     });
 
     return {

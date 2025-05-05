@@ -1,8 +1,8 @@
 "use client";
 
-import { Button, Input, Modal, Combobox } from "../../../../component";
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import { Controller } from "react-hook-form";
+import { Button, Combobox, Input, Modal } from "../../../../component";
 import { useSearchProfileForm } from "./use-search.profile.form";
 
 export function SearchProfileForm() {
@@ -59,7 +59,7 @@ export function SearchProfileForm() {
                   label="Perfil"
                   type="multiple"
                   data={[...profiles]}
-                  defaultValue={field.value}
+                  value={field.value}
                   error={errors.profile?.message}
                   onSearchChange={handleSearchProflile}
                   keyExtractor={(item) => item.id}
@@ -86,8 +86,7 @@ export function SearchProfileForm() {
                     { id: "ativo", name: "Ativo", value: true },
                     { id: "inativo", name: "Inativo", value: false },
                   ]}
-                  value={field.value ?? []}
-                  defaultValue={[]}
+                  value={field.value}
                   onOptionChange={(items) =>
                     field.onChange(
                       items.some((i) => i.id === "")
@@ -110,21 +109,25 @@ export function SearchProfileForm() {
             <Controller
               name="user"
               control={control}
-              render={({field}) => (
+              render={({ field }) => (
                 <Combobox
                   label="Usuários"
                   type="multiple"
                   data={[...users]}
                   error={errors.user?.message}
                   onSearchChange={handleSearchUser}
-                  defaultValue={field.value}
+                  value={field.value}
                   keyExtractor={(item) => item.id}
                   displayValueGetter={(item) => item.name}
                   placeholder="Selecione um usuário"
                   onOptionChange={(items) =>
                     setValue(
                       "user",
-                      items.map((i) => ({ id: i.id, name: i.name, profile: i.profile }))
+                      items.map((i) => ({
+                        id: i.id,
+                        name: i.name,
+                        profile: i.profile,
+                      }))
                     )
                   }
                 />
@@ -133,11 +136,7 @@ export function SearchProfileForm() {
           </div>
 
           <div className="flex justify-end gap-2 mt-4">
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={onReset}
-            >
+            <Button variant="ghost" type="button" onClick={onReset}>
               Limpar
             </Button>
             <Button type="submit">Pesquisar</Button>

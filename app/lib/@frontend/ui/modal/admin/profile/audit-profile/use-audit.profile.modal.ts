@@ -27,11 +27,13 @@ export function useAuditProfileModal() {
         refetch,
     } = useQuery({
         queryKey: ["findManyProfileAudit", profile],
-        queryFn: () =>
-            findManyAudit({
+        queryFn: async () => {
+            const { docs } = await findManyAudit({
                 domain: AuditDomain.profile,
                 affected_entity_id: profile?.id,
-            }),
+            })
+            return docs
+        }
     });
 
     return {

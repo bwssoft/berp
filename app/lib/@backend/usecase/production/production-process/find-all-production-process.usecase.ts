@@ -12,7 +12,8 @@ class FindAllProductionProcessUsecase {
 
   @RemoveMongoId()
   async execute() {
-    return await this.repository.findMany({});
+    const { docs } = await this.repository.findMany({});
+    return docs
   }
 }
 

@@ -16,7 +16,8 @@ class FindAllTechnicalSheetUsecase {
 
   @RemoveMongoId()
   async execute(params: Filter<ITechnicalSheet>) {
-    return await this.repository.findMany(params);
+    const { docs } = await this.repository.findMany(params);
+    return docs
   }
 }
 

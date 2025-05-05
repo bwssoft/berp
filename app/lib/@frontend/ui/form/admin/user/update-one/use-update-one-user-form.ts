@@ -50,7 +50,10 @@ export type UpdateUserSchema = z.infer<typeof updateSchema>;
 export function useUpdateOneUserForm(user: IUser) {
     const { data: allProfiles } = useQuery({
         queryKey: ["findManyProfiles"],
-        queryFn: () => findManyProfile({}),
+        queryFn: async () => {
+            const { docs } = await findManyProfile({})
+            return docs
+        },
     });
     const profiles = allProfiles?.filter((p) => p.active) ?? [];
     const router = useRouter();

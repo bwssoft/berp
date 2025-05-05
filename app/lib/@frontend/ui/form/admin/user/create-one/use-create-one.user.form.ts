@@ -64,7 +64,10 @@ export function useCreateOneUserForm() {
 
     const profiles = useQuery({
         queryKey: ["findManyProfiles"],
-        queryFn: () => findManyProfile({}),
+        queryFn: async () => {
+            const { docs } = await findManyProfile({});
+            return docs
+          }
     });
 
     const activeProfiles = profiles.data?.filter((p) => p.active) ?? [];
