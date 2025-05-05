@@ -74,7 +74,9 @@ export function ProfileTable(props: Props) {
       />
 
       <AuditProfileModal
-        audits={{ docs: audtiModal.auditData }}
+        audits={audtiModal.audits}
+        currentPage={audtiModal.currentPage}
+        handlePageChange={audtiModal.handlePageChange}
         closeModal={audtiModal.closeModal}
         open={audtiModal.open}
         profile={audtiModal.profile}

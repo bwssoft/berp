@@ -12,33 +12,27 @@ const PAGE_SIZE = 10;
 
 interface AuditTableProps {
   data: PaginationResult<IAudit>;
+  currentPage: number
+  handlePageChange: (page: number) => void
 }
 
-export function AuditTable({ data }: AuditTableProps) {
+export function AuditTable({ data, currentPage, handlePageChange}: AuditTableProps) {
 
-  const { docs, pages = 1, total = 0, limit = PAGE_SIZE } = data;
 
-  const searchParams = useSearchParams();
-  const pageParam = searchParams.get("page");
-  const currentPage = pageParam ? Math.max(1, Number(pageParam)) : 1;
-  
-  const { handleParamsChange } = useHandleParamsChange();
-  const handlePageChange = (page: number) => handleParamsChange({ page })
-  
   return (
     <div>
       <DataTable
         columns={columns}
-        data={docs}
+        data={data.docs}
         mobileDisplayValue={(audit) => `${audit.action} - ${audit.user.name}`}
         mobileKeyExtractor={(audit) => audit.created_at?.toISOString()}
         className="w-full"
       />
       <Pagination
         currentPage={currentPage}
-        totalPages={pages}
-        totalItems={total}
-        limit={limit}
+        totalPages={data.pages || 1}
+        totalItems={data.total || 0}
+        limit={data.limit || PAGE_SIZE}
         onPageChange={handlePageChange}
       />
     </div>
