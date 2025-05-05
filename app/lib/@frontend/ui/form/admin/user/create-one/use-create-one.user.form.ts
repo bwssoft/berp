@@ -95,6 +95,7 @@ export function useCreateOneUserForm() {
                 description: "Usuário registrado com sucesso!",
                 variant: "success",
             });
+            router.back();
         } else if (error) {
             Object.entries(error).forEach(([key, message]) => {
                 if (key !== "global" && message) {
