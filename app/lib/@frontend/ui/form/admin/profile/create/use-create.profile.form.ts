@@ -36,7 +36,7 @@ export function useCreateProfileForm() {
       data.locked_control_code = controls.map(({ code }) => code);
       const { success, error } = await createOneProfile(data);
       if (success) {
-        router.back();
+        router.push("/admin/profile");
         toast({
           title: "Sucesso!",
           description: "Perfil registrado com sucesso!",
