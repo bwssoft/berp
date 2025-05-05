@@ -1,24 +1,24 @@
 "use client";
 
 import { IAudit } from "@/app/lib/@backend/domain";
-import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
-import { columns } from "./audit.columns";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import { useSearchParams } from "next/navigation";
-import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { Pagination } from "../../../component/pagination";
+import { columns } from "./audit.columns";
 
 const PAGE_SIZE = 10;
 
 interface AuditTableProps {
   data: PaginationResult<IAudit>;
-  currentPage: number
-  handlePageChange: (page: number) => void
+  currentPage: number;
+  handlePageChange: (page: number) => void;
 }
 
-export function AuditTable({ data, currentPage, handlePageChange}: AuditTableProps) {
-
-
+export function AuditTable({
+  data,
+  currentPage,
+  handlePageChange,
+}: AuditTableProps) {
   return (
     <div>
       <DataTable
