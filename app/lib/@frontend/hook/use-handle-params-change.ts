@@ -8,8 +8,6 @@ export function useHandleParamsChange() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  console.log("searchParams", searchParams);
-
   const handleParamsChange = useCallback(
     (paramsToUpdate: Record<string, any>) => {
       // Cria uma instância a partir dos parâmetros atuais

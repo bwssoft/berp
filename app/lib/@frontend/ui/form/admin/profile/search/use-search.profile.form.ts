@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
+import { ChangeEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 import { findManyProfile, findManyUser } from "@/app/lib/@backend/action";
+import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 
 const schema = z.object({
   quick: z.string().optional(),
@@ -122,7 +122,6 @@ export const useSearchProfileForm = () => {
     reset();
     handleParamsChange({
       profile_id: "",
-      username: "",
       active: undefined,
     });
   };
