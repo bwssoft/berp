@@ -41,7 +41,7 @@ export function useCreateProfileForm() {
                     description: "Perfil registrado com sucesso!",
                     variant: "success",
                 });
-                reset({ name: "", active: true, locked_control_code: [] });
+                router.push("/admin/profile");
                 return;
             }
 
@@ -71,7 +71,7 @@ export function useCreateProfileForm() {
 
     function handleCancelCreate() {
         reset({ name: "", active: undefined, locked_control_code: [] });
-        router.back();
+        router.push("/admin/profile");
     }
 
     return {
