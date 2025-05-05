@@ -4,11 +4,12 @@ import React from "react";
 import { Modal, ModalBody, ModalContent, ModalFooter } from "../../../component/modal";
 import { AuditTable} from "../../../table/admin/audit";
 import { IAudit, IUser } from "@/app/lib/@backend/domain";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 interface AuditUserModalProps {
   open: boolean;
   closeModal: () => void;
-  auditData: IAudit[];
+  auditData: PaginationResult<IAudit>;
   user?: Pick<IUser, "id" | "name">
 }
 

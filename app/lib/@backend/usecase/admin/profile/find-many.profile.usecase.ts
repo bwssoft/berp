@@ -3,23 +3,34 @@ import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { profileRepository } from "@/app/lib/@backend/infra";
 import { Filter } from "mongodb";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
-  export interface Input extends Filter<IProfile> {}
-  export type Output = IProfile[];
+    export interface Input {
+        filter?: Filter<IProfile>;
+        page?: number;
+        limit?: number;
+        sort?: Record<string, 1 | -1>;
+    }
+    export type Output = PaginationResult<IProfile>;
 }
 
 class FindManyProfileUsecase {
-  repository: IProfileRepository;
+    repository: IProfileRepository;
 
-  constructor() {
-    this.repository = profileRepository;
-  }
+    constructor() {
+        this.repository = profileRepository;
+    }
 
-  @RemoveMongoId()
-  async execute(arg: Dto.Input): Promise<Dto.Output> {
-    return await this.repository.findMany(arg.filter, undefined, arg.sort ?? { name: -1 });
-  }
+    @RemoveMongoId()
+    async execute(arg: Dto.Input): Promise<Dto.Output> {
+        return await this.repository.findMany(
+            arg.filter ?? {},
+            arg.limit,
+            arg.page,
+            arg.sort
+        );
+    }
 }
 
 export const findManyProfileUsecase = singleton(FindManyProfileUsecase);

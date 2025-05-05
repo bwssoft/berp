@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
+import { ChangeEvent, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 import { findManyProfile, findManyUser } from "@/app/lib/@backend/action";
+import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 
 const schema = z.object({
   quick: z.string().optional(),
@@ -81,8 +81,8 @@ export const useSearchProfileForm = () => {
       if (profileSearchTerm.trim() !== "") {
         filter["name"] = { $regex: profileSearchTerm, $options: "i" };
       }
-
-      return await findManyProfile(filter);
+      const { docs } = await findManyProfile(filter);
+      return docs
     },
   });
 
@@ -95,7 +95,8 @@ export const useSearchProfileForm = () => {
         filter["name"] = { $regex: userSearchTerm, $options: "i" };
       }
 
-      return await findManyUser(filter);
+      const { docs } = await findManyUser(filter);
+      return docs;
     },
   });
 
@@ -113,7 +114,7 @@ export const useSearchProfileForm = () => {
       active: data.active?.map(({ value }) => value),
     };
 
-    handleParamsChange(params);
+    handleParamsChange({...params});
     toggleModal();
   });
 
@@ -121,7 +122,6 @@ export const useSearchProfileForm = () => {
     reset();
     handleParamsChange({
       profile_id: "",
-      username: "",
       active: undefined,
     });
   };

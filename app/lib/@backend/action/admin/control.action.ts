@@ -8,8 +8,13 @@ import {
 } from "../../usecase";
 import { Filter } from "mongodb";
 
-export async function findManyControl(input: Filter<IControl>, limit?: number) {
-  return await findManyControlUsecase.execute(input, limit);
+export async function findManyControl(
+    filter: Filter<IControl> = {},
+    page?: number,
+    limit?: number,
+    sort?: Record<string, 1 | -1>
+) {
+    return await findManyControlUsecase.execute({ filter, page, limit, sort });
 }
 
 export async function findOneControl(input: Partial<IControl>) {
