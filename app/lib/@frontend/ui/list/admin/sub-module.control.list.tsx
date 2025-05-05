@@ -63,7 +63,7 @@ export function SubModuleControlList(props: Props) {
       />
 
       <AuditByControlCodeProfileModal
-        audits={auditModal.audits}
+        audits={{ docs: auditModal.audits}}
         closeModal={auditModal.closeModal}
         open={auditModal.open}
         control={auditModal.control}

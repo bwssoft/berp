@@ -14,13 +14,14 @@ export const useChooseProfileForm = () => {
       const filter: Record<string, any> = {
         active: true,
       };
-    
+
       if (searchTerm.trim() !== "") {
         filter["name"] = { $regex: searchTerm, $options: "i" };
       }
-    
-      return findManyProfile(filter);
-    }
+
+      const { docs } = await findManyProfile(filter);
+      return docs;
+    },
   });
 
   const handleSearchProfile = useCallback((input: string) => {

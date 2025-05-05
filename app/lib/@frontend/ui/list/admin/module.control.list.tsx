@@ -8,9 +8,10 @@ import {
   ProfileLinkedControlModal,
   useProfileLinkedControlModal,
 } from "../../modal";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 interface Props {
-  controls: IControl[];
+  controls: PaginationResult<IControl>;
   profile: IProfile | null;
 }
 
@@ -24,7 +25,7 @@ export function ModuleControlList(props: Props) {
         role="list"
         className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       >
-        {controls.map((control) => (
+        {controls.docs.map((control) => (
           <li
             key={control.id}
             className={cn(
@@ -78,6 +79,7 @@ export function ModuleControlList(props: Props) {
         closeModal={linkedControlModal.closeModal}
         open={linkedControlModal.open}
         control={linkedControlModal.control}
+        isLoading={linkedControlModal.isLoading}
       />
     </>
   );

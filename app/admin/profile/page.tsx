@@ -12,11 +12,13 @@ interface Props {
 
     profile_id?: string[];
     active?: string[];
+    page?: string;
   };
 }
 export default async function Example(props: Props) {
-  const { searchParams } = props;
-  const profiles = await findManyProfile(query(searchParams), { name: 1 });
+  const { searchParams: { page, ...rest } } = props;
+  const _page = page ? Number(page) : 1;
+  const profiles = await findManyProfile(query(rest), _page);
 
   return (
     <div>

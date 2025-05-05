@@ -59,15 +59,15 @@ class UpdateOneProductionProcessUsecase {
     query: { id: string },
     value: Partial<Omit<IProductionProcess, "id" | "created_at">>
   ) {
-    const result = await this.repository.updateOne(query, { $set: value })
+    const result = await this.repository.updateOne(query, { $set: value });
 
     if (result.modifiedCount > 0 && value.steps) {
-      const productionOrdersWithThisProductionProcess =
+      const { docs: productionOrdersWithThisProductionProcess } =
         (await this.productionOrderRepository.findMany({
           "production_process.process_uuid": {
             $in: [query.id],
           },
-        })) as unknown as IProductionOrderLegacy[];
+        })) as unknown as { docs: IProductionOrderLegacy[] }
 
       await Promise.all(
         productionOrdersWithThisProductionProcess.map((productionOrder) => {
@@ -85,7 +85,7 @@ class UpdateOneProductionProcessUsecase {
                     }),
                   },
                 ],
-              }
+              },
             }
           );
         })
