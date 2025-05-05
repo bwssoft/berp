@@ -1,36 +1,25 @@
 "use client";
 
-import React, {
-  ComponentType,
-  createContext,
-  SVGProps,
-  useCallback,
-  useContext,
-} from "react";
-import { IProfile, IUser } from "../../@backend/domain";
-import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
-import { NavItem } from "../ui/component";
+import { useSession } from "next-auth/react";
+import React, { createContext, useContext, useMemo } from "react";
+import { logout } from "../../@backend/action";
+import { IProfile, IUser } from "../../@backend/domain";
 
-namespace Context {
-  type User = Partial<IUser> & { current_profile: IProfile };
+type AuthUser = Partial<IUser> & { current_profile: IProfile };
 
-  export interface AuthContextType {
-    user: User | undefined;
-    profile: IProfile | undefined;
-    changeProfile: (input: IProfile) => void;
-    navigationByProfile: (input: NavigationItem[]) => NavigationItem[];
-  }
-
-  export interface NavigationItem extends NavItem {
-    code: string;
-    children?: NavigationItem[];
-  }
+interface AuthContextType {
+  user: AuthUser | undefined;
+  profile: IProfile | undefined;
+  changeProfile: (input: IProfile) => void;
+  navBarItems: {
+    name: string;
+    onClick?: () => void;
+    href?: string;
+  }[];
 }
 
-const AuthContext = createContext<Context.AuthContextType>(
-  {} as Context.AuthContextType
-);
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({
   session,
@@ -45,14 +34,19 @@ export const AuthProvider = ({
       user: { ...data?.user, current_profile: input },
     });
   };
-  const navigationByProfile = useCallback(
-    (navigation: Context.NavigationItem[]): Context.NavigationItem[] => {
-      return navigation.filter((n) =>
-        n.children
-          ? navigationByProfile(navigation)
-          : data?.user.current_profile.locked_control_code.includes(n.code)
-      );
-    },
+  const navBarItems: any[] = useMemo(
+    () => [
+      {
+        name: "Sair",
+        onClick: () => {
+          logout();
+        },
+      },
+      {
+        name: "Perfil",
+        href: `/admin/user/form/view?id=${data?.user?.id}`,
+      },
+    ],
     [data]
   );
   return (
@@ -61,7 +55,7 @@ export const AuthProvider = ({
         user: data?.user ?? session?.user,
         profile: data?.user?.current_profile ?? session?.user?.current_profile,
         changeProfile,
-        navigationByProfile,
+        navBarItems,
       }}
     >
       {children}

@@ -12,7 +12,7 @@ import { randomUUID } from "crypto";
 
 namespace Dto {
     export type Input<Before = object, After = object> = {
-        action?: string
+        action: string
         before: Before;
         after: After;
         domain: AuditDomain;
@@ -57,7 +57,7 @@ class CreateOneAuditUsecase {
             affected_entity_id: (after as any).id,
             domain,
             type: Object.keys(before).length === 0 ? AuditType.create : AuditType.update,
-            action: action ?? (metadata.length === 0 ? "create" : "update"),
+            action: action,
             metadata,
             created_at: new Date(),
             user,

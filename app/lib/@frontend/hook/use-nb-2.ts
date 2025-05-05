@@ -355,8 +355,10 @@ export const useNB2 = () => {
 
                 const BATT_VOLT = Number(autotest["BATT_VOLT"]);
                 const VCC = Number(autotest["VCC"]);
+                const TEMP = Number(autotest["TEMP"]);
 
                 resultTemplate.analysis = {
+                  DEV: autotest["DEV"] === "DM_BWS_NB2",
                   ACELC: Boolean(autotest["ACELC"]?.length),
                   ACELP: autotest["ACELP"] === "OK",
                   BATT_VOLT:
@@ -376,6 +378,7 @@ export const useNB2 = () => {
                   RSI: autotest["RSI"] === "OK",
                   SN: Boolean(autotest["SN"]?.length),
                   VCC: !isNaN(VCC) && VCC <= 130 && VCC >= 120,
+                  TEMP: !isNaN(TEMP) && TEMP <= 28 && TEMP >= 23,
                 };
 
                 const statusValues = Object.values(resultTemplate.analysis);
@@ -465,7 +468,25 @@ export const useNB2 = () => {
     return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
   };
 
+  const isIdentified = (input: {
+    imei?: string;
+    iccid?: string;
+    serial?: string;
+    firmware?: string;
+  }) => {
+    const { serial, imei, iccid, firmware } = input;
+    const identified = [serial, imei, iccid, firmware];
+    if (identified.every((e) => e && e.length > 0)) {
+      return "fully_identified";
+    } else if (identified.some((e) => e && e.length > 0)) {
+      return "partially_identified";
+    } else {
+      return "not_identified";
+    }
+  };
+
   return {
+    isIdentified,
     ports,
     handleIdentification,
     handleGetProfile,

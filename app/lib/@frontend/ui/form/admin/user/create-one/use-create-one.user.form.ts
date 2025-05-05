@@ -1,3 +1,4 @@
+"use client";
 import { findManyProfile } from "@/app/lib/@backend/action";
 import { createOneUser } from "@/app/lib/@backend/action/admin/user.action";
 import { toast } from "@/app/lib/@frontend/hook";
@@ -10,123 +11,129 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export const schema = z
-  .object({
-    cpf: z
-      .string()
-      .min(11, "CPF obrigatório")
-      .refine((value) => isValidCPF(value), "CPF inválido"),
-    email: z.string().email("Email inválido!"),
-    name: z.string().min(2, "Obrigatório informar um nome"),
-    external: z.boolean(),
-    image: z.string().optional(),
-    profile: z
-      .array(z.object({ id: z.string(), name: z.string() }))
-      .min(1, "Selecione pelo menos um perfil"),
-    username: z.string().min(3, "Obrigatório informar um nome de usuário"),
-  })
-  .refine(
-    (data) => {
-      // se externo igual a true é usuario externo, se for false é usuário interno
-      if (!data.external) {
-        // se for usuário interno
-        const emailLower = data.email.toLowerCase();
-        return userConstants.allowedDomains.some((domain) =>
-          emailLower.endsWith(domain)
-        );
-      }
-      return true; // se for externo, qualquer e-mail é aceito
-    },
-    {
-      path: ["email"],
-      message: "Obrigatório informar um email com domínio interno!",
-    }
-  );
+    .object({
+        cpf: z
+            .string()
+            .min(11, "CPF obrigatório")
+            .refine((value) => isValidCPF(value), "CPF inválido"),
+        email: z.string().email("Email inválido!"),
+        name: z.string().min(2, "Obrigatório informar um nome"),
+        external: z.boolean(),
+        image: z.any().optional(),
+        profile: z
+            .array(z.object({ id: z.string(), name: z.string() }))
+            .min(1, "Selecione pelo menos um perfil"),
+        username: z.string().min(3, "Obrigatório informar um nome de usuário"),
+    })
+    .refine(
+        (data) => {
+            if (!data.external) {
+                const emailLower = data.email.toLowerCase();
+                return userConstants.allowedDomains.some((domain) =>
+                    emailLower.endsWith(domain)
+                );
+            }
+            return true;
+        },
+        {
+            path: ["email"],
+            message: "Obrigatório informar um email com domínio interno!",
+        }
+    );
 
 export type Schema = z.infer<typeof schema>;
 
 export function useCreateOneUserForm() {
-  const router = useRouter();
+    const router = useRouter();
 
-  const {
-    register,
-    handleSubmit: hookFormSubmit,
-    control,
-    formState: { errors },
-    setError,
-    reset,
-    watch,
-  } = useForm<Schema>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      external: false, // Por default o checkbox deve estar desmarcado para usuário interno e marcado para usuário externo.
-      profile: [],
-    },
-  });
-
-  const profiles = useQuery({
-    queryKey: ["findManyProfiles"],
-    queryFn: () => findManyProfile({}),
-  });
-
-  const activeProfiles = profiles.data?.filter((p) => p.active) ?? [];
-
-  const handleSubmit = hookFormSubmit(async (data) => {
-    const { success, error } = await createOneUser({
-      ...data,
-      image: "",
-      active: true,
-      lock: false,
+    const {
+        register,
+        handleSubmit: hookFormSubmit,
+        control,
+        formState: { errors },
+        setError,
+        reset,
+        watch,
+    } = useForm<Schema>({
+        resolver: zodResolver(schema),
+        defaultValues: {
+            external: false,
+            profile: [],
+        },
     });
-    if (success) {
-      router.back();
-      toast({
-        title: "Sucesso!",
-        description: "Usuário registrado com sucesso!",
-        variant: "success",
-      });
-    } else if (error) {
-      Object.entries(error).forEach(([key, message]) => {
-        if (key !== "global" && message) {
-          setError(key as keyof Schema, {
-            type: "manual",
-            message: message as string,
-          });
+
+    const profiles = useQuery({
+        queryKey: ["findManyProfiles"],
+        queryFn: async () => {
+            const { docs } = await findManyProfile({});
+            return docs
+          }
+    });
+
+    const activeProfiles = profiles.data?.filter((p) => p.active) ?? [];
+
+    const handleSubmit = hookFormSubmit(async (data) => {
+        const formData = new FormData();
+        if (Array.isArray(data.image)) {
+            data.image.forEach((file) => {
+                formData.append("file", file);
+            });
         }
-      });
 
-      if (error.global) {
-        toast({
-          title: "Erro!",
-          description: error.global,
-          variant: "error",
-        });
-      }
-    }
-  });
+        const { success, error } = await createOneUser(
+            {
+                ...data,
+                active: true,
+                lock: false,
+                image: undefined,
+            },
+            formData
+        );
+        if (success) {
+            toast({
+                title: "Sucesso!",
+                description: "Usuário registrado com sucesso!",
+                variant: "success",
+            });
+        } else if (error) {
+            Object.entries(error).forEach(([key, message]) => {
+                if (key !== "global" && message) {
+                    setError(key as keyof Schema, {
+                        type: "manual",
+                        message: message as string,
+                    });
+                }
+            });
 
-  function handleCancelEdit() {
-    reset({
-      cpf: "",
-      external: false,
-      email: "",
-      name: "",
-      username: "",
-      image: "",
-      profile: [],
+            if (error.global) {
+                toast({
+                    title: "Erro!",
+                    description: error.global,
+                    variant: "error",
+                });
+            }
+        }
     });
-  }
 
-  function handleBackPage() {
-    router.back();
-  }
+    function handleCancelEdit() {
+        reset({
+            cpf: "",
+            external: false,
+            email: "",
+            name: "",
+            username: "",
+            image: "",
+            profile: [],
+        });
+        router.back();
+    }
 
-  return {
-    handleSubmit,
-    register,
-    control,
-    profiles: activeProfiles,
-    errors,
-    handleBackPage,
-    handleCancelEdit,
-  };
+    return {
+        handleSubmit,
+        register,
+        control,
+        profiles: activeProfiles,
+        errors,
+        handleCancelEdit,
+    };
 }

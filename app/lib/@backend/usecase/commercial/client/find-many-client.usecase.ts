@@ -13,7 +13,8 @@ class FinaManyClientUsecase {
 
   @RemoveMongoId()
   async execute(input: Filter<IClient>) {
-    return await this.repository.findAll(input);
+    const { docs } = await this.repository.findMany(input);
+    return docs
   }
 }
 

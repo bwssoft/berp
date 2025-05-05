@@ -1,10 +1,9 @@
-// app/lib/@frontend/ui/form/admin/user/search-form/search.user.form.tsx
 "use client";
 
-import { Button, Input, Modal, Combobox } from "../../../../component";
 import { FunnelIcon } from "@heroicons/react/24/outline";
-import { useSearchUserForm } from "./use-search.user.form";
 import { Controller } from "react-hook-form";
+import { Button, Combobox, Input, Modal } from "../../../../component";
+import { useSearchUserForm } from "./use-search.user.form";
 
 export function SearchUserForm() {
   const {
@@ -17,7 +16,8 @@ export function SearchUserForm() {
     setValue,
     control,
     errors,
-    handleChangeQuickSearch
+    handleChangeProfileName,
+    handleSearchProflile
   } = useSearchUserForm();
 
   return (
@@ -28,7 +28,7 @@ export function SearchUserForm() {
               label="Nome ou CPF"
               placeholder="Digite e busque pelo nome do usuário ou CPF"
               containerClassname="sm:w-96"
-              onChange={handleChangeQuickSearch}
+              onChange={handleChangeProfileName}
             />
             <Button
               type="button"
@@ -48,34 +48,48 @@ export function SearchUserForm() {
               <Input
                 label="Nome"
                 {...register("name")}
+                 placeholder="Digite o nome"
                 error={errors.name?.message}
               />
               <Input
                 label="CPF"
                 {...register("cpf")}
+                placeholder="Digite o CPF do usuário"
                 error={errors.cpf?.message}
               />
-              <Combobox
-                label="Perfil"
-                type="multiple"
-                defaultValue={[]}
-                data={[{ id: "", name: "Todos" }, ...profiles]}
-                error={errors.profile_id?.message}
-                onOptionChange={(items) => {
-                  const ids = items.map((item) => item.id);
-                  setValue("profile_id", ids);
-                }}
-                keyExtractor={(item) => item.id}
-                displayValueGetter={(item) => item.name}
-              />
+              <Controller
+              name="profile"
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  label="Perfil"
+                  type="multiple"
+                  data={[...profiles]}
+                  value={field.value}
+                  error={errors.profile?.message}
+                  onSearchChange={handleSearchProflile}
+                  keyExtractor={(item) => item.id}
+                  displayValueGetter={(item) => item.name}
+                  placeholder="Selecione um perfil"
+                  onOptionChange={(items) =>
+                    setValue(
+                      "profile",
+                      items.map((i) => ({ id: i.id, name: i.name }))
+                    )
+                  }
+                />
+              )}
+            />
               <Input
                 label="Usuário"
                 {...register("username")}
+                placeholder="Digite o nome de usuário"
                 error={errors.username?.message}
               />
               <Input
                 label="Email"
                 {...register("email")}
+                placeholder="Digite o email"
                 error={errors.email?.message}
               />
 
@@ -85,14 +99,14 @@ export function SearchUserForm() {
                 render={({ field, fieldState }) => (
                   <Combobox
                     label="Status"
+                    placeholder="Selecione o status"
                     type="multiple"
                     data={[
                       { id: "", name: "Todos", value: false },
                       { id: "ativo", name: "Ativo", value: true },
                       { id: "inativo", name: "Inativo", value: false },
                     ]}
-                    value={field.value ?? []}
-                    defaultValue={[]}
+                    value={field.value}
                     onOptionChange={(items) =>
                       field.onChange(
                         items.some((i) => i.id === "")
@@ -123,7 +137,8 @@ export function SearchUserForm() {
                       { id: "1", name: "externo", value: true },
                       { id: "2", name: "interno", value: false },
                     ]}
-                    value={field.value ?? []}
+                    value={field.value}
+                    placeholder="Selecione o tipo de usuário"
                     defaultValue={[]}
                     onOptionChange={(items) =>
                       field.onChange(
@@ -146,10 +161,10 @@ export function SearchUserForm() {
             </div>
 
             <div className="flex justify-end gap-2 mt-4">
-              <Button type="submit">Pesquisar</Button>
               <Button variant="ghost" type="button" onClick={onReset}>
                 Limpar
               </Button>
+              <Button type="submit">Pesquisar</Button>
             </div>
           </form>
       </Modal>

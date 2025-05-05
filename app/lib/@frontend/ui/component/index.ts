@@ -28,3 +28,5 @@ export * from "./grid-list";
 export * from "./combobox";
 export * from "./popover";
 export * from "./modal";
+export * from "./spinner";
+export * from "./input-password";

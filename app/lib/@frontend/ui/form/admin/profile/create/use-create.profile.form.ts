@@ -22,6 +22,7 @@ export function useCreateProfileForm() {
     formState: { errors },
     control,
     setValue,
+    reset,
     setError,
     reset: hookFormReset,
   } = useForm<Schema>({
@@ -31,7 +32,7 @@ export function useCreateProfileForm() {
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
-      const controls = await findManyControl({}, 200);
+      const { docs: controls } = await findManyControl({}, 200);
       data.locked_control_code = controls.map(({ code }) => code);
       const { success, error } = await createOneProfile(data);
       if (success) {
@@ -65,19 +66,24 @@ export function useCreateProfileForm() {
         variant: "error",
       });
     }
+    router.push("/admin/profile"); 
   });
 
-  function handleBackPage() {
+  function handleCancelCreate() {
+    reset({
+      active: undefined,
+      name: "",
+      locked_control_code: [],
+    });
     router.back();
   }
 
   return {
     register,
-    handleBackPage,
     handleSubmit,
     errors,
     control,
     setValue,
-    reset: hookFormReset,
+    handleCancelCreate,
   };
 }

@@ -13,7 +13,8 @@ class FindManyTechnologyUsecase {
 
   @RemoveMongoId()
   async execute(input: Filter<ITechnology>) {
-    return await this.repository.findAll(input);
+    const { docs } = await this.repository.findMany(input);
+    return docs
   }
 }
 

@@ -3,10 +3,16 @@ import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { controlRepository } from "@/app/lib/@backend/infra";
 import { Filter } from "mongodb";
+import { PaginationResult } from "../../../domain/@shared/repository/pagination.interface";
 
 namespace Dto {
-  export interface Input extends Filter<IControl> {}
-  export type Output = IControl[];
+    export interface Input {
+        filter?: Filter<IControl>;
+        page?: number;
+        limit?: number;
+        sort?: Record<string, 1 | -1>;
+    }
+  export type Output = PaginationResult<IControl>;
 }
 
 class FindManyControlUsecase {
@@ -17,8 +23,13 @@ class FindManyControlUsecase {
   }
 
   @RemoveMongoId()
-  async execute(arg: Dto.Input, limit?: number): Promise<Dto.Output> {
-    return await this.repository.findAll(arg, limit ?? 20);
+  async execute(arg: Dto.Input): Promise<Dto.Output> {
+    return await this.repository.findMany(
+      arg.filter ?? {},
+      arg.limit,
+      arg.page,
+      arg.sort
+  );
   }
 }
 

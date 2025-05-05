@@ -1,14 +1,16 @@
 "use client";
-import { Modal, ModalBody, ModalContent } from "../../../../component/modal";
-import { useAuditByControlCodeProfileModal } from "./use-audit-by-control-code.profile.modal";
-import { AuditTable } from "../../../../table/admin/audit";
 import { IAudit, IControl } from "@/app/lib/@backend/domain";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { Modal, ModalBody, ModalContent } from "../../../../component/modal";
+import { AuditTable } from "../../../../table/admin/audit";
 
 interface Props {
   open: boolean;
   closeModal: () => void;
   control?: Pick<IControl, "id" | "name">;
-  audits: IAudit[];
+  audits: PaginationResult<IAudit>;
+  currentPage: number;
+  handleChangePage: (page: number) => void;
 }
 
 export function AuditByControlCodeProfileModal({
@@ -16,6 +18,8 @@ export function AuditByControlCodeProfileModal({
   closeModal,
   control,
   audits,
+  handleChangePage,
+  currentPage,
 }: Props) {
   return (
     <Modal
@@ -26,7 +30,11 @@ export function AuditByControlCodeProfileModal({
     >
       <ModalBody>
         <ModalContent className="overflow-y-scroll max-h-[70vh]">
-          <AuditTable data={audits ?? []} />
+          <AuditTable
+            data={audits}
+            handlePageChange={handleChangePage}
+            currentPage={currentPage}
+          />
         </ModalContent>
       </ModalBody>
     </Modal>

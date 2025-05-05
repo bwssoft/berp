@@ -22,8 +22,8 @@ class FindManyConfigurationLogUsecase {
 
   @RemoveMongoId()
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    const result = await this.repository.findAll(arg);
-    return result;
+    const { docs } = await this.repository.findMany(arg);
+    return docs;
   }
 }
 

@@ -24,6 +24,8 @@ class CreateManyAutoTestLogUsecase {
       );
     }
 
+    if(_input.length === 0) return [];
+
     await this.repository.createMany(_input);
 
     return _input;

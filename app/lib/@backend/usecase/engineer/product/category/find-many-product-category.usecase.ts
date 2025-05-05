@@ -12,7 +12,8 @@ class FindManyProductCategoriesUseCase {
 
   @RemoveMongoId()
   async execute(input: Partial<IProductCategory>) {
-    return await this.repository.findAll(input)
+    const { docs } = await this.repository.findMany(input)
+    return docs
   }
 }
 

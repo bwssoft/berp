@@ -12,6 +12,7 @@ interface Props {
       firmware?: string | undefined;
       serial?: string | undefined;
     };
+    status: "fully_identified" | "partially_identified" | "not_identified";
     port: ISerialPort;
   }[];
 }

@@ -42,7 +42,7 @@ class ActiveProfileUsecase {
 
       // Caso for a caso de uso de inativar, checar se existem usuários vinculados a esse perfil
       if (!active) {
-        const userWithProfile = await this.userRepository.findAll(
+        const { docs: userWithProfile } = await this.userRepository.findMany(
           {
             "profile.id": input.id,
           },

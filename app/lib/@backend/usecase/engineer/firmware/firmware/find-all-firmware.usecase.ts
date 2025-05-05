@@ -12,7 +12,8 @@ class FindAllFirmwareUsecase {
 
   @RemoveMongoId()
   async execute() {
-    return await this.repository.findAll({});
+    const { docs } = await this.repository.findMany({});
+    return docs
   }
 }
 
