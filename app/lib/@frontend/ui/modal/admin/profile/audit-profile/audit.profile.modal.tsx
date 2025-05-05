@@ -9,6 +9,8 @@ interface Props {
   closeModal: () => void;
   profile?: Pick<IProfile, "id" | "name">;
   audits: PaginationResult<IAudit>
+  currentPage: number
+  handlePageChange: (page: number) => void
 }
 
 export function AuditProfileModal({
@@ -16,6 +18,8 @@ export function AuditProfileModal({
   closeModal,
   profile,
   audits,
+  currentPage,
+  handlePageChange
 }: Props) {
   return (
     <Modal
@@ -26,7 +30,7 @@ export function AuditProfileModal({
     >
       <ModalBody>
         <ModalContent className="overflow-y-scroll max-h-[70vh]">
-          <AuditTable data={audits} />
+          <AuditTable data={audits} currentPage={currentPage} handlePageChange={handlePageChange} />
         </ModalContent>
       </ModalBody>
     </Modal>
