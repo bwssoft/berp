@@ -37,7 +37,7 @@ export default async function Example(props: Props) {
     countControl({ parent_code: { $regex: control.code, $options: "i" } }),
   ]);
 
-  const control_tree = buildControlTree(controls);
+  const control_tree = buildControlTree(controls.docs);
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

@@ -1,32 +1,50 @@
 "use client";
 
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { IUser } from "@/app/lib/@backend/domain";
-import { columns } from "./user.columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
-import {
-  AuditUserModal,
-  useAuditUserModal,
-} from "@/app/lib/@frontend/ui/modal";
+import { columns } from "./user.columns";
+import { AuditUserModal, useAuditUserModal } from "@/app/lib/@frontend/ui/modal";
+import { Pagination} from "../../../component/pagination";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+
+const PAGE_SIZE = 10;
 
 interface Props {
-  data: IUser[];
+  data: PaginationResult<IUser>;
+  currentPage?: number;
 }
-export function UserTable(props: Props) {
-  const { data } = props;
-  const modal = useAuditUserModal();
 
+export function UserTable({ data, currentPage = 1 }: Props) {
+  const { docs, pages = 1, total = 0, limit = PAGE_SIZE } = data;
+  
+  const { handleParamsChange } = useHandleParamsChange();
+  const handlePageChange = (page: number) => handleParamsChange({ page })
+
+  const modal = useAuditUserModal();
+  
   return (
     <>
-      <DataTable
-        columns={columns({openAuditModal: modal.handleUserSelection})}
-        data={data}
-        mobileDisplayValue={(data) => data.name}
-        mobileKeyExtractor={(data) => data.created_at?.toISOString()}
-        className="w-full"
-      />
+      <div className="w-full">
+        <DataTable
+          columns={columns({ openAuditModal: modal.handleUserSelection })}
+          data={docs}
+          mobileDisplayValue={(u) => u.name}
+          mobileKeyExtractor={(u) => u.id.toString()}
+        />
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={pages}
+          totalItems={total}
+          limit={limit}
+          onPageChange={handlePageChange}
+        />
+      </div>
 
       <AuditUserModal
-        auditData={modal.auditData}
+        auditData={{ docs: modal.auditData }}
         closeModal={modal.closeModal}
         open={modal.open}
         user={modal.user}

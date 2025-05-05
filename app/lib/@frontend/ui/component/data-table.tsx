@@ -36,7 +36,7 @@ export function DataTableDesktop<TData, TValue>({
     <div
       {...rest}
       className={cn(
-        "rounded-md bg-white shadow-md ring-1 ring-black/5 overflow-x-auto", // Adicionei overflow-x-auto aqui
+        "rounded-t-md bg-white shadow-md w-full ring-1 ring-black/5 overflow-x-auto", // Adicionei overflow-x-auto aqui
         className
       )}
     >

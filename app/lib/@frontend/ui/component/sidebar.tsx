@@ -27,6 +27,7 @@ import {
 } from "react";
 import { useIsOnPathname } from "../../hook/is-on-pathname";
 import { useAuth } from "../../context";
+import { ShowVersion } from "./show-version";
 
 export type NavItem = {
   name: string;
@@ -242,6 +243,7 @@ export function SideBar(props: Props) {
               </ul>
             </nav>
           </div>
+          <ShowVersion />
         </div>
 
         <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-sm sm:px-6 lg:hidden">

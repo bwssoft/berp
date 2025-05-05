@@ -1,6 +1,7 @@
 "use client"
 import { findManyProfile } from "@/app/lib/@backend/action";
-import { IControl } from "@/app/lib/@backend/domain";
+import { IControl, IProfile } from "@/app/lib/@backend/domain";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 
@@ -15,13 +16,14 @@ export function useProfileLinkedControlModal() {
     setOpen(true)
   },[])
 
-  const profiles = useQuery({
+  const {data: profiles, isLoading} = useQuery({
     queryKey: ['findManyProfiles', control],
     queryFn: () => findManyProfile({"locked_control_code": {$nin: [control?.code!]}}),
-  }).data ?? [];
+  })
 
   return {
-    profiles,
+    profiles: profiles as PaginationResult<IProfile>,
+    isLoading,
     handleControlSelection,
     open,
     openModal,

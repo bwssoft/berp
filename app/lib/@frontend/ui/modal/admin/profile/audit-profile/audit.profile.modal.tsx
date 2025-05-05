@@ -1,4 +1,5 @@
 "use client";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { Modal, ModalBody, ModalContent } from "../../../../component/modal";
 import { AuditTable } from "../../../../table/admin/audit";
 import { IAudit, IProfile } from "@/app/lib/@backend/domain";
@@ -7,7 +8,7 @@ interface Props {
   open: boolean;
   closeModal: () => void;
   profile?: Pick<IProfile, "id" | "name">;
-  audits: IAudit[];
+  audits: PaginationResult<IAudit>
 }
 
 export function AuditProfileModal({
