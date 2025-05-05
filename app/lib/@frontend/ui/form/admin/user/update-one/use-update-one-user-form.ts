@@ -89,6 +89,7 @@ export function useUpdateOneUserForm(user: IUser) {
                 description: "Usuário atualizado com sucesso",
                 variant: "success",
             });
+            router.push("/admin/user");
         }else if(error){
             Object.entries(error).forEach(([key, message]) => {
                 if (key !== "global" && message) {
