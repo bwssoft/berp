@@ -33,7 +33,11 @@ export default async function Example(props: Props) {
 
   const [profile, controls, total_controls_on_module] = await Promise.all([
     findOneProfile({ id: slug[1] }),
-    findManyControl({ parent_code: { $regex: control.code, $options: "i" } }),
+    findManyControl(
+      { parent_code: { $regex: control.code, $options: "i" } },
+      undefined,
+      50
+    ),
     countControl({ parent_code: { $regex: control.code, $options: "i" } }),
   ]);
 
