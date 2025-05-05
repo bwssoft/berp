@@ -10,25 +10,32 @@ export function useAuditUserModal() {
     const openModal = useCallback(() => setOpen(true), []);
     const closeModal = useCallback(() => setOpen(false), []);
 
-    const [user, setUser] = useState<Pick<IUser, "id" | "name">>()
-    const handleUserSelection = useCallback((user: Pick<IUser, "id" | "name">) => {
-        setUser(user)
-        setOpen(true)
-    },[])
+    const [page, setPage] = useState<number>(1);
+    const [user, setUser] = useState<Pick<IUser, "id" | "name">>();
+    const handleUserSelection = useCallback(
+        (user: Pick<IUser, "id" | "name">) => {
+            setUser(user);
+            setOpen(true);
+        },
+        []
+    );
+
+    const handlePageChange = (page: number) => setPage(page);
 
     const {
-        data: auditData = [],
+        data: auditData,
         error,
         refetch,
     } = useQuery({
-        queryKey: ["findManyUserAudit", user],
+        queryKey: ["findManyUserAudit", user, page],
         queryFn: async () => {
-            const { docs } = await findManyAudit({
-                domain: AuditDomain.user, 
-                affected_entity_id: user?.id
-            })
-
-            return docs
+            return await findManyAudit(
+                {
+                    domain: AuditDomain.user,
+                    affected_entity_id: user?.id,
+                },
+                page
+            );
         },
     });
 
@@ -40,6 +47,8 @@ export function useAuditUserModal() {
         error,
         refetch,
         handleUserSelection,
-        user
+        handlePageChange,
+        user,
+        page,
     };
 }

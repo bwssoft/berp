@@ -44,10 +44,12 @@ export function UserTable({ data, currentPage = 1 }: Props) {
       </div>
 
       <AuditUserModal
-        auditData={{ docs: modal.auditData }}
+        currentPage={modal.page}
+        auditData={modal.auditData ?? {docs:[]}}
         closeModal={modal.closeModal}
         open={modal.open}
         user={modal.user}
+        handlePageChange={modal.handlePageChange}
       />
     </>
   );
