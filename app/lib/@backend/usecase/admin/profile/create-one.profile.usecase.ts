@@ -1,12 +1,13 @@
-import { singleton } from "@/app/lib/util/singleton";
 import {
   AuditDomain,
   IProfile,
   IProfileRepository,
 } from "@/app/lib/@backend/domain";
 import { profileRepository } from "@/app/lib/@backend/infra";
-import { createOneAuditUsecase } from "../audit";
+import { singleton } from "@/app/lib/util/singleton";
 import { auth } from "@/auth";
+import { createOneAuditUsecase } from "../audit";
+import { findManyControlUsecase } from "../control";
 
 class CreateOneProfileUsecase {
   repository: IProfileRepository;
@@ -16,11 +17,6 @@ class CreateOneProfileUsecase {
   }
 
   async execute(input: Omit<IProfile, "id" | "created_at">) {
-    const _input = Object.assign(input, {
-      created_at: new Date(),
-      id: crypto.randomUUID(),
-    });
-
     try {
       const profile = await this.repository.findOne({ name: input.name });
       if (profile) {
@@ -29,6 +25,14 @@ class CreateOneProfileUsecase {
           error: { name: "Nome já cadastrado para outro perfil!" },
         };
       }
+      const { docs: controls } = await findManyControlUsecase.execute({
+        limit: 200,
+      });
+      const _input = Object.assign(input, {
+        created_at: new Date(),
+        id: crypto.randomUUID(),
+        locked_control_code: controls.map(({ code }) => code),
+      });
       await this.repository.create(_input);
 
       const session = await auth();

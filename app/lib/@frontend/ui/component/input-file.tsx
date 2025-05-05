@@ -96,6 +96,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                     type="file"
                     className="sr-only"
                     multiple
+                    accept={accept}
                     onChange={onFileChange}
                     ref={fileInputRef}
                   />
