@@ -2,6 +2,7 @@
 
 import { IProfile } from "@/app/lib/@backend/domain";
 import { SetLockedProfileForm } from "@/app/lib/@frontend/ui/form";
+import { ControlTree } from "@/app/lib/util";
 import {
   Disclosure,
   DisclosureButton,
@@ -13,14 +14,13 @@ import {
   IdentificationIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
+import { Button } from "../../component";
 import {
   AuditByControlCodeProfileModal,
   ProfileLinkedControlModal,
   useAuditByControlCodeProfileModal,
   useProfileLinkedControlModal,
 } from "../../modal";
-import { ControlTree } from "@/app/lib/util";
-import { Button } from "../../component";
 
 interface Props {
   controlTree: ControlTree;
@@ -63,10 +63,12 @@ export function SubModuleControlList(props: Props) {
       />
 
       <AuditByControlCodeProfileModal
-        audits={{ docs: auditModal.audits}}
+        audits={auditModal.audits ?? { docs: [] }}
         closeModal={auditModal.closeModal}
         open={auditModal.open}
         control={auditModal.control}
+        currentPage={auditModal.page}
+        handleChangePage={auditModal.handleChangePage}
       />
     </>
   );
