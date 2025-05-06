@@ -10,7 +10,7 @@ const actions = [
   {
     title: "Gestão",
     href: "/production/order/management",
-    code: "production:order-management",
+    code: "production:order:view",
     icon: ClipboardDocumentCheckIcon,
     iconForeground: "text-indigo-700",
     iconBackground: "bg-indigo-50",
@@ -20,7 +20,7 @@ const actions = [
   {
     title: "Dashboard",
     href: "/production/order/dashboard",
-    code: "production:order-dashboard",
+    code: "production:order:dashboard",
     icon: ChartBarIcon,
     iconForeground: "text-green-700",
     iconBackground: "bg-green-50",
@@ -30,7 +30,7 @@ const actions = [
   {
     title: "Kanban",
     href: "/production/order/kanban",
-    code: "production:order-kanban",
+    code: "production:order:kanban",
     icon: ViewColumnsIcon,
     iconForeground: "text-amber-700",
     iconBackground: "bg-amber-50",
