@@ -386,7 +386,7 @@ export const useBWS4G = () => {
                   RSI: autotest["RSI"] === "OK",
                   SN: Boolean(autotest["SN"]?.length),
                   VCC: !isNaN(VCC) && VCC <= 1300 && VCC >= 1200,
-                  TEMP: !isNaN(TEMP) && TEMP <= 28 && TEMP >= 23,
+                  // TEMP: !isNaN(TEMP) && TEMP <= 28 && TEMP >= 23,
                 };
 
                 const statusValues = Object.values(resultTemplate.analysis);
