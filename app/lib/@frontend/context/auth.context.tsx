@@ -1,12 +1,14 @@
 "use client";
 
-import React, { createContext, useContext, useMemo } from "react";
-import { IProfile, IUser } from "../../@backend/domain";
-import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
+import React, { createContext, useCallback, useContext, useMemo } from "react";
 import { logout } from "../../@backend/action";
+import { IProfile, IUser } from "../../@backend/domain";
+import { NavItem } from "../ui/component";
 
 type AuthUser = Partial<IUser> & { current_profile: IProfile };
+type NavOption = NavItem & { code: string };
 
 interface AuthContextType {
   user: AuthUser | undefined;
@@ -17,6 +19,7 @@ interface AuthContextType {
     onClick?: () => void;
     href?: string;
   }[];
+  navigationByProfile: (options: NavOption[]) => NavOption[];
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -29,6 +32,7 @@ export const AuthProvider = ({
   children: React.ReactNode;
 }) => {
   const { data, update } = useSession();
+
   const changeProfile = async (input: IProfile) => {
     await update({
       user: { ...data?.user, current_profile: input },
@@ -49,6 +53,17 @@ export const AuthProvider = ({
     ],
     [data]
   );
+  const navigationByProfile = useCallback(
+    (options: NavOption[]) => {
+      if (!data) return [];
+      const { user } = data;
+      return options.filter(
+        (el) => !user.current_profile.locked_control_code.includes(el.code)
+      );
+    },
+    [data]
+  );
+
   return (
     <AuthContext.Provider
       value={{
@@ -56,6 +71,7 @@ export const AuthProvider = ({
         profile: data?.user?.current_profile ?? session?.user?.current_profile,
         changeProfile,
         navBarItems,
+        navigationByProfile,
       }}
     >
       {children}

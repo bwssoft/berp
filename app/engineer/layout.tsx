@@ -14,13 +14,16 @@ import {
   CubeIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
+import { useAuth } from "../lib/@frontend/context";
 
 export default function EngineerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <Layout navigation={navigation}>{children}</Layout>;
+  const { navigationByProfile } = useAuth();
+  const options = navigationByProfile(navigation);
+  return <Layout navigation={options}>{children}</Layout>;
 }
 
 const navigation = [
