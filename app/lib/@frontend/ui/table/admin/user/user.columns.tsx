@@ -58,12 +58,12 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     cell: ({ row }) => {
       const { original } = row;
 
-      const hideHistory = props.restrictFeatureByProfile("user:view");
-      const hideEdit = props.restrictFeatureByProfile("user:update");
+      const hideHistory = props.restrictFeatureByProfile("admin:user:view");
+      const hideEdit = props.restrictFeatureByProfile("admin:user:update");
       console.log("AAAAAAAAAAAAAAAA:",hideHistory,",", " BBBBBBBBBBBBBBBB:", hideEdit)
       return (
         <td className="flex gap-2 items-center">
-          {!hideHistory && (
+          {hideHistory && (
             <Button
               title="Histórico"
               onClick={() =>
@@ -75,7 +75,7 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
             </Button>
           )}
 
-          {!hideEdit && (
+          {hideEdit && (
             <Link href={`/admin/user/form/update?id=${original.id}`}>
               <Button
                 title="Editar"

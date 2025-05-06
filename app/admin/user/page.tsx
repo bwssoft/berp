@@ -25,7 +25,7 @@ export default async function Example(props: Props) {
   const { searchParams: { page, ...rest } } = props
   const _page = page?.length && Number(page)
   const users = await findManyUser(query(rest), _page);
-  const canCreate = await restrictFeatureByProfile("user:create");
+  const canCreate = await restrictFeatureByProfile("admin:user:create");
   
   return (
     <div>
