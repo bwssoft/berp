@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
+import { useAuth } from "@/app/lib/@frontend/context";
 
 const PAGE_SIZE = 10;
 
@@ -31,6 +32,8 @@ export function ProfileTable(props: Props) {
   const { handleParamsChange } = useHandleParamsChange();
   const handlePageChange = (page: number) => handleParamsChange({ page });
 
+  const { restrictFeatureByProfile } = useAuth();
+
   return (
     <>
       <div className="w-full">
@@ -39,6 +42,7 @@ export function ProfileTable(props: Props) {
             openActiveDialog: activeDialog.handleOpen,
             openUserModal: userModal.handleProfileSelection,
             openAuditModal: audtiModal.handleProfileSelection,
+            restrictFeatureByProfile,
           })}
           data={docs}
           mobileDisplayValue={(data) => data.name}
