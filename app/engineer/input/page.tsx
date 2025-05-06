@@ -1,3 +1,5 @@
+"use client";
+import { useAuth } from "@/app/lib/@frontend/context";
 import { GridList } from "@/app/lib/@frontend/ui/component";
 import {
   Cog6ToothIcon,
@@ -11,6 +13,7 @@ const actions = [
   {
     title: "Gestão",
     href: "/engineer/input/management",
+    code: "engineer:input",
     icon: Cog6ToothIcon, // Gestão geral/configuração
     iconForeground: "text-rose-700",
     iconBackground: "bg-rose-50",
@@ -20,6 +23,7 @@ const actions = [
   {
     title: "Categorias",
     href: "/engineer/input/category",
+    code: "engineer:input-category",
     icon: TagIcon, // Ícone clássico de categorização
     iconForeground: "text-yellow-700",
     iconBackground: "bg-yellow-50",
@@ -29,6 +33,7 @@ const actions = [
   {
     title: "Entradas e Saídas",
     href: "/engineer/input/transaction",
+    code: "engineer:input-transaction",
     icon: ArrowsRightLeftIcon, // Representa movimentações de estoque
     iconForeground: "text-indigo-700",
     iconBackground: "bg-indigo-50",
@@ -38,6 +43,7 @@ const actions = [
   {
     title: "Estoque",
     href: "/engineer/input/stock",
+    code: "engineer:input-stock",
     icon: ArchiveBoxIcon, // Representa armazenamento/estoque
     iconForeground: "text-teal-700",
     iconBackground: "bg-teal-50",
@@ -47,6 +53,7 @@ const actions = [
   {
     title: "Análise do estoque",
     href: "/engineer/input/analysis",
+    code: "engineer:input-analysis",
     icon: ChartBarIcon, // Representa gráficos/relatórios
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
@@ -56,6 +63,9 @@ const actions = [
 ];
 
 export default function Page() {
+  const { navigationByProfile} = useAuth();
+  const options = navigationByProfile(actions);
+  
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -70,7 +80,7 @@ export default function Page() {
         </div>
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <GridList actions={actions} className="bg-unset" />
+        <GridList actions={options} className="bg-unset" />
       </div>
     </div>
   );

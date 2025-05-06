@@ -1,3 +1,5 @@
+"use client";
+import { useAuth } from "@/app/lib/@frontend/context";
 import { GridList } from "@/app/lib/@frontend/ui/component";
 import {
   ClipboardDocumentCheckIcon,
@@ -8,6 +10,7 @@ const actions = [
   {
     title: "Gestão",
     href: "/engineer/command/management",
+    code: "engineer:command",
     icon: ClipboardDocumentCheckIcon, // Representa gerenciamento de tarefas/comandos
     iconForeground: "text-blue-700",
     iconBackground: "bg-blue-50",
@@ -17,6 +20,7 @@ const actions = [
   {
     title: "Agendamento",
     href: "/engineer/command/schedule",
+    code: "engineer:command-schedule",
     icon: CalendarDaysIcon, // Ícone de calendário para agendamento
     iconForeground: "text-emerald-700",
     iconBackground: "bg-emerald-50",
@@ -26,6 +30,9 @@ const actions = [
 ];
 
 export default function Page() {
+  const { navigationByProfile } = useAuth();
+  const options = navigationByProfile(actions);
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -40,7 +47,7 @@ export default function Page() {
         </div>
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <GridList actions={actions} className="bg-unset" />
+        <GridList actions={options} className="bg-unset" />
       </div>
     </div>
   );
