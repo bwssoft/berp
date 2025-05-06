@@ -9,7 +9,7 @@ const actions = [
   {
     title: "Auto Test",
     href: "/production/log/auto-test",
-    code: "production:auto-test-log",
+    code: "production:log:auto-test",
     icon: WrenchScrewdriverIcon,
     iconForeground: "text-blue-700",
     iconBackground: "bg-blue-50",
@@ -18,7 +18,7 @@ const actions = [
   {
     title: "Configurador",
     href: "/production/log/configurator",
-    code: "production:configuration-log",
+    code: "production:log:configurator",
     icon: Cog6ToothIcon,
     iconForeground: "text-amber-700",
     iconBackground: "bg-amber-50",
@@ -27,7 +27,7 @@ const actions = [
   {
     title: "Identificador",
     href: "/production/log/identificator",
-    code: "production:device-identification-log",
+    code: "production:log:identifier",
     icon: IdentificationIcon,
     iconForeground: "text-cyan-700",
     iconBackground: "bg-cyan-50",

@@ -1,7 +1,8 @@
+"use client";
+
 import {
   WrenchScrewdriverIcon, // Auto Test
   ClipboardDocumentListIcon, // Ordem de Produção
-  BuildingLibraryIcon,
   DocumentArrowDownIcon, // Processo Produtivo
 } from "@heroicons/react/24/outline";
 
