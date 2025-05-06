@@ -39,23 +39,12 @@ const actions = [
     description:
       "Crie, acompanhe e organize ordens de produção com informações detalhadas.",
   },
-  {
-    title: "Processo Produtivo",
-    href: "/production/process/management",
-    code: "production:process",
-    icon: BuildingLibraryIcon,
-    iconForeground: "text-emerald-700",
-    iconBackground: "bg-emerald-50",
-    description:
-      "Visualize e gerencie as etapas do processo produtivo dentro da fábrica.",
-  },
 ];
 
 export default function Page() {
+  const { navigationByProfile } = useAuth();
+  const options = navigationByProfile(actions);
 
-  const {navigationByProfile} = useAuth()
-  const options =  navigationByProfile(actions)
-  
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
