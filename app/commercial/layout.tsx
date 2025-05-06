@@ -2,12 +2,16 @@
 
 import { Layout } from "@/app/lib/@frontend/ui/component";
 import { BriefcaseIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "../lib/@frontend/context";
 
 export default function ComercialLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { navigationByProfile } = useAuth();
+  const options = navigationByProfile(navigation);
+  
   return <Layout navigation={navigation}>{children}</Layout>;
 }
 
