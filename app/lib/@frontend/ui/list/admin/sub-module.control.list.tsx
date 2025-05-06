@@ -21,6 +21,7 @@ import {
   useAuditByControlCodeProfileModal,
   useProfileLinkedControlModal,
 } from "../../modal";
+import { useAuth } from "../../../context";
 
 interface Props {
   controlTree: ControlTree;
@@ -84,6 +85,10 @@ const renderControlTree = (
   openAuditModal: (props: { id: string; name: string; code: string }) => void
 ) => {
   const has_children = control.children.length > 0;
+
+  const { restrictFeatureByProfile } = useAuth()
+  const hideActiveButton = restrictFeatureByProfile("admin:profile:inactive");
+
   return (
     <Disclosure key={control.id}>
       <DisclosureButton className="border-b border-gray-200 w-full p-6 group flex justify-between items-center gap-2">
@@ -129,11 +134,13 @@ const renderControlTree = (
               >
                 <IdentificationIcon className="size-5" />
               </Button>
-              <SetLockedProfileForm
-                control={control}
-                profile={profile}
-                totalControlsOnModule={totalControlsOnModule}
-              />
+              {hideActiveButton && (
+                <SetLockedProfileForm
+                  control={control}
+                  profile={profile}
+                  totalControlsOnModule={totalControlsOnModule}
+                />
+              )}
             </div>
           )}
           {has_children ? (

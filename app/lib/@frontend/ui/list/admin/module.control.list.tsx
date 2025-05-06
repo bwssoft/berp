@@ -22,7 +22,7 @@ export function ModuleControlList(props: Props) {
 
   const { restrictFeatureByProfile } = useAuth();
 
-  const hideButton = restrictFeatureByProfile("admin:profile:view");
+  const hideViewButton = restrictFeatureByProfile("admin:profile:view");
 
   return (
     <>
@@ -42,14 +42,16 @@ export function ModuleControlList(props: Props) {
                 {control.name}
               </h3>
               <div className="w-fit mt-2 flex divide-x-2 divide-gray-300 text-sm text-gray-400 hover:cursor-pointer">
-                <Link
-                  href={`/admin/control/${control.id}/${profile?.id ?? ""}`}
-                  key={control.id}
-                  className="text-gray-500 pr-2 hover:underline hover:underline-offset-4 hover:text-blue-500"
-                >
-                  Detalhes
-                </Link>
-                {hideButton && (
+                {hideViewButton && (
+                  <Link
+                    href={`/admin/control/${control.id}/${profile?.id ?? ""}`}
+                    key={control.id}
+                    className="text-gray-500 pr-2 hover:underline hover:underline-offset-4 hover:text-blue-500"
+                  >
+                    Detalhes
+                  </Link>
+                )}
+                {hideViewButton && (
                   <p
                     className="text-gray-500 px-2 hover:underline hover:underline-offset-4 hover:text-blue-500"
                     onClick={() =>
