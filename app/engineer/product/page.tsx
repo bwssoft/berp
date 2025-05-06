@@ -1,3 +1,5 @@
+"use client";
+
 import { useAuth } from "@/app/lib/@frontend/context";
 import { GridList } from "@/app/lib/@frontend/ui/component";
 import {
@@ -62,7 +64,7 @@ const actions = [
 ];
 
 export default function Page() {
-  const { navigationByProfile} = useAuth();
+  const { navigationByProfile } = useAuth();
   const options = navigationByProfile(actions);
 
   return (
