@@ -24,23 +24,25 @@ export function useCreateProfileForm() {
     setValue,
     reset,
     setError,
-    reset: hookFormReset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
-      //fazer a request
       const { success, error } = await createOneProfile(data);
+
       if (success) {
-        router.push("/admin/profile");
         toast({
           title: "Sucesso!",
           description: "Perfil registrado com sucesso!",
           variant: "success",
         });
-      } else if (error) {
+        router.push("/admin/profile");
+        return;
+      }
+
+      if (error) {
         Object.entries(error).forEach(([key, message]) => {
           if (key !== "global" && message) {
             setError(key as keyof Schema, {
@@ -49,31 +51,24 @@ export function useCreateProfileForm() {
             });
           }
         });
-        if (error.global) {
-          toast({
-            title: "Erro!",
-            description: error.global,
-            variant: "error",
-          });
-        }
+        toast({
+          title: "Erro!",
+          description: error.global ?? "Falha ao registrar o perfil!",
+          variant: "error",
+        });
       }
-    } catch (e) {
+    } catch {
       toast({
         title: "Erro!",
         description: "Falha ao registrar o perfil!",
         variant: "error",
       });
     }
-    router.push("/admin/profile");
   });
 
   function handleCancelCreate() {
-    reset({
-      active: undefined,
-      name: "",
-      locked_control_code: [],
-    });
-    router.back();
+    reset({ name: "", active: undefined, locked_control_code: [] });
+    router.push("/admin/profile");
   }
 
   return {
