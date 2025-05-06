@@ -5,10 +5,9 @@ import { useSession } from "next-auth/react";
 import React, { createContext, useCallback, useContext, useMemo } from "react";
 import { logout } from "../../@backend/action";
 import { IProfile, IUser } from "../../@backend/domain";
-import { NavItem } from "../ui/component";
 
 type AuthUser = Partial<IUser> & { current_profile: IProfile };
-type RedirectOption = NavItem & { code: string };
+type RedirectOption<T> = T & { code: string };
 
 interface AuthContextType {
   user: AuthUser | undefined;
@@ -19,7 +18,7 @@ interface AuthContextType {
     onClick?: () => void;
     href?: string;
   }[];
-  navigationByProfile: (options: RedirectOption[]) => RedirectOption[];
+  navigationByProfile: <T>(options: RedirectOption<T>[]) => RedirectOption<T>[];
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -53,16 +52,15 @@ export const AuthProvider = ({
     ],
     [data]
   );
-  const navigationByProfile = useCallback(
-    (options: RedirectOption[]) => {
-      if (!data) return [];
-      const { user } = data;
-      return options.filter(
-        (el) => !user.current_profile.locked_control_code.includes(el.code)
-      );
-    },
-    [data]
-  );
+  const navigationByProfile: <T>(
+    options: RedirectOption<T>[]
+  ) => RedirectOption<T>[] = (options) => {
+    if (!data) return [];
+    const { user } = data;
+    return options.filter(
+      (el) => !user.current_profile.locked_control_code.includes(el.code)
+    );
+  };
   return (
     <AuthContext.Provider
       value={{
