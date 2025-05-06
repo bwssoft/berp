@@ -22,7 +22,7 @@ const actions = [
   {
     title: "Categorias",
     href: "/engineer/product/category",
-    code: "engineer:product-category",
+    code: "engineer:product:category",
     icon: TagIcon, // Ícone clássico de categorização
     iconForeground: "text-yellow-700",
     iconBackground: "bg-yellow-50",
@@ -32,7 +32,7 @@ const actions = [
   {
     title: "Entradas e Saídas",
     href: "/engineer/product/transactions",
-    code: "engineer:product-transaction",
+    code: "engineer:product:transaction",
     icon: ArrowsRightLeftIcon, // Representa movimentações de estoque
     iconForeground: "text-indigo-700",
     iconBackground: "bg-indigo-50",
@@ -42,7 +42,7 @@ const actions = [
   {
     title: "Estoque",
     href: "/engineer/product/stock",
-    code: "engineer:product-stock",
+    code: "engineer:product:inventory",
     icon: ArchiveBoxIcon, // Representa armazenamento/estoque
     iconForeground: "text-teal-700",
     iconBackground: "bg-teal-50",
@@ -52,7 +52,7 @@ const actions = [
   {
     title: "Análise do estoque",
     href: "/engineer/product/analysis",
-    code: "engineer:product-analysis",
+    code: "engineer:product:analyse",
     icon: ChartBarIcon, // Representa gráficos/relatórios
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",

@@ -17,7 +17,7 @@ const actions = [
   {
     title: "Acompanhamento",
     href: "/engineer/firmware/request-to-update",
-    code: "engineer:firmware-request-to-update",
+    code: "engineer:firmware:requisicoes-atualizacao",
     icon: EyeIcon, // representa visualização e monitoramento
     iconForeground: "text-emerald-700",
     iconBackground: "bg-emerald-50",
