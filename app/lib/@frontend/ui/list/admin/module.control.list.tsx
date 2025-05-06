@@ -9,6 +9,7 @@ import {
   useProfileLinkedControlModal,
 } from "../../modal";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { useAuth } from "../../../context";
 
 interface Props {
   controls: PaginationResult<IControl>;
@@ -18,6 +19,10 @@ interface Props {
 export function ModuleControlList(props: Props) {
   const { controls, profile } = props;
   const linkedControlModal = useProfileLinkedControlModal();
+
+  const { restrictFeatureByProfile } = useAuth();
+
+  const hideButton = restrictFeatureByProfile("admin:profile:view");
 
   return (
     <>
@@ -44,18 +49,20 @@ export function ModuleControlList(props: Props) {
                 >
                   Detalhes
                 </Link>
-                <p
-                  className="text-gray-500 px-2 hover:underline hover:underline-offset-4 hover:text-blue-500"
-                  onClick={() =>
-                    linkedControlModal.handleControlSelection({
-                      id: control.id,
-                      code: control.code,
-                      name: control.name,
-                    })
-                  }
-                >
-                  Ver Perfis
-                </p>
+                {hideButton && (
+                  <p
+                    className="text-gray-500 px-2 hover:underline hover:underline-offset-4 hover:text-blue-500"
+                    onClick={() =>
+                      linkedControlModal.handleControlSelection({
+                        id: control.id,
+                        code: control.code,
+                        name: control.name,
+                      })
+                    }
+                  >
+                    Ver Perfis
+                  </p>
+                )}
               </div>
             </div>
             {profile &&
