@@ -19,6 +19,7 @@ interface AuthContextType {
     href?: string;
   }[];
   navigationByProfile: <T>(options: RedirectOption<T>[]) => RedirectOption<T>[];
+  restrictFeatureByProfile: (feature: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -61,6 +62,13 @@ export const AuthProvider = ({
       (el) => !user.current_profile.locked_control_code.includes(el.code)
     );
   };
+
+  const restrictFeatureByProfile = (feature: string) => {
+    if (!data) return false;
+    const { user } = data;
+    return !user.current_profile.locked_control_code.includes(feature);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -69,6 +77,7 @@ export const AuthProvider = ({
         changeProfile,
         navBarItems,
         navigationByProfile,
+        restrictFeatureByProfile,
       }}
     >
       {children}
