@@ -1,3 +1,4 @@
+"use client";
 import {
   Cog6ToothIcon,
   AdjustmentsHorizontalIcon,
@@ -9,11 +10,13 @@ import {
 } from "@heroicons/react/24/outline";
 
 import { GridList } from "../lib/@frontend/ui/component";
+import { useAuth } from "../lib/@frontend/context";
 
 const actions = [
   {
     title: "Comandos",
     href: "/engineer/command",
+    code: "engineer:command",
     icon: ArrowPathIcon, // Representa ações/execução
     iconForeground: "text-indigo-700",
     iconBackground: "bg-indigo-50",
@@ -23,6 +26,7 @@ const actions = [
   {
     title: "Perfil de configuração",
     href: "/engineer/configuration-profile/management",
+    code: "engineer:configuration-profile",
     icon: AdjustmentsHorizontalIcon, // Ajustes, configurações
     iconForeground: "text-amber-700",
     iconBackground: "bg-amber-50",
@@ -32,6 +36,7 @@ const actions = [
   {
     title: "Dispositivos",
     href: "/engineer/device/management",
+    code: "engineer:device",
     icon: CpuChipIcon, // Representa hardware/dispositivos
     iconForeground: "text-blue-700",
     iconBackground: "bg-blue-50",
@@ -41,6 +46,7 @@ const actions = [
   {
     title: "Firmware",
     href: "/engineer/firmware",
+    code: "engineer:firmware",
     icon: Cog6ToothIcon, // Representa atualização/sistema
     iconForeground: "text-rose-700",
     iconBackground: "bg-rose-50",
@@ -50,6 +56,7 @@ const actions = [
   {
     title: "Insumos",
     href: "/engineer/input",
+    code: "engineer:input",
     icon: ArchiveBoxIcon, // Representa estoque/insumos
     iconForeground: "text-teal-700",
     iconBackground: "bg-teal-50",
@@ -59,6 +66,7 @@ const actions = [
   {
     title: "Produtos",
     href: "/engineer/product/management",
+    code: "engineer:product",
     icon: CubeIcon, // Representa produtos físicos
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
@@ -68,6 +76,9 @@ const actions = [
 ];
 
 export default function Page() {
+  const { navigationByProfile} = useAuth();
+  const options = navigationByProfile(actions);
+  
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -81,7 +92,7 @@ export default function Page() {
         </div>
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <GridList actions={actions} className="bg-unset" />
+        <GridList actions={options} className="bg-unset" />
       </div>
     </div>
   );
