@@ -5,10 +5,9 @@ import { useSession } from "next-auth/react";
 import React, { createContext, useCallback, useContext, useMemo } from "react";
 import { logout } from "../../@backend/action";
 import { IProfile, IUser } from "../../@backend/domain";
-import { NavItem } from "../ui/component";
 
 type AuthUser = Partial<IUser> & { current_profile: IProfile };
-type NavOption = NavItem & { code: string };
+type RedirectOption<T> = T & { code: string };
 
 interface AuthContextType {
   user: AuthUser | undefined;
@@ -19,7 +18,8 @@ interface AuthContextType {
     onClick?: () => void;
     href?: string;
   }[];
-  navigationByProfile: (options: NavOption[]) => NavOption[];
+  navigationByProfile: <T>(options: RedirectOption<T>[]) => RedirectOption<T>[];
+  restrictFeatureByProfile: (code: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -53,13 +53,25 @@ export const AuthProvider = ({
     ],
     [data]
   );
-  const navigationByProfile = useCallback(
-    (options: NavOption[]) => {
+
+  const navigationByProfile: <T>(
+    options: RedirectOption<T>[]
+  ) => RedirectOption<T>[] = useCallback(
+    (options) => {
       if (!data) return [];
       const { user } = data;
       return options.filter(
         (el) => !user.current_profile.locked_control_code.includes(el.code)
       );
+    },
+    [data]
+  );
+
+  const restrictFeatureByProfile = useCallback(
+    (code: string) => {
+      if (!data) return false;
+      const { user } = data;
+      return !user.current_profile.locked_control_code.includes(code);
     },
     [data]
   );
@@ -72,6 +84,7 @@ export const AuthProvider = ({
         changeProfile,
         navBarItems,
         navigationByProfile,
+        restrictFeatureByProfile,
       }}
     >
       {children}

@@ -1,3 +1,5 @@
+"use client";
+import { useAuth } from "@/app/lib/@frontend/context";
 import { GridList } from "@/app/lib/@frontend/ui/component";
 import { Cog6ToothIcon, EyeIcon } from "@heroicons/react/24/outline"; // ícones específicos para firmware e monitoramento
 
@@ -5,6 +7,7 @@ const actions = [
   {
     title: "Gestão",
     href: "/engineer/firmware/management",
+    code: "engineer:firmware",
     icon: Cog6ToothIcon, // engrenagem remete a sistema, atualização e configuração
     iconForeground: "text-rose-700",
     iconBackground: "bg-rose-50",
@@ -14,6 +17,7 @@ const actions = [
   {
     title: "Acompanhamento",
     href: "/engineer/firmware/request-to-update",
+    code: "engineer:firmware:requisicoes-atualizacao",
     icon: EyeIcon, // representa visualização e monitoramento
     iconForeground: "text-emerald-700",
     iconBackground: "bg-emerald-50",
@@ -23,6 +27,9 @@ const actions = [
 ];
 
 export default function Page() {
+  const { navigationByProfile} = useAuth();
+  const options = navigationByProfile(actions);
+  
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -37,7 +44,7 @@ export default function Page() {
         </div>
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <GridList actions={actions} className="bg-unset" />
+        <GridList actions={options} className="bg-unset" />
       </div>
     </div>
   );
