@@ -8,7 +8,7 @@ import { IProfile, IUser } from "../../@backend/domain";
 import { NavItem } from "../ui/component";
 
 type AuthUser = Partial<IUser> & { current_profile: IProfile };
-type NavOption = NavItem & { code: string };
+type RedirectOption = NavItem & { code: string };
 
 interface AuthContextType {
   user: AuthUser | undefined;
@@ -19,7 +19,7 @@ interface AuthContextType {
     onClick?: () => void;
     href?: string;
   }[];
-  navigationByProfile: (options: NavOption[]) => NavOption[];
+  navigationByProfile: (options: RedirectOption[]) => RedirectOption[];
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -54,7 +54,7 @@ export const AuthProvider = ({
     [data]
   );
   const navigationByProfile = useCallback(
-    (options: NavOption[]) => {
+    (options: RedirectOption[]) => {
       if (!data) return [];
       const { user } = data;
       return options.filter(
@@ -63,7 +63,6 @@ export const AuthProvider = ({
     },
     [data]
   );
-
   return (
     <AuthContext.Provider
       value={{
