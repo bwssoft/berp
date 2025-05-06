@@ -11,8 +11,7 @@ export default function ComercialLayout({
 }) {
   const { navigationByProfile } = useAuth();
   const options = navigationByProfile(navigation);
-  
-  return <Layout navigation={navigation}>{children}</Layout>;
+  return <Layout navigation={options}>{children}</Layout>;
 }
 
 const navigation = [
