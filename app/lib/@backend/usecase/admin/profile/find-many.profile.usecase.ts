@@ -28,7 +28,7 @@ class FindManyProfileUsecase {
             arg.filter ?? {},
             arg.limit,
             arg.page,
-            arg.sort
+            arg.sort ?? { name: 1 }
         );
     }
 }

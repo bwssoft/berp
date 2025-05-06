@@ -150,7 +150,7 @@ const navigation = [
       {
         name: "Análise do estoque",
         pathname: "/engineer/product/analysis",
-        code: "engineer:product:analysis",
+        code: "engineer:product:analyse",
         icon: ChartBarIcon, // Representa gráficos/relatórios
       },
     ],

@@ -1,3 +1,6 @@
+"use client";
+
+import { useAuth } from "@/app/lib/@frontend/context";
 import { GridList } from "@/app/lib/@frontend/ui/component";
 import {
   WrenchScrewdriverIcon,
@@ -9,6 +12,7 @@ const actions = [
   {
     title: "Auto Test",
     href: "/production/tool/auto-test",
+    code: "production:tool:auto-test",
     icon: WrenchScrewdriverIcon,
     iconForeground: "text-blue-700",
     iconBackground: "bg-blue-50",
@@ -18,6 +22,7 @@ const actions = [
   {
     title: "Configurador",
     href: "/production/tool/configurator",
+    code: "production:tool:configurator",
     icon: Cog6ToothIcon,
     iconForeground: "text-amber-700",
     iconBackground: "bg-amber-50",
@@ -27,6 +32,7 @@ const actions = [
   {
     title: "Identificador",
     href: "/production/tool/identificator",
+    code: "production:tool:identifier",
     icon: IdentificationIcon,
     iconForeground: "text-cyan-700",
     iconBackground: "bg-cyan-50",
@@ -36,6 +42,8 @@ const actions = [
 ];
 
 export default function Page() {
+  const { navigationByProfile } = useAuth();
+  const options = navigationByProfile(actions);
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -50,7 +58,7 @@ export default function Page() {
         </div>
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <GridList actions={actions} className="bg-unset" />
+        <GridList actions={options} className="bg-unset" />
       </div>
     </div>
   );
