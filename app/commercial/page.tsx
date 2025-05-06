@@ -1,11 +1,14 @@
-import { BriefcaseIcon, DocumentTextIcon } from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
+"use client";
 
+import { BriefcaseIcon, DocumentTextIcon } from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
 import { GridList } from "../lib/@frontend/ui/component";
+import { useAuth } from "../lib/@frontend/context";
 
 const actions = [
   {
     title: "Clientes",
     href: "/commercial/client",
+    code: "commercial:client",
     icon: BriefcaseIcon, // representa claramente clientes/relacionamentos
     iconForeground: "text-sky-700",
     iconBackground: "bg-sky-50",
@@ -15,6 +18,7 @@ const actions = [
   {
     title: "Propostas",
     href: "/commercial/proposal",
+    code: "commercial:proposal",
     icon: DocumentTextIcon, // remete a contratos, propostas e documentos
     iconForeground: "text-lime-700",
     iconBackground: "bg-lime-50",
@@ -24,6 +28,8 @@ const actions = [
 ];
 
 export default function Page() {
+  const { navigationByProfile } = useAuth();
+  const options = navigationByProfile(actions);
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -37,7 +43,7 @@ export default function Page() {
         </div>
       </div>
       <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <GridList actions={actions} className="bg-unset" />
+        <GridList actions={options} className="bg-unset" />
       </div>
     </div>
   );
