@@ -19,7 +19,7 @@ interface AuthContextType {
     href?: string;
   }[];
   navigationByProfile: <T>(options: RedirectOption<T>[]) => RedirectOption<T>[];
-  restrictFeatureByProfile: (feature: string) => boolean;
+  restrictFeatureByProfile: (code: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -53,21 +53,28 @@ export const AuthProvider = ({
     ],
     [data]
   );
+
   const navigationByProfile: <T>(
     options: RedirectOption<T>[]
-  ) => RedirectOption<T>[] = (options) => {
-    if (!data) return [];
-    const { user } = data;
-    return options.filter(
-      (el) => !user.current_profile.locked_control_code.includes(el.code)
-    );
-  };
+  ) => RedirectOption<T>[] = useCallback(
+    (options) => {
+      if (!data) return [];
+      const { user } = data;
+      return options.filter(
+        (el) => !user.current_profile.locked_control_code.includes(el.code)
+      );
+    },
+    [data]
+  );
 
-  const restrictFeatureByProfile = (feature: string) => {
-    if (!data) return false;
-    const { user } = data;
-    return !user.current_profile.locked_control_code.includes(feature);
-  };
+  const restrictFeatureByProfile = useCallback(
+    (code: string) => {
+      if (!data) return false;
+      const { user } = data;
+      return !user.current_profile.locked_control_code.includes(code);
+    },
+    [data]
+  );
 
   return (
     <AuthContext.Provider
