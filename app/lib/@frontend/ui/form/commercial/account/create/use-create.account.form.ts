@@ -7,6 +7,10 @@ const schema = z.object({
     value: z.string(),
     type: z.string(),
   }),
+  cpf: z.object({
+    name: z.string(),
+    rg: z.string(),
+  }),
 });
 export type CreateAccountFormSchema = z.infer<typeof schema>;
 
