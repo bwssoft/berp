@@ -18,7 +18,7 @@ export function SetLockedProfileForm(props: Props) {
     <form>
       {profile ? (
         <Toggle
-          value={!profile.locked_control_code.includes(control.code)}
+          value={profile.locked_control_code.includes(control.code)}
           onChange={handleLocked}
           title={(value) => (value ? "Remover acesso" : "Conceder acesso")}
         />

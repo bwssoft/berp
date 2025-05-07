@@ -58,15 +58,23 @@ class SetLockedControlProfileUsecase {
   }
 
   // method to mount mongodb update object
+  // method to build mongodb update object, evitando duplicados na adição
   buildValue(input: Dto.Input) {
     const { locked_control_code } = input;
-    return input.operation === "add"
-      ? {
-          $push: {
-            locked_control_code: { $each: locked_control_code },
-          },
-        }
-      : { $pullAll: { locked_control_code } };
+
+    if (input.operation === "add") {
+      return {
+        $addToSet: {
+          locked_control_code: { $each: locked_control_code },
+        },
+      };
+    }
+
+    return {
+      $pullAll: {
+        locked_control_code,
+      },
+    };
   }
 }
 
