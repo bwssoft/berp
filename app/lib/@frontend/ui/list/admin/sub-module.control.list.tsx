@@ -89,7 +89,7 @@ const renderControlTree = (
 ) => {
   const has_children = control.children.length > 0;
 
-  const hideActiveButton = restrictFeatureByProfile("admin:profile:update");
+  const hideActiveButton = restrictFeatureByProfile("admin:control:update");
 
   return (
     <Disclosure key={control.id}>
