@@ -33,6 +33,7 @@ export function SubModuleControlList(props: Props) {
   const { controlTree, profile, totalControlsOnModule } = props;
   const linkedControlModal = useProfileLinkedControlModal();
   const auditModal = useAuditByControlCodeProfileModal();
+  const { restrictFeatureByProfile } = useAuth();
 
   return (
     <>
@@ -50,7 +51,8 @@ export function SubModuleControlList(props: Props) {
               profile,
               totalControlsOnModule,
               linkedControlModal.handleControlSelection,
-              auditModal.handleControlSelection
+              auditModal.handleControlSelection,
+              restrictFeatureByProfile
             )}
           </li>
         ))}
@@ -82,12 +84,12 @@ const renderControlTree = (
   profile: IProfile | null,
   totalControlsOnModule: number,
   openProfileModal: (props: { id: string; name: string; code: string }) => void,
-  openAuditModal: (props: { id: string; name: string; code: string }) => void
+  openAuditModal: (props: { id: string; name: string; code: string }) => void,
+  restrictFeatureByProfile: (code: string) => boolean
 ) => {
   const has_children = control.children.length > 0;
 
-  const { restrictFeatureByProfile } = useAuth()
-  const hideActiveButton = restrictFeatureByProfile("admin:profile:inactive");
+  const hideActiveButton = restrictFeatureByProfile("admin:profile:update");
 
   return (
     <Disclosure key={control.id}>
@@ -159,7 +161,8 @@ const renderControlTree = (
                 profile,
                 totalControlsOnModule,
                 openProfileModal,
-                openAuditModal
+                openAuditModal,
+                restrictFeatureByProfile
               )
             )}
           </DisclosurePanel>

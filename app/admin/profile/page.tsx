@@ -1,4 +1,5 @@
-import { findManyProfile, restrictFeatureByProfile } from "@/app/lib/@backend/action";
+import { findManyProfile } from "@/app/lib/@backend/action";
+import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { IProfile } from "@/app/lib/@backend/domain";
 import { SearchProfileForm } from "@/app/lib/@frontend/ui/form";
 import { ProfileTable } from "@/app/lib/@frontend/ui/table";

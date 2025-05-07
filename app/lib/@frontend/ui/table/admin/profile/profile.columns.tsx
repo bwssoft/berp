@@ -43,7 +43,7 @@ export const columns = (props: Props): ColumnDef<IProfile>[] => [
     cell: ({ row }) => {
       const { original } = row;
 
-      const hideActiveButton = props.restrictFeatureByProfile("admin:profile:update");
+      const hideActiveButton = props.restrictFeatureByProfile("admin:profile:inactive");
       const hideViewButton = props.restrictFeatureByProfile("admin:profile:view");
 
       return (
