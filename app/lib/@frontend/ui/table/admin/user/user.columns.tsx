@@ -1,3 +1,5 @@
+"use-client"
+
 import { Badge } from "@bwsoft/badge";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../../../component";
@@ -6,7 +8,8 @@ import { ClockIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 interface Props {
-  openAuditModal: (user: Pick<IUser, "name" | "id">) => void
+  openAuditModal: (user: Pick<IUser, "name" | "id">) => void;
+  restrictFeatureByProfile: (code: string) => boolean;
 }
 
 export const columns = (props: Props): ColumnDef<IUser>[] => [
@@ -30,9 +33,7 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     accessorKey: "document",
     cell: ({ row }) => {
       const { original } = row;
-      return (
-        <p>{original.external ? "Externo" : "Interno"}</p>
-      );
+      return <p>{original.external ? "Externo" : "Interno"}</p>;
     },
   },
   {
@@ -56,24 +57,35 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     accessorKey: "created_at",
     cell: ({ row }) => {
       const { original } = row;
+
+      const hideHistory = props.restrictFeatureByProfile("admin:user:view");
+      const hideEdit = props.restrictFeatureByProfile("admin:user:update");
+      console.log("AAAAAAAAAAAAAAAA:",hideHistory,",", " BBBBBBBBBBBBBBBB:", hideEdit)
       return (
         <td className="flex gap-2 items-center">
-          <Button
-            title="Histórico"
-            onClick={() => props.openAuditModal({name: original.name, id: original.id}) }
-            className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          >
-            <ClockIcon className="size-5" />
-          </Button>
-          <Link href={`/admin/user/form/update?id=${original.id}`}>
+          {hideHistory && (
             <Button
-              title="Usuários"
-              variant="ghost"
+              title="Histórico"
+              onClick={() =>
+                props.openAuditModal({ name: original.name, id: original.id })
+              }
               className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             >
-              <PencilSquareIcon className="size-5" />
+              <ClockIcon className="size-5" />
             </Button>
-          </Link>
+          )}
+
+          {hideEdit && (
+            <Link href={`/admin/user/form/update?id=${original.id}`}>
+              <Button
+                title="Editar"
+                variant="ghost"
+                className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              >
+                <PencilSquareIcon className="size-5" />
+              </Button>
+            </Link>
+          )}
         </td>
       );
     },

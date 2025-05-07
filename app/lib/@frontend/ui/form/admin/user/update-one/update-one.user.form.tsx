@@ -12,6 +12,7 @@ import {
     useLockUserDialog,
     useResetPasswordUserDialog,
 } from "../../../../dialog";
+import { restrictFeatureByProfile } from "@/app/lib/@backend/action";
 
 interface Props {
     user: IUser;
@@ -38,6 +39,8 @@ export function UpdateOneUserForm({ user }: Props) {
         userId: userData.id,
         willActivate: !userData.active,
     });
+
+    const blockActivateButton = restrictFeatureByProfile("user:update");
 
     const resetPasswordDialog = useResetPasswordUserDialog({
         userId: userData.id,
@@ -72,14 +75,15 @@ export function UpdateOneUserForm({ user }: Props) {
                         >
                             Reset de Senha
                         </Button>
-
-                        <Button
-                            variant="secondary"
-                            onClick={activeDialog.openDialog}
-                            type="button"
-                        >
-                            {isActive ? "Inativar" : "Ativar"}
-                        </Button>
+                        {!blockActivateButton && (
+                            <Button
+                                variant="secondary"
+                                onClick={activeDialog.openDialog}
+                                type="button"
+                            >
+                                {isActive ? "Inativar" : "Ativar"}
+                            </Button>
+                            )}
                     </div>
 
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
