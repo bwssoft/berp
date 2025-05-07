@@ -21,6 +21,7 @@ import {
   useAuditByControlCodeProfileModal,
   useProfileLinkedControlModal,
 } from "../../modal";
+import { useAuth } from "../../../context";
 
 interface Props {
   controlTree: ControlTree;
@@ -32,6 +33,7 @@ export function SubModuleControlList(props: Props) {
   const { controlTree, profile, totalControlsOnModule } = props;
   const linkedControlModal = useProfileLinkedControlModal();
   const auditModal = useAuditByControlCodeProfileModal();
+  const { restrictFeatureByProfile } = useAuth();
 
   return (
     <>
@@ -49,7 +51,8 @@ export function SubModuleControlList(props: Props) {
               profile,
               totalControlsOnModule,
               linkedControlModal.handleControlSelection,
-              auditModal.handleControlSelection
+              auditModal.handleControlSelection,
+              restrictFeatureByProfile
             )}
           </li>
         ))}
@@ -81,9 +84,13 @@ const renderControlTree = (
   profile: IProfile | null,
   totalControlsOnModule: number,
   openProfileModal: (props: { id: string; name: string; code: string }) => void,
-  openAuditModal: (props: { id: string; name: string; code: string }) => void
+  openAuditModal: (props: { id: string; name: string; code: string }) => void,
+  restrictFeatureByProfile: (code: string) => boolean
 ) => {
   const has_children = control.children.length > 0;
+
+  const hideActiveButton = restrictFeatureByProfile("admin:profile:update");
+
   return (
     <Disclosure key={control.id}>
       <DisclosureButton className="border-b border-gray-200 w-full p-6 group flex justify-between items-center gap-2">
@@ -129,11 +136,13 @@ const renderControlTree = (
               >
                 <IdentificationIcon className="size-5" />
               </Button>
-              <SetLockedProfileForm
-                control={control}
-                profile={profile}
-                totalControlsOnModule={totalControlsOnModule}
-              />
+              {hideActiveButton && (
+                <SetLockedProfileForm
+                  control={control}
+                  profile={profile}
+                  totalControlsOnModule={totalControlsOnModule}
+                />
+              )}
             </div>
           )}
           {has_children ? (
@@ -152,7 +161,8 @@ const renderControlTree = (
                 profile,
                 totalControlsOnModule,
                 openProfileModal,
-                openAuditModal
+                openAuditModal,
+                restrictFeatureByProfile
               )
             )}
           </DisclosurePanel>

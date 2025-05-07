@@ -38,6 +38,7 @@ export const AuthProvider = ({
       user: { ...data?.user, current_profile: input },
     });
   };
+
   const navBarItems: any[] = useMemo(
     () => [
       {
@@ -60,8 +61,8 @@ export const AuthProvider = ({
     (options) => {
       if (!data) return [];
       const { user } = data;
-      return options.filter(
-        (el) => !user.current_profile.locked_control_code.includes(el.code)
+      return options.filter((el) =>
+        user.current_profile.locked_control_code.includes(el.code)
       );
     },
     [data]
@@ -71,7 +72,7 @@ export const AuthProvider = ({
     (code: string) => {
       if (!data) return false;
       const { user } = data;
-      return !user.current_profile.locked_control_code.includes(code);
+      return user.current_profile.locked_control_code.includes(code);
     },
     [data]
   );
