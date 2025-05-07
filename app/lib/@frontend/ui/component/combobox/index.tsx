@@ -86,6 +86,13 @@ export type ComboboxProps<T> = {
   onSearchChange?: (queryText: string, selectedOptions: T[]) => void;
   useSearchChangeDebounce?: boolean;
   searchChangeDebounceDelay?: number;
+
+  /**
+   * Encontrar um solução para não depender de passar modal no popover.
+   * Para renderizar o combobox dentro de um modal precisa dessa prop.
+   * Na tela de /admin/user/profile essa prop faz o componente se perder nas referências
+   */
+  modal?: boolean;
 };
 
 const ComboboxContext = React.createContext({} as ComboboxContextValues<any>);
@@ -109,6 +116,7 @@ export function Combobox<TData>({
   onSearchChange: newSearchChange,
   searchChangeDebounceDelay = 500,
   useSearchChangeDebounce = true,
+  modal = true,
   ...props
 }: ComboboxProps<TData>) {
   const { type, isLoading, onOptionChange, onSearchChange } =
@@ -299,14 +307,12 @@ export function Combobox<TData>({
         onMultipleSelect,
         searchChangeDebounceDelay,
         useSearchChangeDebounce,
+        modal,
         ...props,
       }}
     >
       <div className={cn("w-full", className)}>
-        <Popover
-         open={isOptionsOpened}
-         modal
-         >
+        <Popover open={isOptionsOpened} modal>
           <ComboboxTrigger ref={triggerContainerRef} />
 
           <PopoverContent
