@@ -21,7 +21,9 @@ const { auth, signIn, signOut, handlers } = NextAuth({
 
         const { username, password } = parsedCredentials.data;
 
-        const user = await findOneUser({ $or: [{ email: username }, { username }] });
+        const user = await findOneUser({
+          $or: [{ email: username }, { username }],
+        });
 
         if (!user || !user.active || user.lock) return null;
 
@@ -31,7 +33,8 @@ const { auth, signIn, signOut, handlers } = NextAuth({
 
         const passwordsMatch = await bcrypt.compare(password, user.password);
 
-        if (passwordsMatch) return { ...user, current_profile: profile, image: null };
+        if (passwordsMatch)
+          return { ...user, current_profile: profile, image: null };
 
         return null;
       },
