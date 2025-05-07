@@ -264,7 +264,9 @@ export function Combobox<TData>({
     }
   );
 
-  const onOpenAutoFocus = (e: Event) => e.preventDefault();
+  const onOpenAutoFocus = (e: Event) => {
+    e.preventDefault();
+  };
 
   const onCloseAutoFocus = () => {
     if (behavior === "select") {
@@ -322,7 +324,7 @@ export function Combobox<TData>({
             className="z-[500] flex max-h-64 flex-col overflow-y-hidden p-0"
             updatePositionStrategy="always"
             autoCorrect="false"
-            onOpenAutoFocus={onOpenAutoFocus}
+            // onOpenAutoFocus={onOpenAutoFocus}
             onCloseAutoFocus={onCloseAutoFocus}
           >
             <ComboboxMultipleSearch />
