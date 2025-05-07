@@ -22,7 +22,7 @@ export function ViewOneUserForm({ user }: Props) {
               data={user.profile}
               displayValueGetter={(doc) => doc.name}
               keyExtractor={(doc) => doc.id}
-              onOptionChange={([doc]) => handleChangeProfile(doc?.id)}
+              onOptionChange={([doc]) => doc?.id && handleChangeProfile(doc.id)}
               type="single"
               label="Perfil"
               defaultValue={
