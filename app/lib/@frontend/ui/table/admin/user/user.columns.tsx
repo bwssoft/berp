@@ -60,7 +60,6 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
 
       const hideHistory = props.restrictFeatureByProfile("admin:user:view");
       const hideEdit = props.restrictFeatureByProfile("admin:user:update");
-      console.log("AAAAAAAAAAAAAAAA:",hideHistory,",", " BBBBBBBBBBBBBBBB:", hideEdit)
       return (
         <td className="flex gap-2 items-center">
           {hideHistory && (

@@ -1,4 +1,5 @@
-import { findManyUser, restrictFeatureByProfile } from "@/app/lib/@backend/action";
+import { findManyUser } from "@/app/lib/@backend/action";
+import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { IUser } from "@/app/lib/@backend/domain";
 import { SearchUserForm } from "@/app/lib/@frontend/ui/form/admin/user/search-form/search.user.form";
 import { UserTable } from "@/app/lib/@frontend/ui/table/admin/user";
@@ -9,7 +10,7 @@ import Link from "next/link";
 interface Props {
   searchParams: {
     quick?: string;
-    page?:string;
+    page?: string;
     name?: string;
     cpf?: string;
     profile_id?: string[] | string;
@@ -22,11 +23,13 @@ interface Props {
   };
 }
 export default async function Example(props: Props) {
-  const { searchParams: { page, ...rest } } = props
-  const _page = page?.length && Number(page)
+  const {
+    searchParams: { page, ...rest },
+  } = props;
+  const _page = page?.length && Number(page);
   const users = await findManyUser(query(rest), _page);
   const canCreate = await restrictFeatureByProfile("admin:user:create");
-  
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
