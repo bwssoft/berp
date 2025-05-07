@@ -6,7 +6,7 @@ import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { auditRepository } from "../../../infra/repository/mongodb/admin/audit.repository";
 import { PaginationResult } from "../../../domain/@shared/repository/pagination.interface";
 
-export namespace Dto {
+namespace Dto {
         export interface Input {
             filter?: Filter<IAudit>;
             page?: number;
