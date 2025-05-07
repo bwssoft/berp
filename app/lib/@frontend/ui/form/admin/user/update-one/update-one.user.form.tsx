@@ -12,7 +12,7 @@ import {
     useLockUserDialog,
     useResetPasswordUserDialog,
 } from "../../../../dialog";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action";
+import { useAuth } from "@/app/lib/@frontend/context";
 
 interface Props {
     user: IUser;
@@ -29,6 +29,7 @@ export function UpdateOneUserForm({ user }: Props) {
         handleCancelEdit,
         handleBackPage,
     } = useUpdateOneUserForm(user);
+    const { restrictFeatureByProfile } = useAuth()
 
     const lockDialog = useLockUserDialog({
         userId: userData.id,
@@ -40,7 +41,7 @@ export function UpdateOneUserForm({ user }: Props) {
         willActivate: !userData.active,
     });
 
-    const blockActivateButton = restrictFeatureByProfile("user:update");
+    const blockActivateButton = restrictFeatureByProfile("admin:user:update");
 
     const resetPasswordDialog = useResetPasswordUserDialog({
         userId: userData.id,
@@ -57,33 +58,35 @@ export function UpdateOneUserForm({ user }: Props) {
             >
                 <div className="border-b border-gray-900/10 pb-6">
                     <div className="mt-10 flex gap-2 justify-end">
-                        <Button
-                            variant="secondary"
-                            onClick={lockDialog.openDialog}
-                            type="button"
-                        >
-                            {isLocked
-                                ? "Desbloquear Usuário"
-                                : "Bloquear Usuário"}
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            onClick={resetPasswordDialog.openDialog}
-                            disabled={isLocked}
-                            type="button"
-                        >
-                            Reset de Senha
-                        </Button>
                         {!blockActivateButton && (
-                            <Button
-                                variant="secondary"
-                                onClick={activeDialog.openDialog}
-                                type="button"
-                            >
-                                {isActive ? "Inativar" : "Ativar"}
-                            </Button>
-                            )}
+                            <>
+                                <Button
+                                    variant="secondary"
+                                    onClick={lockDialog.openDialog}
+                                    type="button"
+                                    >
+                                    {isLocked
+                                        ? "Desbloquear Usuário"
+                                        : "Bloquear Usuário"}
+                                </Button>
+
+                                <Button
+                                    variant="secondary"
+                                    onClick={resetPasswordDialog.openDialog}
+                                    disabled={isLocked}
+                                    type="button"
+                                    >
+                                    Reset de Senha
+                                </Button>
+                                <Button
+                                    variant="secondary"
+                                    onClick={activeDialog.openDialog}
+                                    type="button"
+                                    >
+                                    {isActive ? "Inativar" : "Ativar"}
+                                </Button>
+                            </>
+                        )}
                     </div>
 
                     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">

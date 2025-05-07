@@ -19,7 +19,7 @@ class RestrictFeatureByProfileUsecase {
 
     const { user } = session;
 
-    return !user.current_profile.locked_control_code.includes(code);
+    return user.current_profile.locked_control_code.includes(code);
   }
 }
 
