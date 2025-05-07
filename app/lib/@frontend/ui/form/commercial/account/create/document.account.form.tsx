@@ -2,13 +2,22 @@
 
 import { useFormContext } from "react-hook-form";
 import { CreateAccountFormSchema } from "./use-create.account.form";
-import { Input } from "../../../../component";
+import { Button, Input } from "../../../../component";
 
-export function DocumentAccount() {
+export function DocumentAccountForm() {
   const methods = useFormContext<CreateAccountFormSchema>();
   return (
     <div>
-      <Input label="Documento" {...methods.register("document.value")} />
+      <div className="flex items-end gap-4">
+        <Input
+          {...methods.register("document.value")}
+          label="CPF/CNPJ *"
+          className="w-80"
+          placeholder="Insira um documento para ser validado"
+        />
+        <Button type="button">Validar</Button>
+      </div>
+      <Input label="Tipo de pessoa" {...methods.register("document.type")} />
     </div>
   );
 }

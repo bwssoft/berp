@@ -2,14 +2,29 @@
 
 import { FormProvider } from "react-hook-form";
 import { useCreateAccountForm } from "./use-create.account.form";
-import { DocumentAccount } from "./document.account.form";
+import { DocumentAccountForm } from "./document.account.form";
+import { Button } from "../../../../component";
+import { CpfAccountForm } from "./cpf.account.form";
+import { CNPJAccountForm } from "./cnpj.account.form";
 
 export function AccountCreateForm() {
   const { methods } = useCreateAccountForm();
 
   return (
     <FormProvider {...methods}>
-      <DocumentAccount />
+      <form className="flex flex-col gap-4">
+        <DocumentAccountForm />
+        <CpfAccountForm />
+        <CNPJAccountForm />
+
+        <div className="flex gap-4">
+          <Button type="button" variant="ghost">
+            Cancelar
+          </Button>
+          <Button type="button">Salvar e continuar</Button>
+        </div>
+      </form>
+      <pre>{JSON.stringify(methods.watch(), null, 2)}</pre>
     </FormProvider>
   );
 }
