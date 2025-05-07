@@ -7,7 +7,10 @@ const schema = z.object({
         value: z.string(),
         type: z.string(),
     }),
-
+    cpf: z.object({
+        name: z.string(),
+        rg: z.string(),
+    }),
     cnpj: z.object({
         social_name: z.string(),
         fantasy_name: z.string(),
