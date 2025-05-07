@@ -68,7 +68,7 @@ export function ModuleControlList(props: Props) {
               </div>
             </div>
             {profile &&
-              !profile?.locked_control_code.includes(control.code) && (
+              profile?.locked_control_code.includes(control.code) && (
                 <span
                   aria-hidden="true"
                   className="absolute right-6 top-6 flex gap-2"
