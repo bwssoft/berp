@@ -10,60 +10,58 @@ interface Props {
 }
 
 export function useSetLockedProfileForm(props: Props) {
-  const { control, profile, totalControlsOnModule } = props;
+  const { control, profile } = props;
 
   const handleLocked = useCallback(
     async (arg: boolean) => {
       if (!profile) return;
 
       const parts = control.code.split(":");
-      // ["engineer", "engineer:product", "engineer:product:create"]
       const moduleCodes = parts.map((_, i) => parts.slice(0, i + 1).join(":"));
 
-      // Para remoção, vamos descobrir quais prefixes realmente devem "destravar"
-      const unlockPrefixes: string[] = [];
+      if (arg) {
+        // no caso de add, mantemos sua lógica original
+        await setLockedControl({
+          id: profile.id,
+          locked_control_code: [control.code, ...moduleCodes],
+          operation: "add",
+          control_name: control.name,
+        });
+      } else {
+        // === remoção dinâmica ===
+        const codesToRemove = new Set<string>([control.code]);
 
-      if (!arg) {
-        // percorre de baixo pra cima (do controle até a raiz)
+        // percorre de baixo pra cima
         for (let i = parts.length - 1; i >= 0; i--) {
           const prefix = parts.slice(0, i + 1).join(":");
-          // procura **outros** códigos bloqueados que partilham esse prefixo
+
+          // filtra irmãos EXCLUINDO tudo que já está marcado para remoção
           const siblings = profile.locked_control_code.filter(
-            (c) => c.startsWith(prefix + ":") && c !== control.code
+            (c) => c.startsWith(prefix + ":") && !codesToRemove.has(c)
           );
-          // se não existir nenhum irmão restante, podemos destravar este nível
+
           if (siblings.length === 0) {
-            unlockPrefixes.push(prefix);
+            codesToRemove.add(prefix);
+            // continua subindo para ver se remove também níveis acima
           } else {
-            // encontrou irmãos bloqueados → parar de subir na hierarquia
-            break;
+            break; // ainda há irmãos “vivos” → pare de subir
           }
         }
-      }
 
-      // para adição, a lógica continua a mesma de antes
-      const lockedCodes = [control.code];
-      if (arg) {
-        // se não havia NADA do módulo raiz bloqueado, bloqueia toda a cadeia
-        lockedCodes.push(...moduleCodes);
+        await setLockedControl({
+          id: profile.id,
+          locked_control_code: Array.from(codesToRemove),
+          operation: "remove",
+          control_name: control.name,
+        });
       }
-
-      // se for remoção, adiciona apenas os prefixes válidos
-      if (!arg) {
-        lockedCodes.push(...unlockPrefixes);
-      }
-
-      await setLockedControl({
-        id: profile.id,
-        locked_control_code: lockedCodes,
-        operation: arg ? "add" : "remove",
-        control_name: control.name,
-      });
 
       toast({
         variant: "success",
         title: "Sucesso",
-        description: `Acesso '${control.name}' ${arg ? "adicionado" : "removido"} do perfil '${profile.name}'`,
+        description: `Acesso '${control.name}' ${
+          arg ? "adicionado" : "removido"
+        } do perfil '${profile.name}'`,
       });
     },
     [control, profile]
