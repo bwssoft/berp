@@ -5,6 +5,7 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { authenticate } from "@/app/lib/@backend/action";
 import { auth } from "@/auth";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const schema = z.object({
   username: z.string(),
@@ -26,7 +27,7 @@ type Schema = z.infer<typeof schema>;
 
 export function useLoginUserForm() {
   const router = useRouter();
-
+  const { update } = useSession();
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -37,7 +38,7 @@ export function useLoginUserForm() {
 
   const handleSubmit = hookFormSubmit(async (data) => {
     const login = await authenticate(data);
-
+    await update();
     if (login.success) {
       const session = await auth();
       if (session?.user.temporary_password) {
