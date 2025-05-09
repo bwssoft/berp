@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const schema = z.object({
     document: z.object({
-        value: z.string(),
+        value: z.string().min(9, "Campo obrigatório"),
         type: z.string(),
     }),
     cpf: z.object({
