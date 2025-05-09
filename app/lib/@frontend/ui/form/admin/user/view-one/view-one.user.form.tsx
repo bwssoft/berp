@@ -29,6 +29,7 @@ export function ViewOneUserForm({ user }: Props) {
                 profile ? [{ id: profile.id, name: profile.name }] : undefined
               }
               placeholder="Escolha seu perfil atual"
+              modal={false}
             />
           </div>
           <Input label="CPF" value={user.cpf} disabled />

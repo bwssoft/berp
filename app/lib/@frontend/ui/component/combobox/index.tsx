@@ -314,7 +314,7 @@ export function Combobox<TData>({
       }}
     >
       <div className={cn("w-full", className)}>
-        <Popover open={isOptionsOpened} modal>
+        <Popover open={isOptionsOpened} modal={modal}>
           <ComboboxTrigger ref={triggerContainerRef} />
 
           <PopoverContent
