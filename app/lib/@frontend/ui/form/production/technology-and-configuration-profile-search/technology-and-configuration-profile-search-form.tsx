@@ -2,7 +2,7 @@
 
 import { IConfigurationProfile, ITechnology } from "@/app/lib/@backend/domain";
 import { useTechnologyAndConfigurationProfileForm } from "./use-technology-and-configuration-profile-search";
-import { Combobox } from "@bwsoft/combobox";
+import { Combobox } from "../../../component";
 
 interface Props {
   configurationProfile: IConfigurationProfile | null;
