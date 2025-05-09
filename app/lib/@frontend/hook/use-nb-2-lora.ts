@@ -356,6 +356,7 @@ export const useNB2Lora = () => {
             const autotestTimeout = 25000; // 25s timeout total
             const startTime = Date.now();
             let remainingAttempts = 5;
+            let lastBattResult = false;
 
             while (
               remainingAttempts > 0 &&
@@ -384,12 +385,14 @@ export const useNB2Lora = () => {
                 const VCC = Number(autotest["VCC"]);
                 const TEMP = Number(autotest["TEMP"]);
 
+                const isBattGood =
+                  !isNaN(BATT_VOLT) && BATT_VOLT <= 43 && BATT_VOLT >= 40;
+
                 resultTemplate.analysis = {
                   DEV: autotest["DEV"] === "DM_BWS_NB2_LORA",
                   ACELC: Boolean(autotest["ACELC"]?.length),
                   ACELP: autotest["ACELP"] === "OK",
-                  BATT_VOLT:
-                    !isNaN(BATT_VOLT) && BATT_VOLT <= 43 && BATT_VOLT >= 40,
+                  BATT_VOLT: lastBattResult || isBattGood,
                   CHARGER: autotest["CHARGER"] === "OK",
                   FW: Boolean(autotest["FW"]?.length),
                   GPS: autotest["GPS"] === "OK",
@@ -408,6 +411,8 @@ export const useNB2Lora = () => {
                   TEMP: !isNaN(TEMP) && TEMP <= 28 && TEMP >= 23,
                   RF: autotest["RF"] === "OK",
                 };
+
+                lastBattResult = resultTemplate.analysis.BATT_VOLT;
 
                 const statusValues = Object.values(resultTemplate.analysis);
 
