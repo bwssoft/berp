@@ -3,6 +3,7 @@ import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useState } from "react";
 
 const schema = z.object({
   document: z.object({
@@ -24,35 +25,57 @@ const schema = z.object({
     economic_group_controlled: z.string().optional(),
   }),
 });
+
 export type CreateAccountFormSchema = z.infer<typeof schema>;
 
 export function useCreateAccountForm() {
+  const [type, setType] = useState<"cpf" | "cnpj">("cpf");
+
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      document: { value: "", type: "cpf" },
+      cpf: { name: "", rg: "" },
+      cnpj: {
+        social_name: "",
+        fantasy_name: "",
+        state_registration: "",
+        municipal_registration: "",
+        status: "",
+        sector: "",
+        economic_group_holding: "",
+        economic_group_controlled: "",
+      },
+    },
   });
 
   const handleCpfCnpj = (value: string) => {
     const cleanedValue = value.replace(/\D/g, "");
 
-    // Verifica se é CPF (11 dígitos)
     if (cleanedValue.length === 11) {
-      isValidCPF(cleanedValue)
-        ? methods.setValue("document.type", "cpf")
-        : methods.setError("document.value", {
-            type: "manual",
-            message: "CPF inválido",
-          });
+      if (isValidCPF(cleanedValue)) {
+        methods.setValue("document.type", "cpf", { shouldValidate: true });
+        setType("cpf");
+      } else {
+        methods.setError("document.value", {
+          type: "manual",
+          message: "CPF inválido",
+        });
+      }
     }
-    // Verifica se é CNPJ (14 dígitos)
+
     if (cleanedValue.length >= 14) {
-      isValidCNPJ(cleanedValue)
-        ? methods.setValue("document.type", "cnpj")
-        : methods.setError("document.value", {
-            type: "manual",
-            message: "CNPJ inválido",
-          });
+      if (isValidCNPJ(cleanedValue)) {
+        methods.setValue("document.type", "cnpj", { shouldValidate: true });
+        setType("cnpj");
+      } else {
+        methods.setError("document.value", {
+          type: "manual",
+          message: "CNPJ inválido",
+        });
+      }
     }
   };
 
-  return { methods, handleCpfCnpj };
+  return { methods, handleCpfCnpj, type, setType };
 }
