@@ -2,7 +2,7 @@
 
 import { IProfile } from "@/app/lib/@backend/domain";
 import { useChooseProfileForm } from "./use-choose.profile.form";
-import { Combobox } from "@bwsoft/combobox";
+import { Combobox } from "../../../../component";
 
 interface Props {
   profile: IProfile | null;
