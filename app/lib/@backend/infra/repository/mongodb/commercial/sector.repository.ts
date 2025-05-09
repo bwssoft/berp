@@ -5,7 +5,7 @@ import { BaseRepository } from "../@base";
 class SectorRepository extends BaseRepository<ISector> {
     constructor() {
         super({
-            collection: "sector",
+            collection: "comercial.sector",
             db: "berp",
         });
     }
