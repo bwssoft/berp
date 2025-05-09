@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { Button, Modal, ModalBody, ModalContent } from "../../../component";
+import { Button, Combobox, Modal, ModalBody, ModalContent } from "../../../component";
 import { SectorTable } from "../../../table/commercial/sector";
 import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
 import { Controller } from "react-hook-form";
-import { Combobox } from "@bwsoft/combobox";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 interface SectorModalProps {
