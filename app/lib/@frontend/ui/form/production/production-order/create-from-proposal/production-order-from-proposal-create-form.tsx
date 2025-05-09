@@ -19,8 +19,7 @@ import {
   IProductionOrder,
   ITechnology,
 } from "@/app/lib/@backend/domain";
-import { Button, Error } from "../../../../component";
-import { Combobox } from "@bwsoft/combobox";
+import { Button, Combobox, Error } from "../../../../component";
 import { Controller } from "react-hook-form";
 import { nanoid } from "nanoid";
 import Link from "next/link";

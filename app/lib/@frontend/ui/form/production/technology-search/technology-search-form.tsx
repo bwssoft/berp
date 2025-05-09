@@ -2,7 +2,7 @@
 
 import { ITechnology } from "@/app/lib/@backend/domain";
 import { useTechnologySearchForm } from "./use-technology-search-form";
-import { Combobox } from "@bwsoft/combobox";
+import { Combobox } from "../../../component";
 
 interface Props {
   technology: ITechnology | null;
