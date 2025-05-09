@@ -21,8 +21,8 @@ export default function ProductionLayout({
   children: React.ReactNode;
 }) {
   const { navigationByProfile } = useAuth();
-  const options = navigationByProfile(navigation);
-  return <Layout navigation={options}>{children}</Layout>;
+  // const options = navigationByProfile(navigation);
+  return <Layout navigation={navigation}>{children}</Layout>;
 }
 
 const navigation = [
