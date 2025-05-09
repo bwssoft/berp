@@ -77,7 +77,7 @@ export function ValidateField<T extends FieldValues>({
     const error = getNestedError(errors as any, name as string)?.message;
 
     return (
-        <div className="flex flex-col gap-1">
+        <div className="flex gap-1 ">
             <Controller
                 control={control}
                 name={name}
@@ -94,7 +94,7 @@ export function ValidateField<T extends FieldValues>({
 
             {children}
 
-            <div className="mt-1 flex items-center gap-2">
+            <div className="mt-1 flex items-end">
                 {!validated ? (
                     <Button
                         variant={"default"}
