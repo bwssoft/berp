@@ -5,6 +5,7 @@ import {
 } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { useSearchContactAccount } from "./use-search-contact.account";
+import { Button } from "../../../../component";
 
 type ContactAccountFormProps = {
   accountId?: string;
@@ -45,6 +46,15 @@ export function SearchContactAccountForm({
           )}
         </Disclosure>
       ))}
+      <div className="flex justify-end gap-4 w-full">
+        <Button type="button" variant={"ghost"} onClick={() => {}}>
+          Cancelar
+        </Button>
+
+        <Button type="button" onClick={() => {}}>
+          Salvar
+        </Button>
+      </div>
     </div>
   );
 }
