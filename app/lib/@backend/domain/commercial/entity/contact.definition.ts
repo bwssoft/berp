@@ -4,10 +4,12 @@ export interface IContact {
   department: ContactDepartmentEnum;
   name: string;
   email: string;
-  phone: string;
+  phone: string | string[];
   can_sign_contract: boolean;
   can_receive_document: boolean;
   created_at: Date;
+  cpf: string;
+  rg?: string;
   accountId: string[];
 }
 
