@@ -1,6 +1,7 @@
 "use client";
 
 import { ClipboardIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { Button } from "../../../component";
 
 type Address = {
     street: string;
@@ -8,7 +9,7 @@ type Address = {
     district: string;
     city: string;
     state: string;
-    zip: string;
+    zip_code: string;
     complement?: string;
     reference?: string;
 };
@@ -21,7 +22,7 @@ interface AddressCardProps {
 }
 
 export function AddressCard({
-    title = "Endereço Fiscal",
+    title = "Endereço: ",
     address,
     onRefresh,
     onCopy,
@@ -35,49 +36,34 @@ export function AddressCard({
                 district,
                 city,
                 state,
-                zip,
+                zip_code,
                 complement,
                 reference,
             } = address;
             navigator.clipboard.writeText(
-                `${street}, ${number}, ${district}\n${city} - ${state}, ${zip}\nComplemento: ${complement ?? ""}\nPonto de Referência: ${reference ?? ""}`
+                `${street}, ${number}, ${district}\n${city} - ${state}, ${zip_code}\nComplemento: ${complement ?? ""}\nPonto de Referência: ${reference ?? ""}`
             );
         }
     };
 
     return (
-        <div className="rounded border border-gray-200 bg-gray-50 p-4 text-sm leading-5 text-gray-800">
-            <span className="font-semibold">{title}</span>
-            <div className="mt-1 whitespace-pre-line">
-                <span>
-                    {address.street}, {address.number}, {address.district}
-                </span>
-                <span>
-                    {address.city} - {address.state}, {address.zip}
-                </span>
-                <span> Complemento: {address.complement ?? ""}</span>
-                <span> Ponto de Referência: {address.reference ?? ""}</span>
-            </div>
-
-            <div className="absolute right-2 top-2 flex gap-2">
-                {onRefresh && (
-                    <button
-                        type="button"
-                        onClick={onRefresh}
-                        className="rounded p-1 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                        title="Atualizar"
-                    >
+        <div className="shadow-xl rounded-xl bg-slate-100 p-5 text-gray-800 max-w-80 min-h-72">
+            <div className="flex items-center justify-between font-semibold">
+                {title}
+                <div className="flex gap-1">
+                    <Button variant={"secondary"}>
                         <ArrowPathIcon className="size-4" />
-                    </button>
-                )}
-                <button
-                    type="button"
-                    onClick={copy}
-                    className="rounded p-1 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                    title="Copiar"
-                >
-                    <ClipboardIcon className="size-4" />
-                </button>
+                    </Button>
+                    <Button variant={"secondary"}>
+                        <ClipboardIcon className="size-4" />
+                    </Button>
+                </div>
+            </div>
+            <div className="mt-4">
+                {address.street}, {address.number}, {address.district}
+                {address.city} - {address.state}, {address.zip_code}
+                Complemento: {address.complement ?? ""}
+                Ponto de Referência: {address.reference ?? ""}
             </div>
         </div>
     );
