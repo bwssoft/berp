@@ -1,13 +1,14 @@
 export interface IContact {
-  id: string
-  role: ContactRoleEnum
-  department: ContactDepartmentEnum
+  id: string;
+  role: ContactRoleEnum;
+  department: ContactDepartmentEnum;
   name: string;
-  email: string
-  phone: string
-  can_sign_contract: boolean
-  can_receive_document: boolean
-  created_at: Date
+  email: string;
+  phone: string;
+  can_sign_contract: boolean;
+  can_receive_document: boolean;
+  created_at: Date;
+  accountId: string[];
 }
 
 export enum ContactRoleEnum {
