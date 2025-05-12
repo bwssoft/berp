@@ -23,7 +23,7 @@ export function ContactModal({ open, closeModal }: ContactModalProps) {
       position="center"
     >
       <ModalContent>
-        <ModalBody>
+        <ModalBody className="overflow-y-scroll max-h-[70vh]">
           <ContactAccountForm />
         </ModalBody>
       </ModalContent>
