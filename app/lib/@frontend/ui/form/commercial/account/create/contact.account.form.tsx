@@ -8,7 +8,7 @@ export function ContactAccountForm() {
     <div>
       <div className="flex flex-col items-start  gap-4">
         <Controller
-          name="external"
+          name=""
           render={({ field }) => (
             <Checkbox
               checked={field.value}
@@ -25,6 +25,13 @@ export function ContactAccountForm() {
         <Input label={"Cargo/Relação"} />
 
         <Input label={"Área"} />
+
+        {false && (
+          <>
+            <Input label={"CPF"} />
+            <Input label={"RG"} />
+          </>
+        )}
 
         <div className="flex gap-4 items-center justify-between w-full">
           <Controller
@@ -45,7 +52,7 @@ export function ContactAccountForm() {
         <h2>Contato para </h2>
         <div className="flex gap-4">
           <Controller
-            name="external"
+            name=""
             render={({ field }) => (
               <Checkbox
                 checked={field.value}
@@ -57,7 +64,7 @@ export function ContactAccountForm() {
             )}
           />
           <Controller
-            name="external"
+            name=""
             render={({ field }) => (
               <Checkbox
                 checked={field.value}
@@ -69,7 +76,7 @@ export function ContactAccountForm() {
             )}
           />
           <Controller
-            name="external"
+            name=""
             render={({ field }) => (
               <Checkbox
                 checked={field.value}
@@ -81,7 +88,7 @@ export function ContactAccountForm() {
             )}
           />
           <Controller
-            name="external"
+            name=""
             render={({ field }) => (
               <Checkbox
                 checked={field.value}
@@ -94,7 +101,7 @@ export function ContactAccountForm() {
           />
         </div>
 
-        <div>
+        <div className="flex justify-end gap-4 w-full">
           <Button type="button" variant={"ghost"} onClick={() => {}}>
             Cancelar
           </Button>
