@@ -9,7 +9,7 @@ export interface IContact {
 }
 
 export interface ContactItem {
-  type: "Business Phone" | "Home Phone" | "Mobile" | "Email";
+  type: "Celular" | "Telefone residencial" | "Telefone Comercial" | "Email";
   contact: string;
   preferred: PreferredContact;
   contactFor: ContactFor[];
@@ -21,4 +21,4 @@ export interface PreferredContact {
   email?: boolean;
 }
 
-export type ContactFor = "Sales" | "Support" | "Billing" | "Marketing";
+export type ContactFor = "Faturamento" | "Marketing" | "Suporte" | "Comercial";
