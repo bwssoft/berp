@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IContact } from "@/app/lib/@backend/domain";
 import { BaseRepository } from "../@base";
+import { IContact } from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 
 class ContactRepository extends BaseRepository<IContact> {
   constructor() {

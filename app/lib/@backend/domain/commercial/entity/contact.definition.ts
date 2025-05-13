@@ -10,7 +10,7 @@ export interface IContact {
 
 export interface ContactItem {
   type: "Celular" | "Telefone residencial" | "Telefone Comercial" | "Email";
-  contact: string;
+  contact: string[];
   preferred: PreferredContact;
   contactFor: ContactFor[];
 }

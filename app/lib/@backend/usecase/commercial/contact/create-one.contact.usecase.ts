@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IContact, IContactRepository } from "@/app/lib/@backend/domain";
-import { contactRepository } from "../../../infra/repository";
+import { IContact, IContactRepository } from "../../../domain";
+import { contactRepository } from "../../../infra";
 class CreateOneContactUsecase {
   repository: IContactRepository;
 
