@@ -1,48 +1,48 @@
 import { OmieEnterpriseEnum } from "../../@shared/gateway/omie.gateway.interface";
-import { IContact } from "./contact.definition";
+import { IOldContact } from "./old-contact.definition";
 
 export interface IClient {
   id: string;
   company_name: string; //razao social
   trade_name: string; //nome fantasia
-  document: Document
-  sector: ClientSectorEnum
+  document: Document;
+  sector: ClientSectorEnum;
   description?: string;
-  tax_details?: TaxDetails
-  bank_details?: BankDetails
+  tax_details?: TaxDetails;
+  bank_details?: BankDetails;
   address?: Address;
-  contacts: IContact[];
+  contacts: IOldContact[];
   created_at: Date;
   omie_metadata?: {
     codigo_cliente: Partial<Record<OmieEnterpriseEnum, number | undefined>>;
-    codigo_cliente_integracao?: string
-  }
+    codigo_cliente_integracao?: string;
+  };
 }
 
 export enum DocumentValueEnum {
   "CPF" = "CPF",
-  "CNPJ"= "CNPJ" 
+  "CNPJ" = "CNPJ",
 }
 
 export interface Document {
-  value: string
-  type: DocumentValueEnum
-};
+  value: string;
+  type: DocumentValueEnum;
+}
 
 interface TaxDetails {
   state_registration?: string;
   municipal_registration?: string;
-  regime?: TaxRegime
+  regime?: TaxRegime;
 }
 interface BankDetails {
-  code?: string // codigo do banco
-  agency?: string
-  account?: string
-  pix?: string
+  code?: string; // codigo do banco
+  agency?: string;
+  account?: string;
+  pix?: string;
   holder?: {
-    document?: string
-    name?: string
-  }
+    document?: string;
+    name?: string;
+  };
 }
 export interface Address {
   street: string;
@@ -79,4 +79,3 @@ export enum TaxRegime {
   PRODUTOR_RURAL = "PRODUTOR_RURAL",
   OUTRO = "OUTRO",
 }
-
