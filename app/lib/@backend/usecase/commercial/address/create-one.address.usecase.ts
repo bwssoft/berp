@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IAddress } from "../../../domain";
-import { IAddressRepository } from "../../../domain/commercial/repository/address.repository";
-import { addressRepository } from "../../../infra/repository/mongodb/commercial/address.repository";
+import { IAddressRepository } from "@/app/lib/@backend/domain/commercial";
+import { addressRepository } from "@/app/lib/@backend/infra/repository";
+import { IAddress } from "@/app/lib/@backend/domain";
 
 class CreateOneAddressUsecase {
     repository: IAddressRepository;

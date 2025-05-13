@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 const AddressFormSchema = z.object({
     search_address: z.string().optional(),
@@ -22,7 +23,9 @@ const AddressFormSchema = z.object({
 export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
 
 export function useAddressForm() {
-    return useForm<AddressFormSchema>({
+    const [open, setOpen] = useState(false);
+
+    const methods = useForm<AddressFormSchema>({
         resolver: zodResolver(AddressFormSchema),
         defaultValues: {
             search_address: "",
@@ -37,4 +40,8 @@ export function useAddressForm() {
             types: [],
         },
     });
+
+    return {
+        ...methods,
+    };
 }

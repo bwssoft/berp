@@ -7,10 +7,27 @@ import { Button } from "../../../../component";
 import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
 import { IAddress } from "@/app/lib/@backend/domain";
-import { AddressCardList } from "../../../../list/comercial/address/use-address.list";
+import { AddressForm } from "./address.account.form";
 
 export function AccountCreateForm() {
     const { methods } = useCreateAccountForm();
+
+    const mockIAddresses: IAddress[] = [
+        {
+            id: "a1b2c3d4",
+            street: "Maple Avenue",
+            district: "Greenwood",
+            city: "Springfield",
+            state: "California",
+            zip_code: "90210",
+            number: "742",
+            complement: "Apartment 5B",
+            reference_point: "Near the old library",
+            type: "Residencial",
+            createdAt: new Date("2024-10-15T10:30:00Z"),
+            updatedAt: new Date("2025-04-22T15:45:00Z"),
+        },
+    ];
 
     return (
         <FormProvider {...methods}>
@@ -18,13 +35,13 @@ export function AccountCreateForm() {
                 <DocumentAccountForm />
                 <CpfAccountForm />
                 <CNPJAccountForm />
+                <AddressForm />
                 <div className="flex gap-4">
                     <Button type="button" variant="ghost">
                         Cancelar
                     </Button>
                     <Button type="button">Salvar e próximo</Button>
                 </div>
-                ---------------------------- ----------------------------
             </form>
             <pre>{JSON.stringify(methods.watch(), null, 2)}</pre>
         </FormProvider>
