@@ -1,12 +1,8 @@
 "use client";
 
 import React from "react";
-import {
-  ContactAccountForm,
-  Modal,
-  ModalBody,
-  ModalContent,
-} from "../../../component";
+import { Modal, ModalBody, ModalContent } from "../../../component";
+import { ContactAccountForm } from "../../../form/commercial/account/contact";
 
 interface ContactModalProps {
   open: boolean;

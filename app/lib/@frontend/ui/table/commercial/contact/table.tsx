@@ -1,19 +1,20 @@
 "use client";
-//tava reclamando da função cell nas colunas
-
-import { IClient, IProposal } from "@/app/lib/@backend/domain";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./colums";
-import { ContactList } from "../../../form/commercial/account/create/use-contact.account";
+import { ContactList, useContactAccount } from "../../../form";
 
 interface Props {
   data: ContactList[];
 }
 export function ContactTable(props: Props) {
   const { data } = props;
+  const { handlePreferredContact } = useContactAccount();
+
   return (
     <DataTable
-      columns={columns}
+      columns={columns({
+        handlePreferredContact,
+      })}
       data={data}
       mobileDisplayValue={() => `${data}`}
       mobileKeyExtractor={(data) => data.contact}

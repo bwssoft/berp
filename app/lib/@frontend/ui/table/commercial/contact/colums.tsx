@@ -1,10 +1,15 @@
-import { deleteOneProposalById } from "@/app/lib/@backend/action";
 import { ColumnDef } from "@tanstack/react-table";
-import Link from "next/link";
-import { ContactList } from "../../../form/commercial/account/create/use-contact.account";
+import { ContactList } from "../../../form/commercial/account/contact/create/use-contact.account";
 import { TrashIcon } from "@heroicons/react/20/solid";
 
-export const columns: ColumnDef<ContactList>[] = [
+interface Props {
+  handlePreferredContact: (
+    contact: ContactList,
+    preferredContact: string
+  ) => void;
+}
+
+export const columns = (props: Props): ColumnDef<ContactList>[] => [
   {
     header: "Tipo",
     accessorKey: "type",

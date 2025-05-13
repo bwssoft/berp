@@ -2,7 +2,11 @@
 
 import { Filter } from "mongodb";
 import { IContact } from "../../domain";
-import { createOneContactUsecase, findManyContactUsecase } from "../../usecase";
+import {
+  createOneContactUsecase,
+  findManyContactUsecase,
+  findOneContactUsecase,
+} from "../../usecase";
 
 export async function createOneContact(
   contact: Omit<IContact, "id" | "created_at">
@@ -18,3 +22,7 @@ export async function findManyContact(
 ) {
   return await findManyContactUsecase.execute({ filter, page, limit, sort });
 }
+
+export const findOneContact = async (filter: Filter<IContact>) => {
+  return await findOneContactUsecase.execute(filter);
+};

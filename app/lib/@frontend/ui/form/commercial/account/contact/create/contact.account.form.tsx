@@ -6,18 +6,18 @@ import {
   Checkbox,
   Combobox,
   ContactTable,
+  CreateAccountFormSchema,
   Input,
-} from "../../../../component";
+} from "../../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useContactAccount } from "./use-contact.account";
-import { CreateAccountFormSchema } from "./use-create.account.form";
 
 export function ContactAccountForm() {
   const { contactData, handleNewContact } = useContactAccount();
   const { register, control } = useFormContext<CreateAccountFormSchema>();
 
   return (
-    <div className="flex flex-col items-start  gap-4 ">
+    <div className="flex flex-col items-start  gap-4">
       <Controller
         name="contact.contractEnabled"
         control={control}
