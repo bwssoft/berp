@@ -1,25 +1,36 @@
 "use client";
 
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import {
   Button,
   Checkbox,
   Combobox,
   ContactTable,
-  CreateAccountFormSchema,
   Input,
+  useContactAccount,
 } from "../../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { useContactAccount } from "./use-contact.account";
+import { on } from "events";
 
 export function ContactAccountForm() {
-  const { contactData, handleNewContact } = useContactAccount();
-  const { register, control } = useFormContext<CreateAccountFormSchema>();
+  const {
+    control,
+    register,
+    watch,
+    fields,
+    onSubmit,
+    handleNewContact,
+    handlePreferredContact,
+    handleRemove,
+  } = useContactAccount();
 
   return (
-    <div className="flex flex-col items-start  gap-4">
+    <form
+      action={() => onSubmit()}
+      className="flex flex-col items-start  gap-4"
+    >
       <Controller
-        name="contact.contractEnabled"
+        name="contractEnabled"
         control={control}
         render={({ field }) => (
           <Checkbox
@@ -32,25 +43,22 @@ export function ContactAccountForm() {
         )}
       />
 
-      <Input label={"Nome"} {...register("contact.name")} />
+      <Input label={"Nome"} {...register("name")} />
 
-      <Input
-        label={"Cargo/Relação"}
-        {...register("contact.positionOrRelation")}
-      />
+      <Input label={"Cargo/Relação"} {...register("positionOrRelation")} />
 
-      <Input label={"Área"} {...register("contact.department")} />
+      <Input label={"Área"} {...register("department")} />
 
-      {false && (
+      {watch("contractEnabled") && (
         <>
-          <Input label={"CPF"} {...register("contact.cpf")} />
-          <Input label={"RG"} {...register("contact.rg")} />
+          <Input label={"CPF"} {...register("cpf")} />
+          <Input label={"RG"} {...register("rg")} />
         </>
       )}
 
       <div className="flex gap-4 justify-between w-full items-end">
         <Controller
-          name="contact.contactItems.0.type"
+          name="contactItems.0.type"
           control={control}
           render={({ field }) => (
             <Combobox
@@ -60,7 +68,7 @@ export function ContactAccountForm() {
                 "Telefone Residencial",
                 "Telefone Comercial",
               ]}
-              value={[field.value]}
+              value={field.value}
               onChange={field.onChange}
               label="Tipo"
               type="single"
@@ -71,24 +79,27 @@ export function ContactAccountForm() {
           )}
         />
 
-        <Input
-          label="Contato"
-          {...register(`contact.contactItems.0.contact`)}
-        />
+        <Input label="Contato" {...register(`contactItems.0.contact`)} />
         <div
           className="bg-black text-white rounded-full p-1 mb-1.5 cursor-pointer"
-          onClick={() => handleNewContact("celular", "77998562656", "teste")}
+          onClick={handleNewContact}
         >
           <PlusIcon className="text-white w-5 h-5" />
         </div>
       </div>
 
-      {contactData.length > 0 && <ContactTable data={contactData} />}
+      {fields.length > 0 && (
+        <ContactTable
+          data={fields}
+          handlePreferredContact={handlePreferredContact}
+          handleRemove={handleRemove}
+        />
+      )}
 
       <h2>Contato para </h2>
       <div className="flex gap-4">
         <Controller
-          name={`contact.contactItems.0.contactFor`}
+          name={`contactFor`}
           control={control}
           render={({ field }) => (
             <Checkbox
@@ -96,7 +107,7 @@ export function ContactAccountForm() {
               onChange={(checked) => {
                 const newValue = checked
                   ? [...(field.value || []), "Comercial"]
-                  : field.value?.filter((item) => item !== "Comercial");
+                  : field.value?.filter((item: string) => item !== "Comercial");
                 field.onChange(newValue);
               }}
               label="Comercial"
@@ -104,7 +115,7 @@ export function ContactAccountForm() {
           )}
         />
         <Controller
-          name={`contact.contactItems.0.contactFor`}
+          name={`contactFor`}
           control={control}
           render={({ field }) => (
             <Checkbox
@@ -120,7 +131,7 @@ export function ContactAccountForm() {
           )}
         />
         <Controller
-          name={`contact.contactItems.0.contactFor`}
+          name={`contactFor`}
           control={control}
           render={({ field }) => (
             <Checkbox
@@ -128,7 +139,9 @@ export function ContactAccountForm() {
               onChange={(checked) => {
                 const newValue = checked
                   ? [...(field.value || []), "Faturamento"]
-                  : field.value?.filter((item) => item !== "Faturamento");
+                  : field.value?.filter(
+                      (item: string) => item !== "Faturamento"
+                    );
                 field.onChange(newValue);
               }}
               label="Faturamento"
@@ -136,7 +149,7 @@ export function ContactAccountForm() {
           )}
         />
         <Controller
-          name={`contact.contactItems.0.contactFor`}
+          name={`contactFor`}
           control={control}
           render={({ field }) => (
             <Checkbox
@@ -160,10 +173,8 @@ export function ContactAccountForm() {
           Cancelar
         </Button>
 
-        <Button type="button" onClick={() => {}}>
-          Salvar
-        </Button>
+        <Button type="submit">Salvar</Button>
       </div>
-    </div>
+    </form>
   );
 }

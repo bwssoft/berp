@@ -1,4 +1,5 @@
 export interface IContact {
+  id: string;
   contractEnabled: boolean;
   name: string;
   positionOrRelation: string;
@@ -6,13 +7,15 @@ export interface IContact {
   cpf?: string;
   rg?: string;
   contactItems: ContactItem[];
+  contactFor: ContactFor[];
+  accountId?: string;
+  created_at: Date;
 }
 
 export interface ContactItem {
-  type: "Celular" | "Telefone residencial" | "Telefone Comercial" | "Email";
-  contact: string[];
-  preferred: PreferredContact;
-  contactFor: ContactFor[];
+  type: "Celular" | "Telefone Residencial" | "Telefone Comercial" | "Email";
+  contact: string;
+  preferredContact: PreferredContact;
 }
 
 export interface PreferredContact {
