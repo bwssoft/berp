@@ -10,7 +10,7 @@ class CreateOneAddressUsecase {
         this.repository = addressRepository;
     }
 
-    async execute(input: Omit<IAddress, "id" | "created_at" | "updated_at">) {
+    async execute(input: Omit<IAddress, "id" | "created_at">) {
         const address = {
             ...input,
             id: crypto.randomUUID(),

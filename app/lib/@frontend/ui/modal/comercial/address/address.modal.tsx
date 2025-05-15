@@ -11,16 +11,19 @@ import {
 } from "../../../component";
 
 import { AddressCreateForm } from "../../../form/commercial/address/create/address.create.form";
-import { useAddressModal } from "./use-address.comercial.modal";
+import { useAddressModal } from "./use-address.modal";
 
-export function AddressModal() {
-    const { open, closeModal } = useAddressModal();
+interface AddressProps {
+    open: any;
+}
+export function AddressModal({ open }: AddressProps) {
+    const { closeModal } = useAddressModal();
 
     return (
         <Modal
             open={open}
             onClose={closeModal}
-            title="Novo tipo de setor"
+            title="MINHAUU"
             className="bg-white"
             position="center"
         >

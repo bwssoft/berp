@@ -1,1 +1,1 @@
-export * from "./address.comercial.modal";
+export * from "./address.modal";

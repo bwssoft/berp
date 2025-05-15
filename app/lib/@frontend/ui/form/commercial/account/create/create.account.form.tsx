@@ -12,23 +12,6 @@ import { AddressForm } from "./address.account.form";
 export function AccountCreateForm() {
     const { methods } = useCreateAccountForm();
 
-    const mockIAddresses: IAddress[] = [
-        {
-            id: "a1b2c3d4",
-            street: "Maple Avenue",
-            district: "Greenwood",
-            city: "Springfield",
-            state: "California",
-            zip_code: "90210",
-            number: "742",
-            complement: "Apartment 5B",
-            reference_point: "Near the old library",
-            type: "Residencial",
-            createdAt: new Date("2024-10-15T10:30:00Z"),
-            updatedAt: new Date("2025-04-22T15:45:00Z"),
-        },
-    ];
-
     return (
         <FormProvider {...methods}>
             <form className="flex flex-col gap-4">

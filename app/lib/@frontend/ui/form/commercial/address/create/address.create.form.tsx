@@ -6,32 +6,27 @@ import { useAddressForm } from "./use-address.create.form";
 import { Button, Checkbox, Input } from "../../../../component";
 
 export function AddressCreateForm() {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useAddressForm();
-
-    const onSubmit = handleSubmit((data) => {
-        console.log(data);
-    });
+    const { register, handleSubmit, loadingCep, errors } = useAddressForm();
 
     return (
         <form
-            onSubmit={onSubmit}
+            onSubmit={handleSubmit}
             className="flex flex-col gap-2 bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10 w-full"
         >
-            <Input
+            {/* <Input
                 label="Buscar pelo endereço"
                 placeholder=""
                 {...register("search_address")}
                 error={errors.search_address?.message}
-            />
+            /> */}
             <Input
                 label="Buscar pelo CEP"
                 placeholder=""
-                {...register("cep")}
-                error={errors.cep?.message}
+                onLoad={() => {
+                    loadingCep;
+                }}
+                {...register("zip_code")}
+                error={errors.zip_code?.message}
             />
             <Input
                 label="Logradouro"
@@ -72,14 +67,14 @@ export function AddressCreateForm() {
             <Input
                 label="Ponto de Referência"
                 placeholder=""
-                {...register("landmark")}
-                error={errors.landmark?.message}
+                {...register("reference_point")}
+                error={errors.reference_point?.message}
             />
             <div className="mt-2">
                 <span className="text-sm font-medium text-gray-700">
                     Tipo *
                 </span>
-                <div className="mt-1 grid grid-cols-2 gap-2">
+                {/* <div className="mt-1 grid grid-cols-2 gap-2">
                     <Checkbox
                         {...register("types")}
                         value="commercial"
@@ -100,11 +95,13 @@ export function AddressCreateForm() {
                         value="residential"
                         label="Residencial"
                     />
-                </div>
+                </div> */}
             </div>
             <div className="mt-4 flex justify-end gap-3">
                 <Button title="Cancelar" type="button" variant="secondary" />
-                <Button title="Salvar" type="submit" />
+                <Button title="Salvar" type="submit">
+                    salvar
+                </Button>
             </div>
         </form>
     );

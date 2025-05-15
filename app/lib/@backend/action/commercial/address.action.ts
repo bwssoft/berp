@@ -7,11 +7,16 @@ import {
     findOneAddressUsecase,
 } from "@/app/lib/@backend/usecase";
 import { Filter } from "mongodb";
+import { viaCepGateway } from "../../infra/gateway/viacep/viacep.gateway";
+
+export async function getAddressByCep(cep: string) {
+    return await viaCepGateway.findByCep(cep);
+}
 
 export async function createOneAddress(
-    address: Omit<IAddress, "id" | "created_at" | "updated_at">
+    input: Omit<IAddress, "id" | "created_at">
 ) {
-    return await createOneAddressUsecase.execute(address);
+    return await createOneAddressUsecase.execute(input);
 }
 
 export async function findManyAddress(
