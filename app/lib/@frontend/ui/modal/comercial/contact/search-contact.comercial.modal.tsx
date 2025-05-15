@@ -20,11 +20,11 @@ export function SearchContactModal({
       open={open}
       onClose={closeModal}
       title="Busca de Contatos"
-      className="bg-white h-full"
+      className="bg-white h-full max-h-[70vh]"
       position="center"
     >
       <ModalContent>
-        <ModalBody className="overflow-y-scroll max-h-[70vh]">
+        <ModalBody>
           <SearchContactAccountForm accountId={accountId} />
         </ModalBody>
       </ModalContent>
