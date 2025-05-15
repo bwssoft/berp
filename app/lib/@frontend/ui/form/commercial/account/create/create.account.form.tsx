@@ -6,9 +6,6 @@ import { DocumentAccountForm } from "./document.account.form";
 import { Button } from "../../../../component";
 import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
-import { IAddress } from "@/app/lib/@backend/domain";
-import { AddressForm } from "./address.account.form";
-
 export function AccountCreateForm() {
     const { methods } = useCreateAccountForm();
 
@@ -18,7 +15,7 @@ export function AccountCreateForm() {
                 <DocumentAccountForm />
                 <CpfAccountForm />
                 <CNPJAccountForm />
-                <AddressForm />
+
                 <div className="flex gap-4">
                     <Button type="button" variant="ghost">
                         Cancelar

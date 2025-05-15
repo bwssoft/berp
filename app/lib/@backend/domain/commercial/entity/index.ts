@@ -1,4 +1,5 @@
 export * from "./client.definition";
+export * from "./old-contact.definition";
 export * from "./contact.definition";
 export * from "./proposal.definition";
 export * from "./rule.definition";

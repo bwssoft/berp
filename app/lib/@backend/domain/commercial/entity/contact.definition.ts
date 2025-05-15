@@ -1,35 +1,27 @@
 export interface IContact {
-  id: string
-  role: ContactRoleEnum
-  department: ContactDepartmentEnum
+  id: string;
+  contractEnabled: boolean;
   name: string;
-  email: string
-  phone: string
-  can_sign_contract: boolean
-  can_receive_document: boolean
-  created_at: Date
+  positionOrRelation: string;
+  department?: string;
+  cpf?: string;
+  rg?: string;
+  contactItems: ContactItem[];
+  contactFor: ContactFor[];
+  accountId?: string;
+  created_at: Date;
 }
 
-export enum ContactRoleEnum {
-  analyst = "analyst",
-  supervisor = "supervisor",
-  manager = "manager",
-  director = "director",
-  president = "president",
-  owner = "owner",
-  other = "other",
+export interface ContactItem {
+  type: "Celular" | "Telefone Residencial" | "Telefone Comercial" | "Email";
+  contact: string;
+  preferredContact: PreferredContact;
 }
 
-export enum ContactDepartmentEnum {
-  administrative = "administrative",
-  commercial = "commercial",
-  purchasing = "purchasing",
-  financial = "financial",
-  logistics = "logistics",
-  operations = "operations",
-  presidency = "presidency",
-  product = "product",
-  owner = "owner",
-  support = "support",
-  other = "other",
+export interface PreferredContact {
+  phone?: boolean;
+  whatsapp?: boolean;
+  email?: boolean;
 }
+
+export type ContactFor = "Faturamento" | "Marketing" | "Suporte" | "Comercial";

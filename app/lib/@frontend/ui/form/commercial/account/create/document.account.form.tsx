@@ -9,7 +9,7 @@ import { Button, Input } from "../../../../component";
 
 export function DocumentAccountForm() {
   const methods = useFormContext<CreateAccountFormSchema>();
-  const { handleCpfCnpj } = useCreateAccountForm();
+  const { handleCpfCnpj, type } = useCreateAccountForm();
 
   return (
     <div>
@@ -33,7 +33,7 @@ export function DocumentAccountForm() {
         control={methods.control}
         render={({ field }) => (
           <Input
-            value={field.value}
+            value={type === "cpf" ? "Pessoa fisica" : "Pessoa juridica"}
             label="Tipo de pessoa"
             onChange={field.onChange}
           />

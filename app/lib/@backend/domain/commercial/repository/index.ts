@@ -5,3 +5,4 @@ export * from "./rule.repository";
 export * from "./negotiation-type.repository";
 export * from "./sector.repository";
 export * from "./address.repository";
+export * from "./contact.repository";
