@@ -1,3 +1,6 @@
+"use client";
+import { findManyContact } from "@/app/lib/@backend/action";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export function useSearchContactAccount(accountId: string) {
@@ -23,5 +26,13 @@ export function useSearchContactAccount(accountId: string) {
     },
   ]);
 
-  return { accounts };
+  const contacts = useQuery({
+    queryKey: ["findManyContacts"],
+    queryFn: async () => {
+      const data = await findManyContact();
+      return data;
+    },
+  });
+
+  return { accounts, contacts };
 }
