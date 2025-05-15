@@ -9,20 +9,21 @@ import {
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Button } from "../../../../../component";
 import { useSearchContactAccount } from "./use-search-contact.account";
+import { IContact } from "@/app/lib/@backend/domain";
 
 type ContactAccountFormProps = {
-  accountId: string;
+  contacts: IContact[];
 };
 
 export function SearchContactAccountForm({
-  accountId,
+  contacts,
 }: ContactAccountFormProps) {
-  const { accounts, contacts } = useSearchContactAccount(accountId);
+  const {} = useSearchContactAccount();
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-auto flex flex-col gap-4">
-        {contacts.data?.docs.map((contact, index) => (
+        {contacts.map((contact, index) => (
           <Disclosure key={contact.id ?? ""}>
             {({ open }) => (
               <>

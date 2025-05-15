@@ -3,17 +3,18 @@
 import React from "react";
 import { Modal, ModalBody, ModalContent } from "../../../component";
 import { SearchContactAccountForm } from "../../../form/commercial/account/contact";
+import { IContact } from "@/app/lib/@backend/domain";
 
 interface ContactModalProps {
   open: boolean;
   closeModal: () => void;
-  accountId: string;
+  contacts: IContact[];
 }
 
 export function SearchContactModal({
   open,
   closeModal,
-  accountId,
+  contacts,
 }: ContactModalProps) {
   return (
     <Modal
@@ -25,7 +26,7 @@ export function SearchContactModal({
     >
       <ModalContent>
         <ModalBody>
-          <SearchContactAccountForm accountId={accountId} />
+          <SearchContactAccountForm contacts={contacts} />
         </ModalBody>
       </ModalContent>
     </Modal>
