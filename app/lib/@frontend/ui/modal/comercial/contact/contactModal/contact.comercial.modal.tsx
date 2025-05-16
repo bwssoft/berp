@@ -1,15 +1,16 @@
 "use client";
 
 import React from "react";
-import { Modal, ModalBody, ModalContent } from "../../../component";
-import { ContactAccountForm } from "../../../form/commercial/account/contact";
+import { Modal, ModalBody, ModalContent } from "../../../../component";
+import { ContactAccountForm } from "../../../../form/commercial/account/contact";
+import { useContactModal } from "./use-contact.comercial.modal";
 
 interface ContactModalProps {
   open: boolean;
-  closeModal: () => void;
 }
 
-export function ContactModal({ open, closeModal }: ContactModalProps) {
+export function ContactModal({ open }: ContactModalProps) {
+  const { closeModal } = useContactModal();
   return (
     <Modal
       open={open}

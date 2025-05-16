@@ -1,5 +1,11 @@
+"use client";
 import { Button } from "@/app/lib/@frontend/ui/component";
-import { ContactModal, SearchContactModal } from "@/app/lib/@frontend/ui/modal";
+import {
+  ContactModal,
+  SearchContactModal,
+  useContactModal,
+  useSearchContactModal,
+} from "@/app/lib/@frontend/ui/modal";
 
 interface Props {
   searchParams: {
@@ -9,13 +15,16 @@ interface Props {
 
 export default async function Page(props: Props) {
   const { searchParams } = props;
+  const { open: openContact, openModal: openModalContact } = useContactModal();
+  const { open: openSearchContact, openModal: openModalSearchContact } =
+    useSearchContactModal();
 
   return (
     <div className="flex gap-4 w-full justify-end">
-      <Button onClick={() => {}}>Buscar contato</Button>
-      <Button onClick={() => {}}>Novo</Button>
-      <SearchContactModal open={false} closeModal={() => {}} contacts={[]} />
-      <ContactModal open={false} closeModal={() => {}} />
+      <Button onClick={openModalSearchContact}>Buscar contato</Button>
+      <Button onClick={openModalContact}>Novo</Button>
+      <SearchContactModal open={openSearchContact} contacts={[]} />
+      <ContactModal open={openContact} />
     </div>
   );
 }
