@@ -39,7 +39,7 @@ export function useCreateAccountForm() {
     const methods = useForm<CreateAccountFormSchema>({
         resolver: zodResolver(schema),
         defaultValues: {
-            document: { value: "", type: "cpf" },
+            document: { value: "" },
             cpf: { name: "", rg: "" },
             cnpj: {
                 social_name: "",

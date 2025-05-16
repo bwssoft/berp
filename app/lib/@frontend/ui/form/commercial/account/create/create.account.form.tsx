@@ -8,7 +8,7 @@ import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
 
 export function AccountCreateForm() {
-    const { methods, onSubmit, type } = useCreateAccountForm();
+    const { methods, onSubmit, type, handleCpfCnpj } = useCreateAccountForm();
 
     const hasValidated = methods.getValues("document.type") === type;
 
@@ -23,17 +23,19 @@ export function AccountCreateForm() {
                     Preencha o formulário abaixo para registrar uma conta.
                 </p>
 
-                <DocumentAccountForm />
+                <DocumentAccountForm onValidate={handleCpfCnpj} type={type} />
 
                 {hasValidated && type === "cpf" && <CpfAccountForm />}
                 {hasValidated && type === "cnpj" && <CNPJAccountForm />}
 
-                <div className="flex gap-4">
-                    <Button type="button" variant="ghost">
-                        Cancelar
-                    </Button>
-                    <Button type="submit">Salvar e próximo</Button>
-                </div>
+                {hasValidated && (
+                    <div className="flex gap-4">
+                        <Button type="button" variant="ghost">
+                            Cancelar
+                        </Button>
+                        <Button type="submit">Salvar e próximo</Button>
+                    </div>
+                )}
             </form>
         </FormProvider>
     );

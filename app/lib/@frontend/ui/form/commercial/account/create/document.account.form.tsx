@@ -4,28 +4,13 @@ import { Controller, useFormContext } from "react-hook-form";
 import { CreateAccountFormSchema } from "./use-create.account.form";
 import { Button, Input } from "../../../../component";
 
-export function DocumentAccountForm() {
+interface Props {
+    onValidate: (documentValue: string) => void;
+    type: "cpf" | "cnpj" | undefined;
+}
+
+export function DocumentAccountForm({ onValidate, type }: Props) {
     const methods = useFormContext<CreateAccountFormSchema>();
-
-    const handleCpfCnpj = () => {
-        // Pega o valor atual do documento e chama a função do hook pai
-        const value = methods.getValues("document.value");
-
-        const cleanedValue = value.replace(/\D/g, "");
-
-        if (cleanedValue.length === 11) {
-            methods.setValue("document.type", "cpf", { shouldValidate: true });
-        } else if (cleanedValue.length >= 14) {
-            methods.setValue("document.type", "cnpj", { shouldValidate: true });
-        } else {
-            methods.setError("document.value", {
-                type: "manual",
-                message: "Documento inválido",
-            });
-        }
-    };
-
-    const type = methods.watch("document.type");
 
     return (
         <div>
@@ -37,7 +22,12 @@ export function DocumentAccountForm() {
                     placeholder="Insira um documento para ser validado"
                     error={methods.formState.errors.document?.value?.message}
                 />
-                <Button type="button" onClick={handleCpfCnpj}>
+                <Button
+                    type="button"
+                    onClick={() =>
+                        onValidate(methods.getValues("document.value"))
+                    }
+                >
                     Validar
                 </Button>
             </div>
