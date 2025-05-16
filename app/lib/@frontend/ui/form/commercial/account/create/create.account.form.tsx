@@ -6,24 +6,35 @@ import { DocumentAccountForm } from "./document.account.form";
 import { Button } from "../../../../component";
 import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
+
 export function AccountCreateForm() {
-    const { methods } = useCreateAccountForm();
+    const { methods, onSubmit, type } = useCreateAccountForm();
+
+    const hasValidated = methods.getValues("document.type") === type;
 
     return (
         <FormProvider {...methods}>
-            <form className="flex flex-col gap-4">
+            <form
+                className="flex flex-col gap-4"
+                onSubmit={methods.handleSubmit(onSubmit)}
+            >
+                <h2 className="text-lg font-semibold">Registro de conta</h2>
+                <p className="text-sm text-gray-500">
+                    Preencha o formulário abaixo para registrar uma conta.
+                </p>
+
                 <DocumentAccountForm />
-                <CpfAccountForm />
-                <CNPJAccountForm />
+
+                {hasValidated && type === "cpf" && <CpfAccountForm />}
+                {hasValidated && type === "cnpj" && <CNPJAccountForm />}
 
                 <div className="flex gap-4">
                     <Button type="button" variant="ghost">
                         Cancelar
                     </Button>
-                    <Button type="button">Salvar e próximo</Button>
+                    <Button type="submit">Salvar e próximo</Button>
                 </div>
             </form>
-            <pre>{JSON.stringify(methods.watch(), null, 2)}</pre>
         </FormProvider>
     );
 }
