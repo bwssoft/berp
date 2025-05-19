@@ -1,10 +1,16 @@
 "use client";
 
 import React from "react";
-import { Button, Combobox, Modal, ModalBody, ModalContent } from "../../../component";
+import {
+    Button,
+    Combobox,
+    Modal,
+    ModalBody,
+    ModalContent,
+} from "../../../component";
 import { SectorTable } from "../../../table/commercial/sector";
 import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
-import { Controller } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 interface SectorModalProps {
@@ -18,6 +24,7 @@ const sectorOptions = [
     { id: "services", name: "Serviços" },
 ];
 export function SectorModal({ open, closeModal, sectors }: SectorModalProps) {
+    const { control } = useFormContext();
     return (
         <Modal
             open={open}
@@ -31,7 +38,7 @@ export function SectorModal({ open, closeModal, sectors }: SectorModalProps) {
                     <div>
                         <div className="flex items-end gap-2 mb-4">
                             <Controller
-                                // control={control}
+                                control={control}
                                 name="cnpj.sector"
                                 render={({ field }) => (
                                     <Combobox
