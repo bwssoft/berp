@@ -11,8 +11,7 @@ import { redirect } from "next/navigation";
 export async function createOneAccount(
   account: Omit<IAccount, "id" | "created_at">
 ) {
-  const { id, success } = await createOneAccountUsecase.execute(account);
-  if (!success) return;
+  const { id } = await createOneAccountUsecase.execute(account);
   redirect(`/commercial/account/form/create/tab/address?id=${id}`);
 }
 
