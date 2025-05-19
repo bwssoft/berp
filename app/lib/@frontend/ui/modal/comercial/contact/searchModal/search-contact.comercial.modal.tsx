@@ -1,31 +1,38 @@
 "use client";
 
 import React from "react";
-import { Modal, ModalBody, ModalContent } from "../../../../component";
+import { Modal, ModalBody, ModalContent, Button } from "../../../../component";
 import { SearchContactAccountForm } from "../../../../form/commercial/account/contact";
-import { IContact } from "@/app/lib/@backend/domain";
 import { useSearchContactModal } from "./use-search-contact.comercial.modal";
 
 interface ContactModalProps {
-  open: boolean;
-  contacts: IContact[];
+  accountId?: string;
 }
 
-export function SearchContactModal({ open, contacts }: ContactModalProps) {
-  const { closeModal } = useSearchContactModal();
+export function SearchContactModal({ accountId }: ContactModalProps) {
+  const { closeModal, openModal, open, contacts } = useSearchContactModal(
+    accountId ?? ""
+  );
+
+  if (!contacts) return null;
+
   return (
-    <Modal
-      open={open}
-      onClose={closeModal}
-      title="Busca de Contatos"
-      className="bg-white h-full max-h-[70vh]"
-      position="center"
-    >
-      <ModalContent>
-        <ModalBody>
-          <SearchContactAccountForm contacts={contacts} />
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <>
+      <Button onClick={openModal}>Buscar contato</Button>
+
+      <Modal
+        open={open}
+        onClose={closeModal}
+        title="Busca de Contatos"
+        className="bg-white h-full max-h-[70vh]"
+        position="center"
+      >
+        <ModalContent>
+          <ModalBody>
+            <SearchContactAccountForm contacts={contacts ?? []} />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

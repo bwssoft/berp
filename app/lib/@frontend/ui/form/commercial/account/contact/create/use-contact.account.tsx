@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createOneContact } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
+import { useSearchParams } from "next/navigation";
 
 export type ContactList = {
   id?: string;
@@ -84,6 +85,9 @@ export function useContactAccount() {
     },
   });
 
+  const searchParams = useSearchParams();
+  const accountId = searchParams.get("id");
+
   const {
     control,
     register,
@@ -145,12 +149,12 @@ export function useContactAccount() {
   };
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log({ data });
     const { success, error } = await createOneContact({
       ...data,
       contactItems: data.contactItems.map((item) => ({
         ...item,
         type: item.type[0],
+        accountId,
       })),
     });
     if (success) {
