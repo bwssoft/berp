@@ -26,7 +26,9 @@ const schema = z.object({
         state_registration: z.string().min(1),
         municipal_registration: z.string().optional(),
         status: z.string().min(1),
-        sector: z.array(z.string().min(1, "Setor vazio não permitido")),
+        sector: z
+            .array(z.string().min(1, "Setor vazio não permitido"))
+            .optional(),
         economic_group_holding: z.string().optional(),
         economic_group_controlled: z.string().optional(),
     }),

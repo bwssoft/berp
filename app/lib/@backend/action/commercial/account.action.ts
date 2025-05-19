@@ -3,27 +3,35 @@
 import { Filter } from "mongodb";
 import { IAccount } from "../../domain";
 import {
-  createOneAccountUsecase,
-  findManyAccountUsecase,
+    createOneAccountUsecase,
+    findManyAccountUsecase,
 } from "../../usecase/commercial/account";
 import { redirect } from "next/navigation";
+import { updateOneAccountUsecase } from "../../usecase/commercial/account/update-one.account.usecase";
 
 export async function createOneAccount(
-  account: Omit<IAccount, "id" | "created_at">
+    account: Omit<IAccount, "id" | "created_at">
 ) {
-  const { id } = await createOneAccountUsecase.execute(account);
-  redirect(`/commercial/account/form/create/tab/address?id=${id}`);
+    const { id } = await createOneAccountUsecase.execute(account);
+    redirect(`/commercial/account/form/create/tab/address?id=${id}`);
 }
 
 export async function findManyAccount(
-  filter: Filter<IAccount> = {},
-  page?: number,
-  limit?: number,
-  sort?: Record<string, 1 | -1>
+    filter: Filter<IAccount> = {},
+    page?: number,
+    limit?: number,
+    sort?: Record<string, 1 | -1>
 ) {
-  return await findManyAccountUsecase.execute({ filter, page, limit, sort });
+    return await findManyAccountUsecase.execute({ filter, page, limit, sort });
+}
+
+export async function updateOneAccount(
+    filter: Filter<IAccount>,
+    update: Partial<IAccount>
+) {
+    return await updateOneAccountUsecase.execute(filter, update);
 }
 
 export const findOneAccount = async (filter: Filter<IAccount>) => {
-  //   return await findOneAccountUsecase.execute(filter);
+    // return await findOneAccountUsecase.execute(filter);
 };
