@@ -4,6 +4,7 @@ import { accountRepository } from "../../../infra";
 
 export type Output = {
   success: boolean;
+  id?: string;
   error?: {
     global?: string;
   };
@@ -25,7 +26,7 @@ class CreateOneAccountUsecase {
 
       await this.repository.create(account);
 
-      return { success: true };
+      return { success: true, id: account.id };
     } catch (error) {
       console.error(error);
       return {
