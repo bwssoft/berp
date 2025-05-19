@@ -1,11 +1,12 @@
 "use client";
+
 import { IAddress } from "@/app/lib/@backend/domain";
 import { Button } from "@/app/lib/@frontend/ui/component";
 import { AddressCardList } from "@/app/lib/@frontend/ui/list/comercial/address/address.list";
 import { AddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
 import { useAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/use-address.modal";
 
-export function AddressForm() {
+export default function Page() {
     const { openModal, open } = useAddressModal();
 
     const mockIAddresses: IAddress[] = [

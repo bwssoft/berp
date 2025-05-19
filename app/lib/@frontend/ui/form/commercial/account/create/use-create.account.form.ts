@@ -29,6 +29,9 @@ const schema = z.object({
         economic_group_holding: z.string().optional(),
         economic_group_controlled: z.string().optional(),
     }),
+
+    contact: z.any().optional(),
+    address: z.any().optional(),
 });
 
 export type CreateAccountFormSchema = z.infer<typeof schema>;
@@ -47,7 +50,7 @@ export function useCreateAccountForm() {
                 state_registration: "",
                 municipal_registration: "",
                 status: "",
-                sector: "",
+
                 economic_group_holding: "",
                 economic_group_controlled: "",
             },
