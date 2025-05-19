@@ -6,66 +6,71 @@ import { AddressCardList } from "@/app/lib/@frontend/ui/list/comercial/address/a
 import { AddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
 import { useAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/use-address.modal";
 
-export default function Page() {
-    const { openModal, open } = useAddressModal();
+interface Props {
+  searchParams: { id: string };
+}
 
-    const mockIAddresses: IAddress[] = [
-        {
-            id: "a1b2c3d4",
-            street: "Maple Avenue",
-            district: "Greenwood",
-            city: "Springfield",
-            state: "California",
-            zip_code: "90210",
-            number: "742",
-            complement: "Apartment 5B",
-            reference_point: "Near the old library",
-            type: "Residencial",
-            created_at: new Date("2024-10-15T10:30:00Z"),
-            updated_at: new Date("2025-04-22T15:45:00Z"),
-        },
-        {
-            id: "a1b2c3d4",
-            street: "Maple Avenue",
-            district: "Greenwood",
-            city: "Springfield",
-            state: "California",
-            zip_code: "90210",
-            number: "742",
-            complement: "Apartment 5B",
-            reference_point: "Near the old library",
-            type: "Residencial",
-            created_at: new Date("2024-10-15T10:30:00Z"),
-            updated_at: new Date("2025-04-22T15:45:00Z"),
-        },
-        {
-            id: "a1b2c3d4",
-            street: "Maple Avenue",
-            district: "Greenwood",
-            city: "Springfield",
-            state: "California",
-            zip_code: "90210",
-            number: "742",
-            complement: "Apartment 5B",
-            reference_point: "Near the old library",
-            type: "Residencial",
-            created_at: new Date("2024-10-15T10:30:00Z"),
-            updated_at: new Date("2025-04-22T15:45:00Z"),
-        },
-    ];
+export default function Page({ searchParams }: Props) {
+  const { id } = searchParams;
+  const { openModal, open } = useAddressModal();
 
-    return (
-        <div>
-            <AddressModal open={open} />
-            <div className="flex justify-between items-start gap-4">
-                <div className="flex flex-wrap gap-2">
-                    <AddressCardList items={mockIAddresses} />
-                </div>
+  const mockIAddresses: IAddress[] = [
+    {
+      id: "a1b2c3d4",
+      street: "Maple Avenue",
+      district: "Greenwood",
+      city: "Springfield",
+      state: "California",
+      zip_code: "90210",
+      number: "742",
+      complement: "Apartment 5B",
+      reference_point: "Near the old library",
+      type: "Residencial",
+      created_at: new Date("2024-10-15T10:30:00Z"),
+      updated_at: new Date("2025-04-22T15:45:00Z"),
+    },
+    {
+      id: "a1b2c3d4",
+      street: "Maple Avenue",
+      district: "Greenwood",
+      city: "Springfield",
+      state: "California",
+      zip_code: "90210",
+      number: "742",
+      complement: "Apartment 5B",
+      reference_point: "Near the old library",
+      type: "Residencial",
+      created_at: new Date("2024-10-15T10:30:00Z"),
+      updated_at: new Date("2025-04-22T15:45:00Z"),
+    },
+    {
+      id: "a1b2c3d4",
+      street: "Maple Avenue",
+      district: "Greenwood",
+      city: "Springfield",
+      state: "California",
+      zip_code: "90210",
+      number: "742",
+      complement: "Apartment 5B",
+      reference_point: "Near the old library",
+      type: "Residencial",
+      created_at: new Date("2024-10-15T10:30:00Z"),
+      updated_at: new Date("2025-04-22T15:45:00Z"),
+    },
+  ];
 
-                <Button onClick={openModal} type="button" className="h-fit">
-                    Novo
-                </Button>
-            </div>
+  return (
+    <div>
+      <AddressModal open={open} />
+      <div className="flex justify-between items-start gap-4">
+        <div className="flex flex-wrap gap-2">
+          <AddressCardList items={mockIAddresses} />
         </div>
-    );
+
+        <Button onClick={openModal} type="button" className="h-fit">
+          Novo
+        </Button>
+      </div>
+    </div>
+  );
 }
