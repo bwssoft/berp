@@ -5,6 +5,7 @@ import { IAccount } from "../../domain";
 import {
     createOneAccountUsecase,
     findManyAccountUsecase,
+    findOneAccountUsecase,
 } from "../../usecase/commercial/account";
 import { redirect } from "next/navigation";
 import { updateOneAccountUsecase } from "../../usecase/commercial/account/update-one.account.usecase";
@@ -33,5 +34,5 @@ export async function updateOneAccount(
 }
 
 export const findOneAccount = async (filter: Filter<IAccount>) => {
-    // return await findOneAccountUsecase.execute(filter);
+    return await findOneAccountUsecase.execute(filter);
 };
