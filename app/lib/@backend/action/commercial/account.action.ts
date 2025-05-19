@@ -5,6 +5,7 @@ import { IAccount } from "../../domain";
 import {
   createOneAccountUsecase,
   findManyAccountUsecase,
+  findOneAccountUsecase,
 } from "../../usecase/commercial/account";
 import { redirect } from "next/navigation";
 
@@ -25,5 +26,5 @@ export async function findManyAccount(
 }
 
 export const findOneAccount = async (filter: Filter<IAccount>) => {
-  //   return await findOneAccountUsecase.execute(filter);
+  return await findOneAccountUsecase.execute(filter);
 };
