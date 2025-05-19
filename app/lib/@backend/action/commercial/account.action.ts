@@ -6,11 +6,14 @@ import {
   createOneAccountUsecase,
   findManyAccountUsecase,
 } from "../../usecase/commercial/account";
+import { redirect } from "next/navigation";
 
 export async function createOneAccount(
   account: Omit<IAccount, "id" | "created_at">
 ) {
-  return await createOneAccountUsecase.execute(account);
+  const { id, success } = await createOneAccountUsecase.execute(account);
+  if (!success) return;
+  redirect(`/commercial/account/form/create/tab/address?id=${id}`);
 }
 
 export async function findManyAccount(

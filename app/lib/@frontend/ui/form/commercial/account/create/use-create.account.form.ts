@@ -123,11 +123,8 @@ export function useCreateAccountForm() {
             }),
       };
 
-      const { id, success } = await createOneAccount(base);
-      if (success) {
-        router.push(`/commercial/account/form/create/tab/address?id=${id}`);
-        methods.reset();
-      }
+      await createOneAccount(base);
+      methods.reset();
     } catch (error) {
       console.error(error);
     }
