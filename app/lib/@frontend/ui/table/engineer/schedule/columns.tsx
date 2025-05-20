@@ -16,7 +16,7 @@ export const columns: ColumnDef<
     accessorKey: "device",
     cell: ({ row }) => {
       const schedule = row.original;
-      return schedule.device.serial;
+      return schedule.device.equipment.serial;
     },
   },
   {

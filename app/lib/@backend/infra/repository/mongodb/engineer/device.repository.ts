@@ -5,10 +5,10 @@ import { BaseRepository } from "../@base";
 class DeviceRepository extends BaseRepository<IDevice> {
   constructor() {
     super({
-      collection: "device",
-      db: "berp"
+      collection: "engineer.device",
+      db: "berp",
     });
   }
 }
 
-export const deviceRepository = singleton(DeviceRepository)
+export const deviceRepository = singleton(DeviceRepository);

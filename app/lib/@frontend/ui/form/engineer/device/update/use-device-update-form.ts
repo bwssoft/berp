@@ -1,22 +1,22 @@
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { updateOneDeviceById } from '@/app/lib/@backend/action';
-import { IDevice } from '@/app/lib/@backend/domain';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { updateOneDeviceById } from "@/app/lib/@backend/action";
+import { IDevice } from "@/app/lib/@backend/domain";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const schema = z.object({
-  serial: z.string().min(1, 'Esse campo não pode ser vazio'),
-  product_id: z.string().min(1, 'Esse campo não pode ser vazio'),
+  serial: z.string().min(1, "Esse campo não pode ser vazio"),
+  product_id: z.string().min(1, "Esse campo não pode ser vazio"),
 });
 
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
-  defaultValues: IDevice
+  defaultValues: IDevice;
 }
 export function useDeviceUpdateForm(props: Props) {
-  const { defaultValues } = props
+  const { defaultValues } = props;
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -24,16 +24,15 @@ export function useDeviceUpdateForm(props: Props) {
     control,
     setValue,
     reset: hookFormReset,
-
   } = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues
+    // defaultValues,
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
-      await updateOneDeviceById({ id: defaultValues.id! }, data);
+      // await updateOneDeviceById({ id: defaultValues.id! }, data);
       toast({
         title: "Sucesso!",
         description: "Equipamento atualizado com sucesso!",
