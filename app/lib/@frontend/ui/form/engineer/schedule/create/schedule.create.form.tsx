@@ -151,14 +151,16 @@ export function ScheduleCreateForm(props: Props) {
                       (device) => device.id === selectedId
                     );
                     if (selectedDevice) {
-                      setValue("devices", [{ serial: selectedDevice.serial }]);
+                      setValue("devices", [
+                        { serial: selectedDevice.equipment.serial },
+                      ]);
                     }
                   }}
                 >
                   <option>Selecione um equipamento</option>
                   {devices.map((i) => (
                     <option key={i.id} value={i.id}>
-                      {i.serial}
+                      {i.equipment.serial}
                     </option>
                   ))}
                 </select>
