@@ -36,6 +36,7 @@ export function TechnologySearchForm(props: Props) {
               onSearchChange={handleSearchTechnology}
               defaultValue={technology ? [technology] : []}
               placeholder="Escolha a tecnologia"
+              modal={false}
             />
           </div>
         </div>
