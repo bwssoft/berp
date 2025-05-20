@@ -11,7 +11,7 @@ class IdentificationLogRepository
 {
   constructor() {
     super({
-      collection: "production.device-identification-log",
+      collection: "production.identification-log",
       db: "berp",
     });
   }
