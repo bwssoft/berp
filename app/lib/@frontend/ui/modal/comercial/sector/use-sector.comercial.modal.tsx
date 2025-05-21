@@ -1,44 +1,63 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
-import { useCallback, useState } from "react";
+import {
+    createOneSector,
+    findManySector,
+} from "@/app/lib/@backend/action/commercial/sector.action";
 
-export function useSectorModal(initial: ISector[] = []) {
+const SectorSchema = z.object({ name: z.string().trim().min(1) });
+type SectorForm = z.infer<typeof SectorSchema>;
+
+export function useSectorModal() {
     const [open, setOpen] = useState(false);
-    const openModal = useCallback(() => setOpen(true), []);
-    const closeModal = useCallback(() => setOpen(false), []);
+    const [sectors, setSectors] = useState<ISector[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [sectors, setSectors] = useState<ISector[]>(initial);
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors, isSubmitting },
+    } = useForm<SectorForm>({
+        resolver: zodResolver(SectorSchema),
+        defaultValues: { name: "" },
+    });
 
-    const addSector = (name: string) => {
-        const trimmed = name.trim();
-        if (!trimmed) return;
-        setSectors((prev) => [
-            ...prev,
-            {
-                id: crypto.randomUUID(),
-                name: trimmed,
-                active: true,
-                created_at: new Date(),
-            },
-        ]);
+    const fetchSectors = async () => {
+        setIsLoading(true);
+        const data = await findManySector({});
+        setSectors(data);
+        setIsLoading(false);
     };
 
-    const toggleSector = (id: string) =>
-        setSectors((prev) =>
-            prev.map((s) => (s.id === id ? { ...s, active: !s.active } : s))
-        );
+    useEffect(() => {
+        fetchSectors();
+    }, []);
 
-    const deleteSector = (id: string) =>
-        setSectors((prev) => prev.filter((s) => s.id !== id));
+    const openModal = () => setOpen(true);
+    const closeModal = () => setOpen(false);
+
+    const addSector = async ({ name }: SectorForm) => {
+        const sector = await createOneSector({ name, active: true });
+        await fetchSectors();
+        reset();
+        closeModal;
+    };
 
     return {
         open,
         openModal,
         closeModal,
         sectors,
-        addSector,
-        toggleSector,
-        deleteSector,
+        isLoading,
+        register,
+        errors,
+        handleAdd: handleSubmit(addSector),
+        isPending: isSubmitting,
     };
 }

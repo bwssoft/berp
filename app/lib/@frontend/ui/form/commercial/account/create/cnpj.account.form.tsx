@@ -2,34 +2,15 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 import { CreateAccountFormSchema } from "./use-create.account.form";
-import { Input, Combobox, Button } from "../../../../component";
+import { Input, Combobox, Button, Select } from "../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import {
     SectorModal,
     useSectorModal,
 } from "../../../../modal/comercial/sector";
 import { ValidateField } from "../../../../component/validate-field";
-const sectorOptions = [
-    { id: "retail", name: "Varejo" },
-    { id: "industry", name: "Indústria" },
-    { id: "services", name: "Serviços" },
-];
 export function CNPJAccountForm() {
-    const sectorModal = useSectorModal([
-        { id: "retail", name: "Varejo", active: true, created_at: new Date() },
-        {
-            id: "industry",
-            name: "Indústria",
-            active: true,
-            created_at: new Date(),
-        },
-        {
-            id: "services",
-            name: "Serviços",
-            active: true,
-            created_at: new Date(),
-        },
-    ]);
+    const sectorModal = useSectorModal();
     const {
         register,
         control,
@@ -73,15 +54,16 @@ export function CNPJAccountForm() {
                     control={control}
                     name="cnpj.sector"
                     render={({ field }) => (
-                        <Combobox
-                            label="Setor"
-                            placeholder="Selecione o setor"
-                            className="mt-1 text-left"
-                            data={sectorOptions}
-                            error={errors.cnpj?.sector?.message}
-                            onOptionChange={field.onChange}
-                            keyExtractor={(item) => item.id}
-                            displayValueGetter={(item) => item.name}
+                        <Select
+                            name="sector"
+                            data={sectorModal.sectors}
+                            keyExtractor={(d) => d.name}
+                            valueExtractor={(d) => d.name}
+                            label="Tipo de Bloqueio"
+                            value={sectorModal.sectors.find(
+                                (d) => d.name === field.name
+                            )}
+                            onChange={(d) => field.onChange(d.name)}
                         />
                     )}
                 />
@@ -99,7 +81,6 @@ export function CNPJAccountForm() {
                 <SectorModal
                     open={sectorModal.open}
                     closeModal={sectorModal.closeModal}
-                    sectors={sectorModal.sectors}
                 />
             </div>
             <ValidateField<CreateAccountFormSchema>
