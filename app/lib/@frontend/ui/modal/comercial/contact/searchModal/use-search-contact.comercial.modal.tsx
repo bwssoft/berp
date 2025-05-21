@@ -3,15 +3,17 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { findManyAccount } from "@/app/lib/@backend/action";
+import { IAccount } from "@/app/lib/@backend/domain";
 
 const PAGE_SIZE = 10;
 const currentPage = 1;
 
-export function useSearchContactModal(accountId: string) {
+export function useSearchContactModal(accountId?: string) {
   const [open, setOpen] = useState(false);
   const [contactsByCompany, setContactsByCompany] = useState<
     { name: string; contacts: string[]; documentValue: string }[]
   >([]);
+  const [accountData, setAccountData] = useState<IAccount>();
 
   const { isLoading: accountLoading } = useQuery({
     queryKey: ["findManyAccount", accountId, currentPage],
@@ -25,7 +27,7 @@ export function useSearchContactModal(accountId: string) {
       );
 
       const account = data.docs[0];
-
+      setAccountData(account);
       if (
         Array.isArray(account?.contacts) &&
         account.fantasy_name &&
@@ -101,6 +103,7 @@ export function useSearchContactModal(accountId: string) {
     open,
     openModal,
     closeModal,
+    accountData,
     contactsByCompany,
     isLoading: accountLoading,
   };

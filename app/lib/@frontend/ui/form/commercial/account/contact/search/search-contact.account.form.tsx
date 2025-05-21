@@ -8,7 +8,7 @@ import {
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Button } from "../../../../../component";
 import { useSearchContactAccount } from "./use-search-contact.account";
-import { IContact } from "@/app/lib/@backend/domain";
+import { IAccount } from "@/app/lib/@backend/domain";
 
 type ContactAccountFormProps = {
   contacts: {
@@ -17,13 +17,13 @@ type ContactAccountFormProps = {
     documentValue: string;
   }[];
   isLoading?: boolean;
-  accountId?: string;
+  accountData?: IAccount;
 };
 
 export function SearchContactAccountForm({
   contacts,
   isLoading,
-  accountId = "",
+  accountData = {} as IAccount,
 }: ContactAccountFormProps) {
   const {
     handleSave,
@@ -31,7 +31,9 @@ export function SearchContactAccountForm({
     selectedIds,
     setSelectedIds,
     contactData,
-  } = useSearchContactAccount({ accountId, contacts });
+  } = useSearchContactAccount({ accountData, contacts });
+
+  if (isLoading) return <div>carregando...</div>;
 
   return (
     <div className="flex flex-col h-full">
