@@ -5,6 +5,7 @@ import { Button } from "@/app/lib/@frontend/ui/component";
 import { AddressCardList } from "@/app/lib/@frontend/ui/list/comercial/address/address.list";
 import { AddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
 import { useAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/use-address.modal";
+import { redirect, useRouter } from "next/navigation";
 
 interface Props {
   searchParams: { id: string };
@@ -13,6 +14,7 @@ interface Props {
 export default function Page({ searchParams }: Props) {
   const { id } = searchParams;
   const { openModal, open } = useAddressModal();
+  const router = useRouter();
 
   const mockIAddresses: IAddress[] = [
     {
@@ -69,6 +71,19 @@ export default function Page({ searchParams }: Props) {
 
         <Button onClick={openModal} type="button" className="h-fit">
           Novo
+        </Button>
+      </div>
+      <div className="flex gap-4 items-end justify-end">
+        <Button type="button" variant="ghost">
+          Cancelar
+        </Button>
+        <Button
+          type="submit"
+          onClick={() => {
+            router.push(`/commercial/account/form/create/tab/contact?id=${id}`);
+          }}
+        >
+          Salvar e próximo
         </Button>
       </div>
     </div>
