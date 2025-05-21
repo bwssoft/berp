@@ -1,4 +1,3 @@
-// SearchContactAccountForm.tsx
 "use client";
 
 import {
@@ -12,34 +11,55 @@ import { useSearchContactAccount } from "./use-search-contact.account";
 import { IContact } from "@/app/lib/@backend/domain";
 
 type ContactAccountFormProps = {
-  contacts: IContact[];
+  contacts: {
+    name: string;
+    contacts: string[];
+    documentValue: string;
+  }[];
+  isLoading?: boolean;
+  accountId?: string;
 };
 
 export function SearchContactAccountForm({
   contacts,
+  isLoading,
+  accountId = "",
 }: ContactAccountFormProps) {
-  const {} = useSearchContactAccount();
+  const {
+    handleSave,
+    toggleCheckbox,
+    selectedIds,
+    setSelectedIds,
+    contactData,
+  } = useSearchContactAccount({ accountId, contacts });
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-auto flex flex-col gap-4">
-        {contacts.map((contact, index) => (
-          <Disclosure key={contact.id ?? ""}>
+        {contactData.map((company) => (
+          <Disclosure key={company.name}>
             {({ open }) => (
               <>
                 <DisclosureButton className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-black bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
-                  <span>Empresa {index + 1}</span>
+                  <span>{company.name}</span>
                   <ChevronUpIcon
                     className={`${
                       open ? "rotate-180 transform" : ""
                     } w-5 h-5 text-purple-500`}
                   />
                 </DisclosureButton>
-                <DisclosurePanel className="px-4 pt-4 pb-2 text-sm text-gray-500 flex flex-col gap-2">
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" />
-                    {contact.name}
-                  </label>
+
+                <DisclosurePanel className="px-4 pb-2 text-sm text-gray-700 flex flex-col gap-2">
+                  {company.contacts.map((c) => (
+                    <label key={c.id} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(c.id)}
+                        onChange={(e) => toggleCheckbox(c.id, e.target.checked)}
+                      />
+                      {c.name}
+                    </label>
+                  ))}
                 </DisclosurePanel>
               </>
             )}
@@ -47,11 +67,15 @@ export function SearchContactAccountForm({
         ))}
       </div>
 
-      <div className="flex justify-end gap-4 w-full">
-        <Button type="button" variant="ghost" onClick={() => {}}>
+      <div className="flex justify-end gap-4 w-full pt-4">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setSelectedIds([])}
+        >
           Cancelar
         </Button>
-        <Button type="button" onClick={() => {}}>
+        <Button type="button" onClick={() => handleSave()}>
           Salvar
         </Button>
       </div>

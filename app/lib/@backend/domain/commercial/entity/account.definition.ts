@@ -14,9 +14,9 @@ export interface IAccount {
   status?: string;
   setor?: ISector[];
   address?: IAddress[];
-  contacts?: IContact[];
+  contacts?: String[];
   economic_group_holding?: string;
-  economic_group_controlled?: string;
+  economic_group_controlled?: string[];
   created_at?: Date;
   updated_at?: Date;
 }
