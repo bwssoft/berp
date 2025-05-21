@@ -8,7 +8,9 @@ import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.defi
 import {
     createOneSector,
     findManySector,
+    updateOneSector,
 } from "@/app/lib/@backend/action/commercial/sector.action";
+import { toast } from "@/app/lib/@frontend/hook";
 
 const SectorSchema = z.object({ name: z.string().trim().min(1) });
 type SectorForm = z.infer<typeof SectorSchema>;
@@ -16,6 +18,9 @@ type SectorForm = z.infer<typeof SectorSchema>;
 export function useSectorModal() {
     const [open, setOpen] = useState(false);
     const [sectors, setSectors] = useState<ISector[]>([]);
+    const [updatedSectors, setUpdatedSectors] = useState<
+        Record<string, boolean>
+    >({});
     const [isLoading, setIsLoading] = useState(true);
 
     const {
@@ -39,14 +44,43 @@ export function useSectorModal() {
         fetchSectors();
     }, []);
 
+    const handleToggle = (sector: ISector) => {
+        const newActive = !sector.active;
+
+        setSectors((prev) =>
+            prev.map((s) =>
+                s.id === sector.id ? { ...s, active: newActive } : s
+            )
+        );
+
+        setUpdatedSectors((prev) => ({
+            ...prev,
+            [sector.id]: newActive,
+        }));
+    };
+
+    const handleSave = async () => {
+        const updates = Object.entries(updatedSectors);
+        for (const [id, active] of updates) {
+            await updateOneSector({ id }, { active });
+        }
+        setUpdatedSectors({});
+        toast({
+            title: "Sucesso!",
+            variant: "success",
+        });
+
+        await fetchSectors();
+    };
+
     const openModal = () => setOpen(true);
     const closeModal = () => setOpen(false);
 
     const addSector = async ({ name }: SectorForm) => {
-        const sector = await createOneSector({ name, active: true });
+        await createOneSector({ name, active: true });
         await fetchSectors();
         reset();
-        closeModal;
+        closeModal();
     };
 
     return {
@@ -59,5 +93,7 @@ export function useSectorModal() {
         errors,
         handleAdd: handleSubmit(addSector),
         isPending: isSubmitting,
+        handleToggle,
+        handleSave,
     };
 }
