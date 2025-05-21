@@ -5,16 +5,16 @@ import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 
 class UpdateOneAccountUsecase {
-    repository: IAccountRepository;
+  repository: IAccountRepository;
 
-    constructor() {
-        this.repository = accountRepository;
-    }
+  constructor() {
+    this.repository = accountRepository;
+  }
 
-    @RemoveMongoId()
-    async execute(filter: Filter<IAccount>, update: Partial<IAccount>) {
-        return await this.repository.updateOne(filter, update);
-    }
+  @RemoveMongoId()
+  async execute(filter: Filter<IAccount>, update: Partial<IAccount>) {
+    return await this.repository.updateOne(filter, { $set: update });
+  }
 }
 
 export const updateOneAccountUsecase = singleton(UpdateOneAccountUsecase);
