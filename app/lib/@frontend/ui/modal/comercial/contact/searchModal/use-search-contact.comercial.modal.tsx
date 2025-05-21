@@ -2,40 +2,91 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { findManyAccount, findOneContact } from "@/app/lib/@backend/action";
-import { IContact } from "@/app/lib/@backend/domain";
+import { findManyAccount } from "@/app/lib/@backend/action";
 
 const PAGE_SIZE = 10;
 const currentPage = 1;
 
 export function useSearchContactModal(accountId: string) {
   const [open, setOpen] = useState(false);
+  const [contactsByCompany, setContactsByCompany] = useState<
+    { name: string; contacts: string[]; documentValue: string }[]
+  >([]);
 
-  const { data: accountPage, isLoading: accountLoading } = useQuery({
+  const { isLoading: accountLoading } = useQuery({
     queryKey: ["findManyAccount", accountId, currentPage],
     queryFn: async () => {
       if (!accountId) return { docs: [], total: 0, pages: 1 };
-      return await findManyAccount({ id: accountId }, currentPage, PAGE_SIZE);
+
+      const data = await findManyAccount(
+        { id: accountId },
+        currentPage,
+        PAGE_SIZE
+      );
+
+      const account = data.docs[0];
+
+      if (
+        Array.isArray(account?.contacts) &&
+        account.fantasy_name &&
+        account.document?.value
+      ) {
+        const contactIds = account.contacts.map((c: any) => c.id || c);
+
+        setContactsByCompany([
+          {
+            name: account.fantasy_name,
+            documentValue: account.document.value,
+            contacts: contactIds,
+          },
+        ]);
+      }
+
+      if (
+        data?.docs[0].economic_group_holding &&
+        data.docs[0].economic_group_holding !== data.docs[0].document.value
+      ) {
+        const dataForCnpj = await findManyAccount(
+          { economic_group_holding: data.docs[0].economic_group_holding },
+          currentPage,
+          PAGE_SIZE
+        );
+
+        const novasEmpresas: {
+          name: string;
+          contacts: string[];
+          documentValue: string;
+        }[] = [];
+
+        for (const empresa of dataForCnpj.docs) {
+          if (
+            Array.isArray(empresa.contacts) &&
+            empresa.contacts.length > 0 &&
+            empresa.fantasy_name &&
+            empresa.document?.value
+          ) {
+            const contactIds = empresa.contacts.map((c: any) => c.id || c);
+
+            novasEmpresas.push({
+              name: empresa.fantasy_name,
+              documentValue: empresa.document.value,
+              contacts: contactIds,
+            });
+          }
+        }
+
+        setContactsByCompany((prev) => {
+          const existingDocs = new Set(prev.map((p) => p.documentValue));
+          const novosUnicos = novasEmpresas.filter(
+            (n) => !existingDocs.has(n.documentValue)
+          );
+          return [...prev, ...novosUnicos];
+        });
+      }
+
+      return data;
     },
     enabled: !!accountId,
-  });
-
-  const contactIds: string[] =
-    accountPage?.docs[0]?.contacts?.map((c: any) => c.id) ?? [];
-
-  const {
-    data: contacts = [],
-    isLoading: contactsLoading,
-    isError: contactsError,
-  } = useQuery({
-    queryKey: ["contactsById", contactIds],
-    queryFn: async () => {
-      const results = await Promise.all(
-        contactIds.map((id) => findOneContact({ id }))
-      );
-      return results.filter((c): c is IContact => !!c);
-    },
-    enabled: contactIds.length > 0,
   });
 
   function openModal() {
@@ -50,8 +101,7 @@ export function useSearchContactModal(accountId: string) {
     open,
     openModal,
     closeModal,
-    contacts,
-    isLoading: accountLoading || contactsLoading,
-    isError: contactsError,
+    contactsByCompany,
+    isLoading: accountLoading,
   };
 }

@@ -12,11 +12,11 @@ export interface IAccount {
     state_registration?: string;
     municipal_registration?: string;
     status?: string;
-    setor?: ISector[];
+    setor?: string[];
     address?: string[];
-    contacts?: IContact[];
+    contacts?: String[];
     economic_group_holding?: string;
-    economic_group_controlled?: string;
+    economic_group_controlled?: string[];
     created_at?: Date;
     updated_at?: Date;
 }
