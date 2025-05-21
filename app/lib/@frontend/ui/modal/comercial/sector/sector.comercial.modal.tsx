@@ -17,8 +17,15 @@ interface Props {
 }
 
 export function SectorModal({ open, closeModal }: Props) {
-    const { sectors, register, errors, handleAdd, isPending } =
-        useSectorModal();
+    const {
+        sectors,
+        register,
+        errors,
+        handleAdd,
+        isPending,
+        handleToggle,
+        handleSave,
+    } = useSectorModal();
 
     return (
         <>
@@ -50,17 +57,17 @@ export function SectorModal({ open, closeModal }: Props) {
                             </Button>
                         </div>
 
-                        <SectorTable initialData={sectors} />
+                        <SectorTable data={sectors} onToggle={handleToggle} />
 
                         <div className="flex gap-4 my-4 justify-end">
                             <Button
                                 type="button"
                                 variant="ghost"
-                                onClick={closeModal}
+                                onClick={handleSave}
                             >
                                 Cancelar
                             </Button>
-                            <Button type="button" onClick={closeModal}>
+                            <Button type="button" onClick={handleSave}>
                                 Salvar
                             </Button>
                         </div>

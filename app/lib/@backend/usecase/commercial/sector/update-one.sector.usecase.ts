@@ -13,15 +13,8 @@ class UpdateOneSectorUsecase {
     }
 
     @RemoveMongoId()
-    async execute(
-        filter: Filter<ISector>,
-        update: Partial<ISector>
-    ): Promise<ISector> {
-        await this.repository.updateOne(filter, update);
-        const updated = await this.repository.findOne(filter);
-        if (!updated) throw new Error("Setor não encontrado após update");
-
-        return updated;
+    async execute(filter: Filter<ISector>, update: Partial<ISector>) {
+        return await this.repository.updateOne(filter, { $set: update });
     }
 }
 
