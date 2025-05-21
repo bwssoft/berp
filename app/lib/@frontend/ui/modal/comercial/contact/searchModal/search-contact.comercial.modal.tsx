@@ -10,8 +10,14 @@ interface ContactModalProps {
 }
 
 export function SearchContactModal({ accountId }: ContactModalProps) {
-  const { closeModal, openModal, open, contactsByCompany, isLoading } =
-    useSearchContactModal(accountId ?? "");
+  const {
+    closeModal,
+    openModal,
+    open,
+    contactsByCompany,
+    isLoading,
+    accountData,
+  } = useSearchContactModal(accountId ?? "");
 
   if (!contactsByCompany) return null;
 
@@ -30,8 +36,8 @@ export function SearchContactModal({ accountId }: ContactModalProps) {
           <ModalBody>
             <SearchContactAccountForm
               isLoading={isLoading}
-              accountId={accountId}
               contacts={contactsByCompany ?? []}
+              accountData={accountData}
             />
           </ModalBody>
         </ModalContent>
