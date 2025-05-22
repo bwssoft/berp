@@ -1,12 +1,16 @@
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { createOneDevice } from '@/app/lib/@backend/action';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { createOneDevice } from "@/app/lib/@backend/action";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Device } from "@/app/lib/@backend/domain";
 
 const schema = z.object({
-  serial: z.string().min(1, 'Esse campo não pode ser vazio'),
-  product_id: z.string().min(1, 'Esse campo não pode ser vazio'),
+  equipment: z.object({
+    serial: z.string().min(1, "Esse campo não pode ser vazio"),
+    firmware: z.string().min(1, "Esse campo não pode ser vazio"),
+  }),
+  model: z.nativeEnum(Device.Model),
 });
 
 export type Schema = z.infer<typeof schema>;

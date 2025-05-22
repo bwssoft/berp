@@ -23,7 +23,7 @@ export const columns: ColumnDef<Type>[] = [
     accessorKey: "device",
     cell: ({ row }) => {
       const request_to_update = row.original;
-      return request_to_update.device.serial;
+      return request_to_update.device.equipment.serial;
     },
   },
   {
