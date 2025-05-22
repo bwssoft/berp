@@ -7,8 +7,9 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
-import { findOneAccount, findOneContact } from "@/app/lib/@backend/action";
-import { PencilIcon } from "@heroicons/react/20/solid";
+import { findOneAccount } from "@/app/lib/@backend/action";
+import { PencilSquareIcon } from "@heroicons/react/20/solid";
+import { Button } from "@react-email/components";
 
 interface ContactCardProps {
   accountId: string;
@@ -32,11 +33,15 @@ export function ContactCard({ accountId }: ContactCardProps) {
           key={contact.id}
           className="shadow-md rounded-lg bg-slate-50 p-4 border border-gray-200 text-sm"
         >
-          <div className="flex justify-between items-start flex-col w-full">
-            <div className="flex flex-row items-end justify-end w-full">
-              <TrashIcon className="w-4 h-4" />
-              <PencilIcon className="w-4 h-4" />
-            </div>
+          <div className="flex flex-row items-end justify-end w-full gap-1">
+            <Button className="cursor-pointer" onClick={() => {}}>
+              <TrashIcon className="w-5 h-5 cursor-pointer" />
+            </Button>
+            <Button className="cursor-pointer">
+              <PencilSquareIcon className="w-5 h-5 cursor-pointer" />
+            </Button>
+          </div>
+          <div className="flex justify-between items-start flex-col w-full -mt-4">
             <span className="font-semibold text-[16px] text-gray-900">
               {contact.name}
             </span>
@@ -44,7 +49,12 @@ export function ContactCard({ accountId }: ContactCardProps) {
               {contact.contactItems.map((contactItem) => (
                 <div className="flex gap-2 items-center">
                   <span className="font-semibold">{contactItem.type}: </span>
-                  <span className="text-slate-700">{contactItem.contact}</span>
+                  <span
+                    title="Preferência de contato"
+                    className="text-slate-700"
+                  >
+                    {contactItem.contact}
+                  </span>
                   {contactItem.preferredContact.whatsapp == true && (
                     <WhatsappIcon />
                   )}
