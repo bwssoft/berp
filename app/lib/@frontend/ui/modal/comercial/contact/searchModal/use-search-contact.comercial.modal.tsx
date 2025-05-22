@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { findManyAccount } from "@/app/lib/@backend/action";
-import { IAccount } from "@/app/lib/@backend/domain";
+import { IAccount, IContact } from "@/app/lib/@backend/domain";
 
 const PAGE_SIZE = 10;
 const currentPage = 1;
@@ -11,7 +11,7 @@ const currentPage = 1;
 export function useSearchContactModal(accountId?: string) {
   const [open, setOpen] = useState(false);
   const [contactsByCompany, setContactsByCompany] = useState<
-    { name: string; contacts: string[]; documentValue: string }[]
+    { name: string; contacts: IContact[]; documentValue: string }[]
   >([]);
   const [accountData, setAccountData] = useState<IAccount>();
 
@@ -28,18 +28,17 @@ export function useSearchContactModal(accountId?: string) {
 
       const account = data.docs[0];
       setAccountData(account);
+
       if (
         Array.isArray(account?.contacts) &&
         account.fantasy_name &&
         account.document?.value
       ) {
-        const contactIds = account.contacts.map((c: any) => c.id || c);
-
         setContactsByCompany([
           {
             name: account.fantasy_name,
             documentValue: account.document.value,
-            contacts: contactIds,
+            contacts: account.contacts,
           },
         ]);
       }
@@ -56,7 +55,7 @@ export function useSearchContactModal(accountId?: string) {
 
         const novasEmpresas: {
           name: string;
-          contacts: string[];
+          contacts: IContact[];
           documentValue: string;
         }[] = [];
 
@@ -67,12 +66,10 @@ export function useSearchContactModal(accountId?: string) {
             empresa.fantasy_name &&
             empresa.document?.value
           ) {
-            const contactIds = empresa.contacts.map((c: any) => c.id || c);
-
             novasEmpresas.push({
               name: empresa.fantasy_name,
               documentValue: empresa.document.value,
-              contacts: contactIds,
+              contacts: empresa.contacts,
             });
           }
         }

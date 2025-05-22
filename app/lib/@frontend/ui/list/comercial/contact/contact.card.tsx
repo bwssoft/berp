@@ -17,27 +17,13 @@ export function ContactCard({ accountId }: ContactCardProps) {
     enabled: !!accountId,
   });
 
-  const contactIds = accountData?.contacts?.map((c) => c) ?? [];
-
-  const { data: contacts = [], isLoading: contactLoading } = useQuery({
-    queryKey: ["findAllContacts", contactIds],
-    queryFn: async () => {
-      if (contactIds.length === 0) return [];
-      const results = await Promise.all(
-        contactIds.map((id) => findOneContact({ id }).catch(() => null))
-      );
-      return results.filter((c): c is IContact => !!c);
-    },
-    enabled: contactIds.length > 0,
-  });
-
-  if (accountLoading || contactLoading) {
+  if (accountLoading) {
     return <div>Carregando contatos...</div>;
   }
 
   return (
     <div className="flex flex-col gap-4 w-fit">
-      {contacts.map((contact) => (
+      {accountData?.contacts?.map((contact) => (
         <div
           key={contact.id}
           className="shadow-md rounded-lg bg-white p-4 border border-gray-200 text-sm"
