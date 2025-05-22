@@ -2,7 +2,7 @@
 "use client";
 
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
-import { ContactList } from "../../../form/commercial/account/contact/create/use-contact.account";
+import { ContactList } from "../../../form/commercial/account/contact/create/use-contact.create.account";
 import { columns } from "./colums";
 
 interface Props {
