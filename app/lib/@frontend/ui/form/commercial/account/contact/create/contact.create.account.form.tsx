@@ -7,7 +7,7 @@ import {
   Combobox,
   ContactTable,
   Input,
-  useContactAccount,
+  useCreateContactAccount,
 } from "../../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
@@ -15,7 +15,7 @@ type Props = {
   closeModal: () => void;
 };
 
-export function ContactAccountForm({ closeModal }: Props) {
+export function CreateContactAccountForm({ closeModal }: Props) {
   const {
     control,
     register,
@@ -25,7 +25,7 @@ export function ContactAccountForm({ closeModal }: Props) {
     handleNewContact,
     handlePreferredContact,
     handleRemove,
-  } = useContactAccount(closeModal);
+  } = useCreateContactAccount(closeModal);
 
   return (
     <form

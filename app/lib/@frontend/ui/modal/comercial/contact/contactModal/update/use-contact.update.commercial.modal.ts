@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function useContactModal() {
+export function useUpdateContactModal() {
   const [open, setOpen] = useState(false);
 
   function openModal() {

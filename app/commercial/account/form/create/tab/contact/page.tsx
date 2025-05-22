@@ -1,11 +1,11 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component";
 import { ContactCard } from "@/app/lib/@frontend/ui/list/comercial/contact/contact.card";
+import { SearchContactModal } from "@/app/lib/@frontend/ui/modal";
 import {
-  ContactModal,
-  SearchContactModal,
-  useContactModal,
-} from "@/app/lib/@frontend/ui/modal";
+  CreateContactModal,
+  useCreateContactModal,
+} from "@/app/lib/@frontend/ui/modal/comercial/contact/contactModal";
 
 interface Props {
   searchParams: {
@@ -19,14 +19,14 @@ export default function Page(props: Props) {
     open: openContact,
     openModal: openModalContact,
     closeModal,
-  } = useContactModal();
+  } = useCreateContactModal();
 
   return (
     <div>
       <div className="flex gap-4 w-full justify-end">
         <SearchContactModal accountId={searchParams.id ?? ""} />
         <Button onClick={openModalContact}>Novo</Button>
-        <ContactModal closeModal={closeModal} open={openContact} />
+        <CreateContactModal closeModal={closeModal} open={openContact} />
       </div>
       <div>
         <ContactCard accountId={searchParams.id ?? ""} />

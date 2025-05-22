@@ -76,7 +76,7 @@ const schema = z
     }
   });
 
-export function useContactAccount(closeModal: () => void) {
+export function useCreateContactAccount(closeModal: () => void) {
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {

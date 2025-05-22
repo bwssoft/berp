@@ -1,16 +1,19 @@
 "use client";
 
+import {
+  CreateContactAccountForm,
+  Modal,
+  ModalBody,
+  ModalContent,
+} from "@/app/lib/@frontend/ui/component";
 import React from "react";
-import { Modal, ModalBody, ModalContent } from "../../../../component";
-import { ContactAccountForm } from "../../../../form/commercial/account/contact";
-import { useContactModal } from "./use-contact.comercial.modal";
 
 interface Props {
   open: boolean;
   closeModal: () => void;
 }
 
-export function ContactModal({ open, closeModal }: Props) {
+export function CreateContactModal({ open, closeModal }: Props) {
   return (
     <Modal
       open={open}
@@ -21,7 +24,7 @@ export function ContactModal({ open, closeModal }: Props) {
     >
       <ModalContent>
         <ModalBody className="overflow-y-scroll max-h-[70vh]">
-          <ContactAccountForm closeModal={closeModal} />
+          <CreateContactAccountForm closeModal={closeModal} />
         </ModalBody>
       </ModalContent>
     </Modal>
