@@ -11,7 +11,11 @@ import {
 } from "../../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
 
-export function ContactAccountForm() {
+type Props = {
+  closeModal: () => void;
+};
+
+export function ContactAccountForm({ closeModal }: Props) {
   const {
     control,
     register,
@@ -21,7 +25,7 @@ export function ContactAccountForm() {
     handleNewContact,
     handlePreferredContact,
     handleRemove,
-  } = useContactAccount();
+  } = useContactAccount(closeModal);
 
   return (
     <form

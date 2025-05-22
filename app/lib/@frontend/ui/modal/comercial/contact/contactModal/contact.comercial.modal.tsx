@@ -5,12 +5,12 @@ import { Modal, ModalBody, ModalContent } from "../../../../component";
 import { ContactAccountForm } from "../../../../form/commercial/account/contact";
 import { useContactModal } from "./use-contact.comercial.modal";
 
-interface ContactModalProps {
+interface Props {
   open: boolean;
+  closeModal: () => void;
 }
 
-export function ContactModal({ open }: ContactModalProps) {
-  const { closeModal } = useContactModal();
+export function ContactModal({ open, closeModal }: Props) {
   return (
     <Modal
       open={open}
@@ -21,7 +21,7 @@ export function ContactModal({ open }: ContactModalProps) {
     >
       <ModalContent>
         <ModalBody className="overflow-y-scroll max-h-[70vh]">
-          <ContactAccountForm />
+          <ContactAccountForm closeModal={closeModal} />
         </ModalBody>
       </ModalContent>
     </Modal>

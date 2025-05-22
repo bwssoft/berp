@@ -76,7 +76,7 @@ const schema = z
     }
   });
 
-export function useContactAccount() {
+export function useContactAccount(closeModal: () => void) {
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -201,6 +201,7 @@ export function useContactAccount() {
         });
 
         reset();
+        closeModal();
       } catch (err) {
         console.log(err);
         toast({

@@ -15,14 +15,18 @@ interface Props {
 
 export default function Page(props: Props) {
   const { searchParams } = props;
-  const { open: openContact, openModal: openModalContact } = useContactModal();
+  const {
+    open: openContact,
+    openModal: openModalContact,
+    closeModal,
+  } = useContactModal();
 
   return (
     <div>
       <div className="flex gap-4 w-full justify-end">
         <SearchContactModal accountId={searchParams.id ?? ""} />
         <Button onClick={openModalContact}>Novo</Button>
-        <ContactModal open={openContact} />
+        <ContactModal closeModal={closeModal} open={openContact} />
       </div>
       <div>
         <ContactCard accountId={searchParams.id ?? ""} />
