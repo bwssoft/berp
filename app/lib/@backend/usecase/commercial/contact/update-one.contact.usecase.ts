@@ -22,9 +22,8 @@ class UpdateOneContactUsecase {
     try {
       // 1. Atualiza o contato principal
       await this.repository.updateOne(filter, { $set: update });
-
       // 2. Busca o contato atualizado para obter o id correto
-      const updatedContact = await this.repository.findOne(filter);
+      const updatedContact = await this.repository.findOne({ id: filter.id });
       if (!updatedContact?.id) {
         return {
           error: { global: "Contato não encontrado após atualização." },

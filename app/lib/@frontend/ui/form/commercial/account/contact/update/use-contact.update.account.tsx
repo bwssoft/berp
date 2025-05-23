@@ -4,13 +4,9 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  findManyAccount,
-  updateOneAccount,
-  updateOneContact,
-} from "@/app/lib/@backend/action";
+import { findManyAccount, updateOneContact } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery } from "@tanstack/react-query";
 import { ContactList } from "../create";
@@ -109,6 +105,8 @@ export function useUpdateContactAccount(
     name: "contactItems",
   });
 
+  const router = useRouter();
+
   const handleNewContact = () => {
     const rawType = watch("contactItems.0.type");
     const type =
@@ -168,7 +166,7 @@ export function useUpdateContactAccount(
 
   const onSubmit = handleSubmit(async (data) => {
     const { success, error } = await updateOneContact(
-      { data },
+      { id: contact.id },
       {
         ...data,
         accountId: accountId ?? undefined,
@@ -179,40 +177,16 @@ export function useUpdateContactAccount(
         })),
       }
     );
-    if (success && accountId) {
-      try {
-        const currentContacts: IContact[] =
-          accountData?.docs?.[0]?.contacts ?? [];
+    if (success) {
+      router.refresh();
+      toast({
+        title: "Sucesso!",
+        description: "Contato atualizado com sucesso!",
+        variant: "success",
+      });
 
-        const updatedContacts: IContact[] = [
-          ...currentContacts,
-          ...(success ? [success] : []),
-        ].filter(
-          (contact, index, self) =>
-            contact?.id && index === self.findIndex((c) => c?.id === contact.id)
-        );
-
-        await updateOneAccount(
-          { id: accountId },
-          { contacts: updatedContacts }
-        );
-
-        toast({
-          title: "Sucesso!",
-          description: "Contato atualizado com sucesso!",
-          variant: "success",
-        });
-
-        reset();
-        closeModal();
-      } catch (err) {
-        console.log(err);
-        toast({
-          title: "Erro!",
-          description: "Ocorreu um erro ao atualizar contato.",
-          variant: "error",
-        });
-      }
+      reset();
+      closeModal();
     } else if (error) {
       Object.entries(error).forEach(([key, msg]) => {
         if (key !== "global" && msg) {

@@ -196,6 +196,7 @@ export function useCreateContactAccount(closeModal: () => void) {
           { contacts: updatedContacts }
         );
 
+        router.refresh();
         toast({
           title: "Sucesso!",
           description: "Contato criado e conta atualizada com sucesso!",
@@ -204,7 +205,6 @@ export function useCreateContactAccount(closeModal: () => void) {
 
         reset();
         closeModal();
-        router.refresh();
       } catch (err) {
         console.log(err);
         toast({
