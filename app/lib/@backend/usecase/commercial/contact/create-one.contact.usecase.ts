@@ -3,11 +3,12 @@ import { IContact, IContactRepository } from "../../../domain";
 import { contactRepository } from "../../../infra";
 
 export type Output = {
-  success: boolean;
+  success?: IContact;
   error?: {
     global?: string;
   };
 };
+
 class CreateOneContactUsecase {
   repository: IContactRepository;
 
@@ -25,11 +26,10 @@ class CreateOneContactUsecase {
 
       await this.repository.create(contact);
 
-      return { success: true };
+      return { success: contact };
     } catch (error) {
       console.error(error);
       return {
-        success: false,
         error: { global: "Falha ao criar contato." },
       };
     }

@@ -1,10 +1,15 @@
 "use client";
 
-import { ClipboardIcon } from "@heroicons/react/24/outline";
-import { IContact } from "@/app/lib/@backend/domain";
-import { Button } from "../../../component";
+import { WhatsappIcon } from "../../../../svg/whatsapp-icon";
+import {
+  EnvelopeIcon,
+  PhoneIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
-import { findOneAccount, findOneContact } from "@/app/lib/@backend/action";
+import { findOneAccount } from "@/app/lib/@backend/action";
+import { PencilSquareIcon } from "@heroicons/react/20/solid";
+import { Button } from "@react-email/components";
 
 interface ContactCardProps {
   accountId: string;
@@ -17,57 +22,66 @@ export function ContactCard({ accountId }: ContactCardProps) {
     enabled: !!accountId,
   });
 
-  const contactIds = accountData?.contacts?.map((c) => c) ?? [];
-
-  const { data: contacts = [], isLoading: contactLoading } = useQuery({
-    queryKey: ["findAllContacts", contactIds],
-    queryFn: async () => {
-      if (contactIds.length === 0) return [];
-      const results = await Promise.all(
-        contactIds.map((id) => findOneContact({ id }).catch(() => null))
-      );
-      return results.filter((c): c is IContact => !!c);
-    },
-    enabled: contactIds.length > 0,
-  });
-
-  if (accountLoading || contactLoading) {
+  if (accountLoading) {
     return <div>Carregando contatos...</div>;
   }
 
   return (
-    <div className="flex flex-col gap-4 w-fit">
-      {contacts.map((contact) => (
+    <div className="flex flex-col gap-4 w-fit ">
+      {accountData?.contacts?.map((contact) => (
         <div
           key={contact.id}
-          className="shadow-md rounded-lg bg-white p-4 border border-gray-200 text-sm"
+          className="shadow-md rounded-lg bg-slate-50 p-4 border border-gray-200 text-sm"
         >
-          <div className="flex justify-between items-start">
-            <div className="flex flex-col">
-              <span className="font-semibold text-base text-gray-900">
-                {contact.name}
-              </span>
-              <span className="text-gray-700">
+          <div className="flex flex-row items-end justify-end w-full gap-1">
+            <Button className="cursor-pointer" onClick={() => {}}>
+              <TrashIcon className="w-5 h-5 cursor-pointer" />
+            </Button>
+            <Button className="cursor-pointer">
+              <PencilSquareIcon className="w-5 h-5 cursor-pointer" />
+            </Button>
+          </div>
+          <div className="flex justify-between items-start flex-col w-full -mt-4">
+            <span className="font-semibold text-[16px] text-gray-900">
+              {contact.name}
+            </span>
+            <div className="text-xs">
+              {contact.contactItems.map((contactItem) => (
+                <div className="flex gap-2 items-center">
+                  <span className="font-semibold">{contactItem.type}: </span>
+                  <span
+                    title="Preferência de contato"
+                    className="text-slate-700"
+                  >
+                    {contactItem.contact}
+                  </span>
+                  {contactItem.preferredContact.whatsapp == true && (
+                    <WhatsappIcon />
+                  )}
+                  {contactItem.preferredContact.phone == true && <PhoneIcon />}
+                  {contactItem.preferredContact.email == true && (
+                    <EnvelopeIcon />
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="text-xs">
+              <span className="font-semibold">Área: </span>
+              <span key={contact.positionOrRelation} className="text-slate-700">
                 {contact.positionOrRelation}
               </span>
-              {contact.department && (
-                <span className="text-gray-500 text-xs">
-                  {contact.department}
-                </span>
-              )}
             </div>
-            <Button
-              variant="ghost"
-              className="p-1"
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  `${contact.name} - ${contact.positionOrRelation} - ${contact.department ?? ""}`
-                );
-              }}
-              title="Copiar dados"
-            >
-              <ClipboardIcon className="h-4 w-4 text-gray-500" />
-            </Button>
+            <div className="text-xs">
+              <span className="font-semibold">Contato para: </span>
+              {contact.contactFor.map((contactFor) => (
+                <span
+                  key={contactFor}
+                  className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-slate-700"
+                >
+                  {contactFor}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       ))}

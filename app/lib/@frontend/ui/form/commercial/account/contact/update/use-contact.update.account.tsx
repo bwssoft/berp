@@ -1,12 +1,19 @@
-// use-contact.account.tsx
 "use client";
+
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { createOneContact } from "@/app/lib/@backend/action";
+import {
+  createOneContact,
+  findManyAccount,
+  updateOneAccount,
+  updateOneContact,
+} from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useSearchParams } from "next/navigation";
+import { IContact } from "@/app/lib/@backend/domain";
+import { useQuery } from "@tanstack/react-query";
 
 export type ContactList = {
   id?: string;
@@ -70,7 +77,7 @@ const schema = z
     }
   });
 
-export function useContactAccount() {
+export function useUpdateContactAccount(closeModal: () => void) {
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -148,22 +155,64 @@ export function useContactAccount() {
     remove(index);
   };
 
+  const { data: accountData } = useQuery({
+    queryKey: ["findManyAccount", accountId],
+    queryFn: () => {
+      if (!accountId) {
+        return null;
+      } else {
+        return findManyAccount({ id: accountId });
+      }
+    },
+    enabled: !!accountId,
+  });
+
   const onSubmit = handleSubmit(async (data) => {
-    const { success, error } = await createOneContact({
-      ...data,
-      contactItems: data.contactItems.map((item) => ({
-        ...item,
-        type: item.type[0],
-        accountId,
-      })),
-    });
-    if (success) {
-      toast({
-        title: "Sucesso!",
-        description: "Contato criado com sucesso!",
-        variant: "success",
-      });
-      reset();
+    const { success, error } = await updateOneContact(
+      { data }, // filtro
+      {
+        ...data,
+        accountId: accountId ?? undefined,
+        contactItems: data.contactItems.map((item) => ({
+          ...item,
+          type: item.type[0],
+        })),
+      }
+    );
+    if (success && accountId) {
+      try {
+        const currentContacts: IContact[] =
+          accountData?.docs?.[0]?.contacts ?? [];
+
+        const updatedContacts: IContact[] = [
+          ...currentContacts,
+          ...(success ? [success] : []),
+        ].filter(
+          (contact, index, self) =>
+            contact?.id && index === self.findIndex((c) => c?.id === contact.id)
+        );
+
+        await updateOneAccount(
+          { id: accountId },
+          { contacts: updatedContacts }
+        );
+
+        toast({
+          title: "Sucesso!",
+          description: "Contato atualizado com sucesso!",
+          variant: "success",
+        });
+
+        reset();
+        closeModal();
+      } catch (err) {
+        console.log(err);
+        toast({
+          title: "Erro!",
+          description: "Ocorreu um erro ao atualizar contato.",
+          variant: "error",
+        });
+      }
     } else if (error) {
       Object.entries(error).forEach(([key, msg]) => {
         if (key !== "global" && msg) {

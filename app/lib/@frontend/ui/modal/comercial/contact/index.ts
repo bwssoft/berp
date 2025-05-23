@@ -1,2 +1,2 @@
-export * from "./contactModal";
 export * from "./searchModal";
+export * from "./contactModal";

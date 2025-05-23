@@ -7,12 +7,15 @@ import {
   Combobox,
   ContactTable,
   Input,
-  useContactAccount,
+  useUpdateContactAccount,
 } from "../../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { on } from "events";
 
-export function ContactAccountForm() {
+type Props = {
+  closeModal: () => void;
+};
+
+export function UpdateContactAccountForm({ closeModal }: Props) {
   const {
     control,
     register,
@@ -22,7 +25,7 @@ export function ContactAccountForm() {
     handleNewContact,
     handlePreferredContact,
     handleRemove,
-  } = useContactAccount();
+  } = useUpdateContactAccount(closeModal);
 
   return (
     <form

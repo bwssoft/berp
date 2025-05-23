@@ -7,6 +7,7 @@ import {
   findManyContactUsecase,
   findOneContactUsecase,
 } from "../../usecase";
+import { updateOneContactUsecase } from "../../usecase/commercial/contact";
 
 export async function createOneContact(
   contact: Omit<IContact, "id" | "created_at">
@@ -21,6 +22,13 @@ export async function findManyContact(
   sort?: Record<string, 1 | -1>
 ) {
   return await findManyContactUsecase.execute({ filter, page, limit, sort });
+}
+
+export async function updateOneContact(
+  filter: Filter<IContact>,
+  update: Partial<IContact>
+) {
+  return await updateOneContactUsecase.execute(filter, update);
 }
 
 export const findOneContact = async (filter: Filter<IContact>) => {

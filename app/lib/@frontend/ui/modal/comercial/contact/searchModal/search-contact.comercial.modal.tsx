@@ -23,7 +23,9 @@ export function SearchContactModal({ accountId }: ContactModalProps) {
 
   return (
     <>
-      <Button onClick={openModal}>Buscar contato</Button>
+      {contactsByCompany.length > 0 && (
+        <Button onClick={openModal}>Buscar contato</Button>
+      )}
 
       <Modal
         open={open}

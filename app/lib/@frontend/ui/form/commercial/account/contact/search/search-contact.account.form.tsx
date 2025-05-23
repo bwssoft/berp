@@ -8,12 +8,12 @@ import {
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Button } from "../../../../../component";
 import { useSearchContactAccount } from "./use-search-contact.account";
-import { IAccount } from "@/app/lib/@backend/domain";
+import { IAccount, IContact } from "@/app/lib/@backend/domain";
 
 type ContactAccountFormProps = {
   contacts: {
     name: string;
-    contacts: string[];
+    contacts: IContact[];
     documentValue: string;
   }[];
   isLoading?: boolean;
@@ -33,13 +33,13 @@ export function SearchContactAccountForm({
     contactData,
   } = useSearchContactAccount({ accountData, contacts });
 
-  if (isLoading) return <div>carregando...</div>;
+  if (isLoading) return <div>Carregando...</div>;
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-auto flex flex-col gap-4">
-        {contactData.map((company) => (
-          <Disclosure key={company.name}>
+        {(contactData ?? []).map((company) => (
+          <Disclosure key={company.documentValue}>
             {({ open }) => (
               <>
                 <DisclosureButton className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-black bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
@@ -77,7 +77,7 @@ export function SearchContactAccountForm({
         >
           Cancelar
         </Button>
-        <Button type="button" onClick={() => handleSave()}>
+        <Button type="button" onClick={handleSave}>
           Salvar
         </Button>
       </div>

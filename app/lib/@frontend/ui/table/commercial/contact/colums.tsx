@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ContactList } from "../../../form/commercial/account/contact/create/use-contact.account";
+import { ContactList } from "../../../form/commercial/account/contact/create/use-contact.create.account";
 import { WhatsappIcon } from "../../../../svg/whatsapp-icon";
 import {
   EnvelopeIcon,
