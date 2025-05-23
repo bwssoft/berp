@@ -10,7 +10,7 @@ import {
   updateOneAccount,
 } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery } from "@tanstack/react-query";
 
@@ -93,6 +93,7 @@ export function useCreateContactAccount(closeModal: () => void) {
 
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
+  const router = useRouter();
 
   const {
     control,
@@ -203,6 +204,7 @@ export function useCreateContactAccount(closeModal: () => void) {
 
         reset();
         closeModal();
+        router.refresh();
       } catch (err) {
         console.log(err);
         toast({
