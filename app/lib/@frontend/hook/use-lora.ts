@@ -9,21 +9,39 @@ import {
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { IConfigurationProfile } from "../../@backend/domain";
+import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
 
+const defaultDecode = (command: string, buffer: string, state: string[]) => {
+  let lines = buffer.split("\r");
+  buffer = lines.pop() || "";
+  for (const line of lines) {
+    if (line.length > 0 && line.includes(command.replace("\r", ""))) {
+      return line;
+    }
+  }
+};
+
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
+  timeout: number = 500,
   command: string,
-  timeout: number = 500
-): Promise<string | undefined> => {
+  decode: (
+    command: string,
+    buffer: string,
+    state: string[]
+  ) => void = defaultDecode
+): Promise<string[]> => {
   const decoder = new TextDecoder();
   let buffer = "";
-  const timeoutPromise = new Promise<undefined>((resolve) =>
-    setTimeout(() => resolve(undefined), timeout)
+  const timeoutPromise = new Promise<[]>((resolve) =>
+    setTimeout(() => resolve([]), timeout)
   );
 
   const readPromise = (async () => {
+    const state: string[] = [];
+
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
@@ -31,15 +49,10 @@ const readResponse = async (
       const chunk = decoder.decode(value);
       buffer += chunk;
 
-      let lines = buffer.split("\r");
-      buffer = lines.pop() || "";
-      for (const line of lines) {
-        if (line.length > 0 && line.includes(command.replace("\r", ""))) {
-          return line;
-        }
-      }
+      decode(command, buffer, state);
     }
-    return undefined;
+
+    return state;
   })();
 
   return Promise.race([readPromise, timeoutPromise]);
@@ -69,15 +82,15 @@ export const useLora = () => {
     openTransport: async (transport) => {
       await openPort(transport, {
         baudRate: 115200,
-        stopBits: 2,
+        stopBits: 1,
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, message, timeout) => {
+    sendMessage: async (port, command, timeout, decode) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      await writeToPort(port, message);
-      const response = await readResponse(reader, message, timeout);
+      await writeToPort(port, command);
+      const [response] = await readResponse(reader, timeout, command, decode);
       await reader.cancel();
       reader.releaseLock();
       return response;
@@ -404,30 +417,53 @@ export const useLora = () => {
   );
   const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
-      const imei = await handleGetRandomImei();
-      const messages = [
+      const timestamp = Number(getDayZeroTimestamp().toString().slice(0, -5));
+
+      const writeMessages = [
         {
           key: "serial",
           message: `WINS=${serial}\r`,
         },
         {
-          key: "imei",
-          message: `WIMEI=${imei}\r`,
+          key: "timestamp",
+          message: `WTK=${timestamp}\r`,
+        },
+      ] as const;
+
+      const readMessages = [
+        {
+          key: "serial",
+          message: `RINS\r`,
+        },
+        {
+          key: "timestamp",
+          message: `RTK\r`,
+        },
+        {
+          key: "keys",
+          message: `RKEYS\r`,
         },
       ] as const;
       try {
         const init_time = Date.now();
-        const response = await sendMultipleMessages({
+        const writeResponse = await sendMultipleMessages({
           transport: port,
-          messages,
+          messages: writeMessages,
         });
+        await sleep(2000);
+        const readResponse = await sendMultipleMessages({
+          transport: port,
+          messages: readMessages,
+        });
+        console.log(readResponse);
         const end_time = Date.now();
         return {
           port,
-          response,
-          messages,
+          response: { ...writeResponse, ...readResponse },
+          messages: [...writeMessages, ...readMessages],
           init_time,
           end_time,
+          status: true,
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
@@ -440,7 +476,6 @@ export const useLora = () => {
     async (port: ISerialPort) => {
       const messages = [
         { message: "RINS\r", key: "serial", transform: LORAParser.serial },
-        { message: "RIMEI\r", key: "imei", transform: LORAParser.imei },
       ] as const;
       try {
         const response = await sendMultipleMessages({

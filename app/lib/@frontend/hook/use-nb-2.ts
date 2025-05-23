@@ -452,6 +452,7 @@ export const useNB2 = () => {
           messages,
           init_time,
           end_time,
+          status: true,
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
@@ -479,9 +480,6 @@ export const useNB2 = () => {
     },
     [sendMultipleMessages]
   );
-  const handleGetRandomImei = async () => {
-    return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
-  };
 
   const isIdentified = (input: {
     imei?: string;

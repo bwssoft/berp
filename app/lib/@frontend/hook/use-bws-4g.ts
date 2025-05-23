@@ -445,6 +445,7 @@ export const useBWS4G = () => {
           messages,
           init_time,
           end_time,
+          status: true,
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);

@@ -8,7 +8,6 @@ import {
   createOneDevice,
   createOneIdentificationLog,
 } from "../../@backend/action";
-import { sleep } from "../../util";
 
 namespace Namespace {
   export interface useIdentificationProps {
@@ -60,16 +59,18 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
         return;
 
       // run identification
-      const { response, messages, end_time, init_time } =
+      const { response, messages, end_time, init_time, status } =
         await handleIdentification(port, id);
 
       // check if each message sent has response
-      if (!response || !messages || !end_time || !init_time) return undefined;
-
-      await sleep(2000);
-
-      const identification = await handleGetIdentification(port);
-      const status = id === identification?.response?.serial;
+      if (
+        !response ||
+        !messages ||
+        !end_time ||
+        !init_time ||
+        typeof status !== "boolean"
+      )
+        return undefined;
 
       const log: Omit<IIdentificationLog, "id" | "created_at" | "user"> = {
         equipment: {
@@ -78,7 +79,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
           firmware: equipment.firmware!,
           iccid: equipment.iccid,
         },
-        identification: identification?.response,
+        identification: response,
         status,
         metadata: {
           messages: messages.map(({ key, message }) => ({
@@ -100,8 +101,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
           createOneDevice({
             equipment: {
               firmware: equipment.firmware!,
-              serial: identification?.response?.serial!,
-              imei: identification?.response?.imei,
+              serial: (response as any)?.serial!,
             },
             simcard: { iccid: equipment.iccid },
             model:

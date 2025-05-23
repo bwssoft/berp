@@ -283,6 +283,7 @@ export const useE3Plus4G = () => {
           messages,
           init_time,
           end_time,
+          status: true,
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
