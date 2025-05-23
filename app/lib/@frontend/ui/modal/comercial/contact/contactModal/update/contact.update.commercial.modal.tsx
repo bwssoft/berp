@@ -1,7 +1,7 @@
 "use client";
 
+import { IContact } from "@/app/lib/@backend/domain";
 import {
-  CreateContactAccountForm,
   Modal,
   ModalBody,
   ModalContent,
@@ -12,20 +12,21 @@ import React from "react";
 interface Props {
   open: boolean;
   closeModal: () => void;
+  contact: IContact;
 }
 
-export function UpdateContactModal({ open, closeModal }: Props) {
+export function UpdateContactModal({ open, closeModal, contact }: Props) {
   return (
     <Modal
       open={open}
       onClose={closeModal}
-      title="Novo Contato"
+      title="Atualizar Contato"
       className="bg-white"
       position="center"
     >
       <ModalContent>
         <ModalBody className="overflow-y-scroll max-h-[70vh]">
-          <UpdateContactAccountForm closeModal={closeModal} />
+          <UpdateContactAccountForm contact={contact} closeModal={closeModal} />
         </ModalBody>
       </ModalContent>
     </Modal>

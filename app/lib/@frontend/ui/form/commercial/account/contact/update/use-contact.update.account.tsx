@@ -5,7 +5,6 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
-  createOneContact,
   findManyAccount,
   updateOneAccount,
   updateOneContact,
@@ -67,18 +66,28 @@ const schema = z
     }
   });
 
-export function useUpdateContactAccount(closeModal: () => void) {
+export function useUpdateContactAccount(
+  closeModal: () => void,
+  contact: IContact
+) {
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      contractEnabled: false,
-      name: "",
-      positionOrRelation: "",
-      department: "",
-      cpf: "",
-      rg: "",
-      contactFor: [],
-      contactItems: [],
+      contractEnabled: contact.contractEnabled,
+      name: contact.name,
+      positionOrRelation: contact.positionOrRelation,
+      department: contact.department,
+      cpf: contact.cpf,
+      rg: contact.rg,
+      contactFor: contact.contactFor,
+      contactItems: contact.contactItems.map((item) => ({
+        id: item.id,
+        type: Array.isArray(item.type)
+          ? item.type
+          : [item.type].filter(Boolean),
+        contact: item.contact,
+        preferredContact: item.preferredContact,
+      })),
     },
   });
 
@@ -159,12 +168,13 @@ export function useUpdateContactAccount(closeModal: () => void) {
 
   const onSubmit = handleSubmit(async (data) => {
     const { success, error } = await updateOneContact(
-      { data }, // filtro
+      { data },
       {
         ...data,
         accountId: accountId ?? undefined,
         contactItems: data.contactItems.map((item) => ({
           ...item,
+          id: item.id ?? crypto.randomUUID(),
           type: item.type[0],
         })),
       }

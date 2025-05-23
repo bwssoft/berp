@@ -9,6 +9,8 @@ import {
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
 import { useContactCard } from "./use-contact.card";
 import { Button, Dialog } from "../../../component";
+import { UpdateContactModal, useUpdateContactModal } from "../../../modal";
+import { IContact } from "@/app/lib/@backend/domain";
 
 interface ContactCardProps {
   accountId: string;
@@ -22,13 +24,14 @@ export function ContactCard({ accountId }: ContactCardProps) {
     openModalDelete,
     setOpenModalDelete,
   } = useContactCard(accountId);
+  const { closeModal, open, openModal } = useUpdateContactModal();
   if (accountLoading) {
     return <div>Carregando contatos...</div>;
   }
 
   return (
     <div className="flex flex-col gap-4 w-fit ">
-      {accountData?.contacts?.map((contact: any) => (
+      {accountData?.contacts?.map((contact: IContact) => (
         <div
           key={contact.id}
           className="shadow-md rounded-lg bg-slate-50 p-4 border border-gray-200 text-sm"
@@ -37,13 +40,15 @@ export function ContactCard({ accountId }: ContactCardProps) {
             <Button
               variant={"ghost"}
               className="cursor-pointer w-fit"
-              onClick={() => {
-                setOpenModalDelete(true);
-              }}
+              onClick={() => setOpenModalDelete(true)}
             >
               <TrashIcon className="w-5 h-5 cursor-pointer" />
             </Button>
-            <Button variant={"ghost"} className="cursor-pointer w-fit">
+            <Button
+              onClick={openModal}
+              variant={"ghost"}
+              className="cursor-pointer w-fit"
+            >
               <PencilSquareIcon className="w-5 h-5 cursor-pointer" />
             </Button>
           </div>
@@ -116,6 +121,11 @@ export function ContactCard({ accountId }: ContactCardProps) {
               </div>
             </div>
           </Dialog>
+          <UpdateContactModal
+            contact={contact}
+            open={open}
+            closeModal={closeModal}
+          />
         </div>
       ))}
     </div>
