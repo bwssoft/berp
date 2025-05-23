@@ -10,12 +10,14 @@ import {
   useUpdateContactAccount,
 } from "../../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { IContact } from "@/app/lib/@backend/domain";
 
 type Props = {
   closeModal: () => void;
+  contact: IContact;
 };
 
-export function UpdateContactAccountForm({ closeModal }: Props) {
+export function UpdateContactAccountForm({ closeModal, contact }: Props) {
   const {
     control,
     register,
@@ -25,7 +27,7 @@ export function UpdateContactAccountForm({ closeModal }: Props) {
     handleNewContact,
     handlePreferredContact,
     handleRemove,
-  } = useUpdateContactAccount(closeModal);
+  } = useUpdateContactAccount(closeModal, contact);
 
   return (
     <form

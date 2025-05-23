@@ -13,6 +13,7 @@ export interface IContact {
 }
 
 export interface ContactItem {
+  id: string;
   type: "Celular" | "Telefone Residencial" | "Telefone Comercial" | "Email";
   contact: string;
   preferredContact: PreferredContact;

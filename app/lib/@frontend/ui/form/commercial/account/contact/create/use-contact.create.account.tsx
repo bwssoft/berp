@@ -172,6 +172,7 @@ export function useCreateContactAccount(closeModal: () => void) {
       accountId: accountId ?? undefined,
       contactItems: data.contactItems.map((item) => ({
         ...item,
+        id: item.id ?? crypto.randomUUID(),
         type: item.type[0],
       })),
     });
