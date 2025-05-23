@@ -1,10 +1,14 @@
 import { deleteOneContact, findOneAccount } from "@/app/lib/@backend/action";
+import { IContact } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 export const useContactCard = (accountId: string) => {
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<IContact>(
+    {} as IContact
+  );
   const { data: accountData, isLoading: accountLoading } = useQuery({
     queryKey: ["findOneAccount", accountId],
     queryFn: async () => await findOneAccount({ id: accountId }),
@@ -36,5 +40,7 @@ export const useContactCard = (accountId: string) => {
     deleteContact,
     setOpenModalDelete,
     openModalDelete,
+    setSelectedContact,
+    selectedContact,
   };
 };

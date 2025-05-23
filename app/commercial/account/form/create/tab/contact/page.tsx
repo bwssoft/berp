@@ -6,6 +6,7 @@ import {
   CreateContactModal,
   useCreateContactModal,
 } from "@/app/lib/@frontend/ui/modal/comercial/contact/contactModal";
+import { PageFooterButtons } from "./page-footer-buttons";
 
 interface Props {
   searchParams: {
@@ -31,6 +32,9 @@ export default function Page(props: Props) {
       <div>
         <ContactCard accountId={searchParams.id ?? ""} />
       </div>
+      <footer className="">
+        <PageFooterButtons />
+      </footer>
     </div>
   );
 }
