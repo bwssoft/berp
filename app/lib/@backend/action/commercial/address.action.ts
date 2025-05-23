@@ -19,7 +19,6 @@ export async function createOneAddress(
 ) {
   const result = await createOneAddressUsecase.execute(input);
   if (!result) return;
-  redirect(`/commercial/account/form/create/tab/contact?id=${input.accountId}`);
 }
 
 export async function findManyAddress(
