@@ -14,6 +14,7 @@ export function AddressCardList({ items, className }: AddressCardListProps) {
                     key={item.id}
                     title="Endereço:"
                     address={{
+                        id: item.id,
                         street: item.street,
                         number: item.number,
                         district: item.district,

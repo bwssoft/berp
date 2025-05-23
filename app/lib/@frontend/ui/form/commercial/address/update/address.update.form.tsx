@@ -1,20 +1,19 @@
 "use client";
 
 import React from "react";
-
-import { useAddressForm } from "./use-address.create.form";
-import { Button, Checkbox, Input } from "../../../../component";
 import { Controller } from "react-hook-form";
+import { Button, Checkbox, Input } from "../../../../component";
+import { IAddress } from "@/app/lib/@backend/domain";
+import { useAddressUpdateForm } from "./use-address.update.form";
 
 interface Props {
+    address: IAddress;
     closeModal: () => void;
 }
 
-export function AddressCreateForm({ closeModal }: Props) {
+export function AddressUpdateForm({ address, closeModal }: Props) {
     const { register, handleSubmit, loadingCep, errors, control } =
-        useAddressForm({
-            closeModal,
-        });
+        useAddressUpdateForm({ address, closeModal });
 
     const checkboxOptions = [
         { label: "Comercial", value: "Comercial" },
@@ -26,62 +25,51 @@ export function AddressCreateForm({ closeModal }: Props) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-2 px-1 sm:px-6 lg:px-8 rounded-md pb-6 "
+            className="flex flex-col gap-2 px-1 sm:px-6 lg:px-8 rounded-md pb-6"
         >
             <Input
                 label="Buscar pelo CEP"
-                placeholder=""
-                onLoad={() => {
-                    loadingCep;
-                }}
+                onLoad={() => loadingCep}
                 {...register("zip_code")}
                 error={errors.zip_code?.message}
             />
             <Input
                 label="Logradouro"
-                placeholder=""
                 {...register("street")}
                 error={errors.street?.message}
             />
             <Input
                 label="Número"
-                placeholder=""
                 {...register("number")}
                 error={errors.number?.message}
             />
             <Input
                 label="Complemento"
-                placeholder=""
                 {...register("complement")}
                 error={errors.complement?.message}
             />
             <Input
                 label="Bairro"
-                placeholder=""
                 {...register("district")}
                 error={errors.district?.message}
             />
             <Input
                 label="Estado"
-                placeholder=""
                 {...register("state")}
                 error={errors.state?.message}
             />
             <Input
                 label="Cidade"
-                placeholder=""
                 {...register("city")}
                 error={errors.city?.message}
             />
             <Input
                 label="Ponto de Referência"
-                placeholder=""
                 {...register("reference_point")}
                 error={errors.reference_point?.message}
             />
             <div className="mt-2">
                 <span className="text-sm font-medium text-gray-700">Tipo</span>
-
                 <Controller
                     control={control}
                     name="type"

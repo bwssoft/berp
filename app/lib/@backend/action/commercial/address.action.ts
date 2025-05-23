@@ -2,31 +2,37 @@
 
 import { IAddress } from "@/app/lib/@backend/domain";
 import {
-  createOneAddressUsecase,
-  findManyAddressUsecase,
-  findOneAddressUsecase,
+    createOneAddressUsecase,
+    findManyAddressUsecase,
+    findOneAddressUsecase,
 } from "@/app/lib/@backend/usecase";
 import { Filter } from "mongodb";
 import { viaCepGateway } from "../../infra/gateway/viacep/viacep.gateway";
 import { redirect } from "next/navigation";
+import { updateOneAddressUsecase } from "../../usecase/commercial/address/update-one.address.usecase";
 
 export async function getAddressByCep(cep: string) {
-  return await viaCepGateway.findByCep(cep);
+    return await viaCepGateway.findByCep(cep);
 }
 
 export async function createOneAddress(
-  input: Omit<IAddress, "id" | "created_at">
+    input: Omit<IAddress, "id" | "created_at">
 ) {
-  const result = await createOneAddressUsecase.execute(input);
-  if (!result) return;
+    const result = await createOneAddressUsecase.execute(input);
+    if (!result) return;
 }
 
 export async function findManyAddress(
-  query: Filter<IAddress>
+    query: Filter<IAddress>
 ): Promise<IAddress[]> {
-  return await findManyAddressUsecase.execute(query);
+    return await findManyAddressUsecase.execute(query);
 }
-
+export async function updateOneAddress(
+    filter: Filter<IAddress>,
+    update: Partial<IAddress>
+) {
+    return await updateOneAddressUsecase.execute(filter, update);
+}
 export async function findOneAddress(query: Partial<IAddress>) {
-  return await findOneAddressUsecase.execute(query);
+    return await findOneAddressUsecase.execute(query);
 }

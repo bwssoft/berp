@@ -7,6 +7,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "../../../component";
 import { IAddress } from "@/app/lib/@backend/domain";
+import { AddressUpdateModal } from "../../../modal/comercial/address/update";
+import { useAddressModal } from "../../../modal/comercial/address/use-address.modal";
 
 interface AddressCardProps {
     title?: string;
@@ -16,7 +18,7 @@ interface AddressCardProps {
 }
 
 export function AddressCard({
-    title = "Endereço:",
+    title = "Endereço",
     address,
     onRefresh,
     onCopy,
@@ -57,11 +59,16 @@ export function AddressCard({
                 });
         }
     };
-
+    const { closeModal, open, openModal } = useAddressModal();
     return (
         <div className="shadow-xl rounded-xl bg-slate-100 p-5 text-gray-800 h-70 w-96">
+            <AddressUpdateModal
+                address={address}
+                closeModal={closeModal}
+                open={open}
+            />
             <div className="flex items-center justify-between font-semibold">
-                {title} {address.type}
+                {title} {address.type?.join(" / ")}
                 <div className="flex gap-1">
                     <Button variant={"secondary"}>
                         <ArrowPathIcon className="size-4" />
@@ -69,7 +76,7 @@ export function AddressCard({
                     <Button onClick={copy} variant={"secondary"}>
                         <ClipboardIcon className="size-4" />
                     </Button>
-                    <Button variant={"secondary"}>
+                    <Button onClick={openModal} variant={"secondary"}>
                         <PencilIcon className="size-4" />
                     </Button>
                 </div>
