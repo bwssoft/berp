@@ -14,7 +14,7 @@ export function AddressModal({ open, closeModal }: AddressProps) {
         <Modal
             open={open}
             onClose={closeModal}
-            title="Editar endereço"
+            title="Cadastrar novo endereço"
             className="bg-white"
             position="center"
         >
