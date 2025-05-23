@@ -8,7 +8,7 @@ import { findManyAccount, updateOneContact } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ContactList } from "../create";
 
 const schema = z
@@ -164,6 +164,7 @@ export function useUpdateContactAccount(
     enabled: !!accountId,
   });
 
+  const queryClient = useQueryClient();
   const onSubmit = handleSubmit(async (data) => {
     const { success, error } = await updateOneContact(
       { id: contact.id },
@@ -178,7 +179,10 @@ export function useUpdateContactAccount(
       }
     );
     if (success) {
-      router.refresh();
+      await queryClient.invalidateQueries({
+        queryKey: ["findOneAccount", accountId],
+      });
+
       toast({
         title: "Sucesso!",
         description: "Contato atualizado com sucesso!",

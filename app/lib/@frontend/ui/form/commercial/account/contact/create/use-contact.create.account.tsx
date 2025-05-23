@@ -12,7 +12,7 @@ import {
 import { toast } from "@/app/lib/@frontend/hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export type ContactList = {
   id?: string;
@@ -167,6 +167,8 @@ export function useCreateContactAccount(closeModal: () => void) {
     enabled: !!accountId,
   });
 
+  const queryClient = useQueryClient();
+
   const onSubmit = handleSubmit(async (data) => {
     const { success, error } = await createOneContact({
       ...data,
@@ -179,6 +181,9 @@ export function useCreateContactAccount(closeModal: () => void) {
     });
 
     if (success && accountId) {
+      await queryClient.invalidateQueries({
+        queryKey: ["findOneAccount", accountId],
+      });
       try {
         const currentContacts: IContact[] =
           accountData?.docs?.[0]?.contacts ?? [];

@@ -23,6 +23,8 @@ export function ContactCard({ accountId }: ContactCardProps) {
     deleteContact,
     openModalDelete,
     setOpenModalDelete,
+    setSelectedContact,
+    selectedContact,
   } = useContactCard(accountId);
   const { closeModal, open, openModal } = useUpdateContactModal();
   if (accountLoading) {
@@ -45,7 +47,9 @@ export function ContactCard({ accountId }: ContactCardProps) {
               <TrashIcon className="w-5 h-5 cursor-pointer" />
             </Button>
             <Button
-              onClick={openModal}
+              onClick={() => {
+                setSelectedContact(contact), openModal();
+              }}
               variant={"ghost"}
               className="cursor-pointer w-fit px-1"
             >
@@ -122,7 +126,7 @@ export function ContactCard({ accountId }: ContactCardProps) {
             </div>
           </Dialog>
           <UpdateContactModal
-            contact={contact}
+            contact={selectedContact}
             open={open}
             closeModal={closeModal}
           />
