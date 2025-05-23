@@ -14,17 +14,7 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery } from "@tanstack/react-query";
-
-export type ContactList = {
-  id?: string;
-  type: string[];
-  contact: string;
-  preferredContact: {
-    phone?: boolean;
-    whatsapp?: boolean;
-    email?: boolean;
-  };
-};
+import { ContactList } from "../create";
 
 const schema = z
   .object({
