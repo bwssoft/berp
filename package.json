@@ -43,6 +43,7 @@
     "exceljs": "^4.4.0",
     "firebase": "^10.12.2",
     "flowbite": "^2.3.0",
+    "framer-motion": "^12.12.1",
     "holy-loader": "^2.3.11",
     "lodash": "^4.17.21",
     "mongodb": "^6.10.0",

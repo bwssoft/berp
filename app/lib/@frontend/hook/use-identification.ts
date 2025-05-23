@@ -1,10 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { IIdentificationLog, ITechnology } from "../../@backend/domain";
+import { Device, IIdentificationLog, ITechnology } from "../../@backend/domain";
 import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
-import { createOneIdentificationLog } from "../../@backend/action";
+import {
+  createOneDevice,
+  createOneIdentificationLog,
+} from "../../@backend/action";
 import { sleep } from "../../util";
 
 namespace Namespace {
@@ -51,20 +54,22 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
     async (id: string) => {
       isWriting.current = true;
 
+      const { equipment, port } = identified[0];
+
+      if (!equipment || !equipment.firmware || !equipment.serial || !technology)
+        return;
+
       // run identification
-      const { port, response, messages, end_time, init_time } =
-        await handleIdentification(ports[0], id);
+      const { response, messages, end_time, init_time } =
+        await handleIdentification(port, id);
 
       // check if each message sent has response
       if (!response || !messages || !end_time || !init_time) return undefined;
 
-      const { equipment } = identified.find((el) => el.port === port) ?? {};
-
-      if (!equipment || !technology) return undefined;
-
-      await sleep(5000);
+      await sleep(2000);
 
       const identification = await handleGetIdentification(port);
+      const status = id === identification?.response?.serial;
 
       const log: Omit<IIdentificationLog, "id" | "created_at" | "user"> = {
         equipment: {
@@ -74,7 +79,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
           iccid: equipment.iccid,
         },
         identification: identification?.response,
-        status: id === identification?.response?.serial,
+        status,
         metadata: {
           messages: messages.map(({ key, message }) => ({
             request: message,
@@ -89,21 +94,32 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
         },
       };
 
+      const promises: Promise<any>[] = [createOneIdentificationLog(log)];
+      if (status) {
+        promises.push(
+          createOneDevice({
+            equipment: {
+              firmware: equipment.firmware!,
+              serial: identification?.response?.serial!,
+              imei: identification?.response?.imei,
+            },
+            simcard: { iccid: equipment.iccid },
+            model:
+              Device.Model[technology.name.system as keyof typeof Device.Model],
+            identified_at: new Date(),
+          })
+        );
+      }
+
       // save result on database
-      const dataSavedOnDb = await createOneIdentificationLog(log);
+      const [dataSavedOnDb] = await Promise.all(promises);
 
       // update state with process result
       setProcess((prev) => prev.concat(dataSavedOnDb));
 
       isWriting.current = false;
     },
-    [
-      handleGetIdentification,
-      handleIdentification,
-      identified,
-      ports,
-      technology,
-    ]
+    [handleGetIdentification, handleIdentification, identified, technology]
   );
 
   // useEffect used to identify devices when connected via serial ports

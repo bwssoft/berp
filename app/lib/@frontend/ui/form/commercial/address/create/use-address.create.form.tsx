@@ -20,6 +20,9 @@ const AddressFormSchema = z.object({
     state: z.string().min(1, "Estado obrigatório"),
     city: z.string().min(1, "Cidade obrigatória"),
     reference_point: z.string().optional(),
+    types: z
+        .array(z.enum(["Comercial", "Entrega", "Faturamento", "Residencial"]))
+        .optional(),
 });
 
 export type AddressFormSchema = z.infer<typeof AddressFormSchema>;

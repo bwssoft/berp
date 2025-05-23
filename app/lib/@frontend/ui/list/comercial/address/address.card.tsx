@@ -2,27 +2,17 @@
 
 import { ClipboardIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../../component";
-
-type Address = {
-    street: string;
-    number: string;
-    district: string;
-    city: string;
-    state: string;
-    zip_code: string;
-    complement?: string;
-    reference?: string;
-};
+import { IAddress } from "@/app/lib/@backend/domain";
 
 interface AddressCardProps {
     title?: string;
-    address: Address;
+    address: IAddress;
     onRefresh?: () => void;
     onCopy?: () => void;
 }
 
 export function AddressCard({
-    title = "Endereço: ",
+    title = "Endereço:",
     address,
     onRefresh,
     onCopy,
@@ -47,9 +37,9 @@ export function AddressCard({
     };
 
     return (
-        <div className="shadow-xl rounded-xl bg-slate-100 p-5 text-gray-800 max-w-80 min-h-72">
+        <div className="shadow-xl rounded-xl bg-slate-100 p-5 text-gray-800 h-70 w-96">
             <div className="flex items-center justify-between font-semibold">
-                {title}
+                {title} {address.type}
                 <div className="flex gap-1">
                     <Button variant={"secondary"}>
                         <ArrowPathIcon className="size-4" />
@@ -59,11 +49,15 @@ export function AddressCard({
                     </Button>
                 </div>
             </div>
-            <div className="mt-4">
-                {address.street}, {address.number}, {address.district}
-                {address.city} - {address.state}, {address.zip_code}
-                Complemento: {address.complement ?? ""}
-                Ponto de Referência: {address.reference ?? ""}
+            <div className="flex flex-col pt-3">
+                <div>
+                    {address.street} ,{address.number}, {address.district}
+                </div>
+                <div>
+                    {address.city} - {address.state}, {address.zip_code}
+                </div>
+                <div>Complemento: {address.complement ?? ""}</div>
+                <div>Ponto de Referência: {address.reference_point ?? ""}</div>
             </div>
         </div>
     );
