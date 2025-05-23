@@ -59,7 +59,7 @@ export function CNPJAccountForm() {
                             data={sectorModal.sectors}
                             keyExtractor={(d) => d.name}
                             valueExtractor={(d) => d.name}
-                            label="Tipo de Bloqueio"
+                            label="Setor"
                             value={sectorModal.sectors.find(
                                 (d) => d.name === field.name
                             )}

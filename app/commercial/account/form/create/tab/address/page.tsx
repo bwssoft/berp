@@ -14,10 +14,14 @@ export default async function Page({ searchParams }: Props) {
     const addresses: IAddress[] = await findManyAddress({ accountId: id });
 
     return (
-        <div>
-            <CreateAddressModal id={id} />
-            <AddressCardList items={addresses} />
-            <PageFooterButtons id={id} />
+        <div className="min-h-screen flex flex-col">
+            <div className="flex-1">
+                <CreateAddressModal id={id} />
+                <AddressCardList items={addresses} />
+            </div>
+            <footer className="">
+                <PageFooterButtons id={id} />
+            </footer>
         </div>
     );
 }

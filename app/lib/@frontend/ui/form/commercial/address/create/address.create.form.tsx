@@ -11,7 +11,7 @@ export function AddressCreateForm() {
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-2 bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10 w-full"
+            className="flex flex-col gap-2 px-1 sm:px-6 lg:px-8 rounded-md pb-6 "
         >
             <Input
                 label="Buscar pelo CEP"
@@ -94,7 +94,7 @@ export function AddressCreateForm() {
                     Cancelar
                 </Button>
                 <Button title="Salvar" type="submit">
-                    salvar
+                    Salvar
                 </Button>
             </div>
         </form>

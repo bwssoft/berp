@@ -20,9 +20,9 @@ const AddressFormSchema = z.object({
     state: z.string().min(1, "Estado obrigatório"),
     city: z.string().min(1, "Cidade obrigatória"),
     reference_point: z.string().optional(),
-    types: z
+    type: z
         .array(z.enum(["Comercial", "Entrega", "Faturamento", "Residencial"]))
-        .optional(),
+        .min(1, "Selecione pelo menos um tipo"),
 });
 
 export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
@@ -49,6 +49,7 @@ export function useAddressForm() {
             state: "",
             city: "",
             reference_point: "",
+            type: [],
         },
     });
 
@@ -58,6 +59,7 @@ export function useAddressForm() {
     useEffect(() => {
         const fetchAddress = async (cep: string) => {
             setLoadingCep(true);
+
             try {
                 const res = await fetch(`/api/viacep?cep=${cep}`);
                 if (!res.ok) throw new Error("CEP não encontrado");
@@ -80,23 +82,29 @@ export function useAddressForm() {
         if (isValidCEP(zip)) fetchAddress(zip);
     }, [zip, setValue]);
 
-    const handleSubmit = hookFormSubmit(async (data) => {
-        try {
-            await createOneAddress({ ...data, accountId });
-            toast({
-                title: "Sucesso!",
-                description: "Endereço criado com sucesso!",
-                variant: "success",
-            });
-            reset();
-        } catch {
-            toast({
-                title: "Erro!",
-                description: "Falha ao registrar o endereço!",
-                variant: "error",
-            });
+    const handleSubmit = hookFormSubmit(
+        async (data) => {
+            console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", data);
+            try {
+                await createOneAddress({ ...data, accountId });
+                toast({
+                    title: "Sucesso!",
+                    description: "Endereço criado com sucesso!",
+                    variant: "success",
+                });
+                reset();
+            } catch {
+                toast({
+                    title: "Erro!",
+                    description: "Falha ao registrar o endereço!",
+                    variant: "error",
+                });
+            }
+        },
+        (err) => {
+            console.log(err);
         }
-    });
+    );
 
     return {
         register,

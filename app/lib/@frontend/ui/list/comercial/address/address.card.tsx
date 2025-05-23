@@ -1,6 +1,10 @@
 "use client";
 
-import { ClipboardIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import {
+    ClipboardIcon,
+    ArrowPathIcon,
+    PencilIcon,
+} from "@heroicons/react/24/outline";
 import { Button } from "../../../component";
 import { IAddress } from "@/app/lib/@backend/domain";
 
@@ -18,8 +22,9 @@ export function AddressCard({
     onCopy,
 }: AddressCardProps) {
     const copy = () => {
-        if (onCopy) onCopy();
-        else {
+        if (onCopy) {
+            onCopy();
+        } else {
             const {
                 street,
                 number,
@@ -28,11 +33,28 @@ export function AddressCard({
                 state,
                 zip_code,
                 complement,
-                reference,
+                reference_point,
             } = address;
-            navigator.clipboard.writeText(
-                `${street}, ${number}, ${district}\n${city} - ${state}, ${zip_code}\nComplemento: ${complement ?? ""}\nPonto de Referência: ${reference ?? ""}`
-            );
+
+            let text = `${street}, ${number}, ${district}
+            ${city} - ${state}, ${zip_code}`;
+
+            if (complement) {
+                text += `\nComplemento: ${complement}`;
+            }
+
+            if (reference_point) {
+                text += `\nPonto de Referência: ${reference_point}`;
+            }
+
+            navigator.clipboard
+                .writeText(text)
+                .then(() => {
+                    console.log("Endereço copiado com sucesso");
+                })
+                .catch(() => {
+                    console.error("Falha ao copiar o endereço.");
+                });
         }
     };
 
@@ -44,8 +66,11 @@ export function AddressCard({
                     <Button variant={"secondary"}>
                         <ArrowPathIcon className="size-4" />
                     </Button>
-                    <Button variant={"secondary"}>
+                    <Button onClick={copy} variant={"secondary"}>
                         <ClipboardIcon className="size-4" />
+                    </Button>
+                    <Button variant={"secondary"}>
+                        <PencilIcon className="size-4" />
                     </Button>
                 </div>
             </div>
