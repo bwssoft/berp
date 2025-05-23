@@ -23,7 +23,7 @@ export function AddressModal({ open }: AddressProps) {
         <Modal
             open={open}
             onClose={closeModal}
-            title="MINHAUU"
+            title="Cadastrar novo endereço"
             className="bg-white"
             position="center"
         >

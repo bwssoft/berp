@@ -13,12 +13,6 @@ export function AddressCreateForm() {
             onSubmit={handleSubmit}
             className="flex flex-col gap-2 bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10 w-full"
         >
-            {/* <Input
-                label="Buscar pelo endereço"
-                placeholder=""
-                {...register("search_address")}
-                error={errors.search_address?.message}
-            /> */}
             <Input
                 label="Buscar pelo CEP"
                 placeholder=""
@@ -71,34 +65,34 @@ export function AddressCreateForm() {
                 error={errors.reference_point?.message}
             />
             <div className="mt-2">
-                <span className="text-sm font-medium text-gray-700">
-                    Tipo *
-                </span>
-                {/* <div className="mt-1 grid grid-cols-2 gap-2">
+                <span className="text-sm font-medium text-gray-700">Tipo</span>
+                <div className="mt-1 grid grid-cols-2 gap-2">
                     <Checkbox
-                        {...register("types")}
-                        value="commercial"
+                        {...register("type")}
+                        value="Comercial"
                         label="Comercial"
                     />
                     <Checkbox
-                        {...register("types")}
-                        value="delivery"
+                        {...register("type")}
+                        value="Entrega"
                         label="Entrega"
                     />
                     <Checkbox
-                        {...register("types")}
-                        value="billing"
+                        {...register("type")}
+                        value="Faturamento"
                         label="Faturamento"
                     />
                     <Checkbox
-                        {...register("types")}
-                        value="residential"
+                        {...register("type")}
+                        value="Residencial"
                         label="Residencial"
                     />
-                </div> */}
+                </div>
             </div>
             <div className="mt-4 flex justify-end gap-3">
-                <Button title="Cancelar" type="button" variant="secondary" />
+                <Button title="Cancelar" type="button" variant="secondary">
+                    Cancelar
+                </Button>
                 <Button title="Salvar" type="submit">
                     salvar
                 </Button>
