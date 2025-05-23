@@ -33,7 +33,7 @@ export default function Page(props: Props) {
         <ContactCard accountId={searchParams.id ?? ""} />
       </div>
       <footer className="">
-        <PageFooterButtons />
+        <PageFooterButtons id={searchParams.id ?? ""} />
       </footer>
     </div>
   );

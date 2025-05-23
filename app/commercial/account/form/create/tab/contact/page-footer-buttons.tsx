@@ -7,7 +7,7 @@ interface Props {
   id: string;
 }
 
-export function PageFooterButtons() {
+export function PageFooterButtons({ id }: Props) {
   const router = useRouter();
 
   return (
@@ -15,8 +15,11 @@ export function PageFooterButtons() {
       <Button type="button" variant="ghost">
         Cancelar
       </Button>
-      <Button type="submit" onClick={() => router.push(`/commercial/account`)}>
-        Salvar
+      <Button
+        type="submit"
+        onClick={() => router.push(`/commercial/account?id=${id}`)}
+      >
+        Salvar e próximo
       </Button>
     </div>
   );
