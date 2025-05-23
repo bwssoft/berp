@@ -39,7 +39,7 @@ export function ContactCard({ accountId }: ContactCardProps) {
           <div className="flex flex-row items-end justify-end w-full gap-1">
             <Button
               variant={"ghost"}
-              className="cursor-pointer w-fit"
+              className="cursor-pointer w-fit px-1"
               onClick={() => setOpenModalDelete(true)}
             >
               <TrashIcon className="w-5 h-5 cursor-pointer" />
@@ -47,7 +47,7 @@ export function ContactCard({ accountId }: ContactCardProps) {
             <Button
               onClick={openModal}
               variant={"ghost"}
-              className="cursor-pointer w-fit"
+              className="cursor-pointer w-fit px-1"
             >
               <PencilSquareIcon className="w-5 h-5 cursor-pointer" />
             </Button>
