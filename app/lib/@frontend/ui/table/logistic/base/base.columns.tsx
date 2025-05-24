@@ -1,12 +1,12 @@
 "use-client";
 
-import { Badge } from "@bwsoft/badge";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../../../component";
 import { IBase, Base } from "@/app/lib/@backend/domain";
-import { ClockIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { baseConstants } from "@/app/lib/constant/logistic";
+import { Badge } from "../../../component/badge";
 
 interface Props {
   openAuditModal?: (user: Pick<IBase, "code" | "id">) => void;
@@ -21,10 +21,9 @@ export const columns = (props: Props): ColumnDef<IBase>[] => [
     cell: ({ row }) => {
       const { original } = row;
       return (
-        <Badge
-          label={baseConstants.type[original.type]}
-          className={getTypeColor(original.type)}
-        />
+        <Badge variant="outline" className={getTypeColor(original.type)}>
+          {baseConstants.type[original.type]}
+        </Badge>
       );
     },
   },
@@ -42,11 +41,7 @@ export const columns = (props: Props): ColumnDef<IBase>[] => [
     cell: ({ row }) => {
       const { original } = row;
       return (
-        <Badge
-          variant="basic"
-          theme={original.active ? "green" : "gray"}
-          label={original.active ? "Ativo" : "Inativo"}
-        />
+        <Badge variant="outline">{original.active ? "Ativo" : "Inativo"}</Badge>
       );
     },
   },

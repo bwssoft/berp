@@ -44,6 +44,7 @@ export function UpdateOneBaseForm(props: Props) {
                 )}
                 keyExtractor={(d) => d.value}
                 valueExtractor={(d) => d.label}
+                labelExtractor={(d) => d.label}
                 label="Tipo da base"
                 value={Object.entries(baseConstants.type)
                   .map(([key, value]) => ({

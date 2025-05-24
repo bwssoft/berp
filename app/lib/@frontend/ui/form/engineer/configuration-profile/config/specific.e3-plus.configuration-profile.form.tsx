@@ -69,6 +69,7 @@ export function SpecificE3PlusConfigurationProfileForm() {
                     data={configConstants.lockType}
                     keyExtractor={(d) => d.value}
                     valueExtractor={(d) => d.label}
+                    labelExtractor={(d) => d.label}
                     label="Tipo de Bloqueio"
                     value={configConstants.lockType.find(
                       (d) => d.value === field.value
@@ -91,6 +92,7 @@ export function SpecificE3PlusConfigurationProfileForm() {
                   data={timezones}
                   keyExtractor={(d) => d.value}
                   valueExtractor={(d) => d.label}
+                  labelExtractor={(d) => d.label}
                   label="Fuso Horário"
                   value={timezones.find((tz) => tz.value === field.value)}
                   onChange={(d) => field.onChange(d.value)}
@@ -107,6 +109,7 @@ export function SpecificE3PlusConfigurationProfileForm() {
                   data={configConstants.workMode}
                   keyExtractor={(d) => d.value}
                   valueExtractor={(d) => d.label}
+                  labelExtractor={(d) => d.label}
                   label="Modo de trabalho"
                   value={configConstants.workMode.find(
                     (d) => d.value === field.value
@@ -125,6 +128,7 @@ export function SpecificE3PlusConfigurationProfileForm() {
                   data={configConstants.accelerometerSensitivity}
                   keyExtractor={(d) => d.value}
                   valueExtractor={(d) => d.label}
+                  labelExtractor={(d) => d.label}
                   label="Sensibilidade do acelerômetro"
                   value={configConstants.accelerometerSensitivity.find(
                     (d) => d.value === field.value
@@ -143,6 +147,7 @@ export function SpecificE3PlusConfigurationProfileForm() {
                   data={configConstants.economyMode}
                   keyExtractor={(d) => d.value}
                   valueExtractor={(d) => d.label}
+                  labelExtractor={(d) => d.label}
                   label="Modo de Economia"
                   value={configConstants.economyMode.find(
                     (d) => d.value === field.value

@@ -28,6 +28,7 @@ export function ProductSelect(props: Props) {
       data={products}
       keyExtractor={(i) => i.id}
       valueExtractor={(i) => i.name}
+      labelExtractor={(i) => i.name}
       onChange={(i) => handleChange(i.id)}
       name="product-select"
       placeholder="Selecione algum produto para pesquisar"

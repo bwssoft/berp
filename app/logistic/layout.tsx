@@ -5,6 +5,7 @@ import {
   WrenchScrewdriverIcon, // Auto Test
   BuildingStorefrontIcon, // Ordem de Produção
 } from "@heroicons/react/24/outline";
+import { ArrowLeftRight } from "lucide-react";
 
 export default function ProductionLayout({
   children,
@@ -23,7 +24,7 @@ const navigation = [
   },
   {
     name: "Movimentação",
-    icon: WrenchScrewdriverIcon,
+    icon: ArrowLeftRight,
     pathname: "/logistic/movement",
     code: "logistic:movement",
   },

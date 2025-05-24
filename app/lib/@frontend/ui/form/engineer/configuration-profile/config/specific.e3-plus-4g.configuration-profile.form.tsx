@@ -70,6 +70,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                     data={configConstants.lockType}
                     keyExtractor={(d) => d.value}
                     valueExtractor={(d) => d.label}
+                    labelExtractor={(i) => i.label}
                     label="Tipo de Bloqueio"
                     value={configConstants.lockType.find(
                       (d) => d.value === field.value
@@ -121,6 +122,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                   data={timezones}
                   keyExtractor={(d) => d.value}
                   valueExtractor={(d) => d.label}
+                  labelExtractor={(i) => i.label}
                   label="Fuso Horário"
                   value={timezones.find((tz) => tz.value === field.value)}
                   onChange={(d) => field.onChange(d.value)}
@@ -137,6 +139,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                   data={configConstants.economyMode}
                   keyExtractor={(d) => d.value}
                   valueExtractor={(d) => d.label}
+                  labelExtractor={(i) => i.label}
                   label="Modo de Economia"
                   value={configConstants.economyMode.find(
                     (d) => d.value === field.value
@@ -202,6 +205,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                 data={configConstants.input1}
                 keyExtractor={(d) => d.value}
                 valueExtractor={(d) => d.label}
+                labelExtractor={(i) => i.label}
                 label="Entrada 1"
                 value={configConstants.input1.find(
                   (d) => d.value === field.value
@@ -220,6 +224,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                 data={configConstants.input2}
                 keyExtractor={(d) => d.value}
                 valueExtractor={(d) => d.label}
+                labelExtractor={(i) => i.label}
                 label="Entrada 2"
                 value={configConstants.input2.find(
                   (d) => d.value === field.value
@@ -238,6 +243,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                 data={configConstants.communicationType}
                 keyExtractor={(d) => d.value}
                 valueExtractor={(d) => d.label}
+                labelExtractor={(i) => i.label}
                 label="Tipo de Comunicação"
                 value={configConstants.communicationType.find(
                   (d) => d.value === field.value
@@ -256,6 +262,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                 data={configConstants.protocolType}
                 keyExtractor={(d) => d.value}
                 valueExtractor={(d) => d.label}
+                labelExtractor={(i) => i.label}
                 label="Tipo de Protocolo"
                 value={configConstants.protocolType.find(
                   (d) => d.value === field.value

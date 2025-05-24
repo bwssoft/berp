@@ -9,6 +9,7 @@ import {
 
 import { GridList } from "../lib/@frontend/ui/component";
 import { useAuth } from "../lib/@frontend/context";
+import { ArrowLeftRightIcon } from "lucide-react";
 
 const actions = [
   {
@@ -19,6 +20,15 @@ const actions = [
     iconForeground: "text-blue-700",
     iconBackground: "bg-blue-50",
     description: "Gerencie as bases cadastradas no sistema.",
+  },
+  {
+    title: "Movimentação",
+    href: "/logistic/movement",
+    code: "logistic:movement",
+    icon: ArrowLeftRightIcon,
+    iconForeground: "text-purple-700",
+    iconBackground: "bg-purple-50",
+    description: "Registres as movimentações no sistema.",
   },
 ];
 

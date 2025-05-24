@@ -2,7 +2,7 @@ import { cn } from "@/app/lib/util";
 import { forwardRef } from "react";
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label?: string;
   error?: string;
   containerClassname?: string;
   help?: string;
@@ -33,7 +33,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             {label}
           </label>
         )}
-        <div className={"mt-2 relative"}>
+        <div className={cn("relative", label && "mt-2")}>
           <input
             type="text"
             name={name}

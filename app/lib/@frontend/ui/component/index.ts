@@ -30,3 +30,7 @@ export * from "./popover";
 export * from "./modal";
 export * from "./spinner";
 export * from "./input-password";
+export * from "./form";
+export * from "./collapsible";
+export * from "./label";
+export * from "./card";

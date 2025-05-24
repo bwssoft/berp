@@ -28,6 +28,7 @@ export function InputSelect(props: Props) {
       data={inputs}
       keyExtractor={(i) => i.id}
       valueExtractor={(i) => i.name}
+      labelExtractor={(i) => i.name}
       name="input-select"
       onChange={(i) => handleChange(i.id)}
       placeholder="Selecione algum insumo para pesquisar"

@@ -41,6 +41,7 @@ export function CreateOneBaseForm(props: Props) {
                     value: key,
                   })
                 )}
+                labelExtractor={(d) => d.label}
                 keyExtractor={(d) => d.value}
                 valueExtractor={(d) => d.label}
                 label="Tipo da base"

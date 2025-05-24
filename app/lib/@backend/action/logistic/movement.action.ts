@@ -5,6 +5,7 @@ import {
   findOneMovementUsecase,
   updateOneMovementUsecase,
   findManyMovementUsecase,
+  createManyMovementUsecase,
 } from "@/app/lib/@backend/usecase";
 import { IMovement } from "@/app/lib/@backend/domain";
 import { Filter } from "mongodb";
@@ -13,6 +14,12 @@ export async function createOneMovement(
   input: Omit<IMovement, "id" | "created_at">
 ) {
   await createOneMovementUsecase.execute(input);
+}
+
+export async function createManyMovement(
+  input: Omit<IMovement, "id" | "created_at" | "seq">[]
+) {
+  return await createManyMovementUsecase.execute(input);
 }
 
 export async function findOneMovement(input: { filter: Partial<IMovement> }) {
