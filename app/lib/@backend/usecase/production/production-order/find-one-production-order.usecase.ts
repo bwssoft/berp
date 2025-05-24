@@ -14,7 +14,7 @@ namespace Dto {
   export interface Input extends Partial<IProductionOrder> {}
 
   export type Document = IProductionOrder & {
-    enterprise: Pick<IEnterprise, "id" | "short_name">;
+    enterprise: Pick<IEnterprise, "id" | "name">;
     product: Pick<
       IProduct,
       | "id"
@@ -37,7 +37,7 @@ namespace Dto {
   export type Output =
     | (IProductionOrder & {
         product: Product;
-        enterprise: Pick<IEnterprise, "id" | "short_name">;
+        enterprise: Pick<IEnterprise, "id" | "name">;
       })
     | undefined;
 
@@ -85,7 +85,7 @@ class FindOneProductionOrderUsecase {
       {
         $lookup: {
           as: "enterprise",
-          from: "business-enterprise",
+          from: "business.enterprise",
           foreignField: "id",
           localField: "enterprise_id",
           pipeline: [
@@ -93,7 +93,7 @@ class FindOneProductionOrderUsecase {
               $project: {
                 _id: 0,
                 id: 1,
-                short_name: 1,
+                name: 1,
               },
             },
           ],
