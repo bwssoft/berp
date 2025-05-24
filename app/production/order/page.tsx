@@ -14,8 +14,8 @@ const actions = [
     href: "/production/order/management",
     code: "production:order:view",
     icon: ClipboardDocumentCheckIcon,
-    iconForeground: "text-indigo-700",
-    iconBackground: "bg-indigo-50",
+    iconForeground: "text-blue-700",
+    iconBackground: "bg-blue-50",
     description:
       "Gerencie ordens de produção com controle detalhado de etapas, responsáveis e status.",
   },

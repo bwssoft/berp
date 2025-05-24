@@ -36,8 +36,8 @@ const actions = [
     href: "/engineer/product/transactions",
     code: "engineer:product:transaction",
     icon: ArrowsRightLeftIcon, // Representa movimentações de estoque
-    iconForeground: "text-indigo-700",
-    iconBackground: "bg-indigo-50",
+    iconForeground: "text-blue-700",
+    iconBackground: "bg-blue-50",
     description:
       "Registre e monitore a movimentação de entrada e saída de produtos.",
   },

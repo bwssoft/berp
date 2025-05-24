@@ -18,6 +18,6 @@ namespace Stock {
 
   export interface Base {
     id: string;
-    name: string;
+    code: string;
   }
 }

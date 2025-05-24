@@ -18,8 +18,8 @@ const actions = [
     href: "/engineer/command",
     code: "engineer:command",
     icon: ArrowPathIcon, // Representa ações/execução
-    iconForeground: "text-indigo-700",
-    iconBackground: "bg-indigo-50",
+    iconForeground: "text-blue-700",
+    iconBackground: "bg-blue-50",
     description:
       "Gerencie os comandos enviados aos dispositivos em tempo real ou agendados.",
   },
@@ -76,9 +76,9 @@ const actions = [
 ];
 
 export default function Page() {
-  const { navigationByProfile} = useAuth();
+  const { navigationByProfile } = useAuth();
   const options = navigationByProfile(actions);
-  
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

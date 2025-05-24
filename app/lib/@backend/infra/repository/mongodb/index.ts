@@ -4,3 +4,4 @@ export * from "./engineer";
 export * from "./production";
 export * from "./financial";
 export * from "./logistic";
+export * from "./business";

@@ -10,7 +10,7 @@ import { IBase } from "@/app/lib/@backend/domain";
 import { Filter } from "mongodb";
 
 export async function createOneBase(input: Omit<IBase, "id" | "created_at">) {
-  await createOneBaseUsecase.execute(input);
+  return await createOneBaseUsecase.execute(input);
 }
 
 export async function findOneBase(input: { filter: Partial<IBase> }) {
@@ -30,5 +30,5 @@ export async function updateOneBaseById(
   query: { id: string },
   value: Omit<IBase, "id" | "created_at">
 ) {
-  await updateOneBaseUsecase.execute(query, value);
+  return await updateOneBaseUsecase.execute(query, value);
 }

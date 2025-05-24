@@ -30,6 +30,7 @@ export function ProductTransactionCreateForm(props: Props) {
                     ]}
                     keyExtractor={(d) => d.id}
                     valueExtractor={(d) => d.label}
+                    labelExtractor={(d) => d.label}
                     onChange={(d) => field.onChange(d.value)}
                   />
                 )}

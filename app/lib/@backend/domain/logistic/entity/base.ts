@@ -1,16 +1,19 @@
 export interface IBase {
   id: string;
-  name: string;
+  code: string;
   type: Base.Type;
   enterprise: Base.Enterprise;
   description?: string;
   created_at: Date;
+  active: boolean;
 }
 
-namespace Base {
+export namespace Base {
   export interface Enterprise {
     id: string;
-    short_name: string;
+    name: {
+      short: string;
+    };
   }
   export enum Type {
     STOCK = "STOCK",

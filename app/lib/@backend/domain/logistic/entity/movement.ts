@@ -22,7 +22,7 @@ namespace Movement {
 
   export interface Base {
     id: string;
-    name: string;
+    code: string;
   }
 
   export enum Type {

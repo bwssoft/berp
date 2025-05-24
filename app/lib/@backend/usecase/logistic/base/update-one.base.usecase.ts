@@ -17,7 +17,19 @@ class UpdateOneBaseUsecase {
     value: Omit<IBase, "id" | "created_at">
   ) {
     // Chama o método updateOne do repositório, utilizando $set para aplicar as atualizações.
-    return await this.repository.updateOne(query, { $set: value });
+    try {
+      await this.repository.updateOne(query, { $set: value });
+      return {
+        success: true,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        error: {
+          global: err instanceof Error ? err.message : JSON.stringify(err),
+        },
+      };
+    }
   }
 }
 
