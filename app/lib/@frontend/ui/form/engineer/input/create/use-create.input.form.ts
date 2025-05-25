@@ -94,7 +94,7 @@ export function useCreateInputForm() {
       if (success) {
         toast({
           title: "Sucesso!",
-          description: "Inpute registrada com sucesso!",
+          description: "Insumo registrado com sucesso!",
           variant: "success",
         });
         router.push("/engineer/input/management");
@@ -112,14 +112,14 @@ export function useCreateInputForm() {
         });
         toast({
           title: "Erro!",
-          description: error.usecase ?? "Falha ao registrar o inpute!",
+          description: error.usecase ?? "Falha ao registrar o insumo!",
           variant: "error",
         });
       }
     } catch (error) {
       toast({
         title: "Erro!",
-        description: "Falha ao registrar o inpute!",
+        description: "Falha ao registrar o insumo!",
         variant: "error",
       });
     }

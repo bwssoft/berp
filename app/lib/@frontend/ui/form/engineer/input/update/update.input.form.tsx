@@ -59,7 +59,7 @@ export function UpdateOneInputForm(props: Props) {
               <FormItem>
                 <FormLabel>Nome *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Digite o nome do inpute" {...field} />
+                  <Input placeholder="Digite o nome do insumo" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -253,7 +253,7 @@ export function UpdateOneInputForm(props: Props) {
                 <FormLabel>Descrição</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Descreva o inpute..."
+                    placeholder="Descreva o insumo..."
                     rows={3}
                     {...field}
                   />

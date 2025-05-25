@@ -37,10 +37,6 @@ export const columns = (props: Props): ColumnDef<IInput>[] => [
     ),
   },
   {
-    header: "Unidade de medida",
-    accessorKey: "measure_unit",
-  },
-  {
     header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {

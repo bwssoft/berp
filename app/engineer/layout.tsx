@@ -15,6 +15,7 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../lib/@frontend/context";
+import { InspectionPanel } from "lucide-react";
 
 export default function EngineerLayout({
   children,
@@ -87,7 +88,7 @@ const navigation = [
     children: [
       {
         name: "Gestão",
-        pathname: "/engineer/component",
+        pathname: "/engineer/component/management",
         code: "engineer:component:view",
         icon: Cog6ToothIcon, // Gestão geral/configuração
       },
@@ -95,6 +96,26 @@ const navigation = [
         name: "Categorias",
         pathname: "/engineer/component/category",
         code: "engineer:component:category",
+        icon: TagIcon, // Ícone clássico de categorização
+      },
+    ],
+  },
+  {
+    name: "Insumos",
+    pathname: "/engineer/input",
+    code: "engineer:input",
+    icon: InspectionPanel, // Representa estoque/insumos
+    children: [
+      {
+        name: "Gestão",
+        pathname: "/engineer/input/management",
+        code: "engineer:input:view",
+        icon: Cog6ToothIcon, // Gestão geral/configuração
+      },
+      {
+        name: "Categorias",
+        pathname: "/engineer/input/category",
+        code: "engineer:input:category",
         icon: TagIcon, // Ícone clássico de categorização
       },
     ],

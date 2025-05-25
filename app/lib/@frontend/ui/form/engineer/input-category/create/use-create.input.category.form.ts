@@ -58,14 +58,14 @@ export function useCreateOneInputCategoryForm() {
           });
           toast({
             title: "Erro!",
-            description: error.usecase ?? "Falha ao registrar o inpute!",
+            description: error.usecase ?? "Falha ao registrar o insumo!",
             variant: "error",
           });
         }
       } catch (error) {
         toast({
           title: "Erro!",
-          description: "Falha ao registrar o inpute!",
+          description: "Falha ao registrar o insumo!",
           variant: "error",
         });
       }

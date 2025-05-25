@@ -1,6 +1,10 @@
 "use client";
 
-import { BriefcaseIcon, DocumentTextIcon } from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
+import {
+  BriefcaseIcon,
+  CubeIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
 import { GridList } from "../lib/@frontend/ui/component";
 import { useAuth } from "../lib/@frontend/context";
 
@@ -29,9 +33,9 @@ const actions = [
     title: "Produtos",
     href: "/commercial/product",
     code: "commercial:product",
-    icon: DocumentTextIcon, // remete a contratos, propostas e documentos
-    iconForeground: "text-lime-700",
-    iconBackground: "bg-lime-50",
+    icon: CubeIcon, // remete a contratos, propostas e documentos
+    iconForeground: "text-blue-700",
+    iconBackground: "bg-blue-50",
     description: "Crie, edite e acompanhe produtos.",
   },
 ];

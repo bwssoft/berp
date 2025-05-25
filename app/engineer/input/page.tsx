@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/app/lib/@frontend/context";
 import { GridList } from "@/app/lib/@frontend/ui/component";
-import { Cog6ToothIcon, TagIcon } from "@heroicons/react/24/outline"; // ícones adequados para o contexto de inputes
+import { Cog6ToothIcon, TagIcon } from "@heroicons/react/24/outline"; // ícones adequados para o contexto de insumos
 
 const actions = [
   {
@@ -11,7 +11,7 @@ const actions = [
     icon: Cog6ToothIcon, // Gestão geral/configuração
     iconForeground: "text-rose-700",
     iconBackground: "bg-rose-50",
-    description: "Gerencie os inputs utilizados no sistema.",
+    description: "Gerencie os insumos utilizados no sistema.",
   },
   {
     title: "Categorias",

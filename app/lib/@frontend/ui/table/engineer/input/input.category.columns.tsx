@@ -39,7 +39,7 @@ export const columns = (props: Props): ColumnDef<IInputCategory>[] => [
           {showEdit && (
             <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
               <Link
-                href={`/engineer/input/category/form/update?id=${input.id}`}
+                href={`/engineer/input/category/update?id=${input.id}`}
                 className="text-blue-600 hover:text-blue-900"
               >
                 <Button
