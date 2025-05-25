@@ -25,6 +25,15 @@ const actions = [
     description:
       "Crie, edite e acompanhe propostas comerciais de forma organizada.",
   },
+  {
+    title: "Produtos",
+    href: "/commercial/product",
+    code: "commercial:product",
+    icon: DocumentTextIcon, // remete a contratos, propostas e documentos
+    iconForeground: "text-lime-700",
+    iconBackground: "bg-lime-50",
+    description: "Crie, edite e acompanhe produtos.",
+  },
 ];
 
 export default function Page() {

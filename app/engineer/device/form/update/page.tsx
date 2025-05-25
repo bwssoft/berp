@@ -25,7 +25,7 @@ export default async function Page(props: Props) {
     );
   }
 
-  const products = await findManyProduct();
+  const { docs: products } = await findManyProduct({ filter: {} });
 
   return (
     <div>

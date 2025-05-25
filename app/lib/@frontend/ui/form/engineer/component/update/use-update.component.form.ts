@@ -2,13 +2,16 @@ import { updateOneComponentById } from "@/app/lib/@backend/action";
 import { Component, IComponent } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
-  name: z.string().min(1, "Nome é obrigatório").max(100, "Nome muito longo"),
+  name: z
+    .string()
+    .min(1, "Nome é obrigatório")
+    .max(100, "Quantidade de caracteres excedida (100)"),
   category: z.object({
     id: z.string(),
     code: z.string(),
@@ -51,16 +54,7 @@ export function useUpdateComponentForm(props: Props) {
 
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      name: "",
-      category: undefined as unknown as IComponent["category"],
-      measure_unit: Component.Unit.un,
-      color: "#000000",
-      spec: {},
-      files: [],
-      description: "",
-      price: 0,
-    },
+    defaultValues,
   });
 
   const handleSubmit = form.handleSubmit(async (data: Schema) => {

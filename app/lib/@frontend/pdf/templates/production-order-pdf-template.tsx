@@ -19,11 +19,10 @@ type ProductionOrderPdfTemplateProps = {
     id: string;
     name: string;
     color: string;
-    description: string;
+    description?: string;
     created_at: Date;
     technology: Pick<ITechnology, "name" | "id">;
     category: Pick<IProductCategory, "name" | "id">;
-    process_execution?: IProduct["process_execution"];
     bom?: {
       input_id: string;
       input_name: string;
@@ -61,7 +60,6 @@ type InputsSectionProps = {
     name: string;
     technology: Pick<ITechnology, "name" | "id">;
     category: Pick<IProductCategory, "name" | "id">;
-    process_execution?: IProduct["process_execution"];
     bom?: {
       input_id: string;
       input_name: string;

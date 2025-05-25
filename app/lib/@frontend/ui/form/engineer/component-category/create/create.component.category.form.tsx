@@ -1,65 +1,81 @@
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/component/button";
+
+import { Button, Input } from "@/app/lib/@frontend/ui/component";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/app/lib/@frontend/ui/component/form";
+import { Loader2 } from "lucide-react";
 import { useCreateOneComponentCategoryForm } from "./use-create.component.category.form";
 
 export function CreateOneComponentCategoryForm() {
-  const { handleSubmit, register } = useCreateOneComponentCategoryForm();
+  const { form, handleSubmit, handleCancel } =
+    useCreateOneComponentCategoryForm();
 
   return (
-    <form action={() => handleSubmit()}>
-      <div className="space-y-12">
-        <div className="border-b border-gray-900/10 pb-12">
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="code"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Prefixo do código
-              </label>
-              <input
-                {...register("code")}
-                type="text"
-                id="code"
-                autoComplete="code"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                placeholder="Código"
-              />
-            </div>
-            <div className="sm:col-span-4">
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium leading-6 text-gray-900"
-              >
-                Nome da categoria
-              </label>
-              <input
-                {...register("name")}
-                type="text"
-                id="name"
-                autoComplete="name"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                placeholder="Nome"
-              />
-            </div>
-          </div>
+    <Form {...form}>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Grid principal */}
+        <div className="grid grid-cols-1 gap-4">
+          <FormField
+            control={form.control}
+            name="code"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Código *</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Digite o código da categoria"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Nome */}
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Digite o nome da categoria" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-      </div>
 
-      <div className="mt-6 flex items-center justify-end gap-x-6">
-        <button
-          type="button"
-          className="text-sm font-semibold leading-6 text-gray-900"
-        >
-          Cancelar
-        </button>
-        <Button
-          type="submit"
-          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-        >
-          Salvar
-        </Button>
-      </div>
-    </form>
+        {/* Botões */}
+        <div className="flex gap-4 pt-6 border-t border-gray-900/10">
+          <Button
+            type="submit"
+            disabled={form.formState.isSubmitting}
+            className="bg-blue-600 hover:bg-blue-500"
+          >
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            )}
+            Salvar
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => handleCancel()}
+            disabled={form.formState.isSubmitting}
+          >
+            Cancelar
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

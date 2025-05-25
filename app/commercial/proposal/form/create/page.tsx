@@ -6,9 +6,9 @@ import {
 import { ProposalCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
-  const [clients, products, negotiationType] = await Promise.all([
+  const [clients, { docs: products }, negotiationType] = await Promise.all([
     findManyClient({}),
-    findManyProduct(),
+    findManyProduct({ filter: {} }),
     findAllNegotiationType(),
   ]);
   return (

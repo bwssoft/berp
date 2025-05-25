@@ -56,18 +56,18 @@ export function MovementRowForm({
             <FormItem>
               <FormControl>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  onValueChange={(value) => {
+                    const item = items.find((el) => el.id === value);
+                    field.onChange(item);
+                  }}
+                  defaultValue={field.value.id}
                 >
                   <SelectTrigger className="h-9">
                     <SelectValue placeholder="Item" />
                   </SelectTrigger>
                   <SelectContent>
                     {items.map((item) => (
-                      <SelectItem
-                        key={item.id}
-                        value={{ id: item.id, ref: item.ref }}
-                      >
+                      <SelectItem key={item.id} value={item.id}>
                         {item.ref.code}
                       </SelectItem>
                     ))}
@@ -144,22 +144,18 @@ export function MovementRowForm({
             <FormItem>
               <FormControl>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  onValueChange={(value) => {
+                    const base = bases.find((el) => el.id === value);
+                    field.onChange(base);
+                  }}
+                  defaultValue={field.value.id}
                 >
                   <SelectTrigger className="h-9">
                     <SelectValue placeholder="Base" />
                   </SelectTrigger>
                   <SelectContent>
                     {bases.map((base) => (
-                      <SelectItem
-                        key={base.id}
-                        value={{
-                          id: base.id,
-                          code: base.code,
-                          type: base.type,
-                        }}
-                      >
+                      <SelectItem key={base.id} value={base.id}>
                         {base.code}
                       </SelectItem>
                     ))}

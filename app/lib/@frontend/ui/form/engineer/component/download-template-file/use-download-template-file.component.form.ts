@@ -6,7 +6,9 @@ export function useDownloadComponentTemplateFileForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const componentCategories = await findManyComponentCategory();
+    const { docs: componentCategories } = await findManyComponentCategory({
+      filter: {},
+    });
 
     const workbook = new ExcelJS.Workbook();
     const sheet = prepareInputSheet(workbook);

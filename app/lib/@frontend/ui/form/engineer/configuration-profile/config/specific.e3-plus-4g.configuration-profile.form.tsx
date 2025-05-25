@@ -1,5 +1,6 @@
 import { Controller, useFormContext } from "react-hook-form";
-import { Alert, Input, Select, Toggle } from "../../../../component";
+import { Alert, Input, Toggle } from "../../../../component";
+import { Select } from "../../../../composite";
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { ConfigurationProfileSchema } from "../create/use-configuration-profile.create.form";
 

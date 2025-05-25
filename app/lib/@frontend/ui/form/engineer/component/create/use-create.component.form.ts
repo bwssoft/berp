@@ -11,7 +11,10 @@ import { toast } from "@/app/lib/@frontend/hook";
 
 // Schema de validação com Zod
 const componentSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório").max(100, "Nome muito longo"),
+  name: z
+    .string()
+    .min(1, "Nome é obrigatório")
+    .max(100, "Quantidade de caracteres excedida (100)"),
   category: z.object({
     id: z.string(),
     code: z.string(),

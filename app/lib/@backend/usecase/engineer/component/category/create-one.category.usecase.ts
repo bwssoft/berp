@@ -15,11 +15,21 @@ class CreateOneComponentCategoryUsecase {
   async execute(
     componentCategory: Omit<IComponentCategory, "id" | "created_at">
   ) {
-    return await this.repository.create({
-      ...componentCategory,
-      created_at: new Date(),
-      id: crypto.randomUUID(),
-    });
+    try {
+      await this.repository.create({
+        ...componentCategory,
+        created_at: new Date(),
+        id: crypto.randomUUID(),
+      });
+      return { success: true };
+    } catch (e) {
+      return {
+        success: false,
+        error: {
+          usecase: e instanceof Error ? e.message : JSON.stringify(e),
+        },
+      };
+    }
   }
 }
 

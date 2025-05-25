@@ -17,12 +17,7 @@ namespace Dto {
     enterprise: Pick<IEnterprise, "id" | "name">;
     product: Pick<
       IProduct,
-      | "id"
-      | "name"
-      | "process_execution"
-      | "created_at"
-      | "color"
-      | "description"
+      "id" | "name" | "created_at" | "color" | "description"
     > & {
       technology: Pick<ITechnology, "name" | "id">;
       category: Pick<IProductCategory, "name" | "id">;
@@ -45,9 +40,8 @@ namespace Dto {
     id: string;
     name: string;
     color: string;
-    description: string;
+    description?: string;
     created_at: Date;
-    process_execution?: IProduct["process_execution"];
     technology: Pick<ITechnology, "name" | "id">;
     category: Pick<IProductCategory, "name" | "id">;
     bom: {

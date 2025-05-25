@@ -2,44 +2,29 @@ import { OmieEnterpriseEnum } from "../../@shared/gateway/omie.gateway.interface
 
 export interface IProduct {
   id: string;
+  seq: number;
+  category: Product.Category;
   name: string;
-  category: string;
-  description: string;
   color: string;
+  description?: string;
   price: number;
-  files: File[];
-  code: number;
-  technology_id: string;
-  bom?: Bom[];
-  process_execution?: ProcessExecution[];
-  omie_metadata?: OmieMetadata;
+  spec: Record<string, string>;
+  files: string[];
+  active: boolean;
   created_at: Date;
+  updated_at?: Date;
+  omie_metadata?: Product.OmieMetadata;
+  technology_id?: string;
 }
 
-type ProcessExecution = {
-  id: string;
-  step: string;
-};
+export namespace Product {
+  export type Category = {
+    id: string;
+    code: string;
+  };
 
-type Bom = {
-  input_id: string;
-  quantity: number;
-};
-
-type File = {
-  id: string;
-  key: string;
-  name: string;
-  size: number;
-  type: string;
-};
-
-type OmieMetadata = {
-  codigo_produto: Partial<Record<OmieEnterpriseEnum, number | undefined>>;
-  codigo_produto_integracao?: string;
-};
-
-export enum EProductCategory {
-  RVG = "RVG",
-  CMN = "CMN",
+  export type OmieMetadata = {
+    codigo_produto: Partial<Record<OmieEnterpriseEnum, number | undefined>>;
+    codigo_produto_integracao?: string;
+  };
 }

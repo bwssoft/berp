@@ -22,9 +22,11 @@ export async function findManyComponentCategory(input: {
 export async function createOneComponentCategory(
   componentCategory: Omit<IComponentCategory, "id" | "created_at">
 ) {
-  await createOneComponentCategoryUsecase.execute(componentCategory);
+  const result =
+    await createOneComponentCategoryUsecase.execute(componentCategory);
   revalidatePath("/engineer/component");
-  return componentCategory;
+  revalidatePath("/engineer/component/category");
+  return result;
 }
 
 export async function createManyComponentInputCategories(
@@ -32,6 +34,7 @@ export async function createManyComponentInputCategories(
 ) {
   await createManyComponentCategoryUsecase.execute(componentCategory);
   revalidatePath("/engineer/component");
+  revalidatePath("/engineer/component/category");
   return componentCategory;
 }
 

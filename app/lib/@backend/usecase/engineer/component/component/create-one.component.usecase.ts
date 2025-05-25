@@ -12,7 +12,7 @@ class CreateOneComponentUsecase {
   async execute(component: Omit<IComponent, "id" | "created_at" | "seq">) {
     try {
       const last_component_with_same_category = await this.repository.findOne(
-        { category: component.category },
+        { "category.id": component.category.id },
         { sort: { seq: -1 }, limit: 1 }
       );
 

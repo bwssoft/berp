@@ -1,7 +1,13 @@
 "use client";
 
 import { Layout } from "@/app/lib/@frontend/ui/component";
-import { BriefcaseIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import {
+  BriefcaseIcon,
+  Cog6ToothIcon,
+  CubeIcon,
+  DocumentTextIcon,
+  TagIcon,
+} from "@heroicons/react/24/outline";
 import { useAuth } from "../lib/@frontend/context";
 
 export default function ComercialLayout({
@@ -26,5 +32,25 @@ const navigation = [
     pathname: "/commercial/proposal",
     code: "commercial:proposal",
     icon: DocumentTextIcon, // remete a contratos, propostas e documentos
+  },
+  {
+    name: "Produtos",
+    pathname: "/commercial/product",
+    code: "commercial:product",
+    icon: CubeIcon, // Representa produtos físicos
+    children: [
+      {
+        name: "Gestão",
+        pathname: "/commercial/product/management",
+        code: "commercial:product:view",
+        icon: Cog6ToothIcon, // Gestão geral/configuração
+      },
+      {
+        name: "Categorias",
+        pathname: "/commercial/product/category",
+        code: "commercial:product:category",
+        icon: TagIcon, // Ícone clássico de categorização
+      },
+    ],
   },
 ];

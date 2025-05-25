@@ -1,7 +1,6 @@
 export * from "./command";
 export * from "./firmware";
 export * from "./component";
-export * from "./product";
 export * from "./device.action";
 export * from "./technical-sheet.action";
 export * from "./configuration-profile.action";

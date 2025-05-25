@@ -1,10 +1,11 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useUpdateBaseForm } from "./use-update.base.form";
-import { Input, Radio, Select, Textarea } from "../../../../component";
+import { Input, Radio, Textarea } from "../../../../component";
 import { Controller } from "react-hook-form";
 import { baseConstants } from "@/app/lib/constant/logistic";
 import { IBase, IEnterprise } from "@/app/lib/@backend/domain";
+import { Select } from "../../../../composite";
 
 interface Props {
   enterprises: IEnterprise[];

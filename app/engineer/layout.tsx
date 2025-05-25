@@ -99,42 +99,4 @@ const navigation = [
       },
     ],
   },
-  {
-    name: "Produtos",
-    pathname: "/engineer/product",
-    code: "engineer:product",
-    icon: CubeIcon, // Representa produtos físicos
-    children: [
-      {
-        name: "Gestão",
-        pathname: "/engineer/product/management",
-        code: "engineer:product:view",
-        icon: Cog6ToothIcon, // Gestão geral/configuração
-      },
-      {
-        name: "Categorias",
-        pathname: "/engineer/product/category",
-        code: "engineer:product:category",
-        icon: TagIcon, // Ícone clássico de categorização
-      },
-      {
-        name: "Entradas e Saídas",
-        pathname: "/engineer/product/transaction",
-        code: "engineer:product:transaction",
-        icon: ArrowsRightLeftIcon, // Representa movimentações de estoque
-      },
-      {
-        name: "Estoque",
-        pathname: "/engineer/product/stock",
-        code: "engineer:product:stock",
-        icon: ArchiveBoxIcon, // Representa armazenamento/estoque
-      },
-      {
-        name: "Análise do estoque",
-        pathname: "/engineer/product/analysis",
-        code: "engineer:product:analyse",
-        icon: ChartBarIcon, // Representa gráficos/relatórios
-      },
-    ],
-  },
 ];
