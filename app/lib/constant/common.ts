@@ -10,6 +10,6 @@ const measure_unit: { [key in Component.Unit]: string } = {
   un: "Unidade (un)",
 };
 
-export const componentConstants = {
+export const commonConstants = {
   measure_unit,
 };

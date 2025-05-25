@@ -1,5 +1,5 @@
 export * from "./client";
-export * from "./component";
+export * from "./common";
 export * from "./product";
 export * from "./production-order";
 export * from "./configuration";

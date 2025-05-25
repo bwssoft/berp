@@ -22,16 +22,14 @@ import {
   FormMessage,
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
-import { IComponent, IComponentCategory } from "@/app/lib/@backend/domain";
-import { commonConstants } from "@/app/lib/constant";
-import { useUpdateComponentForm } from "./use-update.component.form";
+import { useCreateInputForm } from "./use-create.input.form";
+import { IInputCategory } from "@/app/lib/@backend/domain";
 
 interface Props {
-  categories: IComponentCategory[];
-  component: IComponent;
+  categories: IInputCategory[];
 }
-export function UpdateOneComponentForm(props: Props) {
-  const { categories, component } = props;
+export function CreateOneInputForm(props: Props) {
+  const { categories } = props;
   const {
     form,
     addSpecEntry,
@@ -44,8 +42,8 @@ export function UpdateOneComponentForm(props: Props) {
     loading,
     specEntries,
     fileEntries,
-    handleCancel,
-  } = useUpdateComponentForm({ defaultValues: component });
+    handleCancelCreate,
+  } = useCreateInputForm();
 
   return (
     <Form {...form}>
@@ -60,7 +58,7 @@ export function UpdateOneComponentForm(props: Props) {
               <FormItem>
                 <FormLabel>Nome *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Digite o nome do componente" {...field} />
+                  <Input placeholder="Digite o nome do inpute" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -102,40 +100,6 @@ export function UpdateOneComponentForm(props: Props) {
                     </SelectContent>
                   </Select>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Unidade de Medida */}
-            <FormField
-              control={form.control}
-              name="measure_unit"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Unidade de Medida *</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma unidade" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Object.entries(commonConstants.measure_unit)
-                        .map(([key, value]) => ({
-                          label: value,
-                          value: key,
-                        }))
-                        .map((type) => (
-                          <SelectItem key={type.value} value={type.value}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -288,7 +252,7 @@ export function UpdateOneComponentForm(props: Props) {
                 <FormLabel>Descrição</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Descreva o componente..."
+                    placeholder="Descreva o inpute..."
                     rows={3}
                     {...field}
                   />
@@ -312,7 +276,7 @@ export function UpdateOneComponentForm(props: Props) {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => handleCancel()}
+            onClick={() => handleCancelCreate()}
             disabled={loading}
           >
             Cancelar

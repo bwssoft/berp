@@ -1,6 +1,7 @@
 export * from "./technical-sheet";
 export * from "./schedule";
 export * from "./component";
+export * from "./input";
 export * from "./firmware-request-to-update";
 export * from "./firmware";
 export * from "./device";

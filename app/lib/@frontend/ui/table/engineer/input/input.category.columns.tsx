@@ -1,4 +1,4 @@
-import { IComponent } from "@/app/lib/@backend/domain";
+import { IInputCategory } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { Button } from "../../../component";
@@ -8,61 +8,38 @@ interface Props {
   restrictFeatureByProfile: (code: string) => boolean;
 }
 
-export const columns = (props: Props): ColumnDef<IComponent>[] => [
+export const columns = (props: Props): ColumnDef<IInputCategory>[] => [
   {
     header: "Código",
     accessorKey: "code",
-    cell: ({ row }) => {
-      const component = row.original;
-      return `${component.category.code.toUpperCase()}${component.seq
-        .toString()
-        .padStart(3, "0")}`;
-    },
   },
   {
     header: "Nome",
     accessorKey: "name",
-    cell: ({
-      row: {
-        original: { color, name },
-      },
-    }) => (
-      <div className="flex items-center gap-2">
-        <div
-          className="w-4 h-4 rounded-full border"
-          style={{ backgroundColor: color }}
-        />
-        {name}
-      </div>
-    ),
-  },
-  {
-    header: "Unidade de medida",
-    accessorKey: "measure_unit",
   },
   {
     header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const component = row.original;
-      return component.created_at.toLocaleString();
+      const input = row.original;
+      return input.created_at.toLocaleString();
     },
   },
   {
     header: "",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const component = row.original;
+      const input = row.original;
 
       const showEdit = props.restrictFeatureByProfile(
-        "engineer:component:update"
+        "engineer:input:category:update"
       );
       return (
         <>
           {showEdit && (
             <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
               <Link
-                href={`/engineer/component/form/update?id=${component.id}`}
+                href={`/engineer/input/category/form/update?id=${input.id}`}
                 className="text-blue-600 hover:text-blue-900"
               >
                 <Button

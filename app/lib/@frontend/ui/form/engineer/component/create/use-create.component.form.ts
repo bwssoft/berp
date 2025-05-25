@@ -100,7 +100,7 @@ export function useCreateComponentForm() {
             description: "Componente registrada com sucesso!",
             variant: "success",
           });
-          router.push("/engineer/component/component");
+          router.push("/engineer/component/management");
           return;
         }
 
@@ -166,7 +166,7 @@ export function useCreateComponentForm() {
   };
 
   function handleCancelCreate() {
-    router.push("/engineer/component/component");
+    router.push("/engineer/component/management");
   }
 
   return {

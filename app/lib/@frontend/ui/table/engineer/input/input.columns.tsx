@@ -1,4 +1,4 @@
-import { IComponent } from "@/app/lib/@backend/domain";
+import { IInput } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { Button } from "../../../component";
@@ -8,13 +8,13 @@ interface Props {
   restrictFeatureByProfile: (code: string) => boolean;
 }
 
-export const columns = (props: Props): ColumnDef<IComponent>[] => [
+export const columns = (props: Props): ColumnDef<IInput>[] => [
   {
     header: "Código",
     accessorKey: "code",
     cell: ({ row }) => {
-      const component = row.original;
-      return `${component.category.code.toUpperCase()}${component.seq
+      const input = row.original;
+      return `${input.category.code.toUpperCase()}${input.seq
         .toString()
         .padStart(3, "0")}`;
     },
@@ -44,25 +44,23 @@ export const columns = (props: Props): ColumnDef<IComponent>[] => [
     header: "Data de criação",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const component = row.original;
-      return component.created_at.toLocaleString();
+      const input = row.original;
+      return input.created_at.toLocaleString();
     },
   },
   {
     header: "",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const component = row.original;
+      const input = row.original;
 
-      const showEdit = props.restrictFeatureByProfile(
-        "engineer:component:update"
-      );
+      const showEdit = props.restrictFeatureByProfile("engineer:input:update");
       return (
         <>
           {showEdit && (
             <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
               <Link
-                href={`/engineer/component/form/update?id=${component.id}`}
+                href={`/engineer/input/form/update?id=${input.id}`}
                 className="text-blue-600 hover:text-blue-900"
               >
                 <Button

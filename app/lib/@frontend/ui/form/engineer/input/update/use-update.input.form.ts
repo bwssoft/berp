@@ -1,5 +1,5 @@
-import { updateOneComponentById } from "@/app/lib/@backend/action";
-import { Component, IComponent } from "@/app/lib/@backend/domain";
+import { updateOneInputById } from "@/app/lib/@backend/action";
+import { IInput } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,6 @@ const schema = z.object({
     id: z.string(),
     code: z.string(),
   }),
-  measure_unit: z.nativeEnum(Component.Unit),
   color: z
     .string()
     .regex(
@@ -41,9 +40,9 @@ const schema = z.object({
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
-  defaultValues: IComponent;
+  defaultValues: IInput;
 }
-export function useUpdateComponentForm(props: Props) {
+export function useUpdateInputForm(props: Props) {
   const { defaultValues } = props;
   const router = useRouter();
 
@@ -82,7 +81,7 @@ export function useUpdateComponentForm(props: Props) {
     };
 
     try {
-      const { success, error } = await updateOneComponentById(
+      const { success, error } = await updateOneInputById(
         { id: defaultValues.id },
         formData
       );
@@ -90,10 +89,10 @@ export function useUpdateComponentForm(props: Props) {
       if (success) {
         toast({
           title: "Sucesso!",
-          description: "Componente registrado com sucesso!",
+          description: "Inpute registrado com sucesso!",
           variant: "success",
         });
-        router.push("/engineer/component/management");
+        router.push("/engineer/input/management");
         return;
       }
 
@@ -108,14 +107,14 @@ export function useUpdateComponentForm(props: Props) {
         });
         toast({
           title: "Erro!",
-          description: error.usecase ?? "Falha ao registrar o componente!",
+          description: error.usecase ?? "Falha ao registrar o inpute!",
           variant: "error",
         });
       }
     } catch (error) {
       toast({
         title: "Erro!",
-        description: "Falha ao registrar o componente!",
+        description: "Falha ao registrar o inpute!",
         variant: "error",
       });
     }
@@ -158,7 +157,7 @@ export function useUpdateComponentForm(props: Props) {
   };
 
   function handleCancel() {
-    router.push("/engineer/component/management");
+    router.push("/engineer/input/management");
   }
 
   return {

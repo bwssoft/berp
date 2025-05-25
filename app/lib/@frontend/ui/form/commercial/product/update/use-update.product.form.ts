@@ -158,7 +158,7 @@ export function useUpdateProductForm(props: Props) {
   };
 
   function handleCancelUpdate() {
-    router.push("/engineer/component/component");
+    router.push("/engineer/component/management");
   }
 
   return {

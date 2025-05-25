@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { componentConstants } from "@/app/lib/constant";
+import { commonConstants } from "@/app/lib/constant";
 import { useCreateFromFileComponentForm } from "./use-create-from-file.component.form";
 import { IComponentCategory } from "@/app/lib/@backend/domain";
 import { FileUpload } from "../../../../component";
@@ -90,7 +90,7 @@ export function CreateFromFileComponentForm(props: Props) {
                         <option value={`measure_unit-select-empty-${index}`}>
                           Unidade de medida
                         </option>
-                        {Object.entries(componentConstants.measure_unit).map(
+                        {Object.entries(commonConstants.measure_unit).map(
                           ([key, value]) => (
                             <option key={key} value={key}>
                               {value}

@@ -24,7 +24,7 @@ import {
 import { Trash2, Plus, Loader2 } from "lucide-react";
 import { useCreateComponentForm } from "./use-create.component.form";
 import { IComponentCategory } from "@/app/lib/@backend/domain";
-import { componentConstants } from "@/app/lib/constant";
+import { commonConstants } from "@/app/lib/constant";
 
 interface Props {
   categories: IComponentCategory[];
@@ -123,7 +123,7 @@ export function CreateOneComponentForm(props: Props) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Object.entries(componentConstants.measure_unit)
+                      {Object.entries(commonConstants.measure_unit)
                         .map(([key, value]) => ({
                           label: value,
                           value: key,

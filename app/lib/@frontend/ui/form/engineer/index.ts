@@ -6,3 +6,5 @@ export * from "./firmware";
 export * from "./device";
 export * from "./command";
 export * from "./configuration-profile";
+export * from "./input";
+export * from "./input-category";
