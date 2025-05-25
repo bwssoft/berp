@@ -3,7 +3,7 @@ import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { CreateOneComponentForm } from "@/app/lib/@frontend/ui/form";
 
 export default async function Page() {
-  const categories = await findManyComponentCategory();
+  const { docs: categories } = await findManyComponentCategory({ filter: {} });
   return (
     <div>
       <div className="w-4/6 ring-1 ring-inset ring-gray-200 bg-white rounded-md px-6 py-8">

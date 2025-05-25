@@ -4,10 +4,10 @@ export interface IComponent {
   name: string;
   category: Component.Category;
   measure_unit: Component.Unit;
-  // manufacturer: Component.Manufacturer[];
+  manufacturer: Component.Manufacturer[];
   color: string;
   created_at: Date;
-  spec: Record<string, string>;
+  spec?: Record<string, string>;
   files?: string[];
   description?: string;
   price?: number;

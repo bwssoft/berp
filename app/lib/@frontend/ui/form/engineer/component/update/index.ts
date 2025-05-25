@@ -1,1 +1,1 @@
-export * from './input.update.form'
+export * from "./update.component.form";

@@ -1,19 +1,25 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useInputCreateFromFileForm } from "./use-input-create-from-file-form";
-import { FileUpload } from "../../../../component/input-file";
-import { inputConstants } from "@/app/lib/constant";
+import { componentConstants } from "@/app/lib/constant";
+import { useCreateFromFileComponentForm } from "./use-create-from-file.component.form";
+import { IComponentCategory } from "@/app/lib/@backend/domain";
+import { FileUpload } from "../../../../component";
 
-export function InputCreateFromFileForm() {
+interface Props {
+  categories: IComponentCategory[];
+}
+
+export function CreateFromFileComponentForm(props: Props) {
+  const { categories } = props;
   const {
     handleSubmit,
     register,
-    inputs,
-    handleAppedInput,
-    handleRemoveInput,
+    components,
+    handleAppedComponent,
+    handleRemoveComponent,
     handleFile,
-  } = useInputCreateFromFileForm();
+  } = useCreateFromFileComponentForm({ categories });
 
   return (
     <form action={() => handleSubmit()} className="w-full">
@@ -24,33 +30,31 @@ export function InputCreateFromFileForm() {
 
             <div className="col-span-full">
               <label
-                htmlFor="inputs"
+                htmlFor="components"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
                 Insumos
               </label>
               <div>
-                {inputs.map((item, index) => (
+                {components.map((item, index) => (
                   <div key={item.id} className="flex flex-col mt-8 space-y-2">
                     <div className="flex space-x-4 items-center">
                       <select
                         id="category"
                         className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
-                        {...register(`inputs.${index}.category`)}
+                        {...register(`components.${index}.category`)}
                       >
                         <option value={`category-select-empty-${index}`}>
                           Categoria
                         </option>
-                        {Object.entries(inputConstants.category).map(
-                          ([key, value]) => (
-                            <option key={key} value={key}>
-                              {value}
-                            </option>
-                          )
-                        )}
+                        {categories.map((c) => (
+                          <option key={c.id} value={c.code}>
+                            {c.code} - {c.name}
+                          </option>
+                        ))}
                       </select>
                       <input
-                        {...register(`inputs.${index}.name`)}
+                        {...register(`components.${index}.name`)}
                         type="text"
                         id="name"
                         autoComplete="name"
@@ -63,7 +67,7 @@ export function InputCreateFromFileForm() {
                         </div>
                         <input
                           type="text"
-                          {...register(`inputs.${index}.price`)}
+                          {...register(`components.${index}.price`)}
                           id="price"
                           className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                           placeholder="0.00"
@@ -81,12 +85,12 @@ export function InputCreateFromFileForm() {
                       <select
                         id="measure_unit"
                         className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6"
-                        {...register(`inputs.${index}.measure_unit`)}
+                        {...register(`components.${index}.measure_unit`)}
                       >
                         <option value={`measure_unit-select-empty-${index}`}>
                           Unidade de medida
                         </option>
-                        {Object.entries(inputConstants.measure_unit).map(
+                        {Object.entries(componentConstants.measure_unit).map(
                           ([key, value]) => (
                             <option key={key} value={key}>
                               {value}
@@ -100,11 +104,11 @@ export function InputCreateFromFileForm() {
                         type="text"
                         disabled={true}
                         placeholder="Cor"
-                        {...register(`inputs.${index}.color`)}
+                        {...register(`components.${index}.color`)}
                       />
                       <Button
                         type="button"
-                        onClick={() => handleRemoveInput(index)}
+                        onClick={() => handleRemoveComponent(index)}
                         className="rounded-full bg-red-600 shadow-sm hover:bg-red-500 p-1 h-fit"
                       >
                         <XMarkIcon width={16} height={16} />
@@ -118,7 +122,7 @@ export function InputCreateFromFileForm() {
                         >
                           <input
                             {...register(
-                              `inputs.${index}.manufacturer.${idx}.name`
+                              `components.${index}.manufacturer.${idx}.name`
                             )}
                             type="text"
                             id="name"
@@ -128,7 +132,7 @@ export function InputCreateFromFileForm() {
                           />
                           <input
                             {...register(
-                              `inputs.${index}.manufacturer.${idx}.code`
+                              `components.${index}.manufacturer.${idx}.code`
                             )}
                             type="text"
                             id="code"
@@ -145,14 +149,15 @@ export function InputCreateFromFileForm() {
               <button
                 type="button"
                 onClick={() =>
-                  handleAppedInput({
+                  handleAppedComponent({
                     name: "",
                     price: "" as any,
                     measure_unit:
-                      `measure_unit-select-empty-${inputs.length}` as any,
+                      `measure_unit-select-empty-${components.length}` as any,
                     color: "",
                     manufacturer: [],
-                    category: `category-select-empty-${inputs.length}` as any,
+                    category:
+                      `category-select-empty-${components.length}` as any,
                   })
                 }
                 className="mt-4 border border-gray-300 bg-white shadow-sm hover:bg-gray-200 inline-flex items-center gap-2 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2"

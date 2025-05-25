@@ -4,7 +4,7 @@ export * from "./product-transaction";
 export * from "./product-category";
 export * from "./product";
 export * from "./input-transaction";
-export * from "./input-category";
+export * from "./component-category";
 export * from "./component";
 export * from "./firmware";
 export * from "./device";

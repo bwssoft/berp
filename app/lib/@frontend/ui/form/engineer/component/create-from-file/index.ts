@@ -1,1 +1,1 @@
-export * from './input.create-from-file.form'
+export * from "./create-from-file.component.form";

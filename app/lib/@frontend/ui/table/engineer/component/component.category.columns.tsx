@@ -1,10 +1,14 @@
+import { IComponentCategory } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { toast } from "@/app/lib/@frontend/hook";
-import { IComponentCategory } from "@/app/lib/@backend/domain";
-import { deleteOneComponentCategoryById } from "@/app/lib/@backend/action";
+import { Button } from "../../../component";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
-export const componentCategoryColumns: ColumnDef<IComponentCategory>[] = [
+interface Props {
+  restrictFeatureByProfile: (code: string) => boolean;
+}
+
+export const columns = (props: Props): ColumnDef<IComponentCategory>[] => [
   {
     header: "Código",
     accessorKey: "code",
@@ -14,44 +18,41 @@ export const componentCategoryColumns: ColumnDef<IComponentCategory>[] = [
     accessorKey: "name",
   },
   {
+    header: "Data de criação",
+    accessorKey: "created_at",
+    cell: ({ row }) => {
+      const component = row.original;
+      return component.created_at.toLocaleString();
+    },
+  },
+  {
     header: "",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const compoment = row.original;
+      const component = row.original;
+
+      const showEdit = props.restrictFeatureByProfile(
+        "engineer:component:category:update"
+      );
       return (
-        <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-          <Link
-            href={`/engineer/compoment/component/form/update?id=${compoment.id}`}
-            className="text-blue-600 hover:text-blue-900"
-          >
-            Editar
-          </Link>
-          <form
-            action={async () => {
-              try {
-                await deleteOneComponentCategoryById({ id: compoment.id! });
-                toast({
-                  variant: "success",
-                  title: "Sucesso!",
-                  description: "Insumo deletado com sucesso.",
-                });
-              } catch (e) {
-                toast({
-                  variant: "error",
-                  title: "Erro!",
-                  description: "Falha ao deletar o insummo.",
-                });
-              }
-            }}
-          >
-            <button
-              type="submit"
-              className="text-blue-600 hover:text-blue-900 px-0 py-0"
-            >
-              Deletar
-            </button>
-          </form>
-        </td>
+        <>
+          {showEdit && (
+            <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+              <Link
+                href={`/engineer/component/category/form/update?id=${component.id}`}
+                className="text-blue-600 hover:text-blue-900"
+              >
+                <Button
+                  title="Editar"
+                  variant="ghost"
+                  className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                >
+                  <PencilSquareIcon className="size-5" />
+                </Button>
+              </Link>
+            </td>
+          )}
+        </>
       );
     },
   },

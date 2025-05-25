@@ -1,20 +1,40 @@
 import { singleton } from "@/app/lib/util/singleton";
+import type { Filter } from "mongodb";
 import { componentCategoryRepository } from "@/app/lib/@backend/infra";
-import { IComponentCategoryRepository } from "@/app/lib/@backend/domain";
+import {
+  IComponentCategory,
+  IComponentCategoryRepository,
+} from "@/app/lib/@backend/domain";
+import { RemoveFields } from "@/app/lib/@backend/decorators";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
-class FindManyComponentCategoryUseCase {
+namespace Dto {
+  export interface Input {
+    filter?: Filter<IComponentCategory>;
+    page?: number;
+    limit?: number;
+    sort?: Record<string, 1 | -1>;
+  }
+  export type Output = PaginationResult<IComponentCategory>;
+}
+class FindManyComponentCategoryUsecase {
   repository: IComponentCategoryRepository;
 
   constructor() {
     this.repository = componentCategoryRepository;
   }
 
-  async execute() {
-    const { docs } = await this.repository.findMany({});
-    return docs;
+  @RemoveFields("_id")
+  async execute(arg: Dto.Input): Promise<Dto.Output> {
+    return await this.repository.findMany(
+      arg.filter ?? {},
+      arg.limit,
+      arg.page,
+      arg.sort
+    );
   }
 }
 
-export const findManyComponentCategoryUseCase = singleton(
-  FindManyComponentCategoryUseCase
+export const findManyComponentCategoryUsecase = singleton(
+  FindManyComponentCategoryUsecase
 );

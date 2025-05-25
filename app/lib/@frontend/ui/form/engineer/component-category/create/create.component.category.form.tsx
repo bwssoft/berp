@@ -1,9 +1,9 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
-import { useInputCategoryCreateForm } from "./use-input-category-create-form";
+import { useCreateOneComponentCategoryForm } from "./use-create.component.category.form";
 
-export function InputCategoryCreateForm() {
-  const { handleSubmit, register } = useInputCategoryCreateForm();
+export function CreateOneComponentCategoryForm() {
+  const { handleSubmit, register } = useCreateOneComponentCategoryForm();
 
   return (
     <form action={() => handleSubmit()}>

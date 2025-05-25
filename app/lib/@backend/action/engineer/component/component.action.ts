@@ -21,7 +21,7 @@ export async function createOneComponent(
 }
 
 export async function createManyComponent(
-  component: Omit<IComponent, "id" | "created_at" | "code">[]
+  component: Omit<IComponent, "id" | "created_at" | "seq">[]
 ) {
   await createManyComponentUsecase.execute(component);
   revalidatePath("/engineer/component");
@@ -34,10 +34,11 @@ export async function findOneComponent(component: Partial<IComponent>) {
 
 export async function updateOneComponentById(
   query: { id: string },
-  value: Omit<IComponent, "id" | "created_at" | "code">
+  value: Omit<IComponent, "id" | "created_at" | "seq">
 ) {
-  await updateOneComponentUsecase.execute(query, value);
+  const result = await updateOneComponentUsecase.execute(query, value);
   revalidatePath("/engineer/component");
+  return result;
 }
 
 export async function deleteOneComponentById(query: { id: string }) {

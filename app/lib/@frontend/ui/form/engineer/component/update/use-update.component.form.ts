@@ -1,16 +1,13 @@
-"use client";
-
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { updateOneComponentById } from "@/app/lib/@backend/action";
 import { Component, IComponent } from "@/app/lib/@backend/domain";
-import { createOneComponent } from "@/app/lib/@backend/action";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "@/app/lib/@frontend/hook";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-// Schema de validação com Zod
-const componentSchema = z.object({
+const schema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(100, "Nome muito longo"),
   category: z.object({
     id: z.string(),
@@ -37,9 +34,13 @@ const componentSchema = z.object({
     .default([]),
 });
 
-export type CreateComponentFormData = z.infer<typeof componentSchema>;
+export type Schema = z.infer<typeof schema>;
 
-export function useCreateComponentForm() {
+interface Props {
+  defaultValues: IComponent;
+}
+export function useUpdateComponentForm(props: Props) {
+  const { defaultValues } = props;
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -48,8 +49,8 @@ export function useCreateComponentForm() {
   >([{ key: "", value: "" }]);
   const [fileEntries, setFileEntries] = useState<string[]>([""]);
 
-  const form = useForm<CreateComponentFormData>({
-    resolver: zodResolver(componentSchema),
+  const form = useForm<Schema>({
+    resolver: zodResolver(schema),
     defaultValues: {
       name: "",
       category: undefined as unknown as IComponent["category"],
@@ -62,67 +63,68 @@ export function useCreateComponentForm() {
     },
   });
 
-  const handleSubmit = form.handleSubmit(
-    async (data: CreateComponentFormData) => {
-      setLoading(true);
+  const handleSubmit = form.handleSubmit(async (data: Schema) => {
+    setLoading(true);
 
-      // Filtrar spec entries vazias
-      const filteredSpec = specEntries
-        .filter((entry) => entry.key.trim() && entry.value.trim())
-        .reduce(
-          (acc, entry) => {
-            acc[entry.key] = entry.value;
-            return acc;
-          },
-          {} as Record<string, string>
-        );
+    // Filtrar spec entries vazias
+    const filteredSpec = specEntries
+      .filter((entry) => entry.key.trim() && entry.value.trim())
+      .reduce(
+        (acc, entry) => {
+          acc[entry.key] = entry.value;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
 
-      const filteredFiles = fileEntries.filter((file) => file.trim());
+    const filteredFiles = fileEntries.filter((file) => file.trim());
 
-      const formData = {
-        ...data,
-        spec: filteredSpec,
-        files: filteredFiles,
-        price: data.price,
-      };
+    const formData = {
+      ...data,
+      spec: filteredSpec,
+      files: filteredFiles,
+      price: data.price,
+    };
 
-      try {
-        const { success, error } = await createOneComponent(formData);
+    try {
+      const { success, error } = await updateOneComponentById(
+        { id: defaultValues.id },
+        formData
+      );
 
-        if (success) {
-          toast({
-            title: "Sucesso!",
-            description: "Componente registrada com sucesso!",
-            variant: "success",
-          });
-          router.push("/engineer/component/component");
-          return;
-        }
+      if (success) {
+        toast({
+          title: "Sucesso!",
+          description: "Componente registrada com sucesso!",
+          variant: "success",
+        });
+        router.push("/engineer/component/component");
+        return;
+      }
 
-        if (error) {
-          Object.entries(error).forEach(([key, message]) => {
-            if (key !== "global" && message) {
-              form.setError(key as keyof CreateComponentFormData, {
-                type: "manual",
-                message: message as string,
-              });
-            }
-          });
-          toast({
-            title: "Erro!",
-            description: error.usecase ?? "Falha ao registrar o componente!",
-            variant: "error",
-          });
-        }
-      } catch (error) {
+      if (error) {
+        Object.entries(error).forEach(([key, message]) => {
+          if (key !== "global" && message) {
+            form.setError(key as keyof Schema, {
+              type: "manual",
+              message: message as string,
+            });
+          }
+        });
         toast({
           title: "Erro!",
-          description: "Falha ao registrar o componente!",
+          description: error.usecase ?? "Falha ao registrar o componente!",
           variant: "error",
         });
       }
+    } catch (error) {
+      toast({
+        title: "Erro!",
+        description: "Falha ao registrar o componente!",
+        variant: "error",
+      });
     }
-  );
+  });
 
   const addSpecEntry = () => {
     setSpecEntries([...specEntries, { key: "", value: "" }]);
@@ -160,14 +162,14 @@ export function useCreateComponentForm() {
     setFileEntries(updated);
   };
 
-  function handleCancelCreate() {
+  function handleCancel() {
     router.push("/engineer/component/component");
   }
 
   return {
     form,
     handleSubmit,
-    schema: componentSchema,
+    schema,
     addSpecEntry,
     removeSpecEntry,
     updateSpecEntry,
@@ -177,6 +179,6 @@ export function useCreateComponentForm() {
     loading,
     specEntries,
     fileEntries,
-    handleCancelCreate,
+    handleCancel,
   };
 }

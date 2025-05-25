@@ -13,7 +13,19 @@ class UpdateOneComponentUsecase {
     query: { id: string },
     value: Omit<IComponent, "id" | "created_at" | "seq">
   ) {
-    return await this.repository.updateOne(query, { $set: value });
+    try {
+      await this.repository.updateOne(query, { $set: value });
+      return {
+        success: true,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        error: {
+          usecase: err instanceof Error ? err.message : JSON.stringify(err),
+        },
+      };
+    }
   }
 }
 

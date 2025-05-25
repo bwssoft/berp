@@ -22,15 +22,16 @@ import {
   FormMessage,
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
-import { useCreateComponentForm } from "./use-create.component.form";
-import { IComponentCategory } from "@/app/lib/@backend/domain";
+import { IComponent, IComponentCategory } from "@/app/lib/@backend/domain";
 import { componentConstants } from "@/app/lib/constant";
+import { useUpdateComponentForm } from "./use-update.component.form";
 
 interface Props {
   categories: IComponentCategory[];
+  component: IComponent;
 }
-export function CreateOneComponentForm(props: Props) {
-  const { categories } = props;
+export function UpdateOneComponentForm(props: Props) {
+  const { categories, component } = props;
   const {
     form,
     addSpecEntry,
@@ -43,8 +44,8 @@ export function CreateOneComponentForm(props: Props) {
     loading,
     specEntries,
     fileEntries,
-    handleCancelCreate,
-  } = useCreateComponentForm();
+    handleCancel,
+  } = useUpdateComponentForm({ defaultValues: component });
 
   return (
     <Form {...form}>
@@ -311,7 +312,7 @@ export function CreateOneComponentForm(props: Props) {
           <Button
             type="button"
             variant="secondary"
-            onClick={() => handleCancelCreate()}
+            onClick={() => handleCancel()}
             disabled={loading}
           >
             Cancelar

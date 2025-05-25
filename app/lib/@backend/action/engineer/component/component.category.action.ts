@@ -5,14 +5,18 @@ import {
   createManyComponentCategoryUsecase,
   createOneComponentCategoryUsecase,
   deleteOneComponentCategoryUsecase,
-  findManyComponentCategoryUseCase,
+  findManyComponentCategoryUsecase,
 } from "@/app/lib/@backend/usecase";
 import { IComponentCategory } from "@/app/lib/@backend/domain";
+import { Filter } from "mongodb";
 
-export async function findManyComponentCategory(): Promise<
-  IComponentCategory[]
-> {
-  return await findManyComponentCategoryUseCase.execute();
+export async function findManyComponentCategory(input: {
+  filter: Filter<IComponentCategory>;
+  page?: number;
+  limit?: number;
+  sort?: Record<string, 1 | -1>;
+}) {
+  return await findManyComponentCategoryUsecase.execute(input);
 }
 
 export async function createOneComponentCategory(

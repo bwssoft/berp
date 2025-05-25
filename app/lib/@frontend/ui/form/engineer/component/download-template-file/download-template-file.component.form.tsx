@@ -1,8 +1,8 @@
 "use client";
-import { useDownloadInputBOMForm } from "./use-download-input-bom-form";
+import { useDownloadComponentTemplateFileForm } from "./use-download-template-file.component.form";
 
-export function DownloadInputBOMForm() {
-  const { handleSubmit } = useDownloadInputBOMForm();
+export function DownloadComponentTemplateFileForm() {
+  const { handleSubmit } = useDownloadComponentTemplateFileForm();
 
   return (
     <form onSubmit={handleSubmit}>

@@ -1,12 +1,12 @@
-import { findAllInputCategories } from "@/app/lib/@backend/action";
-import { IInputCategory } from "@/app/lib/@backend/domain/engineer/entity/com.category.definition";
+import { findManyComponentCategory } from "@/app/lib/@backend/action";
+import { IComponentCategory } from "@/app/lib/@backend/domain";
 import ExcelJS from "exceljs";
 
-export function useDownloadInputBOMForm() {
+export function useDownloadComponentTemplateFileForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const inputCategories = await findAllInputCategories();
+    const componentCategories = await findManyComponentCategory();
 
     const workbook = new ExcelJS.Workbook();
     const sheet = prepareInputSheet(workbook);
@@ -16,7 +16,7 @@ export function useDownloadInputBOMForm() {
     sheet.dataValidations.add("A2:A99999", {
       type: "list",
       allowBlank: false,
-      formulae: formatCategoriesSheetValidationFormulae(inputCategories),
+      formulae: formatCategoriesSheetValidationFormulae(componentCategories),
       operator: "equal",
       showErrorMessage: true,
       errorStyle: "error",
@@ -31,7 +31,7 @@ export function useDownloadInputBOMForm() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "create-input-from-file.xlsx";
+      link.download = "create-from-file.component.xlsx";
       link.click();
       URL.revokeObjectURL(url);
     }
@@ -110,7 +110,7 @@ export function useDownloadInputBOMForm() {
   }
 
   function formatCategoriesSheetValidationFormulae(
-    categories: IInputCategory[]
+    categories: IComponentCategory[]
   ) {
     const formulae = categories.reduce((formulae, category, index) => {
       const option = category.code.toUpperCase();
