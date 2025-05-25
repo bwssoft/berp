@@ -54,14 +54,13 @@ const actions = [
       "Gerencie as versões de firmware dos dispositivos e atualizações.",
   },
   {
-    title: "Insumos",
-    href: "/engineer/input",
-    code: "engineer:input",
+    title: "Componentes",
+    href: "/engineer/component",
+    code: "engineer:component",
     icon: ArchiveBoxIcon, // Representa estoque/insumos
     iconForeground: "text-teal-700",
     iconBackground: "bg-teal-50",
-    description:
-      "Controle de entrada e gerenciamento de insumos utilizados na produção.",
+    description: "Gerencie os componentes utilizados no sistema.",
   },
   {
     title: "Produtos",

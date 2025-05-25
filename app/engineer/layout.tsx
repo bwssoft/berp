@@ -80,40 +80,22 @@ const navigation = [
     ],
   },
   {
-    name: "Insumos",
-    pathname: "/engineer/input",
-    code: "engineer:input",
+    name: "Componentes",
+    pathname: "/engineer/component",
+    code: "engineer:component",
     icon: ArchiveBoxIcon, // Representa estoque/insumos
     children: [
       {
         name: "Gestão",
-        pathname: "/engineer/input/management",
-        code: "engineer:input:view",
+        pathname: "/engineer/component",
+        code: "engineer:component:view",
         icon: Cog6ToothIcon, // Gestão geral/configuração
       },
       {
         name: "Categorias",
-        pathname: "/engineer/input/category",
-        code: "engineer:input:category",
+        pathname: "/engineer/component/category",
+        code: "engineer:component:category",
         icon: TagIcon, // Ícone clássico de categorização
-      },
-      {
-        name: "Entradas e Saídas",
-        pathname: "/engineer/input/transaction",
-        code: "engineer:input:transaction",
-        icon: ArrowsRightLeftIcon, // Representa movimentações de estoque
-      },
-      {
-        name: "Estoque",
-        pathname: "/engineer/input/stock",
-        code: "engineer:input:stock",
-        icon: ArchiveBoxIcon, // Representa armazenamento/estoque
-      },
-      {
-        name: "Análise do estoque",
-        pathname: "/engineer/input/analysis",
-        code: "engineer:input:analysis",
-        icon: ChartBarIcon, // Representa gráficos/relatórios
       },
     ],
   },
