@@ -3,15 +3,17 @@ import { OmieEnterpriseEnum } from "../../@shared/gateway/omie.gateway.interface
 export interface IProduct {
   id: string;
   seq: number;
-  category: Product.Category;
   name: string;
+  category: Product.Category;
   color: string;
-  description?: string;
-  price: number;
-  spec: Record<string, string>;
-  files: string[];
   active: boolean;
   created_at: Date;
+
+  spec?: Record<string, string>;
+  files?: string[];
+  description?: string;
+  price?: number;
+
   updated_at?: Date;
   omie_metadata?: Product.OmieMetadata;
   technology_id?: string;

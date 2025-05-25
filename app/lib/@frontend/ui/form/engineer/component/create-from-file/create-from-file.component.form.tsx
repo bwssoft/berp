@@ -156,6 +156,7 @@ export function CreateFromFileComponentForm(props: Props) {
                       `measure_unit-select-empty-${components.length}` as any,
                     color: "",
                     manufacturer: [],
+                    active: true,
                     category:
                       `category-select-empty-${components.length}` as any,
                   })

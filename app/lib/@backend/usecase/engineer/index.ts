@@ -5,3 +5,4 @@ export * from "./firmware";
 export * from "./component";
 export * from "./technical-sheet";
 export * from "./technology";
+export * from "./input";

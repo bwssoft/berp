@@ -28,6 +28,7 @@ const schema = z.object({
           name: z.string(),
         })
       ),
+      active: z.boolean().default(true),
     })
   ),
 });
@@ -77,13 +78,13 @@ export function useCreateFromFileComponentForm(props: Props) {
       await createManyComponent(components);
       toast({
         title: "Sucesso!",
-        description: "Insumo registrado com sucesso!",
+        description: "Componente registrado com sucesso!",
         variant: "success",
       });
     } catch (e) {
       toast({
         title: "Erro!",
-        description: "Falha ao registrar o insumo!",
+        description: "Falha ao registrar o componente!",
         variant: "error",
       });
     }
@@ -111,6 +112,7 @@ export function useCreateFromFileComponentForm(props: Props) {
           component.measure_unit ?? ("" as IComponent["measure_unit"]),
         name: component.name ?? "",
         color: getRandomHexColor(),
+        active: true,
         manufacturer: [
           {
             code: component.part_number_1 ?? "",

@@ -8,3 +8,5 @@ export * from "./technical-sheet.repository";
 export * from "./command-schedule.repository.interface";
 export * from "./command.repository.interface";
 export * from "./technology.repository";
+export * from "./input.repository";
+export * from "./input.category.repository";

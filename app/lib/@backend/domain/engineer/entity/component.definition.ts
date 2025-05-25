@@ -3,14 +3,17 @@ export interface IComponent {
   seq: number;
   name: string;
   category: Component.Category;
-  measure_unit: Component.Unit;
-  manufacturer: Component.Manufacturer[];
   color: string;
+  active: boolean;
   created_at: Date;
+
   spec?: Record<string, string>;
   files?: string[];
   description?: string;
   price?: number;
+
+  measure_unit: Component.Unit;
+  manufacturer: Component.Manufacturer[];
 }
 
 export namespace Component {

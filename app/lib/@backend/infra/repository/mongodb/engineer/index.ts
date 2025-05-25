@@ -8,3 +8,5 @@ export * from "./component.repository";
 export * from "./request-to-update-firmware.repository";
 export * from "./technical-sheet.repository";
 export * from "./technology.repository";
+export * from "./input.repository";
+export * from "./input.category.repository";

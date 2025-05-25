@@ -38,6 +38,7 @@ const componentSchema = z.object({
       })
     )
     .default([]),
+  active: z.boolean().default(true),
 });
 
 export type CreateComponentFormData = z.infer<typeof componentSchema>;
@@ -62,6 +63,7 @@ export function useCreateComponentForm() {
       files: [],
       description: "",
       price: 0,
+      active: true,
     },
   });
 

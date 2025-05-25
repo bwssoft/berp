@@ -8,3 +8,5 @@ export * from "./technical-sheet.definition";
 export * from "./command-schedule.definition";
 export * from "./command.definition";
 export * from "./technology.definition";
+export * from "./input.definition";
+export * from "./input.category.definition";

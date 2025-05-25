@@ -35,6 +35,7 @@ const schema = z.object({
       })
     )
     .default([]),
+  active: z.boolean().default(true),
 });
 
 export type Schema = z.infer<typeof schema>;
