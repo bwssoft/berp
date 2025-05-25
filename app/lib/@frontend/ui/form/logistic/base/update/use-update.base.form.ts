@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
-  code: z
+  sku: z
     .string()
     .min(1, "Código é obrigatório")
     .max(100, "Código deve ter no máximo 100 caracteres"),

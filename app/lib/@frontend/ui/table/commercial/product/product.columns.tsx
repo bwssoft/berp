@@ -10,14 +10,8 @@ interface Props {
 
 export const columns = (props: Props): ColumnDef<IProduct>[] => [
   {
-    header: "Código",
-    accessorKey: "code",
-    cell: ({ row }) => {
-      const product = row.original;
-      return `${product.category.code.toUpperCase()}${product.seq
-        .toString()
-        .padStart(3, "0")}`;
-    },
+    header: "SKU",
+    accessorKey: "sku",
   },
   {
     header: "Nome",

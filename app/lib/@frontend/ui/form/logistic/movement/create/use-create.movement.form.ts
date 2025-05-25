@@ -3,21 +3,24 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Base, Movement } from "@/app/lib/@backend/domain";
+import { Base, Item, Movement } from "@/app/lib/@backend/domain";
 import { createManyMovement } from "@/app/lib/@backend/action";
 
 const movementSchema = z.object({
   item: z.object({
     id: z.string(),
+    type: z.nativeEnum(Item.Type),
     ref: z.object({
       id: z.string(),
-      code: z.string(),
+      sku: z.string(),
+      color: z.string(),
+      category: z.object({ id: z.string() }),
     }),
   }),
   quantity: z.number().positive("Quantidade deve ser positiva"),
   base: z.object({
     id: z.string(),
-    code: z.string(),
+    sku: z.string(),
     type: z.nativeEnum(Base.Type),
   }),
   status: z.nativeEnum(Movement.Status),

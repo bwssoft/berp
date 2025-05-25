@@ -1,8 +1,9 @@
 export interface IInput {
   id: string;
+  sku: string; //category+variavel
   seq: number;
-  name: string;
   category: Input.Category;
+  name: string;
   color: string;
   active: boolean;
   created_at: Date;

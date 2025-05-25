@@ -21,14 +21,14 @@ export function UpdateOneBaseForm(props: Props) {
       <div className="border-b border-gray-900/10 pb-6">
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8">
           <Input
-            {...register("code")}
+            {...register("sku")}
             type="text"
-            id="code"
-            label="Código da base"
-            autoComplete="code"
-            placeholder="Digite o código da base"
+            id="sku"
+            label="SKU da base"
+            autoComplete="sku"
+            placeholder="Digite o SKU da base"
             className="w-full"
-            error={errors.code?.message}
+            error={errors.sku?.message}
             help="Código identificador da base no sistema"
           />
           <Controller

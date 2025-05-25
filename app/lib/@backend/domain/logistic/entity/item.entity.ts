@@ -5,13 +5,17 @@ export interface IItem {
   created_at: Date;
 }
 
-namespace Item {
+export namespace Item {
   export interface Ref {
-    id: string;
-    code: string;
+    id: string; // relação com input ou product ou component
+    sku: string;
+    name: string;
+    color: string;
+    category: { id: string };
   }
   export enum Type {
     PRODUCT = "PRODUCT",
     INPUT = "INPUT",
+    COMPONENT = "COMPONENT",
   }
 }

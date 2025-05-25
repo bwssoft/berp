@@ -1,3 +1,6 @@
+import { Item } from "./item.entity";
+import { Base } from "./base.entity";
+
 export interface IStock {
   id: string;
   base: Stock.Base;
@@ -10,14 +13,19 @@ export interface IStock {
 namespace Stock {
   export interface Item {
     id: string;
+    type: Item.Type;
     ref: {
+      id: string;
       name: string;
-      code: string;
+      sku: string;
+      color: string;
+      category: { id: string };
     };
   }
 
   export interface Base {
     id: string;
-    code: string;
+    sku: string;
+    type: Base.Type;
   }
 }

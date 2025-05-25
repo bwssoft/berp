@@ -2,9 +2,10 @@ import { OmieEnterpriseEnum } from "../../@shared/gateway/omie.gateway.interface
 
 export interface IProduct {
   id: string;
+  sku: string; //category+variavel
   seq: number;
-  name: string;
   category: Product.Category;
+  name: string;
   color: string;
   active: boolean;
   created_at: Date;

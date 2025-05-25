@@ -28,7 +28,7 @@ export function BaseTable({ data, currentPage = 1 }: Props) {
             restrictFeatureByProfile,
           })}
           data={docs}
-          mobileDisplayValue={(u) => u.code}
+          mobileDisplayValue={(u) => u.sku}
           mobileKeyExtractor={(u) => u.id.toString()}
         />
 

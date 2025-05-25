@@ -9,17 +9,20 @@ class CreateOneInputUsecase {
     this.repository = inputRepository;
   }
 
-  async execute(Input: Omit<IInput, "id" | "created_at" | "seq">) {
+  async execute(input: Omit<IInput, "id" | "created_at" | "seq" | "sku">) {
     try {
       const last_Input_with_same_category = await this.repository.findOne(
-        { "category.id": Input.category.id },
+        { "category.id": input.category.id },
         { sort: { seq: -1 }, limit: 1 }
       );
 
-      const _Input = Object.assign(Input, {
+      const seq = (last_Input_with_same_category?.seq ?? 0) + 1;
+
+      const _Input = Object.assign(input, {
         created_at: new Date(),
         id: crypto.randomUUID(),
-        seq: (last_Input_with_same_category?.seq ?? 0) + 1,
+        seq,
+        sku: `${input.category}-${seq}`,
       });
 
       await this.repository.create(_Input);

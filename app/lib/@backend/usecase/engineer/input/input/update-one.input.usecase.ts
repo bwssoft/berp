@@ -11,7 +11,7 @@ class UpdateOneInputUsecase {
 
   async execute(
     query: { id: string },
-    value: Omit<IInput, "id" | "created_at" | "seq">
+    value: Omit<IInput, "id" | "created_at" | "seq" | "sku">
   ) {
     try {
       await this.repository.updateOne(query, { $set: value });

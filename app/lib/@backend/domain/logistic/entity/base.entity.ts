@@ -1,6 +1,6 @@
 export interface IBase {
   id: string;
-  code: string;
+  sku: string;
   type: Base.Type;
   enterprise: Base.Enterprise;
   description?: string;

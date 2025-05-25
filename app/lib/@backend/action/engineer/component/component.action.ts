@@ -13,7 +13,7 @@ import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
 
 export async function createOneComponent(
-  component: Omit<IComponent, "id" | "created_at" | "seq">
+  component: Omit<IComponent, "id" | "created_at" | "seq" | "sku">
 ) {
   const result = await createOneComponentUsecase.execute(component);
   revalidatePath("/engineer/component");
@@ -21,7 +21,7 @@ export async function createOneComponent(
 }
 
 export async function createManyComponent(
-  component: Omit<IComponent, "id" | "created_at" | "seq">[]
+  component: Omit<IComponent, "id" | "created_at" | "seq" | "sku">[]
 ) {
   await createManyComponentUsecase.execute(component);
   revalidatePath("/engineer/component");
@@ -34,7 +34,7 @@ export async function findOneComponent(component: Partial<IComponent>) {
 
 export async function updateOneComponentById(
   query: { id: string },
-  value: Omit<IComponent, "id" | "created_at" | "seq">
+  value: Omit<IComponent, "id" | "created_at" | "seq" | "sku">
 ) {
   const result = await updateOneComponentUsecase.execute(query, value);
   revalidatePath("/engineer/component");

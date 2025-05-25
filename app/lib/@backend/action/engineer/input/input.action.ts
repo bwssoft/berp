@@ -12,7 +12,7 @@ import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
 
 export async function createOneInput(
-  input: Omit<IInput, "id" | "created_at" | "seq">
+  input: Omit<IInput, "id" | "created_at" | "seq" | "sku">
 ) {
   const result = await createOneInputUsecase.execute(input);
   revalidatePath("/engineer/input");
@@ -25,7 +25,7 @@ export async function findOneInput(input: Partial<IInput>) {
 
 export async function updateOneInputById(
   query: { id: string },
-  value: Omit<IInput, "id" | "created_at" | "seq">
+  value: Omit<IInput, "id" | "created_at" | "seq" | "sku">
 ) {
   const result = await updateOneInputUsecase.execute(query, value);
   revalidatePath("/engineer/input");

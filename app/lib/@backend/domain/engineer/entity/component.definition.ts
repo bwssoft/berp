@@ -1,8 +1,9 @@
 export interface IComponent {
   id: string;
+  sku: string; //category+variavel
   seq: number;
-  name: string;
   category: Component.Category;
+  name: string;
   color: string;
   active: boolean;
   created_at: Date;

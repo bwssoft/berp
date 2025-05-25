@@ -9,7 +9,9 @@ class CreateManyComponentUsecase {
     this.repository = componentRepository;
   }
 
-  async execute(components: Omit<IComponent, "id" | "created_at" | "seq">[]) {
+  async execute(
+    components: Omit<IComponent, "id" | "created_at" | "seq" | "sku">[]
+  ) {
     // Agrupar components por categoria
     const componentsByCategory = components.reduce(
       (acc, component) => {
@@ -19,7 +21,10 @@ class CreateManyComponentUsecase {
         acc[component.category.id].push(component);
         return acc;
       },
-      {} as Record<string, Omit<IComponent, "id" | "created_at" | "seq">[]>
+      {} as Record<
+        string,
+        Omit<IComponent, "id" | "created_at" | "seq" | "sku">[]
+      >
     );
 
     // Para cada categoria, encontrar o maior código e atribuir novos códigos sequenciais
@@ -44,6 +49,7 @@ class CreateManyComponentUsecase {
           created_at: new Date(),
           id: crypto.randomUUID(),
           seq: last_seq,
+          sku: `${i.category.code}-${last_seq}`,
         });
       });
 

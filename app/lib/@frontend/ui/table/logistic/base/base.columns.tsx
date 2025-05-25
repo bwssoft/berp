@@ -9,12 +9,12 @@ import { baseConstants } from "@/app/lib/constant/logistic";
 import { Badge } from "../../../component/badge";
 
 interface Props {
-  openAuditModal?: (user: Pick<IBase, "code" | "id">) => void;
-  restrictFeatureByProfile: (code: string) => boolean;
+  openAuditModal?: (user: Pick<IBase, "sku" | "id">) => void;
+  restrictFeatureByProfile: (sku: string) => boolean;
 }
 
 export const columns = (props: Props): ColumnDef<IBase>[] => [
-  { header: "Código", accessorKey: "code" },
+  { header: "SKU", accessorKey: "sku" },
   {
     header: "Tipo",
     accessorKey: "type",

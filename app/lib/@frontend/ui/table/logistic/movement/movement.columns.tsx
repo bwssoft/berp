@@ -27,7 +27,7 @@ export const columns = (props: Props): ColumnDef<IMovement>[] => [
       row: {
         original: { item },
       },
-    }) => item.ref.code,
+    }) => item.ref.sku,
   },
   {
     header: "Qtd",
@@ -45,7 +45,7 @@ export const columns = (props: Props): ColumnDef<IMovement>[] => [
       row: {
         original: { base },
       },
-    }) => base.code,
+    }) => base.sku,
   },
   {
     header: "Status",

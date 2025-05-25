@@ -9,17 +9,18 @@ class CreateOneProductUsecase {
     this.repository = productRepository;
   }
 
-  async execute(product: Omit<IProduct, "id" | "created_at" | "seq">) {
+  async execute(product: Omit<IProduct, "id" | "created_at" | "seq" | "sku">) {
     try {
       const last_product_with_same_category = await this.repository.findOne(
         { "category.id": product.category.id },
         { sort: { seq: -1 }, limit: 1 }
       );
-
+      const seq = (last_product_with_same_category?.seq ?? 0) + 1;
       const _product = Object.assign(product, {
         created_at: new Date(),
         id: crypto.randomUUID(),
-        seq: (last_product_with_same_category?.seq ?? 0) + 1,
+        seq,
+        sku: `${product.category}-${seq}`,
       });
 
       await this.repository.create(_product);

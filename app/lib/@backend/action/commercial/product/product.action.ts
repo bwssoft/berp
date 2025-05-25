@@ -12,7 +12,7 @@ import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
 
 export async function createOneProduct(
-  product: Omit<IProduct, "id" | "created_at" | "seq">
+  product: Omit<IProduct, "id" | "created_at" | "seq" | "sku">
 ) {
   const result = await createOneProductUsecase.execute(product);
   revalidatePath("/commercial/product");
@@ -25,7 +25,7 @@ export async function findOneProduct(product: Partial<IProduct>) {
 
 export async function updateOneProductById(
   query: { id: string },
-  value: Omit<IProduct, "id" | "created_at" | "seq">
+  value: Omit<IProduct, "id" | "created_at" | "seq" | "sku">
 ) {
   const result = await updateOneProductUsecase.execute(query, value);
   revalidatePath("/commercial/product");

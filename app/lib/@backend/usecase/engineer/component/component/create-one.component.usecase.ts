@@ -9,17 +9,22 @@ class CreateOneComponentUsecase {
     this.repository = componentRepository;
   }
 
-  async execute(component: Omit<IComponent, "id" | "created_at" | "seq">) {
+  async execute(
+    component: Omit<IComponent, "id" | "created_at" | "seq" | "sku">
+  ) {
     try {
       const last_component_with_same_category = await this.repository.findOne(
         { "category.id": component.category.id },
         { sort: { seq: -1 }, limit: 1 }
       );
 
+      const seq = (last_component_with_same_category?.seq ?? 0) + 1;
+
       const _component = Object.assign(component, {
         created_at: new Date(),
         id: crypto.randomUUID(),
-        seq: (last_component_with_same_category?.seq ?? 0) + 1,
+        seq,
+        sku: `${component.category.code}-${seq}`,
       });
 
       await this.repository.create(_component);

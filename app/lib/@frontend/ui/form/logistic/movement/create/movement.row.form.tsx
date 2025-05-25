@@ -68,7 +68,7 @@ export function MovementRowForm({
                   <SelectContent>
                     {items.map((item) => (
                       <SelectItem key={item.id} value={item.id}>
-                        {item.ref.code}
+                        {item.ref.sku}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -156,7 +156,7 @@ export function MovementRowForm({
                   <SelectContent>
                     {bases.map((base) => (
                       <SelectItem key={base.id} value={base.id}>
-                        {base.code}
+                        {base.sku}
                       </SelectItem>
                     ))}
                   </SelectContent>
