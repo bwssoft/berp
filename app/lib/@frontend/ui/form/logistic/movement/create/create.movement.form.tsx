@@ -1,18 +1,33 @@
 "use client";
 
 import { Plus, Save } from "lucide-react";
-import { Button, Form } from "../../../../component";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
+import { Form } from "@/app/lib/@frontend/ui/component/form";
 import { useCreateMovementForm } from "./use-create.movement.form";
-import Link from "next/link";
 import { MovementRowForm } from "./movement.row.form";
-import { IBase, IItem } from "@/app/lib/@backend/domain";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../../component/card";
+} from "@/app/lib/@frontend/ui/component/card";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { IBase, IItem } from "@/app/lib/@backend/domain";
+import Link from "next/link";
+import { SortableItem } from "../../../../component";
 
 interface Props {
   items: IItem[];
@@ -20,8 +35,32 @@ interface Props {
 }
 export function CreateMovementForm(props: Props) {
   const { items, bases } = props;
-  const { methods, fields, addMovement, removeMovement, onSubmit } =
-    useCreateMovementForm();
+  const {
+    methods,
+    fields,
+    addMovement,
+    removeMovement,
+    reorderMovements,
+    onSubmit,
+  } = useCreateMovementForm();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const oldIndex = fields.findIndex((field) => field.id === active.id);
+      const newIndex = fields.findIndex((field) => field.id === over.id);
+
+      reorderMovements(oldIndex, newIndex);
+    }
+  };
 
   return (
     <Form {...methods}>
@@ -41,14 +80,14 @@ export function CreateMovementForm(props: Props) {
               </Button>
             </CardTitle>
             <CardDescription>
-              Preencha os campos principais. Use o botão ▼ para adicionar
-              descrições opcionais.
+              Arraste as movimentações para reordená-las. A sequência define
+              automaticamente o fluxo logístico.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Headers para desktop */}
             <div className="hidden lg:grid lg:grid-cols-6 gap-2 text-sm font-medium text-muted-foreground px-4">
-              <div>Item</div>
+              <div>Ordem / Item</div>
               <div>Qtd</div>
               <div>Tipo</div>
               <div>Base</div>
@@ -56,19 +95,32 @@ export function CreateMovementForm(props: Props) {
               <div>Ações</div>
             </div>
 
-            {/* Lista de movimentações */}
-            <div className="space-y-3">
-              {fields.map((field, index) => (
-                <MovementRowForm
-                  bases={bases}
-                  items={items}
-                  key={field.id}
-                  index={index}
-                  onRemove={() => removeMovement(index)}
-                  canRemove={fields.length > 1}
-                />
-              ))}
-            </div>
+            {/* Lista de movimentações com drag-and-drop */}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={fields.map((field) => field.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-3">
+                  {fields.map((field, index) => (
+                    <SortableItem key={field.id} id={field.id}>
+                      <MovementRowForm
+                        bases={bases}
+                        items={items}
+                        index={index}
+                        onRemove={() => removeMovement(index)}
+                        canRemove={fields.length > 1}
+                        totalMovements={fields.length}
+                      />
+                    </SortableItem>
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
 
             {/* Botão adicionar centralizado */}
             <div className="flex justify-center pt-4">

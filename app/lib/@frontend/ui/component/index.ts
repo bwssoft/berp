@@ -34,3 +34,5 @@ export * from "./form";
 export * from "./collapsible";
 export * from "./label";
 export * from "./card";
+export * from "./sortable-item";
+export * from "./badge";

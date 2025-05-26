@@ -12,6 +12,11 @@ export interface IMovement {
   created_at: Date;
   confirmed_at?: Date;
   description?: string;
+  related_movement_id?: {
+    previous?: string;
+    next?: string;
+  };
+  workflow_id?: string;
 }
 
 export namespace Movement {
@@ -39,5 +44,6 @@ export namespace Movement {
   export enum Status {
     PENDING = "PENDING",
     CONFIRM = "CONFIRM",
+    CANCELLED = "CANCELLED",
   }
 }

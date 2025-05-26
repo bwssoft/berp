@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Trash2, ChevronDown, ChevronUp, GripVertical } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -21,8 +21,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/app/lib/@frontend/ui/component/collapsible";
-import { CreateMovementFormData } from "./use-create.movement.form";
-import { Button, Input, Textarea } from "../../../../component";
+import {
+  Button,
+  Input,
+  Textarea,
+  Badge,
+} from "@/app/lib/@frontend/ui/component";
+import type { CreateMovementFormData } from "./use-create.movement.form";
 import { IBase, IItem } from "@/app/lib/@backend/domain";
 import { movementConstants } from "@/app/lib/constant/logistic";
 
@@ -32,6 +37,9 @@ interface MovementRowFormProps {
   canRemove: boolean;
   items: IItem[];
   bases: IBase[];
+  totalMovements: number;
+  dragHandleProps?: any;
+  isDragging?: boolean;
 }
 
 export function MovementRowForm({
@@ -40,12 +48,74 @@ export function MovementRowForm({
   canRemove,
   items,
   bases,
+  totalMovements,
+  dragHandleProps,
+  isDragging = false,
 }: MovementRowFormProps) {
   const { control } = useFormContext<CreateMovementFormData>();
   const [showDetails, setShowDetails] = useState(false);
 
+  const sequenceNumber = index + 1;
+  const isFirst = index === 0;
+  const isLast = index === totalMovements - 1;
+
   return (
-    <div className="border rounded-lg p-4 space-y-3 bg-card">
+    <div
+      className={`border rounded-2xl p-4 space-y-3 bg-card shadow-sm transition-all duration-200 ${
+        isDragging ? "shadow-lg scale-105 rotate-1" : ""
+      }`}
+    >
+      {/* Header com indicador de sequência */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-3">
+          {/* Drag Handle */}
+          <div
+            {...dragHandleProps}
+            className="flex items-center gap-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-muted/50"
+          >
+            <GripVertical className="h-4 w-4 text-muted-foreground" />
+            <Badge variant="outline" className="font-mono text-sm">
+              #{sequenceNumber}
+            </Badge>
+          </div>
+
+          {/* Indicadores de posição */}
+          <div className="flex gap-1">
+            {isFirst && (
+              <Badge
+                variant="secondary"
+                className="text-xs bg-green-100 text-green-700"
+              >
+                Início
+              </Badge>
+            )}
+            {isLast && totalMovements > 1 && (
+              <Badge
+                variant="secondary"
+                className="text-xs bg-blue-100 text-blue-700"
+              >
+                Fim
+              </Badge>
+            )}
+            {!isFirst && !isLast && totalMovements > 2 && (
+              <Badge
+                variant="secondary"
+                className="text-xs bg-orange-100 text-orange-700"
+              >
+                Intermediária
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Sequência visual */}
+        {totalMovements > 1 && (
+          <div className="text-xs text-muted-foreground">
+            {sequenceNumber} de {totalMovements}
+          </div>
+        )}
+      </div>
+
       {/* Linha principal compacta */}
       <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 gap-2 items-start">
         {/* Item */}
@@ -184,7 +254,7 @@ export function MovementRowForm({
                   defaultValue={field.value}
                 >
                   <SelectTrigger className="h-9">
-                    <SelectValue placeholder="Tipo" />
+                    <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(movementConstants.status)

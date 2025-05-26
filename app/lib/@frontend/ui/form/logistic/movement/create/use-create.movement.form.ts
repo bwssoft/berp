@@ -8,6 +8,7 @@ import { createManyMovement } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 
 const movementSchema = z.object({
+  id: z.string().default(() => Math.random().toString(36).substr(2, 9)),
   item: z.object({
     id: z.string(),
     type: z.nativeEnum(Item.Type),
@@ -27,6 +28,7 @@ const movementSchema = z.object({
   status: z.nativeEnum(Movement.Status),
   type: z.nativeEnum(Movement.Type),
   description: z.string().optional(),
+  order: z.number().default(0), // Ordem da movimentação na sequência
 });
 
 const movementFormSchema = z.object({
@@ -36,7 +38,7 @@ const movementFormSchema = z.object({
 });
 
 export type CreateMovementFormData = z.infer<typeof movementFormSchema>;
-export type Movement = z.infer<typeof movementSchema>;
+export type MovementFormItem = z.infer<typeof movementSchema>;
 
 export function useCreateMovementForm() {
   const methods = useForm<CreateMovementFormData>({
@@ -44,41 +46,67 @@ export function useCreateMovementForm() {
     defaultValues: {
       movements: [
         {
-          item: undefined as unknown as Movement["item"],
-          base: undefined as unknown as Movement["base"],
+          id: Math.random().toString(36).substr(2, 9),
+          item: undefined as unknown as MovementFormItem["item"],
+          base: undefined as unknown as MovementFormItem["base"],
           quantity: 0,
           status: Movement.Status.PENDING,
           type: Movement.Type.ENTER,
           description: "",
+          order: 0,
         },
       ],
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control: methods.control,
     name: "movements",
   });
 
   const addMovement = () => {
+    const newOrder = fields.length;
     append({
-      item: undefined as unknown as Movement["item"],
-      base: undefined as unknown as Movement["base"],
+      id: Math.random().toString(36).substr(2, 9),
+      item: undefined as unknown as MovementFormItem["item"],
+      base: undefined as unknown as MovementFormItem["base"],
       quantity: 1,
       status: Movement.Status.PENDING,
       type: Movement.Type.ENTER,
       description: "",
+      order: newOrder,
     });
   };
 
   const removeMovement = (index: number) => {
     if (fields.length > 1) {
       remove(index);
+      // Reordenar os índices após remoção
+      updateOrderIndexes();
     }
+  };
+
+  const reorderMovements = (fromIndex: number, toIndex: number) => {
+    move(fromIndex, toIndex);
+    updateOrderIndexes();
+  };
+
+  const updateOrderIndexes = () => {
+    const movements = methods.getValues("movements");
+    movements.forEach((_, index) => {
+      methods.setValue(`movements.${index}.order`, index);
+    });
   };
 
   const onSubmit = async ({ movements }: CreateMovementFormData) => {
     try {
+      const movementsToSubmit = movements.map(({ id, ...movement }, index) => ({
+        ...movement,
+        sequencePosition: index + 1,
+        previousMovement: index > 0 ? movements[index - 1].id : null,
+        nextMovement:
+          index < movements.length - 1 ? movements[index + 1].id : null,
+      }));
       const { success, error } = await createManyMovement(movements);
 
       if (success) {
@@ -111,6 +139,7 @@ export function useCreateMovementForm() {
     fields,
     addMovement,
     removeMovement,
+    reorderMovements,
     onSubmit: methods.handleSubmit(onSubmit),
     schema: movementFormSchema,
   };
