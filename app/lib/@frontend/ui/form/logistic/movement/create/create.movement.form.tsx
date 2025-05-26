@@ -76,7 +76,7 @@ export function CreateMovementForm(props: Props) {
                 type="button"
                 variant="ghost"
                 onClick={addMovement}
-                className="w-full max-w-md border-dashed border-2 hover:border-solid"
+                className="w-fit border-dashed border-2 hover:border-solid"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Adicionar nova movimentação

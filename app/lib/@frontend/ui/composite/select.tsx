@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Label } from "@headlessui/react";
 import {
   Select as ShadSelect,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Label,
 } from "@/app/lib/@frontend/ui/component";
 import { cn } from "@/app/lib/util/cn";
 

@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
 import { GridList } from "../lib/@frontend/ui/component";
 import { useAuth } from "../lib/@frontend/context";
+import { Package } from "lucide-react";
 
 const actions = [
   {
@@ -33,7 +34,7 @@ const actions = [
     title: "Produtos",
     href: "/commercial/product",
     code: "commercial:product",
-    icon: CubeIcon, // remete a contratos, propostas e documentos
+    icon: Package, // remete a contratos, propostas e documentos
     iconForeground: "text-blue-700",
     iconBackground: "bg-blue-50",
     description: "Crie, edite e acompanhe produtos.",

@@ -9,17 +9,22 @@ import {
 } from "@/app/lib/@backend/usecase";
 import { IMovement } from "@/app/lib/@backend/domain";
 import { Filter } from "mongodb";
+import { revalidatePath } from "next/cache";
 
 export async function createOneMovement(
   input: Omit<IMovement, "id" | "created_at">
 ) {
-  await createOneMovementUsecase.execute(input);
+  const result = await createOneMovementUsecase.execute(input);
+  revalidatePath("/logistic/movement");
+  return result;
 }
 
 export async function createManyMovement(
   input: Omit<IMovement, "id" | "created_at" | "seq">[]
 ) {
-  return await createManyMovementUsecase.execute(input);
+  const result = await createManyMovementUsecase.execute(input);
+  revalidatePath("/logistic/movement");
+  return result;
 }
 
 export async function findOneMovement(input: { filter: Partial<IMovement> }) {
@@ -39,5 +44,7 @@ export async function updateOneMovementById(
   query: { id: string },
   value: Omit<IMovement, "id" | "created_at">
 ) {
-  await updateOneMovementUsecase.execute(query, value);
+  const result = await updateOneMovementUsecase.execute(query, value);
+  revalidatePath("/logistic/movement");
+  return result;
 }

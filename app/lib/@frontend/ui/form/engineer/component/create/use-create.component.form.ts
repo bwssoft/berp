@@ -97,7 +97,7 @@ export function useCreateComponentForm() {
         if (success) {
           toast({
             title: "Sucesso!",
-            description: "Componente registrada com sucesso!",
+            description: "Componente registrado com sucesso!",
             variant: "success",
           });
           router.push("/engineer/component/management");

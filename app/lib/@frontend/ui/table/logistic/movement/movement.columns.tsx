@@ -2,9 +2,19 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../../../component";
-import { IMovement } from "@/app/lib/@backend/domain";
+import { IMovement, Movement } from "@/app/lib/@backend/domain";
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { Badge } from "../../../component/badge";
+import {
+  ArrowDownCircleIcon,
+  ArrowUpCircleIcon,
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  Cpu,
+  Package,
+  Wrench,
+} from "lucide-react";
 
 interface Props {
   restrictFeatureByProfile: (code: string) => boolean;
@@ -12,13 +22,13 @@ interface Props {
 
 export const columns = (props: Props): ColumnDef<IMovement>[] => [
   {
-    header: "ID",
+    header: "Sequencial",
     accessorKey: "seq",
     cell: ({
       row: {
         original: { seq },
       },
-    }) => "MOV" + seq,
+    }) => "MOV" + seq.toString().padStart(3, "0"),
   },
   {
     header: "Item",
@@ -27,7 +37,12 @@ export const columns = (props: Props): ColumnDef<IMovement>[] => [
       row: {
         original: { item },
       },
-    }) => item.ref.sku,
+    }) => (
+      <div className="flex items-center gap-2">
+        {getTypeBadge(item.type)}
+        <span>{item.ref.sku}</span>
+      </div>
+    ),
   },
   {
     header: "Qtd",
@@ -38,6 +53,37 @@ export const columns = (props: Props): ColumnDef<IMovement>[] => [
       },
     }) => quantity,
   },
+  {
+    header: "Tipo",
+    accessorKey: "type",
+    cell: ({
+      row: {
+        original: { type },
+      },
+    }) => (
+      <Badge
+        variant="outline"
+        className={
+          Movement.Type.ENTER === type
+            ? "text-green-600 border-green-600"
+            : "text-red-600 border-red-600"
+        }
+      >
+        {Movement.Type.ENTER === type ? (
+          <>
+            <ArrowDownCircleIcon className="w-4 h-4 mr-1" />
+            Entrada
+          </>
+        ) : (
+          <>
+            <ArrowUpCircleIcon className="w-4 h-4 mr-1" />
+            Saída
+          </>
+        )}
+      </Badge>
+    ),
+  },
+
   {
     header: "Base",
     accessorKey: "base",
@@ -57,16 +103,41 @@ export const columns = (props: Props): ColumnDef<IMovement>[] => [
     }) => getStatusBadge(status),
   },
   {
-    header: "Confirmado em",
-    accessorKey: "confirmed_at",
+    header: "Datas",
+    accessorKey: "created_at",
     cell: ({
       row: {
-        original: { confirmed_at },
+        original: { created_at, confirmed_at },
       },
-    }) => {
-      confirmed_at ? new Date(confirmed_at).toLocaleDateString("pt-BR") : "-";
-    },
+    }) => (
+      <div className="flex flex-col gap-1">
+        <div
+          className="flex items-center gap-2 text-sm text-muted-foreground"
+          title="Data de cadastro"
+        >
+          <CalendarDays className="w-4 h-4" />
+          {new Date(created_at).toLocaleDateString("pt-BR")}
+        </div>
+        <div
+          className="flex items-center gap-2 text-sm"
+          title="Data de confirmação"
+        >
+          {confirmed_at ? (
+            <>
+              <CheckCircle2 className="w-4 h-4 text-green-500" />
+              {new Date(confirmed_at).toLocaleDateString("pt-BR")}
+            </>
+          ) : (
+            <>
+              <Clock className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-400">--</span>
+            </>
+          )}
+        </div>
+      </div>
+    ),
   },
+
   {
     header: "Ações",
     accessorKey: "created_at",
@@ -99,19 +170,45 @@ const getStatusBadge = (status: string) => {
   switch (status) {
     case "PENDING":
       return (
-        <Badge className="text-yellow-600 border-yellow-600">
-          <ClockIcon className="w-3 h-3 mr-1" />
+        <Badge variant="outline" className="flex items-center gap-2 w-fit">
+          <ClockIcon className="size-4" />
           Pendente
         </Badge>
       );
     case "CONFIRM":
       return (
-        <Badge className="text-green-600 border-green-600">
-          <CheckIcon className="w-3 h-3 mr-1" />
+        <Badge variant="outline" className="flex items-center gap-2 w-fit">
+          <CheckIcon className="size-4 text-green-500" />
           Confirmado
         </Badge>
       );
     default:
       return <Badge variant="outline">{status}</Badge>;
+  }
+};
+
+const getTypeBadge = (type: string) => {
+  switch (type) {
+    case "PRODUCT":
+      return (
+        <Badge variant="outline" className="flex gap-2 item-center">
+          <Package className="size-4" />
+          Produto
+        </Badge>
+      );
+    case "INPUT":
+      return (
+        <Badge variant="outline" className="flex gap-2 item-center">
+          <Wrench className="size-4" /> Insumo
+        </Badge>
+      );
+    case "COMPONENT":
+      return (
+        <Badge variant="outline" className="flex gap-2 item-center">
+          <Cpu className="size-4" /> Componente
+        </Badge>
+      );
+    default:
+      return null;
   }
 };

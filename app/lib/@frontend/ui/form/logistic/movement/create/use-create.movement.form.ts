@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Base, Item, Movement } from "@/app/lib/@backend/domain";
 import { createManyMovement } from "@/app/lib/@backend/action";
+import { toast } from "@/app/lib/@frontend/hook";
 
 const movementSchema = z.object({
   item: z.object({
@@ -78,12 +79,30 @@ export function useCreateMovementForm() {
 
   const onSubmit = async ({ movements }: CreateMovementFormData) => {
     try {
-      await createManyMovement(movements);
-      alert(`✅ ${movements.length} transferência(s) registrada(s)!`);
-      methods.reset();
-    } catch (error) {
-      console.error("Erro:", error);
-      alert("❌ Erro ao processar transferências. Tente novamente.");
+      const { success, error } = await createManyMovement(movements);
+
+      if (success) {
+        toast({
+          title: "Sucesso!",
+          description: "Movimentação registrada com sucesso!",
+          variant: "success",
+        });
+        return;
+      }
+
+      if (error) {
+        toast({
+          title: "Erro!",
+          description: error.usecase ?? "Falha ao registrar a movimentação!",
+          variant: "error",
+        });
+      }
+    } catch {
+      toast({
+        title: "Erro!",
+        description: "Falha ao registrar a movimentação!",
+        variant: "error",
+      });
     }
   };
 

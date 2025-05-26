@@ -10,7 +10,7 @@ import { IItem } from "@/app/lib/@backend/domain";
 import { Filter } from "mongodb";
 
 export async function createOneItem(input: Omit<IItem, "id" | "created_at">) {
-  await createOneItemUsecase.execute(input);
+  return await createOneItemUsecase.execute(input);
 }
 
 export async function findOneItem(input: { filter: Partial<IItem> }) {

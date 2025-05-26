@@ -1,22 +1,15 @@
 "use client";
 
-import {
-  WrenchScrewdriverIcon, // Auto Test
-  ClipboardDocumentListIcon, // Ordem de Produção
-  DocumentArrowDownIcon,
-  BuildingOfficeIcon, // Processo Produtivo
-} from "@heroicons/react/24/outline";
-
 import { GridList } from "../lib/@frontend/ui/component";
 import { useAuth } from "../lib/@frontend/context";
-import { ArrowLeftRightIcon } from "lucide-react";
+import { Warehouse, ArrowLeftRight, Boxes, Package } from "lucide-react";
 
 const actions = [
   {
     title: "Bases",
     href: "/logistic/base",
     code: "logistic:base",
-    icon: BuildingOfficeIcon,
+    icon: Warehouse,
     iconForeground: "text-blue-700",
     iconBackground: "bg-blue-50",
     description: "Gerencie as bases cadastradas no sistema.",
@@ -25,10 +18,28 @@ const actions = [
     title: "Movimentação",
     href: "/logistic/movement",
     code: "logistic:movement",
-    icon: ArrowLeftRightIcon,
+    icon: ArrowLeftRight,
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
-    description: "Registres as movimentações no sistema.",
+    description: "Registre as movimentações no sistema.",
+  },
+  {
+    title: "Estoque",
+    href: "/logistic/stock",
+    code: "logistic:stock",
+    icon: Boxes,
+    iconForeground: "text-green-700",
+    iconBackground: "bg-green-50",
+    description: "Acompanhe e gerencie o estoque disponível.",
+  },
+  {
+    title: "Itens",
+    href: "/logistic/item",
+    code: "logistic:item",
+    icon: Package,
+    iconForeground: "text-yellow-700",
+    iconBackground: "bg-yellow-50",
+    description: "Gerencie os itens cadastrados no sistema.",
   },
 ];
 

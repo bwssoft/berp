@@ -15,7 +15,7 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../lib/@frontend/context";
-import { InspectionPanel } from "lucide-react";
+import { Cpu, InspectionPanel, Wrench } from "lucide-react";
 
 export default function EngineerLayout({
   children,
@@ -84,7 +84,7 @@ const navigation = [
     name: "Componentes",
     pathname: "/engineer/component",
     code: "engineer:component",
-    icon: ArchiveBoxIcon, // Representa estoque/insumos
+    icon: Cpu, // Representa estoque/insumos
     children: [
       {
         name: "Gestão",
@@ -104,7 +104,7 @@ const navigation = [
     name: "Insumos",
     pathname: "/engineer/input",
     code: "engineer:input",
-    icon: InspectionPanel, // Representa estoque/insumos
+    icon: Wrench, // Representa estoque/insumos
     children: [
       {
         name: "Gestão",

@@ -11,7 +11,7 @@ export default async function Page() {
   ]);
   return (
     <div>
-      <div className="w-4/6">
+      <div className="w-full">
         <div className="flex items-end gap-4">
           <BackButton />
           <div>

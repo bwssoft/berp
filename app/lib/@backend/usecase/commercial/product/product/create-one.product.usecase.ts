@@ -20,7 +20,7 @@ class CreateOneProductUsecase {
         created_at: new Date(),
         id: crypto.randomUUID(),
         seq,
-        sku: `${product.category}-${seq}`,
+        sku: `${product.category.code}-${seq}`,
       });
 
       await this.repository.create(_product);

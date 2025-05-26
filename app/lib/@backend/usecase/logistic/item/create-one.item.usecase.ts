@@ -8,7 +8,7 @@ namespace Dto {
   export type Input = Omit<IItem, "id" | "created_at">;
 
   // Output DTO: The created IItem object
-  export type Output = IItem;
+  export type Output = { success: boolean; error?: { usecase: string } };
 }
 
 class CreateOneItemUsecase {
@@ -21,17 +21,26 @@ class CreateOneItemUsecase {
 
   async execute(input: Dto.Input): Promise<Dto.Output> {
     // Cria o objeto base com um novo ID e data de criação
-    const base: IItem = {
-      ...input,
-      id: randomUUID(),
-      created_at: new Date(),
-    };
+    try {
+      const base: IItem = {
+        ...input,
+        id: randomUUID(),
+        created_at: new Date(),
+      };
 
-    // Chama o método create do repositório
-    await this.repository.create(base);
-
-    // Retorna o objeto base criado
-    return base;
+      // Chama o método create do repositório
+      await this.repository.create(base);
+      return {
+        success: true,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        error: {
+          usecase: err instanceof Error ? err.message : JSON.stringify(err),
+        },
+      };
+    }
   }
 }
 

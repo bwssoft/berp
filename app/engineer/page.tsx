@@ -11,7 +11,7 @@ import {
 
 import { GridList } from "../lib/@frontend/ui/component";
 import { useAuth } from "../lib/@frontend/context";
-import { InspectionPanel } from "lucide-react";
+import { Cpu, InspectionPanel, Wrench } from "lucide-react";
 
 const actions = [
   {
@@ -58,7 +58,7 @@ const actions = [
     title: "Componentes",
     href: "/engineer/component",
     code: "engineer:component",
-    icon: ArchiveBoxIcon, // Representa estoque/insumos
+    icon: Cpu, // Representa estoque/insumos
     iconForeground: "text-teal-700",
     iconBackground: "bg-teal-50",
     description: "Gerencie os componentes utilizados no sistema.",
@@ -67,7 +67,7 @@ const actions = [
     title: "Insumos",
     href: "/engineer/input/management",
     code: "engineer:input",
-    icon: InspectionPanel, // Representa produtos físicos
+    icon: Wrench, // Representa produtos físicos
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
     description: "Visualize e gerencie os insumos da Engenharia.",

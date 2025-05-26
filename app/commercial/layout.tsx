@@ -9,6 +9,7 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../lib/@frontend/context";
+import { Package } from "lucide-react";
 
 export default function ComercialLayout({
   children,
@@ -37,7 +38,7 @@ const navigation = [
     name: "Produtos",
     pathname: "/commercial/product",
     code: "commercial:product",
-    icon: CubeIcon, // Representa produtos físicos
+    icon: Package, // Representa produtos físicos
     children: [
       {
         name: "Gestão",

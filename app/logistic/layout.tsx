@@ -1,11 +1,7 @@
 "use client";
 
 import { Layout } from "@/app/lib/@frontend/ui/component";
-import {
-  WrenchScrewdriverIcon, // Auto Test
-  BuildingStorefrontIcon, // Ordem de Produção
-} from "@heroicons/react/24/outline";
-import { ArrowLeftRight } from "lucide-react";
+import { Warehouse, ArrowLeftRight, Boxes, Package } from "lucide-react";
 
 export default function ProductionLayout({
   children,
@@ -20,7 +16,7 @@ const navigation = [
     name: "Bases",
     code: "logistic:base",
     pathname: "/logistic/base",
-    icon: BuildingStorefrontIcon,
+    icon: Warehouse,
   },
   {
     name: "Movimentação",
@@ -30,8 +26,14 @@ const navigation = [
   },
   {
     name: "Estoque",
-    icon: WrenchScrewdriverIcon,
+    icon: Boxes,
     pathname: "/logistic/stock",
     code: "logistic:stock",
+  },
+  {
+    name: "Itens",
+    icon: Package,
+    pathname: "/logistic/item",
+    code: "logistic:item",
   },
 ];

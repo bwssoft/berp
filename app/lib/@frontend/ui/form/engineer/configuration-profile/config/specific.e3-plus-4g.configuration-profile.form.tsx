@@ -285,7 +285,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
         </div>
         <Alert
           title="Atenção: Estas alterações gerarão comandos imediatamente"
-          variant="attention"
+          variant="default"
           className="mb-6"
         />
 
@@ -451,7 +451,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
         </div>
         <Alert
           title="Atenção: Estas funções só gerarão comandos quando ativadas"
-          variant="attention"
+          variant="default"
           className="mb-6"
         />
 

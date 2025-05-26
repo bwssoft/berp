@@ -29,7 +29,7 @@ class CreateOneComponentUsecase {
 
       await this.repository.create(_component);
       return {
-        sucess: true,
+        success: true,
       };
     } catch (err) {
       return {

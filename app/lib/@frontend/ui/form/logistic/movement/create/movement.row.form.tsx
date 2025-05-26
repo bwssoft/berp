@@ -60,7 +60,7 @@ export function MovementRowForm({
                     const item = items.find((el) => el.id === value);
                     field.onChange(item);
                   }}
-                  defaultValue={field.value.id}
+                  defaultValue={field?.value?.id}
                 >
                   <SelectTrigger className="h-9">
                     <SelectValue placeholder="Item" />
@@ -68,7 +68,12 @@ export function MovementRowForm({
                   <SelectContent>
                     {items.map((item) => (
                       <SelectItem key={item.id} value={item.id}>
-                        {item.ref.sku}
+                        <div className="flex-1">
+                          <div className="font-medium">{item.ref.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            <span className="font-mono">{item.ref.sku}</span>
+                          </div>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -148,7 +153,7 @@ export function MovementRowForm({
                     const base = bases.find((el) => el.id === value);
                     field.onChange(base);
                   }}
-                  defaultValue={field.value.id}
+                  defaultValue={field?.value?.id}
                 >
                   <SelectTrigger className="h-9">
                     <SelectValue placeholder="Base" />
