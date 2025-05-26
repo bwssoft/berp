@@ -1,10 +1,10 @@
 "use client";
 
-import { Plus, Save } from "lucide-react";
+import { Save, Workflow, Package } from "lucide-react";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { Form } from "@/app/lib/@frontend/ui/component/form";
 import { useCreateMovementForm } from "./use-create.movement.form";
-import { MovementRowForm } from "./movement.row.form";
+import { MovementBlockForm } from "./movement-block-form";
 import {
   Card,
   CardContent,
@@ -12,157 +12,123 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/lib/@frontend/ui/component/card";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { IBase, IItem } from "@/app/lib/@backend/domain";
+import type { IBase, IItem } from "@/app/lib/@backend/domain";
 import Link from "next/link";
-import { SortableItem } from "../../../../component";
 
 interface Props {
   items: IItem[];
   bases: IBase[];
 }
+
 export function CreateMovementForm(props: Props) {
   const { items, bases } = props;
   const {
     methods,
-    fields,
-    addMovement,
-    removeMovement,
-    reorderMovements,
+    blocks,
+    addRelatedBlock,
+    addIndependentBlock,
+    addMovementToBlock,
+    removeMovementFromBlock,
+    reorderMovementsInBlock,
+    removeMovementBlock,
+    getTotalMovements,
     onSubmit,
   } = useCreateMovementForm();
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-
-    if (active.id !== over.id) {
-      const oldIndex = fields.findIndex((field) => field.id === active.id);
-      const newIndex = fields.findIndex((field) => field.id === over.id);
-
-      reorderMovements(oldIndex, newIndex);
-    }
-  };
 
   return (
     <Form {...methods}>
       <form onSubmit={onSubmit} className="space-y-6">
+        {/* Header com ações principais */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span>Movimentações ({fields.length})</span>
+            <CardTitle>Criar Movimentações</CardTitle>
+            <CardDescription>
+              Organize suas movimentações em sequências relacionadas ou registre
+              movimentações independentes.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col sm:flex-row gap-3">
               <Button
                 type="button"
                 variant="outline"
-                size="sm"
-                onClick={addMovement}
+                onClick={addRelatedBlock}
+                className="flex-1"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Adicionar
+                <Workflow className="w-4 h-4 mr-2" />
+                Adicionar sequência de movimentações
               </Button>
-            </CardTitle>
-            <CardDescription>
-              Arraste as movimentações para reordená-las. A sequência define
-              automaticamente o fluxo logístico.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Headers para desktop */}
-            <div className="hidden lg:grid lg:grid-cols-6 gap-2 text-sm font-medium text-muted-foreground px-4">
-              <div>Ordem / Item</div>
-              <div>Qtd</div>
-              <div>Tipo</div>
-              <div>Base</div>
-              <div>Status</div>
-              <div>Ações</div>
-            </div>
 
-            {/* Lista de movimentações com drag-and-drop */}
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={fields.map((field) => field.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <div className="space-y-3">
-                  {fields.map((field, index) => (
-                    <SortableItem key={field.id} id={field.id}>
-                      <MovementRowForm
-                        bases={bases}
-                        items={items}
-                        index={index}
-                        onRemove={() => removeMovement(index)}
-                        canRemove={fields.length > 1}
-                        totalMovements={fields.length}
-                      />
-                    </SortableItem>
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-
-            {/* Botão adicionar centralizado */}
-            <div className="flex justify-center pt-4">
               <Button
                 type="button"
-                variant="ghost"
-                onClick={addMovement}
-                className="w-fit border-dashed border-2 hover:border-solid"
+                variant="outline"
+                onClick={addIndependentBlock}
+                className="flex-1"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Adicionar nova movimentação
+                <Package className="w-4 h-4 mr-2" />
+                Adicionar movimentação independente
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Ações do formulário */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 bg-muted/50 rounded-lg">
-          <div className="text-sm text-muted-foreground">
-            {fields.length} movimentação{fields.length > 1 ? "ões" : ""}
-            {fields.length > 1 ? "s" : ""} para registro
-          </div>
-
-          <div className="flex gap-3">
-            <Link href="/logistic/movement">
-              <Button type="button" variant="outline">
-                Cancelar
-              </Button>
-            </Link>
-            <Button
-              type="submit"
-              size="lg"
-              disabled={methods.formState.isSubmitting}
-              className="min-w-[200px]"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {methods.formState.isSubmitting
-                ? "Registrando..."
-                : `Registrar (${fields.length})`}
-            </Button>
-          </div>
+        {/* Blocos de movimentações */}
+        <div className="space-y-6">
+          {blocks.map((block, blockIndex) => (
+            <MovementBlockForm
+              key={block.id}
+              blockIndex={blockIndex}
+              block={methods.getValues(`blocks.${blockIndex}`)}
+              items={items}
+              bases={bases}
+              onAddMovement={() => addMovementToBlock(blockIndex)}
+              onRemoveMovement={(movementIndex) =>
+                removeMovementFromBlock(blockIndex, movementIndex)
+              }
+              onReorderMovements={(fromIndex, toIndex) =>
+                reorderMovementsInBlock(blockIndex, fromIndex, toIndex)
+              }
+              onRemoveBlock={() => removeMovementBlock(blockIndex)}
+              canRemoveBlock={blocks.length > 1}
+              totalBlocks={blocks.length}
+            />
+          ))}
         </div>
+
+        {/* Resumo e ações do formulário */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                <div className="font-medium">Resumo:</div>
+                <div>
+                  {blocks.length} bloco{blocks.length > 1 ? "s" : ""} •{" "}
+                  {getTotalMovements()} movimentação
+                  {getTotalMovements() > 1 ? "ões" : ""} para registro
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Link href="/logistic/movement">
+                  <Button type="button" variant="outline">
+                    Cancelar
+                  </Button>
+                </Link>
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={methods.formState.isSubmitting}
+                  className="min-w-[200px]"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {methods.formState.isSubmitting
+                    ? "Registrando..."
+                    : `Registrar (${getTotalMovements()})`}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </form>
     </Form>
   );

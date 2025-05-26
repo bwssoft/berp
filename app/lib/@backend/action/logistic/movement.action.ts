@@ -20,7 +20,7 @@ export async function createOneMovement(
 }
 
 export async function createManyMovement(
-  input: Omit<IMovement, "id" | "created_at" | "seq">[]
+  input: Omit<IMovement, "created_at" | "seq">[]
 ) {
   const result = await createManyMovementUsecase.execute(input);
   revalidatePath("/logistic/movement");

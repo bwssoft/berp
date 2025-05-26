@@ -9,22 +9,21 @@ class CreateManyMovementUsecase {
     this.repository = movementRepository;
   }
 
-  async execute(input: Omit<IMovement, "id" | "created_at" | "seq">[]) {
+  async execute(input: Omit<IMovement, "created_at" | "seq">[]) {
     try {
       const last_movement = await this.repository.findOne(
         {},
         { sort: { code: -1 }, limit: 1 }
       );
-      const last_seq = last_movement?.seq ?? 0;
+      let seq = last_movement?.seq ? last_movement?.seq + 1 : 1;
 
       const _input: IMovement[] = [];
       for (const p in input) {
         const movement = input[p];
-        const seq = Number(p) + 1 + last_seq;
+        seq++;
         _input.push(
           Object.assign(movement, {
             created_at: new Date(),
-            id: crypto.randomUUID(),
             seq,
           })
         );

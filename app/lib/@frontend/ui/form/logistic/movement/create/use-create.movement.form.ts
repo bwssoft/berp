@@ -3,12 +3,12 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Base, Item, Movement } from "@/app/lib/@backend/domain";
+import { Base, IMovement, Item, Movement } from "@/app/lib/@backend/domain";
 import { createManyMovement } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 
 const movementSchema = z.object({
-  id: z.string().default(() => Math.random().toString(36).substr(2, 9)),
+  id: z.string().default(() => crypto.randomUUID()),
   item: z.object({
     id: z.string(),
     type: z.nativeEnum(Item.Type),
@@ -28,46 +28,119 @@ const movementSchema = z.object({
   status: z.nativeEnum(Movement.Status),
   type: z.nativeEnum(Movement.Type),
   description: z.string().optional(),
-  order: z.number().default(0), // Ordem da movimentação na sequência
+  order: z.number().default(0),
 });
 
-const movementFormSchema = z.object({
+const movementBlockSchema = z.object({
+  id: z.string(),
+  type: z.enum(["RELATED", "INDEPENDENT"]),
+  title: z.string(),
   movements: z
     .array(movementSchema)
     .min(1, "Adicione pelo menos uma movimentação"),
 });
 
+const movementFormSchema = z.object({
+  blocks: z
+    .array(movementBlockSchema)
+    .min(1, "Adicione pelo menos um bloco de movimentações"),
+});
+
 export type CreateMovementFormData = z.infer<typeof movementFormSchema>;
 export type MovementFormItem = z.infer<typeof movementSchema>;
+export type MovementBlock = z.infer<typeof movementBlockSchema>;
 
 export function useCreateMovementForm() {
   const methods = useForm<CreateMovementFormData>({
     resolver: zodResolver(movementFormSchema),
     defaultValues: {
+      blocks: [
+        {
+          id: crypto.randomUUID(),
+          type: "INDEPENDENT",
+          title: "Movimentações independentes",
+          movements: [
+            {
+              id: crypto.randomUUID(),
+              item: undefined as unknown as MovementFormItem["item"],
+              base: undefined as unknown as MovementFormItem["base"],
+              quantity: 0,
+              status: Movement.Status.PENDING,
+              type: Movement.Type.ENTER,
+              description: "",
+              order: 0,
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  const {
+    fields: blocks,
+    append: appendBlock,
+    remove: removeBlock,
+  } = useFieldArray({
+    control: methods.control,
+    name: "blocks",
+  });
+
+  // Função para adicionar novo bloco de sequência relacionada
+  const addRelatedBlock = () => {
+    const relatedCount = blocks.filter(
+      (block) =>
+        methods.getValues(`blocks.${blocks.indexOf(block)}.type`) === "RELATED"
+    ).length;
+
+    appendBlock({
+      id: crypto.randomUUID(),
+      type: "RELATED",
+      title: `Sequência ${relatedCount + 1}`,
       movements: [
         {
-          id: Math.random().toString(36).substr(2, 9),
+          id: crypto.randomUUID(),
           item: undefined as unknown as MovementFormItem["item"],
           base: undefined as unknown as MovementFormItem["base"],
-          quantity: 0,
+          quantity: 1,
           status: Movement.Status.PENDING,
           type: Movement.Type.ENTER,
           description: "",
           order: 0,
         },
       ],
-    },
-  });
+    });
+  };
 
-  const { fields, append, remove, move } = useFieldArray({
-    control: methods.control,
-    name: "movements",
-  });
+  // Função para adicionar novo bloco de movimentações independentes
+  const addIndependentBlock = () => {
+    appendBlock({
+      id: crypto.randomUUID(),
+      type: "INDEPENDENT",
+      title: "Movimentações independentes",
+      movements: [
+        {
+          id: crypto.randomUUID(),
+          item: undefined as unknown as MovementFormItem["item"],
+          base: undefined as unknown as MovementFormItem["base"],
+          quantity: 1,
+          status: Movement.Status.PENDING,
+          type: Movement.Type.ENTER,
+          description: "",
+          order: 0,
+        },
+      ],
+    });
+  };
 
-  const addMovement = () => {
-    const newOrder = fields.length;
-    append({
-      id: Math.random().toString(36).substr(2, 9),
+  // Função para adicionar movimentação a um bloco específico
+  const addMovementToBlock = (blockIndex: number) => {
+    const currentMovements = methods.getValues(
+      `blocks.${blockIndex}.movements`
+    );
+    const newOrder = currentMovements.length;
+
+    const newMovement = {
+      id: crypto.randomUUID(),
       item: undefined as unknown as MovementFormItem["item"],
       base: undefined as unknown as MovementFormItem["base"],
       quantity: 1,
@@ -75,44 +148,132 @@ export function useCreateMovementForm() {
       type: Movement.Type.ENTER,
       description: "",
       order: newOrder,
-    });
+    };
+
+    methods.setValue(`blocks.${blockIndex}.movements`, [
+      ...currentMovements,
+      newMovement,
+    ]);
   };
 
-  const removeMovement = (index: number) => {
-    if (fields.length > 1) {
-      remove(index);
-      // Reordenar os índices após remoção
-      updateOrderIndexes();
+  // Função para remover movimentação de um bloco específico
+  const removeMovementFromBlock = (
+    blockIndex: number,
+    movementIndex: number
+  ) => {
+    const currentMovements = methods.getValues(
+      `blocks.${blockIndex}.movements`
+    );
+
+    if (currentMovements.length > 1) {
+      const updatedMovements = currentMovements.filter(
+        (_, index) => index !== movementIndex
+      );
+      // Reordenar os índices
+      const reorderedMovements = updatedMovements.map((movement, index) => ({
+        ...movement,
+        order: index,
+      }));
+      methods.setValue(`blocks.${blockIndex}.movements`, reorderedMovements);
     }
   };
 
-  const reorderMovements = (fromIndex: number, toIndex: number) => {
-    move(fromIndex, toIndex);
-    updateOrderIndexes();
+  // Função para reordenar movimentações dentro de um bloco (apenas para RELATED)
+  const reorderMovementsInBlock = (
+    blockIndex: number,
+    fromIndex: number,
+    toIndex: number
+  ) => {
+    const currentMovements = methods.getValues(
+      `blocks.${blockIndex}.movements`
+    );
+    const reorderedMovements = [...currentMovements];
+    const [removed] = reorderedMovements.splice(fromIndex, 1);
+    reorderedMovements.splice(toIndex, 0, removed);
+
+    // Atualizar ordem
+    const updatedMovements = reorderedMovements.map((movement, index) => ({
+      ...movement,
+      order: index,
+    }));
+
+    methods.setValue(`blocks.${blockIndex}.movements`, updatedMovements);
   };
 
-  const updateOrderIndexes = () => {
-    const movements = methods.getValues("movements");
-    movements.forEach((_, index) => {
-      methods.setValue(`movements.${index}.order`, index);
-    });
+  // Função para remover bloco inteiro
+  const removeMovementBlock = (blockIndex: number) => {
+    if (blocks.length > 1) {
+      removeBlock(blockIndex);
+    }
   };
 
-  const onSubmit = async ({ movements }: CreateMovementFormData) => {
+  // Calcular total de movimentações
+  const getTotalMovements = () => {
+    return blocks.reduce((total, _, blockIndex) => {
+      const movements =
+        methods.getValues(`blocks.${blockIndex}.movements`) || [];
+      return total + movements.length;
+    }, 0);
+  };
+
+  const onSubmit = async (data: CreateMovementFormData) => {
     try {
-      const movementsToSubmit = movements.map(({ id, ...movement }, index) => ({
-        ...movement,
-        sequencePosition: index + 1,
-        previousMovement: index > 0 ? movements[index - 1].id : null,
-        nextMovement:
-          index < movements.length - 1 ? movements[index + 1].id : null,
-      }));
+      const movements: IMovement[] = [];
+
+      data.blocks.forEach((block) => {
+        const isRelated = block.type === "RELATED";
+
+        block.movements.forEach((movement, index) => {
+          const currentId = movement.id; // Aproveita o ID já existente
+
+          const previousId =
+            isRelated && index > 0 ? block.movements[index - 1].id : undefined;
+
+          const nextId =
+            isRelated && index < block.movements.length - 1
+              ? block.movements[index + 1].id
+              : undefined;
+
+          const movementObj: IMovement = {
+            id: currentId,
+            seq: movements.length + 1, // Sequencial global
+            item: {
+              id: movement.item.id,
+              type: movement.item.type,
+              ref: {
+                id: movement.item.ref.id,
+                sku: movement.item.ref.sku,
+                category: { id: movement.item.ref.category.id },
+              },
+            },
+            quantity: movement.quantity,
+            type: movement.type,
+            base: {
+              id: movement.base.id,
+              sku: movement.base.sku,
+              type: movement.base.type,
+            },
+            status: movement.status,
+            created_at: new Date(),
+            description: movement.description || undefined,
+            related_movement_id: isRelated
+              ? {
+                  previous: previousId,
+                  next: nextId,
+                }
+              : undefined,
+          };
+
+          movements.push(movementObj);
+        });
+      });
+
       const { success, error } = await createManyMovement(movements);
 
       if (success) {
         toast({
           title: "Sucesso!",
-          description: "Movimentação registrada com sucesso!",
+          description: `${movements.length} movimentação${movements.length > 1 ? "ões" : ""} registrada${movements.length > 1 ? "s" : ""} com sucesso!`,
           variant: "success",
         });
         return;
@@ -121,14 +282,14 @@ export function useCreateMovementForm() {
       if (error) {
         toast({
           title: "Erro!",
-          description: error.usecase ?? "Falha ao registrar a movimentação!",
+          description: error.usecase ?? "Falha ao registrar as movimentações!",
           variant: "error",
         });
       }
     } catch {
       toast({
         title: "Erro!",
-        description: "Falha ao registrar a movimentação!",
+        description: "Falha ao registrar as movimentações!",
         variant: "error",
       });
     }
@@ -136,10 +297,14 @@ export function useCreateMovementForm() {
 
   return {
     methods,
-    fields,
-    addMovement,
-    removeMovement,
-    reorderMovements,
+    blocks,
+    addRelatedBlock,
+    addIndependentBlock,
+    addMovementToBlock,
+    removeMovementFromBlock,
+    reorderMovementsInBlock,
+    removeMovementBlock,
+    getTotalMovements,
     onSubmit: methods.handleSubmit(onSubmit),
     schema: movementFormSchema,
   };

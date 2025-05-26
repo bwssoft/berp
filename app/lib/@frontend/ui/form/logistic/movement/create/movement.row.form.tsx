@@ -28,7 +28,7 @@ import {
   Badge,
 } from "@/app/lib/@frontend/ui/component";
 import type { CreateMovementFormData } from "./use-create.movement.form";
-import { IBase, IItem } from "@/app/lib/@backend/domain";
+import type { IBase, IItem } from "@/app/lib/@backend/domain";
 import { movementConstants } from "@/app/lib/constant/logistic";
 
 interface MovementRowFormProps {
@@ -38,6 +38,8 @@ interface MovementRowFormProps {
   items: IItem[];
   bases: IBase[];
   totalMovements: number;
+  blockIndex: number;
+  blockType: "RELATED" | "INDEPENDENT";
   dragHandleProps?: any;
   isDragging?: boolean;
 }
@@ -49,6 +51,8 @@ export function MovementRowForm({
   items,
   bases,
   totalMovements,
+  blockIndex,
+  blockType,
   dragHandleProps,
   isDragging = false,
 }: MovementRowFormProps) {
@@ -68,48 +72,55 @@ export function MovementRowForm({
       {/* Header com indicador de sequência */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
-          {/* Drag Handle */}
-          <div
-            {...dragHandleProps}
-            className="flex items-center gap-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-muted/50"
-          >
-            <GripVertical className="h-4 w-4 text-muted-foreground" />
-            <Badge variant="outline" className="font-mono text-sm">
-              #{sequenceNumber}
-            </Badge>
-          </div>
+          {/* Drag Handle - apenas para blocos RELATED */}
+          {blockType === "RELATED" && (
+            <div
+              {...dragHandleProps}
+              className="flex items-center gap-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-muted/50"
+            >
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
+            </div>
+          )}
 
-          {/* Indicadores de posição */}
-          <div className="flex gap-1">
-            {isFirst && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-green-100 text-green-700"
-              >
-                Início
-              </Badge>
-            )}
-            {isLast && totalMovements > 1 && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-blue-100 text-blue-700"
-              >
-                Fim
-              </Badge>
-            )}
-            {!isFirst && !isLast && totalMovements > 2 && (
-              <Badge
-                variant="secondary"
-                className="text-xs bg-orange-100 text-orange-700"
-              >
-                Intermediária
-              </Badge>
-            )}
-          </div>
+          <Badge variant="outline" className="font-mono text-sm">
+            {blockType === "RELATED"
+              ? `#${sequenceNumber}`
+              : `Mov ${sequenceNumber}`}
+          </Badge>
+
+          {/* Indicadores de posição - apenas para blocos RELATED */}
+          {blockType === "RELATED" && (
+            <div className="flex gap-1">
+              {isFirst && (
+                <Badge
+                  variant="secondary"
+                  className="text-xs bg-green-100 text-green-700"
+                >
+                  Início
+                </Badge>
+              )}
+              {isLast && totalMovements > 1 && (
+                <Badge
+                  variant="secondary"
+                  className="text-xs bg-blue-100 text-blue-700"
+                >
+                  Fim
+                </Badge>
+              )}
+              {!isFirst && !isLast && totalMovements > 2 && (
+                <Badge
+                  variant="secondary"
+                  className="text-xs bg-orange-100 text-orange-700"
+                >
+                  Intermediária
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Sequência visual */}
-        {totalMovements > 1 && (
+        {/* Sequência visual - apenas para blocos RELATED */}
+        {blockType === "RELATED" && totalMovements > 1 && (
           <div className="text-xs text-muted-foreground">
             {sequenceNumber} de {totalMovements}
           </div>
@@ -121,7 +132,7 @@ export function MovementRowForm({
         {/* Item */}
         <FormField
           control={control}
-          name={`movements.${index}.item`}
+          name={`blocks.${blockIndex}.movements.${index}.item`}
           render={({ field }) => (
             <FormItem>
               <FormControl>
@@ -157,7 +168,7 @@ export function MovementRowForm({
         {/* Quantidade */}
         <FormField
           control={control}
-          name={`movements.${index}.quantity`}
+          name={`blocks.${blockIndex}.movements.${index}.quantity`}
           render={({ field }) => (
             <FormItem>
               <FormControl>
@@ -181,7 +192,7 @@ export function MovementRowForm({
         {/* Tipo */}
         <FormField
           control={control}
-          name={`movements.${index}.type`}
+          name={`blocks.${blockIndex}.movements.${index}.type`}
           render={({ field }) => (
             <FormItem>
               <FormControl>
@@ -214,7 +225,7 @@ export function MovementRowForm({
         {/* Base */}
         <FormField
           control={control}
-          name={`movements.${index}.base`}
+          name={`blocks.${blockIndex}.movements.${index}.base`}
           render={({ field }) => (
             <FormItem>
               <FormControl>
@@ -245,7 +256,7 @@ export function MovementRowForm({
         {/* Status */}
         <FormField
           control={control}
-          name={`movements.${index}.status`}
+          name={`blocks.${blockIndex}.movements.${index}.status`}
           render={({ field }) => (
             <FormItem>
               <FormControl>
@@ -314,7 +325,7 @@ export function MovementRowForm({
           <div className="border-t pt-3">
             <FormField
               control={control}
-              name={`movements.${index}.description`}
+              name={`blocks.${blockIndex}.movements.${index}.description`}
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
