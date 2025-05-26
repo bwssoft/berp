@@ -103,7 +103,7 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
                 });
                 closeModal();
                 reset();
-                router.refresh();
+                //  router.refresh();
             } catch {
                 toast({
                     title: "Erro!",

@@ -5,18 +5,23 @@ import { createOneSectorUsecase } from "../../usecase/commercial/sector/create-o
 import { Filter } from "mongodb";
 import { findManySectorUsecase } from "../../usecase/commercial/sector/find-many.sector.usecase";
 import { updateOneSectorUsecase } from "../../usecase/commercial/sector/update-one.sector.usecase";
+import { revalidatePath } from "next/cache";
 
 type CreateSectorInput = Omit<ISector, "id" | "created_at" | "updated_at">;
 
 export async function createOneSector(data: CreateSectorInput) {
-    return await createOneSectorUsecase.execute(data);
+    const sector = await createOneSectorUsecase.execute(data);
+    revalidatePath("/commercial/account/form/create", "page");
+    return sector;
 }
 
 export async function updateOneSector(
     filter: Filter<ISector>,
     update: Partial<ISector>
 ) {
-    return await updateOneSectorUsecase.execute(filter, update);
+    const result = await updateOneSectorUsecase.execute(filter, update);
+    revalidatePath("/commercial/account/form/create", "page");
+    return result;
 }
 export async function findManySector(
     query: Filter<ISector>

@@ -10,7 +10,9 @@ import { Filter } from "mongodb";
 import { viaCepGateway } from "../../infra/gateway/viacep/viacep.gateway";
 import { redirect } from "next/navigation";
 import { updateOneAddressUsecase } from "../../usecase/commercial/address/update-one.address.usecase";
+import { revalidatePath } from "next/cache";
 
+let PATH_address = "commercial/account/form/create/tab/address";
 export async function getAddressByCep(cep: string) {
     return await viaCepGateway.findByCep(cep);
 }
@@ -19,6 +21,7 @@ export async function createOneAddress(
     input: Omit<IAddress, "id" | "created_at">
 ) {
     const result = await createOneAddressUsecase.execute(input);
+    revalidatePath(PATH_address, "page");
     if (!result) return;
 }
 
@@ -31,7 +34,9 @@ export async function updateOneAddress(
     filter: Filter<IAddress>,
     update: Partial<IAddress>
 ) {
-    return await updateOneAddressUsecase.execute(filter, update);
+    const result = await updateOneAddressUsecase.execute(filter, update);
+    revalidatePath(PATH_address, "page");
+    return result;
 }
 export async function findOneAddress(query: Partial<IAddress>) {
     return await findOneAddressUsecase.execute(query);

@@ -57,7 +57,7 @@ export function CNPJAccountForm() {
                         <Select
                             name="sector"
                             data={sectorModal.sectors}
-                            keyExtractor={(d) => d.name}
+                            keyExtractor={(d) => d.id!}
                             valueExtractor={(d) => d.name}
                             label="Setor"
                             value={sectorModal.sectors.find(
@@ -81,6 +81,13 @@ export function CNPJAccountForm() {
                 <SectorModal
                     open={sectorModal.open}
                     closeModal={sectorModal.closeModal}
+                    sectors={sectorModal.sectors}
+                    register={sectorModal.register}
+                    errors={sectorModal.errors}
+                    handleAdd={sectorModal.handleAdd}
+                    isPending={sectorModal.isPending}
+                    handleToggle={sectorModal.handleToggle}
+                    handleSave={sectorModal.handleSave}
                 />
             </div>
             <ValidateField<CreateAccountFormSchema>

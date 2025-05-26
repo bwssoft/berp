@@ -35,7 +35,6 @@ interface Props {
 export function useAddressForm({ closeModal }: Props) {
     const searchParams = useSearchParams();
     const accountId = searchParams.get("id") ?? "";
-    const router = useRouter();
     const {
         register,
         handleSubmit: hookFormSubmit,
@@ -98,7 +97,6 @@ export function useAddressForm({ closeModal }: Props) {
                 });
                 closeModal();
                 reset();
-                router.refresh();
             } catch {
                 toast({
                     title: "Erro!",
