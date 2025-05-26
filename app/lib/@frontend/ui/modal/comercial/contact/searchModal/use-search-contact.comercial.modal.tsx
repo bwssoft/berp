@@ -30,25 +30,11 @@ export function useSearchContactModal(accountId?: string) {
       setAccountData(account);
 
       if (
-        Array.isArray(account?.contacts) &&
-        account.fantasy_name &&
-        account.document?.value
-      ) {
-        setContactsByCompany([
-          {
-            name: account.fantasy_name,
-            documentValue: account.document.value,
-            contacts: account.contacts,
-          },
-        ]);
-      }
-
-      if (
-        data?.docs[0].economic_group_holding &&
-        data.docs[0].economic_group_holding !== data.docs[0].document.value
+        account?.economic_group_holding &&
+        account.economic_group_holding !== account.document?.value
       ) {
         const dataForCnpj = await findManyAccount(
-          { economic_group_holding: data.docs[0].economic_group_holding },
+          { economic_group_holding: account.economic_group_holding },
           currentPage,
           PAGE_SIZE
         );
@@ -61,6 +47,7 @@ export function useSearchContactModal(accountId?: string) {
 
         for (const empresa of dataForCnpj.docs) {
           if (
+            empresa.document?.value !== account.document?.value &&
             Array.isArray(empresa.contacts) &&
             empresa.contacts.length > 0 &&
             empresa.fantasy_name &&

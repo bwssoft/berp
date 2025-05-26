@@ -38,6 +38,7 @@ export function SearchContactModal({ accountId }: ContactModalProps) {
           <ModalBody>
             <SearchContactAccountForm
               isLoading={isLoading}
+              closeModal={closeModal}
               contacts={contactsByCompany ?? []}
               accountData={accountData}
             />

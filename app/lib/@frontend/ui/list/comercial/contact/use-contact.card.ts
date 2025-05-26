@@ -1,7 +1,7 @@
 import { deleteOneContact, findOneAccount } from "@/app/lib/@backend/action";
 import { IContact } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 export const useContactCard = (accountId: string) => {
@@ -9,21 +9,29 @@ export const useContactCard = (accountId: string) => {
   const [selectedContact, setSelectedContact] = useState<IContact>(
     {} as IContact
   );
+  const queryClient = useQueryClient();
+
   const { data: accountData, isLoading: accountLoading } = useQuery({
     queryKey: ["findOneAccount", accountId],
     queryFn: async () => await findOneAccount({ id: accountId }),
     enabled: !!accountId,
   });
 
-  //   const { data, isLoading } = useQuery({
-  //     queryKey: ["deleteOneContact", accountId],
-  //     queryFn: async () => await deleteOneContact({ id: accountId }),
-  //     enabled: !!accountId,
-  //   });
-
   const deleteContact = async (id: string) => {
     try {
       await deleteOneContact({ id });
+      toast({
+        title: "Sucesso",
+        description: "Contato deletado com sucesso",
+        variant: "success",
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["findOneAccount", accountId],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ["findManyAccount", accountId],
+      });
     } catch (err) {
       console.log(err);
       toast({

@@ -7,10 +7,11 @@ import { z } from "zod";
 import {
   createOneContact,
   findManyAccount,
+  findOneAccount,
   updateOneAccount,
 } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -93,7 +94,6 @@ export function useCreateContactAccount(closeModal: () => void) {
 
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
-  const router = useRouter();
 
   const {
     control,
@@ -181,27 +181,30 @@ export function useCreateContactAccount(closeModal: () => void) {
     });
 
     if (success && accountId) {
-      await queryClient.invalidateQueries({
-        queryKey: ["findOneAccount", accountId],
+      const freshAccount = await findOneAccount({ id: accountId });
+      const currentContacts: IContact[] = freshAccount?.contacts ?? [];
+
+      const uniqueContacts = new Map<string, IContact>();
+      [...currentContacts, success].forEach((c) => {
+        if (c?.id) uniqueContacts.set(c.id, c);
       });
+
+      const updatedContacts = Array.from(uniqueContacts.values());
+
       try {
-        const currentContacts: IContact[] =
-          accountData?.docs?.[0]?.contacts ?? [];
-
-        const updatedContacts: IContact[] = [
-          ...currentContacts,
-          ...(success ? [success] : []),
-        ].filter(
-          (contact, index, self) =>
-            contact?.id && index === self.findIndex((c) => c?.id === contact.id)
-        );
-
         await updateOneAccount(
           { id: accountId },
           { contacts: updatedContacts }
         );
 
-        router.refresh();
+        await queryClient.invalidateQueries({
+          queryKey: ["findOneAccount", accountId],
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: ["findManyAccount", accountId],
+        });
+
         toast({
           title: "Sucesso!",
           description: "Contato criado e conta atualizada com sucesso!",
@@ -211,7 +214,7 @@ export function useCreateContactAccount(closeModal: () => void) {
         reset();
         closeModal();
       } catch (err) {
-        console.log(err);
+        console.error(err);
         toast({
           title: "Erro ao atualizar conta!",
           description: "O contato foi criado, mas a conta não foi atualizada.",

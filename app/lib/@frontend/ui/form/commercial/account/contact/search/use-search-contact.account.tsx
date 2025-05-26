@@ -4,6 +4,7 @@ import { updateOneAccount } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useState, useEffect } from "react";
 import { IAccount, IContact } from "@/app/lib/@backend/domain";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   contacts?: {
@@ -12,9 +13,14 @@ interface Props {
     documentValue: string;
   }[];
   accountData?: IAccount;
+  closeModal: () => void;
 }
 
-export function useSearchContactAccount({ accountData, contacts }: Props) {
+export function useSearchContactAccount({
+  accountData,
+  contacts,
+  closeModal,
+}: Props) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [contactData, setContactData] = useState<Props["contacts"]>([]);
 
@@ -24,6 +30,8 @@ export function useSearchContactAccount({ accountData, contacts }: Props) {
     }
   }, [contacts]);
 
+  const queryClient = useQueryClient();
+
   const handleSave = async () => {
     try {
       if (!accountData?.id) return;
@@ -32,16 +40,35 @@ export function useSearchContactAccount({ accountData, contacts }: Props) {
         ?.flatMap((group) => group.contacts)
         .filter((contact) => selectedIds.includes(contact.id));
 
+      const existingContacts: IContact[] = accountData.contacts ?? [];
+
+      const merged = new Map<string, IContact>();
+
+      [...existingContacts, ...(selectedContacts ?? [])].forEach((c) => {
+        if (c?.id) merged.set(c.id, c);
+      });
+
+      const updatedContacts = Array.from(merged.values());
+
       await updateOneAccount(
         { id: accountData.id },
-        { contacts: selectedContacts }
+        { contacts: updatedContacts }
       );
+
+      await queryClient.invalidateQueries({
+        queryKey: ["findOneAccount", accountData.id],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ["findManyAccount", accountData.id],
+      });
 
       toast({
         title: "Sucesso!",
         variant: "success",
         description: "Contatos atualizados com sucesso!",
       });
+      closeModal();
     } catch (error) {
       console.error({ error });
       toast({

@@ -18,12 +18,14 @@ type ContactAccountFormProps = {
   }[];
   isLoading?: boolean;
   accountData?: IAccount;
+  closeModal: () => void;
 };
 
 export function SearchContactAccountForm({
   contacts,
   isLoading,
   accountData = {} as IAccount,
+  closeModal,
 }: ContactAccountFormProps) {
   const {
     handleSave,
@@ -31,7 +33,7 @@ export function SearchContactAccountForm({
     selectedIds,
     setSelectedIds,
     contactData,
-  } = useSearchContactAccount({ accountData, contacts });
+  } = useSearchContactAccount({ accountData, contacts, closeModal });
 
   if (isLoading) return <div>Carregando...</div>;
 

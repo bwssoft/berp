@@ -31,7 +31,7 @@ class DeleteOneContactUsecase {
       }
 
       // 1. Excluir o contato principal
-      const deleted = await this.repository.deleteOne({ id: contactId });
+      await this.repository.deleteOne({ id: contactId });
 
       // 2. Remover esse contato de todas as contas
       const accounts = await this.repositoryAccount.findMany({
