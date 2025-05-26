@@ -20,6 +20,7 @@ export const useContactCard = (accountId: string) => {
   const deleteContact = async (id: string) => {
     try {
       await deleteOneContact({ id });
+      setOpenModalDelete(false);
       toast({
         title: "Sucesso",
         description: "Contato deletado com sucesso",
