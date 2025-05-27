@@ -8,7 +8,8 @@ import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
 
 export function AccountCreateForm() {
-  const { methods, onSubmit, type, handleCpfCnpj } = useCreateAccountForm();
+  const { methods, onSubmit, type, handleCpfCnpj, textButton, setTextButton } =
+    useCreateAccountForm();
 
   const hasValidated = methods.getValues("document.type") === type;
 
@@ -18,7 +19,12 @@ export function AccountCreateForm() {
         className="flex flex-col gap-4"
         onSubmit={methods.handleSubmit(onSubmit)}
       >
-        <DocumentAccountForm onValidate={handleCpfCnpj} type={type} />
+        <DocumentAccountForm
+          textButton={textButton}
+          setTextButton={setTextButton}
+          onValidate={handleCpfCnpj}
+          type={type}
+        />
 
         {hasValidated && type === "cpf" && <CpfAccountForm />}
         {hasValidated && type === "cnpj" && <CNPJAccountForm />}

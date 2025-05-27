@@ -39,6 +39,7 @@ export type CreateAccountFormSchema = z.infer<typeof schema>;
 
 export function useCreateAccountForm() {
   const [type, setType] = useState<"cpf" | "cnpj">("cpf");
+  const [textButton, setTextButton] = useState("Validar");
 
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
@@ -58,36 +59,38 @@ export function useCreateAccountForm() {
     },
   });
 
-  const handleCpfCnpj = (value: string) => {
+  const handleCpfCnpj = (value: string): "cpf" | "cnpj" | "invalid" => {
     const cleanedValue = value.replace(/\D/g, "");
 
     if (cleanedValue.length === 11) {
       if (isValidCPF(cleanedValue)) {
-        methods.setValue("document.type", "cpf", {
-          shouldValidate: true,
-        });
+        methods.setValue("document.type", "cpf", { shouldValidate: true });
         setType("cpf");
+        return "cpf";
       } else {
         methods.setError("document.value", {
           type: "manual",
           message: "CPF inválido",
         });
+        return "invalid";
       }
     }
 
-    if (cleanedValue.length >= 14) {
+    if (cleanedValue.length === 14) {
       if (isValidCNPJ(cleanedValue)) {
-        methods.setValue("document.type", "cnpj", {
-          shouldValidate: true,
-        });
+        methods.setValue("document.type", "cnpj", { shouldValidate: true });
         setType("cnpj");
+        return "cnpj";
       } else {
         methods.setError("document.value", {
           type: "manual",
           message: "CNPJ inválido",
         });
+        return "invalid";
       }
     }
+
+    return "invalid";
   };
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
@@ -129,5 +132,13 @@ export function useCreateAccountForm() {
     }
   };
 
-  return { methods, handleCpfCnpj, type, setType, onSubmit };
+  return {
+    methods,
+    handleCpfCnpj,
+    type,
+    setType,
+    onSubmit,
+    textButton,
+    setTextButton,
+  };
 }
