@@ -271,6 +271,27 @@ export function useCreateMovementForm() {
       const { success, error } = await createManyMovement(movements);
 
       if (success) {
+        methods.reset({
+          blocks: [
+            {
+              id: crypto.randomUUID(),
+              type: "INDEPENDENT",
+              title: "Movimentações independentes",
+              movements: [
+                {
+                  id: crypto.randomUUID(),
+                  item: undefined as unknown as MovementFormItem["item"],
+                  base: undefined as unknown as MovementFormItem["base"],
+                  quantity: 1,
+                  status: Movement.Status.PENDING,
+                  type: Movement.Type.ENTER,
+                  description: "",
+                  order: 0,
+                },
+              ],
+            },
+          ],
+        });
         toast({
           title: "Sucesso!",
           description: `${movements.length} movimentação${movements.length > 1 ? "ões" : ""} registrada${movements.length > 1 ? "s" : ""} com sucesso!`,

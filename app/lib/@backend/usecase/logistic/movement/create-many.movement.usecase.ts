@@ -1,5 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IMovement, IMovementRepository } from "@/app/lib/@backend/domain";
+import {
+  IMovement,
+  IMovementRepository,
+  Movement,
+} from "@/app/lib/@backend/domain";
 import { movementRepository } from "@/app/lib/@backend/infra";
 import { consolidateStockByMovementUseCase } from "../stock";
 
@@ -26,6 +30,10 @@ class CreateManyMovementUsecase {
           Object.assign(movement, {
             created_at: new Date(),
             seq,
+            confirmed_at:
+              movement.status === Movement.Status.CONFIRM
+                ? new Date()
+                : undefined,
           })
         );
       }
