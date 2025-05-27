@@ -100,7 +100,9 @@ export function CreateOneItemForm() {
         <CardContent>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(handleSubmit, (e) => console.log(e))}
+              onSubmit={form.handleSubmit(handleSubmit, (e) =>
+                console.error(e)
+              )}
               className="space-y-6"
             >
               {/* Seleção de Tipo */}

@@ -6,6 +6,7 @@ import {
   updateOneMovementUsecase,
   findManyMovementUsecase,
   createManyMovementUsecase,
+  confirmManyMovementUsecase,
 } from "@/app/lib/@backend/usecase";
 import { IMovement } from "@/app/lib/@backend/domain";
 import { Filter } from "mongodb";
@@ -46,5 +47,12 @@ export async function updateOneMovementById(
 ) {
   const result = await updateOneMovementUsecase.execute(query, value);
   revalidatePath("/logistic/movement");
+  return result;
+}
+
+export async function confirmManyMovement(input: string[]) {
+  const result = await confirmManyMovementUsecase.execute(input);
+  revalidatePath("/logistic/movement");
+  revalidatePath("/logistic/stock");
   return result;
 }

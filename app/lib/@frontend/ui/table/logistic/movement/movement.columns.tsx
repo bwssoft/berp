@@ -15,6 +15,7 @@ import {
   Package,
   Wrench,
 } from "lucide-react";
+import { confirmManyMovement } from "@/app/lib/@backend/action";
 
 interface Props {
   restrictFeatureByProfile: (code: string) => boolean;
@@ -116,7 +117,7 @@ export const columns = (props: Props): ColumnDef<IMovement>[] => [
           title="Data de cadastro"
         >
           <CalendarDays className="w-4 h-4" />
-          {new Date(created_at).toLocaleDateString("pt-BR")}
+          {new Date(created_at).toLocaleString("pt-BR")}
         </div>
         <div
           className="flex items-center gap-2 text-sm"
@@ -125,7 +126,7 @@ export const columns = (props: Props): ColumnDef<IMovement>[] => [
           {confirmed_at ? (
             <>
               <CheckCircle2 className="w-4 h-4 text-green-500" />
-              {new Date(confirmed_at).toLocaleDateString("pt-BR")}
+              {new Date(confirmed_at).toLocaleString("pt-BR")}
             </>
           ) : (
             <>
@@ -155,7 +156,7 @@ export const columns = (props: Props): ColumnDef<IMovement>[] => [
             <Button
               variant="outline"
               size="sm"
-              onClick={() => alert(id + "CONFIRM")}
+              onClick={() => confirmManyMovement([id])}
             >
               <CheckIcon className="w-3 h-3" />
             </Button>

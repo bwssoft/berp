@@ -2,6 +2,7 @@ import { IMovement, IMovementRepository } from "@/app/lib/@backend/domain"; // A
 import { movementRepository } from "@/app/lib/@backend/infra"; // Assumindo que movementRepository existe em infra
 import { singleton } from "@/app/lib/util/singleton";
 import { randomUUID } from "crypto";
+import { consolidateStockByMovementUseCase } from "../stock";
 
 namespace Dto {
   // Input DTO: Omit 'id' and 'created_at' as they are generated
@@ -29,6 +30,8 @@ class CreateOneMovementUsecase {
 
     // Chama o método create do repositório
     await this.repository.create(base);
+
+    await consolidateStockByMovementUseCase.execute([base]);
 
     // Retorna o objeto base criado
     return base;

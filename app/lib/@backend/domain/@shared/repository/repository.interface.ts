@@ -40,7 +40,7 @@ export interface IBaseRepository<Entity extends object> {
         value: UpdateFilter<Entity>
     ): Promise<UpdateResult<Entity>>;
     updateBulk(
-        operations: { query: Filter<Entity>; value: UpdateFilter<Entity> }[]
+        operations: { filter: Filter<Entity>; update: UpdateFilter<Entity>, upsert: boolean }[]
     ): Promise<BulkWriteResult>;
     deleteOne(query: Filter<Entity>): Promise<DeleteResult>;
     aggregate<T extends object>(

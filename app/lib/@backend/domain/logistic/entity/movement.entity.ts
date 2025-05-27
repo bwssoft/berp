@@ -44,6 +44,6 @@ export namespace Movement {
   export enum Status {
     PENDING = "PENDING",
     CONFIRM = "CONFIRM",
-    CANCELLED = "CANCELLED",
+    // CANCELLED = "CANCELLED",
   }
 }

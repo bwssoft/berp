@@ -8,7 +8,7 @@ const type: { [key in Movement.Type]: string } = {
 const status: { [key in Movement.Status]: string } = {
   CONFIRM: "Confirmado",
   PENDING: "Pendente",
-  CANCELLED: "Canselado",
+  // CANCELLED: "Cancelado",
 };
 
 export const movementConstants = {

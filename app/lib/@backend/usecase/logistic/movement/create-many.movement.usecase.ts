@@ -1,6 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { IMovement, IMovementRepository } from "@/app/lib/@backend/domain";
 import { movementRepository } from "@/app/lib/@backend/infra";
+import { consolidateStockByMovementUseCase } from "../stock";
 
 class CreateManyMovementUsecase {
   repository: IMovementRepository;
@@ -30,6 +31,9 @@ class CreateManyMovementUsecase {
       }
 
       await this.repository.createMany(_input);
+
+      await consolidateStockByMovementUseCase.execute(_input);
+
       return {
         success: true,
       };
