@@ -8,6 +8,7 @@ import { useState } from "react";
 
 import { IAccount } from "@/app/lib/@backend/domain";
 import { createOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { fetchCnpjData } from "@/app/lib/@backend/action";
 
 const schema = z.object({
   document: z.object({
@@ -114,15 +115,17 @@ export function useCreateAccountForm() {
         return "invalid";
       }
 
-      const existing = await checkDocumentExists(cleanedValue);
-      if (existing) {
-        methods.setError("document.value", {
-          type: "manual",
-          message: "Documento já cadastrado!",
-        });
-        return "invalid";
-      }
+      // const existing = await checkDocumentExists(cleanedValue);
+      // if (existing) {
+      //   methods.setError("document.value", {
+      //     type: "manual",
+      //     message: "Documento já cadastrado!",
+      //   });
+      //   return "invalid";
+      // }
 
+      const data = await fetchCnpjData(cleanedValue);
+      console.log(data);
       methods.setValue("document.type", "cnpj");
       setType("cnpj");
       return "cnpj";
