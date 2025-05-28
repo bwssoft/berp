@@ -5,11 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
-import { toast } from "@/app/lib/@frontend/hook";
 
 import { IAccount } from "@/app/lib/@backend/domain";
 import { createOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { useRouter } from "next/navigation";
 
 const schema = z.object({
   document: z.object({
@@ -17,15 +15,26 @@ const schema = z.object({
     type: z.enum(["cpf", "cnpj"]),
   }),
   cpf: z.object({
-    name: z.string(),
-    rg: z.string(),
+    name: z
+      .string()
+      .min(1, "Nome completo é obrigatório")
+      .refine((val) => val.trim().split(/\s+/).length >= 2, {
+        message: "Informe o nome completo",
+      }),
+    rg: z
+      .string()
+      .regex(/^[\d./-]*$/, {
+        message: "RG deve conter apenas números, pontos, barras e hífens",
+      })
+      .optional(),
   }),
+
   cnpj: z.object({
     social_name: z.string().min(1),
-    fantasy_name: z.string().min(1),
-    state_registration: z.string().min(1),
+    fantasy_name: z.string().optional(),
+    state_registration: z.string().optional(),
     municipal_registration: z.string().optional(),
-    status: z.string().min(1),
+    status: z.string().optional(),
     sector: z.string().min(1, "Setor obrigatório"),
     economic_group_holding: z.string().optional(),
     economic_group_controlled: z.string().optional(),
@@ -59,37 +68,70 @@ export function useCreateAccountForm() {
     },
   });
 
-  const handleCpfCnpj = (value: string): "cpf" | "cnpj" | "invalid" => {
+  const handleCpfCnpj = async (
+    value: string
+  ): Promise<"cpf" | "cnpj" | "invalid"> => {
     const cleanedValue = value.replace(/\D/g, "");
 
+    if (!cleanedValue) {
+      methods.setError("document.value", {
+        type: "manual",
+        message: "Documento não informado",
+      });
+      return "invalid";
+    }
+
     if (cleanedValue.length === 11) {
-      if (isValidCPF(cleanedValue)) {
-        methods.setValue("document.type", "cpf", { shouldValidate: true });
-        setType("cpf");
-        return "cpf";
-      } else {
+      if (!isValidCPF(cleanedValue)) {
         methods.setError("document.value", {
           type: "manual",
-          message: "CPF inválido",
+          message: "Documento inválido!",
         });
         return "invalid";
       }
+
+      // Validação de CPF duplicado (simulação):
+      // const existing = await checkDocumentExists(cleanedValue);
+      // if (existing) {
+      //   methods.setError("document.value", {
+      //     type: "manual",
+      //     message: "Documento já cadastrado!",
+      //   });
+      //   return "invalid";
+      // }
+
+      methods.setValue("document.type", "cpf");
+      setType("cpf");
+      return "cpf";
     }
 
     if (cleanedValue.length === 14) {
-      if (isValidCNPJ(cleanedValue)) {
-        methods.setValue("document.type", "cnpj", { shouldValidate: true });
-        setType("cnpj");
-        return "cnpj";
-      } else {
+      if (!isValidCNPJ(cleanedValue)) {
         methods.setError("document.value", {
           type: "manual",
-          message: "CNPJ inválido",
+          message: "Documento inválido!",
         });
         return "invalid";
       }
+
+      const existing = await checkDocumentExists(cleanedValue);
+      if (existing) {
+        methods.setError("document.value", {
+          type: "manual",
+          message: "Documento já cadastrado!",
+        });
+        return "invalid";
+      }
+
+      methods.setValue("document.type", "cnpj");
+      setType("cnpj");
+      return "cnpj";
     }
 
+    methods.setError("document.value", {
+      type: "manual",
+      message: "Documento inválido!",
+    });
     return "invalid";
   };
 
