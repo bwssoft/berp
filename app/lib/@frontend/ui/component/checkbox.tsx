@@ -13,7 +13,7 @@ export function Checkbox(props: Props) {
           {...props}
         />
       </div>
-      <div className="ml-3 text-sm leading-6">
+      <div className="ml-2 text-sm leading-6">
         {label && (
           <label htmlFor={id} className="font-medium text-gray-900">
             {label}

@@ -19,7 +19,7 @@ export function AddressModal({ open, closeModal }: AddressProps) {
       position="center"
     >
       <ModalContent>
-        <ModalBody>
+        <ModalBody className="overflow-y-scroll max-h-[70vh] w-full">
           <AddressCreateForm closeModal={closeModal} />
         </ModalBody>
       </ModalContent>
