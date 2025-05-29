@@ -7,8 +7,13 @@ import { z } from "zod";
 import { useState } from "react";
 
 import { IAccount } from "@/app/lib/@backend/domain";
-import { createOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import {
+    createOneAccount,
+    accountExists,
+} from "@/app/lib/@backend/action/commercial/account.action";
 import { fetchCnpjData } from "@/app/lib/@backend/action";
+
+import { CheckIcon } from "@heroicons/react/24/solid"; //
 
 const schema = z.object({
     document: z.object({
@@ -83,6 +88,14 @@ export function useCreateAccountForm() {
             return "invalid";
         }
 
+        if (await accountExists(cleanedValue)) {
+            methods.setError("document.value", {
+                type: "manual",
+                message: "Documento já cadastrado!",
+            });
+            return "invalid";
+        }
+
         if (cleanedValue.length === 11) {
             if (!isValidCPF(cleanedValue)) {
                 methods.setError("document.value", {
@@ -91,17 +104,6 @@ export function useCreateAccountForm() {
                 });
                 return "invalid";
             }
-
-            // Validação de CPF duplicado (simulação):
-            // const existing = await checkDocumentExists(cleanedValue);
-            // if (existing) {
-            //   methods.setError("document.value", {
-            //     type: "manual",
-            //     message: "Documento já cadastrado!",
-            //   });
-            //   return "invalid";
-            // }
-
             methods.setValue("document.type", "cpf");
             setType("cpf");
             return "cpf";
@@ -115,16 +117,6 @@ export function useCreateAccountForm() {
                 });
                 return "invalid";
             }
-
-            // const existing = await checkDocumentExists(cleanedValue);
-            // if (existing) {
-            //   methods.setError("document.value", {
-            //     type: "manual",
-            //     message: "Documento já cadastrado!",
-            //   });
-            //   return "invalid";
-            // }
-
             methods.setValue("document.type", "cnpj");
             setType("cnpj");
             return "cnpj";
@@ -138,9 +130,11 @@ export function useCreateAccountForm() {
     };
 
     const onSubmit = async (data: CreateAccountFormSchema) => {
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", data);
         try {
             const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
                 document: data.document,
+
                 ...(type === "cpf"
                     ? {
                           name: data.cpf.name,
@@ -153,22 +147,18 @@ export function useCreateAccountForm() {
                           municipal_registration:
                               data.cnpj.municipal_registration,
                           status: data.cnpj.status,
+
                           economic_group_holding:
-                              data.cnpj.economic_group_holding,
-                          economic_group_controlled:
-                              data.cnpj.economic_group_controlled,
-                          ...(data.cnpj.sector
-                              ? {
-                                    setor: [
-                                        {
-                                            id: data.cnpj.sector,
-                                            name: "",
-                                            active: true,
-                                            created_at: new Date(),
-                                        },
-                                    ],
-                                }
-                              : {}),
+                              data.cnpj.economic_group_holding || undefined,
+
+                          economic_group_controlled: data.cnpj
+                              .economic_group_controlled
+                              ? [data.cnpj.economic_group_controlled]
+                              : undefined,
+
+                          setor: data.cnpj.sector
+                              ? [data.cnpj.sector]
+                              : undefined,
                       }),
             };
 
