@@ -8,6 +8,7 @@ import { useState } from "react";
 
 import { IAccount } from "@/app/lib/@backend/domain";
 import { createOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { fetchCnpjData } from "@/app/lib/@backend/action";
 
 const schema = z.object({
     document: z.object({
