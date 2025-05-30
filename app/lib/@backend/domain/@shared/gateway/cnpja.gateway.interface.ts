@@ -1,73 +1,120 @@
 export interface ICnpjaResponse {
-  cnpj: string;
-  identificador_matriz_filial: number;
-  descricao_matriz_filial: string;
-  razao_social: string;
-  nome_fantasia?: string;
-  situacao_cadastral: number;
-  descricao_situacao_cadastral: string;
-  data_situacao_cadastral: string;
-  motivo_situacao_cadastral?: number;
-  nome_cidade_exterior?: string;
-  codigo_natureza_juridica: number;
-  data_inicio_atividade: string;
-  cnae_fiscal: number;
-  cnae_fiscal_descricao: string;
-  descricao_tipo_logradouro: string;
-  logradouro: string;
-  numero: string;
-  complemento?: string;
-  bairro: string;
-  cep: string;
-  uf: string;
-  codigo_municipio: number;
-  municipio: string;
-  ddd_telefone_1?: string;
-  ddd_telefone_2?: string;
-  ddd_fax?: string;
-  correio_eletronico?: string;
-  situacao_especial?: string;
-  data_situacao_especial?: string;
-  capital_social: number;
-  porte_empresa: string;
-  simples?: {
-    simples: string;
-    data_opcao_simples?: string;
-    data_exclusao_simples?: string;
-    mei: string;
-    data_opcao_mei?: string;
-    data_exclusao_mei?: string;
-  };
-  socios?: Array<{
-    nome_socio: string;
-    cpf_cnpj_socio: string;
-    codigo_qualificacao_socio: number;
-    qualificacao_socio: string;
-    data_entrada_sociedade: string;
-    codigo_pais: number;
-    pais: string;
-    representante_legal?: {
-      nome_representante: string;
-      cpf_representante: string;
-      codigo_qualificacao_representante: number;
-      qualificacao_representante: string;
-    };
-  }>;
-  cnaes_secundarios?: Array<{
-    codigo: number;
-    descricao: string;
-  }>;
-  inscricoes_estaduais?: Array<{
-    inscricao_estadual: string;
-    ativo: boolean;
-    atualizado_em: string;
-    estado: {
-      uf: string;
-      nome: string;
-    };
-  }>;
+  updated: string;
+  taxId: string;
+  alias: string;
+  founded: string;
+  head: boolean;
+  company: Company;
+  statusDate: string;
+  status: Status;
+  address: Address;
+  mainActivity: Activity;
+  phones: Phone[];
+  emails: Email[];
+  sideActivities: Activity[];
+  registrations: Registration[];
+}
+
+export interface Company {
+  id: number;
+  name: string; // razão social
+  equity: number;
+  nature: Nature;
+  size: Size;
+  simples: OptionStatus;
+  simei: OptionStatus;
+  members: Member[];
+}
+
+export interface Member {
+  since: string;
+  person: Person;
+  role: Role;
+}
+
+export interface Person {
+  id: string;
+  type: "NATURAL" | "LEGAL";
+  name: string;
+  taxId: string;
+  age: string;
+}
+
+export interface Role {
+  id: number;
+  text: string;
+}
+
+export interface Nature {
+  id: number;
+  text: string;
+}
+
+export interface Size {
+  id: number;
+  acronym: string;
+  text: string;
+}
+
+export interface OptionStatus {
+  optant: boolean;
+  since: string | null;
+}
+
+export interface Status {
+  id: number;
+  text: string;
+}
+
+export interface Address {
+  municipality: number;
+  street: string;
+  number: string;
+  district: string;
+  city: string;
+  state: string;
+  details: string | null;
+  zip: string;
+  country: Country;
+}
+
+export interface Country {
+  id: number;
+  name: string;
+}
+
+export interface Activity {
+  id: number;
+  text: string;
+}
+
+export interface Phone {
+  type: "LANDLINE" | "MOBILE" | string;
+  area: string;
+  number: string;
+}
+
+export interface Email {
+  ownership: "CORPORATE" | "PERSONAL" | string;
+  address: string;
+  domain: string;
+}
+
+export interface Registration {
+  number: string;
+  state: string;
+  enabled: boolean;
+  statusDate: string;
+  status: Status;
+  type: RegistrationType;
+}
+
+export interface RegistrationType {
+  id: number;
+  text: string;
 }
 
 export interface ICnpjaGateway {
   getCnpjData(cnpj: string): Promise<ICnpjaResponse | null>;
+  getByName(alias: string): Promise<ICnpjaResponse[] | null>;
 }
