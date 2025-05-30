@@ -1,20 +1,22 @@
-import { findManyAddress, findOneAccount } from "@/app/lib/@backend/action";
-import { AddressCardList } from "@/app/lib/@frontend/ui/list/comercial/address/address.list";
-import { IAccount, IAddress } from "@/app/lib/@backend/domain";
+"use client";
 
+import { AddressCardList } from "@/app/lib/@frontend/ui/list/comercial/address/address.list";
 import { PageFooterButtons } from "./page-footer-buttons";
 import { CreateAddressModal } from "./create-address";
-import { useQuery } from "@tanstack/react-query";
+import { useAddresses } from "@/app/lib/@frontend/ui/form/commercial/address/get/useaddress";
+import { useAccount } from "@/app/lib/@frontend/ui/form/commercial/address/get/useaccount";
 
 interface Props {
     searchParams: { id: string };
 }
 
-export default async function Page({ searchParams }: Props) {
+export default function Page({ searchParams }: Props) {
     const { id } = searchParams;
-    const addresses: IAddress[] = await findManyAddress({ accountId: id });
 
-    const account: IAccount = (await findOneAccount({ id })) as IAccount;
+    const { addresses, loading: loadingAddresses } = useAddresses(id);
+    const { account, loading: loadingAccount } = useAccount(id);
+
+    if (loadingAddresses || loadingAccount) return <p>Carregando...</p>;
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -22,12 +24,9 @@ export default async function Page({ searchParams }: Props) {
                 <CreateAddressModal id={id} />
                 <AddressCardList items={addresses} />
             </div>
-            <footer className="">
+            <footer>
                 <PageFooterButtons
-                    accounts={
-                        !!account?.document?.type &&
-                        account.document.type.length > 0
-                    }
+                    accounts={!!account?.document?.type}
                     addresses={addresses.length > 0}
                     id={id}
                 />
