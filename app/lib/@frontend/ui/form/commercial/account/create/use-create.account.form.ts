@@ -1,16 +1,17 @@
 "use client";
+
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-
-import { IAccount } from "@/app/lib/@backend/domain";
+import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
 import {
   createOneAccount,
   accountExists,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
+import { fetchCnpjData, fetchNameData } from "@/app/lib/@backend/action";
 
 const schema = z
   .object({
@@ -34,7 +35,6 @@ const schema = z
           .optional(),
       })
       .optional(),
-
     cnpj: z
       .object({
         social_name: z.string().min(1, "Razão social é obrigatória"),
@@ -47,7 +47,6 @@ const schema = z
         economic_group_controlled: z.string().optional(),
       })
       .optional(),
-
     contact: z.any().optional(),
     address: z.any().optional(),
   })
@@ -63,7 +62,6 @@ const schema = z
         });
         return;
       }
-
       if (!data.cpf.name || data.cpf.name.trim().length < 1) {
         ctx.addIssue({
           path: ["cpf", "name"],
@@ -83,7 +81,6 @@ const schema = z
         });
         return;
       }
-
       if (!data.cnpj.social_name || data.cnpj.social_name.trim().length < 1) {
         ctx.addIssue({
           path: ["cnpj", "social_name"],
@@ -91,7 +88,6 @@ const schema = z
           message: "Razão social é obrigatória",
         });
       }
-
       if (!data.cnpj.sector || data.cnpj.sector.trim().length < 1) {
         ctx.addIssue({
           path: ["cnpj", "sector"],
@@ -105,8 +101,32 @@ const schema = z
 export type CreateAccountFormSchema = z.infer<typeof schema>;
 
 export function useCreateAccountForm() {
+  // Estado para definir se o documento é CPF ou CNPJ:
   const [type, setType] = useState<"cpf" | "cnpj">("cpf");
-  const [textButton, setTextButton] = useState("Validar");
+
+  // Estado para guardar os dados retornados para holding e controlled
+  const [dataHolding, setDataHolding] = useState<ICnpjaResponse[] | null>(null);
+  const [dataControlled, setDataControlled] = useState<ICnpjaResponse[] | null>(
+    null
+  );
+
+  // Estado único para todos os botões (por exemplo, holding, controlled e contact)
+  const [buttonsState, setButtonsState] = useState({
+    holding: "Validar",
+    controlled: "Validar",
+    contact: "Validar",
+  });
+
+  // Função para alternar o texto de qualquer botão
+  const toggleButtonText = (
+    key: keyof typeof buttonsState,
+    type: "Validar" | "Editar"
+  ) => {
+    setButtonsState((prev) => ({
+      ...prev,
+      [key]: type,
+    }));
+  };
 
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
@@ -126,7 +146,8 @@ export function useCreateAccountForm() {
       return "invalid";
     }
 
-    if (await accountExists(cleanedValue)) {
+    const exists = await accountExists(cleanedValue);
+    if (exists) {
       methods.setError("document.value", {
         type: "manual",
         message: "Documento já cadastrado!",
@@ -135,7 +156,8 @@ export function useCreateAccountForm() {
     }
 
     if (cleanedValue.length === 11) {
-      if (!isValidCPF(cleanedValue)) {
+      const isValid = isValidCPF(cleanedValue);
+      if (!isValid) {
         methods.setError("document.value", {
           type: "manual",
           message: "Documento inválido!",
@@ -148,13 +170,23 @@ export function useCreateAccountForm() {
     }
 
     if (cleanedValue.length === 14) {
-      if (!isValidCNPJ(cleanedValue)) {
+      const isValid = isValidCNPJ(cleanedValue);
+      if (!isValid) {
         methods.setError("document.value", {
           type: "manual",
           message: "Documento inválido!",
         });
         return "invalid";
       }
+
+      const data = await fetchCnpjData(cleanedValue);
+
+      if (data) {
+        methods.setValue("cnpj.fantasy_name", data.alias);
+        methods.setValue("cnpj.status", data.status.text);
+        methods.setValue("cnpj.social_name", data.company.name);
+      }
+
       methods.setValue("document.type", "cnpj");
       setType("cnpj");
       return "cnpj";
@@ -165,6 +197,28 @@ export function useCreateAccountForm() {
       message: "Documento inválido!",
     });
     return "invalid";
+  };
+
+  const handleCnpjOrName = async (
+    value: string,
+    groupType: "controlled" | "holding"
+  ) => {
+    const cleanedValue = value.replace(/\D/g, "");
+    let data;
+
+    if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
+      // É um CNPJ válido
+      data = await fetchCnpjData(cleanedValue);
+    } else {
+      // Se não for CNPJ, trata como nome e usa outra função
+      data = await fetchNameData(value);
+      if (groupType === "controlled") {
+        setDataControlled(data);
+        return;
+      }
+      setDataHolding(data);
+    }
+    return data;
   };
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
@@ -208,7 +262,10 @@ export function useCreateAccountForm() {
     type,
     setType,
     onSubmit,
-    textButton,
-    setTextButton,
+    handleCnpjOrName,
+    dataHolding,
+    dataControlled,
+    buttonsState,
+    toggleButtonText,
   };
 }

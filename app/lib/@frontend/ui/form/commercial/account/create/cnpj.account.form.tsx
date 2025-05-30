@@ -5,102 +5,212 @@ import { CreateAccountFormSchema } from "./use-create.account.form";
 import { Input, Combobox, Button, Select } from "../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import {
-    SectorModal,
-    useSectorModal,
+  SectorModal,
+  useSectorModal,
 } from "../../../../modal/comercial/sector";
-import { ValidateField } from "../../../../component/validate-field";
-export function CNPJAccountForm() {
-    const sectorModal = useSectorModal();
-    const {
-        register,
-        control,
-        formState: { errors },
-    } = useFormContext<CreateAccountFormSchema>();
+import { ICnpjaResponse } from "@/app/lib/@backend/domain";
+import { useState } from "react";
 
-    return (
-        <div className="flex flex-col gap-2">
-            <Input
-                label="Razão Social"
-                placeholder="Digite a razão social"
-                {...register("cnpj.social_name")}
-                error={errors.cnpj?.social_name?.message}
-            />
-            <Input
-                label="Nome Fantasia"
-                placeholder="Digite o nome fantasia"
-                {...register("cnpj.fantasy_name")}
-                error={errors.cnpj?.fantasy_name?.message}
-            />
-            <Input
-                label="Inscrição Estadual"
-                placeholder="Digite a inscrição estadual"
-                {...register("cnpj.state_registration")}
-                error={errors.cnpj?.state_registration?.message}
-            />
-            <Input
-                label="Situação"
-                placeholder="Sem restrição"
-                {...register("cnpj.status")}
-                error={errors.cnpj?.status?.message}
-            />
-            <Input
-                label="Inscrição Municipal"
-                placeholder="Digite a inscrição municipal"
-                {...register("cnpj.municipal_registration")}
-                error={errors.cnpj?.municipal_registration?.message}
-            />
-            <div className="flex items-end gap-2">
-                <Controller
-                    control={control}
-                    name="cnpj.sector"
-                    render={({ field }) => (
-                        <Select
-                            name="sector"
-                            data={sectorModal.sectors}
-                            keyExtractor={(d) => d.id!}
-                            valueExtractor={(d) => d.name}
-                            label="Setor"
-                            value={sectorModal.sectors.find(
-                                (d) => d.name === field.name
-                            )}
-                            onChange={(d) => field.onChange(d.name)}
-                        />
-                    )}
-                />
+interface CNPJAccountFormProps {
+  validationEnterprise?: (
+    value: string,
+    groupType: "controlled" | "holding"
+  ) => Promise<ICnpjaResponse | ICnpjaResponse[] | null | undefined>;
+  dataHolding: ICnpjaResponse[];
+  dataControlled: ICnpjaResponse[];
+  buttonState: {
+    holding: string;
+    controlled: string;
+    contact: string;
+  };
+  toggleButtonText: (
+    key: "contact" | "controlled" | "holding",
+    type: "Validar" | "Editar"
+  ) => void;
+}
 
-                <Button
-                    type="button"
-                    title="Novo Setor"
-                    variant="ghost"
-                    onClick={sectorModal.openModal}
-                    className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
-                    <PlusIcon className="size-5" />
-                </Button>
+export function CNPJAccountForm({
+  validationEnterprise,
+  dataHolding,
+  buttonState,
+  dataControlled,
+  toggleButtonText,
+}: CNPJAccountFormProps) {
+  const sectorModal = useSectorModal();
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext<CreateAccountFormSchema>();
 
-                <SectorModal
-                    open={sectorModal.open}
-                    closeModal={sectorModal.closeModal}
-                    sectors={sectorModal.sectors}
-                    register={sectorModal.register}
-                    errors={sectorModal.errors}
-                    handleAdd={sectorModal.handleAdd}
-                    isPending={sectorModal.isPending}
-                    handleToggle={sectorModal.handleToggle}
-                    handleSave={sectorModal.handleSave}
-                />
-            </div>
-            <ValidateField<CreateAccountFormSchema>
-                name="cnpj.economic_group_holding"
-                label="Grupo Econômico (Holding)"
-                placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
-            />
+  const [queryText, setQueryText] = useState({
+    holding: "",
+    controlled: "",
+  });
 
-            <ValidateField<CreateAccountFormSchema>
-                name="cnpj.economic_group_controlled"
-                label="Grupo Econômico (Controladas)"
-                placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
+  return (
+    <div className="flex flex-col gap-2">
+      <Input
+        label="Razão Social"
+        placeholder="Digite a razão social"
+        {...register("cnpj.social_name")}
+        error={errors.cnpj?.social_name?.message}
+      />
+      <Input
+        label="Nome Fantasia"
+        placeholder="Digite o nome fantasia"
+        {...register("cnpj.fantasy_name")}
+        error={errors.cnpj?.fantasy_name?.message}
+      />
+      <Input
+        label="Inscrição Estadual"
+        placeholder="Digite a inscrição estadual"
+        {...register("cnpj.state_registration")}
+        error={errors.cnpj?.state_registration?.message}
+      />
+      <Input
+        label="Situação"
+        placeholder="Sem restrição"
+        {...register("cnpj.status")}
+        error={errors.cnpj?.status?.message}
+      />
+      <Input
+        label="Inscrição Municipal"
+        placeholder="Digite a inscrição municipal"
+        {...register("cnpj.municipal_registration")}
+        error={errors.cnpj?.municipal_registration?.message}
+      />
+      <div className="flex items-end gap-2">
+        <Controller
+          control={control}
+          name="cnpj.sector"
+          render={({ field }) => (
+            <Select
+              name="sector"
+              data={sectorModal.sectors}
+              keyExtractor={(d) => d.id!}
+              valueExtractor={(d) => d.name}
+              label="Setor"
+              value={sectorModal.sectors.find((d) => d.name === field.name)}
+              onChange={(d) => field.onChange(d.name)}
             />
-        </div>
-    );
+          )}
+        />
+
+        <Button
+          type="button"
+          title="Novo Setor"
+          variant="ghost"
+          onClick={sectorModal.openModal}
+          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        >
+          <PlusIcon className="size-5" />
+        </Button>
+
+        <SectorModal
+          open={sectorModal.open}
+          closeModal={sectorModal.closeModal}
+          sectors={sectorModal.sectors}
+          register={sectorModal.register}
+          errors={sectorModal.errors}
+          handleAdd={sectorModal.handleAdd}
+          isPending={sectorModal.isPending}
+          handleToggle={sectorModal.handleToggle}
+          handleSave={sectorModal.handleSave}
+        />
+      </div>
+      <div className="flex gap-2 items-end">
+        <Controller
+          control={control}
+          name="cnpj.economic_group_holding"
+          render={({ field }) => (
+            <Combobox
+              data={dataHolding}
+              label="Grupo Econômico (Holding)"
+              behavior="search"
+              onSearchChange={(text: string) => {
+                setQueryText({ ...queryText, holding: text });
+              }}
+              value={dataHolding.filter((item) => item.taxId === field.value)}
+              onChange={(item) => console.log(item)}
+              onOptionChange={([item]) => field.onChange(item.taxId)}
+              keyExtractor={(item) => item.taxId}
+              displayValueGetter={(item) => item.company.name}
+              placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
+            />
+          )}
+        />
+        <Button
+          onClick={async () => {
+            if (buttonState.holding === "Validar") {
+              let result;
+              if (validationEnterprise) {
+                result = await validationEnterprise(
+                  queryText.holding,
+                  "holding"
+                );
+              }
+
+              if (result != null) {
+                toggleButtonText("holding", "Editar");
+              }
+            } else {
+              toggleButtonText("holding", "Validar");
+            }
+          }}
+          type="button"
+        >
+          {buttonState.holding}
+        </Button>
+      </div>
+
+      <div className="flex gap-2 items-end">
+        <Controller
+          control={control}
+          name="cnpj.economic_group_controlled"
+          render={({ field }) => (
+            <Combobox
+              data={dataControlled}
+              label="Grupo Econômico (Controladas)"
+              behavior="search"
+              onSearchChange={(text: string) => {
+                setQueryText({ ...queryText, controlled: text });
+              }}
+              type="multiple"
+              value={dataControlled.filter(
+                (item) => item.taxId === field.value
+              )}
+              onChange={(item) => console.log(item)}
+              onOptionChange={([item]) => field.onChange(item.taxId)}
+              keyExtractor={(item) => item.taxId}
+              displayValueGetter={(item) => item.company.name}
+              placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
+            />
+          )}
+        />
+        <Button
+          onClick={async () => {
+            if (buttonState.controlled === "Validar") {
+              let result;
+              if (validationEnterprise) {
+                result = await validationEnterprise(
+                  queryText.controlled,
+                  "controlled"
+                );
+              }
+
+              if (result != null) {
+                toggleButtonText("controlled", "Editar");
+              }
+            } else {
+              toggleButtonText("controlled", "Validar");
+            }
+          }}
+          type="button"
+        >
+          {buttonState.controlled}
+        </Button>
+      </div>
+    </div>
+  );
 }
