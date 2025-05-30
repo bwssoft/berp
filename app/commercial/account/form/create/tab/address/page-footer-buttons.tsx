@@ -11,7 +11,7 @@ interface Props {
     accounts: boolean;
 }
 
-export async function PageFooterButtons({ id, addresses, accounts }: Props) {
+export function PageFooterButtons({ id, addresses, accounts }: Props) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const router = useRouter();
 
