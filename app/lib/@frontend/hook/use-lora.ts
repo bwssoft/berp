@@ -1,11 +1,6 @@
 import { useCallback } from "react";
 import { LORA, LORAParser, LORAEncoder } from "../../@backend/infra/protocol";
-import {
-  generateImei,
-  getRandomInt,
-  sleep,
-  typedObjectEntries,
-} from "../../util";
+import { sleep, typedObjectEntries } from "../../util";
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { IConfigurationProfile } from "../../@backend/domain";
@@ -13,35 +8,18 @@ import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
 
-const defaultDecode = (command: string, buffer: string, state: string[]) => {
-  let lines = buffer.split("\r");
-  buffer = lines.pop() || "";
-  for (const line of lines) {
-    if (line.length > 0 && line.includes(command.replace("\r", ""))) {
-      return line;
-    }
-  }
-};
-
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
-  timeout: number = 500,
   command: string,
-  decode: (
-    command: string,
-    buffer: string,
-    state: string[]
-  ) => void = defaultDecode
-): Promise<string[]> => {
+  timeout: number = 500
+): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
-  const timeoutPromise = new Promise<[]>((resolve) =>
-    setTimeout(() => resolve([]), timeout)
+  const timeoutPromise = new Promise<undefined>((resolve) =>
+    setTimeout(() => resolve(undefined), timeout)
   );
 
   const readPromise = (async () => {
-    const state: string[] = [];
-
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
@@ -49,10 +27,15 @@ const readResponse = async (
       const chunk = decoder.decode(value);
       buffer += chunk;
 
-      decode(command, buffer, state);
+      let lines = buffer.split("\r\n");
+      buffer = lines.pop() || "";
+      for (const line of lines) {
+        if (line.length > 0 && line.includes(command.replace("\r\n", ""))) {
+          return line;
+        }
+      }
     }
-
-    return state;
+    return undefined;
   })();
 
   return Promise.race([readPromise, timeoutPromise]);
@@ -86,11 +69,11 @@ export const useLora = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, command, timeout, decode) => {
+    sendMessage: async (port, command, timeout) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
       await writeToPort(port, command);
-      const [response] = await readResponse(reader, timeout, command, decode);
+      const response = await readResponse(reader, command, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
@@ -418,7 +401,6 @@ export const useLora = () => {
   const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
       const timestamp = Number(getDayZeroTimestamp().toString().slice(0, -5));
-
       const writeMessages = [
         {
           key: "serial",
@@ -440,8 +422,28 @@ export const useLora = () => {
           message: `RTK\r`,
         },
         {
-          key: "keys",
-          message: `RKEYS\r`,
+          key: "rda",
+          message: `RDA\r`,
+        },
+        {
+          key: "rde",
+          message: `RDE\r`,
+        },
+        {
+          key: "rap",
+          message: `RAP\r`,
+        },
+        {
+          key: "rak",
+          message: `RAK\r`,
+        },
+        {
+          key: "rask",
+          message: `RASK\r`,
+        },
+        {
+          key: "rnk",
+          message: `RNK\r`,
         },
       ] as const;
       try {
@@ -455,7 +457,6 @@ export const useLora = () => {
           transport: port,
           messages: readMessages,
         });
-        console.log(readResponse);
         const end_time = Date.now();
         return {
           port,
@@ -490,9 +491,6 @@ export const useLora = () => {
     },
     [sendMultipleMessages]
   );
-  const handleGetRandomImei = async () => {
-    return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
-  };
 
   const isIdentified = (input: { serial?: string; firmware?: string }) => {
     const { serial, firmware } = input;
