@@ -1,6 +1,10 @@
 "use client";
 
-import { IConfigurationProfile, ITechnology } from "@/app/lib/@backend/domain";
+import {
+  Device,
+  IConfigurationProfile,
+  ITechnology,
+} from "@/app/lib/@backend/domain";
 import { Button } from "@/app/lib/@frontend/ui/component";
 import { TechnologyAndConfigurationProfileSearchForm } from "@/app/lib/@frontend/ui/form";
 import {
@@ -48,9 +52,14 @@ export function ConfiguratorPanel(props: Props) {
           </p>
         </div>
         <div className="border-b border-gray-900/10 pb-12 flex flex-col gap-6 w-full">
-          <div className="flow-root w-full">
-            <DevicesDetectedTable data={identified} />
-          </div>
+          {technology && (
+            <div className="flow-root w-full">
+              <DevicesDetectedTable
+                data={identified}
+                model={Device.Model[technology.name.system as Device.Model]}
+              />
+            </div>
+          )}
           <div className="flex justify-between gap-2">
             <div className="flex gap-2">
               <Button

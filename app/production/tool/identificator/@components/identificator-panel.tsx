@@ -1,6 +1,6 @@
 "use client";
 
-import { ITechnology } from "@/app/lib/@backend/domain";
+import { Device, ITechnology } from "@/app/lib/@backend/domain";
 import { Button, Input } from "@/app/lib/@frontend/ui/component";
 import {
   IdentificationForm,
@@ -48,9 +48,14 @@ export function IdentificationPanel(props: Props) {
           </p>
         </div>
         <div className="border-b border-gray-900/10 pb-12 flex flex-col gap-6 w-full">
-          <div className="flow-root w-full">
-            <DevicesDetectedTable data={identified} />
-          </div>
+          {technology && (
+            <div className="flow-root w-full">
+              <DevicesDetectedTable
+                data={identified}
+                model={Device.Model[technology.name.system as Device.Model]}
+              />
+            </div>
+          )}
           <div className="flex justify-between gap-2">
             <IdentificationForm onSubmit={identify} disabled={false} />
             <Button

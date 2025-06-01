@@ -3,6 +3,18 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
 import { ISerialPort } from "@/app/lib/@frontend/hook/use-serial-port";
+import { Device } from "@/app/lib/@backend/domain";
+
+export interface Row {
+  equipment: {
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    firmware?: string | undefined;
+    serial?: string | undefined;
+  };
+  status: "fully_identified" | "partially_identified" | "not_identified";
+  port: ISerialPort;
+}
 
 const statuses = {
   fully_identified: "text-green-500 bg-green-800/20",
@@ -21,19 +33,11 @@ const info = {
   partially_identified: "Parcialmente Identificado",
   not_identified: "Não Identificado",
 };
-export const columns: ColumnDef<{
-  equipment: {
-    imei?: string | undefined;
-    iccid?: string | undefined;
-    firmware?: string | undefined;
-    serial?: string | undefined;
-  };
-  status: "fully_identified" | "partially_identified" | "not_identified";
-  port: ISerialPort;
-}>[] = [
+
+const commonColumns: ColumnDef<Row>[] = [
   {
     header: "Identificado",
-    accessorKey: "inIdentification",
+    accessorKey: "status",
     cell: ({ row }) => {
       const status = row.original.status;
       return (
@@ -52,48 +56,108 @@ export const columns: ColumnDef<{
       );
     },
   },
-  {
-    header: "Serial",
-    accessorKey: "serial",
-    cell: ({ row }) => {
-      const device = row.original;
-      return (
-        <p title={device.equipment.serial}>{device.equipment.serial ?? "--"}</p>
-      );
-    },
-  },
-  {
-    header: "Imei",
-    accessorKey: "imei",
-    cell: ({ row }) => {
-      const device = row.original;
-      return (
-        <p title={device.equipment.imei}>{device.equipment.imei ?? "--"}</p>
-      );
-    },
-  },
-  {
-    header: "Iccid",
-    accessorKey: "iccid",
-    cell: ({ row }) => {
-      const device = row.original;
-      return (
-        <p title={device.equipment.iccid}>
-          {device.equipment.iccid ? device.equipment.iccid : "--"}
-        </p>
-      );
-    },
-  },
-  {
-    header: "Firmware",
-    accessorKey: "firmware",
-    cell: ({ row }) => {
-      const device = row.original;
-      return (
-        <p title={device.equipment.firmware}>
-          {device.equipment.firmware ?? "--"}
-        </p>
-      );
-    },
-  },
 ];
+
+// Define colunas específicas por tipo
+const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
+  DM_E3_PLUS_4G: [
+    {
+      header: "Serial",
+      accessorKey: "serial",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.serial}>
+          {row.original.equipment.serial ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Imei",
+      accessorKey: "imei",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.imei}>
+          {row.original.equipment.imei ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Iccid",
+      accessorKey: "iccid",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.iccid}>
+          {row.original.equipment.iccid ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Firmware",
+      accessorKey: "firmware",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.firmware}>
+          {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+  ],
+  DM_BWS_NB2: [
+    {
+      header: "Serial",
+      accessorKey: "serial",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.serial}>
+          {row.original.equipment.serial ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Imei",
+      accessorKey: "imei",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.imei}>
+          {row.original.equipment.imei ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Iccid",
+      accessorKey: "iccid",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.iccid}>
+          {row.original.equipment.iccid ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Firmware",
+      accessorKey: "firmware",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.firmware}>
+          {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+  ],
+  DM_BWS_LORA: [
+    {
+      header: "Serial",
+      accessorKey: "serial",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.serial}>
+          {row.original.equipment.serial ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Firmware",
+      accessorKey: "firmware",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.firmware}>
+          {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+  ],
+};
+
+export function getColumns(type: Device.Model): ColumnDef<Row>[] {
+  return [...commonColumns, ...(columnMap[type] || [])];
+}

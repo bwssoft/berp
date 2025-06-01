@@ -27,10 +27,10 @@ const readResponse = async (
       const chunk = decoder.decode(value);
       buffer += chunk;
 
-      let lines = buffer.split("\r\n");
+      let lines = buffer.split("\r");
       buffer = lines.pop() || "";
       for (const line of lines) {
-        if (line.length > 0 && line.includes(command.replace("\r\n", ""))) {
+        if (line.length > 0 && line.includes(command.replace("\r", ""))) {
           return line;
         }
       }

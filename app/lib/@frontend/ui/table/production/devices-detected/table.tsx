@@ -1,26 +1,18 @@
 "use client";
 
-import { columns } from "./columns";
+import { getColumns, Row } from "./columns";
 import { DataTable } from "../../../component";
-import { ISerialPort } from "@/app/lib/@frontend/hook/use-serial-port";
+import { Device } from "@/app/lib/@backend/domain";
 
 interface Props {
-  data: {
-    equipment: {
-      imei?: string | undefined;
-      iccid?: string | undefined;
-      firmware?: string | undefined;
-      serial?: string | undefined;
-    };
-    status: "fully_identified" | "partially_identified" | "not_identified";
-    port: ISerialPort;
-  }[];
+  data: Row[];
+  model: Device.Model;
 }
 export function DevicesDetectedTable(props: Props) {
-  const { data } = props;
+  const { data, model } = props;
   return (
     <DataTable
-      columns={columns}
+      columns={getColumns(model)}
       data={data}
       mobileDisplayValue={(data) => data.equipment.imei}
       mobileKeyExtractor={() => Math.random().toString()}
