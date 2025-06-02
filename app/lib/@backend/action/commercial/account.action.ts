@@ -34,6 +34,14 @@ export const findOneAccount = async (filter: Filter<IAccount>) => {
   return await findOneAccountUsecase.execute(filter);
 };
 
+export async function findManyAccount(
+  filter: Filter<IAccount> = {},
+  page?: number,
+  limit?: number,
+  sort?: Record<string, 1 | -1>
+) {
+  return await findManyAccountUsecase.execute({ filter, page, limit, sort });
+}
 export async function accountExists(document: string): Promise<boolean> {
   const existing = await findOneAccount({ "document.value": document });
   return Boolean(existing);

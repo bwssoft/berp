@@ -13,6 +13,7 @@ import {
 import { Schema, z } from "zod";
 import {
   createOneAddress,
+  createOneContact,
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action";
@@ -262,7 +263,12 @@ export function useCreateAccountForm() {
         (item) => item.taxId === data.cnpj?.economic_group_holding
       )?.address;
 
+      const contacts = dataHolding?.find(
+        (item) => item.taxId === data.cnpj?.economic_group_holding
+      );
+
       if (id) {
+        // Criando endereço que retornou da busca da API CNPJa
         await createOneAddress({
           accountId: id,
           city: address?.city,
@@ -273,6 +279,25 @@ export function useCreateAccountForm() {
           zip_code: address?.zip,
           complement: "",
           type: ["Comercial"],
+        });
+
+        // Criando contatos que retornaram da busca da API CNPJa
+        contacts?.phones.map(async (contact) => {
+          await createOneContact({
+            accountId: id,
+            name: contacts.alias,
+            contractEnabled: false,
+            positionOrRelation: "",
+            contactFor: ["Comercial"],
+            contactItems: [
+              {
+                id: crypto.randomUUID(),
+                contact: `${contact.area}${contact.number}`,
+                type: "Telefone Comercial",
+                preferredContact: { phone: true },
+              },
+            ],
+          });
         });
         router.push(`/commercial/account/form/create/tab/address?id=${id}`);
       }
