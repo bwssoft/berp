@@ -16,8 +16,8 @@ import {
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action";
-import router from "next/router";
 import { toast } from "@/app/lib/@frontend/hook";
+import { useRouter } from "next/navigation";
 
 const schema = z
   .object({
@@ -126,6 +126,8 @@ export function useCreateAccountForm() {
     contact: "Validar",
   });
 
+  const router = useRouter();
+
   // Função para alternar o texto de qualquer botão
   const toggleButtonText = (
     key: keyof typeof buttonsState,
@@ -211,7 +213,6 @@ export function useCreateAccountForm() {
     value: string,
     groupType: "controlled" | "holding"
   ) => {
-    console.log("entrou na função");
     const cleanedValue = value.replace(/\D/g, "");
     let data;
 
@@ -223,17 +224,14 @@ export function useCreateAccountForm() {
       data = await fetchNameData(value);
       if (groupType === "controlled") {
         setDataControlled(data);
-        console.log({ data });
         return;
       }
       setDataHolding(data);
-      console.log({ data });
     }
     return data;
   };
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
-    console.log(data.cnpj?.economic_group_controlled);
     const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
       document: data.document,
 
@@ -274,12 +272,22 @@ export function useCreateAccountForm() {
           number: address?.number,
           zip_code: address?.zip,
           complement: "",
+          type: ["Comercial"],
         });
+        router.push(`/commercial/account/form/create/tab/address?id=${id}`);
       }
     }
 
     if (error) {
       Object.entries(error).forEach(([key, message]) => {
+        if (key === "cnpj") {
+          toast({
+            title: "Erro!",
+            description: message as string,
+            variant: "error",
+          });
+          methods.reset();
+        }
         if (key !== "global" && message) {
           methods.setError(key as any, {
             type: "manual",
