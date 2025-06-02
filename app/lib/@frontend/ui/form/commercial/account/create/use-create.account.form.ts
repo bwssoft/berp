@@ -10,13 +10,14 @@ import {
   createOneAccount,
   accountExists,
 } from "@/app/lib/@backend/action/commercial/account.action";
-import { z } from "zod";
+import { Schema, z } from "zod";
 import {
   createOneAddress,
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action";
 import router from "next/router";
+import { toast } from "@/app/lib/@frontend/hook";
 
 const schema = z
   .object({
@@ -233,32 +234,32 @@ export function useCreateAccountForm() {
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
     console.log(data.cnpj?.economic_group_controlled);
-    try {
-      const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
-        document: data.document,
+    const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
+      document: data.document,
 
-        ...(type === "cpf"
-          ? {
-              name: data.cpf?.name,
-              rg: data.cpf?.rg,
-            }
-          : {
-              social_name: data.cnpj?.social_name,
-              fantasy_name: data.cnpj?.fantasy_name,
-              state_registration: data.cnpj?.state_registration,
-              municipal_registration: data.cnpj?.municipal_registration,
-              status: data.cnpj?.status,
+      ...(type === "cpf"
+        ? {
+            name: data.cpf?.name,
+            rg: data.cpf?.rg,
+          }
+        : {
+            social_name: data.cnpj?.social_name,
+            fantasy_name: data.cnpj?.fantasy_name,
+            state_registration: data.cnpj?.state_registration,
+            municipal_registration: data.cnpj?.municipal_registration,
+            status: data.cnpj?.status,
 
-              economic_group_holding:
-                data.cnpj?.economic_group_holding || undefined,
+            economic_group_holding:
+              data.cnpj?.economic_group_holding || undefined,
 
-              economic_group_controlled: data.cnpj?.economic_group_controlled,
+            economic_group_controlled: data.cnpj?.economic_group_controlled,
 
-              setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
-            }),
-      };
+            setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
+          }),
+    };
 
-      const id = await createOneAccount(base);
+    const { error, success, id } = await createOneAccount(base);
+    if (success) {
       const address = dataHolding?.find(
         (item) => item.taxId === data.cnpj?.economic_group_holding
       )?.address;
@@ -275,12 +276,25 @@ export function useCreateAccountForm() {
           complement: "",
         });
       }
+    }
 
-      router.push(`/commercial/account/form/create/tab/address?id=${id}`);
+    if (error) {
+      Object.entries(error).forEach(([key, message]) => {
+        if (key !== "global" && message) {
+          methods.setError(key as any, {
+            type: "manual",
+            message: message as string,
+          });
+        }
+      });
 
-      methods.reset();
-    } catch (error) {
-      console.error(error);
+      if (error.global) {
+        toast({
+          title: "Erro!",
+          description: error.global,
+          variant: "error",
+        });
+      }
     }
   };
 
