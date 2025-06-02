@@ -11,7 +11,11 @@ import {
   accountExists,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
-import { fetchCnpjData, fetchNameData } from "@/app/lib/@backend/action";
+import {
+  createOneAddress,
+  fetchCnpjData,
+  fetchNameData,
+} from "@/app/lib/@backend/action";
 
 const schema = z
   .object({
@@ -255,6 +259,20 @@ export function useCreateAccountForm() {
       };
 
       await createOneAccount(base);
+      const address = dataHolding?.find(
+        (item) => item.taxId === data.cnpj?.economic_group_holding
+      )?.address;
+
+      await createOneAddress({
+        // accountId: address?.taxId,
+        city: address?.city,
+        state: address?.state,
+        street: address?.street,
+        district: address?.district,
+        number: address?.number,
+        zip_code: address?.zip,
+        complement: "",
+      });
       methods.reset();
     } catch (error) {
       console.error(error);
