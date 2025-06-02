@@ -14,8 +14,11 @@ import { revalidatePath } from "next/cache";
 export async function createOneAccount(
     account: Omit<IAccount, "id" | "created_at">
 ) {
-    const { id } = await createOneAccountUsecase.execute(account);
-    redirect(`/commercial/account/form/create/tab/address?id=${id}`);
+    const result = await createOneAccountUsecase.execute(account);
+
+    if (!result.success) return result;
+
+    redirect(`/commercial/account/form/create/tab/address?id=${result.id}`);
 }
 
 export async function findManyAccount(
