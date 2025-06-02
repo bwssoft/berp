@@ -16,6 +16,7 @@ import {
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action";
+import router from "next/router";
 
 const schema = z
   .object({
@@ -138,7 +139,6 @@ export function useCreateAccountForm() {
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
   });
-  console.log(methods.watch());
 
   const handleCpfCnpj = async (
     value: string
@@ -258,21 +258,26 @@ export function useCreateAccountForm() {
             }),
       };
 
-      await createOneAccount(base);
+      const id = await createOneAccount(base);
       const address = dataHolding?.find(
         (item) => item.taxId === data.cnpj?.economic_group_holding
       )?.address;
 
-      await createOneAddress({
-        // accountId: address?.taxId,
-        city: address?.city,
-        state: address?.state,
-        street: address?.street,
-        district: address?.district,
-        number: address?.number,
-        zip_code: address?.zip,
-        complement: "",
-      });
+      if (id) {
+        await createOneAddress({
+          accountId: id,
+          city: address?.city,
+          state: address?.state,
+          street: address?.street,
+          district: address?.district,
+          number: address?.number,
+          zip_code: address?.zip,
+          complement: "",
+        });
+      }
+
+      router.push(`/commercial/account/form/create/tab/address?id=${id}`);
+
       methods.reset();
     } catch (error) {
       console.error(error);
