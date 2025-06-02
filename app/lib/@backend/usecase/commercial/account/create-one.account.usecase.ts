@@ -3,38 +3,50 @@ import { IAccount, IAccountRepository } from "../../../domain";
 import { accountRepository } from "../../../infra";
 
 export type Output = {
-  success: boolean;
-  id?: string;
-  error?: {
-    global?: string;
-  };
+    success: boolean;
+    id?: string;
+    error?: {
+        global?: string;
+    };
 };
+
 class CreateOneAccountUsecase {
-  repository: IAccountRepository;
+    repository: IAccountRepository;
 
-  constructor() {
-    this.repository = accountRepository;
-  }
-
-  async execute(input: Omit<IAccount, "id" | "created_at">): Promise<Output> {
-    try {
-      const account: IAccount = {
-        ...input,
-        id: crypto.randomUUID(),
-        created_at: new Date(),
-      };
-
-      await this.repository.create(account);
-
-      return { success: true, id: account.id };
-    } catch (error) {
-      console.error(error);
-      return {
-        success: false,
-        error: { global: "Falha ao criar conta." },
-      };
+    constructor() {
+        this.repository = accountRepository;
     }
-  }
+
+    async execute(input: Omit<IAccount, "id" | "created_at">): Promise<Output> {
+        try {
+            const duplicated = await this.repository.findOne({
+                "document.value": input.document.value,
+                "document.type": "cnpj",
+            });
+
+            if (duplicated) {
+                return {
+                    success: false,
+                    error: { global: "CNPJ já cadastrado." },
+                };
+            }
+
+            const account: IAccount = {
+                ...input,
+                id: crypto.randomUUID(),
+                created_at: new Date(),
+            };
+
+            await this.repository.create(account);
+
+            return { success: true, id: account.id };
+        } catch {
+            return {
+                success: false,
+                error: { global: "Falha ao criar conta." },
+            };
+        }
+    }
 }
 
 export const createOneAccountUsecase = singleton(CreateOneAccountUsecase);
