@@ -9,7 +9,8 @@ import {
   useSectorModal,
 } from "../../../../modal/comercial/sector";
 import { ICnpjaResponse } from "@/app/lib/@backend/domain";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { debounce } from "lodash";
 
 interface CNPJAccountFormProps {
   validationEnterprise?: (
@@ -18,23 +19,16 @@ interface CNPJAccountFormProps {
   ) => Promise<ICnpjaResponse | ICnpjaResponse[] | null | undefined>;
   dataHolding: ICnpjaResponse[];
   dataControlled: ICnpjaResponse[];
-  buttonState: {
-    holding: string;
-    controlled: string;
-    contact: string;
-  };
-  toggleButtonText: (
-    key: "contact" | "controlled" | "holding",
-    type: "Validar" | "Editar"
-  ) => void;
+  selectedControlled: ICnpjaResponse[] | null;
+  setSelectedControlled: (value: ICnpjaResponse[] | null) => void;
 }
 
 export function CNPJAccountForm({
   validationEnterprise,
   dataHolding,
-  buttonState,
   dataControlled,
-  toggleButtonText,
+  selectedControlled,
+  setSelectedControlled,
 }: CNPJAccountFormProps) {
   const sectorModal = useSectorModal();
   const {
@@ -43,10 +37,23 @@ export function CNPJAccountForm({
     formState: { errors },
   } = useFormContext<CreateAccountFormSchema>();
 
-  const [queryText, setQueryText] = useState({
-    holding: "",
-    controlled: "",
-  });
+  const debouncedValidationHolding = useCallback(
+    debounce(async (value: string) => {
+      if (validationEnterprise) {
+        await validationEnterprise(value, "holding");
+      }
+    }, 500),
+    [validationEnterprise]
+  );
+
+  const debouncedValidationControlled = useCallback(
+    debounce(async (value: string) => {
+      if (validationEnterprise) {
+        await validationEnterprise(value, "controlled");
+      }
+    }, 500),
+    [validationEnterprise]
+  );
 
   return (
     <div className="flex flex-col gap-2">
@@ -129,7 +136,7 @@ export function CNPJAccountForm({
               label="Grupo Econômico (Holding)"
               behavior="search"
               onSearchChange={(text: string) => {
-                setQueryText({ ...queryText, holding: text });
+                debouncedValidationHolding(text);
               }}
               value={dataHolding.filter((item) => item.taxId === field.value)}
               onChange={(item) => console.log(item)}
@@ -140,28 +147,6 @@ export function CNPJAccountForm({
             />
           )}
         />
-        <Button
-          onClick={async () => {
-            if (buttonState.holding === "Validar") {
-              let result;
-              if (validationEnterprise) {
-                result = await validationEnterprise(
-                  queryText.holding,
-                  "holding"
-                );
-              }
-
-              if (result != null) {
-                toggleButtonText("holding", "Editar");
-              }
-            } else {
-              toggleButtonText("holding", "Validar");
-            }
-          }}
-          type="button"
-        >
-          {buttonState.holding}
-        </Button>
       </div>
 
       <div className="flex gap-2 items-end">
@@ -170,46 +155,22 @@ export function CNPJAccountForm({
           name="cnpj.economic_group_controlled"
           render={({ field }) => (
             <Combobox
+              type="multiple"
               data={dataControlled}
               label="Grupo Econômico (Controladas)"
               behavior="search"
-              onSearchChange={(text: string) => {
-                setQueryText({ ...queryText, controlled: text });
+              placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
+              value={selectedControlled || []}
+              onChange={(selectedItems) => {
+                setSelectedControlled(selectedItems);
+                field.onChange(selectedItems.map((item) => item.taxId));
               }}
-              type="multiple"
-              value={dataControlled.filter(
-                (item) => item.taxId === field.value
-              )}
-              onChange={(item) => console.log(item)}
-              onOptionChange={([item]) => field.onChange(item.taxId)}
               keyExtractor={(item) => item.taxId}
               displayValueGetter={(item) => item.company.name}
-              placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
+              onSearchChange={debouncedValidationControlled}
             />
           )}
         />
-        <Button
-          onClick={async () => {
-            if (buttonState.controlled === "Validar") {
-              let result;
-              if (validationEnterprise) {
-                result = await validationEnterprise(
-                  queryText.controlled,
-                  "controlled"
-                );
-              }
-
-              if (result != null) {
-                toggleButtonText("controlled", "Editar");
-              }
-            } else {
-              toggleButtonText("controlled", "Validar");
-            }
-          }}
-          type="button"
-        >
-          {buttonState.controlled}
-        </Button>
       </div>
     </div>
   );

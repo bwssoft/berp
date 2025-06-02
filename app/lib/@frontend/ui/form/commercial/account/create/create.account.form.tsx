@@ -18,6 +18,8 @@ export function AccountCreateForm() {
     buttonsState,
     toggleButtonText,
     dataControlled,
+    setSelectedControlled,
+    selectedControlled,
   } = useCreateAccountForm();
 
   const hasValidated = methods.getValues("document.type") === type;
@@ -38,10 +40,10 @@ export function AccountCreateForm() {
         {hasValidated && type === "cpf" && <CpfAccountForm />}
         {hasValidated && type === "cnpj" && (
           <CNPJAccountForm
-            buttonState={buttonsState}
             dataHolding={dataHolding || []}
+            setSelectedControlled={setSelectedControlled}
+            selectedControlled={selectedControlled}
             dataControlled={dataControlled || []}
-            toggleButtonText={toggleButtonText}
             validationEnterprise={handleCnpjOrName}
           />
         )}

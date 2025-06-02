@@ -44,7 +44,7 @@ const schema = z
         status: z.string().optional(),
         sector: z.string().min(1, "Setor obrigatório"),
         economic_group_holding: z.string().optional(),
-        economic_group_controlled: z.string().optional(),
+        economic_group_controlled: z.array(z.string()).optional(),
       })
       .optional(),
     contact: z.any().optional(),
@@ -109,6 +109,9 @@ export function useCreateAccountForm() {
   const [dataControlled, setDataControlled] = useState<ICnpjaResponse[] | null>(
     null
   );
+  const [selectedControlled, setSelectedControlled] = useState<
+    ICnpjaResponse[] | null
+  >(null);
 
   // Estado único para todos os botões (por exemplo, holding, controlled e contact)
   const [buttonsState, setButtonsState] = useState({
@@ -203,6 +206,7 @@ export function useCreateAccountForm() {
     value: string,
     groupType: "controlled" | "holding"
   ) => {
+    console.log("entrou na função");
     const cleanedValue = value.replace(/\D/g, "");
     let data;
 
@@ -214,14 +218,17 @@ export function useCreateAccountForm() {
       data = await fetchNameData(value);
       if (groupType === "controlled") {
         setDataControlled(data);
+        console.log({ data });
         return;
       }
       setDataHolding(data);
+      console.log({ data });
     }
     return data;
   };
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
+    console.log(data.cnpj?.economic_group_controlled);
     try {
       const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
         document: data.document,
@@ -241,9 +248,7 @@ export function useCreateAccountForm() {
               economic_group_holding:
                 data.cnpj?.economic_group_holding || undefined,
 
-              economic_group_controlled: data.cnpj?.economic_group_controlled
-                ? [data.cnpj.economic_group_controlled]
-                : undefined,
+              economic_group_controlled: data.cnpj?.economic_group_controlled,
 
               setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
             }),
@@ -267,5 +272,7 @@ export function useCreateAccountForm() {
     dataControlled,
     buttonsState,
     toggleButtonText,
+    setSelectedControlled,
+    selectedControlled,
   };
 }
