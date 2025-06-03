@@ -1,4 +1,8 @@
-export function WhatsappIcon() {
+type WhatsappIconProps = {
+  classname: string;
+};
+
+export function WhatsappIcon({ classname }: WhatsappIconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -7,7 +11,7 @@ export function WhatsappIcon() {
       height="48px"
       fill-rule="evenodd"
       clip-rule="evenodd"
-      className="w-5 h-5"
+      className={classname}
     >
       <path
         fill="#fff"

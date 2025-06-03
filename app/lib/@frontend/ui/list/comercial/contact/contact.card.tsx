@@ -71,11 +71,13 @@ export function ContactCard({ accountId }: ContactCardProps) {
                     {contactItem.contact}
                   </span>
                   {contactItem.preferredContact.whatsapp == true && (
-                    <WhatsappIcon />
+                    <WhatsappIcon classname="w-4 h-4" />
                   )}
-                  {contactItem.preferredContact.phone == true && <PhoneIcon />}
+                  {contactItem.preferredContact.phone == true && (
+                    <PhoneIcon className="w-4 h-4" />
+                  )}
                   {contactItem.preferredContact.email == true && (
-                    <EnvelopeIcon />
+                    <EnvelopeIcon className="w-4 h-4" />
                   )}
                 </div>
               ))}

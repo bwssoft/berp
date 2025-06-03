@@ -25,6 +25,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
     handleNewContact,
     handlePreferredContact,
     handleRemove,
+    setNewContacts,
   } = useCreateContactAccount(closeModal);
 
   return (
@@ -60,29 +61,36 @@ export function CreateContactAccountForm({ closeModal }: Props) {
       )}
 
       <div className="flex gap-4 justify-between w-full items-end">
-        <Controller
-          name="contactItems.0.type"
-          control={control}
-          render={({ field }) => (
-            <Combobox
-              data={[
-                "Celular",
-                "Email",
-                "Telefone Residencial",
-                "Telefone Comercial",
-              ]}
-              value={field.value}
-              onChange={field.onChange}
-              label="Tipo"
-              type="single"
-              placeholder="Selecione o tipo"
-              keyExtractor={(item) => item}
-              displayValueGetter={(item) => item}
-            />
-          )}
+        <Combobox
+          data={[
+            "Celular",
+            "Email",
+            "Telefone Residencial",
+            "Telefone Comercial",
+          ]}
+          onChange={(value) => {
+            setNewContacts((prev: any) => ({
+              ...prev,
+              type: value,
+            }));
+          }}
+          label="Tipo"
+          type="single"
+          placeholder="Selecione o tipo"
+          keyExtractor={(item) => item}
+          displayValueGetter={(item) => item}
         />
 
-        <Input label="Contato" {...register(`contactItems.0.contact`)} />
+        <Input
+          label="Contato"
+          onChange={(e) =>
+            setNewContacts((prev: any) => ({
+              ...prev,
+              contact: e.target.value,
+            }))
+          }
+        />
+
         <div
           className="bg-black text-white rounded-full p-1 mb-1.5 cursor-pointer"
           onClick={handleNewContact}

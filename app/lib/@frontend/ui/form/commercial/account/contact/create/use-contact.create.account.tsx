@@ -14,6 +14,7 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 export type ContactList = {
   id?: string;
@@ -57,7 +58,7 @@ const schema = z
           }),
         })
       )
-      .min(1, "Adicione ao menos um tipo de contato"),
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (data.contractEnabled) {
@@ -78,6 +79,11 @@ const schema = z
   });
 
 export function useCreateContactAccount(closeModal: () => void) {
+  const [newContacts, setNewContacts] = useState<any>({
+    type: "",
+    contact: "",
+    preferredContact: {},
+  });
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -97,8 +103,6 @@ export function useCreateContactAccount(closeModal: () => void) {
 
   const {
     control,
-    register,
-    watch,
     setError,
     reset,
     handleSubmit,
@@ -111,16 +115,7 @@ export function useCreateContactAccount(closeModal: () => void) {
   });
 
   const handleNewContact = () => {
-    const rawType = watch("contactItems.0.type");
-    const type =
-      Array.isArray(rawType) && rawType.length > 0
-        ? rawType[0]
-        : typeof rawType === "string"
-          ? rawType
-          : "Celular";
-
-    const contact = watch("contactItems.0.contact")?.trim();
-    if (!type || !contact) {
+    if (!newContacts.type || !newContacts.contact) {
       toast({
         title: "Atenção",
         description: "Preencha o tipo e o contato antes de adicionar.",
@@ -131,8 +126,8 @@ export function useCreateContactAccount(closeModal: () => void) {
 
     append({
       id: crypto.randomUUID(),
-      type: [type],
-      contact,
+      type: newContacts.type,
+      contact: newContacts.contact,
       preferredContact: {},
     });
   };
@@ -173,11 +168,14 @@ export function useCreateContactAccount(closeModal: () => void) {
     const { success, error } = await createOneContact({
       ...data,
       accountId: accountId ?? undefined,
-      contactItems: data.contactItems.map((item) => ({
-        ...item,
-        id: item.id ?? crypto.randomUUID(),
-        type: item.type[0],
-      })),
+      contactItems: newContacts.map(
+        (item: { id: any; type: any[]; preferredContact: any }) => ({
+          ...item,
+          id: item.id ?? crypto.randomUUID(),
+          type: item.type[0],
+          preferredContact: item.preferredContact,
+        })
+      ),
     });
 
     if (success && accountId) {
@@ -240,5 +238,6 @@ export function useCreateContactAccount(closeModal: () => void) {
     handlePreferredContact,
     handleRemove,
     onSubmit,
+    setNewContacts,
   };
 }

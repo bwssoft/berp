@@ -71,7 +71,7 @@ export const columns = (props: Props): ColumnDef<ContactList>[] => [
                   props.handlePreferredContact(row.index, "whatsapp")
                 }
               />
-              <WhatsappIcon />
+              <WhatsappIcon classname="w-5 h-5" />
             </label>
           )}
         </div>
