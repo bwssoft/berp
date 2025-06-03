@@ -30,40 +30,6 @@ export function AddressCreateForm({ closeModal }: { closeModal: () => void }) {
             onSubmit={handleSubmit}
             className="flex flex-col gap-2 px-1 sm:px-6 lg:px-8 rounded-md pb-6"
         >
-            <Controller
-                control={control}
-                name="address_search"
-                render={({ field }) => (
-                    <Combobox<Option>
-                        data={suggestions}
-                        keyExtractor={(o) => o.display_name}
-                        displayValueGetter={(o) => o.display_name}
-                        type="single"
-                        behavior="search"
-                        value={
-                            field.value
-                                ? suggestions.filter(
-                                      (s) => s.display_name === field.value
-                                  )
-                                : []
-                        }
-                        onOptionChange={([selected]) => {
-                            field.onChange(
-                                selected ? selected.display_name : ""
-                            );
-                            if (selected) handleSelectSuggestion(selected);
-                        }}
-                        onSearchChange={(q) => {
-                            field.onChange(q);
-                            setSearch(q);
-                        }}
-                        placeholder="Digite rua, número ou bairro"
-                        isLoading={loadingSearch}
-                        error={errors.address_search?.message}
-                    />
-                )}
-            />
-
             <Input
                 label="Buscar pelo CEP"
                 placeholder=""
