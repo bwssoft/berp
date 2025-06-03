@@ -41,6 +41,7 @@ export async function findManyAccount(
 ) {
   return await findManyAccountUsecase.execute({ filter, page, limit, sort });
 }
+
 export async function accountExists(document: string): Promise<boolean> {
   const existing = await findOneAccount({ "document.value": document });
   return Boolean(existing);

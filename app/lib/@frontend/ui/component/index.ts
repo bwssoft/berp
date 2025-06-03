@@ -29,4 +29,6 @@ export * from "./combobox";
 export * from "./popover";
 export * from "./modal";
 export * from "./spinner";
+export * from "./info-field";
+export * from "./section-card";
 export * from "./input-password";
