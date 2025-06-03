@@ -16,8 +16,7 @@ export async function createOneAccount(
 ) {
   const result = await createOneAccountUsecase.execute(account);
 
-  if (result.error) return result;
-  redirect(`/commercial/account/form/create/tab/address?id=${result.id}`);
+  return result;
 }
 
 export async function updateOneAccount(

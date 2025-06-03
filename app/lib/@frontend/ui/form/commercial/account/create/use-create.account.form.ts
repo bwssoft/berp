@@ -266,6 +266,8 @@ export function useCreateAccountForm() {
     };
 
     const { error, success, id } = await createOneAccount(base);
+    console.log({ address, contacts });
+
     if (success) {
       if (id) {
         // Criando endereço que retornou da busca da API CNPJa
