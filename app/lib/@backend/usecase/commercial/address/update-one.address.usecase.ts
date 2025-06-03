@@ -14,13 +14,7 @@ class UpdateOneAddressUsecase {
 
     @RemoveMongoId()
     async execute(filter: Filter<IAddress>, update: Partial<IAddress>) {
-        console.log(
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            filter.id,
-            update
-        );
         return await this.repository.updateOne(filter, { $set: update });
-        // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", data);
     }
 }
 
