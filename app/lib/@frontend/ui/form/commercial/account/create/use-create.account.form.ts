@@ -9,6 +9,7 @@ import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
 import {
   createOneAccount,
   accountExists,
+  updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { Schema, z } from "zod";
 import {
@@ -233,6 +234,13 @@ export function useCreateAccountForm() {
   };
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
+    const holding = dataHolding?.find(
+      (item) => item.taxId === data.cnpj?.economic_group_holding
+    );
+
+    const address = holding?.address;
+    const contacts = holding;
+
     const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
       document: data.document,
 
@@ -259,14 +267,6 @@ export function useCreateAccountForm() {
 
     const { error, success, id } = await createOneAccount(base);
     if (success) {
-      const address = dataHolding?.find(
-        (item) => item.taxId === data.cnpj?.economic_group_holding
-      )?.address;
-
-      const contacts = dataHolding?.find(
-        (item) => item.taxId === data.cnpj?.economic_group_holding
-      );
-
       if (id) {
         // Criando endereço que retornou da busca da API CNPJa
         await createOneAddress({
@@ -282,23 +282,31 @@ export function useCreateAccountForm() {
         });
 
         // Criando contatos que retornaram da busca da API CNPJa
-        contacts?.phones.map(async (contact) => {
-          await createOneContact({
-            accountId: id,
-            name: contacts.alias,
-            contractEnabled: false,
-            positionOrRelation: "",
-            contactFor: ["Comercial"],
-            contactItems: [
-              {
-                id: crypto.randomUUID(),
-                contact: `${contact.area}${contact.number}`,
-                type: "Telefone Comercial",
-                preferredContact: { phone: true },
-              },
-            ],
-          });
-        });
+        if (contacts && Array.isArray(contacts.phones)) {
+          for (const phone of contacts.phones) {
+            const { success } = await createOneContact({
+              accountId: id,
+              name: contacts.alias,
+              contractEnabled: false,
+              positionOrRelation: "",
+              contactFor: ["Comercial"],
+              contactItems: [
+                {
+                  id: crypto.randomUUID(),
+                  contact: `${phone.area}${phone.number}`,
+                  type: "Telefone Comercial",
+                  preferredContact: { phone: true },
+                },
+              ],
+            });
+
+            // atualiza a conta com o contato novo criado
+            if (success) {
+              await updateOneAccount({ id }, { contacts: [success] });
+            }
+          }
+        }
+
         router.push(`/commercial/account/form/create/tab/address?id=${id}`);
       }
     }
