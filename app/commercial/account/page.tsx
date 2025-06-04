@@ -7,14 +7,15 @@ import {
   SearchContactModal,
   UpdateEconomicGroupAccountModal,
 } from "@/app/lib/@frontend/ui/modal";
-import { CreateContact } from "./create-contact";
 import { CreateAddressModal } from "./form/create/tab/address/create-address";
+import { CreateContact } from "./form/create/tab/contact/create-contact";
 
 interface Props {
   searchParams: {
     id: string;
   };
 }
+
 export default async function Page({ searchParams }: Props) {
   const { id: accountId } = searchParams;
   const account = await findManyAccount({ id: accountId });
@@ -44,19 +45,24 @@ export default async function Page({ searchParams }: Props) {
           <div className="flex gap-2">
             <InfoField
               label="Holding (CNPJ)"
-              value={acc.economic_group_holding}
+              value={`${acc.economic_group_holding?.name} / ${acc.economic_group_holding?.taxId}`}
             />
-            <UpdateEconomicGroupAccountModal />
+            <UpdateEconomicGroupAccountModal accountId={accountId} />
           </div>
           <div className="text-xs w-full mt-2">
             <h4 className="font-semibold">Empresas do Grupo (CNPJ)</h4>
-            {acc.economic_group_controlled?.length ? (
-              acc.economic_group_controlled.map((company, index) => (
-                <span key={index}>{company}</span>
-              ))
-            ) : (
-              <span>Nenhuma empresa do grupo econômico cadastrada</span>
-            )}
+            <div className="flex flex-col ">
+              {acc.economic_group_controlled?.length ? (
+                acc.economic_group_controlled.map((company, index) => (
+                  <p key={index}>
+                    {company.name + " / "}{" "}
+                    <span className="text-gray-700">{company.taxId}</span>
+                  </p>
+                ))
+              ) : (
+                <span>Nenhuma empresa do grupo econômico cadastrada</span>
+              )}
+            </div>
           </div>
         </SectionCard>
       </div>

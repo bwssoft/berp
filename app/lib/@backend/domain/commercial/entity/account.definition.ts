@@ -15,8 +15,13 @@ export interface IAccount {
   setor?: string[];
   address?: string[];
   contacts?: IContact[];
-  economic_group_holding?: string;
-  economic_group_controlled?: string[];
+  economic_group_holding?: EconomicGroup;
+  economic_group_controlled?: EconomicGroup[];
   created_at?: Date;
   updated_at?: Date;
+}
+
+interface EconomicGroup {
+  name: string;
+  taxId: string;
 }

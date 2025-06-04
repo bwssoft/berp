@@ -52,8 +52,20 @@ const schema = z
         municipal_registration: z.string().optional(),
         status: z.string().optional(),
         sector: z.string().min(1, "Setor obrigatório"),
-        economic_group_holding: z.string().optional(),
-        economic_group_controlled: z.array(z.string()).optional(),
+        economic_group_holding: z
+          .object({
+            taxId: z.string().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        economic_group_controlled: z
+          .array(
+            z.object({
+              taxId: z.string().optional(),
+              name: z.string().optional(),
+            })
+          )
+          .optional(),
       })
       .optional(),
     contact: z.any().optional(),
@@ -250,7 +262,7 @@ export function useCreateAccountForm() {
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
     const holding = dataHolding?.find(
-      (item) => item.taxId === data.cnpj?.economic_group_holding
+      (item) => item.taxId === data.cnpj?.economic_group_holding?.taxId
     );
 
     const address = holding?.address;
@@ -271,10 +283,16 @@ export function useCreateAccountForm() {
             municipal_registration: data.cnpj?.municipal_registration,
             status: data.cnpj?.status,
 
-            economic_group_holding:
-              data.cnpj?.economic_group_holding || undefined,
+            economic_group_holding: {
+              name: data.cnpj?.economic_group_holding?.name,
+              taxId: data.cnpj?.economic_group_holding?.taxId,
+            },
 
-            economic_group_controlled: data.cnpj?.economic_group_controlled,
+            economic_group_controlled:
+              data.cnpj?.economic_group_controlled?.map((item) => ({
+                name: item.name,
+                taxId: item.taxId,
+              })),
 
             setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
           }),

@@ -120,9 +120,12 @@ export function CNPJAccountForm({
               onSearchChange={(text: string) => {
                 debouncedValidationHolding(text);
               }}
-              value={dataHolding.filter((item) => item.taxId === field.value)}
-              onChange={(item) => console.log(item)}
-              onOptionChange={([item]) => field.onChange(item.taxId)}
+              value={dataHolding.filter(
+                (item) => item.taxId === field.value?.taxId
+              )}
+              onOptionChange={([item]) =>
+                field.onChange({ name: item.company.name, taxId: item.taxId })
+              }
               keyExtractor={(item) => item.taxId}
               displayValueGetter={(item) => item.company.name}
               placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
@@ -145,7 +148,11 @@ export function CNPJAccountForm({
               value={selectedControlled || []}
               onChange={(selectedItems) => {
                 setSelectedControlled(selectedItems);
-                field.onChange(selectedItems.map((item) => item.taxId));
+                field.onChange(
+                  selectedItems.map((item) => {
+                    return { name: item.company.name, taxId: item.taxId };
+                  })
+                );
               }}
               keyExtractor={(item) => item.taxId}
               displayValueGetter={(item) => item.company.name}

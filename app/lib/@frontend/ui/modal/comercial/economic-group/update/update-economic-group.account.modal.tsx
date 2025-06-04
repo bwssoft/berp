@@ -5,7 +5,11 @@ import { Modal, ModalBody, ModalContent } from "../../../../component";
 import { EconomicGroupAccountForm } from "../../../../form/commercial/account/update/economic-group/update-one.economic-group.account.form";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
-export function UpdateEconomicGroupAccountModal() {
+interface Props {
+  accountId: string;
+}
+
+export function UpdateEconomicGroupAccountModal({ accountId }: Props) {
   const { closeModal, openModal, open } = useUpdateEconomicGroupAccountModal();
   return (
     <>
@@ -24,7 +28,7 @@ export function UpdateEconomicGroupAccountModal() {
       >
         <ModalContent>
           <ModalBody>
-            <EconomicGroupAccountForm />
+            <EconomicGroupAccountForm accountId={accountId} />
           </ModalBody>
         </ModalContent>
       </Modal>
