@@ -13,13 +13,14 @@ export function AccountCreateForm() {
     onSubmit,
     type,
     handleCpfCnpj,
-    handleCnpjOrName,
     dataHolding,
     buttonsState,
     toggleButtonText,
     dataControlled,
     setSelectedControlled,
     selectedControlled,
+    debouncedValidationHolding,
+    debouncedValidationControlled,
   } = useCreateAccountForm();
 
   const hasValidated = methods.getValues("document.type") === type;
@@ -44,7 +45,8 @@ export function AccountCreateForm() {
             setSelectedControlled={setSelectedControlled}
             selectedControlled={selectedControlled}
             dataControlled={dataControlled || []}
-            validationEnterprise={handleCnpjOrName}
+            debouncedValidationHolding={debouncedValidationHolding}
+            debouncedValidationControlled={debouncedValidationControlled}
           />
         )}
 

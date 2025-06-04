@@ -9,26 +9,26 @@ import {
   useSectorModal,
 } from "../../../../modal/comercial/sector";
 import { ICnpjaResponse } from "@/app/lib/@backend/domain";
-import { useCallback, useState } from "react";
-import { debounce } from "lodash";
+import { DebouncedFunc } from "lodash";
 
 interface CNPJAccountFormProps {
-  validationEnterprise?: (
-    value: string,
-    groupType: "controlled" | "holding"
-  ) => Promise<ICnpjaResponse | ICnpjaResponse[] | null | undefined>;
   dataHolding: ICnpjaResponse[];
+  debouncedValidationHolding: DebouncedFunc<(value: string) => Promise<void>>;
+  debouncedValidationControlled: DebouncedFunc<
+    (value: string) => Promise<void>
+  >;
   dataControlled: ICnpjaResponse[];
   selectedControlled: ICnpjaResponse[] | null;
   setSelectedControlled: (value: ICnpjaResponse[] | null) => void;
 }
 
 export function CNPJAccountForm({
-  validationEnterprise,
   dataHolding,
   dataControlled,
   selectedControlled,
   setSelectedControlled,
+  debouncedValidationControlled,
+  debouncedValidationHolding,
 }: CNPJAccountFormProps) {
   const sectorModal = useSectorModal();
   const {
@@ -36,24 +36,6 @@ export function CNPJAccountForm({
     control,
     formState: { errors },
   } = useFormContext<CreateAccountFormSchema>();
-
-  const debouncedValidationHolding = useCallback(
-    debounce(async (value: string) => {
-      if (validationEnterprise) {
-        await validationEnterprise(value, "holding");
-      }
-    }, 500),
-    [validationEnterprise]
-  );
-
-  const debouncedValidationControlled = useCallback(
-    debounce(async (value: string) => {
-      if (validationEnterprise) {
-        await validationEnterprise(value, "controlled");
-      }
-    }, 500),
-    [validationEnterprise]
-  );
 
   return (
     <div className="flex flex-col gap-2">

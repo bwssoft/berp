@@ -3,7 +3,10 @@ import { IAddress } from "@/app/lib/@backend/domain";
 import { InfoField, SectionCard } from "@/app/lib/@frontend/ui/component";
 import { AddressCard } from "@/app/lib/@frontend/ui/list/comercial/address/address.card";
 import { ContactCard } from "@/app/lib/@frontend/ui/list/comercial/contact/contact.card";
-import { SearchContactModal } from "@/app/lib/@frontend/ui/modal";
+import {
+  SearchContactModal,
+  UpdateEconomicGroupAccountModal,
+} from "@/app/lib/@frontend/ui/modal";
 import { CreateContact } from "./create-contact";
 import { CreateAddressModal } from "./form/create/tab/address/create-address";
 
@@ -38,10 +41,13 @@ export default async function Page({ searchParams }: Props) {
         </SectionCard>
 
         <SectionCard title="Grupo Econômico">
-          <InfoField
-            label="Holding (CNPJ)"
-            value={acc.economic_group_holding}
-          />
+          <div className="flex gap-2">
+            <InfoField
+              label="Holding (CNPJ)"
+              value={acc.economic_group_holding}
+            />
+            <UpdateEconomicGroupAccountModal />
+          </div>
           <div className="text-xs w-full mt-2">
             <h4 className="font-semibold">Empresas do Grupo (CNPJ)</h4>
             {acc.economic_group_controlled?.length ? (

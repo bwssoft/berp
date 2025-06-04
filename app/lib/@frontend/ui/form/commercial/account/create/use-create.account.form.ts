@@ -4,7 +4,7 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
 import {
   createOneAccount,
@@ -20,6 +20,7 @@ import {
 } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useRouter } from "next/navigation";
+import { debounce } from "lodash";
 
 const schema = z
   .object({
@@ -233,6 +234,20 @@ export function useCreateAccountForm() {
     return data;
   };
 
+  const debouncedValidationHolding = useCallback(
+    debounce(async (value: string) => {
+      await handleCnpjOrName(value, "holding");
+    }, 500),
+    [handleCnpjOrName]
+  );
+
+  const debouncedValidationControlled = useCallback(
+    debounce(async (value: string) => {
+      await handleCnpjOrName(value, "controlled");
+    }, 500),
+    [handleCnpjOrName]
+  );
+
   const onSubmit = async (data: CreateAccountFormSchema) => {
     const holding = dataHolding?.find(
       (item) => item.taxId === data.cnpj?.economic_group_holding
@@ -354,5 +369,7 @@ export function useCreateAccountForm() {
     toggleButtonText,
     setSelectedControlled,
     selectedControlled,
+    debouncedValidationHolding,
+    debouncedValidationControlled,
   };
 }
