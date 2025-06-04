@@ -21,7 +21,7 @@ export interface IAccount {
   updated_at?: Date;
 }
 
-interface EconomicGroup {
+export interface EconomicGroup {
   name: string;
   taxId: string;
 }

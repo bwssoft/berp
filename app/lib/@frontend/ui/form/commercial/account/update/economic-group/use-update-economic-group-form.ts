@@ -4,11 +4,15 @@ import {
   fetchNameData,
   findManyAccount,
 } from "@/app/lib/@backend/action";
-import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
+import {
+  EconomicGroup,
+  IAccount,
+  ICnpjaResponse,
+} from "@/app/lib/@backend/domain";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { debounce } from "lodash";
+import { debounce, set } from "lodash";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -24,17 +28,21 @@ export type UpdateEconomicGroupFormSchema = z.infer<typeof schema>;
 
 export function useUpdateEconomicGroupForm(accounId: string) {
   // Estado para guardar os dados retornados para holding e controlled
-  const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
-  const [dataControlled, setDataControlled] = useState<ICnpjaResponse[]>([]);
-  const [selectedControlled, setSelectedControlled] = useState<
-    ICnpjaResponse[] | null
-  >(null);
+  const [dataHolding, setDataHolding] = useState<EconomicGroup[]>([]);
+  const [dataControlled, setDataControlled] = useState<EconomicGroup[]>([]);
+  const [selectedControlled, setSelectedControlled] = useState<EconomicGroup[]>(
+    []
+  );
 
   useQuery({
     queryKey: ["findManyAccount", accounId],
     queryFn: async () => {
       const data = await findManyAccount({ id: accounId });
       const holding = data.docs[0]?.economic_group_holding;
+      holding && setDataHolding([holding]);
+
+      const controlled = data.docs[0]?.economic_group_controlled;
+      controlled && setDataControlled(controlled);
     },
   });
 
@@ -55,11 +63,15 @@ export function useUpdateEconomicGroupForm(accounId: string) {
     } else {
       // Se não for CNPJ, trata como nome e usa outra função
       data = await fetchNameData(value);
+      const normalized = data?.map((item) => ({
+        taxId: item.taxId.replace(/\D/g, ""),
+        name: item.company.name,
+      }));
       if (groupType === "controlled") {
-        setDataControlled(data ?? []);
+        setDataControlled(normalized ?? []);
         return;
       }
-      setDataHolding(data ?? []);
+      setDataHolding(normalized ?? []);
     }
     return data;
   };

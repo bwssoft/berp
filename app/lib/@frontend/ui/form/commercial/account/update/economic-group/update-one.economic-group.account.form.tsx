@@ -35,7 +35,7 @@ export function EconomicGroupAccountForm({ accountId }: Props) {
             onChange={(item) => console.log(item)}
             onOptionChange={([item]) => field.onChange(item.taxId)}
             keyExtractor={(item) => item.taxId}
-            displayValueGetter={(item) => item.company.name}
+            displayValueGetter={(item) => item.name}
             placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
           />
         )}
@@ -51,13 +51,13 @@ export function EconomicGroupAccountForm({ accountId }: Props) {
             label="Grupo Econômico (Controladas)"
             behavior="search"
             placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
-            value={selectedControlled || []}
+            value={selectedControlled}
             onChange={(selectedItems) => {
               setSelectedControlled(selectedItems);
               field.onChange(selectedItems.map((item) => item.taxId));
             }}
             keyExtractor={(item) => item.taxId}
-            displayValueGetter={(item) => item.company.name}
+            displayValueGetter={(item) => item.name}
             onSearchChange={debouncedValidationControlled}
           />
         )}
