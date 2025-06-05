@@ -1,12 +1,19 @@
 import { Controller } from "react-hook-form";
 import { useUpdateEconomicGroupForm } from "./use-update-economic-group-form";
 import { Combobox } from "@/app/lib/@frontend/ui/component";
+import { Button } from "@/app/lib/@frontend/ui/component";
 
 interface Props {
   accountId: string;
+  closeModal?: () => void;
+  isModalOpen: boolean;
 }
 
-export function EconomicGroupAccountForm({ accountId }: Props) {
+export function EconomicGroupAccountForm({
+  accountId,
+  closeModal,
+  isModalOpen,
+}: Props) {
   const {
     control,
     onSubmit,
@@ -16,10 +23,10 @@ export function EconomicGroupAccountForm({ accountId }: Props) {
     dataControlled,
     debouncedValidationHolding,
     debouncedValidationControlled,
-  } = useUpdateEconomicGroupForm(accountId);
+  } = useUpdateEconomicGroupForm(accountId, isModalOpen, closeModal);
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <form onSubmit={onSubmit} className="flex flex-col gap-4 w-full h-fit">
       <Controller
         control={control}
         name="cnpj.economic_group_holding"
@@ -62,6 +69,12 @@ export function EconomicGroupAccountForm({ accountId }: Props) {
           />
         )}
       />
+      <div className="flex gap-4 justify-end mt-6">
+        <Button type="button" variant="ghost">
+          Cancelar
+        </Button>
+        <Button type="submit">Salvar</Button>
+      </div>
     </form>
   );
 }

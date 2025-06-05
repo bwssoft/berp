@@ -13,22 +13,24 @@ export function UpdateEconomicGroupAccountModal({ accountId }: Props) {
   const { closeModal, openModal, open } = useUpdateEconomicGroupAccountModal();
   return (
     <>
-      {true && (
-        <Button onClick={openModal}>
-          <PencilSquareIcon className="w-5 h-5 cursor-pointer" />
-        </Button>
-      )}
+      <Button onClick={openModal}>
+        <PencilSquareIcon className="w-5 h-5 cursor-pointer" />
+      </Button>
 
       <Modal
         open={open}
         onClose={closeModal}
         title="Grupo Econômico"
-        className="bg-white h-full max-h-[70vh]"
+        className="bg-white h-fit w-full max-w-xl"
         position="center"
       >
         <ModalContent>
           <ModalBody>
-            <EconomicGroupAccountForm accountId={accountId} />
+            <EconomicGroupAccountForm
+              accountId={accountId}
+              isModalOpen={open}
+              closeModal={closeModal}
+            />
           </ModalBody>
         </ModalContent>
       </Modal>
