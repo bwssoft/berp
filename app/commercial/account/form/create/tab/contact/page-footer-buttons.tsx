@@ -17,7 +17,9 @@ export function PageFooterButtons({ id }: Props) {
       </Button>
       <Button
         type="submit"
-        onClick={() => router.push(`/commercial/account?id=${id}`)}
+        onClick={() =>
+          router.push(`/commercial/account/management/account-data?id=${id}`)
+        }
       >
         Salvar e próximo
       </Button>
