@@ -11,7 +11,7 @@ import {
   accountExists,
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
-import { Schema, z } from "zod";
+import { z } from "zod";
 import {
   createOneAddress,
   createOneContact,
@@ -130,6 +130,7 @@ export function useCreateAccountForm() {
   const [dataControlled, setDataControlled] = useState<ICnpjaResponse[] | null>(
     null
   );
+  const [dataCnpj, setDataCnpj] = useState<ICnpjaResponse | null>(null);
   const [selectedControlled, setSelectedControlled] = useState<
     ICnpjaResponse[] | null
   >(null);
@@ -207,6 +208,8 @@ export function useCreateAccountForm() {
       const data = await fetchCnpjData(cleanedValue);
 
       if (data) {
+        console.log("CNPJ Data:", data);
+        setDataCnpj(data);
         methods.setValue("cnpj.fantasy_name", data.alias);
         methods.setValue("cnpj.status", data.status.text);
         methods.setValue("cnpj.social_name", data.company.name);
@@ -261,16 +264,21 @@ export function useCreateAccountForm() {
   );
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
-    const holding = dataHolding?.find(
-      (item) => item.taxId === data.cnpj?.economic_group_holding?.taxId
-    );
+    // const holding = dataHolding?.find(
+    //   (item) => item.taxId === data.cnpj?.economic_group_holding?.taxId
+    // );
 
-    const address = holding?.address;
-    const contacts = holding;
+    // const controlleds = dataControlled?.filter((item) =>
+    //   data.cnpj?.economic_group_controlled?.some(
+    //     (controlled) => controlled.taxId === item.taxId
+    //   )
+    // );
+
+    const address = dataCnpj?.address;
+    const contact = dataCnpj?.phones[0];
 
     const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
       document: data.document,
-
       ...(type === "cpf"
         ? {
             name: data.cpf?.name,
@@ -282,71 +290,122 @@ export function useCreateAccountForm() {
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
             status: data.cnpj?.status,
-
             economic_group_holding: {
               name: data.cnpj?.economic_group_holding?.name,
               taxId: data.cnpj?.economic_group_holding?.taxId,
             },
-
             economic_group_controlled:
               data.cnpj?.economic_group_controlled?.map((item) => ({
                 name: item.name,
                 taxId: item.taxId,
               })),
-
             setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
           }),
     };
 
     const { error, success, id } = await createOneAccount(base);
-    console.log({ address, contacts });
 
-    if (success) {
-      if (id) {
-        // Criando endereço que retornou da busca da API CNPJa
+    if (success && id) {
+      // Criar endereço
+      if (address) {
         await createOneAddress({
           accountId: id,
-          city: address?.city,
-          state: address?.state,
-          street: address?.street,
-          district: address?.district,
-          number: address?.number,
-          zip_code: address?.zip,
+          city: address.city,
+          state: address.state,
+          street: address.street,
+          district: address.district,
+          number: address.number,
+          zip_code: address.zip,
           complement: "",
           type: ["Comercial"],
         });
-
-        // Criando contatos que retornaram da busca da API CNPJa
-        if (contacts && Array.isArray(contacts.phones)) {
-          for (const phone of contacts.phones) {
-            const { success } = await createOneContact({
-              accountId: id,
-              name: contacts.alias,
-              contractEnabled: false,
-              positionOrRelation: "",
-              contactFor: ["Comercial"],
-              contactItems: [
-                {
-                  id: crypto.randomUUID(),
-                  contact: `${phone.area}${phone.number}`,
-                  type: "Telefone Comercial",
-                  preferredContact: { phone: true },
-                },
-              ],
-            });
-
-            // atualiza a conta com o contato novo criado
-            if (success) {
-              await updateOneAccount({ id }, { contacts: [success] });
-            }
-          }
-        }
-
-        router.push(`/commercial/account/form/create/tab/address?id=${id}`);
       }
+
+      if (contact) {
+        const contactCnpj = await createOneContact({
+          accountId: id,
+          name: dataCnpj?.company.name || dataCnpj?.alias || "",
+          contractEnabled: false,
+          positionOrRelation: "",
+          contactFor: ["Comercial"],
+          contactItems: [
+            {
+              id: crypto.randomUUID(),
+              contact: `${contact.area}${contact.number}`,
+              type:
+                dataCnpj?.phones[0].type === "LANDLINE"
+                  ? "Telefone Comercial"
+                  : "Celular",
+              preferredContact: { phone: true },
+            },
+          ],
+        });
+
+        contactCnpj.success &&
+          (await updateOneAccount({ id }, { contacts: [contactCnpj.success] }));
+      }
+
+      // // Contatos da holding
+      // if (holding?.phones?.length) {
+      //   for (const phone of holding.phones) {
+      //     const result = await createOneContact({
+      //       accountId: id,
+      //       name: holding.alias,
+      //       contractEnabled: false,
+      //       positionOrRelation: "",
+      //       contactFor: ["Comercial"],
+      //       contactItems: [
+      //         {
+      //           id: crypto.randomUUID(),
+      //           contact: `${phone.area}${phone.number}`,
+      //           type: "Telefone Comercial",
+      //           preferredContact: { phone: true },
+      //         },
+      //       ],
+      //     });
+
+      //     if (result.success) {
+      //       allContacts.push(result.success);
+      //     }
+      //   }
+      // }
+
+      // // Contatos das controladas
+      // for (const controlled of controlleds!) {
+      //   if (!controlled.phones?.length) continue;
+
+      //   for (const phone of controlled.phones) {
+      //     const result = await createOneContact({
+      //       accountId: id,
+      //       name: controlled.alias,
+      //       contractEnabled: false,
+      //       positionOrRelation: "",
+      //       contactFor: ["Comercial"],
+      //       contactItems: [
+      //         {
+      //           id: crypto.randomUUID(),
+      //           contact: `${phone.area}${phone.number}`,
+      //           type: "Telefone Comercial",
+      //           preferredContact: { phone: true },
+      //         },
+      //       ],
+      //     });
+
+      //     if (result.success) {
+      //       allContacts.push(result.success);
+      //     }
+      //   }
+      // }
+
+      router.push(`/commercial/account/form/create/tab/address?id=${id}`);
     }
 
+    // Erros
     if (error) {
+      if (error.global) {
+        toast({ title: "Erro!", description: error.global, variant: "error" });
+      }
+
       Object.entries(error).forEach(([key, message]) => {
         if (key === "cnpj") {
           toast({
@@ -355,22 +414,13 @@ export function useCreateAccountForm() {
             variant: "error",
           });
           methods.reset();
-        }
-        if (key !== "global" && message) {
+        } else {
           methods.setError(key as any, {
             type: "manual",
             message: message as string,
           });
         }
       });
-
-      if (error.global) {
-        toast({
-          title: "Erro!",
-          description: error.global,
-          variant: "error",
-        });
-      }
     }
   };
 
