@@ -16,7 +16,7 @@ interface Props {
   handleRemove: (index: number) => void;
 }
 
-export const columns = (props: Props): ColumnDef<ContactList>[] => [
+export const columnsContact = (props: Props): ColumnDef<ContactList>[] => [
   {
     header: "Tipo",
     accessorKey: "type",

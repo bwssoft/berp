@@ -3,7 +3,7 @@
 
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { ContactList } from "../../../form/commercial/account/contact/create/use-contact.create.account";
-import { columns } from "./colums";
+import { columnsContact } from "./contact.columns";
 
 interface Props {
   data: ContactList[];
@@ -21,7 +21,7 @@ export function ContactTable({
 }: Props) {
   return (
     <DataTable
-      columns={columns({
+      columns={columnsContact({
         handlePreferredContact,
         handleRemove,
       })}
