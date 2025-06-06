@@ -9,7 +9,7 @@ export const columns: ColumnDef<IAccountAttachment>[] = [
     accessorKey: "name",
     cell: ({ row }) => {
       const client = row.original;
-      return client.name;
+      return <p className="font-semibold">{client.name}</p>;
     },
   },
   {
@@ -21,16 +21,24 @@ export const columns: ColumnDef<IAccountAttachment>[] = [
     },
   },
   {
+    header: "Data /Hora",
+    accessorKey: "createdAt",
+    cell: ({ row }) => {
+      const input = row.original;
+      return input.createdAt.toLocaleString();
+    },
+  },
+  {
     header: "Arquivo",
     accessorKey: "file",
     cell: ({ row }) => {
       const input = row.original;
-      return input.file.name;
+      return input.file?.name ?? "";
     },
   },
   {
-    header: "Ações",
-    accessorKey: "",
+    header: "",
+    accessorKey: "id",
     cell: ({ row }) => {
       const input = row.original;
       return (

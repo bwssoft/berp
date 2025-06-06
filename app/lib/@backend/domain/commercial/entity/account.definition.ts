@@ -31,5 +31,5 @@ export interface IAccountAttachment {
   name: string;
   userId?: string;
   createdAt: Date;
-  file: File;
+  file?: File;
 }
