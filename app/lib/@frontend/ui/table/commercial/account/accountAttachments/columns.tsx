@@ -1,5 +1,5 @@
-import { deleteOneClientById } from "@/app/lib/@backend/action";
 import { IAccountAttachment } from "@/app/lib/@backend/domain";
+import { InboxArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
@@ -44,14 +44,18 @@ export const columns: ColumnDef<IAccountAttachment>[] = [
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <Link href={``} className="text-blue-600 hover:text-blue-900">
-            Ícone aq
+            <InboxArrowDownIcon className="w-5 h-5" />
           </Link>
-          <form onSubmit={() => deleteOneClientById({ id: input.id! })}>
+          <form
+            onSubmit={() => {
+              /*deleteOneAccountAttachmentsById({ id: input.id! }) */
+            }}
+          >
             <button
               type="submit"
               className="text-blue-600 hover:text-blue-900 px-0 py-0"
             >
-              Deletar
+              <TrashIcon className="w-5 h-5" />
             </button>
           </form>
         </td>

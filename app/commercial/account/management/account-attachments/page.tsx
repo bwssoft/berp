@@ -1,8 +1,15 @@
+"use client";
 import { Button, Input } from "@/app/lib/@frontend/ui/component";
+import {
+  CreateAnnexModal,
+  useCreateAnnexModal,
+} from "@/app/lib/@frontend/ui/modal";
 import { AccountAttachmentsTable } from "@/app/lib/@frontend/ui/table";
 import { FolderOpenIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 
 export default function Page() {
+  const { openModal, open, closeModal } = useCreateAnnexModal();
+
   return (
     <div className="grid grid-cols-2 flex-col gap-4">
       <div className="flex items-end justify-between col-span-2 w-full">
@@ -15,10 +22,11 @@ export default function Page() {
             <MagnifyingGlassIcon className="text-white w-4 h-4" /> Pesquisar
           </Button>
         </div>
-        <Button>
+        <Button onClick={openModal} className="rounded-full">
           <FolderOpenIcon className="text-white w-4 h-4" /> Anexar
         </Button>
       </div>
+      <CreateAnnexModal open={open} closeModal={closeModal} />
 
       <div className="col-span-2">
         <AccountAttachmentsTable
