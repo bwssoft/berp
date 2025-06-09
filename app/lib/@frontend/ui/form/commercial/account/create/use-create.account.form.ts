@@ -50,7 +50,14 @@ const schema = z
         fantasy_name: z.string().optional(),
         state_registration: z.string().optional(),
         municipal_registration: z.string().optional(),
-        status: z.string().optional(),
+        status: z
+          .array(
+            z.object({
+              id: z.string(),
+              name: z.string(),
+            })
+          )
+          .optional(),
         sector: z.string().min(1, "Setor obrigatório"),
         economic_group_holding: z
           .object({
@@ -211,8 +218,8 @@ export function useCreateAccountForm() {
         console.log("CNPJ Data:", data);
         setDataCnpj(data);
         methods.setValue("cnpj.fantasy_name", data.alias);
-        methods.setValue("cnpj.status", data.status.text);
         methods.setValue("cnpj.social_name", data.company.name);
+        methods.setValue("cnpj.status", [{ id: data.status.text }]);
       }
 
       methods.setValue("document.type", "cnpj");

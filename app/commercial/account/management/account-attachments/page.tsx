@@ -22,7 +22,7 @@ export default function Page() {
             <MagnifyingGlassIcon className="text-white w-4 h-4" /> Pesquisar
           </Button>
         </div>
-        <Button onClick={openModal} className="rounded-full">
+        <Button onClick={openModal}>
           <FolderOpenIcon className="text-white w-4 h-4" /> Anexar
         </Button>
       </div>

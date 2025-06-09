@@ -57,11 +57,25 @@ export function CNPJAccountForm({
         {...register("cnpj.state_registration")}
         error={errors.cnpj?.state_registration?.message}
       />
-      <Input
-        label="Situação"
-        placeholder="Sem restrição"
-        {...register("cnpj.status")}
-        error={errors.cnpj?.status?.message}
+      <Controller
+        control={control}
+        name="cnpj.status"
+        render={({ field }) => (
+          <Combobox
+            keyExtractor={(item) => item.id}
+            displayValueGetter={(item) => item.name}
+            label="Situação"
+            data={[
+              { id: "Ativa", name: "Ativa" },
+              { id: "Inativa", name: "Inativa" },
+            ]}
+            placeholder="Selecione a situação"
+            {...register("cnpj.status")}
+            error={errors.cnpj?.status?.message}
+            value={field.value}
+            onChange={([item]) => field.onChange(item.id)}
+          />
+        )}
       />
       <Input
         label="Inscrição Municipal"
