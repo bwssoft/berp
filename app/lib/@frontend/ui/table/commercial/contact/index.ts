@@ -1,2 +1,2 @@
 export * from "./table";
-export * from "./colums";
+export * from "./contact.columns";
