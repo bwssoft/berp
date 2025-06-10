@@ -37,6 +37,24 @@ export default function Page() {
     fetchAttachments();
   }, [open]);
 
+  // Handle attachment deletion
+  const handleDelete = async (id: string) => {
+    // Remove from both states - this will immediately update the UI
+    const newAttachments = attachments.filter((a) => a.id !== id);
+    const newFiltered = filteredAttachments.filter((a) => a.id !== id);
+
+    setAttachments(newAttachments);
+    setFilteredAttachments(newFiltered);
+
+    // If the search field is active, filter the remaining attachments
+    if (searchTerm.trim()) {
+      const filtered = newAttachments.filter((attachment) =>
+        attachment.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredAttachments(filtered);
+    }
+  };
+
   // Handle search
   const handleSearch = () => {
     if (!searchTerm.trim()) {
@@ -86,7 +104,10 @@ export default function Page() {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
           </div>
         ) : (
-          <AccountAttachmentsTable data={filteredAttachments} />
+          <AccountAttachmentsTable
+            data={filteredAttachments}
+            onDelete={handleDelete}
+          />
         )}
       </div>
     </div>

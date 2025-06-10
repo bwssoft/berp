@@ -4,9 +4,12 @@ import { IAccountAttachment } from "@/app/lib/@backend/domain";
 import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ColumnDef } from "@tanstack/react-table";
 import { downloadAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.download.action";
+import { deleteAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.delete.action";
 import { toast } from "@/app/lib/@frontend/hook";
 
-export const columns: ColumnDef<IAccountAttachment>[] = [
+export const createColumns = (
+  onDelete?: (id: string) => Promise<void>
+): ColumnDef<IAccountAttachment>[] => [
   {
     header: "Nome",
     accessorKey: "name",
@@ -86,6 +89,49 @@ export const columns: ColumnDef<IAccountAttachment>[] = [
         }
       };
 
+      const handleDelete = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+          if (!attachment.id) {
+            toast({
+              title: "Erro",
+              description: "ID do anexo não encontrado",
+              variant: "error",
+            });
+            return;
+          }
+
+          toast({
+            title: "Excluindo",
+            description: `Excluindo ${attachment.name}...`,
+            variant: "default",
+          });
+
+          const result = await deleteAccountAttachment(attachment.id);
+
+          if (result.success) {
+            toast({
+              title: "Sucesso",
+              description: `${attachment.name} excluído com sucesso`,
+              variant: "success",
+            });
+            // Call the onDelete callback with the ID to update the UI
+            if (onDelete) {
+              await onDelete(attachment.id);
+            }
+          } else {
+            throw new Error(result.error || "Failed to delete file");
+          }
+        } catch (error) {
+          console.error("Error deleting file:", error);
+          toast({
+            title: "Erro",
+            description: "Falha ao excluir arquivo",
+            variant: "error",
+          });
+        }
+      };
+
       return (
         <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
           <button
@@ -95,16 +141,7 @@ export const columns: ColumnDef<IAccountAttachment>[] = [
           >
             <ArrowDownTrayIcon className="w-5 h-5" />
           </button>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              toast({
-                title: "Info",
-                description: "Funcionalidade em desenvolvimento",
-                variant: "default",
-              });
-            }}
-          >
+          <form onSubmit={handleDelete}>
             <button
               type="submit"
               className="text-blue-600 hover:text-blue-900 px-0 py-0"
