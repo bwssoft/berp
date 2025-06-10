@@ -28,18 +28,33 @@ export class CreateAccountAttachmentUseCase {
     try {
       const { file: buffer, metadata, fileName } = params;
 
-      // Generate a unique key for the file using the user's chosen name
-      const timestamp = Date.now();
-      const fileExtension = fileName.split(".").pop() || "";
-      const uniqueKey = `${metadata.id || timestamp}-${metadata.name.replace(/\s+/g, "_")}`;
+      // Extract file extension from original filename
+      const fileExtension = fileName.split(".").pop()?.toLowerCase() || "";
+      const originalNameWithoutExt = fileName.includes(".")
+        ? fileName.slice(0, fileName.lastIndexOf("."))
+        : fileName;
 
-      // Upload file to S3
+      // Ensure metadata name includes the file extension
+      const nameWithExtension = metadata.name.toLowerCase().endsWith(`.${fileExtension}`)
+        ? metadata.name
+        : `${metadata.name}.${fileExtension}`;
+
+      // Update metadata to include proper filename with extension
+      metadata.name = nameWithExtension;
+
+      // Generate a unique key for S3, preserving the file extension
+      const uniqueKey = `${metadata.id}-${nameWithExtension.replace(/\s+/g, "_")}`;
+
+      const contentType = getContentTypeFromFileName(fileName);
+
+      // Upload file to S3 with content type
       await this.accountAttachmentObjectRepository.create({
         data: buffer,
         key: uniqueKey,
+        contentType,
       });
 
-      // Save metadata to MongoDB
+      // Save metadata to MongoDB with name including extension
       if (!metadata.id || !metadata.name) {
         throw new Error("Missing required fields for attachment metadata");
       }
@@ -47,7 +62,7 @@ export class CreateAccountAttachmentUseCase {
       // Store the user's chosen name from the form
       await this.accountAttachmentRepository.create({
         id: metadata.id,
-        name: metadata.name, // Use the name from the form input
+        name: metadata.name, // Name now includes proper file extension
         userId: metadata.userId || "System",
         createdAt: new Date(),
       });

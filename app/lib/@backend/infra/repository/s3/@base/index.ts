@@ -54,17 +54,19 @@ export class BaseObjectRepository<Entity extends object>
   }
 
   async create(
-    props: { data: Entity | Buffer; key: string } | { data: Entity | Buffer; key: string }[]
+    props: { data: Entity | Buffer; key: string; contentType?: string } | { data: Entity | Buffer; key: string; contentType?: string }[]
   ) {
-    // Garantir que `props` seja sempre um array
+    // Ensure props is always an array
     const items = Array.isArray(props) ? props : [props];
 
-    // Função auxiliar para criar um único item
-    const uploadSingleItem = async ({ data, key: _key }: { data: Entity | Buffer; key: string }) => {
+    // Helper function to create a single item
+    const uploadSingleItem = async ({ data, key: _key, contentType: customContentType }: { data: Entity | Buffer; key: string; contentType?: string }) => {
       const key = this.getKey(_key);
       const isJson = typeof data === "object" && !(data instanceof Buffer);
       const body = isJson ? JSON.stringify(data) : data;
-      const contentType = getContentType(key);
+      
+      // Use provided content type or detect from key/data
+      const contentType = customContentType || getContentType(key);
 
       const command = new PutObjectCommand({
         Bucket: this.bucket,
