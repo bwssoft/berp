@@ -55,9 +55,10 @@ export const columns: ColumnDef<IAccountAttachment>[] = [
           });
 
           const result = await downloadAccountAttachment(attachment.id);
-
           if (result.success && result.data) {
-            const blob = new Blob([result.data], { type: result.contentType });
+            // Convert the array back to Uint8Array for Blob creation
+            const uint8Array = new Uint8Array(result.data);
+            const blob = new Blob([uint8Array], { type: result.contentType });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;

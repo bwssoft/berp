@@ -31,9 +31,11 @@ export async function downloadAccountAttachment(id: string) {
       };
     }
 
+    // Convert Buffer to regular array for serialization
+    const arrayData = Array.from(new Uint8Array(result.data));
     return {
       success: true,
-      data: result.data,
+      data: arrayData,
       contentType: result.contentType,
     };
   } catch (error) {
