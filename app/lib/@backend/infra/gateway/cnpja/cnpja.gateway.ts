@@ -3,7 +3,8 @@ import { ICnpjaResponse, ICnpjaGateway } from "../../../domain";
 
 export class CnpjaApiGateway implements ICnpjaGateway {
   private readonly baseUrl = "https://api.cnpja.com/office";
-  chaveApi = "chave-api";
+  chaveApi =
+    "c081a2f4-7064-46dd-ae39-ec14e0a242af-6167a7ce-6a4b-4ec2-9ab9-b6a8b501411f";
 
   async getCnpjData(cnpj: string): Promise<ICnpjaResponse | null> {
     const cleanCnpj = cnpj.replace(/\D/g, "");
