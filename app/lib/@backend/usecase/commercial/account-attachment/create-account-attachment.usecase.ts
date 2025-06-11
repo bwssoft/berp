@@ -35,7 +35,9 @@ export class CreateAccountAttachmentUseCase {
         : fileName;
 
       // Ensure metadata name includes the file extension
-      const nameWithExtension = metadata.name.toLowerCase().endsWith(`.${fileExtension}`)
+      const nameWithExtension = metadata.name
+        .toLowerCase()
+        .endsWith(`.${fileExtension}`)
         ? metadata.name
         : `${metadata.name}.${fileExtension}`;
 

@@ -17,7 +17,8 @@ type Constructor = {
 };
 
 export class BaseObjectRepository<Entity extends object>
-  implements IBaseObjectRepository<Entity> {
+  implements IBaseObjectRepository<Entity>
+{
   private bucket: string;
   private prefix: string;
   private region: string;
@@ -54,17 +55,27 @@ export class BaseObjectRepository<Entity extends object>
   }
 
   async create(
-    props: { data: Entity | Buffer; key: string; contentType?: string } | { data: Entity | Buffer; key: string; contentType?: string }[]
+    props:
+      | { data: Entity | Buffer; key: string; contentType?: string }
+      | { data: Entity | Buffer; key: string; contentType?: string }[]
   ) {
     // Ensure props is always an array
     const items = Array.isArray(props) ? props : [props];
 
     // Helper function to create a single item
-    const uploadSingleItem = async ({ data, key: _key, contentType: customContentType }: { data: Entity | Buffer; key: string; contentType?: string }) => {
+    const uploadSingleItem = async ({
+      data,
+      key: _key,
+      contentType: customContentType,
+    }: {
+      data: Entity | Buffer;
+      key: string;
+      contentType?: string;
+    }) => {
       const key = this.getKey(_key);
       const isJson = typeof data === "object" && !(data instanceof Buffer);
       const body = isJson ? JSON.stringify(data) : data;
-      
+
       // Use provided content type or detect from key/data
       const contentType = customContentType || getContentType(key);
 
@@ -86,8 +97,9 @@ export class BaseObjectRepository<Entity extends object>
     }
   }
 
-
-  async findOne(key: string): Promise<{ data: Entity | Buffer; contentType: string } | null> {
+  async findOne(
+    key: string
+  ): Promise<{ data: Entity | Buffer; contentType: string } | null> {
     const command = new GetObjectCommand({
       Bucket: this.bucket,
       Key: this.getKey(key),
