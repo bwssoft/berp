@@ -24,7 +24,7 @@ export default async function Page(props: Props) {
   } = props;
   const _page = page?.length ? Number(page) : undefined;
   const accounts = await findManyAccount(query(rest), _page);
-  const canCreate = await restrictFeatureByProfile("commercial:account:create");
+  const canCreate = await restrictFeatureByProfile("commercial:accounts:new");
 
   // Check LGPD permissions - using same pattern as profile page
   const canViewFullLgpd = await restrictFeatureByProfile(
