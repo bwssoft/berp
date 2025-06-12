@@ -8,7 +8,7 @@ import { IAccount, IContact } from "@/app/lib/@backend/domain";
 const PAGE_SIZE = 10;
 const currentPage = 1;
 
-export function useSearchContactModal(accountId?: string) {
+export function useSearchContactHistoricalModal(accountId?: string) {
   const [open, setOpen] = useState(false);
   const [contactsByCompany, setContactsByCompany] = useState<
     { name: string; contacts: IContact[]; documentValue: string }[]
