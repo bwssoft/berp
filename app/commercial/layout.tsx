@@ -1,7 +1,11 @@
 "use client";
 
 import { Layout } from "@/app/lib/@frontend/ui/component";
-import { BriefcaseIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import {
+  BriefcaseIcon,
+  DocumentTextIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline";
 import { useAuth } from "../lib/@frontend/context";
 
 export default function ComercialLayout({
@@ -26,5 +30,11 @@ const navigation = [
     pathname: "/commercial/proposal",
     code: "commercial:proposal",
     icon: DocumentTextIcon, // remete a contratos, propostas e documentos
+  },
+  {
+    name: "Contas",
+    pathname: "/commercial/account",
+    code: "commercial:accounts",
+    icon: UserGroupIcon, // representa gestão de contas comerciais
   },
 ];
