@@ -69,7 +69,7 @@ export function CreateHistoricalForm() {
           />
           <div className="flex items-center justify-between mt-2 ">
             <div className="flex gap-3 ">
-              <button title="Imagem" onClick={() => {}}>
+              <button title="Imagem">
                 <PhoneIcon className="h-5 w-5" />
               </button>
               <button title="Emoji">
