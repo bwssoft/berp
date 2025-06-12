@@ -404,13 +404,6 @@ export async function GET() {
       code: "commercial:proposal",
       parent_code: "commercial",
     },
-    {
-      id: nanoid(),
-      name: "Contas",
-      description: "Contas",
-      code: "commercial:accounts",
-      parent_code: "commercial",
-    },
   ];
 
   // await controlRepository.createMany(controls);
