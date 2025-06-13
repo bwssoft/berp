@@ -25,49 +25,48 @@ export function useSearchContactHistoricalModal(accountId?: string) {
         currentPage,
         PAGE_SIZE
       );
-
       const account = data.docs[0];
       setAccountData(account);
 
-      if (
-        account?.economic_group_holding &&
-        account.economic_group_holding.taxId !== account.document?.value
-      ) {
-        const dataForCnpj = await findManyAccount(
-          { economic_group_holding: account.economic_group_holding },
-          currentPage,
-          PAGE_SIZE
-        );
+      const empresas: {
+        name: string;
+        contacts: IContact[];
+        documentValue: string;
+      }[] = [];
 
-        const novasEmpresas: {
-          name: string;
-          contacts: IContact[];
-          documentValue: string;
-        }[] = [];
+      const documentosInseridos = new Set<string>();
 
-        for (const empresa of dataForCnpj.docs) {
-          if (
-            empresa.document?.value !== account.document?.value &&
-            Array.isArray(empresa.contacts) &&
-            empresa.contacts.length > 0 &&
-            empresa.fantasy_name &&
-            empresa.document?.value
-          ) {
-            novasEmpresas.push({
-              name: empresa.fantasy_name,
-              documentValue: empresa.document.value,
-              contacts: empresa.contacts,
-            });
-          }
+      const addEmpresa = (empresa: IAccount) => {
+        const docValue = empresa.document?.value;
+        if (
+          docValue &&
+          !documentosInseridos.has(docValue) &&
+          empresa.fantasy_name &&
+          Array.isArray(empresa.contacts)
+        ) {
+          documentosInseridos.add(docValue);
+          empresas.push({
+            name: empresa.fantasy_name,
+            documentValue: docValue,
+            contacts: empresa.contacts,
+          });
+        }
+      };
+
+      if (account) {
+        addEmpresa(account);
+
+        if (account.economic_group_holding) {
+          const grupo = await findManyAccount(
+            { economic_group_holding: account.economic_group_holding },
+            currentPage,
+            PAGE_SIZE
+          );
+
+          grupo.docs.forEach(addEmpresa);
         }
 
-        setContactsByCompany((prev) => {
-          const existingDocs = new Set(prev.map((p) => p.documentValue));
-          const novosUnicos = novasEmpresas.filter(
-            (n) => !existingDocs.has(n.documentValue)
-          );
-          return [...prev, ...novosUnicos];
-        });
+        setContactsByCompany(empresas);
       }
 
       return data;

@@ -12,7 +12,7 @@ import {
 import { PlusIcon } from "@heroicons/react/24/outline";
 
 type Props = {
-  closeModal: () => void;
+  closeModal?: () => void;
 };
 
 export function CreateContactAccountForm({ closeModal }: Props) {
@@ -26,7 +26,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
     handlePreferredContact,
     handleRemove,
     setNewContacts,
-  } = useCreateContactAccount(closeModal);
+  } = useCreateContactAccount(closeModal ?? (() => {}));
 
   return (
     <form

@@ -219,7 +219,9 @@ export function useCreateAccountForm() {
         setDataCnpj(data);
         methods.setValue("cnpj.fantasy_name", data.alias);
         methods.setValue("cnpj.social_name", data.company.name);
-        methods.setValue("cnpj.status", [{ id: data.status.text }]);
+        methods.setValue("cnpj.status", [
+          { id: data.status.text, name: data.status.text },
+        ]);
       }
 
       methods.setValue("document.type", "cnpj");
