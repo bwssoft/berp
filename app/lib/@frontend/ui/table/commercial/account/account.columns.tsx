@@ -117,7 +117,9 @@ export const columns = (): ColumnDef<IAccountWithPermissions>[] => [
     cell: ({ row }) => {
       const account = row.original;
       return (
-        <Link href={`/commercial/account/form/update?id=${account.id}`}>
+        <Link
+          href={`/commercial/account/management/account-data?id=${account.id}`}
+        >
           <Button
             title="Editar"
             variant="ghost"
