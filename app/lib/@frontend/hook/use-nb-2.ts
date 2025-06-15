@@ -1,8 +1,6 @@
 import { useCallback } from "react";
 import { NB2, NB2Parser, NB2Encoder } from "../../@backend/infra/protocol";
 import {
-  generateImei,
-  getRandomInt,
   isIccid,
   isImei,
   sleep,
@@ -11,7 +9,7 @@ import {
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { IConfigurationProfile } from "../../@backend/domain";
-import { findOneIdentification } from "../../@backend/action/production/identification.action";
+import { findOneSerial } from "../../@backend/action/engineer/serial.action";
 import { toast } from "./use-toast";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
@@ -420,7 +418,7 @@ export const useNB2 = () => {
   );
   const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
-      const identification = await findOneIdentification({ serial });
+      const identification = await findOneSerial({ serial });
       if (!identification) {
         toast({
           title: "Serial não encontrado",

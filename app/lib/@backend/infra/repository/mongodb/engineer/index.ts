@@ -16,3 +16,4 @@ export * from "./product-category.repository";
 export * from "./request-to-update-firmware.repository";
 export * from "./technical-sheet.repository";
 export * from "./technology.repository";
+export * from "./serial.repository";

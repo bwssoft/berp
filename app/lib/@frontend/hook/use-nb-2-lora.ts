@@ -15,6 +15,9 @@ import {
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { IConfigurationProfile } from "../../@backend/domain";
+import { findOneSerial } from "../../@backend/action";
+import { toast } from "./use-toast";
+import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
 
@@ -446,15 +449,29 @@ export const useNB2Lora = () => {
   );
   const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
-      const imei = await handleGetRandomImei();
+      const identification = await findOneSerial({ serial });
+      if (!identification) {
+        toast({
+          title: "Serial não encontrado",
+          variant: "error",
+          description: `Dispositivo com o serial: ${serial} não encontrado`,
+        });
+        return { port };
+      }
+      const timestamp = Number(getDayZeroTimestamp().toString().slice(0, -5));
+
       const messages = [
         {
           key: "serial",
-          message: `WINS=${serial}\r\n`,
+          message: `WINS=${serial}\r`,
         },
         {
           key: "imei",
-          message: `WIMEI=${imei}\r\n`,
+          message: `WIMEI=${identification.imei}\r`,
+        },
+        {
+          key: "timestamp",
+          message: `WTK=${timestamp}\r`,
         },
       ] as const;
       try {
