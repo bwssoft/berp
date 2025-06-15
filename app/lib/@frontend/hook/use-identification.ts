@@ -119,7 +119,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
 
       isWriting.current = false;
     },
-    [handleGetIdentification, handleIdentification, identified, technology]
+    [handleIdentification, identified, technology]
   );
 
   // useEffect used to identify devices when connected via serial ports

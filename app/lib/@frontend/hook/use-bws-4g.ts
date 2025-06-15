@@ -15,6 +15,8 @@ import {
 } from "../../util";
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
+import { findOneSerial } from "../../@backend/action";
+import { toast } from "./use-toast";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
 
@@ -421,7 +423,15 @@ export const useBWS4G = () => {
   );
   const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
-      const imei = await handleGetRandomImei();
+      const identification = await findOneSerial({ serial });
+      if (!identification) {
+        toast({
+          title: "Serial não encontrado",
+          variant: "error",
+          description: `Dispositivo com o serial: ${serial} não encontrado`,
+        });
+        return { port };
+      }
       const messages = [
         {
           key: "serial",
@@ -429,7 +439,7 @@ export const useBWS4G = () => {
         },
         {
           key: "imei",
-          message: `WIMEI=${imei}\r\n`,
+          message: `WIMEI=${identification.imei}\r\n`,
         },
       ] as const;
       try {

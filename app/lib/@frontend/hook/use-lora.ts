@@ -452,7 +452,7 @@ export const useLora = () => {
           transport: port,
           messages: writeMessages,
         });
-        await sleep(2000);
+        await sleep(750);
         const readResponse = await sendMultipleMessages({
           transport: port,
           messages: readMessages,

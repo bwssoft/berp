@@ -460,7 +460,7 @@ export const useNB2Lora = () => {
       }
       const timestamp = Number(getDayZeroTimestamp().toString().slice(0, -5));
 
-      const messages = [
+      const writeMessages = [
         {
           key: "serial",
           message: `WINS=${serial}\r`,
@@ -474,17 +474,61 @@ export const useNB2Lora = () => {
           message: `WTK=${timestamp}\r`,
         },
       ] as const;
+
+      const readMessages = [
+        {
+          key: "serial",
+          message: `RINS\r`,
+        },
+        {
+          key: "imei",
+          message: `RIMEI\r`,
+        },
+        {
+          key: "timestamp",
+          message: `RTK\r`,
+        },
+        {
+          key: "rda",
+          message: `RDA\r`,
+        },
+        {
+          key: "rde",
+          message: `RDE\r`,
+        },
+        {
+          key: "rap",
+          message: `RAP\r`,
+        },
+        {
+          key: "rak",
+          message: `RAK\r`,
+        },
+        {
+          key: "rask",
+          message: `RASK\r`,
+        },
+        {
+          key: "rnk",
+          message: `RNK\r`,
+        },
+      ] as const;
       try {
         const init_time = Date.now();
-        const response = await sendMultipleMessages({
+        const writeResponse = await sendMultipleMessages({
           transport: port,
-          messages,
+          messages: writeMessages,
+        });
+        await sleep(750);
+        const readResponse = await sendMultipleMessages({
+          transport: port,
+          messages: readMessages,
         });
         const end_time = Date.now();
         return {
           port,
-          response,
-          messages,
+          response: { ...writeResponse, ...readResponse },
+          messages: [...writeMessages, ...readMessages],
           init_time,
           end_time,
           status: true,
