@@ -9,6 +9,7 @@ import {
 } from "@/app/lib/@frontend/ui/modal";
 import { CreateContact } from "../../form/create/tab/contact/create-contact";
 import { CreateAddressModal } from "../../form/create/tab/address/create-address";
+import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 
 interface Props {
   searchParams: {
@@ -20,6 +21,14 @@ export default async function Page({ searchParams }: Props) {
   const { id: accountId } = searchParams;
   const account = await findManyAccount({ id: accountId });
   const address = await findManyAddress({ accountId });
+
+  const hasPermissionContacts = await restrictFeatureByProfile(
+    "commercial:accounts:access:tab:data:contacts"
+  );
+
+  const hasPermissionAddresses = await restrictFeatureByProfile(
+    "commercial:accounts:access:tab:data:addresses"
+  );
 
   const acc = account.docs[0];
 
@@ -70,7 +79,8 @@ export default async function Page({ searchParams }: Props) {
       <SectionCard className="col-span-2" title="Contatos">
         <div className="flex gap-2 items-end justify-end w-full">
           <SearchContactModal accountId={accountId} />
-          <CreateContact />
+
+          {hasPermissionContacts && <CreateContact />}
         </div>
         {(acc.contacts ?? []).length > 0 && (
           <div className="text-xs">
@@ -80,7 +90,8 @@ export default async function Page({ searchParams }: Props) {
       </SectionCard>
 
       <SectionCard className="col-span-2" title="Endereços">
-        <CreateAddressModal id={accountId} />
+        {hasPermissionAddresses && <CreateAddressModal />}
+
         <div className="text-xs">
           {address.length > 0 ? (
             address.map((addr: IAddress, idx: number) => (
