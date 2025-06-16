@@ -1,6 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IAccount, IAccountRepository } from "../../../domain";
+import { AuditDomain, IAccount, IAccountRepository } from "../../../domain";
 import { accountRepository } from "../../../infra";
+import { auth } from "@/auth";
+import { createOneAuditUsecase } from "../../admin/audit";
 
 export type Output = {
   success: boolean;
@@ -39,6 +41,19 @@ class CreateOneAccountUsecase {
       };
 
       await this.repository.create(account);
+
+      // Add audit log
+      const session = await auth();
+      if (session?.user) {
+        const { name, email, id: user_id } = session.user;
+        await createOneAuditUsecase.execute({
+          after: account,
+          before: {},
+          domain: AuditDomain.account,
+          user: { email, name, id: user_id },
+          action: `Conta '${account.document.type === "cpf" ? account.name : account.fantasy_name || account.social_name}' cadastrada`,
+        });
+      }
 
       return { success: true, id: account.id };
     } catch {

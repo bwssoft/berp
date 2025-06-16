@@ -1,7 +1,9 @@
-import { IAccountAttachment } from "@/app/lib/@backend/domain";
+import { AuditDomain, IAccountAttachment } from "@/app/lib/@backend/domain";
 import { IAccountAttachmentObjectRepository } from "@/app/lib/@backend/domain/commercial/repository";
 import { getContentTypeFromFileName } from "@/app/lib/util/get-content-type-from-filename";
 import { singleton } from "@/app/lib/util/singleton";
+import { auth } from "@/auth";
+import { createOneAuditUsecase } from "../../admin/audit";
 
 interface CreateAccountAttachmentUseCaseProps {
   accountAttachmentObjectRepository: IAccountAttachmentObjectRepository;
@@ -61,13 +63,32 @@ export class CreateAccountAttachmentUseCase {
         throw new Error("Missing required fields for attachment metadata");
       }
 
-      // Store the user's chosen name from the form
-      await this.accountAttachmentRepository.create({
+      // Create the attachment object to save
+      const attachment: IAccountAttachment = {
         id: metadata.id,
         name: metadata.name, // Name now includes proper file extension
         userId: metadata.userId || "System",
         createdAt: new Date(),
-      });
+        accountId: metadata.accountId,
+      };
+
+      // Save to MongoDB
+      await this.accountAttachmentRepository.create(attachment);
+
+      // Add audit log
+      const session = await auth();
+      if (session?.user) {
+        const { name, email, id: user_id } = session.user;
+        await createOneAuditUsecase.execute({
+          after: attachment,
+          before: {},
+          domain: AuditDomain.accountAttachments,
+          user: { email, name, id: user_id },
+          action: `Anexo '${attachment.name}' cadastrado${
+            attachment.accountId ? ` para a conta ${attachment.accountId}` : ""
+          }`,
+        });
+      }
 
       // Generate and return the URL to access the file
       const fileUrl =

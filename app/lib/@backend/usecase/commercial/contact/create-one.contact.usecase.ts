@@ -1,6 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IContact, IContactRepository } from "../../../domain";
+import { AuditDomain, IContact, IContactRepository } from "../../../domain";
 import { contactRepository } from "../../../infra";
+import { auth } from "@/auth";
+import { createOneAuditUsecase } from "../../admin/audit";
 
 export type Output = {
   success?: IContact;
@@ -25,6 +27,19 @@ class CreateOneContactUsecase {
       };
 
       await this.repository.create(contact);
+
+      // Add audit log
+      const session = await auth();
+      if (session?.user) {
+        const { name, email, id: user_id } = session.user;
+        await createOneAuditUsecase.execute({
+          after: contact,
+          before: {},
+          domain: AuditDomain.accountContact,
+          user: { email, name, id: user_id },
+          action: `Contato '${contact.name}' cadastrado para a conta ${contact.accountId}`,
+        });
+      }
 
       return { success: contact };
     } catch (error) {
