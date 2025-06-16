@@ -8,7 +8,8 @@ import { deleteAccountAttachment } from "@/app/lib/@backend/action/commercial/ac
 import { toast } from "@/app/lib/@frontend/hook";
 
 export const createColumns = (
-  onDelete?: (id: string) => Promise<void>
+  onDelete?: (id: string) => Promise<void>,
+  canDeleteAttachments: boolean = true
 ): ColumnDef<IAccountAttachment>[] => [
   {
     header: "Nome",
@@ -141,15 +142,17 @@ export const createColumns = (
           >
             <ArrowDownTrayIcon className="w-5 h-5" />
           </button>
-          <form onSubmit={handleDelete}>
-            <button
-              type="submit"
-              className="text-blue-600 hover:text-blue-900 px-0 py-0"
-              title="Excluir anexo"
-            >
-              <TrashIcon className="w-5 h-5" />
-            </button>
-          </form>
+          {canDeleteAttachments && (
+            <form onSubmit={handleDelete}>
+              <button
+                type="submit"
+                className="text-blue-600 hover:text-blue-900 px-0 py-0"
+                title="Excluir anexo"
+              >
+                <TrashIcon className="w-5 h-5" />
+              </button>
+            </form>
+          )}
         </td>
       );
     },
