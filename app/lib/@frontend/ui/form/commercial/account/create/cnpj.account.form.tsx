@@ -10,6 +10,8 @@ import {
 } from "../../../../modal/comercial/sector";
 import { ICnpjaResponse } from "@/app/lib/@backend/domain";
 import { DebouncedFunc } from "lodash";
+import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { useEffect, useState } from "react";
 
 interface CNPJAccountFormProps {
   dataHolding: ICnpjaResponse[];
@@ -36,6 +38,22 @@ export function CNPJAccountForm({
     control,
     formState: { errors },
   } = useFormContext<CreateAccountFormSchema>();
+
+  const [canShowSectorButton, setCanShowSectorButton] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const hasPermission = await restrictFeatureByProfile(
+          "commercial:accounts:access:tab:data:sector"
+        );
+        setCanShowSectorButton(hasPermission);
+      } catch (error) {
+        console.error("Error checking sector permission:", error);
+      }
+    })();
+  }, []);
 
   return (
     <div className="flex flex-col gap-2">
@@ -99,16 +117,17 @@ export function CNPJAccountForm({
             />
           )}
         />
-
-        <Button
-          type="button"
-          title="Novo Setor"
-          variant="ghost"
-          onClick={sectorModal.openModal}
-          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        >
-          <PlusIcon className="size-5" />
-        </Button>
+        {canShowSectorButton && (
+          <Button
+            type="button"
+            title="Novo Setor"
+            variant="ghost"
+            onClick={sectorModal.openModal}
+            className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          >
+            <PlusIcon className="size-5" />
+          </Button>
+        )}
 
         <SectorModal
           open={sectorModal.open}
