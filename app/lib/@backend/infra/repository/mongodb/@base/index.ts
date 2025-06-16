@@ -10,7 +10,7 @@ import {
     UpdateFilter,
 } from "mongodb";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import clientPromise from "./b-cube";
+import { bCubeClientPromise } from "./b-cube";
 
 type Constructor = {
     collection: string;
@@ -28,7 +28,7 @@ export class BaseRepository<Entity extends object>
     constructor({ collection, db, client }: Constructor) {
         this.collection = collection;
         this.db = db;
-        this.client = client ?? clientPromise
+        this.client = client ?? bCubeClientPromise
     }
 
     async create(data: Entity) {

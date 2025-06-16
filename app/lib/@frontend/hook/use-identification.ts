@@ -8,6 +8,7 @@ import {
   createOneDevice,
   createOneIdentificationLog,
 } from "../../@backend/action";
+import { toast } from "./use-toast";
 
 namespace Namespace {
   export interface useIdentificationProps {
@@ -28,6 +29,30 @@ namespace Namespace {
   }
 
   export interface Identification extends IIdentificationLog {}
+
+  export interface IdentificationError {
+    ok: false;
+    port: ISerialPort;
+    error: string;
+  }
+
+  export interface IdentificationSuccess {
+    ok: true;
+    port: ISerialPort;
+    response: Record<string, any>;
+    messages: any[];
+    init_time: number;
+    end_time: number;
+    status: boolean;
+    equipment: {
+      serial: string;
+      imei?: string;
+    };
+  }
+
+  export type IdentificationResult =
+    | IdentificationError
+    | IdentificationSuccess;
 }
 
 export const useIdentification = (props: Namespace.useIdentificationProps) => {
@@ -44,7 +69,6 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
     handleDetection,
     handleIdentification,
     requestPort,
-    handleGetIdentification,
     isIdentified,
   } = useTechnology(technology);
 
@@ -53,33 +77,46 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
     async (id: string) => {
       isWriting.current = true;
 
-      const { equipment, port } = identified[0];
+      const [current] = identified;
 
-      if (!equipment || !equipment.firmware || !equipment.serial || !technology)
+      if (
+        !current.equipment ||
+        !current.equipment.firmware ||
+        !current.equipment.serial ||
+        !technology
+      )
         return;
 
       // run identification
-      const { response, messages, end_time, init_time, status } =
-        await handleIdentification(port, id);
+      const identification = (await handleIdentification(
+        current.port,
+        id
+      )) as Namespace.IdentificationResult;
 
       // check if each message sent has response
-      if (
-        !response ||
-        !messages ||
-        !end_time ||
-        !init_time ||
-        typeof status !== "boolean"
-      )
+      if (!identification.ok) {
+        toast({
+          title: "Erro ao identificar dispositivo",
+          variant: "error",
+          description: identification.error,
+        });
         return undefined;
+      }
+
+      const { response, messages, end_time, init_time, status, equipment } =
+        identification;
 
       const log: Omit<IIdentificationLog, "id" | "created_at" | "user"> = {
         equipment: {
-          imei: equipment.imei!,
-          serial: equipment.serial!,
-          firmware: equipment.firmware!,
-          iccid: equipment.iccid,
+          serial: current.equipment.serial!,
+          firmware: current.equipment.firmware!,
+          imei: current.equipment?.imei,
+          iccid: current.equipment?.iccid,
         },
-        identification: response,
+        identification: {
+          imei: equipment.imei,
+          serial: equipment.serial,
+        },
         status,
         metadata: {
           messages: messages.map(({ key, message }) => ({
@@ -99,11 +136,10 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
       if (status) {
         promises.push(
           createOneDevice({
-            equipment: {
-              firmware: equipment.firmware!,
-              serial: (response as any)?.serial!,
-            },
-            simcard: { iccid: equipment.iccid },
+            equipment: { ...equipment, firmware: current.equipment.firmware },
+            simcard: current.equipment?.iccid
+              ? { iccid: current.equipment?.iccid }
+              : undefined,
             model:
               Device.Model[technology.name.system as keyof typeof Device.Model],
             identified_at: new Date(),

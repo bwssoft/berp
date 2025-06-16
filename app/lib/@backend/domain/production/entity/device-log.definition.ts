@@ -4,9 +4,9 @@ interface Technology {
 }
 
 interface Equipment {
-  imei: string;
   serial: string;
   firmware: string;
+  imei?: string;
   iccid?: string;
 }
 

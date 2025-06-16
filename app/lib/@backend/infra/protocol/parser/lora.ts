@@ -38,13 +38,13 @@ export class LORAParser {
   }
 
   /**
-   * Extrai o valor do imei de uma string que contém "RIMEI=" seguido de um número.
+   * Extrai o valor do 'timestamp' de uma string que contém "RTK=" seguido de um número.
    *
-   * @param input - A string que contém a informação do imei.
-   * @returns O valor do imei ou undefined se o formato não for válido.
+   * @param input - A string que contém a informação do 'timestamp'.
+   * @returns O valor do 'timestamp' ou undefined se o formato não for válido.
    */
-  static imei(input: string): string | undefined {
-    const parts = input.split("RIMEI=");
+  static rtk(input: string): string | undefined {
+    const parts = input.split("RTK=");
 
     if (parts.length < 2) return undefined;
 
@@ -56,13 +56,103 @@ export class LORAParser {
   }
 
   /**
-   * Extrai o valor do iccid de uma string que contém "ICCID=" seguido de um número.
+   * Extrai o valor do 'device address' de uma string que contém "RDA=" seguido de uma chave.
    *
-   * @param input - A string que contém a informação do iccid.
-   * @returns O valor do iccid ou undefined se o formato não for válido.
+   * @param input - A string que contém a informação do 'device address'.
+   * @returns O valor do 'device address' ou undefined se o formato não for válido.
    */
-  static iccid(input: string): string | undefined {
-    const parts = input.split("ICCID=");
+  static rda(input: string): string | undefined {
+    const parts = input.split("RDA=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  /**
+   * Extrai o valor do 'device eui' de uma string que contém "RDE=" seguido de uma chave.
+   *
+   * @param input - A string que contém a informação do 'device eui'.
+   * @returns O valor do 'device eui' ou undefined se o formato não for válido.
+   */
+  static rde(input: string): string | undefined {
+    const parts = input.split("RDE=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  /**
+   * Extrai o valor do 'application eui' de uma string que contém "RAP=" seguido de uma chave.
+   *
+   * @param input - A string que contém a informação do 'application eui'.
+   * @returns O valor do 'application eui' ou undefined se o formato não for válido.
+   */
+  static rap(input: string): string | undefined {
+    const parts = input.split("RAP=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  /**
+   * Extrai o valor do 'application key' de uma string que contém "RAK=" seguido de uma chave.
+   *
+   * @param input - A string que contém a informação do 'application key'.
+   * @returns O valor do 'application key' ou undefined se o formato não for válido.
+   */
+  static rak(input: string): string | undefined {
+    const parts = input.split("RAK=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  /**
+   * Extrai o valor do 'application session key' de uma string que contém "RASK=" seguido de uma chave.
+   *
+   * @param input - A string que contém a informação do 'application session key'.
+   * @returns O valor do 'application session key' ou undefined se o formato não for válido.
+   */
+  static rask(input: string): string | undefined {
+    const parts = input.split("RASK=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  /**
+   * Extrai o valor do 'network session key' de uma string que contém "RASK=" seguido de uma chave.
+   *
+   * @param input - A string que contém a informação do 'network session key'.
+   * @returns O valor do 'network session key' ou undefined se o formato não for válido.
+   */
+  static rnk(input: string): string | undefined {
+    const parts = input.split("RNK=");
 
     if (parts.length < 2) return undefined;
 

@@ -16,7 +16,6 @@ import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { IConfigurationProfile } from "../../@backend/domain";
 import { findOneSerial } from "../../@backend/action";
-import { toast } from "./use-toast";
 import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
@@ -42,7 +41,6 @@ const readResponse = async (
       let lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
       for (const line of lines) {
-        console.log("[NB2 LoRa readResponse]", line);
         if (line.length > 0 && line.includes(command.replace("\r\n", ""))) {
           return line;
         }
@@ -451,66 +449,70 @@ export const useNB2Lora = () => {
     async (port: ISerialPort, serial: string) => {
       const identification = await findOneSerial({ serial });
       if (!identification) {
-        toast({
-          title: "Serial não encontrado",
-          variant: "error",
-          description: `Dispositivo com o serial: ${serial} não encontrado`,
-        });
-        return { port };
+        return { ok: false, port, error: "Serial não encontrado na base" };
       }
       const timestamp = Number(getDayZeroTimestamp().toString().slice(0, -5));
 
       const writeMessages = [
         {
           key: "serial",
-          message: `WINS=${serial}\r`,
+          message: `WINS=${serial}\r\n`,
         },
         {
           key: "imei",
-          message: `WIMEI=${identification.imei}\r`,
+          message: `WIMEI=${identification.imei}\r\n`,
         },
         {
           key: "timestamp",
-          message: `WTK=${timestamp}\r`,
+          message: `LWTK=${timestamp}\r\n`,
         },
       ] as const;
 
       const readMessages = [
         {
           key: "serial",
-          message: `RINS\r`,
+          message: `RINS\r\n`,
+          transform: NB2LORAParser.serial,
         },
         {
           key: "imei",
-          message: `RIMEI\r`,
+          message: `RIMEI\r\n`,
+          transform: NB2LORAParser.imei,
         },
         {
-          key: "timestamp",
-          message: `RTK\r`,
+          key: "tk",
+          message: `LRTK\r\n`,
+          transform: NB2LORAParser.rtk,
         },
         {
-          key: "rda",
-          message: `RDA\r`,
+          key: "da",
+          message: `LRDA\r\n`,
+          transform: NB2LORAParser.rda,
         },
         {
-          key: "rde",
-          message: `RDE\r`,
+          key: "de",
+          message: `LRDE\r\n`,
+          transform: NB2LORAParser.rde,
         },
         {
-          key: "rap",
-          message: `RAP\r`,
+          key: "ap",
+          message: `LRAP\r\n`,
+          transform: NB2LORAParser.rap,
         },
         {
-          key: "rak",
-          message: `RAK\r`,
+          key: "ak",
+          message: `LRAK\r\n`,
+          transform: NB2LORAParser.rak,
         },
         {
-          key: "rask",
-          message: `RASK\r`,
+          key: "ask",
+          message: `LRASK\r\n`,
+          transform: NB2LORAParser.rask,
         },
         {
-          key: "rnk",
-          message: `RNK\r`,
+          key: "nk",
+          message: `LRNK\r\n`,
+          transform: NB2LORAParser.rnk,
         },
       ] as const;
       try {
@@ -525,44 +527,61 @@ export const useNB2Lora = () => {
           messages: readMessages,
         });
         const end_time = Date.now();
+
+        console.log("readResponse", readResponse);
+
+        if (
+          !readResponse.imei ||
+          !isImei(readResponse.imei) ||
+          !readResponse.serial ||
+          !readResponse.tk ||
+          !readResponse.da ||
+          !readResponse.de ||
+          !readResponse.ap ||
+          !readResponse.ak ||
+          !readResponse.ask ||
+          !readResponse.nk
+        ) {
+          return { ok: false, port, error: "IMEI ou Serial inválido" };
+        }
+
+        const status =
+          identification.serial === readResponse.serial &&
+          identification.imei === readResponse.imei;
+
         return {
           port,
-          response: { ...writeResponse, ...readResponse },
-          messages: [...writeMessages, ...readMessages],
+          response: writeResponse,
+          messages: writeMessages,
           init_time,
           end_time,
-          status: true,
+          status,
+          ok: true,
+          equipment: {
+            serial: readResponse.serial,
+            imei: readResponse.imei,
+            lora_keys: {
+              tk: readResponse.tk,
+              da: readResponse.da,
+              de: readResponse.de,
+              ap: readResponse.ap,
+              ak: readResponse.ak,
+              ask: readResponse.ask,
+              nk: readResponse.nk,
+            },
+          },
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
-        return { port };
+        return {
+          ok: false,
+          port,
+          error: error instanceof Error ? error.message : "Erro desconhecido",
+        };
       }
     },
     [sendMultipleMessages]
   );
-  const handleGetIdentification = useCallback(
-    async (port: ISerialPort) => {
-      const messages = [
-        { message: "RINS\r\n", key: "serial", transform: NB2LORAParser.serial },
-        { message: "RIMEI\r\n", key: "imei", transform: NB2LORAParser.imei },
-      ] as const;
-      try {
-        const response = await sendMultipleMessages({
-          transport: port,
-          messages,
-        });
-        return { port, response };
-      } catch (error) {
-        console.error("[ERROR] handleGetIdentification", error);
-        return { port };
-      }
-    },
-    [sendMultipleMessages]
-  );
-  const handleGetRandomImei = async () => {
-    return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
-  };
-
   const isIdentified = (input: {
     imei?: string;
     iccid?: string;
@@ -589,6 +608,5 @@ export const useNB2Lora = () => {
     requestPort,
     handleAutoTest,
     handleDetection,
-    handleGetIdentification,
   };
 };

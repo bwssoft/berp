@@ -156,6 +156,44 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       ),
     },
   ],
+  DM_BWS_NB2_LORA: [
+    {
+      header: "Serial",
+      accessorKey: "serial",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.serial}>
+          {row.original.equipment.serial ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Imei",
+      accessorKey: "imei",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.imei}>
+          {row.original.equipment.imei ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Iccid",
+      accessorKey: "iccid",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.iccid}>
+          {row.original.equipment.iccid ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Firmware",
+      accessorKey: "firmware",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.firmware}>
+          {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+  ],
 };
 
 export function getColumns(type: Device.Model): ColumnDef<Row>[] {

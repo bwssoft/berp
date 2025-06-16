@@ -416,34 +416,42 @@ export const useLora = () => {
         {
           key: "serial",
           message: `RINS\r`,
+          transform: LORAParser.serial,
         },
         {
-          key: "timestamp",
+          key: "tk",
           message: `RTK\r`,
+          transform: LORAParser.rtk,
         },
         {
-          key: "rda",
+          key: "da",
           message: `RDA\r`,
+          transform: LORAParser.rda,
         },
         {
-          key: "rde",
+          key: "de",
           message: `RDE\r`,
+          transform: LORAParser.rde,
         },
         {
-          key: "rap",
+          key: "ap",
           message: `RAP\r`,
+          transform: LORAParser.rap,
         },
         {
-          key: "rak",
+          key: "ak",
           message: `RAK\r`,
+          transform: LORAParser.rak,
         },
         {
-          key: "rask",
+          key: "ask",
           message: `RASK\r`,
+          transform: LORAParser.rask,
         },
         {
-          key: "rnk",
+          key: "nk",
           message: `RNK\r`,
+          transform: LORAParser.rnk,
         },
       ] as const;
       try {
@@ -457,36 +465,54 @@ export const useLora = () => {
           transport: port,
           messages: readMessages,
         });
+
+        if (
+          !readResponse.serial ||
+          !readResponse.tk ||
+          !readResponse.da ||
+          !readResponse.de ||
+          !readResponse.ap ||
+          !readResponse.ak ||
+          !readResponse.ask ||
+          !readResponse.nk
+        ) {
+          return { ok: false, port, error: "Serial inválido" };
+        }
+
+        const status =
+          serial === readResponse.serial &&
+          timestamp.toString() === readResponse.tk;
+
         const end_time = Date.now();
+
         return {
+          ok: true,
           port,
-          response: { ...writeResponse, ...readResponse },
-          messages: [...writeMessages, ...readMessages],
+          response: writeResponse,
+          messages: writeMessages,
           init_time,
           end_time,
-          status: true,
+          status,
+          equipment: {
+            serial: readResponse.serial,
+            lora_keys: {
+              tk: readResponse.tk,
+              da: readResponse.da,
+              de: readResponse.de,
+              ap: readResponse.ap,
+              ak: readResponse.ak,
+              ask: readResponse.ask,
+              nk: readResponse.nk,
+            },
+          },
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
-        return { port };
-      }
-    },
-    [sendMultipleMessages]
-  );
-  const handleGetIdentification = useCallback(
-    async (port: ISerialPort) => {
-      const messages = [
-        { message: "RINS\r", key: "serial", transform: LORAParser.serial },
-      ] as const;
-      try {
-        const response = await sendMultipleMessages({
-          transport: port,
-          messages,
-        });
-        return { port, response };
-      } catch (error) {
-        console.error("[ERROR] handleGetIdentification", error);
-        return { port };
+        return {
+          ok: false,
+          port,
+          error: error instanceof Error ? error.message : "Erro desconhecido",
+        };
       }
     },
     [sendMultipleMessages]
@@ -513,6 +539,5 @@ export const useLora = () => {
     requestPort,
     handleAutoTest,
     handleDetection,
-    handleGetIdentification,
   };
 };

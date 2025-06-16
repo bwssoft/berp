@@ -3,10 +3,10 @@ import { IProduct } from "./product.definition";
 interface IDevice {
   id: string;
   equipment: Device.Equipment;
+  simcard?: Device.Simcard;
   model: Device.Model;
   created_at: Date;
   identified_at?: Date;
-  simcard?: Device.Simcard;
 }
 
 namespace Device {
@@ -14,6 +14,15 @@ namespace Device {
     serial: string;
     firmware: string;
     imei?: string;
+    lora_keys?: {
+      tk: string;
+      da: string;
+      de: string;
+      ap: string;
+      ak: string;
+      ask: string;
+      nk: string;
+    };
   }
 
   export interface Simcard {
