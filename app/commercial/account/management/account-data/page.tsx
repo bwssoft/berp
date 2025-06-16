@@ -30,6 +30,10 @@ export default async function Page({ searchParams }: Props) {
     "commercial:accounts:access:tab:data:addresses"
   );
 
+  const hasPermissionEconomicGroup = await restrictFeatureByProfile(
+    "commercial:accounts:access:tab:data:group-edit"
+  );
+
   const acc = account.docs[0];
 
   return (
@@ -56,7 +60,9 @@ export default async function Page({ searchParams }: Props) {
               label="Holding (CNPJ)"
               value={`${acc.economic_group_holding?.name} / ${acc.economic_group_holding?.taxId}`}
             />
-            <UpdateEconomicGroupAccountModal accountId={accountId} />
+            {hasPermissionEconomicGroup && (
+              <UpdateEconomicGroupAccountModal accountId={accountId} />
+            )}
           </div>
           <div className="text-xs w-full mt-2">
             <h4 className="font-semibold">Empresas do Grupo (CNPJ)</h4>
