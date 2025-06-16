@@ -11,7 +11,7 @@ export default async function Page({ searchParams }: Props) {
 
   return (
     <div className="flex flex-col items-center">
-      <CreateHistoricalForm />
+      <CreateHistoricalForm accountId={accountId} />
     </div>
   );
 }

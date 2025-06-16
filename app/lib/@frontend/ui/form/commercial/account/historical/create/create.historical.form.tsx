@@ -1,3 +1,4 @@
+"use client";
 import { Button, TimelineItem } from "@/app/lib/@frontend/ui/component";
 import { useCreateHistoricalForm } from "./use-create.historical.form";
 import {
@@ -5,6 +6,7 @@ import {
   PaperClipIcon,
   PhoneIcon,
 } from "@heroicons/react/24/outline";
+import { SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
 
 const timelineItems = [
   {
@@ -56,7 +58,11 @@ const timelineItems = [
   },
 ];
 
-export function CreateHistoricalForm() {
+type Props = {
+  accountId: string;
+};
+
+export function CreateHistoricalForm({ accountId }: Props) {
   const {} = useCreateHistoricalForm();
   return (
     <div className="w-[70%]">
@@ -68,16 +74,14 @@ export function CreateHistoricalForm() {
             rows={2}
           />
           <div className="flex items-center justify-between mt-2 ">
-            <div className="flex gap-3 ">
-              <button title="Imagem">
-                <PhoneIcon className="h-5 w-5" />
-              </button>
-              <button title="Emoji">
+            <div className="flex ">
+              <SearchContactHistoricalModal accountId={accountId} />
+              <Button title="Emoji" variant={"ghost"} className="p-1">
                 <FaceSmileIcon className="h-5 w-5" />
-              </button>
-              <button title="Anexar">
+              </Button>
+              <Button title="Anexar" variant={"ghost"} className="p-1">
                 <PaperClipIcon className="h-5 w-5" />
-              </button>
+              </Button>
             </div>
             <Button variant={"outline"} type="submit">
               Salvar
