@@ -35,6 +35,10 @@ export interface IBaseRepository<Entity extends object> {
         query: Filter<Entity>,
         value: UpdateFilter<Entity>
     ): Promise<UpdateResult<Entity>>;
+    upsertOne(
+        query: Filter<Entity>,
+        value: UpdateFilter<Entity>
+    ): Promise<UpdateResult<Entity>>;
     updateMany(
         query: Filter<Entity>,
         value: UpdateFilter<Entity>

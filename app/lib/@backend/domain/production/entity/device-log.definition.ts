@@ -8,6 +8,15 @@ interface Equipment {
   firmware: string;
   imei?: string;
   iccid?: string;
+  lora_keys?: {
+    tk?: string | undefined;
+    da?: string | undefined;
+    de?: string | undefined;
+    ap?: string | undefined;
+    ak?: string | undefined;
+    ask?: string | undefined;
+    nk?: string | undefined;
+  };
 }
 
 interface User {

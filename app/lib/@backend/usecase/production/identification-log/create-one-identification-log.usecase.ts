@@ -4,6 +4,7 @@ import {
   IIdentificationLogRepository,
 } from "@/app/lib/@backend/domain";
 import { identificationLogRepository } from "@/app/lib/@backend/infra";
+import { RemoveFields } from "../../../decorators";
 
 class CreateOneIdentificationLogUsecase {
   repository: IIdentificationLogRepository;
@@ -12,6 +13,7 @@ class CreateOneIdentificationLogUsecase {
     this.repository = identificationLogRepository;
   }
 
+  @RemoveFields("_id")
   async execute(input: Omit<IIdentificationLog, "id" | "created_at">) {
     const _input = Object.assign(input, {
       created_at: new Date(),

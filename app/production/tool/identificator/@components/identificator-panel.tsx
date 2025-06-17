@@ -18,9 +18,10 @@ interface Props {
 export function IdentificationPanel(props: Props) {
   const { technology } = props;
 
-  const { identified, process, identify, requestPort } = useIdentification({
-    technology,
-  });
+  const { identified, process, identify, requestPort, isProcessing } =
+    useIdentification({
+      technology,
+    });
 
   return (
     <>
@@ -57,7 +58,7 @@ export function IdentificationPanel(props: Props) {
             </div>
           )}
           <div className="flex justify-between gap-2">
-            <IdentificationForm onSubmit={identify} disabled={false} />
+            <IdentificationForm onSubmit={identify} disabled={isProcessing} />
             <Button
               variant="outline"
               className="h-fit whitespace-nowrap "

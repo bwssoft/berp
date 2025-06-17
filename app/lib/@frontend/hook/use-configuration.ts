@@ -128,8 +128,8 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
             checked: false,
             status,
             metadata: {
-              messages: messages.map(({ key, message }) => ({
-                request: message,
+              messages: messages.map(({ key, command }) => ({
+                request: command,
                 response: response[key],
               })),
               end_time,

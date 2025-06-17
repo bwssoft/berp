@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { NB2, NB2Parser, NB2Encoder } from "../../@backend/infra/protocol";
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
-import { useCommunication } from "./use-communication";
+import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { IConfigurationProfile } from "../../@backend/domain";
 import { findOneSerial } from "../../@backend/action/engineer/serial.action";
@@ -69,17 +69,18 @@ export const useNB2 = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, message, timeout) => {
+    sendMessage: async (port, msg: Message<string, { check?: string }>) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      await writeToPort(port, message);
-      const response = await readResponse(reader, message, timeout);
+      const { command, timeout, check } = msg;
+      await writeToPort(port, command);
+      const response = await readResponse(reader, check ?? command, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 550,
+      delayBetweenMessages: 200,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -89,11 +90,11 @@ export const useNB2 = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "RIMEI\r\n", key: "imei", transform: NB2Parser.imei },
-        { message: "ICCID\r\n", key: "iccid", transform: NB2Parser.iccid },
-        { message: "RINS\r\n", key: "serial", transform: NB2Parser.serial },
+        { command: "RIMEI\r\n", key: "imei", transform: NB2Parser.imei },
+        { command: "ICCID\r\n", key: "iccid", transform: NB2Parser.iccid },
+        { command: "RINS\r\n", key: "serial", transform: NB2Parser.serial },
         {
-          message: "RFW\r\n",
+          command: "RFW\r\n",
           key: "firmware",
           transform: NB2Parser.firmware,
         },
@@ -118,90 +119,90 @@ export const useNB2 = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "RODM\r\n", key: "odometer", transform: NB2Parser.odometer },
+        { command: "RODM\r\n", key: "odometer", transform: NB2Parser.odometer },
         {
-          message: "RCN\r\n",
+          command: "RCN\r\n",
           key: "data_transmission_on",
           transform: NB2Parser.data_transmission_on,
         },
         {
-          message: "RCW\r\n",
+          command: "RCW\r\n",
           key: "data_transmission_off",
           transform: NB2Parser.data_transmission_off,
         },
         {
-          message: "RCE\r\n",
+          command: "RCE\r\n",
           key: "data_transmission_event",
           transform: NB2Parser.data_transmission_event,
         },
-        { message: "RCS\r\n", key: "sleep", transform: NB2Parser.sleep },
+        { command: "RCS\r\n", key: "sleep", transform: NB2Parser.sleep },
         {
-          message: "RCK\r\n",
+          command: "RCK\r\n",
           key: "keep_alive",
           transform: NB2Parser.keep_alive,
         },
         {
-          message: "RIP1\r\n",
+          command: "RIP1\r\n",
           key: "ip_primary",
           transform: NB2Parser.ip_primary,
         },
         {
-          message: "RIP2\r\n",
+          command: "RIP2\r\n",
           key: "ip_secondary",
           transform: NB2Parser.ip_secondary,
         },
         {
-          message: "RID1\r\n",
+          command: "RID1\r\n",
           key: "dns_primary",
           transform: NB2Parser.dns_primary,
         },
         {
-          message: "RID2\r\n",
+          command: "RID2\r\n",
           key: "dns_secondary",
           transform: NB2Parser.dns_secondary,
         },
-        { message: "RIAP\r\n", key: "apn", transform: NB2Parser.apn },
+        { command: "RIAP\r\n", key: "apn", transform: NB2Parser.apn },
         {
-          message: "RIG12\r\n",
+          command: "RIG12\r\n",
           key: "first_voltage",
           transform: NB2Parser.first_voltage,
         },
         {
-          message: "RIG24\r\n",
+          command: "RIG24\r\n",
           key: "second_voltage",
           transform: NB2Parser.second_voltage,
         },
-        { message: "RFA\r\n", key: "angle", transform: NB2Parser.angle },
-        { message: "RFV\r\n", key: "speed", transform: NB2Parser.speed },
+        { command: "RFA\r\n", key: "angle", transform: NB2Parser.angle },
+        { command: "RFV\r\n", key: "speed", transform: NB2Parser.speed },
         {
-          message: "RFTON\r\n",
+          command: "RFTON\r\n",
           key: "accelerometer_sensitivity_on",
           transform: NB2Parser.accelerometer_sensitivity_on,
         },
         {
-          message: "RFTOF\r\n",
+          command: "RFTOF\r\n",
           key: "accelerometer_sensitivity_off",
           transform: NB2Parser.accelerometer_sensitivity_off,
         },
         {
-          message: "RFAV\r\n",
+          command: "RFAV\r\n",
           key: "accelerometer_sensitivity_violated",
           transform: NB2Parser.accelerometer_sensitivity_violated,
         },
         {
-          message: "RFMA\r\n",
+          command: "RFMA\r\n",
           key: "maximum_acceleration",
           transform: NB2Parser.maximum_acceleration,
         },
         {
-          message: "RFMD\r\n",
+          command: "RFMD\r\n",
           key: "maximum_deceleration",
           transform: NB2Parser.maximum_deceleration,
         },
-        { message: "RIN1\r\n", key: "input_1", transform: NB2Parser.input_1 },
-        { message: "RIN2\r\n", key: "input_2", transform: NB2Parser.input_2 },
-        { message: "RIN3\r\n", key: "input_3", transform: NB2Parser.input_3 },
-        { message: "RIN4\r\n", key: "input_4", transform: NB2Parser.input_4 },
+        { command: "RIN1\r\n", key: "input_1", transform: NB2Parser.input_1 },
+        { command: "RIN2\r\n", key: "input_2", transform: NB2Parser.input_2 },
+        { command: "RIN3\r\n", key: "input_3", transform: NB2Parser.input_3 },
+        { command: "RIN4\r\n", key: "input_4", transform: NB2Parser.input_4 },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -253,9 +254,9 @@ export const useNB2 = () => {
     ) => {
       const generatedMessages = generateMessages(configuration_profile);
       const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, message]) => ({
+        ([key, command]) => ({
           key,
-          message,
+          command,
         })
       );
       return await Promise.all(
@@ -298,12 +299,12 @@ export const useNB2 = () => {
             port,
             response: {} as Record<string, NB2.AutoTest | string | undefined>,
             messages: [
-              { key: "start", message: "START\r\n" },
-              { key: "autotest_1", message: "AUTOTEST" },
-              { key: "autotest_2", message: "AUTOTEST" },
-              { key: "autotest_3", message: "AUTOTEST" },
-              { key: "autotest_4", message: "AUTOTEST" },
-              { key: "autotest_5", message: "AUTOTEST" },
+              { key: "start", command: "START\r\n" },
+              { key: "autotest_1", command: "AUTOTEST" },
+              { key: "autotest_2", command: "AUTOTEST" },
+              { key: "autotest_3", command: "AUTOTEST" },
+              { key: "autotest_4", command: "AUTOTEST" },
+              { key: "autotest_5", command: "AUTOTEST" },
             ],
             analysis: {} as Record<string, boolean>,
             init_time: Date.now(),
@@ -315,7 +316,7 @@ export const useNB2 = () => {
             // 1. Envia comando START
             const startResponse = await sendMultipleMessages({
               transport: port,
-              messages: [{ key: "start", message: "START\r\n" }] as const,
+              messages: [{ key: "start", command: "START\r\n" }] as const,
             });
             resultTemplate.response["start"] = startResponse.start;
 
@@ -338,7 +339,7 @@ export const useNB2 = () => {
                   messages: [
                     {
                       key,
-                      message: "AUTOTEST",
+                      command: "AUTOTEST",
                       transform: NB2Parser.auto_test,
                     },
                   ] as const,
@@ -420,23 +421,25 @@ export const useNB2 = () => {
       const writeMessages = [
         {
           key: "serial",
-          message: `WINS=${serial}\r\n`,
+          command: `WINS=${serial}\r\n`,
+          check: "WINS",
         },
         {
           key: "imei",
-          message: `WIMEI=${identification.imei}\r\n`,
+          command: `WIMEI=${identification.imei}\r\n`,
+          check: "WIMEI",
         },
       ] as const;
 
       const readMessages = [
         {
           key: "serial",
-          message: `RINS\r\n`,
+          command: `RINS\r\n`,
           transform: NB2Parser.serial,
         },
         {
           key: "imei",
-          message: `RIMEI\r\n`,
+          command: `RIMEI\r\n`,
           transform: NB2Parser.imei,
         },
       ] as const;
@@ -447,7 +450,7 @@ export const useNB2 = () => {
           transport: port,
           messages: writeMessages,
         });
-        await sleep(750);
+        await sleep(2000);
         const readResponse = await sendMultipleMessages({
           transport: port,
           messages: readMessages,

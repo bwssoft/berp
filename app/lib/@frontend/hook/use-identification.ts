@@ -5,7 +5,7 @@ import { Device, IIdentificationLog, ITechnology } from "../../@backend/domain";
 import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
 import {
-  createOneDevice,
+  upsertOneDevice,
   createOneIdentificationLog,
 } from "../../@backend/action";
 import { toast } from "./use-toast";
@@ -15,7 +15,7 @@ namespace Namespace {
     technology: ITechnology | null;
   }
 
-  export interface Identified {
+  export interface Detected {
     port: ISerialPort;
     equipment: Equipment;
     status: "fully_identified" | "partially_identified" | "not_identified";
@@ -26,6 +26,15 @@ namespace Namespace {
     iccid?: string | undefined;
     firmware?: string | undefined;
     serial?: string | undefined;
+    lora_keys?: {
+      tk?: string | undefined;
+      da?: string | undefined;
+      de?: string | undefined;
+      ap?: string | undefined;
+      ak?: string | undefined;
+      ask?: string | undefined;
+      nk?: string | undefined;
+    };
   }
 
   export interface Identification extends IIdentificationLog {}
@@ -47,6 +56,15 @@ namespace Namespace {
     equipment: {
       serial: string;
       imei?: string;
+      lora_keys?: {
+        tk: string;
+        da: string;
+        de: string;
+        ap: string;
+        ak: string;
+        ask: string;
+        nk: string;
+      };
     };
   }
 
@@ -57,11 +75,13 @@ namespace Namespace {
 
 export const useIdentification = (props: Namespace.useIdentificationProps) => {
   const { technology } = props;
-  const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
+  const [identified, setIdentified] = useState<Namespace.Detected[]>([]);
   const isIdentifying = useRef(false);
 
   const [process, setProcess] = useState<Namespace.Identification[]>([]);
   const isWriting = useRef(false);
+
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // hook that handle interactions with devices
   const {
@@ -75,6 +95,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
   // function that handle the identification process, check if the process was successful and save result on database
   const identify = useCallback(
     async (id: string) => {
+      setIsProcessing(true);
       isWriting.current = true;
 
       const [current] = identified;
@@ -111,16 +132,18 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
           serial: current.equipment.serial!,
           firmware: current.equipment.firmware!,
           imei: current.equipment?.imei,
+          lora_keys: current.equipment?.lora_keys,
           iccid: current.equipment?.iccid,
         },
         identification: {
-          imei: equipment.imei,
           serial: equipment.serial,
+          imei: equipment?.imei,
+          lora_keys: equipment?.lora_keys,
         },
         status,
         metadata: {
-          messages: messages.map(({ key, message }) => ({
-            request: message,
+          messages: messages.map(({ key, command }) => ({
+            request: command,
             response: response[key as keyof typeof response],
           })),
           end_time,
@@ -135,15 +158,25 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
       const promises: Promise<any>[] = [createOneIdentificationLog(log)];
       if (status) {
         promises.push(
-          createOneDevice({
-            equipment: { ...equipment, firmware: current.equipment.firmware },
-            simcard: current.equipment?.iccid
-              ? { iccid: current.equipment?.iccid }
-              : undefined,
-            model:
-              Device.Model[technology.name.system as keyof typeof Device.Model],
-            identified_at: new Date(),
-          })
+          upsertOneDevice(
+            {
+              "equipment.serial": equipment.serial,
+            },
+            {
+              equipment: {
+                ...equipment,
+                firmware: current.equipment.firmware,
+              },
+              simcard: current.equipment?.iccid
+                ? { iccid: current.equipment?.iccid }
+                : undefined,
+              model:
+                Device.Model[
+                  technology.name.system as keyof typeof Device.Model
+                ],
+              identified_at: new Date(),
+            }
+          )
         );
       }
 
@@ -154,6 +187,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
       setProcess((prev) => prev.concat(dataSavedOnDb));
 
       isWriting.current = false;
+      setIsProcessing(false);
     },
     [handleIdentification, identified, technology]
   );
@@ -161,6 +195,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     const interval = setInterval(async () => {
+      setIsProcessing(true);
       if (isWriting.current) return;
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
@@ -178,6 +213,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
       } else if (!isIdentifying.current && !ports.length) {
         setIdentified([]);
       }
+      setIsProcessing(false);
     }, 5000); // 5000 ms = 5 segundos
 
     // Limpeza: limpa o intervalo quando o componente é desmontado ou quando as dependências mudarem
@@ -189,5 +225,6 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
     identified,
     identify,
     requestPort,
+    isProcessing,
   };
 };

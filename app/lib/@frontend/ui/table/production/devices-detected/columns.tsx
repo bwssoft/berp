@@ -11,6 +11,15 @@ export interface Row {
     iccid?: string | undefined;
     firmware?: string | undefined;
     serial?: string | undefined;
+    lora_keys?: {
+      tk?: string | undefined;
+      da?: string | undefined;
+      de?: string | undefined;
+      ap?: string | undefined;
+      ak?: string | undefined;
+      ask?: string | undefined;
+      nk?: string | undefined;
+    };
   };
   status: "fully_identified" | "partially_identified" | "not_identified";
   port: ISerialPort;
@@ -139,7 +148,7 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
   DM_BWS_LORA: [
     {
       header: "Serial",
-      accessorKey: "serial",
+      accessorKey: "equipment",
       cell: ({ row }) => (
         <p title={row.original.equipment.serial}>
           {row.original.equipment.serial ?? "--"}
@@ -148,10 +157,28 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
     },
     {
       header: "Firmware",
-      accessorKey: "firmware",
+      accessorKey: "equipment",
       cell: ({ row }) => (
         <p title={row.original.equipment.firmware}>
           {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Timestamp",
+      accessorKey: "equipment",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.lora_keys?.tk}>
+          {row.original.equipment.lora_keys?.tk ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Device EUI",
+      accessorKey: "equipment",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.lora_keys?.de}>
+          {row.original.equipment.lora_keys?.de ?? "--"}
         </p>
       ),
     },

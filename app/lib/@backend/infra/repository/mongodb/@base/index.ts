@@ -137,6 +137,20 @@ export class BaseRepository<Entity extends object>
         }
     }
 
+    async upsertOne(
+        query: Filter<Entity>,
+        value: UpdateFilter<Entity>
+    ) {
+        const db = await this.connect();
+        return db
+        .collection<Entity>(this.collection)
+        .updateOne(
+            query,
+            value,
+            { upsert: true }
+        );
+    }
+
     async connect() {
         const client = await this.client;
         return client.db(this.db);
