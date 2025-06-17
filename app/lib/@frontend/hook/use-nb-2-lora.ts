@@ -73,19 +73,22 @@ export const useNB2Lora = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, msg: Message<string, { check?: string }>) => {
+    sendMessage: async (
+      port,
+      msg: Message<string, { check?: string; delay_before?: number }>
+    ) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      const { command, timeout, check } = msg;
+      const { command, timeout, check, delay_before } = msg;
+      if (delay_before) await sleep(delay_before);
       await writeToPort(port, command);
-
       const response = await readResponse(reader, check ?? command, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 200,
+      delayBetweenMessages: 300,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -99,6 +102,18 @@ export const useNB2Lora = () => {
         { command: "ICCID\r\n", key: "iccid", transform: NB2LORAParser.iccid },
         { command: "RINS\r\n", key: "serial", transform: NB2LORAParser.serial },
         {
+          key: "da",
+          command: `LRDA\r\n`,
+          check: "RDA",
+          transform: NB2LORAParser.rda,
+        },
+        {
+          key: "de",
+          command: `LRDE\r\n`,
+          check: "RDE",
+          transform: NB2LORAParser.rde,
+        },
+        {
           command: "RFW\r\n",
           key: "firmware",
           transform: NB2LORAParser.firmware,
@@ -107,10 +122,18 @@ export const useNB2Lora = () => {
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            const response = await sendMultipleMessages({
-              transport: port,
-              messages,
-            });
+            const { firmware, iccid, imei, serial, ...lora_keys } =
+              await sendMultipleMessages({
+                transport: port,
+                messages,
+              });
+            const response = {
+              firmware,
+              iccid,
+              imei,
+              serial,
+              lora_keys,
+            };
             return { port, response };
           } catch (error) {
             console.error("[ERROR] handleDetection", error);
@@ -446,26 +469,37 @@ export const useNB2Lora = () => {
       if (!identification) {
         return { ok: false, port, error: "Serial não encontrado na base" };
       }
-      const timestamp = Number(getDayZeroTimestamp().toString().slice(0, -5));
+      const timestamp = (getDayZeroTimestamp() / 1000)
+        .toString(16)
+        .toUpperCase();
 
       const writeMessages = [
         {
-          key: "serial",
+          key: "serial_nb",
           command: `WINS=${serial}\r\n`,
+          check: "WINS",
         },
         {
           key: "imei",
           command: `WIMEI=${identification.imei}\r\n`,
+          check: "WIMEI",
         },
-        // {
-        //   key: "timestamp",
-        //   command: `LWTK=${timestamp}\r\n`,
-        // },
+        {
+          key: "serial_lora",
+          command: `LWINS=${serial}\r\n`,
+          check: "WINS",
+          delay_before: 1000,
+        },
+        {
+          key: "timestamp",
+          command: `LWTK=${timestamp}\r\n`,
+          check: "WTK",
+        },
       ] as const;
 
       const readMessages = [
         {
-          key: "serial",
+          key: "serial_nb",
           command: `RINS\r\n`,
           transform: NB2LORAParser.serial,
         },
@@ -474,48 +508,54 @@ export const useNB2Lora = () => {
           command: `RIMEI\r\n`,
           transform: NB2LORAParser.imei,
         },
-        // {
-        //   key: "tk",
-        //   command: `LRTK\r\n`,
-        //   check: "RTK",
-        //   transform: NB2LORAParser.rtk,
-        // },
-        // {
-        //   key: "da",
-        //   command: `LRDA\r\n`,
-        //   check: "RDA",
-        //   transform: NB2LORAParser.rda,
-        // },
-        // {
-        //   key: "de",
-        //   command: `LRDE\r\n`,
-        //   check: "RDE",
-        //   transform: NB2LORAParser.rde,
-        // },
-        // {
-        //   key: "ap",
-        //   command: `LRAP\r\n`,
-        //   check: "RAP",
-        //   transform: NB2LORAParser.rap,
-        // },
-        // {
-        //   key: "ak",
-        //   command: `LRAK\r\n`,
-        //   check: "RAK",
-        //   transform: NB2LORAParser.rak,
-        // },
-        // {
-        //   key: "ask",
-        //   command: `LRASK\r\n`,
-        //   check: "RASK",
-        //   transform: NB2LORAParser.rask,
-        // },
-        // {
-        //   key: "nk",
-        //   command: `LRNK\r\n`,
-        //   check: "RNK",
-        //   transform: NB2LORAParser.rnk,
-        // },
+        {
+          key: "serial_lora",
+          command: `LRINS\r\n`,
+          check: "RINS",
+          transform: NB2LORAParser.serial,
+        },
+        {
+          key: "tk",
+          command: `LRTK\r\n`,
+          check: "RTK",
+          transform: NB2LORAParser.rtk,
+        },
+        {
+          key: "da",
+          command: `LRDA\r\n`,
+          check: "RDA",
+          transform: NB2LORAParser.rda,
+        },
+        {
+          key: "de",
+          command: `LRDE\r\n`,
+          check: "RDE",
+          transform: NB2LORAParser.rde,
+        },
+        {
+          key: "ap",
+          command: `LRAP\r\n`,
+          check: "RAP",
+          transform: NB2LORAParser.rap,
+        },
+        {
+          key: "ak",
+          command: `LRAK\r\n`,
+          check: "RAK",
+          transform: NB2LORAParser.rak,
+        },
+        {
+          key: "ask",
+          command: `LRASK\r\n`,
+          check: "RASK",
+          transform: NB2LORAParser.rask,
+        },
+        {
+          key: "nk",
+          command: `LRNK\r\n`,
+          check: "RNK",
+          transform: NB2LORAParser.rnk,
+        },
       ] as const;
 
       try {
@@ -524,7 +564,7 @@ export const useNB2Lora = () => {
           transport: port,
           messages: writeMessages,
         });
-        await sleep(2000);
+        await sleep(1500);
         const readResponse = await sendMultipleMessages({
           transport: port,
           messages: readMessages,
@@ -534,20 +574,24 @@ export const useNB2Lora = () => {
         if (
           !readResponse.imei ||
           !isImei(readResponse.imei) ||
-          !readResponse.serial
-          // !readResponse.tk ||
-          // !readResponse.da ||
-          // !readResponse.de ||
-          // !readResponse.ap ||
-          // !readResponse.ak ||
-          // !readResponse.ask ||
-          // !readResponse.nk
+          !readResponse.serial_nb ||
+          !readResponse.serial_lora ||
+          !readResponse.tk ||
+          !readResponse.da ||
+          !readResponse.de ||
+          !readResponse.ap ||
+          !readResponse.ak ||
+          !readResponse.ask ||
+          !readResponse.nk
         ) {
           return { ok: false, port, error: "IMEI ou Serial inválido" };
         }
 
         const status =
-          identification.serial === readResponse.serial &&
+          identification.serial === readResponse.serial_nb &&
+          identification.serial === readResponse.serial_lora &&
+          identification.serial === readResponse.da &&
+          timestamp === readResponse.tk &&
           identification.imei === readResponse.imei;
 
         return {
@@ -559,16 +603,16 @@ export const useNB2Lora = () => {
           status,
           ok: true,
           equipment: {
-            serial: readResponse.serial,
+            serial: readResponse.serial_nb,
             imei: readResponse.imei,
             lora_keys: {
-              // tk: readResponse.tk,
-              // da: readResponse.da,
-              // de: readResponse.de,
-              // ap: readResponse.ap,
-              // ak: readResponse.ak,
-              // ask: readResponse.ask,
-              // nk: readResponse.nk,
+              tk: readResponse.tk,
+              da: readResponse.da,
+              de: readResponse.de,
+              ap: readResponse.ap,
+              ak: readResponse.ak,
+              ask: readResponse.ask,
+              nk: readResponse.nk,
             },
           },
         };

@@ -212,6 +212,24 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       ),
     },
     {
+      header: "Device Address",
+      accessorKey: "equipment",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.lora_keys?.da}>
+          {row.original.equipment.lora_keys?.da ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Device EUI",
+      accessorKey: "equipment",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.lora_keys?.de}>
+          {row.original.equipment.lora_keys?.de ?? "--"}
+        </p>
+      ),
+    },
+    {
       header: "Firmware",
       accessorKey: "firmware",
       cell: ({ row }) => (

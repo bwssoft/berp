@@ -80,7 +80,7 @@ export const useLora = () => {
       return response;
     },
     options: {
-      delayBetweenMessages: 200,
+      delayBetweenMessages: 100,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -442,7 +442,10 @@ export const useLora = () => {
   );
   const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
-      const timestamp = Number(getDayZeroTimestamp().toString().slice(0, -5));
+      const timestamp = (getDayZeroTimestamp() / 1000)
+        .toString(16)
+        .toUpperCase();
+
       const writeMessages = [
         {
           key: "serial",
@@ -504,7 +507,7 @@ export const useLora = () => {
           transport: port,
           messages: writeMessages,
         });
-        await sleep(750);
+        await sleep(2000);
         const readResponse = await sendMultipleMessages({
           transport: port,
           messages: readMessages,
@@ -524,8 +527,7 @@ export const useLora = () => {
         }
 
         const status =
-          serial === readResponse.serial &&
-          timestamp.toString() === readResponse.tk;
+          serial === readResponse.serial && timestamp === readResponse.tk;
 
         const end_time = Date.now();
 

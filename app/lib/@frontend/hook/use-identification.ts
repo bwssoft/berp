@@ -121,6 +121,8 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
           variant: "error",
           description: identification.error,
         });
+        isWriting.current = false;
+        setIsProcessing(false);
         return undefined;
       }
 

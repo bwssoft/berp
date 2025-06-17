@@ -40,7 +40,7 @@ export class NB2LORAParser {
 
     const value = serialValue.replace(/\s+/g, "");
 
-    return value.length ? value : undefined;
+    return value.length ? value.padStart(8, "0") : undefined;
   }
 
   /**
