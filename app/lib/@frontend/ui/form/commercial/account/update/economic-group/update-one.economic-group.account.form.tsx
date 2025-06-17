@@ -34,7 +34,7 @@ export function EconomicGroupAccountForm({
         name="cnpj.economic_group_holding"
         render={({ field }) => (
           <Combobox
-            data={dataHolding}
+            data={dataHolding.filter((item) => item && item.taxId && item.name)}
             label="Grupo Econômico (Holding)"
             behavior="search"
             onSearchChange={(text: string) => {
@@ -42,11 +42,16 @@ export function EconomicGroupAccountForm({
             }}
             value={selectedHolding}
             onOptionChange={([item]) => {
-              setSelectedHolding([item]);
-              field.onChange(item);
+              if (item) {
+                setSelectedHolding([item]);
+                field.onChange(item);
+              } else {
+                setSelectedHolding([]);
+                field.onChange(undefined);
+              }
             }}
-            keyExtractor={(item) => item.taxId}
-            displayValueGetter={(item) => item.name}
+            keyExtractor={(item) => item?.taxId || ""}
+            displayValueGetter={(item) => item?.name || ""}
             placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
           />
         )}
@@ -58,17 +63,20 @@ export function EconomicGroupAccountForm({
         render={({ field }) => (
           <Combobox
             type="multiple"
-            data={dataControlled}
+            data={dataControlled.filter(
+              (item) => item && item.taxId && item.name
+            )}
             label="Grupo Econômico (Controladas)"
             behavior="search"
             placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
             value={selectedControlled}
             onChange={(selectedItems) => {
-              setSelectedControlled(selectedItems);
-              field.onChange(selectedItems.map((item) => item));
+              const validItems = selectedItems.filter((item) => item);
+              setSelectedControlled(validItems);
+              field.onChange(validItems);
             }}
-            keyExtractor={(item) => item.taxId}
-            displayValueGetter={(item) => item.name}
+            keyExtractor={(item) => item?.taxId || ""}
+            displayValueGetter={(item) => item?.name || ""}
             onSearchChange={debouncedValidationControlled}
           />
         )}
