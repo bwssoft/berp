@@ -20,9 +20,10 @@ interface Props {
 export function ConfiguratorPanel(props: Props) {
   const { configurationProfile, technology } = props;
 
-  const { identified, configured, configure, requestPort } = useConfiguration({
-    technology,
-  });
+  const { identified, configured, configure, requestPort, isProcessing } =
+    useConfiguration({
+      technology,
+    });
   return (
     <>
       <div className="mt-10 flex flex-col gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -66,9 +67,9 @@ export function ConfiguratorPanel(props: Props) {
                 variant="default"
                 className="h-fit bg-blue-600 hover:bg-blue-500"
                 onClick={() => configure(configurationProfile)}
+                disabled={isProcessing}
               >
-                Configurar{" "}
-                {/* {isConfigurationDisabled && `(${configurationDisabledTimer})`} */}
+                Configurar
               </Button>
             </div>
 
