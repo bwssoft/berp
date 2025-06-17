@@ -41,11 +41,10 @@ export function EconomicGroupAccountForm({
               debouncedValidationHolding(text);
             }}
             value={selectedHolding}
-            onChange={(selectedItems) => {
-              setSelectedHolding(selectedItems);
-              field.onChange(selectedItems.map((item) => item.taxId));
+            onOptionChange={([item]) => {
+              setSelectedHolding([item]);
+              field.onChange(item);
             }}
-            onOptionChange={([item]) => field.onChange(item.taxId)}
             keyExtractor={(item) => item.taxId}
             displayValueGetter={(item) => item.name}
             placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
@@ -66,7 +65,7 @@ export function EconomicGroupAccountForm({
             value={selectedControlled}
             onChange={(selectedItems) => {
               setSelectedControlled(selectedItems);
-              field.onChange(selectedItems.map((item) => item.taxId));
+              field.onChange(selectedItems.map((item) => item));
             }}
             keyExtractor={(item) => item.taxId}
             displayValueGetter={(item) => item.name}
