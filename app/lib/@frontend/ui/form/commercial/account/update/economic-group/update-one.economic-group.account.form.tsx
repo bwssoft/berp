@@ -19,6 +19,8 @@ export function EconomicGroupAccountForm({
     onSubmit,
     selectedControlled,
     setSelectedControlled,
+    selectedHolding,
+    setSelectedHolding,
     dataHolding,
     dataControlled,
     debouncedValidationHolding,
@@ -38,8 +40,11 @@ export function EconomicGroupAccountForm({
             onSearchChange={(text: string) => {
               debouncedValidationHolding(text);
             }}
-            value={dataHolding.filter((item) => item.taxId === field.value)}
-            onChange={(item) => console.log(item)}
+            value={selectedHolding}
+            onChange={(selectedItems) => {
+              setSelectedHolding(selectedItems);
+              field.onChange(selectedItems.map((item) => item.taxId));
+            }}
             onOptionChange={([item]) => field.onChange(item.taxId)}
             keyExtractor={(item) => item.taxId}
             displayValueGetter={(item) => item.name}

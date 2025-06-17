@@ -34,6 +34,8 @@ export function useUpdateEconomicGroupForm(
   const [selectedControlled, setSelectedControlled] = useState<EconomicGroup[]>(
     []
   );
+
+  const [selectedHolding, setSelectedHolding] = useState<EconomicGroup[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const queryClient = useQueryClient();
@@ -185,6 +187,8 @@ export function useUpdateEconomicGroupForm(
     debouncedValidationControlled,
     dataControlled,
     setDataControlled,
+    selectedHolding,
+    setSelectedHolding,
     selectedControlled,
     setSelectedControlled,
     isLoading,
