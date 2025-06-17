@@ -17,8 +17,20 @@ import { z } from "zod";
 
 const schema = z.object({
   cnpj: z.object({
-    economic_group_holding: z.string().min(1, "CNPJ da holding é obrigatório"),
-    economic_group_controlled: z.array(z.string()).optional(),
+    economic_group_holding: z
+      .object({
+        name: z.string().min(1, "CNPJ da holding é obrigatório"),
+        taxId: z.string().min(1, "CNPJ da holding é obrigatório"),
+      })
+      .optional(),
+    economic_group_controlled: z
+      .array(
+        z.object({
+          name: z.string().min(1, "CNPJ do grupo controlado é obrigatório"),
+          taxId: z.string().min(1, "CNPJ do grupo controlado é obrigatório"),
+        })
+      )
+      .optional(),
   }),
 });
 
@@ -34,20 +46,22 @@ export function useUpdateEconomicGroupForm(
   const [selectedControlled, setSelectedControlled] = useState<EconomicGroup[]>(
     []
   );
+
+  const [selectedHolding, setSelectedHolding] = useState<EconomicGroup[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const queryClient = useQueryClient();
 
-  const { control, handleSubmit, reset } =
-    useForm<UpdateEconomicGroupFormSchema>({
-      resolver: zodResolver(schema),
-      defaultValues: {
-        cnpj: {
-          economic_group_holding: "",
-          economic_group_controlled: [],
-        },
-      },
-    });
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<UpdateEconomicGroupFormSchema>({
+    resolver: zodResolver(schema),
+  });
+
+  console.log("🚀 ~ error:", errors);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,25 +72,22 @@ export function useUpdateEconomicGroupForm(
         const holding = data.docs[0]?.economic_group_holding;
         const controlled = data.docs[0]?.economic_group_controlled;
 
-        holding && setDataHolding([holding]);
-        controlled && setDataControlled(controlled);
+        if (holding && Object.keys(holding).length > 0) {
+          setSelectedHolding([holding]);
+          setValue("cnpj.economic_group_holding", holding);
+        }
 
-        reset({
-          cnpj: {
-            economic_group_holding: holding?.taxId || "",
-            economic_group_controlled:
-              (controlled ?? []).map((item) => item.taxId) || [],
-          },
-        });
-
-        setSelectedControlled(controlled || []);
+        if (controlled) {
+          setSelectedControlled(controlled || []);
+          setValue("cnpj.economic_group_controlled", controlled);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [isModalOpen]);
+  }, [isModalOpen, accountId, setValue]);
 
   const handleCnpjOrName = async (
     value: string,
@@ -91,17 +102,25 @@ export function useUpdateEconomicGroupForm(
     } else {
       // Se não for CNPJ, trata como nome e usa outra função
       data = await fetchNameData(value);
-      const normalized = data?.map((item) => ({
-        taxId: item.taxId.replace(/\D/g, ""),
-        name: item.company.name,
-      }));
+
+      // Make sure data is valid before processing
+      const normalized = Array.isArray(data)
+        ? data
+            .filter(
+              (item) => item && item.taxId && item.company && item.company.name
+            )
+            .map((item) => ({
+              taxId: item.taxId.replace(/\D/g, ""),
+              name: item.company.name,
+            }))
+        : [];
 
       if (groupType === "controlled") {
-        setDataControlled(normalized ?? []);
+        setDataControlled(normalized);
         return;
       }
 
-      setDataHolding(normalized ?? []);
+      setDataHolding(normalized);
     }
 
     return data;
@@ -122,29 +141,23 @@ export function useUpdateEconomicGroupForm(
   );
 
   const onSubmit = handleSubmit(async (formData) => {
-    const holdingTaxId = formData.cnpj.economic_group_holding;
-    const controlledTaxIds = formData.cnpj.economic_group_controlled || [];
+    const holding = formData.cnpj.economic_group_holding;
+    console.log("🚀 ~ onSubmit ~ holding:", holding);
+    const controlled = formData.cnpj.economic_group_controlled || [];
+    console.log("🚀 ~ onSubmit ~ controlled:", controlled);
 
-    const holding = dataHolding.find((item) => item.taxId === holdingTaxId);
-    if (!holding) return;
-
-    const allControlled = [...selectedControlled, ...dataControlled];
-    const controlled = allControlled.reduce<EconomicGroup[]>((acc, item) => {
-      if (
-        controlledTaxIds.includes(item.taxId) &&
-        !acc.some((existing) => existing.taxId === item.taxId)
-      ) {
-        acc.push(item);
-      }
-      return acc;
-    }, []);
+    if (!holding) {
+      toast({
+        title: "Erro!",
+        description: "Holding inválida ou não encontrada!",
+        variant: "error",
+      });
+      return;
+    }
 
     const payload = {
-      economic_group_holding: { name: holding.name, taxId: holding.taxId },
-      economic_group_controlled: controlled.map((c) => ({
-        name: c.name,
-        taxId: c.taxId,
-      })),
+      economic_group_holding: holding,
+      economic_group_controlled: controlled,
     };
 
     try {
@@ -185,6 +198,8 @@ export function useUpdateEconomicGroupForm(
     debouncedValidationControlled,
     dataControlled,
     setDataControlled,
+    selectedHolding,
+    setSelectedHolding,
     selectedControlled,
     setSelectedControlled,
     isLoading,
