@@ -25,7 +25,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
     handleNewContact,
     handlePreferredContact,
     handleRemove,
-    setNewContacts,
+    setTempContact,
   } = useCreateContactAccount(closeModal ?? (() => {}));
 
   return (
@@ -68,10 +68,10 @@ export function CreateContactAccountForm({ closeModal }: Props) {
             "Telefone Residencial",
             "Telefone Comercial",
           ]}
-          onChange={(value) => {
-            setNewContacts((prev: any) => ({
+          onChange={([value]) => {
+            setTempContact((prev) => ({
               ...prev,
-              type: value,
+              type: value as typeof prev.type,
             }));
           }}
           label="Tipo"
@@ -84,7 +84,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
         <Input
           label="Contato"
           onChange={(e) =>
-            setNewContacts((prev: any) => ({
+            setTempContact((prev) => ({
               ...prev,
               contact: e.target.value,
             }))

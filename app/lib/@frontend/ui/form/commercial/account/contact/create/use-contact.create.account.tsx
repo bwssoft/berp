@@ -79,7 +79,20 @@ const schema = z
   });
 
 export function useCreateContactAccount(closeModal: () => void) {
-  const [newContacts, setNewContacts] = useState<any>({
+  type ContactType =
+    | "Celular"
+    | "Telefone Residencial"
+    | "Telefone Comercial"
+    | "Email";
+  const [tempContact, setTempContact] = useState<{
+    type: ContactType | "";
+    contact: string;
+    preferredContact: {
+      phone?: boolean;
+      whatsapp?: boolean;
+      email?: boolean;
+    };
+  }>({
     type: "",
     contact: "",
     preferredContact: {},
@@ -115,7 +128,7 @@ export function useCreateContactAccount(closeModal: () => void) {
   });
 
   const handleNewContact = () => {
-    if (!newContacts.type || !newContacts.contact) {
+    if (!tempContact.type || !tempContact.contact) {
       toast({
         title: "Atenção",
         description: "Preencha o tipo e o contato antes de adicionar.",
@@ -126,8 +139,17 @@ export function useCreateContactAccount(closeModal: () => void) {
 
     append({
       id: crypto.randomUUID(),
-      type: newContacts.type,
-      contact: newContacts.contact,
+      type: Array.isArray(tempContact.type)
+        ? tempContact.type
+        : [tempContact.type],
+      contact: tempContact.contact,
+      preferredContact: tempContact.preferredContact,
+    });
+
+    // Reset temp contact after adding
+    setTempContact({
+      type: "",
+      contact: "",
       preferredContact: {},
     });
   };
@@ -168,14 +190,12 @@ export function useCreateContactAccount(closeModal: () => void) {
     const { success, error } = await createOneContact({
       ...data,
       accountId: accountId ?? undefined,
-      contactItems: newContacts.map(
-        (item: { id: any; type: any[]; preferredContact: any }) => ({
+      contactItems:
+        data.contactItems?.map((item) => ({
           ...item,
+          type: Array.isArray(item.type) ? item.type[0] : item.type,
           id: item.id ?? crypto.randomUUID(),
-          type: item.type[0],
-          preferredContact: item.preferredContact,
-        })
-      ),
+        })) || [],
     });
 
     if (success && accountId) {
@@ -238,6 +258,6 @@ export function useCreateContactAccount(closeModal: () => void) {
     handlePreferredContact,
     handleRemove,
     onSubmit,
-    setNewContacts,
+    setTempContact,
   };
 }
