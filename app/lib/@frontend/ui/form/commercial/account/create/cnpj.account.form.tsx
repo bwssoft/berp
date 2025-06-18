@@ -80,18 +80,18 @@ export function CNPJAccountForm({
         name="cnpj.status"
         render={({ field }) => (
           <Combobox
-            keyExtractor={(item) => item.id}
-            displayValueGetter={(item) => item.name}
+            type="single"
             label="Situação"
             data={[
               { id: "Ativa", name: "Ativa" },
               { id: "Inativa", name: "Inativa" },
             ]}
-            placeholder="Selecione a situação"
-            {...register("cnpj.status")}
-            error={errors.cnpj?.status?.message}
             value={field.value}
-            onChange={([item]) => field.onChange(item.id)}
+            onOptionChange={(item) => field.onChange(item)}
+            error={errors.cnpj?.status?.message}
+            keyExtractor={(item) => item.id}
+            placeholder="Selecione a situação"
+            displayValueGetter={(item) => item.name}
           />
         )}
       />
