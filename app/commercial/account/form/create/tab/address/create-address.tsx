@@ -13,7 +13,7 @@ export function CreateAddressModal({ id }: Props) {
 
   return (
     <>
-      <AddressModal open={open} closeModal={closeModal} />
+      <AddressModal open={open} closeModal={closeModal} accountId={id} />
       <div className="flex justify-end items-end gap-4 mt-4">
         <Button onClick={openModal} type="button" className="h-fit">
           Novo

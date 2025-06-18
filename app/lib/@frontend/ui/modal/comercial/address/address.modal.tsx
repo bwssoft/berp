@@ -8,8 +8,9 @@ import { AddressCreateForm } from "../../../form/commercial/address/create/addre
 interface AddressProps {
   open: any;
   closeModal: () => void;
+  accountId: string;
 }
-export function AddressModal({ open, closeModal }: AddressProps) {
+export function AddressModal({ open, closeModal, accountId }: AddressProps) {
   return (
     <Modal
       open={open}
@@ -20,7 +21,7 @@ export function AddressModal({ open, closeModal }: AddressProps) {
     >
       <ModalContent>
         <ModalBody className="overflow-y-scroll max-h-[70vh] w-full">
-          <AddressCreateForm closeModal={closeModal} />
+          <AddressCreateForm closeModal={closeModal} accountId={accountId} />
         </ModalBody>
       </ModalContent>
     </Modal>
