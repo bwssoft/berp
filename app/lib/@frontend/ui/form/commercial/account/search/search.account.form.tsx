@@ -103,9 +103,9 @@ export function AccountFilterForm() {
                             valueExtractor={(d) => d.name}
                             label="Setor"
                             value={sectorModal.sectors.find(
-                                (d) => d.id === field.value
+                                (d) => d.name === field.value
                             )}
-                            onChange={(d) => field.onChange(d.id)}
+                            onChange={(d) => field.onChange(d.name)}
                         />
                     )}
                 />
