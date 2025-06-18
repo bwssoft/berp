@@ -9,3 +9,4 @@ export {
 } from "./contact";
 export * from "./account";
 export * from "./address";
+export * from "./historical";
