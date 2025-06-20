@@ -10,22 +10,30 @@ import {
 } from "../../../../../component";
 import { useSearchContactHistoricalModal } from "./use-search-contact.historical.form";
 import { PhoneIcon } from "@heroicons/react/24/outline";
+import { ContactSelection } from "@/app/lib/@backend/domain";
 
 interface ContactModalProps {
   accountId?: string;
+  selectContact: ContactSelection[];
+  setSelectContact: (
+    value:
+      | ContactSelection[]
+      | ((prev: ContactSelection[]) => ContactSelection[])
+  ) => void;
 }
 
-export function SearchContactHistoricalModal({ accountId }: ContactModalProps) {
+export function SearchContactHistoricalModal({
+  accountId,
+  selectContact,
+  setSelectContact,
+}: ContactModalProps) {
   const {
     closeModal,
     openModal,
     open,
     contactsByCompany,
     isLoading,
-    accountData,
   } = useSearchContactHistoricalModal(accountId ?? "");
-
-  console.log({ contactsByCompany });
 
   if (!contactsByCompany) return null;
 
@@ -53,9 +61,10 @@ export function SearchContactHistoricalModal({ accountId }: ContactModalProps) {
           <ModalBody>
             <SearchContactHistoricalAccountForm
               isLoading={isLoading}
+              selectContact={selectContact}
+              setSelectContact={setSelectContact}
               closeModal={closeModal}
               contacts={contactsByCompany ?? []}
-              accountData={accountData}
             />
           </ModalBody>
         </ModalContent>

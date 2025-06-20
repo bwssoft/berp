@@ -1,12 +1,16 @@
 "use client";
-import { Button, TimelineItem } from "@/app/lib/@frontend/ui/component";
+import {
+  Button,
+  TimelineItem,
+} from "@/app/lib/@frontend/ui/component";
 import { useCreateHistoricalForm } from "./use-create.historical.form";
 import {
   FaceSmileIcon,
   PaperClipIcon,
-  PhoneIcon,
 } from "@heroicons/react/24/outline";
 import { SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
+import { useState } from "react";
+import { ContactSelection } from "@/app/lib/@backend/domain";
 
 const timelineItems = [
   {
@@ -30,19 +34,19 @@ const timelineItems = [
   {
     author: "Chelsea Hagon",
     action: "📞 Gael Bernardo Lopes - Gerente - Celular (41) 98373-8269",
-    details: `Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.`,
+    details: "Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.",
     timestamp: "28/03/2025 14:02:56",
   },
   {
     author: "Chelsea Hagon",
     action: "📞 Gael Bernardo Lopes - Gerente - Celular (41) 98373-8269",
-    details: `Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.`,
+    details: "Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.",
     timestamp: "28/03/2025 14:02:56",
   },
   {
     author: "Chelsea Hagon",
     action: "📞 Gael Bernardo Lopes - Gerente - Celular (41) 98373-8269",
-    details: `Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.`,
+    details: "Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.",
     timestamp: "28/03/2025 14:02:56",
   },
   {
@@ -63,19 +67,26 @@ type Props = {
 };
 
 export function CreateHistoricalForm({ accountId }: Props) {
-  const {} = useCreateHistoricalForm();
+  const {register, onSubmit} = useCreateHistoricalForm({accountId});
+  const [selectContact, setSelectContact] = useState<ContactSelection[]>([]);
+
   return (
     <div className="w-[70%]">
-      <form>
+      <form onSubmit={onSubmit}>
         <div className="border rounded-md p-4 mb-4 bg-white ">
           <textarea
             placeholder="Adicione seu histórico..."
+            {...register("description")}
             className="w-full resize-none border-none focus:outline-none focus:ring-0 focus:border-none p-0"
             rows={2}
           />
           <div className="flex items-center justify-between mt-2 ">
             <div className="flex ">
-              <SearchContactHistoricalModal accountId={accountId} />
+              <SearchContactHistoricalModal
+                accountId={accountId}
+                selectContact={selectContact}
+                setSelectContact={(value) => setSelectContact(value)}
+              />
               <Button title="Emoji" variant={"ghost"} className="p-1">
                 <FaceSmileIcon className="h-5 w-5" />
               </Button>
