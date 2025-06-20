@@ -130,7 +130,7 @@ export type CreateAccountFormSchema = z.infer<typeof schema>;
 
 export function useCreateAccountForm() {
   // Estado para definir se o documento é CPF ou CNPJ:
-  const [type, setType] = useState<"cpf" | "cnpj">("cpf");
+  const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
 
   // Estado para guardar os dados retornados para holding e controlled
   const [dataHolding, setDataHolding] = useState<ICnpjaResponse[] | null>(null);
