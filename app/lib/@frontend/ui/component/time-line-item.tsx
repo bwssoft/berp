@@ -33,11 +33,13 @@ export function TimelineItem({ item }: TimelineProps) {
               {/* Avatar ou Emoji */}
               <div className="relative z-10">
                 {isSystem ? (
-                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white border">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white ">
                     🧠
                   </div>
                 ) : (
-                  <UserCircleIcon className="w-10 h-10" />
+                  <div className="bg-white w-full rounded-full">
+                    <UserCircleIcon className="w-10 h-10" />
+                  </div>
                 )}
               </div>
 
