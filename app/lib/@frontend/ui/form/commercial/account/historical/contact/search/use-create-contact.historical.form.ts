@@ -1,10 +1,7 @@
 "use client";
 
-import { updateOneAccount } from "@/app/lib/@backend/action";
-import { toast } from "@/app/lib/@frontend/hook";
 import { useState, useEffect } from "react";
-import { IAccount, IContact } from "@/app/lib/@backend/domain";
-import { useQueryClient } from "@tanstack/react-query";
+import { ContactSelection, IAccount, IContact } from "@/app/lib/@backend/domain";
 
 interface Props {
   contacts?: {
@@ -13,83 +10,106 @@ interface Props {
     documentValue: string;
   }[];
   accountData?: IAccount;
-  closeModal: () => void;
+  selectContact: ContactSelection[];
+  setSelectContact: (
+    value:
+      | ContactSelection[]
+      | ((prev: ContactSelection[]) => ContactSelection[])
+  ) => void;
 }
 
 export function useSearchContactHistoricalAccount({
-  accountData,
   contacts,
-  closeModal,
+  selectContact, 
+  setSelectContact
 }: Props) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [contactData, setContactData] = useState<Props["contacts"]>([]);
+  const [otherContactInfo, setOtherContactInfo] = useState({
+    name: "",
+    type: "",
+    contact: "",
+  });
 
   useEffect(() => {
     if (contacts && contacts.length > 0) {
-      setContactData(contacts);
+      const onlyWithContacts = contacts.filter(
+        (company) => company.contacts && company.contacts.length > 0
+      );
+      setContactData(onlyWithContacts);
     }
   }, [contacts]);
 
-  const queryClient = useQueryClient();
+  const isSelected = (id: string) =>
+    Array.isArray(selectContact) && selectContact.some((sc) => sc.id === id);
 
-  const handleSave = async () => {
-    try {
-      if (!accountData?.id) return;
-
-      const selectedContacts = contactData
-        ?.flatMap((group) => group.contacts)
-        .filter((contact) => selectedIds.includes(contact.id));
-
-      const existingContacts: IContact[] = accountData.contacts ?? [];
-
-      const merged = new Map<string, IContact>();
-
-      [...existingContacts, ...(selectedContacts ?? [])].forEach((c) => {
-        if (c?.id) merged.set(c.id, c);
-      });
-
-      const updatedContacts = Array.from(merged.values());
-
-      await updateOneAccount(
-        { id: accountData.id },
-        { contacts: updatedContacts }
-      );
-
-      await queryClient.invalidateQueries({
-        queryKey: ["findOneAccount", accountData.id],
-      });
-
-      await queryClient.invalidateQueries({
-        queryKey: ["findManyAccount", accountData.id],
-      });
-
-      toast({
-        title: "Sucesso!",
-        variant: "success",
-        description: "Contatos atualizados com sucesso!",
-      });
-      closeModal();
-    } catch (error) {
-      console.error({ error });
-      toast({
-        title: "Erro!",
-        description: "Não foi possível atualizar os contatos!",
-        variant: "error",
-      });
-    }
+  const toggleSelection = (
+    id: string,
+    name: string,
+    type: string,
+    contact: string
+  ) => {
+    setSelectContact((prev) => {
+      const safePrev = Array.isArray(prev) ? prev : [];
+      const exists = safePrev.some((sc) => sc.id === id);
+      return exists
+        ? safePrev.filter((sc) => sc.id !== id)
+        : [...safePrev, { id, name, type, contact }];
+    });
   };
 
-  const toggleCheckbox = (id: string, checked: boolean) => {
-    setSelectedIds((prev) =>
-      checked ? [...prev, id] : prev.filter((item) => item !== id)
-    );
+  const handleAddOtherContact = () => {
+    const { name, type, contact } = otherContactInfo;
+    if (!name || !type || !contact) return;
+
+    const id = crypto.randomUUID();
+    const newContactItem = {
+      id,
+      type,
+      contact,
+      contactItems: [
+        {
+          id,
+          type,
+          contact,
+        },
+      ],
+    };
+
+    toggleSelection(id, name, type, contact);
+
+    setContactData((prev: any) => {
+      const existingGroup = prev.find((g: any) => g.name === "Outros");
+      if (existingGroup) {
+        return prev.map((group: any) =>
+          group.name === "Outros"
+            ? { ...group, contacts: [...group.contacts, newContactItem] }
+            : group
+        );
+      } else {
+        return [
+          ...prev,
+          {
+            name: "Outros",
+            documentValue: "000.000.000-00",
+            contacts: [newContactItem],
+          },
+        ];
+      }
+    });
+
+    setOtherContactInfo({ name: "", type: "", contact: "" });
   };
+
 
   return {
-    handleSave,
-    toggleCheckbox,
     selectedIds,
     setSelectedIds,
     contactData,
+    toggleSelection,
+    isSelected,
+    handleAddOtherContact,
+    otherContactInfo,
+    setOtherContactInfo
   };
 }
