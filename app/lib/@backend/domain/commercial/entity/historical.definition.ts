@@ -11,6 +11,14 @@ export interface IHistorical {
     url: string;
   };
   description?: string;
+  title: string; // exemplo de acordo com o protótipo do jaisson: "Criação de Proposta"
   created_at: Date;
   type?: 'proposta' | 'sistema' | 'ligacao' | 'cadastro' | 'observacao';
 }
+
+export type ContactSelection = {
+  id: string;
+  name: string;
+  type: string;
+  contact: string;
+};
