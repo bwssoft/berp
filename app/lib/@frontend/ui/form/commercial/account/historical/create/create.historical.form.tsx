@@ -10,7 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
 import { useState } from "react";
-import { ContactSelection } from "@/app/lib/@backend/domain";
+import { ContactSelection, IHistorical } from "@/app/lib/@backend/domain";
 
 const timelineItems = [
   {
@@ -64,9 +64,10 @@ const timelineItems = [
 
 type Props = {
   accountId: string;
+  historical: IHistorical[]
 };
 
-export function CreateHistoricalForm({ accountId }: Props) {
+export function CreateHistoricalForm({ accountId, historical }: Props) {
   const {register, onSubmit} = useCreateHistoricalForm({accountId});
   const [selectContact, setSelectContact] = useState<ContactSelection[]>([]);
 
@@ -92,7 +93,7 @@ export function CreateHistoricalForm({ accountId }: Props) {
               </Button>
               <Button title="Anexar" variant={"ghost"} className="p-1">
                 <PaperClipIcon className="h-5 w-5" />
-              </Button>
+              </Button> 
             </div>
             <Button variant={"outline"} type="submit">
               Salvar
