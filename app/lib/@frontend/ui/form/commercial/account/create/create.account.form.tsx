@@ -23,7 +23,7 @@ export function AccountCreateForm() {
     debouncedValidationControlled,
   } = useCreateAccountForm();
 
-  const hasValidated = methods.getValues("document.type") === type;
+  const hasValidated = type && methods.getValues("document.type") === type;
 
   return (
     <FormProvider {...methods}>
