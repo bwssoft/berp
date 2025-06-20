@@ -6,14 +6,13 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { IAccount, IContact } from "@/app/lib/@backend/domain";
-import { useSearchContactHistoricalAccount } from "./use-create-contact.historical.form";
+import { ContactSelection, IContact } from "@/app/lib/@backend/domain";
 import {
   Button,
   Checkbox,
   Combobox,
-  CreateContactAccountForm,
   Input,
+  useSearchContactHistoricalAccount,
 } from "@/app/lib/@frontend/ui/component";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
 import { WhatsappIcon } from "@/app/lib/@frontend/svg/whatsapp-icon";
@@ -25,34 +24,35 @@ type ContactAccountFormProps = {
     documentValue: string;
   }[];
   isLoading?: boolean;
-  accountData?: IAccount;
   closeModal: () => void;
+  selectContact: ContactSelection[];
+  setSelectContact: (
+    value:
+      | ContactSelection[]
+      | ((prev: ContactSelection[]) => ContactSelection[])
+  ) => void;
 };
 
 export function SearchContactHistoricalAccountForm({
   contacts,
-  isLoading,
-  accountData = {} as IAccount,
   closeModal,
-}: ContactAccountFormProps) {
-  const {
-    handleSave,
-    toggleCheckbox,
-    selectedIds,
-    setSelectedIds,
-    contactData,
-  } = useSearchContactHistoricalAccount({ accountData, contacts, closeModal });
-
-  if (isLoading) return <div>Carregando...</div>;
-
+  selectContact,
+  setSelectContact,
+}: ContactAccountFormProps) {  
+  
+  const { toggleSelection, isSelected, handleAddOtherContact, otherContactInfo, setOtherContactInfo, contactData} = useSearchContactHistoricalAccount({
+    contacts,
+    selectContact,
+    setSelectContact
+  });
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-auto flex flex-col gap-4">
-        {(contactData ?? []).map((company) => (
+       {(contactData ?? []).map((company) => (
           <Disclosure key={company.documentValue}>
             {({ open }) => (
               <>
-                <DisclosureButton className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-black bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
+                <DisclosureButton className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-black bg-gray-100 rounded-lg hover:bg-gray-200">
                   <span>{company.name}</span>
                   <ChevronUpIcon
                     className={`${
@@ -60,52 +60,43 @@ export function SearchContactHistoricalAccountForm({
                     } w-5 h-5 text-purple-500`}
                   />
                 </DisclosureButton>
-
-                <DisclosurePanel className="px-4 pb-2 text-sm text-gray-700 flex flex-col gap-2">
-                  {company.contacts.map((c) => (
-                    <label key={c.id} className="flex items-center gap-2">
-                      {c.contactItems.map((ci) => (
-                        <>
-                          <span className="text-gray-500 text-sm">
-                            {ci.type + ": " + ci.contact}
-                          </span>
-                          <div className="flex gap-2">
-                            {(ci.type === "Celular" ||
-                              ci.type === "Telefone Residencial" ||
-                              ci.type === "Telefone Comercial") && (
-                              <label className="flex items-center">
-                                <Checkbox checked={false} onClick={() => {}} />
-                                <PhoneIcon className="w-5 h-5" />
-                              </label>
-                            )}
-
-                            {ci.type === "Email" && (
-                              <label className="flex items-center">
-                                <Checkbox checked={false} onClick={() => {}} />
-                                <EnvelopeIcon className="w-5 h-5" />
-                              </label>
-                            )}
-
-                            {ci.type === "Celular" && (
-                              <label className="flex items-center">
-                                <Checkbox checked={false} onClick={() => {}} />
-                                <WhatsappIcon classname="w-5 h-5" />
-                              </label>
-                            )}
-                          </div>
-                        </>
-                      ))}
-                    </label>
-                  ))}
+                <DisclosurePanel className="px-4 pb-2 flex flex-col gap-2">
+                  {company.contacts.map((c) =>
+                    c.contactItems.map((ci) => (
+                      <label key={ci.id} className="flex items-center gap-2">
+                        <Checkbox
+                          checked={isSelected(ci.id)}
+                          onChange={() =>
+                            toggleSelection(ci.id, company.name, ci.type, ci.contact)
+                          }
+                        />
+                        <span className="text-gray-500 text-sm">
+                          {ci.type + ": " + ci.contact}
+                        </span>
+                        <div className="flex gap-2">
+                          {ci.type.includes("Telefone") && (
+                            <PhoneIcon className="w-5 h-5" />
+                          )}
+                          {ci.type === "Email" && (
+                            <EnvelopeIcon className="w-5 h-5" />
+                          )}
+                          {ci.type === "Celular" && (
+                            <WhatsappIcon classname="w-5 h-5" />
+                          )}
+                        </div>
+                      </label>
+                    ))
+                  )}
                 </DisclosurePanel>
               </>
             )}
           </Disclosure>
         ))}
+
         <Disclosure>
           {({ open }) => (
             <>
-              <DisclosureButton className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-black bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
+              <DisclosureButton className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-black bg-gray-100 rounded-lg hover:bg-gray-200">
                 <span>Outro</span>
                 <ChevronUpIcon
                   className={`${
@@ -113,9 +104,17 @@ export function SearchContactHistoricalAccountForm({
                   } w-5 h-5 text-purple-500`}
                 />
               </DisclosureButton>
-
-              <DisclosurePanel className="px-4 pb-2 text-sm text-gray-700 flex flex-col gap-2">
-                <Input label="Nome" onChange={() => {}} />
+              <DisclosurePanel className="px-4 pb-2 flex flex-col gap-2">
+                <Input
+                  label="Nome"
+                  value={otherContactInfo.name}
+                  onChange={(e) =>
+                    setOtherContactInfo((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
+                />
                 <div className="grid grid-cols-2 gap-2">
                   <Combobox
                     data={[
@@ -124,15 +123,33 @@ export function SearchContactHistoricalAccountForm({
                       "Telefone Residencial",
                       "Telefone Comercial",
                     ]}
-                    onChange={(value) => {}}
+                    value={otherContactInfo.type ? [otherContactInfo.type] : []}
+                    onChange={(value) =>
+                      setOtherContactInfo((prev) => ({
+                        ...prev,
+                        type: Array.isArray(value) ? (value[0] ?? "") : value,
+                      }))
+                    }
                     label="Tipo"
                     type="single"
                     placeholder="Selecione o tipo"
                     keyExtractor={(item) => item}
                     displayValueGetter={(item) => item}
                   />
-                  <Input label="Contato" onChange={() => {}} />
+                  <Input
+                    label="Contato"
+                    value={otherContactInfo.contact}
+                    onChange={(e) =>
+                      setOtherContactInfo((prev) => ({
+                        ...prev,
+                        contact: e.target.value,
+                      }))
+                    }
+                  />
                 </div>
+                <Button type="button" onClick={handleAddOtherContact}>
+                  Adicionar Contato
+                </Button>
               </DisclosurePanel>
             </>
           )}
@@ -143,14 +160,15 @@ export function SearchContactHistoricalAccountForm({
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setSelectedIds([])}
+          onClick={() => setSelectContact([])}
         >
           Cancelar
         </Button>
-        <Button type="button" onClick={handleSave}>
-          Salvar
+        <Button type="button" onClick={closeModal}>
+          Confirmar
         </Button>
       </div>
     </div>
   );
 }
+ 
