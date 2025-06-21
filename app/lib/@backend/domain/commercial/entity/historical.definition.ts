@@ -10,10 +10,11 @@ export interface IHistorical {
     label: string;
     url: string;
   };
+  contacts: ContactSelection[]
   description?: string;
   title: string; // exemplo de acordo com o protótipo do jaisson: "Criação de Proposta"
   created_at: Date;
-  type?: 'proposta' | 'sistema' | 'ligacao' | 'cadastro' | 'observacao';
+  type?: 'proposta' | 'sistema' | 'ligacao' | 'cadastro' | 'observacao' | "anexo";
 }
 
 export type ContactSelection = {

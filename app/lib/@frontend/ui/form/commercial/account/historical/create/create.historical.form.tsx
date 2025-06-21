@@ -12,64 +12,14 @@ import { SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
 import { useState } from "react";
 import { ContactSelection, IHistorical } from "@/app/lib/@backend/domain";
 
-const timelineItems = [
-  {
-    author: "Chelsea Hagon",
-    action: "Proposta (nº",
-    link: { label: "123457", url: "#" },
-    details: "enviada para aceite do cliente.",
-    timestamp: "04/04/2025 09:00:05",
-  },
-  {
-    author: "Chelsea Hagon",
-    action: "Criação de Proposta (nº",
-    link: { label: "123457", url: "#" },
-    timestamp: "03/04/2025 15:20:14",
-  },
-  {
-    author: "Sistema",
-    action: "Rotina de atualização dos dados do CNPJ.",
-    timestamp: "03/04/2025 15:14:46",
-  },
-  {
-    author: "Chelsea Hagon",
-    action: "📞 Gael Bernardo Lopes - Gerente - Celular (41) 98373-8269",
-    details: "Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.",
-    timestamp: "28/03/2025 14:02:56",
-  },
-  {
-    author: "Chelsea Hagon",
-    action: "📞 Gael Bernardo Lopes - Gerente - Celular (41) 98373-8269",
-    details: "Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.",
-    timestamp: "28/03/2025 14:02:56",
-  },
-  {
-    author: "Chelsea Hagon",
-    action: "📞 Gael Bernardo Lopes - Gerente - Celular (41) 98373-8269",
-    details: "Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.",
-    timestamp: "28/03/2025 14:02:56",
-  },
-  {
-    author: "Alex Curren",
-    action: "Criação de Proposta (nº",
-    link: { label: "123456", url: "#" },
-    timestamp: "02/03/2025 11:15:03",
-  },
-  {
-    author: "Tom Cook",
-    action: "Cadastro da conta",
-    timestamp: "02/03/2025 10:05:26",
-  },
-];
-
 type Props = {
   accountId: string;
   historical: IHistorical[]
 };
 
 export function CreateHistoricalForm({ accountId, historical }: Props) {
-  const {register, onSubmit} = useCreateHistoricalForm({accountId});
   const [selectContact, setSelectContact] = useState<ContactSelection[]>([]);
+  const {register, onSubmit} = useCreateHistoricalForm({accountId, selectContact});
 
   return (
     <div className="w-[70%]">
@@ -101,7 +51,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
           </div>
         </div>
       </form>
-      <TimelineItem item={timelineItems} />
+      <TimelineItem historical={historical} />
     </div>
   );
 }
