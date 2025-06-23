@@ -123,8 +123,8 @@ export type E3Plus4GConfig = {
     n2: number;
   };
   ignition_by_voltage?: {
-    t1: number;
-    t2: number;
+    initial: number;
+    final: number;
   };
   ack?: number;
   ignition_status_hb?: boolean;

@@ -594,7 +594,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-4">
                         <FormField
                           control={control}
-                          name="config.specific.ignition_by_voltage.t1"
+                          name="config.specific.ignition_by_voltage.initial"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>VION (t1)</FormLabel>
@@ -612,7 +612,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                         />
                         <FormField
                           control={control}
-                          name="config.specific.ignition_by_voltage.t2"
+                          name="config.specific.ignition_by_voltage.final"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>VIOFF (t2)</FormLabel>

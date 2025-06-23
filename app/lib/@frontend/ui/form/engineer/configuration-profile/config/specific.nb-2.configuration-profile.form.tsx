@@ -48,24 +48,10 @@ export function SpecificNB2ConfigurationProfileForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <FormField
                 control={control}
-                name="config.specific.odometer"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Hodômetro</FormLabel>
-                    <FormControl>
-                      <Input placeholder="5000" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
                 name="config.specific.data_transmission_event"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Transmissão em Evento</FormLabel>
+                    <FormLabel>Envio de mensagens em modo evento</FormLabel>
                     <FormControl>
                       <Input placeholder="60" {...field} />
                     </FormControl>
@@ -79,9 +65,23 @@ export function SpecificNB2ConfigurationProfileForm() {
                 name="config.specific.sleep"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sleep</FormLabel>
+                    <FormLabel>Definir tempo para iniciar modo sleep</FormLabel>
                     <FormControl>
-                      <Input placeholder="2" {...field} />
+                      <Input placeholder="7200" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="config.specific.odometer"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Definir Hodômetro</FormLabel>
+                    <FormControl>
+                      <Input placeholder="5000" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -99,19 +99,19 @@ export function SpecificNB2ConfigurationProfileForm() {
             <Zap className="h-4 w-4" />
             <h4 className="font-medium">Configurações de Tensão</h4>
             <Badge variant="outline" className="text-xs">
-              Monitoramento
+              Ignição Virtual
             </Badge>
           </div>
 
           <div className="rounded-lg border bg-card p-4">
-            <h5 className="text-sm font-medium mb-4">Parâmetros de Tensão</h5>
+            <h5 className="text-sm font-medium mb-4">Tensão 12V</h5>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={control}
-                name="config.specific.first_voltage"
+                name="config.specific.virtual_ignition_12v.initial"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Primeira Tensão</FormLabel>
+                    <FormLabel>Valor Inicial</FormLabel>
                     <FormControl>
                       <Input placeholder="12.0" {...field} />
                     </FormControl>
@@ -122,10 +122,42 @@ export function SpecificNB2ConfigurationProfileForm() {
 
               <FormField
                 control={control}
-                name="config.specific.second_voltage"
+                name="config.specific.virtual_ignition_12v.final"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Segunda Tensão</FormLabel>
+                    <FormLabel>Valor Final</FormLabel>
+                    <FormControl>
+                      <Input placeholder="24.0" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <div className="rounded-lg border bg-card p-4">
+            <h5 className="text-sm font-medium mb-4">Tensão 24V</h5>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
+                control={control}
+                name="config.specific.virtual_ignition_24v.initial"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Valor Inicial</FormLabel>
+                    <FormControl>
+                      <Input placeholder="12.0" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="config.specific.virtual_ignition_24v.final"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Valor Final</FormLabel>
                     <FormControl>
                       <Input placeholder="24.0" {...field} />
                     </FormControl>
@@ -142,26 +174,65 @@ export function SpecificNB2ConfigurationProfileForm() {
         {/* Configurações de Movimento */}
         <div className="space-y-6">
           <div className="flex items-center gap-2">
-            <Navigation className="h-4 w-4" />
-            <h4 className="font-medium">Configurações de Movimento</h4>
+            <Activity className="h-4 w-4" />
+            <h4 className="font-medium">
+              Configurações de Movimento e Sensores
+            </h4>
             <Badge variant="outline" className="text-xs">
-              Navegação
+              Acelerômetro
             </Badge>
           </div>
 
           <div className="rounded-lg border bg-card p-4">
             <h5 className="text-sm font-medium mb-4">
-              Parâmetros de Navegação
+              Detecção de Curva e Velocidade
             </h5>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2  gap-4">
+                <FormField
+                  control={control}
+                  name="config.specific.heading_detection_angle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ângulo para Detecção de Curva</FormLabel>
+                      <FormControl>
+                        <Input placeholder="45" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={control}
+                  name="config.specific.speed_alert_threshold"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Limite de Alerta de Velocidade</FormLabel>
+                      <FormControl>
+                        <Input placeholder="120" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border bg-card p-4">
+            <h5 className="text-sm font-medium mb-4">
+              Configurações do Acelerômetro
+            </h5>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <FormField
                 control={control}
-                name="config.specific.angle"
+                name="config.specific.accel_threshold_for_ignition_on"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Ângulo</FormLabel>
+                    <FormLabel>Limite para detectar ignição ligada</FormLabel>
                     <FormControl>
-                      <Input placeholder="45" {...field} />
+                      <Input placeholder="2.0" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -170,12 +241,58 @@ export function SpecificNB2ConfigurationProfileForm() {
 
               <FormField
                 control={control}
-                name="config.specific.speed"
+                name="config.specific.accel_threshold_for_ignition_off"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Velocidade</FormLabel>
+                    <FormLabel>
+                      Limite para detectar ignição desligada
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="120" {...field} />
+                      <Input placeholder="1.0" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="config.specific.accel_threshold_for_movement"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Limite para detectar movimentação</FormLabel>
+                    <FormControl>
+                      <Input placeholder="0.5" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="config.specific.harsh_acceleration_threshold"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Limite para detectar Aceleração Brusca
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="3.0" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="config.specific.harsh_braking_threshold"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Limite para detectar Frenagem Brusca</FormLabel>
+                    <FormControl>
+                      <Input placeholder="3.5" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -185,9 +302,8 @@ export function SpecificNB2ConfigurationProfileForm() {
           </div>
         </div>
 
-        <Separator />
-
         {/* Configurações de Hardware */}
+        {/* <Separator />
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <Cable className="h-4 w-4" />
@@ -221,102 +337,7 @@ export function SpecificNB2ConfigurationProfileForm() {
               ))}
             </div>
           </div>
-        </div>
-
-        <Separator />
-
-        {/* Configurações do Acelerômetro */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4" />
-            <h4 className="font-medium">Configurações do Acelerômetro</h4>
-            <Badge variant="outline" className="text-xs">
-              Sensores
-            </Badge>
-          </div>
-
-          <div className="rounded-lg border bg-card p-4">
-            <h5 className="text-sm font-medium mb-4">
-              Sensibilidade do Acelerômetro
-            </h5>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <FormField
-                control={control}
-                name="config.specific.accelerometer_sensitivity_on"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sensibilidade Ligado</FormLabel>
-                    <FormControl>
-                      <Input placeholder="3" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="config.specific.accelerometer_sensitivity_off"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sensibilidade Desligado</FormLabel>
-                    <FormControl>
-                      <Input placeholder="1" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="config.specific.accelerometer_sensitivity_violated"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sensibilidade Violada</FormLabel>
-                    <FormControl>
-                      <Input placeholder="5" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-
-          <div className="rounded-lg border bg-card p-4">
-            <h5 className="text-sm font-medium mb-4">Limites de Aceleração</h5>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
-                control={control}
-                name="config.specific.maximum_acceleration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Aceleração Máxima</FormLabel>
-                    <FormControl>
-                      <Input placeholder="2.5" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="config.specific.maximum_deceleration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Desaceleração Máxima</FormLabel>
-                    <FormControl>
-                      <Input placeholder="3.0" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

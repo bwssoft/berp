@@ -391,7 +391,7 @@ export class LORAParser {
    * @param input - A string que contém a informação da tensão 12V.
    * @returns O valor numérico da tensão 12V ou undefined se o formato não for válido.
    */
-  static first_voltage(input: string) {
+  static virtual_ignition_12v(input: string) {
     const parts = input.split("RIG12=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -408,7 +408,7 @@ export class LORAParser {
    * @param input - A string que contém a informação da tensão 24V.
    * @returns O valor numérico da tensão 24V ou undefined se o formato não for válido.
    */
-  static second_voltage(input: string) {
+  static virtual_ignition_24v(input: string) {
     const parts = input.split("RIG24=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -424,7 +424,7 @@ export class LORAParser {
    * @param input - A string que contém a informação do ângulo.
    * @returns O valor numérico do ângulo ou undefined se o formato não for válido.
    */
-  static angle(input: string) {
+  static heading_detection_angle(input: string) {
     const parts = input.split("RFA=");
 
     if (parts.length < 2) return undefined;
@@ -442,7 +442,7 @@ export class LORAParser {
    * @param input - A string que contém a informação da velocidade.
    * @returns O valor numérico da velocidade ou undefined se o formato não for válido.
    */
-  static speed(input: string) {
+  static speed_alert_threshold(input: string) {
     const parts = input.split("RFV=");
 
     if (parts.length < 2) return undefined;
@@ -460,7 +460,7 @@ export class LORAParser {
    * @param input - A string que contém a informação da sensibilidade do acelerometro quando ligado.
    * @returns O valor numérico da sensibilidade do acelerometro quando ligado ou undefined se o formato não for válido.
    */
-  static accelerometer_sensitivity_on(input: string) {
+  static accel_threshold_for_ignition_on(input: string) {
     const parts = input.split("RFTON=");
 
     if (parts.length < 2) return undefined;
@@ -478,7 +478,7 @@ export class LORAParser {
    * @param input - A string que contém a informação da sensibilidade do acelerometro quando desligado.
    * @returns O valor numérico da sensibilidade do acelerometro quando desligado ou undefined se o formato não for válido.
    */
-  static accelerometer_sensitivity_off(input: string) {
+  static accel_threshold_for_ignition_off(input: string) {
     const parts = input.split("RFTOF=");
 
     if (parts.length < 2) return undefined;
@@ -496,7 +496,7 @@ export class LORAParser {
    * @param input - A string que contém a informação da sensibilidade do acelerometro quando violado.
    * @returns O valor numérico da sensibilidade do acelerometro quando violado ou undefined se o formato não for válido.
    */
-  static accelerometer_sensitivity_violated(input: string) {
+  static accel_threshold_for_movement(input: string) {
     const parts = input.split("RFAV=");
 
     if (parts.length < 2) return undefined;
@@ -514,7 +514,7 @@ export class LORAParser {
    * @param input - A string que contém a informação da aceleração máxima.
    * @returns O valor numérico da aceleração máxima ou undefined se o formato não for válido.
    */
-  static maximum_acceleration(input: string) {
+  static harsh_acceleration_threshold(input: string) {
     const parts = input.split("RFMA=");
 
     if (parts.length < 2) return undefined;
@@ -532,7 +532,7 @@ export class LORAParser {
    * @param input - A string que contém a informação da desaceleração máxima.
    * @returns O valor numérico da desaceleração máxima ou undefined se o formato não for válido.
    */
-  static maximum_deceleration(input: string) {
+  static harsh_braking_threshold(input: string) {
     const parts = input.split("RFMD=");
 
     if (parts.length < 2) return undefined;

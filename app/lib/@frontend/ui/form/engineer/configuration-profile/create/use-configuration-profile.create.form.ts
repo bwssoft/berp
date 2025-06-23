@@ -7,6 +7,20 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { formatConfigurationProfileName } from "../util";
 
+const twoBytesSchema = z.coerce
+  .number()
+  .int()
+  .positive({ message: "O valor deve ser positivo" })
+  .min(0, { message: "O valor deve ser no mínimo 0" })
+  .max(65535, { message: "O valor deve ser no máximo 65535" });
+
+const oneBytesSchema = z.coerce
+  .number()
+  .int()
+  .positive({ message: "O valor deve ser positivo" })
+  .min(0, { message: "O valor deve ser no mínimo 0" })
+  .max(255, { message: "O valor deve ser no máximo 255" });
+
 const password = z
   .object({
     old: z.string().optional(),
@@ -41,34 +55,12 @@ const odometer = z.coerce
   .min(0, { message: "O valor deve ser no mínimo 0" })
   .optional();
 
-const horimeter = z.coerce
-  .number()
-  .min(0, { message: "O valor deve ser no mínimo 0" })
-  .max(65535, { message: "O valor deve ser no máximo 65535" })
-  .optional();
-
-const max_speed = z.coerce
-  .number()
-  .min(0, { message: "O valor deve ser no mínimo 0" })
-  .max(255, { message: "O valor deve ser no máximo 255" })
-  .optional();
-
 const angle_adjustment = z.coerce
   .number()
   .positive({ message: "O valor deve ser positivo" })
   .min(5, { message: "O valor deve ser no mínimmo 5" })
   .max(90, { message: "O valor deve ser no máximo 90" })
   .optional();
-
-const lock_type_progression = z.coerce
-  .number()
-  .positive({ message: "O valor deve ser positivo" })
-  .max(60000, { message: "O valor deve ser no máximo 60000" });
-
-const ignition_by_voltage = z.coerce
-  .number()
-  .positive({ message: "O valor deve ser positivo" })
-  .max(65535, { message: "O valor deve ser no máximo 65535" });
 
 const ack = z.coerce
   .number()
@@ -79,12 +71,12 @@ const ack = z.coerce
 // Esquemas básicos
 const dnsSchema = z.object({
   address: z.string(),
-  port: z.coerce.number().min(0).max(65535),
+  port: twoBytesSchema,
 });
 
 const ipSchema = z.object({
   ip: z.string().ip(),
-  port: z.coerce.number().min(0).max(65535),
+  port: twoBytesSchema,
 });
 
 const apnSchema = z.object({
@@ -122,7 +114,7 @@ export const e3PlusConfigSchema = z.object({
   virtual_ignition: z.coerce.boolean().optional().default(false),
   work_mode: z.string().optional(),
   operation_mode: z.coerce.boolean().optional(),
-  max_speed: max_speed,
+  max_speed: oneBytesSchema,
   sleep: sleep,
 });
 
@@ -140,11 +132,11 @@ export const e3Plus4GConfigSchema = z.object({
   virtual_ignition: z.coerce.boolean().optional().default(false),
   virtual_ignition_by_voltage: z.coerce.boolean().optional().default(false),
   virtual_ignition_by_movement: z.coerce.boolean().optional().default(false),
-  max_speed: max_speed,
+  max_speed: oneBytesSchema,
   communication_type: z.string().optional(),
   protocol_type: z.string().optional(),
   anti_theft: z.coerce.boolean().optional().default(false),
-  horimeter: horimeter,
+  horimeter: twoBytesSchema.optional(),
   jammer_detection: z.coerce.boolean().optional().default(false),
   clear_buffer: z.coerce.boolean().optional(),
   clear_horimeter: z.coerce.boolean().optional(),
@@ -153,22 +145,22 @@ export const e3Plus4GConfigSchema = z.object({
   angle_adjustment: angle_adjustment,
   lock_type_progression: z
     .object({
-      n1: lock_type_progression,
-      n2: lock_type_progression,
+      n1: twoBytesSchema,
+      n2: twoBytesSchema,
     })
     .optional(),
   ignition_by_voltage: z
     .object({
-      t1: ignition_by_voltage,
-      t2: ignition_by_voltage,
+      initial: twoBytesSchema,
+      final: twoBytesSchema,
     })
-    .refine((data) => data.t1 !== undefined && data.t2 !== undefined, {
+    .refine((data) => data.initial !== undefined && data.final !== undefined, {
       message: "VION e VIOFF devem ser preenchidos.",
-      path: ["t1"],
+      path: ["initial"],
     })
-    .refine((data) => data.t1! > data.t2!, {
+    .refine((data) => data.initial! > data.final!, {
       message: "VION deve ser maior do que VIOFF.",
-      path: ["t1"],
+      path: ["initial"],
     })
     .optional(),
   ack: ack,
@@ -176,18 +168,44 @@ export const e3Plus4GConfigSchema = z.object({
 });
 
 export const nb2ConfigSchema = z.object({
-  odometer: odometer,
-  data_transmission_event: z.coerce.number().optional(),
-  sleep: z.coerce.number().optional(),
-  first_voltage: z.coerce.number().optional(),
-  second_voltage: z.coerce.number().optional(),
-  angle: z.coerce.number().optional(),
-  speed: z.coerce.number().optional(),
-  accelerometer_sensitivity_on: z.coerce.number().optional(),
-  accelerometer_sensitivity_off: z.coerce.number().optional(),
-  accelerometer_sensitivity_violated: z.coerce.number().optional(),
-  maximum_acceleration: z.coerce.number().optional(),
-  maximum_deceleration: z.coerce.number().optional(),
+  data_transmission_event: twoBytesSchema.optional(),
+  odometer,
+  sleep: twoBytesSchema.optional(),
+  virtual_ignition_12v: z
+    .object({
+      initial: twoBytesSchema,
+      final: twoBytesSchema,
+    })
+    .refine((data) => data.initial !== undefined && data.final !== undefined, {
+      message: "Os intervalos devem ser preenchidos.",
+      path: ["initial"],
+    })
+    .refine((data) => data.initial! > data.final!, {
+      message: "O valor final deve ser maior do que inicial.",
+      path: ["initial"],
+    })
+    .optional(),
+  virtual_ignition_24v: z
+    .object({
+      initial: twoBytesSchema,
+      final: twoBytesSchema,
+    })
+    .refine((data) => data.initial !== undefined && data.final !== undefined, {
+      message: "Os intervalos devem ser preenchidos.",
+      path: ["initial"],
+    })
+    .refine((data) => data.initial! > data.final!, {
+      message: "O valor final deve ser maior do que inicial.",
+      path: ["initial"],
+    })
+    .optional(),
+  heading_detection_angle: z.coerce.number().min(0).max(180).optional(),
+  speed_alert_threshold: oneBytesSchema.optional(),
+  accel_threshold_for_ignition_on: z.coerce.number().positive().optional(),
+  accel_threshold_for_ignition_off: z.coerce.number().positive().optional(),
+  accel_threshold_for_movement: z.coerce.number().positive().optional(),
+  harsh_acceleration_threshold: z.coerce.number().positive().optional(),
+  harsh_braking_threshold: z.coerce.number().positive().optional(),
   input_1: z.coerce.number().optional(),
   input_2: z.coerce.number().optional(),
   input_3: z.coerce.number().optional(),
@@ -195,59 +213,55 @@ export const nb2ConfigSchema = z.object({
 });
 
 export const loraConfigSchema = z.object({
-  sleep: z.coerce.number().min(5).max(65534).optional(),
-  lorawan_mode_duration: z.coerce.number().min(5).max(65535).optional(),
-  lorawan_data_transmission_event: z.coerce
-    .number()
-    .min(5)
-    .max(65534)
-    .optional(),
-  p2p_mode_duration: z.coerce.number().min(5).max(65535).optional(),
-  p2p_data_transmission_event: z.coerce.number().min(5).max(65534).optional(),
+  sleep: twoBytesSchema.optional(),
+  lorawan_mode_duration: twoBytesSchema.optional(),
+  lorawan_data_transmission_event: twoBytesSchema.optional(),
+  p2p_mode_duration: twoBytesSchema.optional(),
+  p2p_data_transmission_event: twoBytesSchema.optional(),
   odometer,
   activation_type: z.enum(["ABP", "OTAA"]).optional(),
-  virtual_ignition_limits_12v: z
+  virtual_ignition_12v: z
     .object({
-      t1: ignition_by_voltage,
-      t2: ignition_by_voltage,
+      initial: twoBytesSchema,
+      final: twoBytesSchema,
     })
-    .refine((data) => data.t1 !== undefined && data.t2 !== undefined, {
+    .refine((data) => data.initial !== undefined && data.final !== undefined, {
       message: "Os intervalos devem ser preenchidos.",
-      path: ["t1"],
+      path: ["initial"],
     })
-    .refine((data) => data.t1! > data.t2!, {
-      message: "t2 deve ser maior do que t1.",
-      path: ["t1"],
+    .refine((data) => data.initial! > data.final!, {
+      message: "O valor final deve ser maior do que inicial.",
+      path: ["initial"],
     })
     .optional(),
-  virtual_ignition_limits_24v: z
+  virtual_ignition_24v: z
     .object({
-      t1: ignition_by_voltage,
-      t2: ignition_by_voltage,
+      initial: twoBytesSchema,
+      final: twoBytesSchema,
     })
-    .refine((data) => data.t1 !== undefined && data.t2 !== undefined, {
+    .refine((data) => data.initial !== undefined && data.final !== undefined, {
       message: "Os intervalos devem ser preenchidos.",
-      path: ["t1"],
+      path: ["initial"],
     })
-    .refine((data) => data.t1! > data.t2!, {
-      message: "t2 deve ser maior do que t1.",
-      path: ["t1"],
+    .refine((data) => data.initial! > data.final!, {
+      message: "O valor final deve ser maior do que inicial.",
+      path: ["initial"],
     })
     .optional(),
   heading: z.boolean().default(false),
   heading_event_mode: z.boolean().default(false),
   heading_detection_angle: z.coerce.number().min(0).max(180).optional(),
-  speed_alert_threshold: z.coerce.number().min(5).max(65534).optional(),
-  accel_igon_threshold: z.coerce.number().positive().optional(),
-  accel_igoff_threshold: z.coerce.number().positive().optional(),
-  accel_movement_threshold: z.coerce.number().positive().optional(),
+  speed_alert_threshold: oneBytesSchema.optional(),
+  accel_threshold_for_ignition_on: z.coerce.number().positive().optional(),
+  accel_threshold_for_ignition_off: z.coerce.number().positive().optional(),
+  accel_threshold_for_movement: z.coerce.number().positive().optional(),
   harsh_acceleration_threshold: z.coerce.number().positive().optional(),
   harsh_braking_threshold: z.coerce.number().positive().optional(),
 
   full_configuration_table: z.string().optional(),
   full_functionality_table: z.string().optional(),
   led_configuration: z.string().optional(),
-  status: z.coerce.number().min(5).max(65534).optional(),
+  status: twoBytesSchema.optional(),
   fifo_send_and_hold_times: z.string().optional(),
   mcu_configuration: z.string().optional(),
   output_table: z.string().optional(),

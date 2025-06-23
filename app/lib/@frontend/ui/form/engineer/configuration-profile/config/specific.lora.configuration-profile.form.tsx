@@ -23,7 +23,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/lib/@frontend/ui/component/tabs";
-import { Cpu, Settings, Activity, Wifi, Cable, Power } from "lucide-react";
+import { Cpu, Settings, Activity, Wifi, Cable, Power, Zap } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { ConfigurationProfileSchema } from "../create/use-configuration-profile.create.form";
 import { Switch } from "../../../../component/switch";
@@ -213,7 +213,7 @@ export function SpecificLoRaConfigurationProfileForm() {
         {/* Configurações de Tensão */}
         <div className="space-y-6">
           <div className="flex items-center gap-2">
-            <Power className="h-4 w-4" />
+            <Zap className="h-4 w-4" />
             <h4 className="font-medium">Configurações de Tensão</h4>
             <Badge variant="outline" className="text-xs">
               Ignição Virtual
@@ -221,31 +221,30 @@ export function SpecificLoRaConfigurationProfileForm() {
           </div>
 
           <div className="rounded-lg border bg-card p-4">
-            <h5 className="text-sm font-medium mb-4">
-              Limites de Ignição Virtual 12V
-            </h5>
+            <h5 className="text-sm font-medium mb-4">Tensão 12V</h5>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={control}
-                name="config.specific.virtual_ignition_limits_12v.t1"
+                name="config.specific.virtual_ignition_12v.initial"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>T1</FormLabel>
+                    <FormLabel>Valor Inicial</FormLabel>
                     <FormControl>
-                      <Input placeholder="11.5-13.5" {...field} />
+                      <Input placeholder="12.0" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={control}
-                name="config.specific.virtual_ignition_limits_12v.t2"
+                name="config.specific.virtual_ignition_12v.final"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>T2</FormLabel>
+                    <FormLabel>Valor Final</FormLabel>
                     <FormControl>
-                      <Input placeholder="11.5-13.5" {...field} />
+                      <Input placeholder="24.0" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -254,31 +253,30 @@ export function SpecificLoRaConfigurationProfileForm() {
             </div>
           </div>
           <div className="rounded-lg border bg-card p-4">
-            <h5 className="text-sm font-medium mb-4">
-              Limites de Ignição Virtual 24V
-            </h5>
+            <h5 className="text-sm font-medium mb-4">Tensão 24V</h5>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={control}
-                name="config.specific.virtual_ignition_limits_24v.t1"
+                name="config.specific.virtual_ignition_24v.initial"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>T1</FormLabel>
+                    <FormLabel>Valor Inicial</FormLabel>
                     <FormControl>
-                      <Input placeholder="11.5-13.5" {...field} />
+                      <Input placeholder="12.0" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={control}
-                name="config.specific.virtual_ignition_limits_24v.t2"
+                name="config.specific.virtual_ignition_24v.final"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>T2</FormLabel>
+                    <FormLabel>Valor Final</FormLabel>
                     <FormControl>
-                      <Input placeholder="11.5-13.5" {...field} />
+                      <Input placeholder="24.0" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -333,7 +331,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                     name="config.specific.heading_detection_angle"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ângulo de Detecção de Curva</FormLabel>
+                        <FormLabel>Ângulo para Detecção de Curva</FormLabel>
                         <FormControl>
                           <Input placeholder="45" {...field} />
                         </FormControl>
@@ -390,7 +388,7 @@ export function SpecificLoRaConfigurationProfileForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <FormField
                 control={control}
-                name="config.specific.accel_igon_threshold"
+                name="config.specific.accel_threshold_for_ignition_on"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Limite para detectar ignição ligada</FormLabel>
@@ -404,7 +402,7 @@ export function SpecificLoRaConfigurationProfileForm() {
 
               <FormField
                 control={control}
-                name="config.specific.accel_igoff_threshold"
+                name="config.specific.accel_threshold_for_ignition_off"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
@@ -420,7 +418,7 @@ export function SpecificLoRaConfigurationProfileForm() {
 
               <FormField
                 control={control}
-                name="config.specific.accel_movement_threshold"
+                name="config.specific.accel_threshold_for_movement"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Limite para detectar movimentação</FormLabel>

@@ -91,37 +91,37 @@ export class NB2LORAEncoder {
     return `WIAP=${input.address},${input.user},${input.password}\r\n`;
   }
 
-  static first_voltage(input: Voltage): string | undefined {
+  static virtual_ignition_12v(input: Voltage): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
       return `WIG12=${input.initial},${input.final}\r\n`;
   }
 
-  static second_voltage(input: Voltage): string | undefined {
+  static virtual_ignition_24v(input: Voltage): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
       return `WIG24=${input.initial},${input.final}\r\n`;
   }
 
-  static angle(input: number): string | undefined {
+  static heading_detection_angle(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFA=${input}\r\n`;
   }
 
-  static speed(input: number): string | undefined {
+  static speed_alert_threshold(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFV=${input}\r\n`;
   }
 
-  static accelerometer_sensitivity_on(input: number): string | undefined {
+  static accel_threshold_for_ignition_on(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFTON=${input}\r\n`;
   }
 
-  static accelerometer_sensitivity_off(input: number): string | undefined {
+  static accel_threshold_for_ignition_off(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFTOF=${input}\r\n`;
   }
 
-  static accelerometer_sensitivity_violated(input: number): string | undefined {
+  static accel_threshold_for_movement(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFAV=${input}\r\n`;
   }
@@ -141,15 +141,15 @@ export class NB2LORAEncoder {
       dns_primary: NB2LORAEncoder.dns_primary,
       dns_secondary: NB2LORAEncoder.dns_secondary,
       apn: NB2LORAEncoder.apn,
-      first_voltage: NB2LORAEncoder.first_voltage,
-      second_voltage: NB2LORAEncoder.second_voltage,
-      angle: NB2LORAEncoder.angle,
-      speed: NB2LORAEncoder.speed,
-      accelerometer_sensitivity_on: NB2LORAEncoder.accelerometer_sensitivity_on,
-      accelerometer_sensitivity_off:
-        NB2LORAEncoder.accelerometer_sensitivity_off,
-      accelerometer_sensitivity_violated:
-        NB2LORAEncoder.accelerometer_sensitivity_violated,
+      virtual_ignition_12v: NB2LORAEncoder.virtual_ignition_12v,
+      virtual_ignition_24v: NB2LORAEncoder.virtual_ignition_24v,
+      heading_detection_angle: NB2LORAEncoder.heading_detection_angle,
+      speed_alert_threshold: NB2LORAEncoder.speed_alert_threshold,
+      accel_threshold_for_ignition_on:
+        NB2LORAEncoder.accel_threshold_for_ignition_on,
+      accel_threshold_for_ignition_off:
+        NB2LORAEncoder.accel_threshold_for_ignition_off,
+      accel_threshold_for_movement: NB2LORAEncoder.accel_threshold_for_movement,
     };
   }
 
