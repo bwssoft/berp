@@ -1,7 +1,6 @@
 import { updateOneConfigurationProfileById } from "@/app/lib/@backend/action";
 import {
   EType,
-  EUseCase,
   IClient,
   IConfigurationProfile,
   ITechnology,
@@ -12,64 +11,27 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { formatConfigurationProfileName } from "../util";
+import {
+  e3Plus4GConfigSchema,
+  e3PlusConfigSchema,
+  generalConfigSchema,
+  loraConfigSchema,
+  nb2ConfigSchema,
+} from "../create/use-configuration-profile.create.form";
 
+// Esquema principal
 const schema = z.object({
-  client_id: z.string({ message: "O cliente é obrigatório" }),
-  type: z.nativeEnum(EType),
-  use_case: z.nativeEnum(EUseCase),
+  client_id: z.string().optional(),
   technology_id: z.string(),
-
-  general: z.object({
-    // network
-    apn: z
-      .object({
-        address: z.string(),
-        user: z.string(),
-        password: z.string().optional(),
-      })
+  name: z.string().min(1),
+  type: z.nativeEnum(EType),
+  config: z.object({
+    general: generalConfigSchema,
+    specific: e3PlusConfigSchema
+      .merge(e3Plus4GConfigSchema)
+      .merge(nb2ConfigSchema)
+      .merge(loraConfigSchema)
       .optional(),
-    ip_primary: z
-      .object({
-        ip: z.string().ip({ message: "IP inválido." }),
-        port: z.coerce.number(),
-      })
-      .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
-        message:
-          "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
-      })
-      .optional(),
-    ip_secondary: z
-      .object({
-        ip: z.string().ip({ message: "IP inválido." }),
-        port: z.coerce.number(),
-      })
-      .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
-        message:
-          "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
-      })
-      .optional(),
-    dns_primary: z
-      .object({
-        address: z.string(),
-        port: z.number(),
-      })
-      .optional(),
-    data_transmission_on: z.coerce
-      .number()
-      .positive({ message: "O valor deve ser positivo" })
-      .max(65535, { message: "O valor deve ser no máximo 65535" })
-      .default(60),
-    data_transmission_off: z.coerce
-      .number()
-      .positive({ message: "O valor deve ser positivo" })
-      .max(65535, { message: "O valor deve ser no máximo 65535" })
-      .default(1800),
-    keep_alive: z.coerce
-      .number()
-      .positive({ message: "O valor deve ser positivo" })
-      .min(60, { message: "O valor deve ser no mínimo 60" })
-      .max(1800, { message: "O valor deve ser no máximo 1800" })
-      .default(60),
   }),
 });
 
@@ -81,7 +43,7 @@ interface Props {
   technology: ITechnology;
 }
 
-export function useConfigurationProfileUpdateFromCrmForm(props: Props) {
+export function useConfigurationProfileUpdateForm(props: Props) {
   const [name, setName] = useState<{
     technology?: string;
     document?: string;
@@ -89,7 +51,7 @@ export function useConfigurationProfileUpdateFromCrmForm(props: Props) {
   }>({});
 
   const {
-    defaultValues: { id, client_id, type, technology_id, use_case, config },
+    defaultValues: { id, client_id, type, technology_id, config },
     client,
     technology,
   } = props;
@@ -107,13 +69,14 @@ export function useConfigurationProfileUpdateFromCrmForm(props: Props) {
     defaultValues: {
       client_id,
       technology_id,
-      use_case,
       type,
-      general: {
-        data_transmission_on: 60,
-        data_transmission_off: 7200,
-        keep_alive: 60,
-        ...config.general,
+      config: {
+        general: {
+          data_transmission_on: 60,
+          data_transmission_off: 7200,
+          keep_alive: 60,
+          ...config.general,
+        },
       },
     },
   });
@@ -121,28 +84,27 @@ export function useConfigurationProfileUpdateFromCrmForm(props: Props) {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
-        const { client_id, type, use_case, technology_id, ...config } = data;
+        const { client_id, type, technology_id, config } = data;
         await updateOneConfigurationProfileById(
           { id: id },
           {
             name: formatConfigurationProfileName(name),
             client_id,
             type,
-            use_case,
             technology_id,
             config,
           }
         );
         toast({
           title: "Sucesso!",
-          description: "Perfil atualizado com sucesso!",
+          description: "Perfil registrado com sucesso!",
           variant: "success",
         });
       } catch (e) {
         console.error(e);
         toast({
           title: "Falha!",
-          description: "Falha ao atualizar o perfil!",
+          description: "Falha ao registrar o perfil!",
           variant: "error",
         });
       }

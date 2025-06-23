@@ -3,11 +3,55 @@
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { useConfigurationProfileCreateForm } from "./use-configuration-profile.create.form";
 import { IClient, ITechnology } from "@/app/lib/@backend/domain";
-import { Button } from "../../../../component";
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../../../component";
 import { GeneralConfigurationProfileForm } from "../config/general.configuration-profile.form";
 import { SpecificE3Plus4GConfigurationProfileForm } from "../config/specific.e3-plus-4g.configuration-profile.form";
 import { Controller, FormProvider } from "react-hook-form";
 import { SpecificE3PlusConfigurationProfileForm } from "../config/specific.e3-plus.configuration-profile.form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../../../component/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../../../../component/card";
+import { Separator } from "../../../../component/separator";
+import { Badge } from "../../../../component/badge";
+import { Switch } from "../../../../component/switch";
+import {
+  AlertTriangle,
+  Clock,
+  Cpu,
+  Network,
+  Server,
+  Settings,
+  Wifi,
+} from "lucide-react";
+import { SpecificNB2ConfigurationProfileForm } from "../config/specific.nb-2.configuration-profile.form";
+import { SpecificLoRaConfigurationProfileForm } from "../config/specific.lora.configuration-profile.form";
 
 interface Props {
   clients: IClient[];
@@ -16,191 +60,169 @@ interface Props {
 
 export function ConfigurationProfileCreateForm(props: Props) {
   const { clients, technologies } = props;
-  const { methods, register, handleChangeName, handleSubmit, technology } =
+  const { form, handleChangeName, handleSubmit, technology } =
     useConfigurationProfileCreateForm(props);
 
+  function renderSpecificForm(system: string | undefined) {
+    switch (system) {
+      case "DM_E3_PLUS_4G":
+        return <SpecificE3Plus4GConfigurationProfileForm />;
+      case "DM_E3_PLUS":
+        return <SpecificE3PlusConfigurationProfileForm />;
+      case "DM_BWS_NB2":
+        return <SpecificNB2ConfigurationProfileForm />;
+      case "DM_BWS_LORA":
+        return <SpecificLoRaConfigurationProfileForm />;
+      default:
+        return null;
+    }
+  }
+
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Seção de Identificação */}
-        <div className="pb-6 border-b border-gray-200">
-          <h2 className="font-medium text-gray-900">Identificação do Perfil</h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Informações básicas para identificar o perfil de configuração
-          </p>
-        </div>
-        <section className="bg-white shadow-sm rounded-lg p-6">
-          <h3 className="text-base font-medium text-gray-900 mb-4">
-            Dados gerais
-          </h3>
-          <div className="grid grid-cols-1 gap-y-6 gap-x-6 sm:grid-cols-6">
-            {/* Cliente */}
-            <Controller
-              control={methods.control}
-              name="client_id"
-              render={({ field }) => (
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="client_id"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Cliente
-                  </label>
-                  <select
-                    id="client_id"
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2.5 border"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      const document = e.target.options[
-                        e.target.selectedIndex
-                      ].getAttribute("data-client") as string;
-                      handleChangeName({ document });
-                    }}
-                  >
-                    <option value="">Selecione um cliente</option>
-                    {clients.map((c) => (
-                      <option
-                        key={c.id}
-                        value={c.id}
-                        data-client={c.document.value}
+    <FormProvider {...form}>
+      <Form {...form}>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Seção Identificação */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Identificação do Perfil
+              </CardTitle>
+              <CardDescription>
+                Informações básicas para identificar o perfil de configuração
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="client_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cliente</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
                       >
-                        {c.company_name ?? c.trade_name} - {c.document.value}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            />
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um cliente" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {clients.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              {client.company_name ?? client.trade_name} -{" "}
+                              {client.document.value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* Caso de Uso */}
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="use_case"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Caso de Uso
-              </label>
-              <select
-                id="use_case"
-                {...register("use_case")}
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2.5 border"
-              >
-                <option value="">Selecione um caso de uso</option>
-                {Object.entries(configurationProfileConstants.useCase).map(
-                  ([key, value]) => (
-                    <option key={key} value={key}>
-                      {value}
-                    </option>
-                  )
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um tipo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.entries(
+                            configurationProfileConstants.type
+                          ).map(([label, value]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="technology_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tecnologia</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma tecnologia" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {technologies.map((tech) => (
+                            <SelectItem key={tech.id} value={tech.id}>
+                              {tech.name.brand}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do Perfil</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Nome será gerado automaticamente"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </select>
-            </div>
+              />
+            </CardContent>
+          </Card>
 
-            {/* Tipo */}
-            <Controller
-              control={methods.control}
-              name="type"
-              render={({ field }) => (
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="type"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Tipo
-                  </label>
-                  <select
-                    id="type"
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2.5 border"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      const type = e.target.options[
-                        e.target.selectedIndex
-                      ].getAttribute("value") as string;
-                      handleChangeName({ type });
-                    }}
-                  >
-                    <option value="">Selecione um tipo</option>
-                    {Object.entries(configurationProfileConstants.type).map(
-                      ([key, value]) => (
-                        <option key={key} value={key}>
-                          {value}
-                        </option>
-                      )
-                    )}
-                  </select>
-                </div>
-              )}
-            />
+          {/* Seção Configurações Gerais */}
+          {technology?.name.system !== "DM_BWS_LORA" ? (
+            <GeneralConfigurationProfileForm />
+          ) : (
+            <></>
+          )}
 
-            {/* Tecnologia */}
-            <Controller
-              control={methods.control}
-              name="technology_id"
-              render={({ field }) => (
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="technology_id"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Tecnologia
-                  </label>
-                  <select
-                    id="technology_id"
-                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2.5 border"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      const technology = e.target.options[
-                        e.target.selectedIndex
-                      ].getAttribute("brand-name") as string;
-                      handleChangeName({ technology });
-                    }}
-                  >
-                    <option value="">Selecione uma tecnologia</option>
-                    {technologies.map((tech) => (
-                      <option
-                        key={tech.id}
-                        value={tech.id}
-                        brand-name={tech.name.brand}
-                      >
-                        {tech.name.brand}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            />
-          </div>
-        </section>
+          {/* Configurações Específicas - Renderização Condicional */}
+          {technology && renderSpecificForm(technology.name.system)}
 
-        {/* Formulários de Configuração */}
-        <GeneralConfigurationProfileForm />
-        {technology?.name.system === "DM_E3_PLUS_4G" ? (
-          <SpecificE3Plus4GConfigurationProfileForm />
-        ) : (
-          <></>
-        )}
-        {technology?.name.system === "DM_E3_PLUS" ? (
-          <SpecificE3PlusConfigurationProfileForm />
-        ) : (
-          <></>
-        )}
-
-        {/* Ações do Formulário */}
-        <div className="mt-8 flex items-center justify-end gap-x-4">
-          <button
-            type="button"
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Cancelar
-          </button>
-          <Button
-            type="submit"
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Salvar Perfil
-          </Button>
-        </div>
-      </form>
+          {/* Botões de Ação */}
+          <Card>
+            <CardFooter className="pt-6 flex justify-between">
+              <Button variant="outline" type="button">
+                Cancelar
+              </Button>
+              <Button type="submit">Salvar Perfil</Button>
+            </CardFooter>
+          </Card>
+        </form>
+      </Form>
     </FormProvider>
   );
 }

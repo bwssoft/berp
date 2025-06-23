@@ -7,8 +7,16 @@ export default async function Page() {
     findManyTechnology({}),
   ]);
   return (
-    <div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background p-6">
+      <div className="mx-auto max-w-4xl space-y-8">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Novo Perfil de Configuração
+          </h1>
+          <p className="text-muted-foreground">
+            Configure um novo perfil para equipamentos IoT
+          </p>
+        </div>
         <ConfigurationProfileCreateForm
           clients={clients}
           technologies={technologies}

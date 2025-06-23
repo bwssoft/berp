@@ -1,295 +1,435 @@
-import { Controller, useFormContext } from "react-hook-form";
-import { Alert, Input, Select, Toggle } from "../../../../component";
-import { configurationProfileConstants } from "@/app/lib/constant";
-import { ConfigurationProfileSchema } from "../create/use-configuration-profile.create.form";
+"use client";
 
-const configConstants = configurationProfileConstants.config.DM_E3_PLUS;
-const { timezones } = configurationProfileConstants;
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/lib/@frontend/ui/component/card";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/app/lib/@frontend/ui/component/form";
+import { Input } from "@/app/lib/@frontend/ui/component/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/lib/@frontend/ui/component/select";
+import { Switch } from "@/app/lib/@frontend/ui/component/switch";
+import { Badge } from "@/app/lib/@frontend/ui/component/badge";
+import {
+  Alert,
+  AlertDescription,
+} from "@/app/lib/@frontend/ui/component/alert";
+import { Checkbox } from "@/app/lib/@frontend/ui/component/checkbox";
+import { Separator } from "@/app/lib/@frontend/ui/component/separator";
+import { Cpu, Lock, Settings, Zap, AlertTriangle } from "lucide-react";
+import { useFormContext } from "react-hook-form";
+import { configurationProfileConstants } from "@/app/lib/constant";
 
 export function SpecificE3PlusConfigurationProfileForm() {
   const {
+    control,
     register,
     formState: { errors },
-    control,
-  } = useFormContext<ConfigurationProfileSchema>();
+  } = useFormContext();
+
   return (
-    <div className="space-y-8 mt-6">
-      {/* Cabeçalho */}
-      <div className="pb-6 border-b border-gray-200">
-        <h3 className="font-medium text-gray-900">
-          Configuração Específicas do E3+
-        </h3>
-        <p className="mt-1 text-sm text-gray-600">
-          Configure parametros específicos do E3+
-        </p>
-      </div>
-
-      {/* Seção 1: Configurações Básicas do Dispositivo */}
-      <section className="bg-white shadow-sm rounded-lg p-6">
-        <h3 className="font-medium text-gray-900 mb-6">
-          Configurações Básicas
-        </h3>
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {/* Senha do Dispositivo */}
-          <div className="sm:col-span-2">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">
-              Alteração de Senha
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                {...register("config.specific.password.old")}
-                id="old_password"
-                label="Senha Atual"
-                placeholder="000000"
-                error={errors?.config?.specific?.password?.old?.message}
-              />
-              <Input
-                {...register("config.specific.password.new")}
-                id="new_password"
-                label="Nova Senha"
-                placeholder="123456"
-                error={errors?.config?.specific?.password?.new?.message}
-              />
-            </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Cpu className="h-5 w-5" />
+          Configurações Específicas - E3+
+        </CardTitle>
+        <CardDescription>
+          Configure parâmetros específicos do equipamento E3+
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        {/* Configurações Básicas */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <Settings className="h-4 w-4" />
+            <h4 className="font-medium">Configurações Básicas</h4>
           </div>
 
-          {/* Configurações de Bloqueio */}
-          <div className="sm:col-span-2">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">
-              Configurações de Bloqueio
-            </h3>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Controller
+          {/* Alteração de Senha */}
+          <div className="rounded-lg border bg-card p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <Lock className="h-4 w-4" />
+              <h5 className="text-sm font-medium">Alteração de Senha</h5>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField
                 control={control}
-                name="config.specific.lock_type"
+                name="config.specific.password.old"
                 render={({ field }) => (
-                  <Select
-                    name="lock_type"
-                    data={configConstants.lockType}
-                    keyExtractor={(d) => d.value}
-                    valueExtractor={(d) => d.label}
-                    label="Tipo de Bloqueio"
-                    value={configConstants.lockType.find(
-                      (d) => d.value === field.value
-                    )}
-                    onChange={(d) => field.onChange(d.value)}
-                  />
+                  <FormItem>
+                    <FormLabel>Senha Atual</FormLabel>
+                    <FormControl>
+                      <Input placeholder="000000" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name="config.specific.password.new"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nova Senha</FormLabel>
+                    <FormControl>
+                      <Input placeholder="123456" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
             </div>
           </div>
 
+          {/* Configurações de Bloqueio */}
+          <div className="rounded-lg border bg-card p-4">
+            <h5 className="text-sm font-medium mb-4">
+              Configurações de Bloqueio
+            </h5>
+            <FormField
+              control={control}
+              name="config.specific.lock_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo de Bloqueio</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(Number(value))}
+                    defaultValue={field.value?.toString()}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o tipo de bloqueio" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {configurationProfileConstants.config.DM_E3_PLUS.lockType.map(
+                        (type) => (
+                          <SelectItem
+                            key={type.value}
+                            value={type.value.toString()}
+                          >
+                            {type.label}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           {/* Configurações Gerais */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:col-span-2">
-            <Controller
-              control={control}
-              name="config.specific.timezone"
-              render={({ field }) => (
-                <Select
-                  name="timezone"
-                  data={timezones}
-                  keyExtractor={(d) => d.value}
-                  valueExtractor={(d) => d.label}
-                  label="Fuso Horário"
-                  value={timezones.find((tz) => tz.value === field.value)}
-                  onChange={(d) => field.onChange(d.value)}
-                />
-              )}
-            />
+          <div className="rounded-lg border bg-card p-4">
+            <h5 className="text-sm font-medium mb-4">Configurações Gerais</h5>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <FormField
+                control={control}
+                name="config.specific.timezone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Fuso Horário</FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      defaultValue={field.value?.toString()}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o fuso" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {configurationProfileConstants.timezones.map((tz) => (
+                          <SelectItem
+                            key={tz.value}
+                            value={tz.value.toString()}
+                          >
+                            {tz.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Controller
-              control={control}
-              name="config.specific.work_mode"
-              render={({ field }) => (
-                <Select
-                  name="config.specific.work_mode"
-                  data={configConstants.workMode}
-                  keyExtractor={(d) => d.value}
-                  valueExtractor={(d) => d.label}
-                  label="Modo de trabalho"
-                  value={configConstants.workMode.find(
-                    (d) => d.value === field.value
-                  )}
-                  onChange={(d) => field.onChange(d.value)}
-                />
-              )}
-            />
+              <FormField
+                control={control}
+                name="config.specific.work_mode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Modo de Trabalho</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o modo" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {configurationProfileConstants.config.DM_E3_PLUS.workMode.map(
+                          (mode) => (
+                            <SelectItem key={mode.value} value={mode.value}>
+                              {mode.label}
+                            </SelectItem>
+                          )
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Controller
-              control={control}
-              name="config.specific.accelerometer_sensitivity"
-              render={({ field }) => (
-                <Select
-                  name="config.specific.accelerometer_sensitivity"
-                  data={configConstants.accelerometerSensitivity}
-                  keyExtractor={(d) => d.value}
-                  valueExtractor={(d) => d.label}
-                  label="Sensibilidade do acelerômetro"
-                  value={configConstants.accelerometerSensitivity.find(
-                    (d) => d.value === field.value
-                  )}
-                  onChange={(d) => field.onChange(d.value)}
-                />
-              )}
-            />
+              <FormField
+                control={control}
+                name="config.specific.accelerometer_sensitivity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sensibilidade do Acelerômetro</FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      defaultValue={field.value?.toString()}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione a sensibilidade" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {configurationProfileConstants.config.DM_E3_PLUS.accelerometerSensitivity.map(
+                          (sens) => (
+                            <SelectItem
+                              key={sens.value}
+                              value={sens.value.toString()}
+                            >
+                              {sens.label}
+                            </SelectItem>
+                          )
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Controller
-              control={control}
-              name="config.specific.economy_mode"
-              render={({ field }) => (
-                <Select
-                  name="economy_mode"
-                  data={configConstants.economyMode}
-                  keyExtractor={(d) => d.value}
-                  valueExtractor={(d) => d.label}
-                  label="Modo de Economia"
-                  value={configConstants.economyMode.find(
-                    (d) => d.value === field.value
-                  )}
-                  onChange={(d) => field.onChange(d.value)}
-                />
-              )}
-            />
+              <FormField
+                control={control}
+                name="config.specific.economy_mode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Modo de Economia</FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      defaultValue={field.value?.toString()}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o modo" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {configurationProfileConstants.config.DM_E3_PLUS.economyMode.map(
+                          (mode) => (
+                            <SelectItem
+                              key={mode.value}
+                              value={mode.value.toString()}
+                            >
+                              {mode.label}
+                            </SelectItem>
+                          )
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Input
-              {...register("config.specific.odometer")}
-              id="odometer"
-              label="Hodômetro"
-              placeholder="5000"
-              type="number"
-              error={errors.config?.specific?.odometer?.message}
-            />
+              <FormField
+                control={control}
+                name="config.specific.odometer"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hodômetro</FormLabel>
+                    <FormControl>
+                      <Input placeholder="5000" type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Input
-              {...register("config.specific.max_speed")}
-              id="max_speed"
-              label="Velocidade Máxima"
-              placeholder="150"
-              type="number"
-              error={errors.config?.specific?.max_speed?.message}
-            />
+              <FormField
+                control={control}
+                name="config.specific.max_speed"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Velocidade Máxima</FormLabel>
+                    <FormControl>
+                      <Input placeholder="150" type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Input
-              {...register("config.specific.sensitivity_adjustment")}
-              id="sensibility"
-              label="Ajuste de Sensibilidade"
-              placeholder="500"
-              type="number"
-              error={errors.config?.specific?.sensitivity_adjustment?.message}
-            />
+              <FormField
+                control={control}
+                name="config.specific.sensitivity_adjustment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ajuste de Sensibilidade</FormLabel>
+                    <FormControl>
+                      <Input placeholder="500" type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Input
-              {...register("config.specific.sleep")}
-              id="sleep"
-              label="Sleep"
-              placeholder="2"
-              type="number"
-              error={errors.config?.specific?.sleep?.message}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Seção 3: Funções Principais */}
-      <section className="bg-white shadow-sm rounded-lg p-6">
-        <div className="mb-6">
-          <h3 className="font-medium text-gray-900">Funções Principais</h3>
-          <p className="mt-1 text-sm text-gray-600">
-            Configurações que geram comandos imediatamente ao serem alteradas
-          </p>
-        </div>
-        <Alert
-          title="Atenção: Estas alterações gerarão comandos imediatamente"
-          variant="attention"
-          className="mb-6"
-        />
-
-        <div className="space-y-4">
-          {/* Funções padrão */}
-          <div className="grid grid-cols-1 gap-4">
-            {configConstants.functions.map((func, id) => (
-              <div
-                key={id}
-                className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg"
-              >
-                <div className="flex-1">
-                  <label
-                    htmlFor={`functions-${func.name}`}
-                    className="font-medium text-gray-600"
-                  >
-                    {func.label}
-                  </label>
-                </div>
-                <Controller
-                  control={control}
-                  name={func.name as any}
-                  render={({ field }) => (
-                    <Toggle onChange={field.onChange} value={field.value} />
-                  )}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Seção 4: Funções Opcionais */}
-      <section className="bg-white shadow-sm rounded-lg p-6">
-        <div className="mb-6">
-          <h3 className="font-medium text-gray-900">Funções Opcionais</h3>
-          <p className="mt-1 text-sm text-gray-600">
-            Configurações que só geram comandos quando explicitamente ativadas
-          </p>
-        </div>
-        <Alert
-          title="Atenção: Estas funções só gerarão comandos quando ativadas"
-          variant="attention"
-          className="mb-6"
-        />
-
-        <div className="space-y-4">
-          {configConstants.optionalFunctions.map((func, id) => (
-            <div
-              key={id}
-              className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg"
-            >
-              <div className="flex-1">
-                <label
-                  htmlFor={`optional-${func.name}`}
-                  className="font-medium text-gray-600"
-                >
-                  {func.label}
-                </label>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center">
-                  <input
-                    id={`optional-checkbox-${func.name}`}
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <label
-                    htmlFor={`optional-checkbox-${func.name}`}
-                    className="ml-2 text-sm text-gray-600"
-                  >
-                    Ativar comando
-                  </label>
-                </div>
-                <Controller
-                  control={control}
-                  name={
-                    func.name as keyof ConfigurationProfileSchema["config"]["specific"]
-                  }
-                  render={({ field }) => (
-                    <Toggle onChange={field.onChange} value={field.value} />
-                  )}
-                />
-              </div>
+              <FormField
+                control={control}
+                name="config.specific.sleep"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sleep</FormLabel>
+                    <FormControl>
+                      <Input placeholder="2" type="number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-          ))}
+          </div>
         </div>
-      </section>
-    </div>
+
+        <Separator />
+
+        {/* Funções Principais */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            <h4 className="font-medium">Funções Principais</h4>
+            <Badge variant="destructive" className="text-xs">
+              Comandos Imediatos
+            </Badge>
+          </div>
+
+          <Alert>
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              Estas alterações gerarão comandos imediatamente ao serem ativadas
+            </AlertDescription>
+          </Alert>
+
+          <div className="space-y-4">
+            {configurationProfileConstants.config.DM_E3_PLUS.functions.map(
+              (func, index) => (
+                <FormField
+                  key={index}
+                  control={control}
+                  name={func.name}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          {func.label}
+                        </FormLabel>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              )
+            )}
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Funções Opcionais */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <Settings className="h-4 w-4" />
+            <h4 className="font-medium">Funções Opcionais</h4>
+            <Badge variant="secondary" className="text-xs">
+              Ativação Manual
+            </Badge>
+          </div>
+
+          <Alert>
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              Estas funções só gerarão comandos quando explicitamente ativadas
+            </AlertDescription>
+          </Alert>
+
+          <div className="space-y-4">
+            {configurationProfileConstants.config.DM_E3_PLUS.optionalFunctions.map(
+              (func, index) => (
+                <div
+                  key={index}
+                  className="flex flex-row items-center justify-between rounded-lg border p-4"
+                >
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">{func.label}</FormLabel>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id={`activate-${index}`} />
+                      <label
+                        htmlFor={`activate-${index}`}
+                        className="text-sm font-medium"
+                      >
+                        Ativar comando
+                      </label>
+                    </div>
+                    <FormField
+                      control={control}
+                      name={func.name}
+                      render={({ field }) => (
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      )}
+                    />
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

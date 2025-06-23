@@ -1,14 +1,13 @@
 export interface IConfigurationProfile {
   id: string;
-  client_id: string;
-  use_case: EUseCase;
   name: string;
   type: EType;
   config: Config;
   created_at: Date;
   user_id: string;
-  technology_id: string;
   validation: Validation;
+  technology_id: string;
+  client_id?: string;
 }
 
 interface Config {
@@ -19,11 +18,6 @@ interface Config {
 interface Validation {
   by_human: boolean;
   by_system: boolean;
-}
-
-export enum EUseCase {
-  CLIENT = "CLIENT",
-  INTERNAL = "INTERNAL",
 }
 
 export enum EType {

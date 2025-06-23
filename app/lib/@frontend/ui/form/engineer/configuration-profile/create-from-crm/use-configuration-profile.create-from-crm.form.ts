@@ -1,5 +1,5 @@
 import { createOneConfigurationProfile } from "@/app/lib/@backend/action";
-import { EType, EUseCase, IClient } from "@/app/lib/@backend/domain";
+import { EType, IClient } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useState } from "react";
@@ -9,62 +9,23 @@ import {
   formatConfigurationProfileName,
   generateConfigurationProfileLinkForClient,
 } from "../util";
+import {
+  e3Plus4GConfigSchema,
+  e3PlusConfigSchema,
+  generalConfigSchema,
+} from "../create/use-configuration-profile.create.form";
 
+// Esquema principal
 const schema = z.object({
-  type: z.nativeEnum(EType),
+  client_id: z.string().optional(),
   technology_id: z.string(),
-
-  general: z.object({
-    // network
-    apn: z
-      .object({
-        address: z.string(),
-        user: z.string(),
-        password: z.string().optional(),
-      })
+  name: z.string().min(1),
+  type: z.nativeEnum(EType),
+  config: z.object({
+    general: generalConfigSchema,
+    specific: z
+      .intersection(e3PlusConfigSchema, e3Plus4GConfigSchema)
       .optional(),
-    ip_primary: z
-      .object({
-        ip: z.string().ip({ message: "IP inválido." }),
-        port: z.coerce.number(),
-      })
-      .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
-        message:
-          "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
-      })
-      .optional(),
-    ip_secondary: z
-      .object({
-        ip: z.string().ip({ message: "IP inválido." }),
-        port: z.coerce.number(),
-      })
-      .refine((data) => (!data.ip && !data.port) || (data.ip && data.port), {
-        message:
-          "Ambos 'ip' e 'port' devem estar preenchidos ou ambos devem estar ausentes.",
-      })
-      .optional(),
-    dns_primary: z
-      .object({
-        address: z.string(),
-        port: z.number(),
-      })
-      .optional(),
-    data_transmission_on: z.coerce
-      .number()
-      .positive({ message: "O valor deve ser positivo" })
-      .max(65535, { message: "O valor deve ser no máximo 65535" })
-      .default(60),
-    data_transmission_off: z.coerce
-      .number()
-      .positive({ message: "O valor deve ser positivo" })
-      .max(65535, { message: "O valor deve ser no máximo 65535" })
-      .default(1800),
-    keep_alive: z.coerce
-      .number()
-      .positive({ message: "O valor deve ser positivo" })
-      .min(60, { message: "O valor deve ser no mínimo 60" })
-      .max(1800, { message: "O valor deve ser no máximo 1800" })
-      .default(60),
   }),
 });
 
@@ -97,10 +58,12 @@ export function useConfigurationProfileCreateFromCrmForm(props: Props) {
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
-      general: {
-        data_transmission_on: 60,
-        data_transmission_off: 43200,
-        keep_alive: 60,
+      config: {
+        general: {
+          data_transmission_on: 60,
+          data_transmission_off: 43200,
+          keep_alive: 60,
+        },
       },
     },
   });
@@ -108,17 +71,24 @@ export function useConfigurationProfileCreateFromCrmForm(props: Props) {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       try {
-        const { type, technology_id, ...config } = data;
+        const { type, technology_id, config } = data;
         const configurationProfileCreated = await createOneConfigurationProfile(
           {
             name: formatConfigurationProfileName(name),
             client_id: client.id,
             technology_id,
             type,
-            use_case: EUseCase["CLIENT"],
             config,
           }
         );
+        if (!configurationProfileCreated) {
+          toast({
+            title: "Falha!",
+            description: "Falha ao registrar o perfil!",
+            variant: "error",
+          });
+          return;
+        }
         setConfigurationProfileId(configurationProfileCreated.id);
         toast({
           title: "Sucesso!",

@@ -126,6 +126,31 @@ export class NB2Encoder {
     return `WFAV=${input}\r\n`;
   }
 
+  static maximum_acceleration(input: number): string | undefined {
+    if (typeof input !== "number") return undefined;
+    return `WFMA=${input}\r\n`;
+  }
+  static maximum_deceleration(input: number): string | undefined {
+    if (typeof input !== "number") return undefined;
+    return `WFMD=${input}\r\n`;
+  }
+
+  static input_1(input: number): string {
+    return `WIN1=${input}`;
+  }
+
+  static input_2(input: number): string {
+    return `WIN2=${input}`;
+  }
+
+  static input_3(input: number): string {
+    return `WIN3=${input}`;
+  }
+
+  static input_4(input: number): string {
+    return `WIN4=${input}`;
+  }
+
   static commands() {
     return {
       serial: NB2Encoder.serial,
@@ -149,6 +174,12 @@ export class NB2Encoder {
       accelerometer_sensitivity_off: NB2Encoder.accelerometer_sensitivity_off,
       accelerometer_sensitivity_violated:
         NB2Encoder.accelerometer_sensitivity_violated,
+      maximum_acceleration: NB2Encoder.maximum_acceleration,
+      maximum_deceleration: NB2Encoder.maximum_deceleration,
+      input_1: NB2Encoder.input_1,
+      input_2: NB2Encoder.input_2,
+      input_3: NB2Encoder.input_3,
+      input_4: NB2Encoder.input_4,
     };
   }
 

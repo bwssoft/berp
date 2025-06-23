@@ -1,282 +1,335 @@
 import { useFormContext } from "react-hook-form";
 import { ConfigurationProfileSchema } from "../create/use-configuration-profile.create.form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../../../component/card";
+import { Clock, Network, Server, Wifi } from "lucide-react";
+import { Badge } from "../../../../component/badge";
+import {
+  Input,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../../../component";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../../../component/form";
 
 export function GeneralConfigurationProfileForm() {
-  const { register } = useFormContext<ConfigurationProfileSchema>();
+  const form = useFormContext<ConfigurationProfileSchema>();
 
   return (
-    <section aria-labelledby="general-config" className="space-y-8">
-      {/* Cabeçalho */}
-      <div className="pb-6 border-b border-gray-200">
-        <h3 className="font-medium text-gray-900">Configuração Gerais</h3>
-        <p className="mt-1 text-sm text-gray-600">
-          Configure como o equipamento irá se comunicar com a rede e transmitir
-          dados
-        </p>
-      </div>
-
-      {/* 1. Configurações Básicas de Rede */}
-      <div className="bg-white shadow-sm rounded-lg p-6 space-y-6">
-        <h3 className="text-base font-medium text-gray-900 mb-4">Rede</h3>
-        {/* APN */}
-        <div className="grid grid-cols-1 gap-y-4 gap-x-6 sm:grid-cols-6">
-          <div className="sm:col-span-6">
-            <h4 className="text-sm font-medium text-gray-600 mb-3">
-              Configuração APN
-            </h4>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div>
-                <label
-                  htmlFor="apn_address"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  APN
-                </label>
-                <input
-                  {...register("config.general.apn.address")}
-                  id="apn_address"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="bws.br"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="apn_user"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Usuário
-                </label>
-                <input
-                  {...register("config.general.apn.user")}
-                  id="apn_user"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="bws"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="apn_password"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Senha
-                </label>
-                <input
-                  {...register("config.general.apn.password")}
-                  id="apn_password"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="bws"
-                />
-              </div>
-            </div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Network className="h-5 w-5" />
+          Configurações Gerais
+        </CardTitle>
+        <CardDescription>
+          Configure como o equipamento irá se comunicar com a rede
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* APN Configuration */}
+        <div className="rounded-lg border bg-card p-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Wifi className="h-4 w-4" />
+            <h4 className="font-medium">Configuração APN</h4>
+            <Badge variant="outline" className="text-xs">
+              Rede
+            </Badge>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="config.general.apn.address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>APN</FormLabel>
+                  <FormControl>
+                    <Input placeholder="bws.br" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="config.general.apn.user"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Usuário</FormLabel>
+                  <FormControl>
+                    <Input placeholder="bws" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="config.general.apn.password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Senha</FormLabel>
+                  <FormControl>
+                    <Input placeholder="bws" type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
 
-        {/* 2. Configurações de IP */}
-        <div className="grid grid-cols-1 gap-y-4 gap-x-6 sm:grid-cols-6">
-          <div className="sm:col-span-3">
-            <h4 className="text-sm font-medium text-gray-600 mb-3">
-              Ip Primário
-            </h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="primary_ip"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Endereço IP
-                </label>
-                <input
-                  {...register("config.general.ip_primary.ip")}
-                  id="primary_ip"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="127.0.0.1"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="primary_ip_port"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Porta
-                </label>
-                <input
-                  {...register("config.general.ip_primary.port")}
-                  id="primary_ip_port"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="3000"
-                />
-              </div>
-            </div>
+        {/* Tabs para IP e DNS */}
+        <div className="rounded-lg border bg-card p-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Server className="h-4 w-4" />
+            <h4 className="font-medium">Configuração de Servidores</h4>
           </div>
 
-          <div className="sm:col-span-3">
-            <h4 className="text-sm font-medium text-gray-600 mb-3">
-              Ip Secundário
-            </h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="secondary_ip"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Endereço IP
-                </label>
-                <input
-                  {...register("config.general.ip_secondary.ip")}
-                  id="secondary_ip"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="127.0.0.1"
-                />
+          <Tabs defaultValue="ip" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="ip" className="flex items-center gap-2">
+                <Server className="h-4 w-4" />
+                Servidores IP
+              </TabsTrigger>
+              <TabsTrigger value="dns" className="flex items-center gap-2">
+                <Network className="h-4 w-4" />
+                Servidores DNS
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Tab Content para IP */}
+            <TabsContent value="ip" className="mt-6 space-y-6">
+              {/* IP Primário */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    Primário
+                  </Badge>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Servidor principal de comunicação
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="config.general.ip_primary.ip"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Endereço IP</FormLabel>
+                        <FormControl>
+                          <Input placeholder="127.0.0.1" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="config.general.ip_primary.port"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Porta</FormLabel>
+                        <FormControl>
+                          <Input placeholder="3000" type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
-              <div>
-                <label
-                  htmlFor="secondary_ip_port"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Porta
-                </label>
-                <input
-                  {...register("config.general.ip_secondary.port")}
-                  id="secondary_ip_port"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="3001"
-                />
+
+              {/* IP Secundário */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    Secundário
+                  </Badge>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Servidor de backup
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="config.general.ip_secondary.ip"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Endereço IP</FormLabel>
+                        <FormControl>
+                          <Input placeholder="127.0.0.2" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="config.general.ip_secondary.port"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Porta</FormLabel>
+                        <FormControl>
+                          <Input placeholder="3001" type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
-            </div>
-          </div>
+            </TabsContent>
+
+            {/* Tab Content para DNS */}
+            <TabsContent value="dns" className="mt-6 space-y-6">
+              {/* DNS Primário */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    Primário
+                  </Badge>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Servidor DNS principal
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="config.general.dns_primary.address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Host DNS</FormLabel>
+                        <FormControl>
+                          <Input placeholder="gw.bws-infra.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="config.general.dns_primary.port"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Porta</FormLabel>
+                        <FormControl>
+                          <Input placeholder="3000" type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* DNS Secundário */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    Secundário
+                  </Badge>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Servidor DNS de backup
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="config.general.dns_secondary.address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Host DNS</FormLabel>
+                        <FormControl>
+                          <Input placeholder="gw2.bws-infra.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="config.general.dns_secondary.port"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Porta</FormLabel>
+                        <FormControl>
+                          <Input placeholder="3001" type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
-        {/* 3. Configurações de DNS */}
-        <div className="grid grid-cols-1 gap-y-4 gap-x-6 sm:grid-cols-6">
-          <div className="sm:col-span-3">
-            <h4 className="text-sm font-medium text-gray-600 mb-3">
-              DNS Primário
-            </h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="dns_primary_address"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Endereço
-                </label>
-                <input
-                  {...register("config.general.dns_primary.address")}
-                  id="dns_primary_address"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="bwfleets.com"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="dns_primary_port"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Porta
-                </label>
-                <input
-                  {...register("config.general.dns_primary.port")}
-                  id="dns_primary_port"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="3000"
-                />
-              </div>
-            </div>
+        {/* Transmission Configuration */}
+        <div className="rounded-lg border bg-card p-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Clock className="h-4 w-4" />
+            <h4 className="font-medium">Configurações de Transmissão</h4>
+            <Badge variant="outline" className="text-xs">
+              Intervalos
+            </Badge>
           </div>
-
-          <div className="sm:col-span-3">
-            <h4 className="text-sm font-medium text-gray-600 mb-3">
-              DNS Secundário
-            </h4>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="dns_secondary_address"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Endereço
-                </label>
-                <input
-                  {...register("config.general.dns_secondary.address")} // Corrigido para secondary
-                  id="dns_secondary_address"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="bwfleets.com"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="dns_secondary_port"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Porta
-                </label>
-                <input
-                  {...register("config.general.dns_secondary.port")} // Corrigido para secondary
-                  id="dns_secondary_port"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="3000"
-                />
-              </div>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="config.general.data_transmission_on"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Intervalo Ligado (s)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="60" type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="config.general.data_transmission_off"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Intervalo Desligado (s)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="7200" type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="config.general.keep_alive"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Keep Alive (min)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="60" type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
-      </div>
-
-      {/* 4. Configurações de Transmissão */}
-      <div className="bg-white shadow-sm rounded-lg p-6">
-        <h3 className="text-base font-medium text-gray-900 mb-4">
-          Configurações de Transmissão
-        </h3>
-
-        <div className="grid grid-cols-1 gap-y-4 gap-x-6 sm:grid-cols-6">
-          <div className="sm:col-span-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label
-                  htmlFor="data_transmission_on"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Intervalo Ligado (s)
-                </label>
-                <input
-                  {...register("config.general.data_transmission_on")}
-                  id="data_transmission_on"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="60"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="data_transmission_off"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Intervalo Desligado (s)
-                </label>
-                <input
-                  {...register("config.general.data_transmission_off")}
-                  id="data_transmission_off"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="7200"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="keep_alive"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Keep Alive (min)
-                </label>
-                <input
-                  {...register("config.general.keep_alive")}
-                  id="keep_alive"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border"
-                  placeholder="60"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 }

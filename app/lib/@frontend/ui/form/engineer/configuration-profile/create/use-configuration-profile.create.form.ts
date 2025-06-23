@@ -1,5 +1,5 @@
 import { createOneConfigurationProfile } from "@/app/lib/@backend/action";
-import { EType, EUseCase, ITechnology } from "@/app/lib/@backend/domain";
+import { EType, ITechnology } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
@@ -175,17 +175,102 @@ export const e3Plus4GConfigSchema = z.object({
   ignition_status_hb: z.coerce.boolean().optional().default(true),
 });
 
+export const nb2ConfigSchema = z.object({
+  odometer: odometer,
+  data_transmission_event: z.coerce.number().optional(),
+  sleep: z.coerce.number().optional(),
+  first_voltage: z.coerce.number().optional(),
+  second_voltage: z.coerce.number().optional(),
+  angle: z.coerce.number().optional(),
+  speed: z.coerce.number().optional(),
+  accelerometer_sensitivity_on: z.coerce.number().optional(),
+  accelerometer_sensitivity_off: z.coerce.number().optional(),
+  accelerometer_sensitivity_violated: z.coerce.number().optional(),
+  maximum_acceleration: z.coerce.number().optional(),
+  maximum_deceleration: z.coerce.number().optional(),
+  input_1: z.coerce.number().optional(),
+  input_2: z.coerce.number().optional(),
+  input_3: z.coerce.number().optional(),
+  input_4: z.coerce.number().optional(),
+});
+
+export const loraConfigSchema = z.object({
+  sleep: z.coerce.number().min(5).max(65534).optional(),
+  lorawan_mode_duration: z.coerce.number().min(5).max(65535).optional(),
+  lorawan_data_transmission_event: z.coerce
+    .number()
+    .min(5)
+    .max(65534)
+    .optional(),
+  p2p_mode_duration: z.coerce.number().min(5).max(65535).optional(),
+  p2p_data_transmission_event: z.coerce.number().min(5).max(65534).optional(),
+  odometer,
+  activation_type: z.enum(["ABP", "OTAA"]).optional(),
+  virtual_ignition_limits_12v: z
+    .object({
+      t1: ignition_by_voltage,
+      t2: ignition_by_voltage,
+    })
+    .refine((data) => data.t1 !== undefined && data.t2 !== undefined, {
+      message: "Os intervalos devem ser preenchidos.",
+      path: ["t1"],
+    })
+    .refine((data) => data.t1! > data.t2!, {
+      message: "t2 deve ser maior do que t1.",
+      path: ["t1"],
+    })
+    .optional(),
+  virtual_ignition_limits_24v: z
+    .object({
+      t1: ignition_by_voltage,
+      t2: ignition_by_voltage,
+    })
+    .refine((data) => data.t1 !== undefined && data.t2 !== undefined, {
+      message: "Os intervalos devem ser preenchidos.",
+      path: ["t1"],
+    })
+    .refine((data) => data.t1! > data.t2!, {
+      message: "t2 deve ser maior do que t1.",
+      path: ["t1"],
+    })
+    .optional(),
+  heading: z.boolean().default(false),
+  heading_event_mode: z.boolean().default(false),
+  heading_detection_angle: z.coerce.number().min(0).max(180).optional(),
+  speed_alert_threshold: z.coerce.number().min(5).max(65534).optional(),
+  accel_igon_threshold: z.coerce.number().positive().optional(),
+  accel_igoff_threshold: z.coerce.number().positive().optional(),
+  accel_movement_threshold: z.coerce.number().positive().optional(),
+  harsh_acceleration_threshold: z.coerce.number().positive().optional(),
+  harsh_braking_threshold: z.coerce.number().positive().optional(),
+
+  full_configuration_table: z.string().optional(),
+  full_functionality_table: z.string().optional(),
+  led_configuration: z.string().optional(),
+  status: z.coerce.number().min(5).max(65534).optional(),
+  fifo_send_and_hold_times: z.string().optional(),
+  mcu_configuration: z.string().optional(),
+  output_table: z.string().optional(),
+  input_1: z.coerce.number().optional(),
+  input_2: z.coerce.number().optional(),
+  input_3: z.coerce.number().optional(),
+  input_4: z.coerce.number().optional(),
+  input_5: z.coerce.number().optional(),
+  input_6: z.coerce.number().optional(),
+});
+
 // Esquema principal
-export const schema = z.object({
-  client_id: z.string(),
+const schema = z.object({
+  client_id: z.string().optional(),
   technology_id: z.string(),
-  use_case: z.nativeEnum(EUseCase),
   name: z.string().min(1),
   type: z.nativeEnum(EType),
   config: z.object({
     general: generalConfigSchema,
-    specific: z
-      .intersection(e3PlusConfigSchema, e3Plus4GConfigSchema)
+    specific: e3PlusConfigSchema
+      .merge(e3Plus4GConfigSchema)
+      .merge(nb2ConfigSchema)
+      .merge(loraConfigSchema)
       .optional(),
   }),
 });
@@ -206,7 +291,7 @@ export function useConfigurationProfileCreateForm(props: Props) {
     type?: string;
   }>({});
 
-  const methods = useForm<Schema>({
+  const form = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
       config: {
@@ -219,7 +304,7 @@ export function useConfigurationProfileCreateForm(props: Props) {
     },
   });
 
-  const { watch } = methods;
+  const { watch } = form;
 
   const technology_id = watch("technology_id");
 
@@ -227,16 +312,15 @@ export function useConfigurationProfileCreateForm(props: Props) {
     return technologies.find((el) => el.id === technology_id);
   }, [technologies, technology_id]); // Só recalcula se `technology_id` mudar
 
-  const handleSubmit = methods.handleSubmit(
+  const handleSubmit = form.handleSubmit(
     async (data) => {
       try {
-        const { client_id, type, use_case, technology_id, config } = data;
+        const { client_id, type, technology_id, config } = data;
         await createOneConfigurationProfile({
           name: formatConfigurationProfileName(name),
           client_id,
           technology_id,
           type,
-          use_case,
           config,
         });
 
@@ -271,14 +355,14 @@ export function useConfigurationProfileCreateForm(props: Props) {
   }) => {
     setName((prev) => {
       const state = Object.assign(prev, props);
-      methods.setValue("name", formatConfigurationProfileName(state));
+      form.setValue("name", formatConfigurationProfileName(state));
       return state;
     });
   };
 
   return {
-    methods,
-    register: methods.register,
+    form,
+    register: form.register,
     handleSubmit,
     handleChangeName,
     technology,

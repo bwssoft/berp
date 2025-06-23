@@ -544,16 +544,51 @@ export class LORAParser {
     return isNaN(value) ? undefined : value;
   }
 
-  static input_1() {
-    return "" as any;
+  static input_1(input: string) {
+    const parts = input.split("RIN1=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_1 = parts[1].trim();
+
+    const value = parseFloat(input_1);
+
+    return isNaN(value) ? undefined : value;
   }
-  static input_2() {
-    return "" as any;
+
+  static input_2(input: string) {
+    const parts = input.split("RIN2=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_2 = parts[1].trim();
+
+    const value = parseFloat(input_2);
+
+    return isNaN(value) ? undefined : value;
   }
-  static input_3() {
-    return "" as any;
+
+  static input_3(input: string) {
+    const parts = input.split("RIN3=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_3 = parts[1].trim();
+
+    const value = parseFloat(input_3);
+
+    return isNaN(value) ? undefined : value;
   }
-  static input_4() {
-    return "" as any;
+
+  static input_4(input: string) {
+    const parts = input.split("RIN4=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_4 = parts[1].trim();
+
+    const value = parseFloat(input_4);
+
+    return isNaN(value) ? undefined : value;
   }
 }
