@@ -213,8 +213,10 @@ export const nb2ConfigSchema = z.object({
 });
 
 export const loraConfigSchema = z.object({
-  sleep: twoBytesSchema.optional(),
+  data_transmission_sleep: twoBytesSchema.optional(),
+  data_transmission_position: twoBytesSchema.optional(),
   lorawan_mode_duration: twoBytesSchema.optional(),
+  data_transmission_status: twoBytesSchema.optional(),
   lorawan_data_transmission_event: twoBytesSchema.optional(),
   p2p_mode_duration: twoBytesSchema.optional(),
   p2p_data_transmission_event: twoBytesSchema.optional(),
@@ -260,8 +262,6 @@ export const loraConfigSchema = z.object({
 
   full_configuration_table: z.string().optional(),
   full_functionality_table: z.string().optional(),
-  led_configuration: z.string().optional(),
-  status: twoBytesSchema.optional(),
   fifo_send_and_hold_times: z.string().optional(),
   mcu_configuration: z.string().optional(),
   output_table: z.string().optional(),
@@ -271,6 +271,7 @@ export const loraConfigSchema = z.object({
   input_4: z.coerce.number().optional(),
   input_5: z.coerce.number().optional(),
   input_6: z.coerce.number().optional(),
+  led_lighting: z.string().optional(),
 });
 
 // Esquema principal
@@ -324,7 +325,7 @@ export function useConfigurationProfileCreateForm(props: Props) {
 
   const technology = useMemo(() => {
     return technologies.find((el) => el.id === technology_id);
-  }, [technologies, technology_id]); // Só recalcula se `technology_id` mudar
+  }, [technologies, technology_id]);
 
   const handleSubmit = form.handleSubmit(
     async (data) => {

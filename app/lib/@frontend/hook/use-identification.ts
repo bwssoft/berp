@@ -26,15 +26,7 @@ namespace Namespace {
     iccid?: string | undefined;
     firmware?: string | undefined;
     serial?: string | undefined;
-    lora_keys?: {
-      tk?: string | undefined;
-      da?: string | undefined;
-      de?: string | undefined;
-      ap?: string | undefined;
-      ak?: string | undefined;
-      ask?: string | undefined;
-      nk?: string | undefined;
-    };
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
   }
 
   export interface Identification extends IIdentificationLog {}
@@ -56,15 +48,7 @@ namespace Namespace {
     equipment: {
       serial: string;
       imei?: string;
-      lora_keys?: {
-        tk: string;
-        da: string;
-        de: string;
-        ap: string;
-        ak: string;
-        ask: string;
-        nk: string;
-      };
+      lora_keys?: Device.Equipment["lora_keys"];
     };
   }
 

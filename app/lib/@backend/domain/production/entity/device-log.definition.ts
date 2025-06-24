@@ -1,3 +1,5 @@
+import { Device } from "../../engineer";
+
 interface Technology {
   id: string;
   system_name: string;
@@ -8,15 +10,7 @@ interface Equipment {
   firmware: string;
   imei?: string;
   iccid?: string;
-  lora_keys?: {
-    tk?: string | undefined;
-    da?: string | undefined;
-    de?: string | undefined;
-    ap?: string | undefined;
-    ak?: string | undefined;
-    ask?: string | undefined;
-    nk?: string | undefined;
-  };
+  lora_keys?: Partial<Device.Equipment["lora_keys"]>;
 }
 
 interface User {

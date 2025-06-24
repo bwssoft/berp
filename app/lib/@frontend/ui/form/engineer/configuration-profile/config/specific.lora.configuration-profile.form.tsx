@@ -55,10 +55,12 @@ export function SpecificLoRaConfigurationProfileForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
                 control={control}
-                name="config.general.data_transmission_on"
+                name="config.specific.data_transmission_position"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Intervalo de envio de mensagem</FormLabel>
+                    <FormLabel>
+                      Intervalo de envio de mensagem (segundos)
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="60" {...field} />
                     </FormControl>
@@ -68,10 +70,10 @@ export function SpecificLoRaConfigurationProfileForm() {
               />
               <FormField
                 control={control}
-                name="config.specific.sleep"
+                name="config.specific.data_transmission_sleep"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sleep</FormLabel>
+                    <FormLabel>Sleep (minutos)</FormLabel>
                     <FormControl>
                       <Input placeholder="180" {...field} />
                     </FormControl>
@@ -85,7 +87,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                 name="config.specific.odometer"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Hodômetro</FormLabel>
+                    <FormLabel>Hodômetro (metros)</FormLabel>
                     <FormControl>
                       <Input placeholder="5000" {...field} />
                     </FormControl>
@@ -141,7 +143,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Tempo de permanência no Modo LoRaWAN
+                          Tempo de permanência no Modo LoRaWAN (segundos)
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="3600" {...field} />
@@ -179,7 +181,9 @@ export function SpecificLoRaConfigurationProfileForm() {
                     name="config.specific.p2p_mode_duration"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Tempo de permanência no Modo P2P</FormLabel>
+                        <FormLabel>
+                          Tempo de permanência no Modo P2P (segundos)
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="1800" {...field} />
                         </FormControl>

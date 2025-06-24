@@ -3,7 +3,11 @@ import { NB2, NB2Parser, NB2Encoder } from "../../@backend/infra/protocol";
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
-import { IConfigurationProfile } from "../../@backend/domain";
+import {
+  Config,
+  IConfigurationProfile,
+  NB2Config,
+} from "../../@backend/domain";
 import { findOneSerial } from "../../@backend/action/engineer/serial.action";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
@@ -119,99 +123,128 @@ export const useNB2 = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { command: "RODM\r\n", key: "odometer", transform: NB2Parser.odometer },
         {
-          command: "RCN\r\n",
+          command: "RCN\r",
           key: "data_transmission_on",
           transform: NB2Parser.data_transmission_on,
         },
         {
-          command: "RCW\r\n",
+          command: "RCW\r",
           key: "data_transmission_off",
           transform: NB2Parser.data_transmission_off,
         },
         {
-          command: "RCE\r\n",
+          command: "RCE\r",
           key: "data_transmission_event",
           transform: NB2Parser.data_transmission_event,
         },
-        { command: "RCS\r\n", key: "sleep", transform: NB2Parser.sleep },
         {
-          command: "RCK\r\n",
+          command: "RCK\r",
           key: "keep_alive",
           transform: NB2Parser.keep_alive,
         },
+
         {
-          command: "RIP1\r\n",
+          command: "RIP1\r",
           key: "ip_primary",
           transform: NB2Parser.ip_primary,
         },
         {
-          command: "RIP2\r\n",
+          command: "RIP2\r",
           key: "ip_secondary",
           transform: NB2Parser.ip_secondary,
         },
         {
-          command: "RID1\r\n",
+          command: "RID1\r",
           key: "dns_primary",
           transform: NB2Parser.dns_primary,
         },
         {
-          command: "RID2\r\n",
+          command: "RID2\r",
           key: "dns_secondary",
           transform: NB2Parser.dns_secondary,
         },
-        { command: "RIAP\r\n", key: "apn", transform: NB2Parser.apn },
+        { command: "RIAP\r", key: "apn", transform: NB2Parser.apn },
+
         {
-          command: "RIG12\r\n",
+          command: "RCS\r",
+          key: "time_to_sleep",
+          transform: NB2Parser.time_to_sleep,
+        },
+        { command: "RODM\r", key: "odometer", transform: NB2Parser.odometer },
+
+        {
+          command: "RIG12\r",
           key: "virtual_ignition_12v",
           transform: NB2Parser.virtual_ignition_12v,
         },
         {
-          command: "RIG24\r\n",
+          command: "RIG24\r",
           key: "virtual_ignition_24v",
           transform: NB2Parser.virtual_ignition_24v,
         },
+
         {
-          command: "RFA\r\n",
+          command: "RFA\r",
           key: "heading_detection_angle",
           transform: NB2Parser.heading_detection_angle,
         },
         {
-          command: "RFV\r\n",
+          command: "RFV\r",
           key: "speed_alert_threshold",
           transform: NB2Parser.speed_alert_threshold,
         },
+
         {
-          command: "RFTON\r\n",
+          command: "RFTON\r",
           key: "accel_threshold_for_ignition_on",
           transform: NB2Parser.accel_threshold_for_ignition_on,
         },
         {
-          command: "RFTOF\r\n",
+          command: "RFTOF\r",
           key: "accel_threshold_for_ignition_off",
           transform: NB2Parser.accel_threshold_for_ignition_off,
         },
         {
-          command: "RFAV\r\n",
+          command: "RFAV\r",
           key: "accel_threshold_for_movement",
           transform: NB2Parser.accel_threshold_for_movement,
         },
+
         {
-          command: "RFMA\r\n",
+          command: "RFMA\r",
           key: "harsh_acceleration_threshold",
           transform: NB2Parser.harsh_acceleration_threshold,
         },
         {
-          command: "RFMD\r\n",
+          command: "RFMD\r",
           key: "harsh_braking_threshold",
           transform: NB2Parser.harsh_braking_threshold,
         },
-        { command: "RIN1\r\n", key: "input_1", transform: NB2Parser.input_1 },
-        { command: "RIN2\r\n", key: "input_2", transform: NB2Parser.input_2 },
-        { command: "RIN3\r\n", key: "input_3", transform: NB2Parser.input_3 },
-        { command: "RIN4\r\n", key: "input_4", transform: NB2Parser.input_4 },
+
+        { command: "RIN1\r", key: "input_1", transform: NB2Parser.input_1 },
+        { command: "RIN2\r", key: "input_2", transform: NB2Parser.input_2 },
+        { command: "RIN3\r", key: "input_3", transform: NB2Parser.input_3 },
+        { command: "RIN4\r", key: "input_4", transform: NB2Parser.input_4 },
+
+        {
+          command: "RC\r",
+          key: "full_configuration_table",
+          transform: NB2Parser.full_configuration_table,
+        },
+        {
+          command: "RF\r",
+          key: "full_functionality_table",
+          transform: NB2Parser.full_functionality_table,
+        },
+
+        {
+          command: "RFSM\r",
+          key: "sleep_mode",
+          transform: NB2Parser.sleep_mode,
+        },
       ] as const;
+
       return await Promise.all(
         ports.map(async (port) => {
           try {

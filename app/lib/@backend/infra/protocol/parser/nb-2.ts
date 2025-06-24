@@ -114,23 +114,6 @@ export class NB2Parser {
   }
 
   /**
-   * Extrai o valor do odômetro de uma string que contém "RODM=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do odômetro.
-   * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
-   */
-  static odometer(input: string): number | undefined {
-    const parts = input.split("RODM=");
-    if (parts.length < 2) return undefined;
-
-    const odometerValue = parts[1].trim();
-
-    const value = parseFloat(odometerValue);
-
-    return isNaN(value) ? undefined : value / 10;
-  }
-
-  /**
    * Extrai o valor do tempo de transmissão de ignição ligada de uma string que contém "RCN=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de transmissão de ignição ligada.
@@ -172,24 +155,6 @@ export class NB2Parser {
    */
   static data_transmission_event(input: string): number | undefined {
     const parts = input.split("RCE=");
-
-    if (parts.length < 2) return undefined;
-
-    const dataTransmissionEvent = parts[1].trim();
-
-    const value = parseFloat(dataTransmissionEvent);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor do tempo de sleep de uma string que contém "RCS=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do tempo de sleep.
-   * @returns O valor numérico do tempo de sleep ou undefined se o formato não for válido.
-   */
-  static sleep(input: string): number | undefined {
-    const parts = input.split("RCS=");
 
     if (parts.length < 2) return undefined;
 
@@ -298,6 +263,41 @@ export class NB2Parser {
       user,
       password,
     };
+  }
+
+  /**
+   * Extrai o valor do tempo para inciar o sleep de uma string que contém "RCS=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do tempo para inicar o sleep.
+   * @returns O valor numérico do tempo para inicar o sleep ou undefined se o formato não for válido.
+   */
+  static time_to_sleep(input: string): number | undefined {
+    const parts = input.split("RCS=");
+
+    if (parts.length < 2) return undefined;
+
+    const dataTransmissionEvent = parts[1].trim();
+
+    const value = parseFloat(dataTransmissionEvent);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  /**
+   * Extrai o valor do odômetro de uma string que contém "RODM=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do odômetro.
+   * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
+   */
+  static odometer(input: string): number | undefined {
+    const parts = input.split("RODM=");
+    if (parts.length < 2) return undefined;
+
+    const odometerValue = parts[1].trim();
+
+    const value = parseFloat(odometerValue);
+
+    return isNaN(value) ? undefined : value / 10;
   }
 
   /**
@@ -459,16 +459,89 @@ export class NB2Parser {
     return isNaN(value) ? undefined : value;
   }
 
-  static input_1() {
-    return "" as any;
+  static input_1(input: string) {
+    const parts = input.split("RIN1=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_1 = parts[1].trim();
+
+    const value = parseFloat(input_1);
+
+    return isNaN(value) ? undefined : value;
   }
-  static input_2() {
-    return "" as any;
+
+  static input_2(input: string) {
+    const parts = input.split("RIN2=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_2 = parts[1].trim();
+
+    const value = parseFloat(input_2);
+
+    return isNaN(value) ? undefined : value;
   }
-  static input_3() {
-    return "" as any;
+
+  static input_3(input: string) {
+    const parts = input.split("RIN3=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_3 = parts[1].trim();
+
+    const value = parseFloat(input_3);
+
+    return isNaN(value) ? undefined : value;
   }
-  static input_4() {
-    return "" as any;
+
+  static input_4(input: string) {
+    const parts = input.split("RIN4=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_4 = parts[1].trim();
+
+    const value = parseFloat(input_4);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static full_configuration_table(input: string): string | undefined {
+    const parts = input.split("RC=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static full_functionality_table(input: string): string | undefined {
+    const parts = input.split("RF=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static sleep_mode(input: string) {
+    const parts = input.split("RFSM=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    if (value !== "00" && value !== "01") return undefined;
+
+    return value;
   }
 }

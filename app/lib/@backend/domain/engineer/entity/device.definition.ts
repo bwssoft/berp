@@ -15,13 +15,13 @@ namespace Device {
     firmware: string;
     imei?: string;
     lora_keys?: {
-      tk: string;
-      da: string;
-      de: string;
-      ap: string;
-      ak: string;
-      ask: string;
-      nk: string;
+      timestamp: string;
+      device_address: string;
+      device_eui: string;
+      application_eui: string;
+      application_key: string;
+      application_session_key: string;
+      network_session_key: string;
     };
   }
 

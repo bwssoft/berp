@@ -101,39 +101,39 @@ export const useLora = () => {
           transform: LORAParser.firmware,
         },
         {
-          key: "tk",
+          key: "timestamp",
           command: `RTK\r`,
-          transform: LORAParser.rtk,
+          transform: LORAParser.timestamp,
         },
         {
-          key: "da",
+          key: "device_address",
           command: `RDA\r`,
-          transform: LORAParser.rda,
+          transform: LORAParser.device_address,
         },
         {
-          key: "de",
+          key: "device_eui",
           command: `RDE\r`,
-          transform: LORAParser.rde,
+          transform: LORAParser.device_eui,
         },
         {
-          key: "ap",
+          key: "application_eui",
           command: `RAP\r`,
-          transform: LORAParser.rap,
+          transform: LORAParser.application_eui,
         },
         {
-          key: "ak",
+          key: "application_key",
           command: `RAK\r`,
-          transform: LORAParser.rak,
+          transform: LORAParser.application_key,
         },
         {
-          key: "ask",
+          key: "application_session_key",
           command: `RASK\r`,
-          transform: LORAParser.rask,
+          transform: LORAParser.application_session_key,
         },
         {
-          key: "nk",
+          key: "network_session_key",
           command: `RNK\r`,
-          transform: LORAParser.rnk,
+          transform: LORAParser.network_session_key,
         },
       ] as const;
       return await Promise.all(
@@ -160,62 +160,34 @@ export const useLora = () => {
       const messages = [
         { command: "RODM\r", key: "odometer", transform: LORAParser.odometer },
         {
-          command: "RCN\r",
-          key: "data_transmission_on",
-          transform: LORAParser.data_transmission_on,
-        },
-        {
           command: "RCW\r",
-          key: "data_transmission_off",
-          transform: LORAParser.data_transmission_off,
+          key: "data_transmission_sleep",
+          transform: LORAParser.data_transmission_sleep,
         },
+
         {
-          command: "RCE\r",
-          key: "data_transmission_event",
-          transform: LORAParser.data_transmission_event,
-        },
-        { command: "RCS\r", key: "sleep", transform: LORAParser.sleep },
-        {
-          command: "RCK\r",
-          key: "keep_alive",
-          transform: LORAParser.keep_alive,
-        },
-        {
-          command: "RIP1\r",
-          key: "ip_primary",
-          transform: LORAParser.ip_primary,
-        },
-        {
-          command: "RIP2\r",
-          key: "ip_secondary",
-          transform: LORAParser.ip_secondary,
-        },
-        {
-          command: "RID1\r",
-          key: "dns_primary",
-          transform: LORAParser.dns_primary,
-        },
-        {
-          command: "RID2\r",
-          key: "dns_secondary",
-          transform: LORAParser.dns_secondary,
-        },
-        { command: "RIAP\r", key: "apn", transform: LORAParser.apn },
-        {
-          command: "RIG12\r",
+          command: "RIG1\r",
           key: "virtual_ignition_12v",
           transform: LORAParser.virtual_ignition_12v,
         },
         {
-          command: "RIG24\r",
+          command: "RIG2\r",
           key: "virtual_ignition_24v",
           transform: LORAParser.virtual_ignition_24v,
+        },
+
+        { command: "RFH\r", key: "heading", transform: LORAParser.heading },
+        {
+          command: "RFHV\r",
+          key: "heading_event_mode",
+          transform: LORAParser.heading_event_mode,
         },
         {
           command: "RFA\r",
           key: "heading_detection_angle",
           transform: LORAParser.heading_detection_angle,
         },
+
         {
           command: "RFV\r",
           key: "speed_alert_threshold",
@@ -246,41 +218,98 @@ export const useLora = () => {
           key: "harsh_braking_threshold",
           transform: LORAParser.harsh_braking_threshold,
         },
+
+        {
+          command: "RWTR\r",
+          key: "data_transmission_position",
+          transform: LORAParser.data_transmission_position,
+        },
+        {
+          command: "RLED\r",
+          key: "led_lighting",
+          transform: LORAParser.led_lighting,
+        },
+
+        {
+          command: "RLTO\r",
+          key: "p2p_mode_duration",
+          transform: LORAParser.p2p_mode_duration,
+        },
+        {
+          command: "WWTO\r",
+          key: "lorawan_mode_duration",
+          transform: LORAParser.lorawan_mode_duration,
+        },
+
         { command: "RIN1\r", key: "input_1", transform: LORAParser.input_1 },
         { command: "RIN2\r", key: "input_2", transform: LORAParser.input_2 },
         { command: "RIN3\r", key: "input_3", transform: LORAParser.input_3 },
         { command: "RIN4\r", key: "input_4", transform: LORAParser.input_4 },
+        { command: "RIN5\r", key: "input_5", transform: LORAParser.input_5 },
+        { command: "RIN6\r", key: "input_6", transform: LORAParser.input_6 },
+
+        {
+          command: "RC\r",
+          key: "full_configuration_table",
+          transform: LORAParser.full_configuration_table,
+        },
+        {
+          command: "RFIFO\r",
+          key: "fifo_send_and_hold_times",
+          transform: LORAParser.fifo_send_and_hold_times,
+        },
+
+        {
+          command: "REWTR\r",
+          key: "lorawan_data_transmission_event",
+          transform: LORAParser.lorawan_data_transmission_event,
+        },
+        {
+          command: "RELTR\r",
+          key: "p2p_data_transmission_event",
+          transform: LORAParser.p2p_data_transmission_event,
+        },
+
+        {
+          command: "RTS\r",
+          key: "data_transmission_status",
+          transform: LORAParser.data_transmission_status,
+        },
+        {
+          command: "RF\r",
+          key: "full_functionality_table",
+          transform: LORAParser.full_functionality_table,
+        },
+
+        {
+          command: "RACT\r",
+          key: "activation_type",
+          transform: LORAParser.activation_type,
+        },
+        {
+          command: "RMC\r",
+          key: "mcu_configuration",
+          transform: LORAParser.mcu_configuration,
+        },
+
+        {
+          command: "ROUT\r",
+          key: "output_table",
+          transform: LORAParser.output_table,
+        },
       ] as const;
+
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            const {
-              data_transmission_on,
-              data_transmission_off,
-              ip_primary,
-              ip_secondary,
-              apn,
-              keep_alive,
-              dns_primary,
-              dns_secondary,
-              ...specific
-            } = await sendMultipleMessages({
+            const specific = await sendMultipleMessages({
               transport: port,
               messages,
             });
             return {
               port,
               config: {
-                general: {
-                  data_transmission_on,
-                  data_transmission_off,
-                  ip_primary,
-                  ip_secondary,
-                  apn,
-                  keep_alive,
-                  dns_primary,
-                  dns_secondary,
-                },
+                general: {},
                 specific,
               },
               raw: [],
@@ -474,39 +503,39 @@ export const useLora = () => {
           transform: LORAParser.serial,
         },
         {
-          key: "tk",
+          key: "timestamp",
           command: `RTK\r`,
-          transform: LORAParser.rtk,
+          transform: LORAParser.timestamp,
         },
         {
-          key: "da",
+          key: "device_address",
           command: `RDA\r`,
-          transform: LORAParser.rda,
+          transform: LORAParser.device_address,
         },
         {
-          key: "de",
+          key: "device_eui",
           command: `RDE\r`,
-          transform: LORAParser.rde,
+          transform: LORAParser.device_eui,
         },
         {
-          key: "ap",
+          key: "application_eui",
           command: `RAP\r`,
-          transform: LORAParser.rap,
+          transform: LORAParser.application_eui,
         },
         {
-          key: "ak",
+          key: "application_key",
           command: `RAK\r`,
-          transform: LORAParser.rak,
+          transform: LORAParser.application_key,
         },
         {
-          key: "ask",
+          key: "application_session_key",
           command: `RASK\r`,
-          transform: LORAParser.rask,
+          transform: LORAParser.application_session_key,
         },
         {
-          key: "nk",
+          key: "network_session_key",
           command: `RNK\r`,
-          transform: LORAParser.rnk,
+          transform: LORAParser.network_session_key,
         },
       ] as const;
       try {
@@ -523,19 +552,20 @@ export const useLora = () => {
 
         if (
           !readResponse.serial ||
-          !readResponse.tk ||
-          !readResponse.da ||
-          !readResponse.de ||
-          !readResponse.ap ||
-          !readResponse.ak ||
-          !readResponse.ask ||
-          !readResponse.nk
+          !readResponse.timestamp ||
+          !readResponse.device_address ||
+          !readResponse.device_eui ||
+          !readResponse.application_eui ||
+          !readResponse.application_key ||
+          !readResponse.application_session_key ||
+          !readResponse.network_session_key
         ) {
           return { ok: false, port, error: "Serial inválido" };
         }
 
         const status =
-          serial === readResponse.serial && timestamp === readResponse.tk;
+          serial === readResponse.serial &&
+          timestamp === readResponse.timestamp;
 
         const end_time = Date.now();
 
@@ -550,13 +580,13 @@ export const useLora = () => {
           equipment: {
             serial: readResponse.serial,
             lora_keys: {
-              tk: readResponse.tk,
-              da: readResponse.da,
-              de: readResponse.de,
-              ap: readResponse.ap,
-              ak: readResponse.ak,
-              ask: readResponse.ask,
-              nk: readResponse.nk,
+              timestamp: readResponse.timestamp,
+              device_address: readResponse.device_address,
+              device_eui: readResponse.device_eui,
+              application_eui: readResponse.application_eui,
+              application_key: readResponse.application_key,
+              application_session_key: readResponse.application_session_key,
+              network_session_key: readResponse.network_session_key,
             },
           },
         };

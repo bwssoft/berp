@@ -36,6 +36,11 @@ export class NB2Encoder {
     return `WCW=${input}\r\n`;
   }
 
+  static data_transmission_event(input: number): string | undefined {
+    if (!input || typeof input !== "number") return undefined;
+    return `WCE=${input}\r\n`;
+  }
+
   static keep_alive(input: number): string | undefined {
     if (!input || typeof input !== "number") return undefined;
     return `WCK=${input}\r\n`;
@@ -66,12 +71,7 @@ export class NB2Encoder {
     return `WIAP=${input.address},${input.user},${input.password}\r\n`;
   }
 
-  static data_transmission_event(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCE=${input}\r\n`;
-  }
-
-  static sleep(input: number): string | undefined {
+  static time_to_sleep(input: number): string | undefined {
     if (!input || typeof input !== "number") return undefined;
     return `WCS=${input}\r\n`;
   }
@@ -151,6 +151,19 @@ export class NB2Encoder {
     return `WIMEI=${input}\r\n`;
   }
 
+  static full_configuration_table(): string {
+    return "WC=";
+  }
+
+  static full_functionality_table(): string {
+    return "WF=";
+  }
+
+  static sleep_mode(input: string): string | undefined {
+    if (input !== "00" && input !== "01") return undefined;
+    return `WFSM=${input}\r`;
+  }
+
   static commands() {
     return {
       serial: NB2Encoder.serial,
@@ -159,7 +172,7 @@ export class NB2Encoder {
       data_transmission_on: NB2Encoder.data_transmission_on,
       data_transmission_off: NB2Encoder.data_transmission_off,
       data_transmission_event: NB2Encoder.data_transmission_event,
-      sleep: NB2Encoder.sleep,
+      time_to_sleep: NB2Encoder.time_to_sleep,
       keep_alive: NB2Encoder.keep_alive,
       ip_primary: NB2Encoder.ip_primary,
       ip_secondary: NB2Encoder.ip_secondary,

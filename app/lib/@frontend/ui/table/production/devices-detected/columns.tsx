@@ -11,15 +11,7 @@ export interface Row {
     iccid?: string | undefined;
     firmware?: string | undefined;
     serial?: string | undefined;
-    lora_keys?: {
-      tk?: string | undefined;
-      da?: string | undefined;
-      de?: string | undefined;
-      ap?: string | undefined;
-      ak?: string | undefined;
-      ask?: string | undefined;
-      nk?: string | undefined;
-    };
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
   };
   status: "fully_identified" | "partially_identified" | "not_identified";
   port: ISerialPort;
@@ -168,8 +160,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Timestamp",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.lora_keys?.tk}>
-          {row.original.equipment.lora_keys?.tk ?? "--"}
+        <p title={row.original.equipment.lora_keys?.timestamp}>
+          {row.original.equipment.lora_keys?.timestamp ?? "--"}
         </p>
       ),
     },
@@ -177,8 +169,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Device EUI",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.lora_keys?.de}>
-          {row.original.equipment.lora_keys?.de ?? "--"}
+        <p title={row.original.equipment.lora_keys?.device_eui}>
+          {row.original.equipment.lora_keys?.device_eui ?? "--"}
         </p>
       ),
     },
@@ -215,8 +207,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Device Address",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.lora_keys?.da}>
-          {row.original.equipment.lora_keys?.da ?? "--"}
+        <p title={row.original.equipment.lora_keys?.device_address}>
+          {row.original.equipment.lora_keys?.device_address ?? "--"}
         </p>
       ),
     },
@@ -224,8 +216,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Device EUI",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.lora_keys?.de}>
-          {row.original.equipment.lora_keys?.de ?? "--"}
+        <p title={row.original.equipment.lora_keys?.device_eui}>
+          {row.original.equipment.lora_keys?.device_eui ?? "--"}
         </p>
       ),
     },

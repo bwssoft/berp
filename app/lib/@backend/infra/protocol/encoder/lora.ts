@@ -1,51 +1,41 @@
-type Encoder = { command: "sleep"; args: number };
+type Encoder = { command: "data_transmission_sleep"; args: number };
 
-// data_transmission_on;
-// sleep;
-// data_transmission_off - existe?;
-// apn - existe?;
-// keep_alive - existe?; WTS=
-// ip_primary - não existe;
-// ip_secondary - não existe;
-// dns_primary - não existe;
-// dns_secondary - não existe;
 export class LORAEncoder {
   static serial(serial: string): string {
     return `WINS=${serial}\r`;
   }
 
-  // WLTR tem a mesma descrição do comando WWTR
-  static data_transmission_on(input: number): string {
-    return `WWTR=${input}\r`;
-  }
-
-  static sleep(input: number): string {
+  static data_transmission_sleep(input: number): string {
     return `WCW=${input}\r`;
-  }
-
-  static odometer(input: number): string {
-    return `WODM=${input}\r`;
-  }
-
-  static activation_type(input: "ABP" | "OTAA"): string | undefined {
-    if (input !== "ABP" && input !== "OTAA") return undefined;
-    return `WACT=${input}\r`;
   }
 
   static lorawan_mode_duration(input: number): string {
     return `WWTO=${input}\r`;
   }
 
-  static lorawan_data_transmission_event(input: number): string {
-    return `WEWTR=${input}\r`;
-  }
-
   static p2p_mode_duration(input: number): string {
     return `WLTO=${input}\r`;
   }
 
+  // WLTR tem a mesma descrição do comando WWTR
+  static data_transmission_position(input: number): string {
+    return `WWTR=${input}\r`;
+  }
+
+  static lorawan_data_transmission_event(input: number): string {
+    return `WEWTR=${input}\r`;
+  }
+
   static p2p_data_transmission_event(input: number): string {
     return `WELTR=${input}\r`;
+  }
+
+  static data_transmission_status(input: number): string {
+    return `WTS=${input}\r`;
+  }
+
+  static odometer(input: number): string {
+    return `WODM=${input}\r`;
   }
 
   static virtual_ignition_12v(input: {
@@ -64,6 +54,11 @@ export class LORAEncoder {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
       return undefined;
     return `WIG2=${input.initial},${input.final}\r`;
+  }
+
+  static activation_type(input: string): string | undefined {
+    if (input !== "00" && input !== "01") return undefined;
+    return `WACT=${input}\r`;
   }
 
   static heading(input: boolean): string | undefined {
@@ -118,11 +113,8 @@ export class LORAEncoder {
     return "WC=";
   }
 
-  static status(input: number): string {
-    return `WTS=${input}\r`;
-  }
-
-  static led_configuration(input: number): string {
+  static led_lighting(input: string): string | undefined {
+    if (input !== "00" && input !== "01") return undefined;
     return `WLED=${input}\r`;
   }
 
@@ -130,6 +122,7 @@ export class LORAEncoder {
     return `WFIFO=${times.join(",")}\r`;
   }
 
+  // sem descrição no documento
   static mcu_configuration(): string {
     return "WMC=";
   }
@@ -193,22 +186,21 @@ export class LORAEncoder {
   static commands() {
     return {
       serial: LORAEncoder.serial,
-      sleep: LORAEncoder.sleep,
-      data_transmission_on: LORAEncoder.data_transmission_on,
-      status: LORAEncoder.status,
-      full_configuration_table: LORAEncoder.full_configuration_table,
+      data_transmission_sleep: LORAEncoder.data_transmission_sleep,
       lorawan_mode_duration: LORAEncoder.lorawan_mode_duration,
       p2p_mode_duration: LORAEncoder.p2p_mode_duration,
-      led_configuration: LORAEncoder.led_configuration,
-      fifo_send_and_hold_times: LORAEncoder.fifo_send_and_hold_times,
+      data_transmission_position: LORAEncoder.data_transmission_position,
       lorawan_data_transmission_event:
         LORAEncoder.lorawan_data_transmission_event,
       p2p_data_transmission_event: LORAEncoder.p2p_data_transmission_event,
+      data_transmission_status: LORAEncoder.data_transmission_status,
       odometer: LORAEncoder.odometer,
       virtual_ignition_12v: LORAEncoder.virtual_ignition_12v,
       virtual_ignition_24v: LORAEncoder.virtual_ignition_24v,
-      full_functionality_table: LORAEncoder.full_functionality_table,
+      activation_type: LORAEncoder.activation_type,
+      heading: LORAEncoder.heading,
       heading_detection_angle: LORAEncoder.heading_detection_angle,
+      heading_event_mode: LORAEncoder.heading_event_mode,
       speed_alert_threshold: LORAEncoder.speed_alert_threshold,
       accel_threshold_for_ignition_on:
         LORAEncoder.accel_threshold_for_ignition_on,
@@ -217,17 +209,18 @@ export class LORAEncoder {
       accel_threshold_for_movement: LORAEncoder.accel_threshold_for_movement,
       harsh_acceleration_threshold: LORAEncoder.harsh_acceleration_threshold,
       harsh_braking_threshold: LORAEncoder.harsh_braking_threshold,
-      heading: LORAEncoder.heading,
-      heading_event_mode: LORAEncoder.heading_event_mode,
+      full_functionality_table: LORAEncoder.full_functionality_table,
+      full_configuration_table: LORAEncoder.full_configuration_table,
+      led_lighting: LORAEncoder.led_lighting,
+      fifo_send_and_hold_times: LORAEncoder.fifo_send_and_hold_times,
       mcu_configuration: LORAEncoder.mcu_configuration,
+      output_table: LORAEncoder.output_table,
       input_1: LORAEncoder.input_1,
       input_2: LORAEncoder.input_2,
       input_3: LORAEncoder.input_3,
       input_4: LORAEncoder.input_4,
       input_5: LORAEncoder.input_5,
       input_6: LORAEncoder.input_6,
-      output_table: LORAEncoder.output_table,
-      activation_type: LORAEncoder.activation_type,
       timestamp: LORAEncoder.timestamp,
       device_eui: LORAEncoder.device_eui,
       application_eui: LORAEncoder.application_eui,

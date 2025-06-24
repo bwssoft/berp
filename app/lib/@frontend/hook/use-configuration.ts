@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Device,
+  E3Plus4GConfig,
   IClient,
   IConfigurationLog,
   IConfigurationProfile,
@@ -30,6 +32,7 @@ namespace Namespace {
     iccid?: string | undefined;
     firmware?: string | undefined;
     serial?: string | undefined;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
   }
 
   export interface Configuration extends IConfigurationLog {}
@@ -80,7 +83,8 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       // obtain device profile after configuration process
       const profileResult = await handleGetProfile(ports);
 
-      delete configuration_profile.config?.specific?.password;
+      delete (configuration_profile.config?.specific as E3Plus4GConfig)
+        ?.password;
 
       // check if each message sent has response and configured to the desired profile
       const result = configurationResult
@@ -122,10 +126,11 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
               system_name: technology.name.system,
             },
             equipment: {
-              imei: equipment.imei!,
               firmware: equipment.firmware!,
               serial: equipment.serial!,
               iccid: equipment.iccid,
+              imei: equipment.imei,
+              lora_keys: equipment.lora_keys,
             },
             checked: false,
             status,
