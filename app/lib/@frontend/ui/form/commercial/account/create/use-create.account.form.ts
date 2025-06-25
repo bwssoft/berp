@@ -38,9 +38,12 @@ const schema = z
           }),
         rg: z
           .string()
-          .regex(/^[\d./-]*$/, {
-            message: "RG deve conter apenas números, pontos, barras e hífens",
-          })
+          .min(7)
+          .max(12)
+          .regex(
+            /^(\d{1,2}\.?\d{3}\.?\d{3}-?\d{1}|^\d{7,9})$/,
+            "RG inválido: deve conter entre 7 e 9 dígitos, com ou sem pontuação"
+          )
           .optional(),
       })
       .optional(),
