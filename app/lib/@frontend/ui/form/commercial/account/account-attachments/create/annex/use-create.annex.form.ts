@@ -61,6 +61,7 @@ export function useCreateAnnexForm({ closeModal }: CreateAnnexFormProps) {
       const result = await createAccountAttachment(fileData, {
         id: crypto.randomUUID(),
         name: data.name,
+        accountId: ""
       });
 
       if (result.success) {
