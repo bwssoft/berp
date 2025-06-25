@@ -111,7 +111,7 @@ export function CNPJAccountForm({
           render={({ field }) => (
             <Select
               name="sector"
-              data={sectorModal.sectors}
+              data={sectorModal.enabledSectors}
               keyExtractor={(d) => d.id!}
               valueExtractor={(d) => d.name}
               label="Setor"
