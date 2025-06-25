@@ -81,11 +81,13 @@ export function CNPJAccountForm({
         render={({ field }) => (
           <Combobox
             type="single"
-            // label="Situação"
-            label="Status faturamento"
+            label="Situação cadastral"
             data={[
-              { id: "Ativo", name: "Ativo" },
-              { id: "Inativo", name: "Inativo" },
+              { id: "Nula", name: "Nula" },
+              { id: "Ativa", name: "Ativa" },
+              { id: "Suspensa", name: "Suspensa" },
+              { id: "Inapta", name: "Inapta" },
+              { id: "Baixada", name: "Baixada" },
             ]}
             value={field.value}
             onOptionChange={(item) => field.onChange(item)}
@@ -109,7 +111,7 @@ export function CNPJAccountForm({
           render={({ field }) => (
             <Select
               name="sector"
-              data={sectorModal.sectors}
+              data={sectorModal.enabledSectors}
               keyExtractor={(d) => d.id!}
               valueExtractor={(d) => d.name}
               label="Setor"
