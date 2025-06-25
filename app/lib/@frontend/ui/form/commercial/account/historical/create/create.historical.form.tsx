@@ -8,7 +8,7 @@ import {
   FaceSmileIcon,
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
-import { SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
+import { CreateAnnexHistoricalModal, SearchContactHistoricalModal, useCreateAnnexHistoricalModal } from "@/app/lib/@frontend/ui/modal";
 import { useState } from "react";
 import { ContactSelection, IHistorical } from "@/app/lib/@backend/domain";
 
@@ -20,6 +20,7 @@ type Props = {
 export function CreateHistoricalForm({ accountId, historical }: Props) {
   const [selectContact, setSelectContact] = useState<ContactSelection[]>([]);
   const {register, onSubmit} = useCreateHistoricalForm({accountId, selectContact});
+  const { openModal,  open, closeModal } = useCreateAnnexHistoricalModal()
 
   return (
     <div className="w-[70%]">
@@ -40,8 +41,8 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
               />
               <Button title="Emoji" variant={"ghost"} className="p-1">
                 <FaceSmileIcon className="h-5 w-5" />
-              </Button>
-              <Button title="Anexar" variant={"ghost"} className="p-1">
+              </Button>  
+              <Button title="Anexar" variant={"ghost"} onClick={openModal} className="p-1">
                 <PaperClipIcon className="h-5 w-5" />
               </Button> 
             </div>
@@ -52,6 +53,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
         </div>
       </form>
       <TimelineItem historical={historical} />
+      <CreateAnnexHistoricalModal open={open} closeModal={closeModal} />
     </div>
   );
 }
