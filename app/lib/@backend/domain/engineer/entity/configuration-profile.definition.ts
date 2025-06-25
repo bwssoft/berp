@@ -157,10 +157,10 @@ export type NB2Config = {
   accel_threshold_for_movement?: number | undefined;
   harsh_acceleration_threshold?: number | undefined;
   harsh_braking_threshold?: number | undefined;
-  input_1?: number | undefined;
-  input_2?: number | undefined;
-  input_3?: number | undefined;
-  input_4?: number | undefined;
+  input_1?: string | undefined;
+  input_2?: string | undefined;
+  input_3?: string | undefined;
+  input_4?: string | undefined;
   full_configuration_table?: string | undefined;
   full_functionality_table?: string | undefined;
   sleep_mode?: string | undefined;

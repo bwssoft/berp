@@ -21,10 +21,10 @@ export const formatConfigurationProfileName = (props: {
   const { type, technology, document } = props;
   const typeFormatted = type
     ? configurationProfileConstants.type[type as EType]
-    : "Unknown";
-  const technologyFormatted = technology ?? "Unknown";
-  const documentFormatted = document ?? "Unknown";
-  return `CONFIG.${documentFormatted}.${technologyFormatted}.${typeFormatted}`.toUpperCase();
+    : "__";
+  const technologyFormatted = technology ?? "__";
+  const documentFormatted = document ?? "__";
+  return `${documentFormatted}.${technologyFormatted}.${typeFormatted}`.toUpperCase();
 };
 
 export const generateConfigurationProfileLinkForClient = async (

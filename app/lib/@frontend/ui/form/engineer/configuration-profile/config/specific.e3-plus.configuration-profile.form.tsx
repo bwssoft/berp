@@ -74,7 +74,7 @@ export function SpecificE3PlusConfigurationProfileForm() {
                   <FormItem>
                     <FormLabel>Senha Atual</FormLabel>
                     <FormControl>
-                      <Input placeholder="000000" type="password" {...field} />
+                      <Input placeholder="000000" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -87,7 +87,7 @@ export function SpecificE3PlusConfigurationProfileForm() {
                   <FormItem>
                     <FormLabel>Nova Senha</FormLabel>
                     <FormControl>
-                      <Input placeholder="123456" type="password" {...field} />
+                      <Input placeholder="123456" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

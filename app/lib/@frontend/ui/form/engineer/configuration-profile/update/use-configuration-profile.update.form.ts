@@ -26,11 +26,14 @@ const schema = z.object({
   name: z.string().min(1),
   type: z.nativeEnum(EType),
   config: z.object({
-    general: generalConfigSchema,
-    specific: e3PlusConfigSchema
-      .merge(e3Plus4GConfigSchema)
-      .merge(nb2ConfigSchema)
-      .merge(loraConfigSchema)
+    general: generalConfigSchema.optional(),
+    specific: z
+      .union([
+        e3PlusConfigSchema,
+        e3Plus4GConfigSchema,
+        nb2ConfigSchema,
+        loraConfigSchema,
+      ])
       .optional(),
   }),
 });
@@ -56,15 +59,7 @@ export function useConfigurationProfileUpdateForm(props: Props) {
     technology,
   } = props;
 
-  const {
-    register,
-    handleSubmit: hookFormSubmit,
-    formState,
-    control,
-    setValue,
-    watch,
-    reset: hookFormReset,
-  } = useForm<Schema>({
+  const form = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
       client_id,
@@ -77,11 +72,12 @@ export function useConfigurationProfileUpdateForm(props: Props) {
           keep_alive: 60,
           ...config.general,
         },
+        specific: config.specific,
       },
     },
   });
 
-  const handleSubmit = hookFormSubmit(
+  const handleSubmit = form.handleSubmit(
     async (data) => {
       try {
         const { client_id, type, technology_id, config } = data;
@@ -123,8 +119,13 @@ export function useConfigurationProfileUpdateForm(props: Props) {
     type?: string;
     technology?: string;
     document?: string;
-  }) => setName((prev) => Object.assign(prev, props));
-
+  }) => {
+    setName((prev) => {
+      const state = Object.assign(prev, props);
+      form.setValue("name", formatConfigurationProfileName(state));
+      return state;
+    });
+  };
   useEffect(
     () =>
       handleChangeName({
@@ -136,13 +137,8 @@ export function useConfigurationProfileUpdateForm(props: Props) {
   );
 
   return {
-    register,
+    form,
     handleSubmit,
-    control,
-    setValue,
-    reset: hookFormReset,
-    watch,
-    formState,
     handleChangeName,
   };
 }

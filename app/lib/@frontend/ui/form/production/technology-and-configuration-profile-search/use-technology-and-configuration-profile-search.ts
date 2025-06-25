@@ -28,7 +28,6 @@ export const useTechnologyAndConfigurationProfileForm = () => {
       if (technologySearchTerm.trim() !== "") {
         filter.technology_id = technologySearchTerm;
       }
-
       return findManyConfigurationProfile(filter);
     },
   });

@@ -1,13 +1,61 @@
 "use client";
 
 import { configurationProfileConstants } from "@/app/lib/constant";
-import { useConfigurationProfileUpdateForm } from "./use-configuration-profile.update.form";
 import {
   IClient,
   IConfigurationProfile,
   ITechnology,
 } from "@/app/lib/@backend/domain";
-import { Button } from "../../../../component";
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../../../component";
+import { GeneralConfigurationProfileForm } from "../config/general.configuration-profile.form";
+import { SpecificE3Plus4GConfigurationProfileForm } from "../config/specific.e3-plus-4g.configuration-profile.form";
+import { Controller, FormProvider } from "react-hook-form";
+import { SpecificE3PlusConfigurationProfileForm } from "../config/specific.e3-plus.configuration-profile.form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../../../component/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../../../../component/card";
+import { Separator } from "../../../../component/separator";
+import { Badge } from "../../../../component/badge";
+import { Switch } from "../../../../component/switch";
+import {
+  AlertTriangle,
+  Clock,
+  Cpu,
+  Network,
+  Server,
+  Settings,
+  Wifi,
+} from "lucide-react";
+import { SpecificNB2ConfigurationProfileForm } from "../config/specific.nb-2.configuration-profile.form";
+import { SpecificLoRaConfigurationProfileForm } from "../config/specific.lora.configuration-profile.form";
+import { useConfigurationProfileUpdateForm } from "./use-configuration-profile.update.form";
 
 interface Props {
   clients: IClient[];
@@ -20,360 +68,197 @@ interface Props {
 export function ConfigurationProfileUpdateForm(props: Props) {
   const { clients, technologies, configurationProfile, client, technology } =
     props;
-  const { register, handleChangeName, handleSubmit } =
+  const { form, handleChangeName, handleSubmit } =
     useConfigurationProfileUpdateForm({
       defaultValues: configurationProfile,
       client,
       technology,
     });
 
+  function renderSpecificForm(system: string | undefined) {
+    switch (system) {
+      case "DM_E3_PLUS_4G":
+        return <SpecificE3Plus4GConfigurationProfileForm />;
+      case "DM_E3_PLUS":
+        return <SpecificE3PlusConfigurationProfileForm />;
+      case "DM_BWS_NB2":
+        return <SpecificNB2ConfigurationProfileForm />;
+      case "DM_BWS_LORA":
+        return <SpecificLoRaConfigurationProfileForm />;
+      default:
+        return null;
+    }
+  }
+
   return (
-    <form action={() => handleSubmit()}>
-      <section aria-labelledby="identification">
-        <div className="bg-white sm:rounded-lg">
-          <div className="py-5">
-            <p className="text-sm font-medium text-gray-900">Identificação</p>
-            <p className="mt-2 text-sm text-gray-700">
-              Informações para identificar o perfil que está sendo criado.
-            </p>
-          </div>
-          <div className="border-t border-gray-200 py-5">
-            <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-              <div className="sm:col-span-3">
-                <label
-                  htmlFor="client_id"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Cliente
-                </label>
-                <select
-                  id="client_id"
-                  {...register("client_id")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                  onChange={(e) => {
-                    const selectedOption =
-                      e.target.options[e.target.selectedIndex];
-                    const clientData =
-                      selectedOption.getAttribute("data-client");
-                    const client = JSON.parse(clientData as string);
-                    handleChangeName({ document: client.document.value });
-                  }}
-                >
-                  <option value="">Selecione um cliente</option>
-                  {clients.map((c) => (
-                    <option
-                      key={c.id}
-                      value={c.id}
-                      data-client={JSON.stringify(c)}
-                    >
-                      {c.company_name ?? c.trade_name} - {c.document.value}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="type"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Tipo
-                </label>
-                <select
-                  id="type"
-                  {...register("type")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                  onChange={(e) => {
-                    const selectedOption =
-                      e.target.options[e.target.selectedIndex];
-                    const type = selectedOption.getAttribute("value") as string;
-                    handleChangeName({ type });
-                  }}
-                >
-                  <option value="">Selecione um tipo</option>
-                  {Object.entries(configurationProfileConstants.type).map(
-                    ([key, value]) => (
-                      <option key={key} value={key}>
-                        {value}
-                      </option>
-                    )
+    <FormProvider {...form}>
+      <Form {...form}>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Seção Identificação */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Identificação do Perfil
+              </CardTitle>
+              <CardDescription>
+                Informações básicas para identificar o perfil de configuração
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="client_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cliente</FormLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          const selected = clients.find((c) => c.id === value);
+                          if (selected) {
+                            handleChangeName({
+                              document: selected.document.value,
+                            });
+                          }
+                        }}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um cliente" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {clients.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              {client.company_name ?? client.trade_name} –{" "}
+                              {client.document.value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </select>
-              </div>
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="technology_id"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Tecnologia
-                </label>
-                <select
-                  id="technology_id"
-                  {...register("technology_id")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                  onChange={(e) => {
-                    const selectedOption =
-                      e.target.options[e.target.selectedIndex];
-                    const technology = selectedOption.getAttribute(
-                      "brand-name"
-                    ) as string;
-                    handleChangeName({ technology });
-                  }}
-                >
-                  <option value="">Selecione uma tecnologia</option>
-                  {technologies.map((tech) => (
-                    <option
-                      key={tech.id}
-                      value={tech.id}
-                      brand-name={tech.name.brand}
-                    >
-                      {tech.name.brand}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section aria-labelledby="communication">
-        <div className="bg-white sm:rounded-lg">
-          <div className="py-5">
-            <p className="text-sm font-medium text-gray-900">
-              Comunicação e rede
-            </p>
-            <p className="mt-2 text-sm text-gray-700">
-              Informações para configurar como o equipamento irá se comunicar
-            </p>
-          </div>
-          <div className="border-t border-gray-200 py-5">
-            <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
-              {/* APN */}
-              <div className="sm:col-span-5">
-                <dt className="block text-sm font-medium leading-6 text-gray-600">
-                  APN
-                </dt>
-                <div className="flex w-full gap-2 mt-2">
-                  <div className="flex-1">
-                    <label
-                      htmlFor="apn_address"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      APN
-                    </label>
-                    <input
-                      {...register("config.general.apn.address")}
-                      id="apn_address"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="bws.br"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label
-                      htmlFor="apn_address"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Usuário
-                    </label>
-                    <input
-                      {...register("config.general.apn.user")}
-                      id="apn_address"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="bws"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label
-                      htmlFor="apn_password"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Senha
-                    </label>
-                    <input
-                      {...register("config.general.apn.password")}
-                      id="apn_password"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="bws"
-                    />
-                  </div>
-                </div>
-              </div>
+                />
 
-              {/* IP */}
-              <div className="sm:col-span-4">
-                <dt className="block text-sm font-medium leading-6 text-gray-600">
-                  IP
-                </dt>
-                <div className="flex w-full gap-2 mt-2">
-                  <div className="flex-1">
-                    <label
-                      htmlFor="primary_ip"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      IP Primário
-                    </label>
-                    <input
-                      {...register("config.general.ip_primary.ip")}
-                      id="primary_ip"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="127.0.0.1"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label
-                      htmlFor="primary_ip_port"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Porta Primária
-                    </label>
-                    <input
-                      {...register("config.general.ip_primary.port")}
-                      id="primary_ip_port"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="3000"
-                    />
-                  </div>
-                </div>
-                <div className="flex w-full gap-2 mt-4">
-                  <div className="flex-1">
-                    <label
-                      htmlFor="secondary_ip"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      IP Secundário
-                    </label>
-                    <input
-                      {...register("config.general.ip_secondary.ip")}
-                      id="secondary_ip"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="127.0.0.1"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label
-                      htmlFor="secondary_ip_port"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Porta Secundária
-                    </label>
-                    <input
-                      {...register("config.general.ip_secondary.port")}
-                      id="secondary_ip_port"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="3001"
-                    />
-                  </div>
-                </div>
-              </div>
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo</FormLabel>
+                      <Select
+                        onValueChange={(type) => {
+                          field.onChange(type);
+                          handleChangeName({
+                            type,
+                          });
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione um tipo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.entries(
+                            configurationProfileConstants.type
+                          ).map(([label, value]) => (
+                            <SelectItem key={label} value={label}>
+                              {value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* DNS */}
-              <div className="sm:col-span-4">
-                <dt className="block text-sm font-medium leading-6 text-gray-600">
-                  DNS
-                </dt>
-                <div className="flex w-full gap-2 mt-2">
-                  <div className="flex-1">
-                    <label
-                      htmlFor="dns_address"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      DNS
-                    </label>
-                    <input
-                      {...register("config.general.dns_primary.address")}
-                      id="dns_address"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="bwfleets.com"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label
-                      htmlFor="dns_port"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Porta
-                    </label>
-                    <input
-                      {...register("config.general.dns_primary.port")}
-                      id="dns_port"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="3000"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* DATA TRANSMISSION */}
-              <div className="sm:col-span-5">
-                <dt className="block text-sm font-medium leading-6 text-gray-600">
-                  Intervalo de transmissão
-                </dt>
-                <div className="flex w-full gap-2 mt-2">
-                  <div className="flex-1">
-                    <label
-                      htmlFor="data_transmission.on"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Ligado (Segundos)
-                    </label>
-                    <input
-                      {...register("config.general.data_transmission_on")}
-                      id="data_transmission.on"
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="60"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <label
-                      htmlFor="data_transmission.off"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Desligado (Segundos)
-                    </label>
-                    <input
-                      id="data_transmission.off"
-                      {...register("config.general.data_transmission_off")}
-                      className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                      placeholder="7200"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* KEEP ALIVE */}
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="keep_alive"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Keep Alive (Minutos)
-                </label>
-                <input
-                  type="text"
-                  id="keep_alive"
-                  {...register("config.general.keep_alive")}
-                  className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                  placeholder="60"
+                <FormField
+                  control={form.control}
+                  name="technology_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tecnologia</FormLabel>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          const selected = technologies.find(
+                            (c) => c.id === value
+                          );
+                          if (selected) {
+                            handleChangeName({
+                              technology: selected.name.brand,
+                            });
+                          }
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma tecnologia" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {technologies.map((tech) => (
+                            <SelectItem key={tech.id} value={tech.id}>
+                              {tech.name.brand}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <div className="mt-6 flex items-center justify-start gap-x-6">
-        <button
-          type="button"
-          className="text-sm font-semibold leading-6 text-gray-900"
-        >
-          Cancelar
-        </button>
-        <Button
-          type="submit"
-          className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-        >
-          Salvar
-        </Button>
-      </div>
-    </form>
+              <FormField
+                control={form.control}
+                name="name"
+                disabled={true}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do Perfil</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Nome será gerado automaticamente"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Seção Configurações Gerais */}
+          {technology?.name.system !== "DM_BWS_LORA" ? (
+            <GeneralConfigurationProfileForm />
+          ) : (
+            <></>
+          )}
+
+          {/* Configurações Específicas - Renderização Condicional */}
+          {technology && renderSpecificForm(technology.name.system)}
+
+          {/* Botões de Ação */}
+          <Card>
+            <CardFooter className="pt-6 flex justify-between">
+              <Button variant="outline" type="button">
+                Cancelar
+              </Button>
+              <Button type="submit">Salvar Perfil</Button>
+            </CardFooter>
+          </Card>
+        </form>
+      </Form>
+    </FormProvider>
   );
 }

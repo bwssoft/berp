@@ -159,7 +159,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Intervalo de envio LoRaWAN em modo evento
+                          Intervalo de envio LoRaWAN em modo evento (segundos)
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="60" {...field} />
@@ -197,7 +197,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Intervalo de envio P2P em modo evento
+                          Intervalo de envio P2P em modo evento (segundos)
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="120" {...field} />
@@ -230,6 +230,7 @@ export function SpecificLoRaConfigurationProfileForm() {
               <FormField
                 control={control}
                 name="config.specific.virtual_ignition_12v.initial"
+                defaultValue={undefined}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Valor Inicial</FormLabel>
@@ -244,9 +245,11 @@ export function SpecificLoRaConfigurationProfileForm() {
               <FormField
                 control={control}
                 name="config.specific.virtual_ignition_12v.final"
+                defaultValue={undefined}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Valor Final</FormLabel>
+
                     <FormControl>
                       <Input placeholder="24.0" {...field} />
                     </FormControl>

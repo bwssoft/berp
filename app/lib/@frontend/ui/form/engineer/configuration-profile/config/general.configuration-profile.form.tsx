@@ -82,7 +82,7 @@ export function GeneralConfigurationProfileForm() {
                 <FormItem>
                   <FormLabel>Senha</FormLabel>
                   <FormControl>
-                    <Input placeholder="bws" type="password" {...field} />
+                    <Input placeholder="bws" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -126,6 +126,7 @@ export function GeneralConfigurationProfileForm() {
                   <FormField
                     control={form.control}
                     name="config.general.ip_primary.ip"
+                    defaultValue={undefined}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Endereço IP</FormLabel>
@@ -139,6 +140,7 @@ export function GeneralConfigurationProfileForm() {
                   <FormField
                     control={form.control}
                     name="config.general.ip_primary.port"
+                    defaultValue={undefined}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Porta</FormLabel>

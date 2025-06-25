@@ -102,8 +102,16 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <FormItem>
                       <FormLabel>Cliente</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          const selected = clients.find((c) => c.id === value);
+                          if (selected) {
+                            handleChangeName({
+                              document: selected.document.value,
+                            });
+                          }
+                        }}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -113,7 +121,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                         <SelectContent>
                           {clients.map((client) => (
                             <SelectItem key={client.id} value={client.id}>
-                              {client.company_name ?? client.trade_name} -{" "}
+                              {client.company_name ?? client.trade_name} –{" "}
                               {client.document.value}
                             </SelectItem>
                           ))}
@@ -131,7 +139,12 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <FormItem>
                       <FormLabel>Tipo</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(type) => {
+                          field.onChange(type);
+                          handleChangeName({
+                            type,
+                          });
+                        }}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -143,8 +156,8 @@ export function ConfigurationProfileCreateForm(props: Props) {
                           {Object.entries(
                             configurationProfileConstants.type
                           ).map(([label, value]) => (
-                            <SelectItem key={value} value={value}>
-                              {label}
+                            <SelectItem key={label} value={label}>
+                              {value}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -161,7 +174,17 @@ export function ConfigurationProfileCreateForm(props: Props) {
                     <FormItem>
                       <FormLabel>Tecnologia</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          const selected = technologies.find(
+                            (c) => c.id === value
+                          );
+                          if (selected) {
+                            handleChangeName({
+                              technology: selected.name.brand,
+                            });
+                          }
+                        }}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -186,6 +209,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
               <FormField
                 control={form.control}
                 name="name"
+                disabled={true}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nome do Perfil</FormLabel>

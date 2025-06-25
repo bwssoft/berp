@@ -69,7 +69,7 @@ class FindManyConfigurationProfileUsecase {
       },
       {
         $lookup: {
-          from: "engineer-technology",
+          from: "engineer.technology",
           as: "technology",
           localField: "technology_id",
           foreignField: "id",

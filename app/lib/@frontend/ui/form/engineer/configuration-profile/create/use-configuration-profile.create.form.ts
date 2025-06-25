@@ -114,7 +114,7 @@ export const e3PlusConfigSchema = z.object({
   virtual_ignition: z.coerce.boolean().optional().default(false),
   work_mode: z.string().optional(),
   operation_mode: z.coerce.boolean().optional(),
-  max_speed: oneBytesSchema,
+  max_speed: oneBytesSchema.optional(),
   sleep: sleep,
 });
 
@@ -132,7 +132,7 @@ export const e3Plus4GConfigSchema = z.object({
   virtual_ignition: z.coerce.boolean().optional().default(false),
   virtual_ignition_by_voltage: z.coerce.boolean().optional().default(false),
   virtual_ignition_by_movement: z.coerce.boolean().optional().default(false),
-  max_speed: oneBytesSchema,
+  max_speed: oneBytesSchema.optional(),
   communication_type: z.string().optional(),
   protocol_type: z.string().optional(),
   anti_theft: z.coerce.boolean().optional().default(false),
@@ -221,7 +221,7 @@ export const loraConfigSchema = z.object({
   p2p_mode_duration: twoBytesSchema.optional(),
   p2p_data_transmission_event: twoBytesSchema.optional(),
   odometer,
-  activation_type: z.enum(["ABP", "OTAA"]).optional(),
+  activation_type: z.enum(["00", "01"]).optional(),
   virtual_ignition_12v: z
     .object({
       initial: twoBytesSchema,
@@ -231,7 +231,7 @@ export const loraConfigSchema = z.object({
       message: "Os intervalos devem ser preenchidos.",
       path: ["initial"],
     })
-    .refine((data) => data.initial! > data.final!, {
+    .refine((data) => data.initial < data.final, {
       message: "O valor final deve ser maior do que inicial.",
       path: ["initial"],
     })
@@ -245,7 +245,7 @@ export const loraConfigSchema = z.object({
       message: "Os intervalos devem ser preenchidos.",
       path: ["initial"],
     })
-    .refine((data) => data.initial! > data.final!, {
+    .refine((data) => data.initial < data.final, {
       message: "O valor final deve ser maior do que inicial.",
       path: ["initial"],
     })
@@ -281,11 +281,14 @@ const schema = z.object({
   name: z.string().min(1),
   type: z.nativeEnum(EType),
   config: z.object({
-    general: generalConfigSchema,
-    specific: e3PlusConfigSchema
-      .merge(e3Plus4GConfigSchema)
-      .merge(nb2ConfigSchema)
-      .merge(loraConfigSchema)
+    general: generalConfigSchema.optional(),
+    specific: z
+      .union([
+        e3PlusConfigSchema,
+        e3Plus4GConfigSchema,
+        nb2ConfigSchema,
+        loraConfigSchema,
+      ])
       .optional(),
   }),
 });
@@ -308,6 +311,7 @@ export function useConfigurationProfileCreateForm(props: Props) {
 
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
+    shouldUnregister: true,
     defaultValues: {
       config: {
         general: {
@@ -354,6 +358,7 @@ export function useConfigurationProfileCreateForm(props: Props) {
       }
     },
     (error) => {
+      console.log(error);
       toast({
         title: "Erro de Validação",
         description:
