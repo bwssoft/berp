@@ -8,67 +8,19 @@ import {
   FaceSmileIcon,
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
-import { SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
+import { CreateAnnexHistoricalModal, SearchContactHistoricalModal, useCreateAnnexHistoricalModal } from "@/app/lib/@frontend/ui/modal";
 import { useState } from "react";
-import { ContactSelection } from "@/app/lib/@backend/domain";
-
-const timelineItems = [
-  {
-    author: "Chelsea Hagon",
-    action: "Proposta (nº",
-    link: { label: "123457", url: "#" },
-    details: "enviada para aceite do cliente.",
-    timestamp: "04/04/2025 09:00:05",
-  },
-  {
-    author: "Chelsea Hagon",
-    action: "Criação de Proposta (nº",
-    link: { label: "123457", url: "#" },
-    timestamp: "03/04/2025 15:20:14",
-  },
-  {
-    author: "Sistema",
-    action: "Rotina de atualização dos dados do CNPJ.",
-    timestamp: "03/04/2025 15:14:46",
-  },
-  {
-    author: "Chelsea Hagon",
-    action: "📞 Gael Bernardo Lopes - Gerente - Celular (41) 98373-8269",
-    details: "Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.",
-    timestamp: "28/03/2025 14:02:56",
-  },
-  {
-    author: "Chelsea Hagon",
-    action: "📞 Gael Bernardo Lopes - Gerente - Celular (41) 98373-8269",
-    details: "Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.",
-    timestamp: "28/03/2025 14:02:56",
-  },
-  {
-    author: "Chelsea Hagon",
-    action: "📞 Gael Bernardo Lopes - Gerente - Celular (41) 98373-8269",
-    details: "Em contato com Sr. Gael, solicitou o cancelamento da proposta atual para abertura de nova proposta adicionando mais 100 rastreadores.",
-    timestamp: "28/03/2025 14:02:56",
-  },
-  {
-    author: "Alex Curren",
-    action: "Criação de Proposta (nº",
-    link: { label: "123456", url: "#" },
-    timestamp: "02/03/2025 11:15:03",
-  },
-  {
-    author: "Tom Cook",
-    action: "Cadastro da conta",
-    timestamp: "02/03/2025 10:05:26",
-  },
-];
+import { ContactSelection, IHistorical } from "@/app/lib/@backend/domain";
 
 type Props = {
   accountId: string;
+  historical: IHistorical[]
 };
 
-export function CreateHistoricalForm({ accountId }: Props) {
-  const {register, onSubmit} = useCreateHistoricalForm({accountId});
+export function CreateHistoricalForm({ accountId, historical }: Props) {
   const [selectContact, setSelectContact] = useState<ContactSelection[]>([]);
+  const {register, onSubmit} = useCreateHistoricalForm({accountId, selectContact});
+  const { openModal,  open, closeModal } = useCreateAnnexHistoricalModal()
 
   return (
     <div className="w-[70%]">
@@ -89,10 +41,10 @@ export function CreateHistoricalForm({ accountId }: Props) {
               />
               <Button title="Emoji" variant={"ghost"} className="p-1">
                 <FaceSmileIcon className="h-5 w-5" />
-              </Button>
-              <Button title="Anexar" variant={"ghost"} className="p-1">
+              </Button>  
+              <Button title="Anexar" variant={"ghost"} onClick={openModal} className="p-1">
                 <PaperClipIcon className="h-5 w-5" />
-              </Button>
+              </Button> 
             </div>
             <Button variant={"outline"} type="submit">
               Salvar
@@ -100,7 +52,8 @@ export function CreateHistoricalForm({ accountId }: Props) {
           </div>
         </div>
       </form>
-      <TimelineItem item={timelineItems} />
+      <TimelineItem historical={historical} />
+      <CreateAnnexHistoricalModal open={open} closeModal={closeModal} />
     </div>
   );
 }

@@ -33,9 +33,10 @@ export interface EconomicGroup {
 }
 
 export interface IAccountAttachment {
-  id?: string;
+  id: string;
   name: string;
   userId?: string;
   createdAt: Date;
   file?: File;
+  accountId: string
 }

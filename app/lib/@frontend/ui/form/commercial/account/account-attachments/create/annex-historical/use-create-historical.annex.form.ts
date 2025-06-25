@@ -3,9 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook";
-import { createAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.action";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { createAccountAttachmentHistorical } from "@/app/lib/@backend/action/commercial/account-attachment.historical.action";
 
 const schema = z.object({
   name: z.string().min(1, "Nome do anexo é obrigatório"),
@@ -16,13 +16,13 @@ const schema = z.object({
     }),
 });
 
-export type CreateAnnexFormSchema = z.infer<typeof schema>;
+export type CreateAnnexHistoricalFormSchema = z.infer<typeof schema>;
 
 interface CreateAnnexFormProps {
   closeModal: () => void;
 }
 
-export function useCreateAnnexForm({ closeModal }: CreateAnnexFormProps) {
+export function useCreateAnnexHistoricalForm({ closeModal }: CreateAnnexFormProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { data: session } = useSession();
 
@@ -32,7 +32,7 @@ export function useCreateAnnexForm({ closeModal }: CreateAnnexFormProps) {
     formState: { errors },
     setValue,
     watch,
-  } = useForm<CreateAnnexFormSchema>({
+  } = useForm<CreateAnnexHistoricalFormSchema>({
     resolver: zodResolver(schema),
   });
 
@@ -41,7 +41,7 @@ export function useCreateAnnexForm({ closeModal }: CreateAnnexFormProps) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setValue("file", file, { shouldValidate: true });
+      setValue("file", file, { shouldValidate: true })
     }
   };
 
@@ -58,30 +58,19 @@ export function useCreateAnnexForm({ closeModal }: CreateAnnexFormProps) {
         size: data.file.size,
       };
 
-      const result = await createAccountAttachment(fileData, {
+      const result = await createAccountAttachmentHistorical(fileData, {
         id: crypto.randomUUID(),
         name: data.name,
         accountId: ""
       });
 
       if (result.success) {
-        toast({
-          title: "Sucesso",
-          description: "Anexo enviado com sucesso!",
-          variant: "success",
-        });
-        closeModal();
-      } else {
-        toast({
-          title: "Erro",
-          description: "Falha ao enviar anexo",
-          variant: "error",
-        });
+       console.log("salvou o anexo no s3")
       }
     } catch (error) {
       toast({
         title: "Erro",
-        description: "Falha ao enviar anexo",
+        description: "Falha ao carregar anexo",
         variant: "error",
       });
       console.error(error);
