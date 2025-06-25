@@ -14,9 +14,10 @@ type CreateHistoricalFormSchema = z.infer<typeof schema>;
 type Props = {
   accountId: string
   selectContact: ContactSelection[]
+  file?: string
 }
 
-export function useCreateHistoricalForm({accountId, selectContact}:Props) {
+export function useCreateHistoricalForm({accountId, selectContact, file}:Props) {
 
   const {handleSubmit, register} = useForm<CreateHistoricalFormSchema>({
     resolver: zodResolver(schema)

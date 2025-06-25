@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Button,
   TimelineItem,
@@ -19,8 +20,13 @@ type Props = {
 
 export function CreateHistoricalForm({ accountId, historical }: Props) {
   const [selectContact, setSelectContact] = useState<ContactSelection[]>([]);
-  const {register, onSubmit} = useCreateHistoricalForm({accountId, selectContact});
-  const { openModal,  open, closeModal } = useCreateAnnexHistoricalModal()
+  const [file, setFile] = useState<string | undefined>()
+  const {register, onSubmit} = useCreateHistoricalForm({accountId, selectContact, file});
+  const { openModal, open, closeModal } = useCreateAnnexHistoricalModal()
+
+  const handleFileChange = (url: string) => {
+    setFile(url)
+  }
 
   return (
     <div className="w-[70%]">
@@ -53,7 +59,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
         </div>
       </form>
       <TimelineItem historical={historical} />
-      <CreateAnnexHistoricalModal open={open} closeModal={closeModal} />
+      <CreateAnnexHistoricalModal onFileUploadSuccess={handleFileChange} open={open} closeModal={closeModal} />
     </div>
   );
 }

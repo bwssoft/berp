@@ -1,9 +1,16 @@
 "use client";
-
 import { useState } from "react";
 
-export function useCreateAnnexHistoricalModal() {
+
+
+export function useCreateAnnexHistoricalModal(onFileUploadSuccess?: (fileUrl: string) => void) {
   const [open, setOpen] = useState(false);
+  
+  const handleFileUploadSuccess = (url: string) => {
+    if(onFileUploadSuccess) {
+        onFileUploadSuccess(url);
+    }
+  };
 
   function openModal() {
     setOpen(true);
@@ -18,5 +25,6 @@ export function useCreateAnnexHistoricalModal() {
     open,
     openModal,
     closeModal,
+    handleFileUploadSuccess,
   };
 }
