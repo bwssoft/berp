@@ -81,16 +81,17 @@ export function CNPJAccountForm({
         render={({ field }) => (
           <Combobox
             type="single"
-            label="Situação"
+            // label="Situação"
+            label="Status faturamento"
             data={[
-              { id: "Ativa", name: "Ativa" },
-              { id: "Inativa", name: "Inativa" },
+              { id: "Ativo", name: "Ativo" },
+              { id: "Inativo", name: "Inativo" },
             ]}
             value={field.value}
             onOptionChange={(item) => field.onChange(item)}
             error={errors.cnpj?.status?.message}
             keyExtractor={(item) => item.id}
-            placeholder="Selecione a situação"
+            placeholder="Selecione o status"
             displayValueGetter={(item) => item.name}
           />
         )}

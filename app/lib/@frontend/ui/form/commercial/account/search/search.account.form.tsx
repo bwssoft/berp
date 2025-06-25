@@ -10,7 +10,7 @@ type FilterFormData = {
   client?: string;
   document?: string;
   sector?: string;
-  billingStatus?: string;
+  status?: string;
   billingSituation?: string;
 };
 
@@ -43,10 +43,10 @@ export function AccountFilterForm() {
       params.delete("sector");
     }
 
-    if (data.billingStatus && data.billingStatus !== "Todos") {
-      params.set("billingStatus", data.billingStatus);
+    if (data.status && data.status !== "Todos") {
+      params.set("status", data.status);
     } else {
-      params.delete("billingStatus");
+      params.delete("status");
     }
 
     if (data.billingSituation && data.billingSituation !== "Todos") {
@@ -109,10 +109,10 @@ export function AccountFilterForm() {
 
         <Controller
           control={control}
-          name="billingStatus"
+          name="status"
           render={({ field }) => (
             <Select
-              name="billingStatus"
+              name="status"
               data={["Ativo", "Inativo"]}
               keyExtractor={(s) => s}
               valueExtractor={(s) => s}

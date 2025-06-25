@@ -17,7 +17,7 @@ interface Props {
     client?: string;
     document?: string;
     sector?: string;
-    billingStatus?: string;
+    status?: string;
     billingSituation?: string;
   };
 }
@@ -119,9 +119,9 @@ function query(params: Props["searchParams"]): Filter<IAccount> {
     });
   }
 
-  if (params.billingStatus && params.billingStatus !== "Todos") {
+  if (params.status && params.status !== "Todos") {
     conditions.push({
-      billing_status: params.billingStatus as "Ativo" | "Inativo",
+      status: params.status as "Ativo" | "Inativo",
     });
   }
 

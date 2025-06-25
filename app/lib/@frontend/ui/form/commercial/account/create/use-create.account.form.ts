@@ -298,7 +298,7 @@ export function useCreateAccountForm() {
             fantasy_name: data.cnpj?.fantasy_name,
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
-            status: data.cnpj?.status,
+            status: data.cnpj?.status?.[0]?.name,
             economic_group_holding: {
               name: data.cnpj?.economic_group_holding?.name,
               taxId: data.cnpj?.economic_group_holding?.taxId,

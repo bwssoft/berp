@@ -76,9 +76,9 @@ export const columns = (): ColumnDef<IAccountWithPermissions>[] => [
   },
   {
     header: "Status Faturamento",
-    accessorKey: "billing_status",
+    accessorKey: "status",
     cell: ({ row }) => {
-      const status = row.original.billing_status ?? "Inativo";
+      const status = row.original.status ?? "Inativo";
       return (
         <Badge
           variant="basic"
