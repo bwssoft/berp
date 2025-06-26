@@ -3,8 +3,7 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { CreateAccountFormSchema } from "./use-create.account.form";
 import { Button, Input } from "../../../../component";
-import { text } from "stream/consumers";
-import { SetStateAction } from "react";
+import { useState } from "react";
 
 interface Props {
   onValidate: (
@@ -29,6 +28,7 @@ export function DocumentAccountForm({
   toggleButtonText,
 }: Props) {
   const methods = useFormContext<CreateAccountFormSchema>();
+  const [isValidating, setIsValidating] = useState(false);
 
   return (
     <div>
@@ -37,26 +37,32 @@ export function DocumentAccountForm({
           {...methods.register("document.value")}
           label="CPF/CNPJ *"
           className="w-80"
-          disabled={textButton.contact !== "Validar"}
+          disabled={textButton.contact !== "Validar" || isValidating}
           placeholder="Insira um documento para ser validado"
           error={methods.formState.errors.document?.value?.message}
         />
         <Button
           type="button"
+          disabled={isValidating}
           onClick={async () => {
             if (textButton.contact === "Validar") {
-              const result = await onValidate(
-                methods.getValues("document.value")
-              );
-              if (type !== undefined && result !== "invalid") {
-                toggleButtonText("contact", "Editar");
+              setIsValidating(true);
+              try {
+                const result = await onValidate(
+                  methods.getValues("document.value")
+                );
+                if (type !== undefined && result !== "invalid") {
+                  toggleButtonText("contact", "Editar");
+                }
+              } finally {
+                setIsValidating(false);
               }
             } else {
               toggleButtonText("contact", "Validar");
             }
           }}
         >
-          {textButton.contact}
+          {isValidating ? "Validando..." : textButton.contact}
         </Button>
       </div>
 
