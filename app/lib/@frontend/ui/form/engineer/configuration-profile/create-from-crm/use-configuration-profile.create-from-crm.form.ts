@@ -13,7 +13,7 @@ import {
   e3Plus4GConfigSchema,
   e3PlusConfigSchema,
   generalConfigSchema,
-} from "../create/use-configuration-profile.create.form";
+} from "../upsert/use-configuration-profile.upsert.form";
 
 // Esquema principal
 const schema = z.object({

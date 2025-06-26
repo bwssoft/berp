@@ -2,10 +2,9 @@
 
 import { configurationProfileConstants } from "@/app/lib/constant";
 import {
-  TechnologySystemName,
-  useConfigurationProfileCreateForm,
-} from "./use-configuration-profile.create.form";
-import { IClient, ITechnology } from "@/app/lib/@backend/domain";
+  Props,
+  useConfigurationProfileUpsertForm,
+} from "./use-configuration-profile.upsert.form";
 import {
   Button,
   Input,
@@ -39,15 +38,15 @@ import { Settings } from "lucide-react";
 import { SpecificNB2ConfigurationProfileForm } from "../config/specific.nb-2.configuration-profile.form";
 import { SpecificLoRaConfigurationProfileForm } from "../config/specific.lora.configuration-profile.form";
 
-interface Props {
-  clients: IClient[];
-  technologies: ITechnology[];
-}
-
-export function ConfigurationProfileCreateForm(props: Props) {
-  const { clients, technologies } = props;
-  const { form, handleChangeName, handleSubmit, technology } =
-    useConfigurationProfileCreateForm(props);
+export function ConfigurationProfileUpsertForm(props: Props) {
+  const { clients, technologies, defaultValues } = props;
+  const {
+    form,
+    handleChangeName,
+    handleSubmit,
+    handleChangeTechnology,
+    technology,
+  } = useConfigurationProfileUpsertForm(props);
 
   function renderSpecificForm(system: string | undefined) {
     switch (system) {
@@ -83,32 +82,27 @@ export function ConfigurationProfileCreateForm(props: Props) {
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
                 <FormField
                   control={form.control}
-                  name="client_id"
+                  name="technology_id"
+                  defaultValue={defaultValues?.technology.id}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cliente</FormLabel>
+                      <FormLabel>Tecnologia</FormLabel>
                       <Select
-                        value={field.value}
                         onValueChange={(value) => {
                           field.onChange(value);
-                          const selected = clients.find((c) => c.id === value);
-                          if (selected) {
-                            handleChangeName({
-                              document: selected.document.value,
-                            });
-                          }
+                          handleChangeTechnology(value);
                         }}
+                        defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Selecione um cliente" />
+                            <SelectValue placeholder="Selecione uma tecnologia" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {clients.map((client) => (
-                            <SelectItem key={client.id} value={client.id}>
-                              {client.company_name ?? client.trade_name} –{" "}
-                              {client.document.value}
+                          {technologies.map((tech) => (
+                            <SelectItem key={tech.id} value={tech.id}>
+                              {tech.name.brand}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -121,6 +115,7 @@ export function ConfigurationProfileCreateForm(props: Props) {
                 <FormField
                   control={form.control}
                   name="type"
+                  defaultValue={defaultValues?.configurationProfile.type}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Tipo</FormLabel>
@@ -155,40 +150,33 @@ export function ConfigurationProfileCreateForm(props: Props) {
 
                 <FormField
                   control={form.control}
-                  name="technology_id"
+                  name="client_id"
+                  defaultValue={defaultValues?.client.id}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tecnologia</FormLabel>
+                      <FormLabel>Cliente</FormLabel>
                       <Select
+                        value={field.value}
                         onValueChange={(value) => {
                           field.onChange(value);
-
-                          const selected = technologies.find(
-                            (t) => t.id === value
-                          );
+                          const selected = clients.find((c) => c.id === value);
                           if (selected) {
-                            // Atualiza também o system
-                            form.setValue(
-                              "config.specific.technology_system_name",
-                              selected.name.system as TechnologySystemName
-                            );
-
                             handleChangeName({
-                              technology: selected.name.brand,
+                              document: selected.document.value,
                             });
                           }
                         }}
-                        defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Selecione uma tecnologia" />
+                            <SelectValue placeholder="Selecione um cliente" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {technologies.map((tech) => (
-                            <SelectItem key={tech.id} value={tech.id}>
-                              {tech.name.brand}
+                          {clients.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              {client.company_name ?? client.trade_name} –{" "}
+                              {client.document.value}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -235,7 +223,9 @@ export function ConfigurationProfileCreateForm(props: Props) {
               <Button variant="outline" type="button">
                 Cancelar
               </Button>
-              <Button type="submit">Salvar Perfil</Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                Salvar Perfil
+              </Button>
             </CardFooter>
           </Card>
         </form>

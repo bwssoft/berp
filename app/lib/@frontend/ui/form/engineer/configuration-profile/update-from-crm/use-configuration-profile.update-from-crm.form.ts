@@ -17,7 +17,7 @@ import {
   generalConfigSchema,
   loraConfigSchema,
   nb2ConfigSchema,
-} from "../create/use-configuration-profile.create.form";
+} from "../upsert/use-configuration-profile.upsert.form";
 
 // Esquema principal
 const schema = z.object({

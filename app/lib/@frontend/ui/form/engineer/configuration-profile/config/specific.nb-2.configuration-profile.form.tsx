@@ -19,7 +19,7 @@ import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { Cpu, Settings, Zap, Navigation, Activity, Cable } from "lucide-react";
 import { useFormContext } from "react-hook-form";
-import { ConfigurationProfileSchema } from "../create/use-configuration-profile.create.form";
+import { ConfigurationProfileSchema } from "../upsert/use-configuration-profile.upsert.form";
 
 export function SpecificNB2ConfigurationProfileForm() {
   const { control } = useFormContext<ConfigurationProfileSchema>();

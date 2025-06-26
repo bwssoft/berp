@@ -25,8 +25,15 @@ import {
 } from "@/app/lib/@frontend/ui/component/tabs";
 import { Cpu, Settings, Activity, Wifi, Cable, Power, Zap } from "lucide-react";
 import { useFormContext } from "react-hook-form";
-import { ConfigurationProfileSchema } from "../create/use-configuration-profile.create.form";
+import { ConfigurationProfileSchema } from "../upsert/use-configuration-profile.upsert.form";
 import { Switch } from "../../../../component/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../../component";
 
 export function SpecificLoRaConfigurationProfileForm() {
   const { control, watch } = useFormContext<ConfigurationProfileSchema>();
@@ -101,10 +108,21 @@ export function SpecificLoRaConfigurationProfileForm() {
                 name="config.specific.activation_type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tipo de Ativação</FormLabel>
-                    <FormControl>
-                      <Input placeholder="ABP ou OTAA" {...field} />
-                    </FormControl>
+                    <FormLabel>Tipo de ativação</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um tipo de ativação" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="00">ABP</SelectItem>
+                        <SelectItem value="01">OTAA</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

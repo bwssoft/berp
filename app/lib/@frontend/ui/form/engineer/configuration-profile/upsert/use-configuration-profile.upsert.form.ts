@@ -1,8 +1,17 @@
-import { createOneConfigurationProfile } from "@/app/lib/@backend/action";
-import { Device, EType, ITechnology } from "@/app/lib/@backend/domain";
+import {
+  createOneConfigurationProfile,
+  updateOneConfigurationProfileById,
+} from "@/app/lib/@backend/action";
+import {
+  Device,
+  EType,
+  IClient,
+  IConfigurationProfile,
+  ITechnology,
+} from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { formatConfigurationProfileName } from "../util";
@@ -180,7 +189,7 @@ export const nb2ConfigSchema = z.object({
       message: "Os intervalos devem ser preenchidos.",
       path: ["initial"],
     })
-    .refine((data) => data.initial! > data.final!, {
+    .refine((data) => data.initial < data.final, {
       message: "O valor final deve ser maior do que inicial.",
       path: ["initial"],
     })
@@ -194,7 +203,7 @@ export const nb2ConfigSchema = z.object({
       message: "Os intervalos devem ser preenchidos.",
       path: ["initial"],
     })
-    .refine((data) => data.initial! > data.final!, {
+    .refine((data) => data.initial < data.final, {
       message: "O valor final deve ser maior do que inicial.",
       path: ["initial"],
     })
@@ -281,6 +290,7 @@ export type TechnologySystemName =
   | Device.Model.DM_BWS_LORA;
 
 const schema = z.object({
+  id: z.string().optional(),
   client_id: z.string().optional(),
   technology_id: z.string(),
   name: z.string().min(1),
@@ -314,12 +324,18 @@ type ProfileName = {
   document?: string;
 };
 
-interface Props {
+export interface Props {
+  clients: IClient[];
   technologies: ITechnology[];
+  defaultValues?: {
+    configurationProfile: IConfigurationProfile;
+    client: IClient;
+    technology: ITechnology;
+  };
 }
 
-export function useConfigurationProfileCreateForm(props: Props) {
-  const { technologies } = props;
+export function useConfigurationProfileUpsertForm(props: Props) {
+  const { technologies, defaultValues } = props;
 
   const [name, setName] = useState<ProfileName>({});
 
@@ -335,38 +351,53 @@ export function useConfigurationProfileCreateForm(props: Props) {
       },
     },
   });
-
   const handleSubmit = form.handleSubmit(
     async (data) => {
+      const { client_id, type, technology_id, config, id } = data;
+
+      const profile = {
+        name: formatConfigurationProfileName(name),
+        client_id,
+        technology_id,
+        type,
+        config,
+      };
+
       try {
-        const { client_id, type, technology_id, config } = data;
-        await createOneConfigurationProfile({
-          name: formatConfigurationProfileName(name),
-          client_id,
-          technology_id,
-          type,
-          config,
-        });
+        if (id) {
+          await updateOneConfigurationProfileById({ id }, profile);
+
+          toast({
+            title: "Perfil Atualizado!",
+            description: "As configurações foram atualizadas com sucesso.",
+            variant: "success",
+          });
+        } else {
+          await createOneConfigurationProfile(profile);
+
+          toast({
+            title: "Perfil Criado!",
+            description: "Novo perfil criado com sucesso.",
+            variant: "success",
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao registrar perfil:", error);
+
         toast({
-          title: "Sucesso!",
-          description: "Perfil registrado com sucesso!",
-          variant: "success",
-        });
-      } catch (e) {
-        console.error(e);
-        toast({
-          title: "Falha!",
-          description: "Falha ao registrar o perfil!",
+          title: "Erro!",
+          description: id
+            ? "Falha ao atualizar o perfil."
+            : "Falha ao criar o novo perfil.",
           variant: "error",
         });
       }
     },
     (error) => {
-      console.log(error);
+      console.error("Erro de validação ao registrar perfil:", error);
       toast({
         title: "Erro de Validação",
-        description:
-          "Por favor, corrija os erros no formulário antes de submeter.",
+        description: "Revise os campos obrigatórios e tente novamente.",
         variant: "error",
       });
     }
@@ -380,11 +411,54 @@ export function useConfigurationProfileCreateForm(props: Props) {
     });
   };
 
+  const handleChangeTechnology = (technology_id: string) => {
+    const selected = technologies.find((t) => t.id === technology_id);
+    if (selected) {
+      handleChangeName({
+        technology: selected.name.brand,
+      });
+
+      switch (selected.name.system) {
+        case Device.Model["DM_BWS_LORA"]:
+          form.unregister(`config.general`);
+          form.unregister(`config.specific`);
+          break;
+        case Device.Model["DM_BWS_NB2"]:
+          form.unregister(`config.specific`);
+          break;
+        case Device.Model["DM_E3_PLUS_4G"]:
+          form.unregister(`config.specific`);
+          break;
+        case Device.Model["DM_E3_PLUS"]:
+          form.unregister(`config.specific`);
+          break;
+        default:
+          break;
+      }
+
+      form.setValue(
+        "config.specific.technology_system_name",
+        selected.name.system as TechnologySystemName
+      );
+    }
+  };
+
   const technology_id = form.watch("technology_id");
 
   const technology = useMemo(() => {
     return technologies.find((el) => el.id === technology_id);
   }, [technologies, technology_id]);
+
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues.configurationProfile);
+      handleChangeName({
+        document: defaultValues.client.document.value,
+        technology: defaultValues.technology.name.brand,
+        type: defaultValues.configurationProfile.type,
+      });
+    }
+  }, [defaultValues]);
 
   return {
     form,
@@ -392,5 +466,6 @@ export function useConfigurationProfileCreateForm(props: Props) {
     handleSubmit,
     handleChangeName,
     technology,
+    handleChangeTechnology,
   };
 }

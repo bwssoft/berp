@@ -1,5 +1,5 @@
 import { findManyClient, findManyTechnology } from "@/app/lib/@backend/action";
-import { ConfigurationProfileCreateForm } from "@/app/lib/@frontend/ui/form";
+import { ConfigurationProfileUpsertForm } from "@/app/lib/@frontend/ui/form";
 
 export default async function Page() {
   const [clients, technologies] = await Promise.all([
@@ -17,7 +17,7 @@ export default async function Page() {
             Configure um novo perfil para equipamentos IoT
           </p>
         </div>
-        <ConfigurationProfileCreateForm
+        <ConfigurationProfileUpsertForm
           clients={clients}
           technologies={technologies}
         />

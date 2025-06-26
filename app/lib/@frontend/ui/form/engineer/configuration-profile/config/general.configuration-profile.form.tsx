@@ -1,5 +1,5 @@
 import { useFormContext } from "react-hook-form";
-import { ConfigurationProfileSchema } from "../create/use-configuration-profile.create.form";
+import { ConfigurationProfileSchema } from "../upsert/use-configuration-profile.upsert.form";
 import {
   Card,
   CardContent,
@@ -145,7 +145,7 @@ export function GeneralConfigurationProfileForm() {
                       <FormItem>
                         <FormLabel>Porta</FormLabel>
                         <FormControl>
-                          <Input placeholder="3000" type="number" {...field} />
+                          <Input placeholder="3000" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -185,7 +185,7 @@ export function GeneralConfigurationProfileForm() {
                       <FormItem>
                         <FormLabel>Porta</FormLabel>
                         <FormControl>
-                          <Input placeholder="3001" type="number" {...field} />
+                          <Input placeholder="3001" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -228,7 +228,7 @@ export function GeneralConfigurationProfileForm() {
                       <FormItem>
                         <FormLabel>Porta</FormLabel>
                         <FormControl>
-                          <Input placeholder="3000" type="number" {...field} />
+                          <Input placeholder="3000" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -268,7 +268,7 @@ export function GeneralConfigurationProfileForm() {
                       <FormItem>
                         <FormLabel>Porta</FormLabel>
                         <FormControl>
-                          <Input placeholder="3001" type="number" {...field} />
+                          <Input placeholder="3001" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -297,7 +297,7 @@ export function GeneralConfigurationProfileForm() {
                 <FormItem>
                   <FormLabel>Intervalo Ligado (s)</FormLabel>
                   <FormControl>
-                    <Input placeholder="60" type="number" {...field} />
+                    <Input placeholder="60" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -310,7 +310,7 @@ export function GeneralConfigurationProfileForm() {
                 <FormItem>
                   <FormLabel>Intervalo Desligado (s)</FormLabel>
                   <FormControl>
-                    <Input placeholder="7200" type="number" {...field} />
+                    <Input placeholder="7200" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -323,7 +323,7 @@ export function GeneralConfigurationProfileForm() {
                 <FormItem>
                   <FormLabel>Keep Alive (min)</FormLabel>
                   <FormControl>
-                    <Input placeholder="60" type="number" {...field} />
+                    <Input placeholder="60" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

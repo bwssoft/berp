@@ -3,16 +3,6 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { z } from "zod";
 
-export const emptyStringToUndefined = (val: unknown) =>
-  val === "" ? undefined : val;
-export const optionalString = z.preprocess(
-  emptyStringToUndefined,
-  z.string().optional()
-);
-export const optionalNumber = z.preprocess(
-  emptyStringToUndefined,
-  z.coerce.number().optional()
-);
 export const formatConfigurationProfileName = (props: {
   type?: string;
   technology?: string;
@@ -24,7 +14,7 @@ export const formatConfigurationProfileName = (props: {
     : "__";
   const technologyFormatted = technology ?? "__";
   const documentFormatted = document ?? "__";
-  return `${documentFormatted}.${technologyFormatted}.${typeFormatted}`.toUpperCase();
+  return `${technologyFormatted}.${typeFormatted}.${documentFormatted}`.toUpperCase();
 };
 
 export const generateConfigurationProfileLinkForClient = async (

@@ -32,7 +32,7 @@ import { Checkbox } from "@/app/lib/@frontend/ui/component/checkbox";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { Cpu, Lock, Settings, Zap, AlertTriangle, Cable } from "lucide-react";
 import { useFormContext } from "react-hook-form";
-import { ConfigurationProfileSchema } from "../create/use-configuration-profile.create.form";
+import { ConfigurationProfileSchema } from "../upsert/use-configuration-profile.upsert.form";
 import { configurationProfileConstants } from "@/app/lib/constant";
 
 export function SpecificE3Plus4GConfigurationProfileForm() {
