@@ -9,9 +9,8 @@ import {
   FaceSmileIcon,
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
-import { CreateAnnexHistoricalModal, SearchContactHistoricalModal, useCreateAnnexHistoricalModal } from "@/app/lib/@frontend/ui/modal";
-import { useState } from "react";
-import { ContactSelection, IHistorical } from "@/app/lib/@backend/domain";
+import { CreateAnnexHistoricalModal, SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
+import { IHistorical } from "@/app/lib/@backend/domain";
 
 type Props = {
   accountId: string;
@@ -19,18 +18,30 @@ type Props = {
 };
 
 export function CreateHistoricalForm({ accountId, historical }: Props) {
-  const [selectContact, setSelectContact] = useState<ContactSelection[]>([]);
-  const [file, setFile] = useState<string | undefined>()
-  const {register, onSubmit} = useCreateHistoricalForm({accountId, selectContact, file});
-  const { openModal, open, closeModal } = useCreateAnnexHistoricalModal()
-
-  const handleFileChange = (url: string) => {
-    setFile(url)
-  }
+  const { 
+    register, 
+    onSubmit, 
+    open, 
+    openModal, 
+    file,
+    handleFileChange, 
+    setSelectContact, 
+    selectContact,
+    closeModal
+  } = useCreateHistoricalForm({accountId});
 
   return (
     <div className="w-[70%]">
       <form onSubmit={onSubmit}>
+        <div>
+          {file && file?.length >= 1 && (
+            <h3>{file?.length} anexos selecionados</h3>
+          )}
+          {selectContact.length >= 1 && (
+            <h3>{selectContact.length} {`${selectContact.length > 1 ? "contatos" : "contato"}`} selecionado(s)</h3>
+          )
+          }
+        </div>
         <div className="border rounded-md p-4 mb-4 bg-white ">
           <textarea
             placeholder="Adicione seu histórico..."
