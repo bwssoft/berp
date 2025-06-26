@@ -10,25 +10,23 @@ interface Props {
     documentValue: string;
   }[];
   accountData?: IAccount;
-  selectContact: ContactSelection[];
+  selectContact: ContactSelection | undefined;
   setSelectContact: (
-    value:
-      | ContactSelection[]
-      | ((prev: ContactSelection[]) => ContactSelection[])
+    value: ContactSelection | undefined | ((prev: ContactSelection | undefined) => ContactSelection | undefined)
   ) => void;
 }
 
 export function useSearchContactHistoricalAccount({
   contacts,
-  selectContact, 
-  setSelectContact
+  selectContact,
+  setSelectContact,
 }: Props) {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [contactData, setContactData] = useState<Props["contacts"]>([]);
   const [otherContactInfo, setOtherContactInfo] = useState({
     name: "",
     type: "",
     contact: "",
+    channel: ""
   });
 
   useEffect(() => {
@@ -40,33 +38,37 @@ export function useSearchContactHistoricalAccount({
     }
   }, [contacts]);
 
-  const isSelected = (id: string) =>
-    Array.isArray(selectContact) && selectContact.some((sc) => sc.id === id);
+
+ const isSelected = (id: string, channel: string) =>
+  selectContact?.id === id && selectContact?.channel === channel;
+
 
   const toggleSelection = (
     id: string,
     name: string,
     type: string,
-    contact: string
+    contact: string,
+    channel: string,
   ) => {
     setSelectContact((prev) => {
-      const safePrev = Array.isArray(prev) ? prev : [];
-      const exists = safePrev.some((sc) => sc.id === id);
-      return exists
-        ? safePrev.filter((sc) => sc.id !== id)
-        : [...safePrev, { id, name, type, contact }];
+      if (prev?.id === id && prev?.channel === channel) {
+        return undefined;
+      } else {
+        return { id, name, type, contact, channel };
+      }
     });
   };
 
   const handleAddOtherContact = () => {
-    const { name, type, contact } = otherContactInfo;
-    if (!name || !type || !contact) return;
+    const { name, type, contact, channel} = otherContactInfo;
+    if (!name || !type || !contact ) return;
 
     const id = crypto.randomUUID();
     const newContactItem = {
       id,
       type,
       contact,
+      channel,
       contactItems: [
         {
           id,
@@ -76,7 +78,7 @@ export function useSearchContactHistoricalAccount({
       ],
     };
 
-    toggleSelection(id, name, type, contact);
+    toggleSelection(id, name, type, contact, channel);
 
     setContactData((prev: any) => {
       const existingGroup = prev.find((g: any) => g.name === "Outros");
@@ -98,18 +100,15 @@ export function useSearchContactHistoricalAccount({
       }
     });
 
-    setOtherContactInfo({ name: "", type: "", contact: "" });
+    setOtherContactInfo({ name: "", type: "", contact: "", channel: ""});
   };
 
-
   return {
-    selectedIds,
-    setSelectedIds,
     contactData,
     toggleSelection,
     isSelected,
     handleAddOtherContact,
     otherContactInfo,
-    setOtherContactInfo
+    setOtherContactInfo,
   };
 }

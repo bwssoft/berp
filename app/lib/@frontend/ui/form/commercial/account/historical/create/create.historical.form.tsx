@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Button,
   TimelineItem,
@@ -8,9 +9,8 @@ import {
   FaceSmileIcon,
   PaperClipIcon,
 } from "@heroicons/react/24/outline";
-import { CreateAnnexHistoricalModal, SearchContactHistoricalModal, useCreateAnnexHistoricalModal } from "@/app/lib/@frontend/ui/modal";
-import { useState } from "react";
-import { ContactSelection, IHistorical } from "@/app/lib/@backend/domain";
+import { CreateAnnexHistoricalModal, SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
+import { IHistorical } from "@/app/lib/@backend/domain";
 
 type Props = {
   accountId: string;
@@ -18,13 +18,23 @@ type Props = {
 };
 
 export function CreateHistoricalForm({ accountId, historical }: Props) {
-  const [selectContact, setSelectContact] = useState<ContactSelection[]>([]);
-  const {register, onSubmit} = useCreateHistoricalForm({accountId, selectContact});
-  const { openModal,  open, closeModal } = useCreateAnnexHistoricalModal()
+  const { 
+    register, 
+    onSubmit, 
+    open, 
+    openModal, 
+    handleFileChange, 
+    setSelectContact, 
+    selectContact,
+    closeModal
+  } = useCreateHistoricalForm({accountId});
 
   return (
     <div className="w-[70%]">
       <form onSubmit={onSubmit}>
+        <div>
+          
+        </div>
         <div className="border rounded-md p-4 mb-4 bg-white ">
           <textarea
             placeholder="Adicione seu histórico..."
@@ -36,7 +46,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
             <div className="flex ">
               <SearchContactHistoricalModal
                 accountId={accountId}
-                selectContact={selectContact}
+                selectContact={selectContact!}
                 setSelectContact={(value) => setSelectContact(value)}
               />
               <Button title="Emoji" variant={"ghost"} className="p-1">
@@ -53,7 +63,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
         </div>
       </form>
       <TimelineItem historical={historical} />
-      <CreateAnnexHistoricalModal open={open} closeModal={closeModal} />
+      <CreateAnnexHistoricalModal onFileUploadSuccess={handleFileChange} open={open} closeModal={closeModal} />
     </div>
   );
 }

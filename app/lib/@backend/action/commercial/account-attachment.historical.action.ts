@@ -39,10 +39,12 @@ export async function createAccountAttachmentHistorical(
       fileName: fileData.name,
     });
 
+    const name = fileData.name
+
     // Revalidate the account attachments page to show the new attachment
     revalidatePath("/commercial/account/management/account-attachments");
 
-    return { success: true, fileUrl };
+    return { success: true, fileUrl, name };
   } catch (error) {
     console.error("Error in createAccountAttachment action:", error);
     return { success: false, error: "Failed to upload attachment" };

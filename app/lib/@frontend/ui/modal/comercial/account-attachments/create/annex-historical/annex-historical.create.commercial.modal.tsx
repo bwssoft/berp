@@ -1,20 +1,22 @@
 "use client";
 
 import {
-  CreateAnnexForm,
   CreateAnnexHistoricalForm,
   Modal,
   ModalBody,
   ModalContent,
 } from "@/app/lib/@frontend/ui/component";
-import React from "react";
+import { useCreateAnnexHistoricalModal } from "./use-annex-historical.create.commercial.modal";
 
 interface Props {
   open: boolean;
   closeModal: () => void;
+  onFileUploadSuccess?: (name: string, url: string) => void;
 }
 
-export function CreateAnnexHistoricalModal({ open, closeModal }: Props) {
+export function CreateAnnexHistoricalModal({ open, closeModal, onFileUploadSuccess }: Props) {
+  const { handleFileUploadSuccess } = useCreateAnnexHistoricalModal(onFileUploadSuccess)
+
   return (
     <Modal
       open={open}
@@ -25,7 +27,7 @@ export function CreateAnnexHistoricalModal({ open, closeModal }: Props) {
     >
       <ModalContent>
         <ModalBody>
-          <CreateAnnexHistoricalForm closeModal={closeModal} />
+          <CreateAnnexHistoricalForm onFileUploadSuccess={handleFileUploadSuccess} closeModal={closeModal} />
         </ModalBody>
       </ModalContent>
     </Modal>

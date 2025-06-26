@@ -1,15 +1,16 @@
 "use client";
 import { Button, Input } from "@/app/lib/@frontend/ui/component";
 import { DocumentArrowUpIcon, PaperClipIcon } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import { useCreateAnnexHistoricalForm } from "./use-create-historical.annex.form";
 
 interface CreateAnnexHistoricalFormProps {
   closeModal: () => void;
+  onFileUploadSuccess?: (fileUrl: string) => void;
 }
 
-export function CreateAnnexHistoricalForm({ closeModal }: CreateAnnexHistoricalFormProps) {
+export function CreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }: CreateAnnexHistoricalFormProps) {
   const {
     register,
     onSubmit,
@@ -17,7 +18,7 @@ export function CreateAnnexHistoricalForm({ closeModal }: CreateAnnexHistoricalF
     handleFileChange,
     selectedFile,
     isUploading,
-  } = useCreateAnnexHistoricalForm({ closeModal });
+  } = useCreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = () => {

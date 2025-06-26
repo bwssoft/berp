@@ -14,11 +14,12 @@ import { ContactSelection } from "@/app/lib/@backend/domain";
 
 interface ContactModalProps {
   accountId?: string;
-  selectContact: ContactSelection[];
+  selectContact: ContactSelection;
   setSelectContact: (
     value:
-      | ContactSelection[]
-      | ((prev: ContactSelection[]) => ContactSelection[])
+      | ContactSelection
+      | ((prev: ContactSelection | undefined) => ContactSelection | undefined)
+      | undefined
   ) => void;
 }
 

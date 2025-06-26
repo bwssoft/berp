@@ -6,15 +6,15 @@ export interface IHistorical {
     avatarUrl?: string;
   };
   action?: string; // exemplo: "Proposta (nº" 83787584758) igual jaisson deixou de exemplo
-  link?: {
-    label: string;
-    url: string;
-  };
-  contacts: ContactSelection[]
+  file?: {
+    name?: string,
+    url?: string
+  }
+  contacts?: ContactSelection
   description?: string;
   title: string; // exemplo de acordo com o protótipo do jaisson: "Criação de Proposta"
   created_at: Date;
-  type?: 'proposta' | 'sistema' | 'ligacao' | 'cadastro' | 'observacao' | "anexo";
+  type?: 'proposta' | 'sistema'  | "manual" | "conta";
 }
 
 export type ContactSelection = {
@@ -22,4 +22,5 @@ export type ContactSelection = {
   name: string;
   type: string;
   contact: string;
+  channel: string
 };
