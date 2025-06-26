@@ -22,4 +22,5 @@ export type ContactSelection = {
   name: string;
   type: string;
   contact: string;
+  channel: string
 };

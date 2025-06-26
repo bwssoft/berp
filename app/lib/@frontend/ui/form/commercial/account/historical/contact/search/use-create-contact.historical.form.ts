@@ -27,6 +27,7 @@ export function useSearchContactHistoricalAccount({
     name: "",
     type: "",
     contact: "",
+    channel: ""
   });
 
   useEffect(() => {
@@ -45,36 +46,39 @@ export function useSearchContactHistoricalAccount({
     id: string,
     name: string,
     type: string,
-    contact: string
+    contact: string,
+    channel: string,
   ) => {
     setSelectContact((prev) => {
       if (prev?.id === id) {
         return undefined;
       } else {
-        return { id, name, type, contact };
+        return { id, name, type, contact, channel };
       }
     });
   };
 
   const handleAddOtherContact = () => {
-    const { name, type, contact } = otherContactInfo;
-    if (!name || !type || !contact) return;
+    const { name, type, contact, channel } = otherContactInfo;
+    if (!name || !type || !contact || !channel) return;
 
     const id = crypto.randomUUID();
     const newContactItem = {
       id,
       type,
       contact,
+      channel,
       contactItems: [
         {
           id,
           type,
           contact,
+          channel
         },
       ],
     };
 
-    toggleSelection(id, name, type, contact);
+    toggleSelection(id, name, type, contact, channel);
 
     setContactData((prev: any) => {
       const existingGroup = prev.find((g: any) => g.name === "Outros");
@@ -96,7 +100,7 @@ export function useSearchContactHistoricalAccount({
       }
     });
 
-    setOtherContactInfo({ name: "", type: "", contact: "" });
+    setOtherContactInfo({ name: "", type: "", contact: "", channel: ""});
   };
 
   return {

@@ -64,16 +64,16 @@ export function SearchContactHistoricalAccountForm({
                 <DisclosurePanel className="px-4 pb-2 flex flex-col gap-2">
                   {company.contacts.map((c) =>
                     c.contactItems.map((ci) => (
-                      <label key={ci.id} className="flex items-center gap-2">
-                        <Checkbox
-                          checked={isSelected(ci.id)}
-                          onChange={() =>
-                            toggleSelection(ci.id, company.name, ci.type, ci.contact)
-                          }
-                        />
+                      <label key={ci.id} className="flex items-center gap-1">
                         <span className="text-gray-500 text-sm">
                           {ci.type + ": " + ci.contact}
                         </span>
+                        <Checkbox
+                          checked={isSelected(ci.id)}
+                          onChange={() =>
+                            toggleSelection(ci.id, company.name, ci.type, ci.contact, ci.type)
+                          }
+                        />
                         <div className="flex gap-2">
                           {ci.type.includes("Telefone") && (
                             <PhoneIcon className="w-5 h-5" />
@@ -85,6 +85,17 @@ export function SearchContactHistoricalAccountForm({
                             <WhatsappIcon classname="w-5 h-5" />
                           )}
                         </div>
+                        {ci.type === "Celular" && (
+                          <label key={ci.id} className="flex items-center gap-1">
+                            <Checkbox
+                              checked={isSelected(ci.id)}
+                              onChange={() =>
+                                toggleSelection(ci.id, company.name, ci.type, ci.contact, "Whatsapp")
+                              }
+                            />
+                            <PhoneIcon className="w-5 h-5" />
+                          </label>
+                        )}
                       </label>
                     ))
                   )}
@@ -165,7 +176,8 @@ export function SearchContactHistoricalAccountForm({
             id: "",
             name: "",
             type: "",
-            contact: ""
+            contact: "",
+            channel: ""
           })}
         >
           Cancelar
