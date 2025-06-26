@@ -484,7 +484,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                   key={index}
                   control={control}
                   name={
-                    func.name as keyof ConfigurationProfileSchema["config"]["specific"]
+                    `config.specific.${func.name}` as keyof ConfigurationProfileSchema["config"]["specific"]
                   }
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -722,7 +722,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                     <FormField
                       control={control}
                       name={
-                        func.name as keyof ConfigurationProfileSchema["config"]["specific"]
+                        `config.specific.${func.name}` as keyof ConfigurationProfileSchema["config"]["specific"]
                       }
                       render={({ field }) => (
                         <FormControl>

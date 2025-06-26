@@ -1,7 +1,10 @@
 "use client";
 
 import { configurationProfileConstants } from "@/app/lib/constant";
-import { useConfigurationProfileCreateForm } from "./use-configuration-profile.create.form";
+import {
+  TechnologySystemName,
+  useConfigurationProfileCreateForm,
+} from "./use-configuration-profile.create.form";
 import { IClient, ITechnology } from "@/app/lib/@backend/domain";
 import {
   Alert,
@@ -176,10 +179,17 @@ export function ConfigurationProfileCreateForm(props: Props) {
                       <Select
                         onValueChange={(value) => {
                           field.onChange(value);
+
                           const selected = technologies.find(
-                            (c) => c.id === value
+                            (t) => t.id === value
                           );
                           if (selected) {
+                            // Atualiza também o system
+                            form.setValue(
+                              "config.specific.technology_system_name",
+                              selected.name.system as TechnologySystemName
+                            );
+
                             handleChangeName({
                               technology: selected.name.brand,
                             });

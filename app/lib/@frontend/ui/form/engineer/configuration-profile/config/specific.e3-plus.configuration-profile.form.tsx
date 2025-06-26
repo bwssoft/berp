@@ -33,13 +33,10 @@ import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { Cpu, Lock, Settings, Zap, AlertTriangle } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { configurationProfileConstants } from "@/app/lib/constant";
+import { ConfigurationProfileSchema } from "../create/use-configuration-profile.create.form";
 
 export function SpecificE3PlusConfigurationProfileForm() {
-  const {
-    control,
-    register,
-    formState: { errors },
-  } = useFormContext();
+  const { control } = useFormContext();
 
   return (
     <Card>
@@ -350,7 +347,9 @@ export function SpecificE3PlusConfigurationProfileForm() {
                 <FormField
                   key={index}
                   control={control}
-                  name={func.name}
+                  name={
+                    `config.specific.${func.name}` as keyof ConfigurationProfileSchema["config"]["specific"]
+                  }
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
@@ -413,7 +412,9 @@ export function SpecificE3PlusConfigurationProfileForm() {
                     </div>
                     <FormField
                       control={control}
-                      name={func.name}
+                      name={
+                        `config.specific.${func.name}` as keyof ConfigurationProfileSchema["config"]["specific"]
+                      }
                       render={({ field }) => (
                         <FormControl>
                           <Switch

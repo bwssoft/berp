@@ -1,5 +1,5 @@
 import { createOneConfigurationProfile } from "@/app/lib/@backend/action";
-import { EType, ITechnology } from "@/app/lib/@backend/domain";
+import { Device, EType, ITechnology } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useState } from "react";
@@ -132,12 +132,12 @@ export const e3Plus4GConfigSchema = z.object({
   virtual_ignition: z.coerce.boolean().optional().default(false),
   virtual_ignition_by_voltage: z.coerce.boolean().optional().default(false),
   virtual_ignition_by_movement: z.coerce.boolean().optional().default(false),
+  anti_theft: z.coerce.boolean().optional().default(false),
+  jammer_detection: z.coerce.boolean().optional().default(false),
   max_speed: oneBytesSchema.optional(),
   communication_type: z.string().optional(),
   protocol_type: z.string().optional(),
-  anti_theft: z.coerce.boolean().optional().default(false),
   horimeter: twoBytesSchema.optional(),
-  jammer_detection: z.coerce.boolean().optional().default(false),
   clear_buffer: z.coerce.boolean().optional(),
   clear_horimeter: z.coerce.boolean().optional(),
   input_1: z.number().optional(),
@@ -274,7 +274,12 @@ export const loraConfigSchema = z.object({
   led_lighting: z.string().optional(),
 });
 
-// Esquema principal
+export type TechnologySystemName =
+  | Device.Model.DM_E3_PLUS
+  | Device.Model.DM_E3_PLUS_4G
+  | Device.Model.DM_BWS_NB2
+  | Device.Model.DM_BWS_LORA;
+
 const schema = z.object({
   client_id: z.string().optional(),
   technology_id: z.string(),
@@ -283,11 +288,19 @@ const schema = z.object({
   config: z.object({
     general: generalConfigSchema.optional(),
     specific: z
-      .union([
-        e3PlusConfigSchema,
-        e3Plus4GConfigSchema,
-        nb2ConfigSchema,
-        loraConfigSchema,
+      .discriminatedUnion("technology_system_name", [
+        e3Plus4GConfigSchema.extend({
+          technology_system_name: z.literal(Device.Model.DM_E3_PLUS_4G),
+        }),
+        e3PlusConfigSchema.extend({
+          technology_system_name: z.literal(Device.Model.DM_E3_PLUS),
+        }),
+        nb2ConfigSchema.extend({
+          technology_system_name: z.literal(Device.Model.DM_BWS_NB2),
+        }),
+        loraConfigSchema.extend({
+          technology_system_name: z.literal(Device.Model.DM_BWS_LORA),
+        }),
       ])
       .optional(),
   }),
@@ -311,7 +324,6 @@ export function useConfigurationProfileCreateForm(props: Props) {
 
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
-    shouldUnregister: true,
     defaultValues: {
       config: {
         general: {
@@ -333,6 +345,7 @@ export function useConfigurationProfileCreateForm(props: Props) {
 
   const handleSubmit = form.handleSubmit(
     async (data) => {
+      console.log("data", data);
       try {
         const { client_id, type, technology_id, config } = data;
         await createOneConfigurationProfile({
@@ -358,7 +371,8 @@ export function useConfigurationProfileCreateForm(props: Props) {
       }
     },
     (error) => {
-      console.log(error);
+      console.log("error", error);
+      console.log(watch());
       toast({
         title: "Erro de Validação",
         description:
