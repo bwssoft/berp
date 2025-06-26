@@ -7,8 +7,6 @@ import {
 } from "./use-configuration-profile.create.form";
 import { IClient, ITechnology } from "@/app/lib/@backend/domain";
 import {
-  Alert,
-  AlertDescription,
   Button,
   Input,
   Select,
@@ -16,14 +14,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
 } from "../../../../component";
 import { GeneralConfigurationProfileForm } from "../config/general.configuration-profile.form";
 import { SpecificE3Plus4GConfigurationProfileForm } from "../config/specific.e3-plus-4g.configuration-profile.form";
-import { Controller, FormProvider } from "react-hook-form";
+import { FormProvider } from "react-hook-form";
 import { SpecificE3PlusConfigurationProfileForm } from "../config/specific.e3-plus.configuration-profile.form";
 import {
   Form,
@@ -41,18 +35,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../../component/card";
-import { Separator } from "../../../../component/separator";
-import { Badge } from "../../../../component/badge";
-import { Switch } from "../../../../component/switch";
-import {
-  AlertTriangle,
-  Clock,
-  Cpu,
-  Network,
-  Server,
-  Settings,
-  Wifi,
-} from "lucide-react";
+import { Settings } from "lucide-react";
 import { SpecificNB2ConfigurationProfileForm } from "../config/specific.nb-2.configuration-profile.form";
 import { SpecificLoRaConfigurationProfileForm } from "../config/specific.lora.configuration-profile.form";
 

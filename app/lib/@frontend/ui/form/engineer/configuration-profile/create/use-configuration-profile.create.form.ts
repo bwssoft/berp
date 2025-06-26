@@ -306,9 +306,13 @@ const schema = z.object({
   }),
 });
 
-type Schema = z.infer<typeof schema>;
+export type ConfigurationProfileSchema = z.infer<typeof schema>;
 
-export type ConfigurationProfileSchema = Schema;
+type ProfileName = {
+  type?: string;
+  technology?: string;
+  document?: string;
+};
 
 interface Props {
   technologies: ITechnology[];
@@ -316,13 +320,10 @@ interface Props {
 
 export function useConfigurationProfileCreateForm(props: Props) {
   const { technologies } = props;
-  const [name, setName] = useState<{
-    technology?: string;
-    document?: string;
-    type?: string;
-  }>({});
 
-  const form = useForm<Schema>({
+  const [name, setName] = useState<ProfileName>({});
+
+  const form = useForm<ConfigurationProfileSchema>({
     resolver: zodResolver(schema),
     defaultValues: {
       config: {
@@ -335,17 +336,8 @@ export function useConfigurationProfileCreateForm(props: Props) {
     },
   });
 
-  const { watch } = form;
-
-  const technology_id = watch("technology_id");
-
-  const technology = useMemo(() => {
-    return technologies.find((el) => el.id === technology_id);
-  }, [technologies, technology_id]);
-
   const handleSubmit = form.handleSubmit(
     async (data) => {
-      console.log("data", data);
       try {
         const { client_id, type, technology_id, config } = data;
         await createOneConfigurationProfile({
@@ -355,7 +347,6 @@ export function useConfigurationProfileCreateForm(props: Props) {
           type,
           config,
         });
-
         toast({
           title: "Sucesso!",
           description: "Perfil registrado com sucesso!",
@@ -371,8 +362,7 @@ export function useConfigurationProfileCreateForm(props: Props) {
       }
     },
     (error) => {
-      console.log("error", error);
-      console.log(watch());
+      console.log(error);
       toast({
         title: "Erro de Validação",
         description:
@@ -382,17 +372,19 @@ export function useConfigurationProfileCreateForm(props: Props) {
     }
   );
 
-  const handleChangeName = (props: {
-    type?: string;
-    technology?: string;
-    document?: string;
-  }) => {
+  const handleChangeName = (props: ProfileName) => {
     setName((prev) => {
       const state = Object.assign(prev, props);
       form.setValue("name", formatConfigurationProfileName(state));
       return state;
     });
   };
+
+  const technology_id = form.watch("technology_id");
+
+  const technology = useMemo(() => {
+    return technologies.find((el) => el.id === technology_id);
+  }, [technologies, technology_id]);
 
   return {
     form,
