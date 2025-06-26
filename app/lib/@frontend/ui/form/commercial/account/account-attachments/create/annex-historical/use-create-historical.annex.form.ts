@@ -20,10 +20,12 @@ export type CreateAnnexHistoricalFormSchema = z.infer<typeof schema>;
 
 interface CreateAnnexFormProps {
   closeModal: () => void;
+  onFileUploadSuccess?: (fileUrl: string) => void;
 }
 
-export function useCreateAnnexHistoricalForm({ closeModal }: CreateAnnexFormProps) {
+export function useCreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }: CreateAnnexFormProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadFileUrl, setUploadFileUrl] = useState<string | undefined>()
   const { data: session } = useSession();
 
   const {
@@ -65,7 +67,9 @@ export function useCreateAnnexHistoricalForm({ closeModal }: CreateAnnexFormProp
       });
 
       if (result.success) {
-       console.log("salvou o anexo no s3")
+        if (onFileUploadSuccess && result.fileUrl) {
+          onFileUploadSuccess(result.fileUrl);
+        }
       }
     } catch (error) {
       toast({
@@ -86,5 +90,6 @@ export function useCreateAnnexHistoricalForm({ closeModal }: CreateAnnexFormProp
     handleFileChange,
     selectedFile,
     isUploading,
+    uploadFileUrl
   };
 }
