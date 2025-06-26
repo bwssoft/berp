@@ -34,13 +34,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
     <div className="w-[70%]">
       <form onSubmit={onSubmit}>
         <div>
-          {file && file?.length >= 1 && (
-            <h3>{file?.length} anexos selecionados</h3>
-          )}
-          {selectContact.length >= 1 && (
-            <h3>{selectContact.length} {`${selectContact.length > 1 ? "contatos" : "contato"}`} selecionado(s)</h3>
-          )
-          }
+          
         </div>
         <div className="border rounded-md p-4 mb-4 bg-white ">
           <textarea
@@ -53,7 +47,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
             <div className="flex ">
               <SearchContactHistoricalModal
                 accountId={accountId}
-                selectContact={selectContact}
+                selectContact={selectContact!}
                 setSelectContact={(value) => setSelectContact(value)}
               />
               <Button title="Emoji" variant={"ghost"} className="p-1">

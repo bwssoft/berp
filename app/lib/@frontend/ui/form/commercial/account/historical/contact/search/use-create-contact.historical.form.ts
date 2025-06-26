@@ -10,18 +10,16 @@ interface Props {
     documentValue: string;
   }[];
   accountData?: IAccount;
-  selectContact: ContactSelection[];
+  selectContact: ContactSelection | undefined;
   setSelectContact: (
-    value:
-      | ContactSelection[]
-      | ((prev: ContactSelection[]) => ContactSelection[])
+    value: ContactSelection | undefined | ((prev: ContactSelection | undefined) => ContactSelection | undefined)
   ) => void;
 }
 
 export function useSearchContactHistoricalAccount({
   contacts,
-  selectContact, 
-  setSelectContact
+  selectContact,
+  setSelectContact,
 }: Props) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [contactData, setContactData] = useState<Props["contacts"]>([]);
@@ -40,8 +38,8 @@ export function useSearchContactHistoricalAccount({
     }
   }, [contacts]);
 
-  const isSelected = (id: string) =>
-    Array.isArray(selectContact) && selectContact.some((sc) => sc.id === id);
+
+  const isSelected = (id: string) => selectContact?.id === id;
 
   const toggleSelection = (
     id: string,
@@ -50,11 +48,11 @@ export function useSearchContactHistoricalAccount({
     contact: string
   ) => {
     setSelectContact((prev) => {
-      const safePrev = Array.isArray(prev) ? prev : [];
-      const exists = safePrev.some((sc) => sc.id === id);
-      return exists
-        ? safePrev.filter((sc) => sc.id !== id)
-        : [...safePrev, { id, name, type, contact }];
+      if (prev?.id === id) {
+        return undefined;
+      } else {
+        return { id, name, type, contact };
+      }
     });
   };
 
@@ -101,7 +99,6 @@ export function useSearchContactHistoricalAccount({
     setOtherContactInfo({ name: "", type: "", contact: "" });
   };
 
-
   return {
     selectedIds,
     setSelectedIds,
@@ -110,6 +107,6 @@ export function useSearchContactHistoricalAccount({
     isSelected,
     handleAddOtherContact,
     otherContactInfo,
-    setOtherContactInfo
+    setOtherContactInfo,
   };
 }

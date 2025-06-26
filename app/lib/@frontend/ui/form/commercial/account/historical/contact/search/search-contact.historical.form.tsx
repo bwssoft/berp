@@ -25,11 +25,12 @@ type ContactAccountFormProps = {
   }[];
   isLoading?: boolean;
   closeModal: () => void;
-  selectContact: ContactSelection[];
+  selectContact: ContactSelection;
   setSelectContact: (
     value:
-      | ContactSelection[]
-      | ((prev: ContactSelection[]) => ContactSelection[])
+      | ContactSelection
+      | ((prev: ContactSelection | undefined) => ContactSelection | undefined)
+      | undefined
   ) => void;
 };
 
@@ -160,7 +161,12 @@ export function SearchContactHistoricalAccountForm({
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setSelectContact([])}
+          onClick={() => setSelectContact({
+            id: "",
+            name: "",
+            type: "",
+            contact: ""
+          })}
         >
           Cancelar
         </Button>
