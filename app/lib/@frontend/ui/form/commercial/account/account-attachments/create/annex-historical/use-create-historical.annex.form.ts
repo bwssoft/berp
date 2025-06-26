@@ -20,7 +20,7 @@ export type CreateAnnexHistoricalFormSchema = z.infer<typeof schema>;
 
 interface CreateAnnexFormProps {
   closeModal: () => void;
-  onFileUploadSuccess?: (fileUrl: string) => void;
+  onFileUploadSuccess?: (name: string, url: string) => void;
 }
 
 export function useCreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }: CreateAnnexFormProps) {
@@ -68,7 +68,7 @@ export function useCreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }
 
       if (result.success) {
         if (onFileUploadSuccess && result.fileUrl) {
-          onFileUploadSuccess(result.fileUrl);
+          onFileUploadSuccess(result.name, result.fileUrl);
         }
       }
     } catch (error) {

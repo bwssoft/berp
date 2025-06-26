@@ -11,7 +11,7 @@ import { useCreateAnnexHistoricalModal } from "./use-annex-historical.create.com
 interface Props {
   open: boolean;
   closeModal: () => void;
-  onFileUploadSuccess?: (fileUrl: string) => void;
+  onFileUploadSuccess?: (name: string, url: string) => void;
 }
 
 export function CreateAnnexHistoricalModal({ open, closeModal, onFileUploadSuccess }: Props) {
