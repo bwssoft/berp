@@ -11,6 +11,7 @@ import { viaCepGateway } from "../../infra/gateway/viacep/viacep.gateway";
 import { redirect } from "next/navigation";
 import { updateOneAddressUsecase } from "../../usecase/commercial/address/update-one.address.usecase";
 import { revalidatePath } from "next/cache";
+import { deleteOneAddressUsecase } from "../../usecase/commercial/address/delete-one-address.usecase";
 
 let PATH_address = "commercial/account/form/create/tab/address";
 export async function getAddressByCep(cep: string) {
@@ -40,4 +41,9 @@ export async function updateOneAddress(
 }
 export async function findOneAddress(query: Partial<IAddress>) {
     return await findOneAddressUsecase.execute(query);
+}
+
+export async function deleteOneAddress(filter: Partial<IAddress>) {
+    const result = await deleteOneAddressUsecase.execute(filter);
+    return result;
 }
