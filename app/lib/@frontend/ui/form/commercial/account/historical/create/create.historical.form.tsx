@@ -23,7 +23,6 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
     onSubmit, 
     open, 
     openModal, 
-    file,
     handleFileChange, 
     setSelectContact, 
     selectContact,

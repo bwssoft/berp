@@ -25,26 +25,24 @@ export function useCreateHistoricalForm({accountId}:Props) {
   })
   const { openModal, open, closeModal } = useCreateAnnexHistoricalModal()
   const {user} = useAuth()
-  const [file, setFile] = useState({
-    name: "",
-    url: ""
-  })
+  const [file, setFile] = useState<{name: string, url: string} | undefined>()
   const [selectContact, setSelectContact] = useState<ContactSelection>();
 
   const onSubmit = handleSubmit(async (data) => {
-    await createOneHistorical({
+    const result = await createOneHistorical({
       ...data,
       accountId: accountId,
       title: "Histórico Manual de Conta",
-      type: "manual",
+      type: "sistema",
       description: data.description,
       author: {
         name: user?.name ?? "",
         avatarUrl: ""
       },
       file: file,
-      contacts: selectContact!
+      contacts: selectContact
     })
+    console.log(result.success)
   })
 
   const handleFileChange = (name: string, url: string) => {

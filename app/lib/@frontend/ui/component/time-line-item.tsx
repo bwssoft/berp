@@ -26,18 +26,6 @@ export function TimelineItem({ historical }: TimelineProps) {
                     🧠
                   </div>
                 );
-              case "anexo":
-                return (
-                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white">
-                    <PaperClipIcon className="w-5 h-5 text-gray-500" />
-                  </div>
-                );
-              case "observacao":
-                return (
-                  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white">
-                    <ChatBubbleLeftRightIcon className="w-5 h-5 text-gray-500" />
-                  </div>
-                );
               default:
                 return (
                   <div className="bg-white w-10 h-10 rounded-full overflow-hidden flex items-center justify-center">
@@ -71,22 +59,11 @@ export function TimelineItem({ historical }: TimelineProps) {
               <div className="ml-4 flex-1">
                 <div className="flex justify-between items-start">
                   <p className="text-sm text-gray-800">
-                    {entry.author?.name && (
-                      <span className="font-semibold">{entry.author.name}</span>
-                    )}{" "}
+                    {isSystem ? 
+                    <span className="font-semibold">Sistema</span> :
+                    <span className="font-semibold">{entry.author?.name }</span>
+                    }
                     {entry.title}
-                    {entry.link && (
-                      <>
-                        {" "}
-                        (<a
-                          href={entry.link.url}
-                          className="text-blue-600 underline"
-                        >
-                          {entry.link.label}
-                        </a>
-                        )
-                      </>
-                    )}
                   </p>
                   <time className="ml-4 text-xs text-gray-400 whitespace-nowrap">
                     {new Date(entry.created_at).toLocaleString("pt-BR", {
@@ -100,22 +77,7 @@ export function TimelineItem({ historical }: TimelineProps) {
                   </time>
                 </div>
 
-                {/* Detalhes */}
-                {(entry.description || entry.type === "ligacao") && (
-                  <div className="mt-1 text-sm text-gray-500">
-                    {entry.type === "ligacao" && entry.action && (
-                      <div className="flex items-center gap-1 font-semibold text-gray-700">
-                        <PhoneIcon className="h-4 w-4" />
-                        <span>{entry.action}</span>
-                      </div>
-                    )}
-                    {entry.description && (
-                      <p className="text-sm text-gray-500 mt-1">
-                        {entry.description}
-                      </p>
-                    )}
-                  </div>
-                )}
+                
               </div>
             </li>
           );

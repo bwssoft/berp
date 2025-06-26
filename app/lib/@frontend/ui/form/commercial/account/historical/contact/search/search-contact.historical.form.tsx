@@ -69,7 +69,7 @@ export function SearchContactHistoricalAccountForm({
                           {ci.type + ": " + ci.contact}
                         </span>
                         <Checkbox
-                          checked={isSelected(ci.id)}
+                          checked={isSelected(ci.id, ci.type)}
                           onChange={() =>
                             toggleSelection(ci.id, company.name, ci.type, ci.contact, ci.type)
                           }
@@ -88,7 +88,7 @@ export function SearchContactHistoricalAccountForm({
                         {ci.type === "Celular" && (
                           <label key={ci.id} className="flex items-center gap-1">
                             <Checkbox
-                              checked={isSelected(ci.id)}
+                              checked={isSelected(ci.id, "Whatsapp")}
                               onChange={() =>
                                 toggleSelection(ci.id, company.name, ci.type, ci.contact, "Whatsapp")
                               }

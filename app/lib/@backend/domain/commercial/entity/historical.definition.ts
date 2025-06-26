@@ -7,10 +7,10 @@ export interface IHistorical {
   };
   action?: string; // exemplo: "Proposta (nº" 83787584758) igual jaisson deixou de exemplo
   file?: {
-    name: string,
-    url: string
+    name?: string,
+    url?: string
   }
-  contacts: ContactSelection
+  contacts?: ContactSelection
   description?: string;
   title: string; // exemplo de acordo com o protótipo do jaisson: "Criação de Proposta"
   created_at: Date;
