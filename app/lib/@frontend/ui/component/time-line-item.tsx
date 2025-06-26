@@ -6,6 +6,8 @@ import {
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 
+import logo from "../../../../../public/bcube-logo.svg"
+
 type TimelineProps = {
   historical: IHistorical[];
 };
@@ -23,7 +25,11 @@ export function TimelineItem({ historical }: TimelineProps) {
               case "sistema":
                 return (
                   <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-lg">
-                    🧠
+                    <img 
+                      src={"/bcube-logo.svg"} 
+                      alt="" 
+                      className="mx-auto h-10 w-auto"
+                    />
                   </div>
                 );
               default:
@@ -51,34 +57,84 @@ export function TimelineItem({ historical }: TimelineProps) {
                   aria-hidden="true"
                 />
               )}
+              {isSystem && (
+                <>
+                  <div className="relative z-10">{renderIcon()}</div>
 
-              {/* Avatar ou ícone */}
-              <div className="relative z-10">{renderIcon()}</div>
+                  <div className="ml-4 flex-1 items-center">
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm text-gray-800 flex gap-1 items-center justify-center">
+                        <span className="font-semibold">Sistema</span> 
+                        <p className="text-gray-500 text-sm">{entry.title}</p>
+                      </div>
+                      <time className="ml-4 text-xs text-gray-400 whitespace-nowrap">
+                        {new Date(entry.created_at).toLocaleString("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })}
+                      </time>
+                    </div>
+                  </div>
+                </>
+              )}
+              {!(entry.type == "manual") && !(entry.type == "sistema") && (
+                <>
+                  <div className="relative z-10">{renderIcon()}</div>
 
-              {/* Conteúdo */}
-              <div className="ml-4 flex-1">
-                <div className="flex justify-between items-start">
-                  <p className="text-sm text-gray-800">
-                    {isSystem ? 
-                    <span className="font-semibold">Sistema</span> :
-                    <span className="font-semibold">{entry.author?.name }</span>
-                    }
-                    {entry.title}
-                  </p>
-                  <time className="ml-4 text-xs text-gray-400 whitespace-nowrap">
-                    {new Date(entry.created_at).toLocaleString("pt-BR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                    })}
-                  </time>
-                </div>
+                  <div className="ml-4 flex-1">
+                    <div className="flex justify-between items-start">
+                      <div className="text-gray-800 text-sm flex gap-1 items-center justify-center">
+                        <span className="font-semibold">{entry.author?.name}</span>
+                        <p className="text-gray-500">{entry.title}</p>
+                        <p className="text-gray-500">(nº<a className="text-blue-600 underline" href="">{entry.action}</a>)</p>
+                        <p className="text-gray-500">{entry.description}</p>
+                      </div>
+                      <time className="ml-4 text-xs text-gray-400 whitespace-nowrap">
+                        {new Date(entry.created_at).toLocaleString("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })}
+                      </time>
+                    </div>
+                  </div>
+                </>
+              )}
+              {entry.type == "manual" && (
+                <>
+                  <div className="relative z-10">{renderIcon()}</div>
 
-                
-              </div>
+                  <div className="ml-4 flex-1">
+                    <div className="flex justify-between items-start">
+                      <p className="text-sm text-gray-800 flex items-center justify-center">
+                        <span className="font-bold text-sm">{entry.author?.name }</span>
+                      </p>
+                      <time className="ml-4 text-xs text-gray-400 whitespace-nowrap">
+                        {new Date(entry.created_at).toLocaleString("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })}
+                      </time>
+                    </div>
+                    <div className="">
+                      <h4 className="text-sm font-bold">{entry.contacts?.name} - {entry.contacts?.type} {entry.contacts?.contact}</h4>
+                      <p className="text-sm text-gray-500">{entry.description}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+
             </li>
           );
         })}

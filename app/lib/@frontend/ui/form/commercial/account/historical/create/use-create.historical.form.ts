@@ -33,7 +33,7 @@ export function useCreateHistoricalForm({accountId}:Props) {
       ...data,
       accountId: accountId,
       title: "Histórico Manual de Conta",
-      type: "sistema",
+      type: "manual",
       description: data.description,
       author: {
         name: user?.name ?? "",
@@ -42,7 +42,6 @@ export function useCreateHistoricalForm({accountId}:Props) {
       file: file,
       contacts: selectContact
     })
-    console.log(result.success)
   })
 
   const handleFileChange = (name: string, url: string) => {
