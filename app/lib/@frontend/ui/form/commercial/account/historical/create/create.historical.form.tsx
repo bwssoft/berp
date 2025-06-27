@@ -26,7 +26,8 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
     handleFileChange, 
     setSelectContact, 
     selectContact,
-    closeModal
+    closeModal,
+    errors
   } = useCreateHistoricalForm({accountId});
 
   return (
@@ -41,7 +42,11 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
             {...register("description")}
             className="w-full resize-none border-none focus:outline-none focus:ring-0 focus:border-none p-0"
             rows={2}
+            
           />
+          {errors.errors.description && (
+            <p className="text-sm text-red-500">{errors.errors.description.message}</p>
+          )}
           <div className="flex items-center justify-between mt-2 ">
             <div className="flex ">
               <SearchContactHistoricalModal

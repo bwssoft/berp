@@ -36,20 +36,16 @@ export function SearchContactHistoricalModal({
     isLoading,
   } = useSearchContactHistoricalModal(accountId ?? "");
 
-  if (!contactsByCompany) return null;
-
   return (
     <>
-      {contactsByCompany.length > 0 && (
-        <Button
-          onClick={openModal}
-          type="button"
-          variant={"ghost"}
-          className="p-1"
-        >
-          <PhoneIcon className="h-5 w-5" />
-        </Button>
-      )}
+      <Button
+        onClick={openModal}
+        type="button"
+        variant={"ghost"}
+        className="p-1"
+      >
+        <PhoneIcon className="h-5 w-5" />
+      </Button>
 
       <Modal
         open={open}

@@ -1,12 +1,8 @@
 import { IHistorical } from "@/app/lib/@backend/domain";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
 import {
-  PhoneIcon,
   PaperClipIcon,
-  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
-
-import logo from "../../../../../public/bcube-logo.svg"
 
 type TimelineProps = {
   historical: IHistorical[];
@@ -107,7 +103,36 @@ export function TimelineItem({ historical }: TimelineProps) {
                   </div>
                 </>
               )}
-              {entry.type == "manual" && (
+              {entry.type == "manual" && !entry.file && (
+                <>
+                  <div className="relative z-10">{renderIcon()}</div>
+
+                  <div className="ml-4 flex-1">
+                    <div className="flex justify-between items-start">
+                      <p className="text-sm text-gray-800 flex items-center justify-center">
+                        <span className="font-bold text-sm">{entry.author?.name}</span>
+                      </p>
+                      <time className="ml-4 text-xs text-gray-400 whitespace-nowrap">
+                        {new Date(entry.created_at).toLocaleString("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          second: "2-digit",
+                        })}
+                      </time>
+                    </div>
+                    <div className="">
+                      {entry.contacts && (
+                        <h4 className="text-sm font-bold">{entry.contacts?.name} - {entry.contacts?.type} {entry.contacts?.contact}</h4>
+                      )}
+                      <p className="text-sm text-gray-500">{entry.description}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+              {entry.type == "manual" && entry.file && (
                 <>
                   <div className="relative z-10">{renderIcon()}</div>
 
@@ -127,10 +152,18 @@ export function TimelineItem({ historical }: TimelineProps) {
                         })}
                       </time>
                     </div>
-                    <div className="">
-                      <h4 className="text-sm font-bold">{entry.contacts?.name} - {entry.contacts?.type} {entry.contacts?.contact}</h4>
-                      <p className="text-sm text-gray-500">{entry.description}</p>
+                    <div className="flex items-center gap-2">
+                      <PaperClipIcon className="w-3 h-3 text-gray-400" />
+                      <a
+                        href={entry.file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 underline text-sm"
+                      >
+                        {entry.file.name || "Arquivo"}
+                      </a>
                     </div>
+                      <p className="text-sm text-gray-500">{entry.description}</p>
                   </div>
                 </>
               )}
