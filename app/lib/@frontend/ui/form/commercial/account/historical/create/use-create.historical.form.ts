@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
-  description: z.string()
+  description: z.string().min(1, "Descrição é obrigatório")
 })
 
 type CreateHistoricalFormSchema = z.infer<typeof schema>;
@@ -20,7 +20,7 @@ type Props = {
 
 export function useCreateHistoricalForm({accountId}:Props) {
 
-  const {handleSubmit, register} = useForm<CreateHistoricalFormSchema>({
+  const {handleSubmit, register, formState: errors} = useForm<CreateHistoricalFormSchema>({
     resolver: zodResolver(schema)
   })
   const { openModal, open, closeModal } = useCreateAnnexHistoricalModal()
@@ -29,7 +29,7 @@ export function useCreateHistoricalForm({accountId}:Props) {
   const [selectContact, setSelectContact] = useState<ContactSelection>();
 
   const onSubmit = handleSubmit(async (data) => {
-    const result = await createOneHistorical({
+    await createOneHistorical({
       ...data,
       accountId: accountId,
       title: "Histórico Manual de Conta",
@@ -61,6 +61,7 @@ export function useCreateHistoricalForm({accountId}:Props) {
     open,
     setSelectContact,
     selectContact,
-    closeModal
+    closeModal,
+    errors
   }
 }
