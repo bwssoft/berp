@@ -21,6 +21,7 @@ export function AccountCreateForm() {
     selectedControlled,
     debouncedValidationHolding,
     debouncedValidationControlled,
+    disabledFields,
   } = useCreateAccountForm();
 
   const hasValidated = type && methods.getValues("document.type") === type;
@@ -47,6 +48,7 @@ export function AccountCreateForm() {
             dataControlled={dataControlled || []}
             debouncedValidationHolding={debouncedValidationHolding}
             debouncedValidationControlled={debouncedValidationControlled}
+            disabledFields={disabledFields}
           />
         )}
 

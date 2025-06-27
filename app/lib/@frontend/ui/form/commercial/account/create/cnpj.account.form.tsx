@@ -22,6 +22,13 @@ interface CNPJAccountFormProps {
   dataControlled: ICnpjaResponse[];
   selectedControlled: ICnpjaResponse[] | null;
   setSelectedControlled: (value: ICnpjaResponse[] | null) => void;
+  disabledFields?: {
+    social_name: boolean;
+    fantasy_name: boolean;
+    status: boolean;
+    state_registration: boolean;
+    municipal_registration: boolean;
+  };
 }
 
 export function CNPJAccountForm({
@@ -31,6 +38,13 @@ export function CNPJAccountForm({
   setSelectedControlled,
   debouncedValidationControlled,
   debouncedValidationHolding,
+  disabledFields = {
+    social_name: false,
+    fantasy_name: false,
+    status: false,
+    state_registration: false,
+    municipal_registration: false,
+  },
 }: CNPJAccountFormProps) {
   const sectorModal = useSectorModal();
   const {
@@ -62,18 +76,21 @@ export function CNPJAccountForm({
         placeholder="Digite a razão social"
         {...register("cnpj.social_name")}
         error={errors.cnpj?.social_name?.message}
+        disabled={disabledFields.social_name}
       />
       <Input
         label="Nome Fantasia"
         placeholder="Digite o nome fantasia"
         {...register("cnpj.fantasy_name")}
         error={errors.cnpj?.fantasy_name?.message}
+        disabled={disabledFields.fantasy_name}
       />
       <Input
         label="Inscrição Estadual"
         placeholder="Digite a inscrição estadual"
         {...register("cnpj.state_registration")}
         error={errors.cnpj?.state_registration?.message}
+        disabled={disabledFields.state_registration}
       />
       <Controller
         control={control}
@@ -95,6 +112,7 @@ export function CNPJAccountForm({
             keyExtractor={(item) => item.id}
             placeholder="Selecione o status"
             displayValueGetter={(item) => item.name}
+            disabled={disabledFields.status}
           />
         )}
       />
@@ -103,6 +121,7 @@ export function CNPJAccountForm({
         placeholder="Digite a inscrição municipal"
         {...register("cnpj.municipal_registration")}
         error={errors.cnpj?.municipal_registration?.message}
+        disabled={disabledFields.municipal_registration}
       />
       <div className="flex items-end gap-2">
         <Controller
