@@ -16,15 +16,32 @@ import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
-export type ContactList = {
+// Define the preferred contact interface
+export interface PreferredContact {
+  phone?: boolean;
+  whatsapp?: boolean;
+  email?: boolean;
+}
+
+// Define the contact type union
+export type ContactType =
+  | "Celular"
+  | "Telefone Residencial"
+  | "Telefone Comercial"
+  | "Email";
+
+// Define the contact item interface
+export interface ContactItem {
   id?: string;
-  type: string[];
+  type: ContactType[];
   contact: string;
-  preferredContact: {
-    phone?: boolean;
-    whatsapp?: boolean;
-    email?: boolean;
-  };
+  preferredContact: PreferredContact;
+}
+
+// Phone validation helper function
+const validatePhoneNumber = (value: string) => {
+  // Check if it's only numbers and max 11 digits (for Brazilian numbers)
+  return /^\d{0,11}$/.test(value);
 };
 
 const schema = z
@@ -58,9 +75,10 @@ const schema = z
           }),
         })
       )
-      .optional(),
+      .min(1, "Adicione ao menos um contato"),
   })
   .superRefine((data, ctx) => {
+    // CPF validation for contracts
     if (data.contractEnabled) {
       if (!data.cpf) {
         ctx.addIssue({
@@ -76,22 +94,48 @@ const schema = z
         });
       }
     }
+
+    // Validate all contact items
+    if (data.contactItems && data.contactItems.length > 0) {
+      data.contactItems.forEach((item, index) => {
+        const contactType = item.type?.[0];
+
+        // Validate phone numbers
+        if (
+          ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(
+            contactType
+          )
+        ) {
+          if (!validatePhoneNumber(item.contact)) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["contactItems", index, "contact"],
+              message:
+                "Telefone deve conter apenas números e no máximo 11 dígitos",
+            });
+          }
+        }
+
+        // Validate email
+        if (contactType === "Email") {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(item.contact)) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["contactItems", index, "contact"],
+              message: "Email inválido",
+            });
+          }
+        }
+      });
+    }
   });
 
 export function useCreateContactAccount(closeModal: () => void) {
-  type ContactType =
-    | "Celular"
-    | "Telefone Residencial"
-    | "Telefone Comercial"
-    | "Email";
   const [tempContact, setTempContact] = useState<{
     type: ContactType | "";
     contact: string;
-    preferredContact: {
-      phone?: boolean;
-      whatsapp?: boolean;
-      email?: boolean;
-    };
+    preferredContact: PreferredContact;
   }>({
     type: "",
     contact: "",
@@ -137,6 +181,36 @@ export function useCreateContactAccount(closeModal: () => void) {
       return;
     }
 
+    // Validate phone numbers
+    if (
+      ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(
+        tempContact.type
+      )
+    ) {
+      if (!validatePhoneNumber(tempContact.contact)) {
+        toast({
+          title: "Formato inválido",
+          description:
+            "Telefone deve conter apenas números e no máximo 11 dígitos",
+          variant: "error",
+        });
+        return;
+      }
+    }
+
+    // Validate email
+    if (tempContact.type === "Email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(tempContact.contact)) {
+        toast({
+          title: "Formato inválido",
+          description: "Formato de email inválido",
+          variant: "error",
+        });
+        return;
+      }
+    }
+
     append({
       id: crypto.randomUUID(),
       type: Array.isArray(tempContact.type)
@@ -156,14 +230,14 @@ export function useCreateContactAccount(closeModal: () => void) {
 
   const handlePreferredContact = (
     index: number,
-    key: keyof ContactList["preferredContact"]
+    key: keyof PreferredContact
   ) => {
     const item = fields[index];
     update(index, {
       ...item,
       preferredContact: {
         ...item.preferredContact,
-        [key]: !item.preferredContact?.[key],
+        [key]: !item.preferredContact?.[key as keyof PreferredContact],
       },
     });
   };
@@ -193,6 +267,7 @@ export function useCreateContactAccount(closeModal: () => void) {
       contactItems:
         data.contactItems?.map((item) => ({
           ...item,
+          contact: item.contact,
           type: Array.isArray(item.type) ? item.type[0] : item.type,
           id: item.id ?? crypto.randomUUID(),
         })) || [],

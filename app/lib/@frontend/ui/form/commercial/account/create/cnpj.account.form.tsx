@@ -56,7 +56,7 @@ export function CNPJAccountForm({
   }, []);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       <Input
         label="Razão Social"
         placeholder="Digite a razão social"
@@ -117,6 +117,7 @@ export function CNPJAccountForm({
               label="Setor"
               value={sectorModal.sectors.find((d) => d.name === field.name)}
               onChange={(d) => field.onChange(d.name)}
+              error={errors.cnpj?.sector?.message}
             />
           )}
         />
