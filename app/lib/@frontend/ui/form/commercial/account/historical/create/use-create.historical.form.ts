@@ -5,6 +5,7 @@ import { useAuth } from "@/app/lib/@frontend/context";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useCreateAnnexHistoricalModal } from "@/app/lib/@frontend/ui/modal";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,7 +29,7 @@ export function useCreateHistoricalForm({accountId}:Props) {
   const {user} = useAuth()
   const [file, setFile] = useState<{name: string, url: string, id: string} | undefined>()
   const [selectContact, setSelectContact] = useState<ContactSelection>();
-
+const queryClient = useQueryClient()
   const onSubmit = handleSubmit(async (data) => {
     await createOneHistorical({
       ...data,
@@ -43,6 +44,11 @@ export function useCreateHistoricalForm({accountId}:Props) {
       file: file,
       contacts: selectContact
     })
+
+    await queryClient.invalidateQueries({
+      queryKey: ["findManyHistorical", accountId],
+    });
+    
   })
 
   const handleFileChange = (name: string, url: string, id: string) => {
