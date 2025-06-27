@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { createAccountAttachmentHistorical } from "@/app/lib/@backend/action/commercial/account-attachment.historical.action";
 
 const schema = z.object({
@@ -19,13 +18,12 @@ const schema = z.object({
 export type CreateAnnexHistoricalFormSchema = z.infer<typeof schema>;
 
 interface CreateAnnexFormProps {
-  closeModal: () => void;
   onFileUploadSuccess?: (name: string, url: string, id: string) => void;
+  accountId: string
 }
 
-export function useCreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }: CreateAnnexFormProps) {
+export function useCreateAnnexHistoricalForm({ onFileUploadSuccess, accountId }: CreateAnnexFormProps) {
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadFileUrl, setUploadFileUrl] = useState<string | undefined>()
 
   const {
     register,
@@ -62,7 +60,7 @@ export function useCreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }
       const result = await createAccountAttachmentHistorical(fileData, {
         id: crypto.randomUUID(),
         name: data.name,
-        accountId: ""
+        accountId: accountId
       });
 
       if (result.success) {
@@ -89,6 +87,5 @@ export function useCreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }
     handleFileChange,
     selectedFile,
     isUploading,
-    uploadFileUrl
   };
 }

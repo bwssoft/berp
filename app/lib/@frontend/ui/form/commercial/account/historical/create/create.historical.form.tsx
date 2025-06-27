@@ -69,7 +69,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
         </div>
       </form>
       <TimelineItem onClickButtonDownload={(id: string, name: string) =>  handleDownload(id, name)} historical={historical} />
-      <CreateAnnexHistoricalModal onFileUploadSuccess={handleFileChange} open={open} closeModal={closeModal} />
+      <CreateAnnexHistoricalModal closeModal={closeModal} onFileUploadSuccess={handleFileChange} open={open} accountId={accountId} />
     </div>
   );
 }

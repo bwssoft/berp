@@ -8,9 +8,10 @@ import { useCreateAnnexHistoricalForm } from "./use-create-historical.annex.form
 interface CreateAnnexHistoricalFormProps {
   closeModal: () => void;
   onFileUploadSuccess?: (name: string, url: string, id: string) => void;
+  accountId: string
 }
 
-export function CreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }: CreateAnnexHistoricalFormProps) {
+export function CreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess, accountId }: CreateAnnexHistoricalFormProps) {
   const {
     register,
     onSubmit,
@@ -18,7 +19,7 @@ export function CreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }: C
     handleFileChange,
     selectedFile,
     isUploading,
-  } = useCreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess });
+  } = useCreateAnnexHistoricalForm({ onFileUploadSuccess, accountId});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = () => {
