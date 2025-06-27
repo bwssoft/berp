@@ -1,11 +1,11 @@
 "use server";
 
-import { accountAttachmentHistoricalObjectRepository, accountAttachmentHistoricalRepository } from "../../infra";
+import { accountAttachmentHistoricalObjectRepository, accountAttachmentObjectRepository, accountAttachmentRepository } from "../../infra";
 
-export async function downloadAccountAttachment(id: string) {
+export async function downloadAccountAttachmentHistorical(id: string) {
   try {
     // First get the metadata from MongoDB
-    const attachment = await accountAttachmentHistoricalRepository.findOne({ id });
+    const attachment = await accountAttachmentRepository.findOne({ id });
     if (!attachment) {
       return {
         success: false,
@@ -20,7 +20,7 @@ export async function downloadAccountAttachment(id: string) {
     console.log("Attachment metadata:", attachment);
 
     // Download the file from S3
-    const result = await accountAttachmentHistoricalObjectRepository.findOne(key);
+    const result = await accountAttachmentObjectRepository.findOne(key);
     console.log("S3 result:", result);
 
     if (!result) {

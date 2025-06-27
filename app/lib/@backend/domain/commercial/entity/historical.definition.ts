@@ -8,7 +8,8 @@ export interface IHistorical {
   action?: string; // exemplo: "Proposta (nº" 83787584758) igual jaisson deixou de exemplo
   file?: {
     name?: string,
-    url?: string
+    url?: string,
+    id?: string
   }
   contacts?: ContactSelection
   description?: string;
