@@ -145,7 +145,20 @@ export function useCreateAccountForm() {
     ICnpjaResponse[] | null
   >(null);
 
-  // Estado único para todos os botões (por exemplo, holding, controlled e contact)
+  const [disabledFields, setDisabledFields] = useState<{
+    social_name: boolean;
+    fantasy_name: boolean;
+    status: boolean;
+    state_registration: boolean;
+    municipal_registration: boolean;
+  }>({
+    social_name: false,
+    fantasy_name: false,
+    status: false,
+    state_registration: false,
+    municipal_registration: false,
+  });
+
   const [buttonsState, setButtonsState] = useState({
     holding: "Validar",
     controlled: "Validar",
@@ -220,11 +233,21 @@ export function useCreateAccountForm() {
       if (data) {
         console.log("CNPJ Data:", data);
         setDataCnpj(data);
+
+        // Set the values from API
         methods.setValue("cnpj.fantasy_name", data.alias);
         methods.setValue("cnpj.social_name", data.company.name);
         methods.setValue("cnpj.status", [
           { id: data.status.text, name: data.status.text },
         ]);
+
+        setDisabledFields({
+          social_name: true,
+          fantasy_name: true,
+          status: true,
+          state_registration: false,
+          municipal_registration: false,
+        });
       }
 
       methods.setValue("document.type", "cnpj");
@@ -393,5 +416,6 @@ export function useCreateAccountForm() {
     selectedControlled,
     debouncedValidationHolding,
     debouncedValidationControlled,
+    disabledFields,
   };
 }
