@@ -1,3 +1,4 @@
+"use client"
 import { IHistorical } from "@/app/lib/@backend/domain";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
 import { ArrowDownTrayIcon, EnvelopeIcon, PaperClipIcon, PhoneIcon } from "@heroicons/react/24/outline";
@@ -6,9 +7,10 @@ import { WhatsappIcon } from "../../svg/whatsapp-icon";
 
 type TimelineProps = {
   historical: IHistorical[];
+  onClickButtonDownload: (id: string, name: string) => void
 };
 
-export function TimelineItem({ historical }: TimelineProps) {
+export function TimelineItem({ historical, onClickButtonDownload }: TimelineProps) {
   const formatDate = (date: string | Date) =>
     new Date(typeof date === "string" ? date : date.toISOString()).toLocaleString("pt-BR", {
       day: "2-digit",
@@ -110,23 +112,25 @@ export function TimelineItem({ historical }: TimelineProps) {
                     {entry.description && <p>{entry.description}</p>}
 
 
-                   {entry.file && (
+                   {entry.file && entry.file && (
                       <div className="mt-4 p-3 border border-gray-200 rounded-md bg-gray-50 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <PaperClipIcon className="w-5 h-5 text-gray-400" />
                           <span className="text-sm text-gray-700">{entry.file.name}</span>
                         </div>
-                        <a
-                          href={entry.file.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          download
-                        >
-                          <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                        
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            type="button"
+                            onClick={() => entry.file?.id && entry.file.name && onClickButtonDownload(entry.file.id, entry.file.name)}
+                            className="flex items-center gap-1"
+                            disabled={!entry.file?.url || !entry.file?.id}
+                          >
                             <ArrowDownTrayIcon className="w-4 h-4" />
                             Baixar
                           </Button>
-                        </a>
+                        
                       </div>
                     )}
 
