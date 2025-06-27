@@ -27,7 +27,8 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
     setSelectContact, 
     selectContact,
     closeModal,
-    errors
+    errors,
+    handleDownload
   } = useCreateHistoricalForm({accountId});
 
   return (
@@ -67,7 +68,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
           </div>
         </div>
       </form>
-      <TimelineItem historical={historical} />
+      <TimelineItem onClickButtonDownload={(id: string, name: string) =>  handleDownload(id, name)} historical={historical} />
       <CreateAnnexHistoricalModal onFileUploadSuccess={handleFileChange} open={open} closeModal={closeModal} />
     </div>
   );

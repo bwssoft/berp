@@ -1,7 +1,8 @@
 "use client"
-import { createOneHistorical } from "@/app/lib/@backend/action";
+import { createOneHistorical, downloadAccountAttachmentHistorical } from "@/app/lib/@backend/action";
 import { ContactSelection } from "@/app/lib/@backend/domain";
 import { useAuth } from "@/app/lib/@frontend/context";
+import { toast } from "@/app/lib/@frontend/hook";
 import { useCreateAnnexHistoricalModal } from "@/app/lib/@frontend/ui/modal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -25,7 +26,7 @@ export function useCreateHistoricalForm({accountId}:Props) {
   })
   const { openModal, open, closeModal } = useCreateAnnexHistoricalModal()
   const {user} = useAuth()
-  const [file, setFile] = useState<{name: string, url: string} | undefined>()
+  const [file, setFile] = useState<{name: string, url: string, id: string} | undefined>()
   const [selectContact, setSelectContact] = useState<ContactSelection>();
 
   const onSubmit = handleSubmit(async (data) => {
@@ -44,13 +45,65 @@ export function useCreateHistoricalForm({accountId}:Props) {
     })
   })
 
-  const handleFileChange = (name: string, url: string) => {
+  const handleFileChange = (name: string, url: string, id: string) => {
     setFile({
       name,
-      url
+      url,
+      id
     })
     closeModal()
   }
+
+  const handleDownload = async (id: string, name: string) => {
+    try {
+      if (!id) {
+        toast({
+          title: "Erro",
+          description: "ID do anexo não encontrado",
+          variant: "error",
+        });
+        return;
+      }
+
+      toast({
+        title: "Download iniciado",
+        description: `Baixando ${name}...`,
+        variant: "default",
+      });
+
+      const result = await downloadAccountAttachmentHistorical(id);
+      console.log(result);
+
+      if (result.success && result.data) {
+        const uint8Array = new Uint8Array(result.data);
+        const blob = new Blob([uint8Array], { type: result.contentType });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        toast({
+          title: "Sucesso",
+          description: `${name} baixado com sucesso`,
+          variant: "success",
+        });
+      } else {
+        throw new Error("Falha no retorno da API");
+      }
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      toast({
+        title: "Erro",
+        description: "Falha ao fazer download do arquivo",
+        variant: "error",
+      });
+    }
+  };
   
   return {
     onSubmit,
@@ -62,6 +115,7 @@ export function useCreateHistoricalForm({accountId}:Props) {
     setSelectContact,
     selectContact,
     closeModal,
-    errors
+    errors,
+    handleDownload
   }
 }

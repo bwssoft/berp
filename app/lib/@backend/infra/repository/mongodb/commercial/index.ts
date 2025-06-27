@@ -7,5 +7,4 @@ export * from "./address.repository";
 export * from "./contact.repository";
 export * from "./account.repository";
 export * from "./historical.repository";
-export * from "./account-attachment-historical.repository";
 export * from "./account-attachment.repository";

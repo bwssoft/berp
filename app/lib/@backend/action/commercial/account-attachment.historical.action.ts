@@ -44,7 +44,7 @@ export async function createAccountAttachmentHistorical(
     // Revalidate the account attachments page to show the new attachment
     revalidatePath("/commercial/account/management/account-attachments");
 
-    return { success: true, fileUrl, name };
+    return { success: true, fileUrl, name, id };
   } catch (error) {
     console.error("Error in createAccountAttachment action:", error);
     return { success: false, error: "Failed to upload attachment" };

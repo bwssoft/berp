@@ -8,3 +8,4 @@ export * from "./account-attachment.action";
 export * from "./account-attachment.find.action";
 export * from "./account-attachment.download.action";
 export * from "./historical.action";
+export * from "./account-attachment-historical.download.action";

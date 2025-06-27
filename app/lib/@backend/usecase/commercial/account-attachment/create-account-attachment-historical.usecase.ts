@@ -8,8 +8,7 @@ import { createOneAuditUsecase } from "../../admin/audit";
 interface CreateAccountAttachmentHistoricalUseCaseProps {
   accountAttachmentObjectRepository: IAccountAttachmentObjectRepository;
 }
-
-import { accountAttachmentHistoricalRepository } from "../../../infra";
+import { accountAttachmentRepository } from "@/app/lib/@backend/infra/repository/mongodb/commercial/account-attachment.repository";
 
 export class CreateAccountAttachmentHistoricalUseCase {
   private accountAttachmentObjectRepository: IAccountAttachmentObjectRepository;
@@ -18,7 +17,7 @@ export class CreateAccountAttachmentHistoricalUseCase {
   constructor(props: CreateAccountAttachmentHistoricalUseCaseProps) {
     this.accountAttachmentObjectRepository =
       props.accountAttachmentObjectRepository;
-    this.accountAttachmentHistoricalRepository = accountAttachmentHistoricalRepository;
+    this.accountAttachmentHistoricalRepository = accountAttachmentRepository;
   }
 
   async execute(params: {
@@ -100,7 +99,7 @@ export class CreateAccountAttachmentHistoricalUseCase {
   }
 }
 
-class CreateAccountAttachmentHistoricalUseCaseImpl extends CreateAccountAttachmentHistoricalUseCase {
+class CreateAccountAttachmentUseCaseImpl extends CreateAccountAttachmentHistoricalUseCase {
   constructor() {
     const {
       accountAttachmentObjectRepository,
@@ -109,6 +108,6 @@ class CreateAccountAttachmentHistoricalUseCaseImpl extends CreateAccountAttachme
   }
 }
 
-export const createAccountAttachmentHistoricalUsecase = singleton(
-  CreateAccountAttachmentHistoricalUseCaseImpl
+export const createAccountAttachmentUsecase = singleton(
+  CreateAccountAttachmentUseCaseImpl
 );
