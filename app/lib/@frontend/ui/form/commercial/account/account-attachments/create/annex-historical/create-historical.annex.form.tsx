@@ -7,7 +7,7 @@ import { useCreateAnnexHistoricalForm } from "./use-create-historical.annex.form
 
 interface CreateAnnexHistoricalFormProps {
   closeModal: () => void;
-  onFileUploadSuccess?: (fileUrl: string) => void;
+  onFileUploadSuccess?: (name: string, url: string, id: string) => void;
 }
 
 export function CreateAnnexHistoricalForm({ closeModal, onFileUploadSuccess }: CreateAnnexHistoricalFormProps) {
