@@ -10,6 +10,7 @@ import { Button, Dialog } from "../../../component";
 import { IAddress } from "@/app/lib/@backend/domain";
 import { AddressUpdateModal } from "../../../modal/comercial/address/update";
 import { useAddressModal } from "../../../modal/comercial/address/use-address.modal";
+import { toast } from "@/app/lib/@frontend/hook";
 
 interface AddressCardProps {
     title?: string;
@@ -53,10 +54,18 @@ export function AddressCard({
             navigator.clipboard
                 .writeText(text)
                 .then(() => {
-                    console.log("Endereço copiado com sucesso");
+                    toast({
+                        title: "Sucesso!",
+                        description: "Endereço copiado com sucesso!",
+                        variant: "success",
+                    });
                 })
                 .catch(() => {
-                    console.error("Falha ao copiar o endereço.");
+                    toast({
+                        title: "Falha!",
+                        description: "Endereço copiado com sucesso!",
+                        variant: "error",
+                    });
                 });
         }
     };
