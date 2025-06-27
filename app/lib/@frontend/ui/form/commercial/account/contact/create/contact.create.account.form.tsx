@@ -26,6 +26,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
     handlePreferredContact,
     handleRemove,
     setTempContact,
+    formState: { errors },
   } = useCreateContactAccount(closeModal ?? (() => {}));
 
   return (
@@ -47,16 +48,41 @@ export function CreateContactAccountForm({ closeModal }: Props) {
         )}
       />
 
-      <Input label={"Nome"} {...register("name")} />
+      <Input
+        placeholder="Digite o nome do contato"
+        label={"Nome"}
+        {...register("name")}
+        error={errors.name?.message}
+      />
 
-      <Input label={"Cargo/Relação"} {...register("positionOrRelation")} />
+      <Input
+        placeholder="Digite o cargo ou relação"
+        label={"Cargo/Relação"}
+        {...register("positionOrRelation")}
+        error={errors.positionOrRelation?.message}
+      />
 
-      <Input label={"Área"} {...register("department")} />
+      <Input
+        placeholder="Digite departamento"
+        label={"Área"}
+        {...register("department")}
+        error={errors.department?.message}
+      />
 
       {watch("contractEnabled") && (
         <>
-          <Input label={"CPF"} {...register("cpf")} />
-          <Input label={"RG"} {...register("rg")} />
+          <Input
+            placeholder="Digite o CPF do contato"
+            label={"CPF"}
+            {...register("cpf")}
+            error={errors.cpf?.message}
+          />
+          <Input
+            placeholder="Digite o RG do contato"
+            label={"RG"}
+            {...register("rg")}
+            error={errors.rg?.message}
+          />
         </>
       )}
 
@@ -89,6 +115,8 @@ export function CreateContactAccountForm({ closeModal }: Props) {
               contact: e.target.value,
             }))
           }
+          placeholder="Adicione o contato"
+          error={errors.contactItems?.message}
         />
 
         <div
@@ -177,6 +205,14 @@ export function CreateContactAccountForm({ closeModal }: Props) {
             />
           )}
         />
+      </div>
+
+      <div>
+        {errors.contactFor && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.contactFor.message}
+          </p>
+        )}
       </div>
 
       <div className="flex justify-end gap-4 w-full">
