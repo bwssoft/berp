@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import {
   Label,
@@ -57,7 +57,7 @@ export function Select<T>(props: {
               <span className="block truncate">
                 {selected
                   ? valueExtractor(selected)
-                  : placeholder ?? "Selecione uma opção"}
+                  : (placeholder ?? "Selecione uma opção")}
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon
@@ -114,7 +114,7 @@ export function Select<T>(props: {
               </ListboxOptions>
             </Transition>
           </div>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
         </div>
       )}
     </Listbox>

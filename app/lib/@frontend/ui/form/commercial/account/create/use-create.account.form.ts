@@ -276,16 +276,6 @@ export function useCreateAccountForm() {
   );
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
-    // const holding = dataHolding?.find(
-    //   (item) => item.taxId === data.cnpj?.economic_group_holding?.taxId
-    // );
-
-    // const controlleds = dataControlled?.filter((item) =>
-    //   data.cnpj?.economic_group_controlled?.some(
-    //     (controlled) => controlled.taxId === item.taxId
-    //   )
-    // );
-
     const address = dataCnpj?.address;
     const contact = dataCnpj?.phones[0];
 
@@ -357,65 +347,17 @@ export function useCreateAccountForm() {
           (await updateOneAccount({ id }, { contacts: [contactCnpj.success] }));
       }
 
-      // // Contatos da holding
-      // if (holding?.phones?.length) {
-      //   for (const phone of holding.phones) {
-      //     const result = await createOneContact({
-      //       accountId: id,
-      //       name: holding.alias,
-      //       contractEnabled: false,
-      //       positionOrRelation: "",
-      //       contactFor: ["Comercial"],
-      //       contactItems: [
-      //         {
-      //           id: crypto.randomUUID(),
-      //           contact: `${phone.area}${phone.number}`,
-      //           type: "Telefone Comercial",
-      //           preferredContact: { phone: true },
-      //         },
-      //       ],
-      //     });
-
-      //     if (result.success) {
-      //       allContacts.push(result.success);
-      //     }
-      //   }
-      // }
-
-      // // Contatos das controladas
-      // for (const controlled of controlleds!) {
-      //   if (!controlled.phones?.length) continue;
-
-      //   for (const phone of controlled.phones) {
-      //     const result = await createOneContact({
-      //       accountId: id,
-      //       name: controlled.alias,
-      //       contractEnabled: false,
-      //       positionOrRelation: "",
-      //       contactFor: ["Comercial"],
-      //       contactItems: [
-      //         {
-      //           id: crypto.randomUUID(),
-      //           contact: `${phone.area}${phone.number}`,
-      //           type: "Telefone Comercial",
-      //           preferredContact: { phone: true },
-      //         },
-      //       ],
-      //     });
-
-      //     if (result.success) {
-      //       allContacts.push(result.success);
-      //     }
-      //   }
-      // }
-
       router.push(`/commercial/account/form/create/tab/address?id=${id}`);
     }
 
     // Erros
     if (error) {
       if (error.global) {
-        toast({ title: "Erro!", description: error.global, variant: "error" });
+        toast({
+          title: "Erro!",
+          description: error.global,
+          variant: "error",
+        });
       }
 
       Object.entries(error).forEach(([key, message]) => {
