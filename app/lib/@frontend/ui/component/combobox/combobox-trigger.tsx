@@ -18,7 +18,7 @@ export const ComboboxTrigger = React.forwardRef<
   return (
     <PopoverTrigger ref={ref} {...rest} className="flex w-full flex-col">
       {label && (
-        <label className="mb-1 text-start text-sm font-medium text-gray-900">
+        <label className="mb-3 text-start text-sm font-medium text-gray-900">
           {label}
         </label>
       )}

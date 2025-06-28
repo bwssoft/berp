@@ -40,6 +40,7 @@
     "axios": "^1.7.4",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
+    "date-fns": "^4.1.0",
     "exceljs": "^4.4.0",
     "firebase": "^10.12.2",
     "flowbite": "^2.3.0",

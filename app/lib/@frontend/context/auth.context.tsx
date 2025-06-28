@@ -13,6 +13,7 @@ interface AuthContextType {
   user: AuthUser | undefined;
   profile: IProfile | undefined;
   changeProfile: (input: IProfile) => void;
+  refreshCurrentProfile: () => Promise<boolean>;
   navBarItems: {
     name: string;
     onClick?: () => void;
@@ -31,12 +32,51 @@ export const AuthProvider = ({
   session: Session | null;
   children: React.ReactNode;
 }) => {
-  const { data, update } = useSession();
+  const { data, update, status } = useSession();
 
   const changeProfile = async (input: IProfile) => {
     await update({
       user: { ...data?.user, current_profile: input },
     });
+  };
+  
+  const refreshCurrentProfile = async (): Promise<boolean> => {
+    try {
+      if (!data?.user?.current_profile?.id) {
+        console.warn("Cannot refresh profile: No current profile in session");
+        return false;
+      }
+      
+      // Import locally to avoid circular dependencies
+      const { findOneProfile } = await import("@/app/lib/@backend/action");
+      
+      // Get the latest profile data
+      const profileId = data.user.current_profile.id;
+      console.log("Refreshing profile with ID:", profileId);
+      const updatedProfile = await findOneProfile({ id: profileId });
+      
+      if (!updatedProfile) {
+        console.error("Failed to refresh profile: Profile not found");
+        return false;
+      }
+      
+      // Log the updated profile permissions for debugging
+      console.log("Updated profile permissions:", updatedProfile.locked_control_code);
+      
+      // Update the session with fresh profile data
+      await update({
+        user: {
+          ...data.user,
+          current_profile: updatedProfile,
+        },
+      });
+      
+      console.log("Profile refreshed successfully");
+      return true;
+    } catch (error) {
+      console.error("Failed to refresh profile:", error);
+      return false;
+    }
   };
 
   const navBarItems: any[] = useMemo(
@@ -83,6 +123,7 @@ export const AuthProvider = ({
         user: data?.user ?? session?.user,
         profile: data?.user?.current_profile ?? session?.user?.current_profile,
         changeProfile,
+        refreshCurrentProfile,
         navBarItems,
         navigationByProfile,
         restrictFeatureByProfile,

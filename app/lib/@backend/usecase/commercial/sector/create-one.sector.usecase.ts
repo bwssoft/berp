@@ -1,3 +1,4 @@
+// app/lib/@backend/usecase/commercial/sector/create-one-sector.usecase.ts
 import { singleton } from "@/app/lib/util/singleton";
 import { ISector, ISectorRepository } from "@/app/lib/@backend/domain";
 import { sectorRepository } from "../../../infra/repository";
@@ -9,13 +10,18 @@ class CreateOneSectorUsecase {
         this.repository = sectorRepository;
     }
 
-    async execute(input: Omit<ISector, "id" | "created_at" | "updated_at">) {
-        const sector = {
+    async execute(
+        input: Omit<ISector, "id" | "created_at" | "updated_at">
+    ): Promise<ISector> {
+        const sector: ISector = {
             ...input,
             id: crypto.randomUUID(),
+            active: true,
             created_at: new Date(),
         };
-        return await this.repository.create(sector);
+        await this.repository.create(sector);
+
+        return sector;
     }
 }
 
