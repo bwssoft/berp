@@ -29,11 +29,11 @@ const schema = z.object({
   }),
   contacts: z.array(z.object({
     id: z.string(),
-    name: z.string(),
-    phone: z.string(),
-    email: z.string(),
     role: z.nativeEnum(ContactRoleEnum),
     department: z.nativeEnum(ContactDepartmentEnum),
+    phone: z.string(),
+    email: z.string(),
+    name: z.string(),
     can_sign_contract: z.boolean().default(false),
     can_receive_document: z.boolean().default(false),
     created_at: z.coerce.date()

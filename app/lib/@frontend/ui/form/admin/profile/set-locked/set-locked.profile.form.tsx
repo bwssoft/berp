@@ -12,7 +12,7 @@ interface Props {
 
 export function SetLockedProfileForm(props: Props) {
   const { control, profile } = props;
-  const { handleLocked } = useSetLockedProfileForm(props);
+  const { handleLocked, isUpdating } = useSetLockedProfileForm(props);
 
   return (
     <form>
@@ -20,7 +20,14 @@ export function SetLockedProfileForm(props: Props) {
         <Toggle
           value={profile.locked_control_code.includes(control.code)}
           onChange={handleLocked}
-          title={(value) => (value ? "Remover acesso" : "Conceder acesso")}
+          disabled={isUpdating}
+          title={(value) =>
+            isUpdating
+              ? "Atualizando..."
+              : value
+                ? "Remover acesso"
+                : "Conceder acesso"
+          }
         />
       ) : (
         <></>

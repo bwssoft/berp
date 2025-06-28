@@ -8,23 +8,59 @@ import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
 
 export function AccountCreateForm() {
-    const { methods } = useCreateAccountForm();
+  const {
+    methods,
+    onSubmit,
+    type,
+    handleCpfCnpj,
+    dataHolding,
+    buttonsState,
+    toggleButtonText,
+    dataControlled,
+    setSelectedControlled,
+    selectedControlled,
+    debouncedValidationHolding,
+    debouncedValidationControlled,
+    disabledFields,
+  } = useCreateAccountForm();
 
-    return (
-        <FormProvider {...methods}>
-            <form className="flex flex-col gap-4">
-                <DocumentAccountForm />
-                <CpfAccountForm />
-                <CNPJAccountForm />
+  const hasValidated = type && methods.getValues("document.type") === type;
 
-                <div className="flex gap-4">
-                    <Button type="button" variant="ghost">
-                        Cancelar
-                    </Button>
-                    <Button type="button">Salvar e próximo</Button>
-                </div>
-            </form>
-            <pre>{JSON.stringify(methods.watch(), null, 2)}</pre>
-        </FormProvider>
-    );
+  return (
+    <FormProvider {...methods}>
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={methods.handleSubmit(onSubmit)}
+      >
+        <DocumentAccountForm
+          textButton={buttonsState}
+          toggleButtonText={toggleButtonText}
+          onValidate={handleCpfCnpj}
+          type={type}
+        />
+
+        {hasValidated && type === "cpf" && <CpfAccountForm />}
+        {hasValidated && type === "cnpj" && (
+          <CNPJAccountForm
+            dataHolding={dataHolding || []}
+            setSelectedControlled={setSelectedControlled}
+            selectedControlled={selectedControlled}
+            dataControlled={dataControlled || []}
+            debouncedValidationHolding={debouncedValidationHolding}
+            debouncedValidationControlled={debouncedValidationControlled}
+            disabledFields={disabledFields}
+          />
+        )}
+
+        {hasValidated && (
+          <div className="flex gap-4">
+            <Button type="button" variant="ghost">
+              Cancelar
+            </Button>
+            <Button type="submit">Salvar e próximo</Button>
+          </div>
+        )}
+      </form>
+    </FormProvider>
+  );
 }

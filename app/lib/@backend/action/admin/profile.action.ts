@@ -25,11 +25,23 @@ export async function findManyProfile(
     limit?: number,
     sort?: Record<string, 1 | -1>
 ) {
-    return await findManyProfileUsecase.execute({ filter, page, limit, sort });
+    const result = await findManyProfileUsecase.execute({ filter, page, limit, sort });
+    return result;
 }
 
 export async function findOneProfile(input: Filter<IProfile>) {
-    return await findOneProfileUsecase.execute(input);
+    try {
+        const result = await findOneProfileUsecase.execute(input);
+        if (!result) {
+            return null;
+        }
+        return result;
+    } catch (error) {
+        console.error("Error in findOneProfile:", error);
+        throw error instanceof Error 
+            ? error 
+            : new Error("An unexpected error occurred while fetching the profile");
+    }
 }
 
 export async function setLockedControl(input: {
@@ -38,8 +50,24 @@ export async function setLockedControl(input: {
     operation: "add" | "remove";
     control_name: string;
 }) {
-    await setLockedControlProfileUsecase.execute(input);
-    revalidatePath("/admin/control");
+    try {
+        const result = await setLockedControlProfileUsecase.execute(input);
+        
+        // Revalidate both control and profile paths to ensure the UI updates correctly
+        revalidatePath("/admin/control");
+        revalidatePath("/admin/profile");
+        
+        if (!result.success) {
+            throw new Error(result.error || "Failed to update permissions");
+        }
+        
+        return result;
+    } catch (error) {
+        console.error("Error in setLockedControl:", error);
+        throw error instanceof Error 
+            ? error 
+            : new Error("An unexpected error occurred while updating permissions");
+    }
 }
 
 export async function activeProfile(input: { id: string; active: boolean }) {
