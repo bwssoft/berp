@@ -2,7 +2,15 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 import { CreateAccountFormSchema } from "./use-create.account.form";
-import { Input, Combobox, Button, Select } from "../../../../component";
+import {
+  Input,
+  Combobox,
+  Button,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+} from "../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import {
   SectorModal,
@@ -12,6 +20,14 @@ import { ICnpjaResponse } from "@/app/lib/@backend/domain";
 import { DebouncedFunc } from "lodash";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { useEffect, useState } from "react";
+import { SelectItem } from "@radix-ui/react-select";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../../../component/form";
 
 interface CNPJAccountFormProps {
   dataHolding: ICnpjaResponse[];
@@ -124,7 +140,7 @@ export function CNPJAccountForm({
         disabled={disabledFields.municipal_registration}
       />
       <div className="flex items-end gap-2">
-        <Controller
+        {/* <Controller
           control={control}
           name="cnpj.sector"
           render={({ field }) => (
@@ -138,6 +154,34 @@ export function CNPJAccountForm({
               onChange={(d) => field.onChange(d.name)}
               error={errors.cnpj?.sector?.message}
             />
+          )}
+        /> */}
+
+        <FormField
+          control={control}
+          name="cnpj.sector"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Setor</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value?.toString()}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o setor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sectorModal.enabledSectors.map((sector) => (
+                      <SelectItem key={sector.id} value={sector.name}>
+                        {sector.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
         {canShowSectorButton && (
