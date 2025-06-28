@@ -39,6 +39,7 @@ export function TechnologyAndConfigurationProfileSearchForm(props: Props) {
                   type="single"
                   defaultValue={technology ? [technology] : []}
                   placeholder="Escolha a tecnologia"
+                  modal={false}
                 />
               </div>
             </div>
@@ -63,6 +64,7 @@ export function TechnologyAndConfigurationProfileSearchForm(props: Props) {
                     configurationProfile ? [configurationProfile] : []
                   }
                   placeholder="Escolha o perfil de configuração"
+                  modal={false}
                 />
               </div>
             </div>

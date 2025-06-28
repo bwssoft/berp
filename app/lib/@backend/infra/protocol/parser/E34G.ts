@@ -64,8 +64,8 @@ type LockTypeProgression = {
 };
 
 type IgnitionByVoltage = {
-  t1: number;
-  t2: number;
+  initial: number;
+  final: number;
 };
 
 interface Check extends Object {
@@ -532,12 +532,12 @@ export class E34GParser {
     };
   }
   static ignition_by_voltage(input: string): IgnitionByVoltage | undefined {
-    const [t1, t2] = input.split(",");
-    if (!t1 || !t2) return undefined;
-    if (Number.isNaN(t1) || Number.isNaN(t2)) return undefined;
+    const [initial, final] = input.split(",");
+    if (!initial || !final) return undefined;
+    if (Number.isNaN(initial) || Number.isNaN(final)) return undefined;
     return {
-      t1: Number(t1),
-      t2: Number(t2),
+      initial: Number(initial),
+      final: Number(final),
     };
   }
 

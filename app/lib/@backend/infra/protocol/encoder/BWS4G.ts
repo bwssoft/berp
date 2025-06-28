@@ -91,12 +91,12 @@ export class BWS4GEncoder {
     return `WIAP=${input.address},${input.user},${input.password}\r\n`;
   }
 
-  static first_voltage(input: Voltage): string | undefined {
+  static virtual_ignition_12v(input: Voltage): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
       return `WIG12=${input.initial},${input.final}\r\n`;
   }
 
-  static second_voltage(input: Voltage): string | undefined {
+  static virtual_ignition_24v(input: Voltage): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
       return `WIG24=${input.initial},${input.final}\r\n`;
   }
@@ -111,17 +111,17 @@ export class BWS4GEncoder {
     return `WFV=${input}\r\n`;
   }
 
-  static accelerometer_sensitivity_on(input: number): string | undefined {
+  static accel_threshold_for_ignition_on(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFTON=${input}\r\n`;
   }
 
-  static accelerometer_sensitivity_off(input: number): string | undefined {
+  static accel_threshold_for_ignition_off(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFTOF=${input}\r\n`;
   }
 
-  static accelerometer_sensitivity_violated(input: number): string | undefined {
+  static accel_threshold_for_movement(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFAV=${input}\r\n`;
   }
@@ -141,14 +141,15 @@ export class BWS4GEncoder {
       dns_primary: BWS4GEncoder.dns_primary,
       dns_secondary: BWS4GEncoder.dns_secondary,
       apn: BWS4GEncoder.apn,
-      first_voltage: BWS4GEncoder.first_voltage,
-      second_voltage: BWS4GEncoder.second_voltage,
+      virtual_ignition_12v: BWS4GEncoder.virtual_ignition_12v,
+      virtual_ignition_24v: BWS4GEncoder.virtual_ignition_24v,
       angle: BWS4GEncoder.angle,
       speed: BWS4GEncoder.speed,
-      accelerometer_sensitivity_on: BWS4GEncoder.accelerometer_sensitivity_on,
-      accelerometer_sensitivity_off: BWS4GEncoder.accelerometer_sensitivity_off,
-      accelerometer_sensitivity_violated:
-        BWS4GEncoder.accelerometer_sensitivity_violated,
+      accel_threshold_for_ignition_on:
+        BWS4GEncoder.accel_threshold_for_ignition_on,
+      accel_threshold_for_ignition_off:
+        BWS4GEncoder.accel_threshold_for_ignition_off,
+      accel_threshold_for_movement: BWS4GEncoder.accel_threshold_for_movement,
     };
   }
 

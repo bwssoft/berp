@@ -1,23 +1,44 @@
 "use client";
 
-import React from "react";
-import { Button, Combobox, Modal, ModalBody, ModalContent } from "../../../component";
-import { SectorTable } from "../../../table/commercial/sector";
 import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
-import { Controller } from "react-hook-form";
+import {
+    Button,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+} from "../../../component";
+import { SectorTable } from "../../../table/commercial/sector";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { UseFormRegister, FieldErrors } from "react-hook-form";
 
-interface SectorModalProps {
+interface FormValues {
+    name: string;
+}
+
+interface Props {
     open: boolean;
     closeModal: () => void;
     sectors: ISector[];
+    register: UseFormRegister<FormValues>;
+    errors: FieldErrors<FormValues>;
+    handleAdd: () => void;
+    isPending: boolean;
+    handleToggle: (s: ISector) => void;
+    handleSave: () => void;
 }
-const sectorOptions = [
-    { id: "retail", name: "Varejo" },
-    { id: "industry", name: "Indústria" },
-    { id: "services", name: "Serviços" },
-];
-export function SectorModal({ open, closeModal, sectors }: SectorModalProps) {
+
+export function SectorModal({
+    open,
+    closeModal,
+    sectors,
+    register,
+    errors,
+    handleAdd,
+    isPending,
+    handleToggle,
+    handleSave,
+}: Props) {
     return (
         <Modal
             open={open}
@@ -28,41 +49,38 @@ export function SectorModal({ open, closeModal, sectors }: SectorModalProps) {
         >
             <ModalContent>
                 <ModalBody>
-                    <div>
-                        <div className="flex items-end gap-2 mb-4">
-                            <Controller
-                                // control={control}
-                                name="cnpj.sector"
-                                render={({ field }) => (
-                                    <Combobox
-                                        label="Tipo"
-                                        placeholder="Selecione o tipo de setor"
-                                        className="mt-1 text-left"
-                                        data={sectorOptions}
-                                        onOptionChange={field.onChange}
-                                        keyExtractor={(item) => item.id}
-                                        displayValueGetter={(item) => item.name}
-                                    />
-                                )}
-                            />
+                    <div className="flex items-end gap-2 mb-4">
+                        <Input
+                            {...register("name")}
+                            label="Tipo"
+                            placeholder="Digite o tipo de setor"
+                            error={errors.name?.message}
+                        />
+                        <Button
+                            type="button"
+                            title="Novo Setor"
+                            variant="ghost"
+                            disabled={isPending}
+                            onClick={handleAdd}
+                            className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50"
+                        >
+                            <PlusIcon className="size-5" />
+                        </Button>
+                    </div>
 
-                            <Button
-                                type="button"
-                                title="Novo Setor"
-                                variant="ghost"
-                                onClick={() => {}}
-                                className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                            >
-                                <PlusIcon className="size-5" />
-                            </Button>
-                        </div>
-                        <SectorTable initialData={sectors} />
-                        <div className="flex gap-4 my-4 justify-end">
-                            <Button type="button" variant="ghost">
-                                Cancelar
-                            </Button>
-                            <Button type="button">Salvar</Button>
-                        </div>
+                    <SectorTable data={sectors} onToggle={handleToggle} />
+
+                    <div className="flex gap-4 my-4 justify-end">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={closeModal}
+                        >
+                            Cancelar
+                        </Button>
+                        <Button type="button" onClick={handleSave}>
+                            Salvar
+                        </Button>
                     </div>
                 </ModalBody>
             </ModalContent>

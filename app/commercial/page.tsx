@@ -1,6 +1,10 @@
 "use client";
 
-import { BriefcaseIcon, DocumentTextIcon } from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
+import {
+  BriefcaseIcon,
+  DocumentTextIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
 import { GridList } from "../lib/@frontend/ui/component";
 import { useAuth } from "../lib/@frontend/context";
 
@@ -25,11 +29,22 @@ const actions = [
     description:
       "Crie, edite e acompanhe propostas comerciais de forma organizada.",
   },
+  {
+    title: "Contas",
+    href: "/commercial/account",
+    code: "commercial:accounts",
+    icon: UserGroupIcon, // representa gestão de contas comerciais
+    iconForeground: "text-purple-700",
+    iconBackground: "bg-purple-50",
+    description:
+      "Gerencie contas comerciais e seus anexos de forma centralizada.",
+  },
 ];
 
 export default function Page() {
   const { navigationByProfile } = useAuth();
   const options = navigationByProfile(actions);
+  console.log("🚀 ~ Page ~ options:", options);
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

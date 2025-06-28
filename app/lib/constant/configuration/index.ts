@@ -21,11 +21,6 @@ const type: { [key in IConfigurationProfile["type"]]: string } = {
   OTHER: "Outro",
 };
 
-const useCase: { [key in IConfigurationProfile["use_case"]]: string } = {
-  CLIENT: "Cliente",
-  INTERNAL: "Interno",
-};
-
 const timezones = [
   { label: "(UTC-12:00) Linha Internacional de Data Oeste", value: -12 },
   { label: "(UTC-11:00) Samoa", value: -11 },
@@ -62,6 +57,5 @@ export const configurationProfileConstants = {
     DM_E3_PLUS_4G: configurationProfileE3Plus4G,
   },
   type,
-  useCase,
   timezones,
 };

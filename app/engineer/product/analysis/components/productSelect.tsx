@@ -1,7 +1,13 @@
 "use client";
 
 import { IProduct } from "@/app/lib/@backend/domain";
-import { Select } from "@/app/lib/@frontend/ui/component";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/lib/@frontend/ui/component";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
@@ -24,13 +30,17 @@ export function ProductSelect(props: Props) {
     replace(`${pathname}?${params.toString()}`);
   };
   return (
-    <Select
-      data={products}
-      keyExtractor={(i) => i.id}
-      valueExtractor={(i) => i.name}
-      onChange={(i) => handleChange(i.id)}
-      name="product-select"
-      placeholder="Selecione algum produto para pesquisar"
-    />
+    <Select onValueChange={(id) => handleChange(id)}>
+      <SelectTrigger>
+        <SelectValue placeholder="Selecione algum produto para pesquisar" />
+      </SelectTrigger>
+      <SelectContent>
+        {products.map((product) => (
+          <SelectItem key={product.id} value={product.id}>
+            {product.code} - {product.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

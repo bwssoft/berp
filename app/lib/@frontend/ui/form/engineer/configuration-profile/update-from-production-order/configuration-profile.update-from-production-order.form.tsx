@@ -127,7 +127,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       APN
                     </label>
                     <input
-                      {...register("general.apn.address")}
+                      {...register("config.general.apn.address")}
                       id="apn_address"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="bws.br"
@@ -141,7 +141,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Usuário
                     </label>
                     <input
-                      {...register("general.apn.user")}
+                      {...register("config.general.apn.user")}
                       id="apn_address"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="bws"
@@ -155,7 +155,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Senha
                     </label>
                     <input
-                      {...register("general.apn.password")}
+                      {...register("config.general.apn.password")}
                       id="apn_password"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="bws"
@@ -178,7 +178,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       IP Primário
                     </label>
                     <input
-                      {...register("general.ip_primary.ip")}
+                      {...register("config.general.ip_primary.ip")}
                       id="primary_ip"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="127.0.0.1"
@@ -192,7 +192,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Porta Primária
                     </label>
                     <input
-                      {...register("general.ip_primary.port")}
+                      {...register("config.general.ip_primary.port")}
                       id="primary_ip_port"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="3000"
@@ -208,7 +208,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       IP Secundário
                     </label>
                     <input
-                      {...register("general.ip_secondary.ip")}
+                      {...register("config.general.ip_secondary.ip")}
                       id="secondary_ip"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="127.0.0.1"
@@ -222,7 +222,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Porta Secundária
                     </label>
                     <input
-                      {...register("general.ip_secondary.port")}
+                      {...register("config.general.ip_secondary.port")}
                       id="secondary_ip_port"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="3001"
@@ -245,7 +245,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       DNS
                     </label>
                     <input
-                      {...register("general.dns_primary.address")}
+                      {...register("config.general.dns_primary.address")}
                       id="dns_address"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="bwfleets.com"
@@ -259,7 +259,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Porta
                     </label>
                     <input
-                      {...register("general.dns_primary.port")}
+                      {...register("config.general.dns_primary.port")}
                       id="dns_port"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="3000"
@@ -282,7 +282,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                       Ligado (Segundos)
                     </label>
                     <input
-                      {...register("general.data_transmission_on")}
+                      {...register("config.general.data_transmission_on")}
                       id="data_transmission.on"
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="60"
@@ -297,7 +297,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                     </label>
                     <input
                       id="data_transmission.off"
-                      {...register("general.data_transmission_off")}
+                      {...register("config.general.data_transmission_off")}
                       className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                       placeholder="7200"
                     />
@@ -316,7 +316,7 @@ export function ConfigurationProfileUpdateFromProductionOrderForm(
                 <input
                   type="text"
                   id="keep_alive"
-                  {...register("general.keep_alive")}
+                  {...register("config.general.keep_alive")}
                   className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
                   placeholder="60"
                 />

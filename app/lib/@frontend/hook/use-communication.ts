@@ -1,21 +1,21 @@
 import { useCallback } from "react";
 import { sleep } from "../../util";
 
-export interface Message<TransformReturn = any> {
-  message: string;
+/**
+ * R = retorno de transform;
+ * M = shape de metadados extras.
+ */
+export type Message<R = any, M extends object = {}> = M & {
   key: string;
-  transform?: (raw: any) => TransformReturn;
+  command: string;
+  transform?: (raw: any) => R;
   timeout?: number;
-}
+};
 
-export interface Props<Transport> {
+export interface Props<Transport, M extends object = {}> {
   openTransport: (transport: Transport) => Promise<void>;
   closeTransport: (transport: Transport) => Promise<void>;
-  sendMessage: (
-    transport: Transport,
-    message: string,
-    timeout?: number
-  ) => Promise<any>;
+  sendMessage: (transport: Transport, msg: Message<any, M>) => Promise<any>;
   options?: {
     delayBetweenMessages?: number;
     maxRetriesPerMessage?: number;
@@ -23,14 +23,11 @@ export interface Props<Transport> {
   };
 }
 
-type MessagesResult<M extends readonly Message<any>[]> = {
-  [P in M[number] as P["key"]]: P["transform"] extends (raw: any) => infer R
-    ? R | undefined
-    : any | undefined;
-};
-
-export function useCommunication<Transport>(props: Props<Transport>) {
+export function useCommunication<Transport, M extends object = {}>(
+  props: Props<Transport, M>
+) {
   const { openTransport, closeTransport, sendMessage, options = {} } = props;
+
   const {
     delayBetweenMessages = 150,
     maxRetriesPerMessage = 3,
@@ -38,23 +35,23 @@ export function useCommunication<Transport>(props: Props<Transport>) {
   } = options;
 
   const sendSingleMessage = useCallback(
-    async <TransformReturn>(
+    async <R>(
       transport: Transport,
-      message: string,
-      transform: (raw: any) => TransformReturn,
-      timeout?: number
-    ): Promise<TransformReturn | undefined> => {
+      msg: Message<R, M>
+    ): Promise<R | undefined> => {
       let attempts = 0;
       while (attempts < maxRetriesPerMessage) {
         try {
-          const rawResponse = await sendMessage(transport, message, timeout);
-          if (rawResponse != null) {
-            return transform(rawResponse);
+          const raw = await sendMessage(transport, msg);
+          if (raw != null && msg.transform) {
+            return msg.transform(raw);
+          } else if (raw != null) {
+            return raw;
           }
           return undefined;
         } catch (error) {
           console.error(
-            `ERROR [sendSingleMessage] tentativa ${attempts + 1} para a mensagem ${message}:`,
+            `ERROR [sendSingleMessage] tentativa ${attempts + 1} para "${msg.command}":`,
             error
           );
         }
@@ -66,39 +63,36 @@ export function useCommunication<Transport>(props: Props<Transport>) {
   );
 
   const sendMultipleMessages = useCallback(
-    async <M extends readonly Message<any>[]>(input: {
+    async <Msgs extends readonly Message<any, M>[]>(input: {
       transport: Transport;
-      messages: M;
+      messages: Msgs;
       depth?: number;
-    }): Promise<MessagesResult<M>> => {
+    }): Promise<{
+      [P in Msgs[number] as P["key"]]: P["transform"] extends (
+        r: any
+      ) => infer R
+        ? R
+        : any;
+    }> => {
       const { transport, messages, depth = 0 } = input;
       if (depth >= maxOverallRetries) {
-        throw new Error(
-          "Número máximo de tentativas atingido. Abortando execução."
-        );
+        throw new Error("Número máximo de tentativas atingido.");
       }
 
-      const responses = {} as MessagesResult<M>;
-
+      const results = {} as any;
       try {
         await openTransport(transport);
 
-        for (const { message, key, transform, timeout } of messages) {
-          const _transform = transform ?? ((raw: any) => raw);
-          const response = await sendSingleMessage(
-            transport,
-            message,
-            _transform,
-            timeout
-          );
-          responses[key as keyof MessagesResult<M>] = response as any;
+        for (const msg of messages) {
+          const res = await sendSingleMessage(transport, msg);
+          results[msg.key] = res;
           await sleep(delayBetweenMessages);
         }
 
         await closeTransport(transport);
-        return responses;
-      } catch (error) {
-        console.error("ERROR [sendMultipleMessages]", error);
+        return results;
+      } catch (err) {
+        console.error("ERROR [sendMultipleMessages]", err);
         await closeTransport(transport);
         return sendMultipleMessages({ transport, messages, depth: depth + 1 });
       }
@@ -106,14 +100,11 @@ export function useCommunication<Transport>(props: Props<Transport>) {
     [
       openTransport,
       closeTransport,
-      sendSingleMessage, // se estiver definido com useCallback ou estável
+      sendSingleMessage,
       delayBetweenMessages,
       maxOverallRetries,
     ]
   );
 
-  return {
-    sendMultipleMessages,
-    sendSingleMessage,
-  };
+  return { sendMultipleMessages, sendSingleMessage };
 }

@@ -23,3 +23,4 @@ export * from "./iterator-to-web-stream";
 export * from "./generate-random-password";
 export * from "./format-template-email";
 export * from "./format-template-reset-passwor-email";
+export * from "./is-valid-cep";
