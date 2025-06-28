@@ -39,7 +39,7 @@ export class NB2Parser {
 
     const value = serialValue.replace(/\s+/g, "");
 
-    return value.length ? value : undefined;
+    return value.length ? value.padStart(8, "0") : undefined;
   }
 
   /**
@@ -114,23 +114,6 @@ export class NB2Parser {
   }
 
   /**
-   * Extrai o valor do odômetro de uma string que contém "RODM=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do odômetro.
-   * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
-   */
-  static odometer(input: string): number | undefined {
-    const parts = input.split("RODM=");
-    if (parts.length < 2) return undefined;
-
-    const odometerValue = parts[1].trim();
-
-    const value = parseFloat(odometerValue);
-
-    return isNaN(value) ? undefined : value / 10;
-  }
-
-  /**
    * Extrai o valor do tempo de transmissão de ignição ligada de uma string que contém "RCN=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de transmissão de ignição ligada.
@@ -172,24 +155,6 @@ export class NB2Parser {
    */
   static data_transmission_event(input: string): number | undefined {
     const parts = input.split("RCE=");
-
-    if (parts.length < 2) return undefined;
-
-    const dataTransmissionEvent = parts[1].trim();
-
-    const value = parseFloat(dataTransmissionEvent);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor do tempo de sleep de uma string que contém "RCS=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do tempo de sleep.
-   * @returns O valor numérico do tempo de sleep ou undefined se o formato não for válido.
-   */
-  static sleep(input: string): number | undefined {
-    const parts = input.split("RCS=");
 
     if (parts.length < 2) return undefined;
 
@@ -301,12 +266,47 @@ export class NB2Parser {
   }
 
   /**
+   * Extrai o valor do tempo para inciar o sleep de uma string que contém "RCS=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do tempo para inicar o sleep.
+   * @returns O valor numérico do tempo para inicar o sleep ou undefined se o formato não for válido.
+   */
+  static time_to_sleep(input: string): number | undefined {
+    const parts = input.split("RCS=");
+
+    if (parts.length < 2) return undefined;
+
+    const dataTransmissionEvent = parts[1].trim();
+
+    const value = parseFloat(dataTransmissionEvent);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  /**
+   * Extrai o valor do odômetro de uma string que contém "RODM=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do odômetro.
+   * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
+   */
+  static odometer(input: string): number | undefined {
+    const parts = input.split("RODM=");
+    if (parts.length < 2) return undefined;
+
+    const odometerValue = parts[1].trim();
+
+    const value = parseFloat(odometerValue);
+
+    return isNaN(value) ? undefined : value / 10;
+  }
+
+  /**
    * Extrai o valor da tensão 12V de uma string que contém "RIG12=110,150"
    *
    * @param input - A string que contém a informação da tensão 12V.
    * @returns O valor numérico da tensão 12V ou undefined se o formato não for válido.
    */
-  static first_voltage(input: string) {
+  static virtual_ignition_12v(input: string) {
     const parts = input.split("RIG12=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -323,7 +323,7 @@ export class NB2Parser {
    * @param input - A string que contém a informação da tensão 24V.
    * @returns O valor numérico da tensão 24V ou undefined se o formato não for válido.
    */
-  static second_voltage(input: string) {
+  static virtual_ignition_24v(input: string) {
     const parts = input.split("RIG24=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -339,7 +339,7 @@ export class NB2Parser {
    * @param input - A string que contém a informação do ângulo.
    * @returns O valor numérico do ângulo ou undefined se o formato não for válido.
    */
-  static angle(input: string) {
+  static heading_detection_angle(input: string) {
     const parts = input.split("RFA=");
 
     if (parts.length < 2) return undefined;
@@ -357,7 +357,7 @@ export class NB2Parser {
    * @param input - A string que contém a informação da velocidade.
    * @returns O valor numérico da velocidade ou undefined se o formato não for válido.
    */
-  static speed(input: string) {
+  static speed_alert_threshold(input: string) {
     const parts = input.split("RFV=");
 
     if (parts.length < 2) return undefined;
@@ -375,7 +375,7 @@ export class NB2Parser {
    * @param input - A string que contém a informação da sensibilidade do acelerometro quando ligado.
    * @returns O valor numérico da sensibilidade do acelerometro quando ligado ou undefined se o formato não for válido.
    */
-  static accelerometer_sensitivity_on(input: string) {
+  static accel_threshold_for_ignition_on(input: string) {
     const parts = input.split("RFTON=");
 
     if (parts.length < 2) return undefined;
@@ -393,7 +393,7 @@ export class NB2Parser {
    * @param input - A string que contém a informação da sensibilidade do acelerometro quando desligado.
    * @returns O valor numérico da sensibilidade do acelerometro quando desligado ou undefined se o formato não for válido.
    */
-  static accelerometer_sensitivity_off(input: string) {
+  static accel_threshold_for_ignition_off(input: string) {
     const parts = input.split("RFTOF=");
 
     if (parts.length < 2) return undefined;
@@ -411,7 +411,7 @@ export class NB2Parser {
    * @param input - A string que contém a informação da sensibilidade do acelerometro quando violado.
    * @returns O valor numérico da sensibilidade do acelerometro quando violado ou undefined se o formato não for válido.
    */
-  static accelerometer_sensitivity_violated(input: string) {
+  static accel_threshold_for_movement(input: string) {
     const parts = input.split("RFAV=");
 
     if (parts.length < 2) return undefined;
@@ -429,7 +429,7 @@ export class NB2Parser {
    * @param input - A string que contém a informação da aceleração máxima.
    * @returns O valor numérico da aceleração máxima ou undefined se o formato não for válido.
    */
-  static maximum_acceleration(input: string) {
+  static harsh_acceleration_threshold(input: string) {
     const parts = input.split("RFMA=");
 
     if (parts.length < 2) return undefined;
@@ -447,7 +447,7 @@ export class NB2Parser {
    * @param input - A string que contém a informação da desaceleração máxima.
    * @returns O valor numérico da desaceleração máxima ou undefined se o formato não for válido.
    */
-  static maximum_deceleration(input: string) {
+  static harsh_braking_threshold(input: string) {
     const parts = input.split("RFMD=");
 
     if (parts.length < 2) return undefined;
@@ -459,16 +459,89 @@ export class NB2Parser {
     return isNaN(value) ? undefined : value;
   }
 
-  static input_1() {
-    return "" as any;
+  static input_1(input: string) {
+    const parts = input.split("RIN1=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_1 = parts[1].trim();
+
+    const value = parseFloat(input_1);
+
+    return isNaN(value) ? undefined : value;
   }
-  static input_2() {
-    return "" as any;
+
+  static input_2(input: string) {
+    const parts = input.split("RIN2=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_2 = parts[1].trim();
+
+    const value = parseFloat(input_2);
+
+    return isNaN(value) ? undefined : value;
   }
-  static input_3() {
-    return "" as any;
+
+  static input_3(input: string) {
+    const parts = input.split("RIN3=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_3 = parts[1].trim();
+
+    const value = parseFloat(input_3);
+
+    return isNaN(value) ? undefined : value;
   }
-  static input_4() {
-    return "" as any;
+
+  static input_4(input: string) {
+    const parts = input.split("RIN4=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_4 = parts[1].trim();
+
+    const value = parseFloat(input_4);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static full_configuration_table(input: string): string | undefined {
+    const parts = input.split("RC=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static full_functionality_table(input: string): string | undefined {
+    const parts = input.split("RF=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static sleep_mode(input: string) {
+    const parts = input.split("RFSM=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    if (value !== "00" && value !== "01") return undefined;
+
+    return value;
   }
 }

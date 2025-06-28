@@ -26,21 +26,6 @@ type Encoder =
   | { command: "dns_primary"; args: DNS };
 
 export class NB2Encoder {
-  static serial(input: string): string | undefined {
-    if (!input || typeof input !== "string") return undefined;
-    return `WINS=${input}\r\n`;
-  }
-
-  static imei(input: string): string | undefined {
-    if (!input || typeof input !== "string") return undefined;
-    return `WIMEI=${input}\r\n`;
-  }
-
-  static odometer(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WODM=${input}\r\n`;
-  }
-
   static data_transmission_on(input: number): string | undefined {
     if (!input || typeof input !== "number") return undefined;
     return `WCN=${input}\r\n`;
@@ -54,11 +39,6 @@ export class NB2Encoder {
   static data_transmission_event(input: number): string | undefined {
     if (!input || typeof input !== "number") return undefined;
     return `WCE=${input}\r\n`;
-  }
-
-  static sleep(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCS=${input}\r\n`;
   }
 
   static keep_alive(input: number): string | undefined {
@@ -91,39 +71,97 @@ export class NB2Encoder {
     return `WIAP=${input.address},${input.user},${input.password}\r\n`;
   }
 
-  static first_voltage(input: Voltage): string | undefined {
+  static time_to_sleep(input: number): string | undefined {
+    if (!input || typeof input !== "number") return undefined;
+    return `WCS=${input}\r\n`;
+  }
+
+  static odometer(input: number): string | undefined {
+    if (!input || typeof input !== "number") return undefined;
+    return `WODM=${input}\r\n`;
+  }
+
+  static virtual_ignition_12v(input: Voltage): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
       return `WIG12=${input.initial},${input.final}\r\n`;
   }
 
-  static second_voltage(input: Voltage): string | undefined {
+  static virtual_ignition_24v(input: Voltage): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
       return `WIG24=${input.initial},${input.final}\r\n`;
   }
 
-  static angle(input: number): string | undefined {
+  static heading_detection_angle(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFA=${input}\r\n`;
   }
 
-  static speed(input: number): string | undefined {
+  static speed_alert_threshold(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFV=${input}\r\n`;
   }
 
-  static accelerometer_sensitivity_on(input: number): string | undefined {
+  static accel_threshold_for_ignition_on(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFTON=${input}\r\n`;
   }
 
-  static accelerometer_sensitivity_off(input: number): string | undefined {
+  static accel_threshold_for_ignition_off(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFTOF=${input}\r\n`;
   }
 
-  static accelerometer_sensitivity_violated(input: number): string | undefined {
+  static accel_threshold_for_movement(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
     return `WFAV=${input}\r\n`;
+  }
+
+  static harsh_acceleration_threshold(input: number): string | undefined {
+    if (typeof input !== "number") return undefined;
+    return `WFMA=${input}\r\n`;
+  }
+  static harsh_braking_threshold(input: number): string | undefined {
+    if (typeof input !== "number") return undefined;
+    return `WFMD=${input}\r\n`;
+  }
+
+  static input_1(input: number): string {
+    return `WIN1=${input}`;
+  }
+
+  static input_2(input: number): string {
+    return `WIN2=${input}`;
+  }
+
+  static input_3(input: number): string {
+    return `WIN3=${input}`;
+  }
+
+  static input_4(input: number): string {
+    return `WIN4=${input}`;
+  }
+
+  static serial(input: string): string | undefined {
+    if (!input || typeof input !== "string") return undefined;
+    return `WINS=${input}\r\n`;
+  }
+
+  static imei(input: string): string | undefined {
+    if (!input || typeof input !== "string") return undefined;
+    return `WIMEI=${input}\r\n`;
+  }
+
+  static full_configuration_table(): string {
+    return "WC=";
+  }
+
+  static full_functionality_table(): string {
+    return "WF=";
+  }
+
+  static sleep_mode(input: string): string | undefined {
+    if (input !== "00" && input !== "01") return undefined;
+    return `WFSM=${input}\r`;
   }
 
   static commands() {
@@ -134,21 +172,28 @@ export class NB2Encoder {
       data_transmission_on: NB2Encoder.data_transmission_on,
       data_transmission_off: NB2Encoder.data_transmission_off,
       data_transmission_event: NB2Encoder.data_transmission_event,
-      sleep: NB2Encoder.sleep,
+      time_to_sleep: NB2Encoder.time_to_sleep,
       keep_alive: NB2Encoder.keep_alive,
       ip_primary: NB2Encoder.ip_primary,
       ip_secondary: NB2Encoder.ip_secondary,
       dns_primary: NB2Encoder.dns_primary,
       dns_secondary: NB2Encoder.dns_secondary,
       apn: NB2Encoder.apn,
-      first_voltage: NB2Encoder.first_voltage,
-      second_voltage: NB2Encoder.second_voltage,
-      angle: NB2Encoder.angle,
-      speed: NB2Encoder.speed,
-      accelerometer_sensitivity_on: NB2Encoder.accelerometer_sensitivity_on,
-      accelerometer_sensitivity_off: NB2Encoder.accelerometer_sensitivity_off,
-      accelerometer_sensitivity_violated:
-        NB2Encoder.accelerometer_sensitivity_violated,
+      virtual_ignition_12v: NB2Encoder.virtual_ignition_12v,
+      virtual_ignition_24v: NB2Encoder.virtual_ignition_24v,
+      heading_detection_angle: NB2Encoder.heading_detection_angle,
+      speed_alert_threshold: NB2Encoder.speed_alert_threshold,
+      accel_threshold_for_ignition_on:
+        NB2Encoder.accel_threshold_for_ignition_on,
+      accel_threshold_for_ignition_off:
+        NB2Encoder.accel_threshold_for_ignition_off,
+      accel_threshold_for_movement: NB2Encoder.accel_threshold_for_movement,
+      harsh_acceleration_threshold: NB2Encoder.harsh_acceleration_threshold,
+      harsh_braking_threshold: NB2Encoder.harsh_braking_threshold,
+      input_1: NB2Encoder.input_1,
+      input_2: NB2Encoder.input_2,
+      input_3: NB2Encoder.input_3,
+      input_4: NB2Encoder.input_4,
     };
   }
 

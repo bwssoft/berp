@@ -1,14 +1,10 @@
 import { useCallback } from "react";
 import { LORA, LORAParser, LORAEncoder } from "../../@backend/infra/protocol";
-import {
-  generateImei,
-  getRandomInt,
-  sleep,
-  typedObjectEntries,
-} from "../../util";
-import { useCommunication } from "./use-communication";
+import { sleep, typedObjectEntries } from "../../util";
+import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { IConfigurationProfile } from "../../@backend/domain";
+import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
 
@@ -69,21 +65,22 @@ export const useLora = () => {
     openTransport: async (transport) => {
       await openPort(transport, {
         baudRate: 115200,
-        stopBits: 2,
+        stopBits: 1,
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, message, timeout) => {
+    sendMessage: async (port, msg: Message<any, { check?: string }>) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      await writeToPort(port, message);
-      const response = await readResponse(reader, message, timeout);
+      const { command, timeout, check } = msg;
+      await writeToPort(port, command);
+      const response = await readResponse(reader, check ?? command, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 550,
+      delayBetweenMessages: 100,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -93,20 +90,61 @@ export const useLora = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "RINS\r", key: "serial", transform: LORAParser.serial },
         {
-          message: "RFW\r",
+          key: "serial",
+          command: `RINS\r`,
+          transform: LORAParser.serial,
+        },
+        {
+          command: "RFW\r",
           key: "firmware",
           transform: LORAParser.firmware,
+        },
+        {
+          key: "timestamp",
+          command: `RTK\r`,
+          transform: LORAParser.timestamp,
+        },
+        {
+          key: "device_address",
+          command: `RDA\r`,
+          transform: LORAParser.device_address,
+        },
+        {
+          key: "device_eui",
+          command: `RDE\r`,
+          transform: LORAParser.device_eui,
+        },
+        {
+          key: "application_eui",
+          command: `RAP\r`,
+          transform: LORAParser.application_eui,
+        },
+        {
+          key: "application_key",
+          command: `RAK\r`,
+          transform: LORAParser.application_key,
+        },
+        {
+          key: "application_session_key",
+          command: `RASK\r`,
+          transform: LORAParser.application_session_key,
+        },
+        {
+          key: "network_session_key",
+          command: `RNK\r`,
+          transform: LORAParser.network_session_key,
         },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            const response = await sendMultipleMessages({
-              transport: port,
-              messages,
-            });
+            const { serial, firmware, ...lora_keys } =
+              await sendMultipleMessages({
+                transport: port,
+                messages,
+              });
+            const response = { serial, firmware, lora_keys };
             return { port, response };
           } catch (error) {
             console.error("[ERROR] handleDetection", error);
@@ -120,121 +158,158 @@ export const useLora = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "RODM\r", key: "odometer", transform: LORAParser.odometer },
+        { command: "RODM\r", key: "odometer", transform: LORAParser.odometer },
         {
-          message: "RCN\r",
-          key: "data_transmission_on",
-          transform: LORAParser.data_transmission_on,
+          command: "RCW\r",
+          key: "data_transmission_sleep",
+          transform: LORAParser.data_transmission_sleep,
+        },
+
+        {
+          command: "RIG1\r",
+          key: "virtual_ignition_12v",
+          transform: LORAParser.virtual_ignition_12v,
         },
         {
-          message: "RCW\r",
-          key: "data_transmission_off",
-          transform: LORAParser.data_transmission_off,
+          command: "RIG2\r",
+          key: "virtual_ignition_24v",
+          transform: LORAParser.virtual_ignition_24v,
+        },
+
+        { command: "RFH\r", key: "heading", transform: LORAParser.heading },
+        {
+          command: "RFHV\r",
+          key: "heading_event_mode",
+          transform: LORAParser.heading_event_mode,
         },
         {
-          message: "RCE\r",
-          key: "data_transmission_event",
-          transform: LORAParser.data_transmission_event,
+          command: "RFA\r",
+          key: "heading_detection_angle",
+          transform: LORAParser.heading_detection_angle,
         },
-        { message: "RCS\r", key: "sleep", transform: LORAParser.sleep },
+
         {
-          message: "RCK\r",
-          key: "keep_alive",
-          transform: LORAParser.keep_alive,
-        },
-        {
-          message: "RIP1\r",
-          key: "ip_primary",
-          transform: LORAParser.ip_primary,
+          command: "RFV\r",
+          key: "speed_alert_threshold",
+          transform: LORAParser.speed_alert_threshold,
         },
         {
-          message: "RIP2\r",
-          key: "ip_secondary",
-          transform: LORAParser.ip_secondary,
+          command: "RFTON\r",
+          key: "accel_threshold_for_ignition_on",
+          transform: LORAParser.accel_threshold_for_ignition_on,
         },
         {
-          message: "RID1\r",
-          key: "dns_primary",
-          transform: LORAParser.dns_primary,
+          command: "RFTOF\r",
+          key: "accel_threshold_for_ignition_off",
+          transform: LORAParser.accel_threshold_for_ignition_off,
         },
         {
-          message: "RID2\r",
-          key: "dns_secondary",
-          transform: LORAParser.dns_secondary,
-        },
-        { message: "RIAP\r", key: "apn", transform: LORAParser.apn },
-        {
-          message: "RIG12\r",
-          key: "first_voltage",
-          transform: LORAParser.first_voltage,
+          command: "RFAV\r",
+          key: "accel_threshold_for_movement",
+          transform: LORAParser.accel_threshold_for_movement,
         },
         {
-          message: "RIG24\r",
-          key: "second_voltage",
-          transform: LORAParser.second_voltage,
-        },
-        { message: "RFA\r", key: "angle", transform: LORAParser.angle },
-        { message: "RFV\r", key: "speed", transform: LORAParser.speed },
-        {
-          message: "RFTON\r",
-          key: "accelerometer_sensitivity_on",
-          transform: LORAParser.accelerometer_sensitivity_on,
+          command: "RFMA\r",
+          key: "harsh_acceleration_threshold",
+          transform: LORAParser.harsh_acceleration_threshold,
         },
         {
-          message: "RFTOF\r",
-          key: "accelerometer_sensitivity_off",
-          transform: LORAParser.accelerometer_sensitivity_off,
+          command: "RFMD\r",
+          key: "harsh_braking_threshold",
+          transform: LORAParser.harsh_braking_threshold,
+        },
+
+        {
+          command: "RWTR\r",
+          key: "data_transmission_position",
+          transform: LORAParser.data_transmission_position,
         },
         {
-          message: "RFAV\r",
-          key: "accelerometer_sensitivity_violated",
-          transform: LORAParser.accelerometer_sensitivity_violated,
+          command: "RLED\r",
+          key: "led_lighting",
+          transform: LORAParser.led_lighting,
+        },
+
+        {
+          command: "RLTO\r",
+          key: "p2p_mode_duration",
+          transform: LORAParser.p2p_mode_duration,
         },
         {
-          message: "RFMA\r",
-          key: "maximum_acceleration",
-          transform: LORAParser.maximum_acceleration,
+          command: "WWTO\r",
+          key: "lorawan_mode_duration",
+          transform: LORAParser.lorawan_mode_duration,
+        },
+
+        { command: "RIN1\r", key: "input_1", transform: LORAParser.input_1 },
+        { command: "RIN2\r", key: "input_2", transform: LORAParser.input_2 },
+        { command: "RIN3\r", key: "input_3", transform: LORAParser.input_3 },
+        { command: "RIN4\r", key: "input_4", transform: LORAParser.input_4 },
+        { command: "RIN5\r", key: "input_5", transform: LORAParser.input_5 },
+        { command: "RIN6\r", key: "input_6", transform: LORAParser.input_6 },
+
+        {
+          command: "RC\r",
+          key: "full_configuration_table",
+          transform: LORAParser.full_configuration_table,
         },
         {
-          message: "RFMD\r",
-          key: "maximum_deceleration",
-          transform: LORAParser.maximum_deceleration,
+          command: "RFIFO\r",
+          key: "fifo_send_and_hold_times",
+          transform: LORAParser.fifo_send_and_hold_times,
         },
-        { message: "RIN1\r", key: "input_1", transform: LORAParser.input_1 },
-        { message: "RIN2\r", key: "input_2", transform: LORAParser.input_2 },
-        { message: "RIN3\r", key: "input_3", transform: LORAParser.input_3 },
-        { message: "RIN4\r", key: "input_4", transform: LORAParser.input_4 },
+
+        {
+          command: "REWTR\r",
+          key: "lorawan_data_transmission_event",
+          transform: LORAParser.lorawan_data_transmission_event,
+        },
+        {
+          command: "RELTR\r",
+          key: "p2p_data_transmission_event",
+          transform: LORAParser.p2p_data_transmission_event,
+        },
+
+        {
+          command: "RTS\r",
+          key: "data_transmission_status",
+          transform: LORAParser.data_transmission_status,
+        },
+        {
+          command: "RF\r",
+          key: "full_functionality_table",
+          transform: LORAParser.full_functionality_table,
+        },
+
+        {
+          command: "RACT\r",
+          key: "activation_type",
+          transform: LORAParser.activation_type,
+        },
+        {
+          command: "RMC\r",
+          key: "mcu_configuration",
+          transform: LORAParser.mcu_configuration,
+        },
+
+        {
+          command: "ROUT\r",
+          key: "output_table",
+          transform: LORAParser.output_table,
+        },
       ] as const;
+
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            const {
-              data_transmission_on,
-              data_transmission_off,
-              ip_primary,
-              ip_secondary,
-              apn,
-              keep_alive,
-              dns_primary,
-              dns_secondary,
-              ...specific
-            } = await sendMultipleMessages({
+            const specific = await sendMultipleMessages({
               transport: port,
               messages,
             });
             return {
               port,
               config: {
-                general: {
-                  data_transmission_on,
-                  data_transmission_off,
-                  ip_primary,
-                  ip_secondary,
-                  apn,
-                  keep_alive,
-                  dns_primary,
-                  dns_secondary,
-                },
+                general: {},
                 specific,
               },
               raw: [],
@@ -255,9 +330,9 @@ export const useLora = () => {
     ) => {
       const generatedMessages = generateMessages(configuration_profile);
       const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, message]) => ({
+        ([key, command]) => ({
           key,
-          message,
+          command,
         })
       );
       return await Promise.all(
@@ -300,12 +375,12 @@ export const useLora = () => {
             port,
             response: {} as Record<string, LORA.AutoTest | string | undefined>,
             messages: [
-              { key: "start", message: "START\r" },
-              { key: "autotest_1", message: "AUTOTEST\r" },
-              { key: "autotest_2", message: "AUTOTEST\r" },
-              { key: "autotest_3", message: "AUTOTEST\r" },
-              { key: "autotest_4", message: "AUTOTEST\r" },
-              { key: "autotest_5", message: "AUTOTEST\r" },
+              { key: "start", command: "START\r" },
+              { key: "autotest_1", command: "AUTOTEST\r" },
+              { key: "autotest_2", command: "AUTOTEST\r" },
+              { key: "autotest_3", command: "AUTOTEST\r" },
+              { key: "autotest_4", command: "AUTOTEST\r" },
+              { key: "autotest_5", command: "AUTOTEST\r" },
             ],
             analysis: {} as Record<string, boolean>,
             init_time: Date.now(),
@@ -317,7 +392,7 @@ export const useLora = () => {
             // 1. Envia comando START
             const startResponse = await sendMultipleMessages({
               transport: port,
-              messages: [{ key: "start", message: "START\r" }] as const,
+              messages: [{ key: "start", command: "START\r" }] as const,
             });
             resultTemplate.response["start"] = startResponse.start;
 
@@ -339,7 +414,7 @@ export const useLora = () => {
                   messages: [
                     {
                       key,
-                      message: "AUTOTEST\r",
+                      command: "AUTOTEST\r",
                       transform: LORAParser.auto_test,
                     },
                   ] as const,
@@ -404,60 +479,128 @@ export const useLora = () => {
   );
   const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
-      const imei = await handleGetRandomImei();
-      const messages = [
+      const timestamp = (getDayZeroTimestamp() / 1000)
+        .toString(16)
+        .toUpperCase();
+
+      const writeMessages = [
         {
           key: "serial",
-          message: `WINS=${serial}\r`,
+          command: `WINS=${serial}\r`,
+          check: "WINS",
         },
         {
-          key: "imei",
-          message: `WIMEI=${imei}\r`,
+          key: "timestamp",
+          command: `WTK=${timestamp}\r`,
+          check: "WTK",
+        },
+      ] as const;
+
+      const readMessages = [
+        {
+          key: "serial",
+          command: `RINS\r`,
+          transform: LORAParser.serial,
+        },
+        {
+          key: "timestamp",
+          command: `RTK\r`,
+          transform: LORAParser.timestamp,
+        },
+        {
+          key: "device_address",
+          command: `RDA\r`,
+          transform: LORAParser.device_address,
+        },
+        {
+          key: "device_eui",
+          command: `RDE\r`,
+          transform: LORAParser.device_eui,
+        },
+        {
+          key: "application_eui",
+          command: `RAP\r`,
+          transform: LORAParser.application_eui,
+        },
+        {
+          key: "application_key",
+          command: `RAK\r`,
+          transform: LORAParser.application_key,
+        },
+        {
+          key: "application_session_key",
+          command: `RASK\r`,
+          transform: LORAParser.application_session_key,
+        },
+        {
+          key: "network_session_key",
+          command: `RNK\r`,
+          transform: LORAParser.network_session_key,
         },
       ] as const;
       try {
         const init_time = Date.now();
-        const response = await sendMultipleMessages({
+        const writeResponse = await sendMultipleMessages({
           transport: port,
-          messages,
+          messages: writeMessages,
         });
+        await sleep(2000);
+        const readResponse = await sendMultipleMessages({
+          transport: port,
+          messages: readMessages,
+        });
+
+        if (
+          !readResponse.serial ||
+          !readResponse.timestamp ||
+          !readResponse.device_address ||
+          !readResponse.device_eui ||
+          !readResponse.application_eui ||
+          !readResponse.application_key ||
+          !readResponse.application_session_key ||
+          !readResponse.network_session_key
+        ) {
+          return { ok: false, port, error: "Serial inválido" };
+        }
+
+        const status =
+          serial === readResponse.serial &&
+          timestamp === readResponse.timestamp;
+
         const end_time = Date.now();
+
         return {
+          ok: true,
           port,
-          response,
-          messages,
+          response: writeResponse,
+          messages: writeMessages,
           init_time,
           end_time,
+          status,
+          equipment: {
+            serial: readResponse.serial,
+            lora_keys: {
+              timestamp: readResponse.timestamp,
+              device_address: readResponse.device_address,
+              device_eui: readResponse.device_eui,
+              application_eui: readResponse.application_eui,
+              application_key: readResponse.application_key,
+              application_session_key: readResponse.application_session_key,
+              network_session_key: readResponse.network_session_key,
+            },
+          },
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
-        return { port };
+        return {
+          ok: false,
+          port,
+          error: error instanceof Error ? error.message : "Erro desconhecido",
+        };
       }
     },
     [sendMultipleMessages]
   );
-  const handleGetIdentification = useCallback(
-    async (port: ISerialPort) => {
-      const messages = [
-        { message: "RINS\r", key: "serial", transform: LORAParser.serial },
-        { message: "RIMEI\r", key: "imei", transform: LORAParser.imei },
-      ] as const;
-      try {
-        const response = await sendMultipleMessages({
-          transport: port,
-          messages,
-        });
-        return { port, response };
-      } catch (error) {
-        console.error("[ERROR] handleGetIdentification", error);
-        return { port };
-      }
-    },
-    [sendMultipleMessages]
-  );
-  const handleGetRandomImei = async () => {
-    return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
-  };
 
   const isIdentified = (input: { serial?: string; firmware?: string }) => {
     const { serial, firmware } = input;
@@ -480,6 +623,5 @@ export const useLora = () => {
     requestPort,
     handleAutoTest,
     handleDetection,
-    handleGetIdentification,
   };
 };

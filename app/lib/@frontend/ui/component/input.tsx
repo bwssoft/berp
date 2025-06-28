@@ -2,7 +2,7 @@ import { cn } from "@/app/lib/util";
 import { forwardRef } from "react";
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label?: string;
   error?: string;
   containerClassname?: string;
 }

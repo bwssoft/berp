@@ -6,3 +6,4 @@ export * from "./input";
 export * from "./product";
 export * from "./technical-sheet";
 export * from "./technology";
+export * from "./serial";

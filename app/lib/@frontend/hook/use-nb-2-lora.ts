@@ -4,17 +4,12 @@ import {
   NB2LORAParser,
   NB2LORAEncoder,
 } from "../../@backend/infra/protocol";
-import {
-  generateImei,
-  getRandomInt,
-  isIccid,
-  isImei,
-  sleep,
-  typedObjectEntries,
-} from "../../util";
-import { useCommunication } from "./use-communication";
+import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
+import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { IConfigurationProfile } from "../../@backend/domain";
+import { findOneSerial } from "../../@backend/action";
+import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
 
@@ -39,7 +34,6 @@ const readResponse = async (
       let lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
       for (const line of lines) {
-        console.log("[NB2 LoRa readResponse]", line);
         if (line.length > 0 && line.includes(command.replace("\r\n", ""))) {
           return line;
         }
@@ -79,17 +73,22 @@ export const useNB2Lora = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, message, timeout) => {
+    sendMessage: async (
+      port,
+      msg: Message<string, { check?: string; delay_before?: number }>
+    ) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      await writeToPort(port, message);
-      const response = await readResponse(reader, message, timeout);
+      const { command, timeout, check, delay_before } = msg;
+      if (delay_before) await sleep(delay_before);
+      await writeToPort(port, command);
+      const response = await readResponse(reader, check ?? command, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 550,
+      delayBetweenMessages: 300,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -99,11 +98,23 @@ export const useNB2Lora = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "RIMEI\r\n", key: "imei", transform: NB2LORAParser.imei },
-        { message: "ICCID\r\n", key: "iccid", transform: NB2LORAParser.iccid },
-        { message: "RINS\r\n", key: "serial", transform: NB2LORAParser.serial },
+        { command: "RIMEI\r\n", key: "imei", transform: NB2LORAParser.imei },
+        { command: "ICCID\r\n", key: "iccid", transform: NB2LORAParser.iccid },
+        { command: "RINS\r\n", key: "serial", transform: NB2LORAParser.serial },
         {
-          message: "RFW\r\n",
+          key: "da",
+          command: `LRDA\r\n`,
+          check: "RDA",
+          transform: NB2LORAParser.rda,
+        },
+        {
+          key: "de",
+          command: `LRDE\r\n`,
+          check: "RDE",
+          transform: NB2LORAParser.rde,
+        },
+        {
+          command: "RFW\r\n",
           key: "firmware",
           transform: NB2LORAParser.firmware,
         },
@@ -111,10 +122,18 @@ export const useNB2Lora = () => {
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            const response = await sendMultipleMessages({
-              transport: port,
-              messages,
-            });
+            const { firmware, iccid, imei, serial, ...lora_keys } =
+              await sendMultipleMessages({
+                transport: port,
+                messages,
+              });
+            const response = {
+              firmware,
+              iccid,
+              imei,
+              serial,
+              lora_keys,
+            };
             return { port, response };
           } catch (error) {
             console.error("[ERROR] handleDetection", error);
@@ -129,106 +148,114 @@ export const useNB2Lora = () => {
     async (ports: ISerialPort[]) => {
       const messages = [
         {
-          message: "RODM\r\n",
+          command: "RODM\r\n",
           key: "odometer",
           transform: NB2LORAParser.odometer,
         },
         {
-          message: "RCN\r\n",
+          command: "RCN\r\n",
           key: "data_transmission_on",
           transform: NB2LORAParser.data_transmission_on,
         },
         {
-          message: "RCW\r\n",
+          command: "RCW\r\n",
           key: "data_transmission_off",
           transform: NB2LORAParser.data_transmission_off,
         },
         {
-          message: "RCE\r\n",
+          command: "RCE\r\n",
           key: "data_transmission_event",
           transform: NB2LORAParser.data_transmission_event,
         },
-        { message: "RCS\r\n", key: "sleep", transform: NB2LORAParser.sleep },
+        { command: "RCS\r\n", key: "sleep", transform: NB2LORAParser.sleep },
         {
-          message: "RCK\r\n",
+          command: "RCK\r\n",
           key: "keep_alive",
           transform: NB2LORAParser.keep_alive,
         },
         {
-          message: "RIP1\r\n",
+          command: "RIP1\r\n",
           key: "ip_primary",
           transform: NB2LORAParser.ip_primary,
         },
         {
-          message: "RIP2\r\n",
+          command: "RIP2\r\n",
           key: "ip_secondary",
           transform: NB2LORAParser.ip_secondary,
         },
         {
-          message: "RID1\r\n",
+          command: "RID1\r\n",
           key: "dns_primary",
           transform: NB2LORAParser.dns_primary,
         },
         {
-          message: "RID2\r\n",
+          command: "RID2\r\n",
           key: "dns_secondary",
           transform: NB2LORAParser.dns_secondary,
         },
-        { message: "RIAP\r\n", key: "apn", transform: NB2LORAParser.apn },
+        { command: "RIAP\r\n", key: "apn", transform: NB2LORAParser.apn },
         {
-          message: "RIG12\r\n",
-          key: "first_voltage",
-          transform: NB2LORAParser.first_voltage,
+          command: "RIG12\r\n",
+          key: "virtual_ignition_12v",
+          transform: NB2LORAParser.virtual_ignition_12v,
         },
         {
-          message: "RIG24\r\n",
-          key: "second_voltage",
-          transform: NB2LORAParser.second_voltage,
-        },
-        { message: "RFA\r\n", key: "angle", transform: NB2LORAParser.angle },
-        { message: "RFV\r\n", key: "speed", transform: NB2LORAParser.speed },
-        {
-          message: "RFTON\r\n",
-          key: "accelerometer_sensitivity_on",
-          transform: NB2LORAParser.accelerometer_sensitivity_on,
+          command: "RIG24\r\n",
+          key: "virtual_ignition_24v",
+          transform: NB2LORAParser.virtual_ignition_24v,
         },
         {
-          message: "RFTOF\r\n",
-          key: "accelerometer_sensitivity_off",
-          transform: NB2LORAParser.accelerometer_sensitivity_off,
+          command: "RFA\r\n",
+          key: "heading_detection_angle",
+          transform: NB2LORAParser.heading_detection_angle,
         },
         {
-          message: "RFAV\r\n",
-          key: "accelerometer_sensitivity_violated",
-          transform: NB2LORAParser.accelerometer_sensitivity_violated,
+          command: "RFV\r\n",
+          key: "speed_alert_threshold",
+          transform: NB2LORAParser.speed_alert_threshold,
         },
         {
-          message: "RFMA\r\n",
-          key: "maximum_acceleration",
-          transform: NB2LORAParser.maximum_acceleration,
+          command: "RFTON\r\n",
+          key: "accel_threshold_for_ignition_on",
+          transform: NB2LORAParser.accel_threshold_for_ignition_on,
         },
         {
-          message: "RFMD\r\n",
-          key: "maximum_deceleration",
-          transform: NB2LORAParser.maximum_deceleration,
+          command: "RFTOF\r\n",
+          key: "accel_threshold_for_ignition_off",
+          transform: NB2LORAParser.accel_threshold_for_ignition_off,
         },
         {
-          message: "RIN1\r\n",
+          command: "RFAV\r\n",
+          key: "accel_threshold_for_movement",
+          transform: NB2LORAParser.accel_threshold_for_movement,
+        },
+        {
+          command: "RFMA\r\n",
+          key: "harsh_acceleration_threshold",
+          transform: NB2LORAParser.harsh_acceleration_threshold,
+        },
+        {
+          command: "RFMD\r\n",
+          key: "harsh_braking_threshold",
+          transform: NB2LORAParser.harsh_braking_threshold,
+        },
+        {
+          command: "RIN1\r\n",
           key: "input_1",
           transform: NB2LORAParser.input_1,
         },
         {
-          message: "RIN2\r\n",
+          command: "RIN2\r\n",
           key: "input_2",
           transform: NB2LORAParser.input_2,
         },
         {
-          message: "RIN3\r\n",
+          command: "RIN3\r\n",
           key: "input_3",
           transform: NB2LORAParser.input_3,
         },
         {
-          message: "RIN4\r\n",
+          command: "RIN4\r\n",
           key: "input_4",
           transform: NB2LORAParser.input_4,
         },
@@ -283,9 +310,9 @@ export const useNB2Lora = () => {
     ) => {
       const generatedMessages = generateMessages(configuration_profile);
       const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, message]) => ({
+        ([key, command]) => ({
           key,
-          message,
+          command,
         })
       );
       return await Promise.all(
@@ -331,12 +358,12 @@ export const useNB2Lora = () => {
               NB2LORA.AutoTest | string | undefined
             >,
             messages: [
-              { key: "start", message: "START\r\n" },
-              { key: "autotest_1", message: "AUTOTEST" },
-              { key: "autotest_2", message: "AUTOTEST" },
-              { key: "autotest_3", message: "AUTOTEST" },
-              { key: "autotest_4", message: "AUTOTEST" },
-              { key: "autotest_5", message: "AUTOTEST" },
+              { key: "start", command: "START\r\n" },
+              { key: "autotest_1", command: "AUTOTEST" },
+              { key: "autotest_2", command: "AUTOTEST" },
+              { key: "autotest_3", command: "AUTOTEST" },
+              { key: "autotest_4", command: "AUTOTEST" },
+              { key: "autotest_5", command: "AUTOTEST" },
             ],
             analysis: {} as Record<string, boolean>,
             init_time: Date.now(),
@@ -348,7 +375,7 @@ export const useNB2Lora = () => {
             // 1. Envia comando START
             const startResponse = await sendMultipleMessages({
               transport: port,
-              messages: [{ key: "start", message: "START\r\n" }] as const,
+              messages: [{ key: "start", command: "START\r\n" }] as const,
             });
             resultTemplate.response["start"] = startResponse.start;
 
@@ -371,7 +398,7 @@ export const useNB2Lora = () => {
                   messages: [
                     {
                       key,
-                      message: "AUTOTEST",
+                      command: "AUTOTEST",
                       transform: NB2LORAParser.auto_test,
                     },
                   ] as const,
@@ -446,61 +473,168 @@ export const useNB2Lora = () => {
   );
   const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
-      const imei = await handleGetRandomImei();
-      const messages = [
+      const identification = await findOneSerial({ serial });
+      if (!identification) {
+        return { ok: false, port, error: "Serial não encontrado na base" };
+      }
+      const timestamp = (getDayZeroTimestamp() / 1000)
+        .toString(16)
+        .toUpperCase();
+
+      const writeMessages = [
         {
-          key: "serial",
-          message: `WINS=${serial}\r\n`,
+          key: "serial_nb",
+          command: `WINS=${serial}\r\n`,
+          check: "WINS",
         },
         {
           key: "imei",
-          message: `WIMEI=${imei}\r\n`,
+          command: `WIMEI=${identification.imei}\r\n`,
+          check: "WIMEI",
+        },
+        {
+          key: "serial_lora",
+          command: `LWINS=${serial}\r\n`,
+          check: "WINS",
+          delay_before: 1000,
+        },
+        {
+          key: "timestamp",
+          command: `LWTK=${timestamp}\r\n`,
+          check: "WTK",
         },
       ] as const;
+
+      const readMessages = [
+        {
+          key: "serial_nb",
+          command: `RINS\r\n`,
+          transform: NB2LORAParser.serial,
+        },
+        {
+          key: "imei",
+          command: `RIMEI\r\n`,
+          transform: NB2LORAParser.imei,
+        },
+        {
+          key: "serial_lora",
+          command: `LRINS\r\n`,
+          check: "RINS",
+          transform: NB2LORAParser.serial,
+        },
+        {
+          key: "tk",
+          command: `LRTK\r\n`,
+          check: "RTK",
+          transform: NB2LORAParser.rtk,
+        },
+        {
+          key: "da",
+          command: `LRDA\r\n`,
+          check: "RDA",
+          transform: NB2LORAParser.rda,
+        },
+        {
+          key: "de",
+          command: `LRDE\r\n`,
+          check: "RDE",
+          transform: NB2LORAParser.rde,
+        },
+        {
+          key: "ap",
+          command: `LRAP\r\n`,
+          check: "RAP",
+          transform: NB2LORAParser.rap,
+        },
+        {
+          key: "ak",
+          command: `LRAK\r\n`,
+          check: "RAK",
+          transform: NB2LORAParser.rak,
+        },
+        {
+          key: "ask",
+          command: `LRASK\r\n`,
+          check: "RASK",
+          transform: NB2LORAParser.rask,
+        },
+        {
+          key: "nk",
+          command: `LRNK\r\n`,
+          check: "RNK",
+          transform: NB2LORAParser.rnk,
+        },
+      ] as const;
+
       try {
         const init_time = Date.now();
-        const response = await sendMultipleMessages({
+        const writeResponse = await sendMultipleMessages({
           transport: port,
-          messages,
+          messages: writeMessages,
+        });
+        await sleep(1500);
+        const readResponse = await sendMultipleMessages({
+          transport: port,
+          messages: readMessages,
         });
         const end_time = Date.now();
+
+        if (
+          !readResponse.imei ||
+          !isImei(readResponse.imei) ||
+          !readResponse.serial_nb ||
+          !readResponse.serial_lora ||
+          !readResponse.tk ||
+          !readResponse.da ||
+          !readResponse.de ||
+          !readResponse.ap ||
+          !readResponse.ak ||
+          !readResponse.ask ||
+          !readResponse.nk
+        ) {
+          return { ok: false, port, error: "IMEI ou Serial inválido" };
+        }
+
+        const status =
+          identification.serial === readResponse.serial_nb &&
+          identification.serial === readResponse.serial_lora &&
+          identification.serial === readResponse.da &&
+          timestamp === readResponse.tk &&
+          identification.imei === readResponse.imei;
+
         return {
           port,
-          response,
-          messages,
+          response: writeResponse,
+          messages: writeMessages,
           init_time,
           end_time,
+          status,
+          ok: true,
+          equipment: {
+            serial: readResponse.serial_nb,
+            imei: readResponse.imei,
+            lora_keys: {
+              tk: readResponse.tk,
+              da: readResponse.da,
+              de: readResponse.de,
+              ap: readResponse.ap,
+              ak: readResponse.ak,
+              ask: readResponse.ask,
+              nk: readResponse.nk,
+            },
+          },
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
-        return { port };
+        return {
+          ok: false,
+          port,
+          error: error instanceof Error ? error.message : "Erro desconhecido",
+        };
       }
     },
     [sendMultipleMessages]
   );
-  const handleGetIdentification = useCallback(
-    async (port: ISerialPort) => {
-      const messages = [
-        { message: "RINS\r\n", key: "serial", transform: NB2LORAParser.serial },
-        { message: "RIMEI\r\n", key: "imei", transform: NB2LORAParser.imei },
-      ] as const;
-      try {
-        const response = await sendMultipleMessages({
-          transport: port,
-          messages,
-        });
-        return { port, response };
-      } catch (error) {
-        console.error("[ERROR] handleGetIdentification", error);
-        return { port };
-      }
-    },
-    [sendMultipleMessages]
-  );
-  const handleGetRandomImei = async () => {
-    return generateImei({ tac: 12345678, snr: getRandomInt(1, 1000000) });
-  };
-
   const isIdentified = (input: {
     imei?: string;
     iccid?: string;
@@ -527,6 +661,5 @@ export const useNB2Lora = () => {
     requestPort,
     handleAutoTest,
     handleDetection,
-    handleGetIdentification,
   };
 };

@@ -3,8 +3,22 @@
 import { Controller, useForm } from "react-hook-form";
 import { useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button, Input, Select } from "../../../../component";
+import {
+  Button,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "../../../../component";
 import { useSectorModal } from "../../../../modal/comercial/sector";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "../../../../component/form";
+import { SelectTrigger } from "@radix-ui/react-select";
 
 type FilterFormData = {
   client?: string;
@@ -91,7 +105,7 @@ export function AccountFilterForm() {
           {...register("document")}
         />
 
-        <Controller
+        {/* <Controller
           control={control}
           name="sector"
           render={({ field }) => (
@@ -105,9 +119,36 @@ export function AccountFilterForm() {
               onChange={(d) => field.onChange(d.name)}
             />
           )}
+        /> */}
+
+        <FormField
+          control={control}
+          name="sector"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Setor</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value?.toString()}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o setor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sectorModal.enabledSectors.map((sector) => (
+                      <SelectItem key={sector.id} value={sector.name}>
+                        {sector.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+            </FormItem>
+          )}
         />
 
-        <Controller
+        {/* <Controller
           control={control}
           name="status"
           render={({ field }) => (
@@ -121,9 +162,33 @@ export function AccountFilterForm() {
               onChange={field.onChange}
             />
           )}
+        /> */}
+
+        <FormField
+          control={control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Status Faturamento</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value?.toString()}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={"Adimplente"}>Ativo</SelectItem>
+                    <SelectItem value={"Inativo"}>Inativo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+            </FormItem>
+          )}
         />
 
-        <Controller
+        {/* <Controller
           control={control}
           name="billingSituation"
           render={({ field }) => (
@@ -136,6 +201,33 @@ export function AccountFilterForm() {
               value={field.value}
               onChange={field.onChange}
             />
+          )}
+        /> */}
+
+        <FormField
+          control={control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Situação Faturamento</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value?.toString()}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={"Adimplente"}>Adimplente</SelectItem>
+                    <SelectItem value={"Inadimplente"}>Inadimplente</SelectItem>
+                    <SelectItem value={"Inadimplente/Bloqueado"}>
+                      Inadimplente/Bloqueado
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+            </FormItem>
           )}
         />
       </div>

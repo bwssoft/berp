@@ -15,6 +15,8 @@ import {
 } from "../../util";
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
+import { findOneSerial } from "../../@backend/action";
+import { toast } from "./use-toast";
 
 type ConfigKeys = keyof IConfigurationProfile["config"];
 
@@ -79,17 +81,18 @@ export const useBWS4G = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, message, timeout) => {
+    sendMessage: async (port, msg) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      await writeToPort(port, message);
-      const response = await readResponse(reader, message, timeout);
+      const { command, timeout } = msg;
+      await writeToPort(port, command);
+      const response = await readResponse(reader, command, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 550,
+      delayBetweenMessages: 200,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -99,11 +102,11 @@ export const useBWS4G = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "RIMEI\r\n", key: "imei", transform: BWS4GParser.imei },
-        { message: "ICCID\r\n", key: "iccid", transform: BWS4GParser.iccid },
-        { message: "RINS\r\n", key: "serial", transform: BWS4GParser.serial },
+        { command: "RIMEI\r\n", key: "imei", transform: BWS4GParser.imei },
+        { command: "ICCID\r\n", key: "iccid", transform: BWS4GParser.iccid },
+        { command: "RINS\r\n", key: "serial", transform: BWS4GParser.serial },
         {
-          message: "RFW\r\n",
+          command: "RFW\r\n",
           key: "firmware",
           transform: BWS4GParser.firmware,
         },
@@ -129,93 +132,93 @@ export const useBWS4G = () => {
     async (ports: ISerialPort[]) => {
       const messages = [
         {
-          message: "RODM\r\n",
+          command: "RODM\r\n",
           key: "odometer",
           transform: BWS4GParser.odometer,
         },
         {
-          message: "RCN\r\n",
+          command: "RCN\r\n",
           key: "data_transmission_on",
           transform: BWS4GParser.data_transmission_on,
         },
         {
-          message: "RCW\r\n",
+          command: "RCW\r\n",
           key: "data_transmission_off",
           transform: BWS4GParser.data_transmission_off,
         },
         {
-          message: "RCE\r\n",
+          command: "RCE\r\n",
           key: "data_transmission_event",
           transform: BWS4GParser.data_transmission_event,
         },
-        { message: "RCS\r\n", key: "sleep", transform: BWS4GParser.sleep },
+        { command: "RCS\r\n", key: "sleep", transform: BWS4GParser.sleep },
         {
-          message: "RCK\r\n",
+          command: "RCK\r\n",
           key: "keep_alive",
           transform: BWS4GParser.keep_alive,
         },
         {
-          message: "RIP1\r\n",
+          command: "RIP1\r\n",
           key: "ip_primary",
           transform: BWS4GParser.ip_primary,
         },
         {
-          message: "RIP2\r\n",
+          command: "RIP2\r\n",
           key: "ip_secondary",
           transform: BWS4GParser.ip_secondary,
         },
         {
-          message: "RID1\r\n",
+          command: "RID1\r\n",
           key: "dns_primary",
           transform: BWS4GParser.dns_primary,
         },
         {
-          message: "RID2\r\n",
+          command: "RID2\r\n",
           key: "dns_secondary",
           transform: BWS4GParser.dns_secondary,
         },
-        { message: "RIAP\r\n", key: "apn", transform: BWS4GParser.apn },
+        { command: "RIAP\r\n", key: "apn", transform: BWS4GParser.apn },
         {
-          message: "RIG12\r\n",
-          key: "first_voltage",
-          transform: BWS4GParser.first_voltage,
+          command: "RIG12\r\n",
+          key: "virtual_ignition_12v",
+          transform: BWS4GParser.virtual_ignition_12v,
         },
         {
-          message: "RIG24\r\n",
-          key: "second_voltage",
-          transform: BWS4GParser.second_voltage,
+          command: "RIG24\r\n",
+          key: "virtual_ignition_24v",
+          transform: BWS4GParser.virtual_ignition_24v,
         },
-        { message: "RFA\r\n", key: "angle", transform: BWS4GParser.angle },
-        { message: "RFV\r\n", key: "speed", transform: BWS4GParser.speed },
+        { command: "RFA\r\n", key: "angle", transform: BWS4GParser.angle },
+        { command: "RFV\r\n", key: "speed", transform: BWS4GParser.speed },
         {
-          message: "RFTON\r\n",
-          key: "accelerometer_sensitivity_on",
-          transform: BWS4GParser.accelerometer_sensitivity_on,
-        },
-        {
-          message: "RFTOF\r\n",
-          key: "accelerometer_sensitivity_off",
-          transform: BWS4GParser.accelerometer_sensitivity_off,
+          command: "RFTON\r\n",
+          key: "accel_threshold_for_ignition_on",
+          transform: BWS4GParser.accel_threshold_for_ignition_on,
         },
         {
-          message: "RFAV\r\n",
-          key: "accelerometer_sensitivity_violated",
-          transform: BWS4GParser.accelerometer_sensitivity_violated,
+          command: "RFTOF\r\n",
+          key: "accel_threshold_for_ignition_off",
+          transform: BWS4GParser.accel_threshold_for_ignition_off,
         },
         {
-          message: "RFMA\r\n",
-          key: "maximum_acceleration",
-          transform: BWS4GParser.maximum_acceleration,
+          command: "RFAV\r\n",
+          key: "accel_threshold_for_movement",
+          transform: BWS4GParser.accel_threshold_for_movement,
         },
         {
-          message: "RFMD\r\n",
-          key: "maximum_deceleration",
-          transform: BWS4GParser.maximum_deceleration,
+          command: "RFMA\r\n",
+          key: "harsh_acceleration_threshold",
+          transform: BWS4GParser.harsh_acceleration_threshold,
         },
-        { message: "RIN1\r\n", key: "input_1", transform: BWS4GParser.input_1 },
-        { message: "RIN2\r\n", key: "input_2", transform: BWS4GParser.input_2 },
-        { message: "RIN3\r\n", key: "input_3", transform: BWS4GParser.input_3 },
-        { message: "RIN4\r\n", key: "input_4", transform: BWS4GParser.input_4 },
+        {
+          command: "RFMD\r\n",
+          key: "harsh_braking_threshold",
+          transform: BWS4GParser.harsh_braking_threshold,
+        },
+        { command: "RIN1\r\n", key: "input_1", transform: BWS4GParser.input_1 },
+        { command: "RIN2\r\n", key: "input_2", transform: BWS4GParser.input_2 },
+        { command: "RIN3\r\n", key: "input_3", transform: BWS4GParser.input_3 },
+        { command: "RIN4\r\n", key: "input_4", transform: BWS4GParser.input_4 },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -267,9 +270,9 @@ export const useBWS4G = () => {
     ) => {
       const generatedMessages = generateMessages(configuration_profile);
       const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, message]) => ({
+        ([key, command]) => ({
           key,
-          message,
+          command,
         })
       );
       return await Promise.all(
@@ -312,12 +315,12 @@ export const useBWS4G = () => {
             port,
             response: {} as Record<string, BWS4G.AutoTest | string | undefined>,
             messages: [
-              { key: "start", message: "START\r\n" },
-              { key: "autotest_1", message: "AUTOTEST" },
-              { key: "autotest_2", message: "AUTOTEST" },
-              { key: "autotest_3", message: "AUTOTEST" },
-              { key: "autotest_4", message: "AUTOTEST" },
-              { key: "autotest_5", message: "AUTOTEST" },
+              { key: "start", command: "START\r\n" },
+              { key: "autotest_1", command: "AUTOTEST" },
+              { key: "autotest_2", command: "AUTOTEST" },
+              { key: "autotest_3", command: "AUTOTEST" },
+              { key: "autotest_4", command: "AUTOTEST" },
+              { key: "autotest_5", command: "AUTOTEST" },
             ],
             analysis: {} as Record<string, boolean>,
             init_time: Date.now(),
@@ -329,7 +332,7 @@ export const useBWS4G = () => {
             // 1. Envia comando START
             const startResponse = await sendMultipleMessages({
               transport: port,
-              messages: [{ key: "start", message: "START\r\n" }] as const,
+              messages: [{ key: "start", command: "START\r\n" }] as const,
             });
             resultTemplate.response["start"] = startResponse.start;
 
@@ -351,7 +354,7 @@ export const useBWS4G = () => {
                   messages: [
                     {
                       key,
-                      message: "AUTOTEST",
+                      command: "AUTOTEST",
                       transform: BWS4GParser.auto_test,
                     },
                   ] as const,
@@ -421,15 +424,23 @@ export const useBWS4G = () => {
   );
   const handleIdentification = useCallback(
     async (port: ISerialPort, serial: string) => {
-      const imei = await handleGetRandomImei();
+      const identification = await findOneSerial({ serial });
+      if (!identification) {
+        toast({
+          title: "Serial não encontrado",
+          variant: "error",
+          description: `Dispositivo com o serial: ${serial} não encontrado`,
+        });
+        return { port };
+      }
       const messages = [
         {
           key: "serial",
-          message: `WINS=${serial}\r\n`,
+          command: `WINS=${serial}\r\n`,
         },
         {
           key: "imei",
-          message: `WIMEI=${imei}\r\n`,
+          command: `WIMEI=${identification.imei}\r\n`,
         },
       ] as const;
       try {
@@ -445,6 +456,7 @@ export const useBWS4G = () => {
           messages,
           init_time,
           end_time,
+          status: true,
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
@@ -456,8 +468,8 @@ export const useBWS4G = () => {
   const handleGetIdentification = useCallback(
     async (port: ISerialPort) => {
       const messages = [
-        { message: "RINS\r\n", key: "serial", transform: BWS4GParser.serial },
-        { message: "RIMEI\r\n", key: "imei", transform: BWS4GParser.imei },
+        { command: "RINS\r\n", key: "serial", transform: BWS4GParser.serial },
+        { command: "RIMEI\r\n", key: "imei", transform: BWS4GParser.imei },
       ] as const;
       try {
         const response = await sendMultipleMessages({

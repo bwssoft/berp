@@ -1,154 +1,233 @@
-type APN = {
-  address: string;
-  user: string;
-  password: string;
-};
-
-type IP = {
-  ip: string;
-  port: string;
-};
-
-type DNS = {
-  address: string;
-  port: string;
-};
-
-type Voltage = {
-  initial: string;
-  final: string;
-};
-
-type Encoder =
-  | { command: "apn"; args: APN }
-  | { command: "ip_primary"; args: IP }
-  | { command: "ip_secondary"; args: IP }
-  | { command: "dns_primary"; args: DNS };
+type Encoder = { command: "data_transmission_sleep"; args: number };
 
 export class LORAEncoder {
-  static serial(input: string): string | undefined {
-    if (!input || typeof input !== "string") return undefined;
-    return `WINS=${input}\r\n`;
+  static serial(serial: string): string {
+    return `WINS=${serial}\r`;
   }
 
-  static imei(input: string): string | undefined {
-    if (!input || typeof input !== "string") return undefined;
-    return `WIMEI=${input}\r\n`;
+  static data_transmission_sleep(input: number): string {
+    return `WCW=${input}\r`;
   }
 
-  static odometer(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WODM=${input}\r\n`;
+  static lorawan_mode_duration(input: number): string {
+    return `WWTO=${input}\r`;
   }
 
-  static data_transmission_on(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCN=${input}\r\n`;
+  static p2p_mode_duration(input: number): string {
+    return `WLTO=${input}\r`;
   }
 
-  static data_transmission_off(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCW=${input}\r\n`;
+  // WLTR tem a mesma descrição do comando WWTR
+  static data_transmission_position(input: number): string {
+    return `WWTR=${input}\r`;
   }
 
-  static data_transmission_event(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCE=${input}\r\n`;
+  static lorawan_data_transmission_event(input: number): string {
+    return `WEWTR=${input}\r`;
   }
 
-  static sleep(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCS=${input}\r\n`;
+  static p2p_data_transmission_event(input: number): string {
+    return `WELTR=${input}\r`;
   }
 
-  static keep_alive(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCK=${input}\r\n`;
+  static data_transmission_status(input: number): string {
+    return `WTS=${input}\r`;
   }
 
-  static ip_primary(input: IP): string | undefined {
-    if (!input.ip || typeof input.port !== "number") return undefined;
-    return `WIP1=${input.ip}:${input.port}\r\n`;
+  static odometer(input: number): string {
+    return `WODM=${input}\r`;
   }
 
-  static ip_secondary(input: IP): string | undefined {
-    if (!input.ip || typeof input.port !== "number") return undefined;
-    return `WIP2=${input.ip}:${input.port}\r\n`;
-  }
-
-  static dns_primary(input: DNS): string | undefined {
-    if (!input.address || typeof input.port !== "number") return undefined;
-    return `WID1=${input.address}:${input.port}\r\n`;
-  }
-
-  static dns_secondary(input: DNS): string | undefined {
-    if (!input.address || typeof input.port !== "number") return undefined;
-    return `WID2=${input.address}:${input.port}\r\n`;
-  }
-
-  static apn(input: APN): string | undefined {
-    if (!input.address || !input.user) return undefined;
-    return `WIAP=${input.address},${input.user},${input.password}\r\n`;
-  }
-
-  static first_voltage(input: Voltage): string | undefined {
+  static virtual_ignition_12v(input: {
+    initial: number;
+    final: number;
+  }): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
-      return `WIG12=${input.initial},${input.final}\r\n`;
+      return undefined;
+    return `WIG1=${input.initial},${input.final}\r`;
   }
 
-  static second_voltage(input: Voltage): string | undefined {
+  static virtual_ignition_24v(input: {
+    initial: number;
+    final: number;
+  }): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
-      return `WIG24=${input.initial},${input.final}\r\n`;
+      return undefined;
+    return `WIG2=${input.initial},${input.final}\r`;
   }
 
-  static angle(input: number): string | undefined {
-    if (typeof input !== "number") return undefined;
-    return `WFA=${input}\r\n`;
+  static activation_type(input: string): string | undefined {
+    if (input !== "00" && input !== "01") return undefined;
+    return `WACT=${input}\r`;
   }
 
-  static speed(input: number): string | undefined {
-    if (typeof input !== "number") return undefined;
-    return `WFV=${input}\r\n`;
+  static heading(input: boolean): string | undefined {
+    if (typeof input !== "boolean") return undefined;
+    return input ? "WFHON\r" : "WFHOFF\r";
   }
 
-  static accelerometer_sensitivity_on(input: number): string | undefined {
+  static heading_detection_angle(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
-    return `WFTON=${input}\r\n`;
+    return `WFA=${input}\r`;
   }
 
-  static accelerometer_sensitivity_off(input: number): string | undefined {
-    if (typeof input !== "number") return undefined;
-    return `WFTOF=${input}\r\n`;
+  static heading_event_mode(input: boolean): string | undefined {
+    if (typeof input !== "boolean") return undefined;
+    return input ? "WFHEON\r" : "WFHEOFF\r";
   }
 
-  static accelerometer_sensitivity_violated(input: number): string | undefined {
+  static speed_alert_threshold(input: number): string | undefined {
     if (typeof input !== "number") return undefined;
-    return `WFAV=${input}\r\n`;
+    return `WFV=${input}\r`;
+  }
+
+  static accel_threshold_for_ignition_on(input: number): string {
+    return `WFTON=${input}\r`;
+  }
+
+  static accel_threshold_for_ignition_off(input: number): string {
+    return `WFTOF=${input}\r`;
+  }
+
+  static accel_threshold_for_movement(input: number): string {
+    return `WFAV=${input}\r`;
+  }
+
+  static harsh_acceleration_threshold(input: number): string {
+    return `WFMA=${input}\r`;
+  }
+
+  static harsh_braking_threshold(input: number): string {
+    return `WFMD=${input}\r`;
+  }
+
+  /**
+   * |-- COMANDOS FORA DO FORM DE CONFIGURAÇÃO --|
+   */
+
+  static full_functionality_table(): string {
+    return "WF=";
+  }
+
+  static full_configuration_table(): string {
+    return "WC=";
+  }
+
+  static led_lighting(input: string): string | undefined {
+    if (input !== "00" && input !== "01") return undefined;
+    return `WLED=${input}\r`;
+  }
+
+  static fifo_send_and_hold_times(times: number[]): string {
+    return `WFIFO=${times.join(",")}\r`;
+  }
+
+  // sem descrição no documento
+  static mcu_configuration(): string {
+    return "WMC=";
+  }
+
+  static output_table(input: number[]): string {
+    return `WOUT=${input.join(",")}\r`;
+  }
+
+  static input_1(input: number): string {
+    return `WIN1=${input}\r`;
+  }
+
+  static input_2(input: number): string {
+    return `WIN2=${input}\r`;
+  }
+
+  static input_3(input: number): string {
+    return `WIN3=${input}\r`;
+  }
+
+  static input_4(input: number): string {
+    return `WIN4=${input}\r`;
+  }
+
+  static input_5(input: number): string {
+    return `WIN5=${input}\r`;
+  }
+
+  static input_6(input: number): string {
+    return `WIN6=${input}\r`;
+  }
+
+  static timestamp(input: number): string {
+    return `WTK=${input}\r`;
+  }
+
+  static device_eui(input: string): string {
+    return `WDE=${input}\r`;
+  }
+
+  static application_eui(input: string): string {
+    return `WAP=${input}\r`;
+  }
+
+  static application_key(input: string): string {
+    return `WAK=${input}\r`;
+  }
+
+  static device_address(input: string): string {
+    return `WDA=${input}\r`;
+  }
+
+  static network_session_key(input: string): string {
+    return `WNK=${input}\r`;
+  }
+
+  static application_session_key(input: string): string {
+    return `WASK=${input}\r`;
   }
 
   static commands() {
     return {
       serial: LORAEncoder.serial,
-      imei: LORAEncoder.imei,
+      data_transmission_sleep: LORAEncoder.data_transmission_sleep,
+      lorawan_mode_duration: LORAEncoder.lorawan_mode_duration,
+      p2p_mode_duration: LORAEncoder.p2p_mode_duration,
+      data_transmission_position: LORAEncoder.data_transmission_position,
+      lorawan_data_transmission_event:
+        LORAEncoder.lorawan_data_transmission_event,
+      p2p_data_transmission_event: LORAEncoder.p2p_data_transmission_event,
+      data_transmission_status: LORAEncoder.data_transmission_status,
       odometer: LORAEncoder.odometer,
-      data_transmission_on: LORAEncoder.data_transmission_on,
-      data_transmission_off: LORAEncoder.data_transmission_off,
-      data_transmission_event: LORAEncoder.data_transmission_event,
-      sleep: LORAEncoder.sleep,
-      keep_alive: LORAEncoder.keep_alive,
-      ip_primary: LORAEncoder.ip_primary,
-      ip_secondary: LORAEncoder.ip_secondary,
-      dns_primary: LORAEncoder.dns_primary,
-      dns_secondary: LORAEncoder.dns_secondary,
-      apn: LORAEncoder.apn,
-      first_voltage: LORAEncoder.first_voltage,
-      second_voltage: LORAEncoder.second_voltage,
-      angle: LORAEncoder.angle,
-      speed: LORAEncoder.speed,
-      accelerometer_sensitivity_on: LORAEncoder.accelerometer_sensitivity_on,
-      accelerometer_sensitivity_off: LORAEncoder.accelerometer_sensitivity_off,
-      accelerometer_sensitivity_violated:
-        LORAEncoder.accelerometer_sensitivity_violated,
+      virtual_ignition_12v: LORAEncoder.virtual_ignition_12v,
+      virtual_ignition_24v: LORAEncoder.virtual_ignition_24v,
+      activation_type: LORAEncoder.activation_type,
+      heading: LORAEncoder.heading,
+      heading_detection_angle: LORAEncoder.heading_detection_angle,
+      heading_event_mode: LORAEncoder.heading_event_mode,
+      speed_alert_threshold: LORAEncoder.speed_alert_threshold,
+      accel_threshold_for_ignition_on:
+        LORAEncoder.accel_threshold_for_ignition_on,
+      accel_threshold_for_ignition_off:
+        LORAEncoder.accel_threshold_for_ignition_off,
+      accel_threshold_for_movement: LORAEncoder.accel_threshold_for_movement,
+      harsh_acceleration_threshold: LORAEncoder.harsh_acceleration_threshold,
+      harsh_braking_threshold: LORAEncoder.harsh_braking_threshold,
+      full_functionality_table: LORAEncoder.full_functionality_table,
+      full_configuration_table: LORAEncoder.full_configuration_table,
+      led_lighting: LORAEncoder.led_lighting,
+      fifo_send_and_hold_times: LORAEncoder.fifo_send_and_hold_times,
+      mcu_configuration: LORAEncoder.mcu_configuration,
+      output_table: LORAEncoder.output_table,
+      input_1: LORAEncoder.input_1,
+      input_2: LORAEncoder.input_2,
+      input_3: LORAEncoder.input_3,
+      input_4: LORAEncoder.input_4,
+      input_5: LORAEncoder.input_5,
+      input_6: LORAEncoder.input_6,
+      timestamp: LORAEncoder.timestamp,
+      device_eui: LORAEncoder.device_eui,
+      application_eui: LORAEncoder.application_eui,
+      application_key: LORAEncoder.application_key,
+      device_address: LORAEncoder.device_address,
+      network_session_key: LORAEncoder.network_session_key,
+      application_session_key: LORAEncoder.application_session_key,
     };
   }
 
