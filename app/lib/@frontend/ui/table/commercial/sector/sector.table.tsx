@@ -1,26 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
-import { ISector, sectorColumns } from "./sector.columns";
+import { sectorColumns } from "./sector.columns";
+import { ISector } from "@/app/lib/@backend/domain";
 
 interface SectorTableProps {
-    initialData: ISector[];
+    data: ISector[];
+    onToggle: (sector: ISector) => void;
 }
 
-export function SectorTable({ initialData }: SectorTableProps) {
-    const [data, setData] = useState<ISector[]>(initialData);
-
-    const handleToggle = (sector: ISector) =>
-        setData((prev) =>
-            prev.map((s) =>
-                s.id === sector.id ? { ...s, active: !s.active } : s
-            )
-        );
-
+export function SectorTable({ data, onToggle }: SectorTableProps) {
     return (
         <DataTable
-            columns={sectorColumns(handleToggle)}
+            columns={sectorColumns(onToggle)}
             data={data}
             mobileDisplayValue={(s) => s.name}
             mobileKeyExtractor={(s) => s.id}

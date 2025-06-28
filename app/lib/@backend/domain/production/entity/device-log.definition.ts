@@ -1,13 +1,16 @@
+import { Device } from "../../engineer";
+
 interface Technology {
   id: string;
   system_name: string;
 }
 
 interface Equipment {
-  imei: string;
   serial: string;
   firmware: string;
+  imei?: string;
   iccid?: string;
+  lora_keys?: Partial<Device.Equipment["lora_keys"]>;
 }
 
 interface User {

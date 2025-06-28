@@ -1,0 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
+import { findManyAddress } from "@/app/lib/@backend/action";
+import { IAddress } from "@/app/lib/@backend/domain";
+
+export const addressesQueryKey = (accountId: string) => [
+  "addresses",
+  accountId,
+];
+
+export function useAddresses(accountId: string) {
+  const { data: addresses = [], isLoading } = useQuery({
+    queryKey: addressesQueryKey(accountId),
+    queryFn: async () => {
+      try {
+        return await findManyAddress({ accountId });
+      } catch (err) {
+        console.error("Erro ao buscar endereços", err);
+        return [];
+      }
+    },
+  });
+
+  return { addresses, loading: isLoading };
+}

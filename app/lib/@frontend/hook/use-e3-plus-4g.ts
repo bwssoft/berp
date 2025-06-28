@@ -64,17 +64,18 @@ export const useE3Plus4G = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, message, timeout) => {
+    sendMessage: async (port, msg) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      await writeToPort(port, message);
+      const { command, timeout } = msg;
+      await writeToPort(port, command);
       const response = await readResponse(reader, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 550,
+      delayBetweenMessages: 200,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -84,9 +85,9 @@ export const useE3Plus4G = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "IMEI", key: "imei", transform: E34GParser.imei },
-        { message: "ICCID", key: "iccid", transform: E34GParser.iccid },
-        { message: "ET", key: "firmware", transform: E34GParser.firmware },
+        { command: "IMEI", key: "imei", transform: E34GParser.imei },
+        { command: "ICCID", key: "iccid", transform: E34GParser.iccid },
+        { command: "ET", key: "firmware", transform: E34GParser.firmware },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -108,9 +109,9 @@ export const useE3Plus4G = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "CHECK", key: "check" },
-        { message: "CXIP", key: "cxip" },
-        { message: "STATUS", key: "status" },
+        { command: "CHECK", key: "check" },
+        { command: "CXIP", key: "cxip" },
+        { command: "STATUS", key: "status" },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -170,9 +171,9 @@ export const useE3Plus4G = () => {
     ) => {
       const generatedMessages = generateMessages(configuration_profile);
       const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, message]) => ({
+        ([key, command]) => ({
           key,
-          message,
+          command,
         })
       );
       return await Promise.all(
@@ -212,7 +213,7 @@ export const useE3Plus4G = () => {
       const messages = [
         {
           key: "autotest",
-          message: "AUTOTEST",
+          command: "AUTOTEST",
           transform: E34GParser.auto_test,
           timeout: 25000,
         },
@@ -267,7 +268,7 @@ export const useE3Plus4G = () => {
       const messages = [
         {
           key: "imei",
-          message: `13041SETSN,${identifier}`,
+          command: `13041SETSN,${identifier}`,
         },
       ] as const;
       try {
@@ -283,6 +284,7 @@ export const useE3Plus4G = () => {
           messages,
           init_time,
           end_time,
+          status: true,
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
@@ -294,7 +296,7 @@ export const useE3Plus4G = () => {
   const handleGetIdentification = useCallback(
     async (port: ISerialPort) => {
       const messages = [
-        { message: "IMEI", key: "imei", transform: E34GParser.imei },
+        { command: "IMEI", key: "imei", transform: E34GParser.imei },
       ] as const;
       try {
         const response = await sendMultipleMessages({

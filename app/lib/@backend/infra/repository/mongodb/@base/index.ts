@@ -9,12 +9,13 @@ import {
     TransactionOptions,
     UpdateFilter,
 } from "mongodb";
-import clientPromise from "./config";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { bCubeClientPromise } from "./b-cube";
 
 type Constructor = {
     collection: string;
     db: string;
+    client?: Promise<MongoClient>
 };
 
 export class BaseRepository<Entity extends object>
@@ -22,10 +23,12 @@ export class BaseRepository<Entity extends object>
 {
     protected collection: string;
     protected db: string;
+    protected client: Promise<MongoClient>
 
-    constructor({ collection, db }: Constructor) {
+    constructor({ collection, db, client }: Constructor) {
         this.collection = collection;
         this.db = db;
+        this.client = client ?? bCubeClientPromise
     }
 
     async create(data: Entity) {
@@ -122,7 +125,7 @@ export class BaseRepository<Entity extends object>
         operations: (client: MongoClient) => Promise<void>,
         options: TransactionOptions = {}
     ): Promise<void> {
-        const client = await clientPromise;
+        const client = await this.client;
         const session = client.startSession();
         try {
             await session.withTransaction(async () => {
@@ -134,8 +137,22 @@ export class BaseRepository<Entity extends object>
         }
     }
 
+    async upsertOne(
+        query: Filter<Entity>,
+        value: UpdateFilter<Entity>
+    ) {
+        const db = await this.connect();
+        return db
+        .collection<Entity>(this.collection)
+        .updateOne(
+            query,
+            value,
+            { upsert: true }
+        );
+    }
+
     async connect() {
-        const client = await clientPromise;
+        const client = await this.client;
         return client.db(this.db);
     }
 }

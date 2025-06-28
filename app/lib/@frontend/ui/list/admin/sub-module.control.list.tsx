@@ -89,7 +89,7 @@ const renderControlTree = (
 ) => {
   const has_children = control.children.length > 0;
 
-  const hideActiveButton = restrictFeatureByProfile("admin:control:update");
+  const hasUpdatePermission = restrictFeatureByProfile("admin:control:update");
 
   return (
     <Disclosure key={control.id}>
@@ -136,7 +136,7 @@ const renderControlTree = (
               >
                 <IdentificationIcon className="size-5" />
               </Button>
-              {hideActiveButton && (
+              {hasUpdatePermission && (
                 <SetLockedProfileForm
                   control={control}
                   profile={profile}

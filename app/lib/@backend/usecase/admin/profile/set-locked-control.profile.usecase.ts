@@ -46,7 +46,7 @@ class SetLockedControlProfileUsecase {
         before,
         domain: AuditDomain.profile,
         user: { email, id, name },
-        action: `Acesso '${input.control_name}' ${input.operation === "add" ? "removido" : "liberado"} para o perfil '${before.name}'`,
+        action: `Acesso '${input.control_name}' ${input.operation === "add" ? "liberado" : "removido"} para o perfil '${before.name}'`,
       });
       return { success: true };
     } catch (error) {

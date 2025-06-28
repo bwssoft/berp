@@ -7,16 +7,21 @@ import {
   findOneIdentificationLogUsecase,
   exportIdentificationLogUsecase,
 } from "@/app/lib/@backend/usecase";
+import { auth } from "@/auth";
 import { Filter } from "mongodb";
 
 export async function createOneIdentificationLog(
   input: Omit<IIdentificationLog, "id" | "created_at" | "user">
 ) {
+  const session = await auth();
+  if (!session) return;
+
   const _input = {
     ...input,
     user: {
-      id: crypto.randomUUID(),
-      name: crypto.randomUUID(),
+      id: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
     },
   };
   return await createOneIdentificationLogUsecase.execute(_input);

@@ -31,7 +31,7 @@ const mapAutoTestResultToLog = (
   result: {
     port: ISerialPort;
     response?: any;
-    messages?: ReadonlyArray<{ key: string; message: string }>;
+    messages?: ReadonlyArray<{ key: string; command: string }>;
     end_time?: number;
     init_time?: number;
     analysis?: any;
@@ -68,8 +68,8 @@ const mapAutoTestResultToLog = (
     },
     status: result.status,
     metadata: {
-      messages: result.messages.map(({ key, message }) => ({
-        request: message,
+      messages: result.messages.map(({ key, command }) => ({
+        request: command,
         response: result.response[key],
       })),
       end_time: result.end_time,

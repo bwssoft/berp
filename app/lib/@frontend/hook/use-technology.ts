@@ -14,19 +14,24 @@ export const useTechnology = (technology: ITechnology | null) => {
   const nb2lora = useNB2Lora();
   const bws4g = useBWS4G();
 
-  if (technology?.name.system === "DM_E3_PLUS_4G") {
-    return e3Plus4G;
-  } else if (technology?.name.system === "DM_E3_PLUS") {
-    return e3Plus;
-  } else if (technology?.name.system === "DM_BWS_NB2") {
-    return nb2;
-  } else if (technology?.name.system === "DM_BWS_LORA") {
-    return lora;
-  } else if (technology?.name.system === "DM_BWS_NB2_LORA") {
-    return nb2lora;
-  } else if (technology?.name.system === "DM_BWS_4G") {
-    return bws4g;
-  } else {
-    return e3Plus4G;
+  const {
+    name: { system: system_name },
+  } = technology ?? { name: { system: "" } };
+
+  switch (system_name) {
+    case "DM_E3_PLUS_4G":
+      return e3Plus4G;
+    case "DM_E3_PLUS":
+      return e3Plus;
+    case "DM_BWS_NB2":
+      return nb2;
+    case "DM_BWS_LORA":
+      return lora;
+    case "DM_BWS_NB2_LORA":
+      return nb2lora;
+    case "DM_BWS_4G":
+      return bws4g;
+    default:
+      return e3Plus4G;
   }
 };

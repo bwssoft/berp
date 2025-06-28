@@ -7,9 +7,9 @@ interface Props {
   data: {
     id: string;
     equipment: {
-      imei: string;
       serial: string;
       firmware: string;
+      imei?: string;
       iccid?: string;
     };
     status: boolean;

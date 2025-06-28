@@ -29,8 +29,8 @@ type LockTypeProgression = {
 };
 
 type IgnitionByVoltage = {
-  t1: number;
-  t2: number;
+  initial: number;
+  final: number;
 };
 
 type Encoder =
@@ -282,10 +282,10 @@ export class E34GEncoder {
   }
 
   static ignition_by_voltage(props: IgnitionByVoltage): string | undefined {
-    if (!props?.t1 || !props?.t2) {
+    if (!props?.initial || !props?.final) {
       return undefined;
     }
-    return `VOLTAGE*${props.t1}*${props.t2}`;
+    return `VOLTAGE*${props.initial}*${props.final}`;
   }
 
   static max_speed(props: number): string | undefined {

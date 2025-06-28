@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Device,
+  E3Plus4GConfig,
   IClient,
   IConfigurationLog,
   IConfigurationProfile,
@@ -30,6 +32,7 @@ namespace Namespace {
     iccid?: string | undefined;
     firmware?: string | undefined;
     serial?: string | undefined;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
   }
 
   export interface Configuration extends IConfigurationLog {}
@@ -42,6 +45,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
   const [configured, setConfigured] = useState<Namespace.Configuration[]>([]);
   const isConfiguring = useRef(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // hook that handle interactions with devices
   const {
@@ -66,6 +70,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       }
 
       isConfiguring.current = true;
+      setIsProcessing(true);
 
       // configure devices
       const configurationResult = await handleConfiguration(
@@ -78,7 +83,8 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       // obtain device profile after configuration process
       const profileResult = await handleGetProfile(ports);
 
-      delete configuration_profile.config?.specific?.password;
+      delete (configuration_profile.config?.specific as E3Plus4GConfig)
+        ?.password;
 
       // check if each message sent has response and configured to the desired profile
       const result = configurationResult
@@ -120,16 +126,17 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
               system_name: technology.name.system,
             },
             equipment: {
-              imei: equipment.imei!,
               firmware: equipment.firmware!,
               serial: equipment.serial!,
               iccid: equipment.iccid,
+              imei: equipment.imei,
+              lora_keys: equipment.lora_keys,
             },
             checked: false,
             status,
             metadata: {
-              messages: messages.map(({ key, message }) => ({
-                request: message,
+              messages: messages.map(({ key, command }) => ({
+                request: command,
                 response: response[key],
               })),
               end_time,
@@ -162,8 +169,16 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       setConfigured((prev) => prev.concat(dataSavedOnDb));
 
       isConfiguring.current = false;
+      setIsProcessing(false);
     },
-    [handleConfiguration, handleGetProfile, identified, ports, technology]
+    [
+      client,
+      handleConfiguration,
+      handleGetProfile,
+      identified,
+      ports,
+      technology,
+    ]
   );
 
   // useEffect used to identify devices when connected via serial ports
@@ -172,6 +187,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       if (isConfiguring.current) return;
       if (!isIdentifying.current && ports.length) {
         isIdentifying.current = true;
+        setIsProcessing(true);
         const identified = await handleDetection(ports);
         setIdentified(
           identified
@@ -183,6 +199,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
             }))
         );
         isIdentifying.current = false;
+        setIsProcessing(false);
       } else if (!isIdentifying.current && !ports.length) {
         setIdentified([]);
       }
@@ -197,5 +214,6 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
     identified,
     configure,
     requestPort,
+    isProcessing,
   };
 };
