@@ -44,7 +44,7 @@ interface BankDetails {
     name?: string;
   };
 }
-export interface Address {
+interface Address {
   street: string;
   district: string;
   city: string;

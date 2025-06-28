@@ -1,3 +1,5 @@
+"use client";
+
 import { Controller } from "react-hook-form";
 import { useUpdateEconomicGroupForm } from "./use-update-economic-group-form";
 import { Combobox } from "@/app/lib/@frontend/ui/component";

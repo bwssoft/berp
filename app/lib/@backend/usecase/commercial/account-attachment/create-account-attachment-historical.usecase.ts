@@ -1,5 +1,8 @@
 import { AuditDomain, IAccountAttachment } from "@/app/lib/@backend/domain";
-import { IAccountAttachmentHistoricalRepository, IAccountAttachmentObjectRepository } from "@/app/lib/@backend/domain/commercial/repository";
+import {
+  IAccountAttachmentRepository,
+  IAccountAttachmentObjectRepository,
+} from "@/app/lib/@backend/domain/commercial/repository";
 import { getContentTypeFromFileName } from "@/app/lib/util/get-content-type-from-filename";
 import { singleton } from "@/app/lib/util/singleton";
 import { auth } from "@/auth";
@@ -12,7 +15,7 @@ import { accountAttachmentRepository } from "@/app/lib/@backend/infra/repository
 
 export class CreateAccountAttachmentHistoricalUseCase {
   private accountAttachmentObjectRepository: IAccountAttachmentObjectRepository;
-  private accountAttachmentHistoricalRepository: IAccountAttachmentHistoricalRepository;
+  private accountAttachmentHistoricalRepository: IAccountAttachmentRepository;
 
   constructor(props: CreateAccountAttachmentHistoricalUseCaseProps) {
     this.accountAttachmentObjectRepository =
@@ -108,6 +111,6 @@ class CreateAccountAttachmentUseCaseImpl extends CreateAccountAttachmentHistoric
   }
 }
 
-export const createAccountAttachmentUsecase = singleton(
+export const createAccountAttachmentHistoricalUsecase = singleton(
   CreateAccountAttachmentUseCaseImpl
 );

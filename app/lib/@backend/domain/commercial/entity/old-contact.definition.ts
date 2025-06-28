@@ -4,13 +4,10 @@ export interface IOldContact {
   department: ContactDepartmentEnum;
   name: string;
   email: string;
-  phone: string | string[];
+  phone: string;
   can_sign_contract: boolean;
   can_receive_document: boolean;
   created_at: Date;
-  cpf: string;
-  rg?: string;
-  accountId: string[];
 }
 
 export enum ContactRoleEnum {

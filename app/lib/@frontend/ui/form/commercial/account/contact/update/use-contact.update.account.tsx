@@ -9,7 +9,7 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ContactList } from "../create";
+import { ContactItem } from "../create";
 
 const schema = z
   .object({
@@ -136,7 +136,7 @@ export function useUpdateContactAccount(
 
   const handlePreferredContact = (
     index: number,
-    key: keyof ContactList["preferredContact"]
+    key: keyof ContactItem["preferredContact"]
   ) => {
     const item = fields[index];
     update(index, {

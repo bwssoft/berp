@@ -61,8 +61,8 @@ export function ContactCard({ accountId }: ContactCardProps) {
               {contact.name}
             </span>
             <div className="text-xs">
-              {contact.contactItems.map((contactItem: any) => (
-                <div className="flex gap-2 items-center">
+              {contact.contactItems.map((contactItem: any, index) => (
+                <div className="flex gap-2 items-center" key={index}>
                   <span className="font-semibold">{contactItem.type}: </span>
                   <span
                     title="Preferência de contato"

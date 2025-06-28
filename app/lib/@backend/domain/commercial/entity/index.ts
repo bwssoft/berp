@@ -8,3 +8,4 @@ export * from "./account.definition";
 export * from "./sector.definition";
 export * from "./address.definition";
 export * from "./historical.definition";
+export * from "./account-attachment.definition";

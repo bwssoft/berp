@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ContactList } from "../../../form/commercial/account/contact/create/use-contact.create.account";
+import { ContactItem } from "../../../form/commercial/account/contact/create/use-contact.create.account";
 import { WhatsappIcon } from "../../../../svg/whatsapp-icon";
 import {
   EnvelopeIcon,
@@ -11,12 +11,12 @@ import { Checkbox } from "../../../component";
 interface Props {
   handlePreferredContact: (
     index: number,
-    key: keyof ContactList["preferredContact"]
+    key: keyof ContactItem["preferredContact"]
   ) => void;
   handleRemove: (index: number) => void;
 }
 
-export const columnsContact = (props: Props): ColumnDef<ContactList>[] => [
+export const columnsContact = (props: Props): ColumnDef<ContactItem>[] => [
   {
     header: "Tipo",
     accessorKey: "type",
@@ -42,7 +42,7 @@ export const columnsContact = (props: Props): ColumnDef<ContactList>[] => [
       return (
         <div className="flex gap-2">
           {(contact.type[0] === "Celular" ||
-            contact.type[0] === "Telefone residencial" ||
+            contact.type[0] === "Telefone Residencial" ||
             contact.type[0] === "Telefone Comercial") && (
             <label className="flex items-center">
               <Checkbox

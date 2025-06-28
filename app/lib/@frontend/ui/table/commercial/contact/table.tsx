@@ -2,14 +2,14 @@
 "use client";
 
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
-import { ContactList } from "../../../form/commercial/account/contact/create/use-contact.create.account";
+import { ContactItem } from "../../../form/commercial/account/contact/create/use-contact.create.account";
 import { columnsContact } from "./contact.columns";
 
 interface Props {
-  data: ContactList[];
+  data: ContactItem[];
   handlePreferredContact: (
     index: number,
-    key: keyof ContactList["preferredContact"]
+    key: keyof ContactItem["preferredContact"]
   ) => void;
   handleRemove: (index: number) => void;
 }

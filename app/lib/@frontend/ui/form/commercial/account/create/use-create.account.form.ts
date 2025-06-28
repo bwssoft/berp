@@ -316,13 +316,13 @@ export function useCreateAccountForm() {
             municipal_registration: data.cnpj?.municipal_registration,
             status: data.cnpj?.status?.[0]?.name,
             economic_group_holding: {
-              name: data.cnpj?.economic_group_holding?.name,
-              taxId: data.cnpj?.economic_group_holding?.taxId,
+              name: data.cnpj?.economic_group_holding?.name! as string,
+              taxId: data.cnpj?.economic_group_holding?.taxId! as string,
             },
             economic_group_controlled:
               data.cnpj?.economic_group_controlled?.map((item) => ({
-                name: item.name,
-                taxId: item.taxId,
+                name: item.name! as string,
+                taxId: item.taxId! as string,
               })),
             setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
           }),
