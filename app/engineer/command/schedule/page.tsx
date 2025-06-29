@@ -1,5 +1,5 @@
 import { findAllSchedule } from "@/app/lib/@backend/action/engineer/command/schedule.action";
-import { ScheduleTable } from "@/app/lib/@frontend/ui/component";
+import { ScheduleTable } from "@/app/lib/@frontend/ui/table/engineer/schedule/table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 

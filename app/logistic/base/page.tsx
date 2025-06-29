@@ -2,7 +2,7 @@ import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restric
 import { findManyBase } from "@/app/lib/@backend/action/logistic/base.action";
 import { IBase } from "@/app/lib/@backend/domain";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
-import { BaseTable } from "@/app/lib/@frontend/ui/table";
+import { BaseTable } from "@/app/lib/@frontend/ui/table/logistic/base/base.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Filter } from "mongodb";
 import Link from "next/link";

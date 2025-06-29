@@ -16,10 +16,7 @@ import {
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { TechnologyAndConfigurationProfileSearchForm } from "@/app/lib/@frontend/ui/form";
-import {
-  DevicesConfiguredTable,
-  DevicesDetectedTable,
-} from "@/app/lib/@frontend/ui/table";
+
 import { useConfiguration } from "@/app/lib/@frontend/hook";
 import {
   Settings,
@@ -34,6 +31,8 @@ import {
 import { Switch } from "@/app/lib/@frontend/ui/component/switch";
 import { Label } from "@/app/lib/@frontend/ui/component/label";
 import Link from "next/link";
+import { DevicesDetectedTable } from "@/app/lib/@frontend/ui/table/production/devices-detected/table";
+import { DevicesConfiguredTable } from "@/app/lib/@frontend/ui/table/production/devices-configured/table";
 
 interface Props {
   configurationProfile: IConfigurationProfile | null;

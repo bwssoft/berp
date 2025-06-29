@@ -6,11 +6,10 @@ import {
   IdentificationForm,
   TechnologySearchForm,
 } from "@/app/lib/@frontend/ui/form";
-import {
-  DevicesDetectedTable,
-  DevicesIdentifiedTable,
-} from "@/app/lib/@frontend/ui/table";
+
 import { useIdentification } from "@/app/lib/@frontend/hook";
+import { DevicesDetectedTable } from "@/app/lib/@frontend/ui/table/production/devices-detected/table";
+import { DevicesIdentifiedTable } from "@/app/lib/@frontend/ui/table/production/devices-identified/table";
 
 interface Props {
   technology: ITechnology | null;
