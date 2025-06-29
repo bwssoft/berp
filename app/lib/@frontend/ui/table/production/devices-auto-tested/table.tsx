@@ -2,6 +2,7 @@
 
 import { columns } from "./columns";
 import { DataTable } from "../../../component";
+import { Device } from "@/app/lib/@backend/domain";
 
 interface Props {
   data: {
@@ -15,7 +16,7 @@ interface Props {
     status: boolean;
     created_at: Date;
     technology: {
-      system_name: string;
+      system_name: Device.Model;
     };
   }[];
 }

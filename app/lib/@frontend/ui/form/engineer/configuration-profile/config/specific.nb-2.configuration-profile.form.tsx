@@ -62,7 +62,7 @@ export function SpecificNB2ConfigurationProfileForm() {
 
               <FormField
                 control={control}
-                name="config.specific.sleep"
+                name="config.specific.time_to_sleep"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Definir tempo para iniciar modo sleep</FormLabel>
@@ -232,7 +232,7 @@ export function SpecificNB2ConfigurationProfileForm() {
                   <FormItem>
                     <FormLabel>Limite para detectar ignição ligada</FormLabel>
                     <FormControl>
-                      <Input placeholder="2.0" {...field} />
+                      <Input placeholder="235" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -248,7 +248,7 @@ export function SpecificNB2ConfigurationProfileForm() {
                       Limite para detectar ignição desligada
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="1.0" {...field} />
+                      <Input placeholder="241" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -262,7 +262,7 @@ export function SpecificNB2ConfigurationProfileForm() {
                   <FormItem>
                     <FormLabel>Limite para detectar movimentação</FormLabel>
                     <FormControl>
-                      <Input placeholder="0.5" {...field} />
+                      <Input placeholder="65535" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -278,7 +278,7 @@ export function SpecificNB2ConfigurationProfileForm() {
                       Limite para detectar Aceleração Brusca
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="3.0" {...field} />
+                      <Input placeholder="65534" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -292,7 +292,7 @@ export function SpecificNB2ConfigurationProfileForm() {
                   <FormItem>
                     <FormLabel>Limite para detectar Frenagem Brusca</FormLabel>
                     <FormControl>
-                      <Input placeholder="3.5" {...field} />
+                      <Input placeholder="65533" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

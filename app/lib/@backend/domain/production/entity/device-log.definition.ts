@@ -2,7 +2,7 @@ import { Device } from "../../engineer";
 
 interface Technology {
   id: string;
-  system_name: string;
+  system_name: Device.Model;
 }
 
 interface Equipment {
@@ -25,16 +25,4 @@ export interface IDeviceLog {
   user: User;
   status: boolean;
   created_at: Date;
-  metadata: Metadata;
 }
-
-type Message = {
-  request: string;
-  response?: string;
-};
-
-type Metadata = {
-  init_time: number;
-  end_time: number;
-  messages: Message[];
-};

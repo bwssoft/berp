@@ -32,6 +32,7 @@ export class NB2LORAParser {
    * @returns O valor do serial ou undefined se o formato não for válido.
    */
   static serial(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RINS=");
 
     if (parts.length < 2) return undefined;
@@ -50,6 +51,7 @@ export class NB2LORAParser {
    * @returns O valor do 'timestamp' ou undefined se o formato não for válido.
    */
   static rtk(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RTK=");
 
     if (parts.length < 2) return undefined;
@@ -68,6 +70,7 @@ export class NB2LORAParser {
    * @returns O valor do 'device address' ou undefined se o formato não for válido.
    */
   static rda(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RDA=");
 
     if (parts.length < 2) return undefined;
@@ -86,6 +89,7 @@ export class NB2LORAParser {
    * @returns O valor do 'device eui' ou undefined se o formato não for válido.
    */
   static rde(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RDE=");
 
     if (parts.length < 2) return undefined;
@@ -104,6 +108,7 @@ export class NB2LORAParser {
    * @returns O valor do 'application eui' ou undefined se o formato não for válido.
    */
   static rap(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RAP=");
 
     if (parts.length < 2) return undefined;
@@ -122,6 +127,7 @@ export class NB2LORAParser {
    * @returns O valor do 'application key' ou undefined se o formato não for válido.
    */
   static rak(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RAK=");
 
     if (parts.length < 2) return undefined;
@@ -140,6 +146,7 @@ export class NB2LORAParser {
    * @returns O valor do 'application session key' ou undefined se o formato não for válido.
    */
   static rask(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RASK=");
 
     if (parts.length < 2) return undefined;
@@ -158,6 +165,7 @@ export class NB2LORAParser {
    * @returns O valor do 'network session key' ou undefined se o formato não for válido.
    */
   static rnk(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RNK=");
 
     if (parts.length < 2) return undefined;
@@ -176,6 +184,7 @@ export class NB2LORAParser {
    * @returns O valor do imei ou undefined se o formato não for válido.
    */
   static imei(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RIMEI=");
 
     if (parts.length < 2) return undefined;
@@ -194,6 +203,7 @@ export class NB2LORAParser {
    * @returns O valor do iccid ou undefined se o formato não for válido.
    */
   static iccid(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("ICCID=");
 
     if (parts.length < 2) return undefined;
@@ -212,6 +222,7 @@ export class NB2LORAParser {
    * @returns O valor do firmware ou undefined se o formato não for válido.
    */
   static firmware(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RFW=");
 
     if (parts.length < 2) return undefined;
@@ -230,6 +241,7 @@ export class NB2LORAParser {
    * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
    */
   static auto_test(input: string): NB2LORA.AutoTest | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("AUTOTEST=");
     if (parts.length < 2) return undefined;
     const splited = parts[1].split(",");
@@ -247,6 +259,7 @@ export class NB2LORAParser {
    * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
    */
   static odometer(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RODM=");
     if (parts.length < 2) return undefined;
 
@@ -264,6 +277,7 @@ export class NB2LORAParser {
    * @returns O valor numérico do tempo de transmissão de ignição ligada ou undefined se o formato não for válido.
    */
   static data_transmission_on(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCN=");
     if (parts.length < 2) return undefined;
 
@@ -281,6 +295,7 @@ export class NB2LORAParser {
    * @returns O valor numérico do tempo de transmissão de ignição desligada ou undefined se o formato não for válido.
    */
   static data_transmission_off(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCW=");
     if (parts.length < 2) return undefined;
 
@@ -298,6 +313,7 @@ export class NB2LORAParser {
    * @returns O valor numérico do tempo de transmissão em evento ou undefined se o formato não for válido.
    */
   static data_transmission_event(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCE=");
 
     if (parts.length < 2) return undefined;
@@ -316,6 +332,7 @@ export class NB2LORAParser {
    * @returns O valor numérico do tempo de sleep ou undefined se o formato não for válido.
    */
   static sleep(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCS=");
 
     if (parts.length < 2) return undefined;
@@ -334,6 +351,7 @@ export class NB2LORAParser {
    * @returns O valor numérico do tempo de keep alive ou undefined se o formato não for válido.
    */
   static keep_alive(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCK=");
 
     if (parts.length < 2) return undefined;
@@ -352,6 +370,7 @@ export class NB2LORAParser {
    * @returns O valor numérico do ip primário ou undefined se o formato não for válido.
    */
   static ip_primary(input: string) {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RIP1=");
     if (parts.length < 2) return undefined;
     const [ip, port] = parts[1].split(":");
@@ -368,6 +387,7 @@ export class NB2LORAParser {
    * @returns O valor numérico do ip secundário ou undefined se o formato não for válido.
    */
   static ip_secondary(input: string) {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RIP2=");
     if (parts.length < 2) return undefined;
     const [ip, port] = parts[1].split(":");
@@ -384,6 +404,8 @@ export class NB2LORAParser {
    * @returns O valor numérico do dns primário ou undefined se o formato não for válido.
    */
   static dns_primary(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RID1=");
     if (parts.length < 2) return undefined;
     const [address, port] = parts[1].split(":");
@@ -400,6 +422,7 @@ export class NB2LORAParser {
    * @returns O valor numérico do dns secundário ou undefined se o formato não for válido.
    */
   static dns_secondary(input: string) {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RID2=");
     if (parts.length < 2) return undefined;
     const [address, port] = parts[1].split(":");
@@ -416,6 +439,8 @@ export class NB2LORAParser {
    * @returns O valor numérico da apn ou undefined se o formato não for válido.
    */
   static apn(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIAP=");
     if (parts.length < 2) return undefined;
     const [address, user, password] = parts[1].split(",");
@@ -434,6 +459,7 @@ export class NB2LORAParser {
    * @returns O valor numérico da tensão 12V ou undefined se o formato não for válido.
    */
   static virtual_ignition_12v(input: string) {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RIG12=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -451,6 +477,8 @@ export class NB2LORAParser {
    * @returns O valor numérico da tensão 24V ou undefined se o formato não for válido.
    */
   static virtual_ignition_24v(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIG24=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -467,6 +495,8 @@ export class NB2LORAParser {
    * @returns O valor numérico do ângulo ou undefined se o formato não for válido.
    */
   static heading_detection_angle(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFA=");
 
     if (parts.length < 2) return undefined;
@@ -485,6 +515,8 @@ export class NB2LORAParser {
    * @returns O valor numérico da velocidade ou undefined se o formato não for válido.
    */
   static speed_alert_threshold(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFV=");
 
     if (parts.length < 2) return undefined;
@@ -503,6 +535,8 @@ export class NB2LORAParser {
    * @returns O valor numérico da sensibilidade do acelerometro quando ligado ou undefined se o formato não for válido.
    */
   static accel_threshold_for_ignition_on(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFTON=");
 
     if (parts.length < 2) return undefined;
@@ -521,6 +555,8 @@ export class NB2LORAParser {
    * @returns O valor numérico da sensibilidade do acelerometro quando desligado ou undefined se o formato não for válido.
    */
   static accel_threshold_for_ignition_off(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFTOF=");
 
     if (parts.length < 2) return undefined;
@@ -539,6 +575,8 @@ export class NB2LORAParser {
    * @returns O valor numérico da sensibilidade do acelerometro quando violado ou undefined se o formato não for válido.
    */
   static accel_threshold_for_movement(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFAV=");
 
     if (parts.length < 2) return undefined;
@@ -557,6 +595,8 @@ export class NB2LORAParser {
    * @returns O valor numérico da aceleração máxima ou undefined se o formato não for válido.
    */
   static harsh_acceleration_threshold(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFMA=");
 
     if (parts.length < 2) return undefined;
@@ -575,6 +615,8 @@ export class NB2LORAParser {
    * @returns O valor numérico da desaceleração máxima ou undefined se o formato não for válido.
    */
   static harsh_braking_threshold(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFMD=");
 
     if (parts.length < 2) return undefined;
@@ -586,16 +628,24 @@ export class NB2LORAParser {
     return isNaN(value) ? undefined : value;
   }
 
-  static input_1() {
+  static input_1(input: string) {
+    if (typeof input !== "string") return undefined;
+
     return "" as any;
   }
-  static input_2() {
+  static input_2(input: string) {
+    if (typeof input !== "string") return undefined;
+
     return "" as any;
   }
-  static input_3() {
+  static input_3(input: string) {
+    if (typeof input !== "string") return undefined;
+
     return "" as any;
   }
-  static input_4() {
+  static input_4(input: string) {
+    if (typeof input !== "string") return undefined;
+
     return "" as any;
   }
 }

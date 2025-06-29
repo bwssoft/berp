@@ -3,9 +3,31 @@ import { E3Encoder, E3Parser } from "../../@backend/infra/protocol";
 import { typedObjectEntries } from "../../util";
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
-import { IConfigurationProfile } from "../../@backend/domain";
+import {
+  Device,
+  E3PlusConfig,
+  IConfigurationProfile,
+} from "../../@backend/domain";
 
-type ConfigKeys = keyof IConfigurationProfile["config"];
+namespace Namespace {
+  interface Equipment {
+    firmware: string;
+    serial: string;
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
+  }
+  export interface Detected {
+    port: ISerialPort;
+    equipment: Equipment;
+  }
+
+  export type Profile = IConfigurationProfile<E3PlusConfig>["config"];
+
+  export type ConfigKeys =
+    | keyof NonNullable<Profile["general"]>
+    | keyof NonNullable<Profile["specific"]>;
+}
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
@@ -47,15 +69,15 @@ const readResponse = async (
 
 const generateMessages = (
   profile: IConfigurationProfile
-): Record<ConfigKeys, string> => {
-  const response = {} as Record<ConfigKeys, string>;
+): Record<Namespace.ConfigKeys, string> => {
+  const response = {} as Record<Namespace.ConfigKeys, string>;
   Object.entries({
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([message, args]) => {
     const _message = E3Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
-    response[message as ConfigKeys] = _message;
+    response[message as Namespace.ConfigKeys] = _message;
   });
   return response;
 };
@@ -169,42 +191,84 @@ export const useE3Plus = () => {
   );
   const handleConfiguration = useCallback(
     async (
-      ports: ISerialPort[],
+      detected: Namespace.Detected[],
       configuration_profile: IConfigurationProfile
     ) => {
-      const generatedMessages = generateMessages(configuration_profile);
-      const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, command]) => ({
-          key,
-          command,
-        })
-      );
+      const messages = [
+        ...typedObjectEntries(generateMessages(configuration_profile)).map(
+          ([key, command]) => ({
+            key,
+            command,
+          })
+        ),
+        { command: "CHECK", key: "check", delay_before: 1000 },
+        { command: "CXIP", key: "cxip" },
+        { command: "STATUS", key: "status" },
+      ] as const;
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
             const init_time = Date.now();
             const response = await sendMultipleMessages({
               transport: port,
-              messages: configurationCommands,
+              messages,
             });
             const end_time = Date.now();
             const responseEntries = Object.entries(response ?? {});
-            const status =
-              responseEntries.length > 0 &&
-              responseEntries.every(
-                ([_, value]) => typeof value !== "undefined"
-              );
+
+            let applied_profile = {} as Namespace.Profile;
+            const { check, status, cxip } = response;
+            if (check && status && cxip) {
+              const {
+                data_transmission_off,
+                data_transmission_on,
+                apn,
+                keep_alive,
+                ...processed_check
+              } = E3Parser.check(check) ?? {};
+              const ip_primary = E3Parser.ip_primary(cxip);
+              const ip_secondary = E3Parser.ip_secondary(cxip);
+              const dns_primary = E3Parser.dns(cxip);
+              applied_profile = {
+                general: {
+                  data_transmission_on,
+                  data_transmission_off,
+                  ip_primary,
+                  ip_secondary,
+                  apn,
+                  keep_alive,
+                  dns_primary,
+                },
+                specific: processed_check,
+              };
+            }
             return {
+              equipment,
               port,
-              response,
-              messages: configurationCommands,
               init_time,
               end_time,
-              status,
+              status:
+                responseEntries.length > 0 &&
+                responseEntries.every(
+                  ([_, value]) => typeof value !== "undefined"
+                ),
+              applied_profile,
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
-            console.error("[ERROR] handleConfiguration", error);
-            return { port };
+            console.error("[ERROR] handleConfiguration  use-e3-plus-4g", error);
+            return {
+              port,
+              status: false,
+              equipment,
+              messages: [],
+              init_time: 0,
+              end_time: 0,
+            };
           }
         })
       );
