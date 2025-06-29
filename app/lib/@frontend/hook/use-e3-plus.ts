@@ -3,9 +3,31 @@ import { E3Encoder, E3Parser } from "../../@backend/infra/protocol";
 import { typedObjectEntries } from "../../util";
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
-import { IConfigurationProfile } from "../../@backend/domain";
+import {
+  Device,
+  E3PlusConfig,
+  IConfigurationProfile,
+} from "../../@backend/domain";
 
-type ConfigKeys = keyof IConfigurationProfile["config"];
+namespace Namespace {
+  interface Equipment {
+    firmware: string;
+    serial: string;
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
+  }
+  export interface Detected {
+    port: ISerialPort;
+    equipment: Equipment;
+  }
+
+  export type Profile = IConfigurationProfile<E3PlusConfig>["config"];
+
+  export type ConfigKeys =
+    | keyof NonNullable<Profile["general"]>
+    | keyof NonNullable<Profile["specific"]>;
+}
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
@@ -47,15 +69,15 @@ const readResponse = async (
 
 const generateMessages = (
   profile: IConfigurationProfile
-): Record<ConfigKeys, string> => {
-  const response = {} as Record<ConfigKeys, string>;
+): Record<Namespace.ConfigKeys, string> => {
+  const response = {} as Record<Namespace.ConfigKeys, string>;
   Object.entries({
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([message, args]) => {
     const _message = E3Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
-    response[message as ConfigKeys] = _message;
+    response[message as Namespace.ConfigKeys] = _message;
   });
   return response;
 };
@@ -72,17 +94,18 @@ export const useE3Plus = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, message, timeout) => {
+    sendMessage: async (port, msg) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      await writeToPort(port, message);
-      const response = await readResponse(reader, message, timeout);
+      const { command, timeout } = msg;
+      await writeToPort(port, command);
+      const response = await readResponse(reader, command, timeout);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 550,
+      delayBetweenMessages: 200,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -92,9 +115,9 @@ export const useE3Plus = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { message: "IMEI", key: "imei", transform: E3Parser.imei },
-        { message: "ICCID", key: "iccid", transform: E3Parser.iccid },
-        { message: "ET", key: "firmware", transform: E3Parser.firmware },
+        { command: "IMEI", key: "imei", transform: E3Parser.imei },
+        { command: "ICCID", key: "iccid", transform: E3Parser.iccid },
+        { command: "ET", key: "firmware", transform: E3Parser.firmware },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -113,20 +136,22 @@ export const useE3Plus = () => {
     },
     [sendMultipleMessages]
   );
-  const handleGetProfile = useCallback(
-    async (ports: ISerialPort[]) => {
+  const handleGetConfig = useCallback(
+    async (detected: Namespace.Detected[]) => {
       const messages = [
-        { message: "CHECK", key: "check" },
-        { message: "CXIP", key: "cxip" },
-        { message: "STATUS", key: "status" },
+        { command: "CHECK", key: "check" },
+        { command: "CXIP", key: "cxip" },
+        { command: "STATUS", key: "status" },
       ] as const;
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
-            const { check, cxip, status } = await sendMultipleMessages({
+            const response = await sendMultipleMessages({
               transport: port,
               messages,
             });
+
+            const { check, cxip } = response;
             const {
               data_transmission_off,
               data_transmission_on,
@@ -139,6 +164,7 @@ export const useE3Plus = () => {
             const dns_primary = E3Parser.dns(cxip);
             return {
               port,
+              equipment,
               config: {
                 general: {
                   data_transmission_on,
@@ -151,15 +177,15 @@ export const useE3Plus = () => {
                 },
                 specific: processed_check,
               },
-              raw: [
-                ["check", check],
-                ["cxip", cxip],
-                ["status", status],
-              ],
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
-            console.error("[ERROR] handleGetProfile", error);
-            return { port };
+            console.error("[ERROR] handleGetConfig", error);
+            return { port, equipment, messages: [], config: {} };
           }
         })
       );
@@ -168,42 +194,79 @@ export const useE3Plus = () => {
   );
   const handleConfiguration = useCallback(
     async (
-      ports: ISerialPort[],
+      detected: Namespace.Detected[],
       configuration_profile: IConfigurationProfile
     ) => {
-      const generatedMessages = generateMessages(configuration_profile);
-      const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, message]) => ({
-          key,
-          message,
-        })
-      );
+      const messages = [
+        ...typedObjectEntries(generateMessages(configuration_profile)).map(
+          ([key, command]) => ({
+            key,
+            command,
+          })
+        ),
+        { command: "CHECK", key: "check", delay_before: 1000 },
+        { command: "CXIP", key: "cxip" },
+        { command: "STATUS", key: "status" },
+      ] as const;
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
             const init_time = Date.now();
             const response = await sendMultipleMessages({
               transport: port,
-              messages: configurationCommands,
+              messages,
             });
             const end_time = Date.now();
             const responseEntries = Object.entries(response ?? {});
-            const status =
-              responseEntries.length > 0 &&
-              responseEntries.every(
-                ([_, value]) => typeof value !== "undefined"
-              );
+            const { check, cxip } = response;
+            const {
+              data_transmission_off,
+              data_transmission_on,
+              apn,
+              keep_alive,
+              ...processed_check
+            } = E3Parser.check(check) ?? {};
+            const ip_primary = E3Parser.ip_primary(cxip);
+            const ip_secondary = E3Parser.ip_secondary(cxip);
+            const dns_primary = E3Parser.dns(cxip);
             return {
+              equipment,
               port,
-              response,
-              messages: configurationCommands,
               init_time,
               end_time,
-              status,
+              status:
+                responseEntries.length > 0 &&
+                responseEntries.every(
+                  ([_, value]) => typeof value !== "undefined"
+                ),
+              applied_profile: {
+                general: {
+                  data_transmission_on,
+                  data_transmission_off,
+                  ip_primary,
+                  ip_secondary,
+                  apn,
+                  keep_alive,
+                  dns_primary,
+                },
+                specific: processed_check,
+              },
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
-            console.error("[ERROR] handleConfiguration", error);
-            return { port };
+            console.error("[ERROR] handleConfiguration  use-e3-plus-4g", error);
+            return {
+              port,
+              status: false,
+              equipment,
+              messages: [],
+              init_time: 0,
+              end_time: 0,
+            };
           }
         })
       );
@@ -214,7 +277,7 @@ export const useE3Plus = () => {
   const handleAutoTest = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { key: "autotest", message: "AUTOTEST", timeout: 25000 },
+        { key: "autotest", command: "AUTOTEST", timeout: 25000 },
       ];
       return await Promise.all(
         ports.map(async (port) => {
@@ -250,7 +313,7 @@ export const useE3Plus = () => {
       const messages = [
         {
           key: "imei",
-          message: `13041SETSN,${identifier}`,
+          command: `13041SETSN,${identifier}`,
         },
       ] as const;
       try {
@@ -266,6 +329,7 @@ export const useE3Plus = () => {
           messages,
           init_time,
           end_time,
+          status: true,
         };
       } catch (error) {
         console.error("[ERROR] handleIdentification", error);
@@ -278,7 +342,7 @@ export const useE3Plus = () => {
   const handleGetIdentification = useCallback(
     async (port: ISerialPort) => {
       const messages = [
-        { message: "IMEI", key: "imei", transform: E3Parser.imei },
+        { command: "IMEI", key: "imei", transform: E3Parser.imei },
       ] as const;
       try {
         const response = await sendMultipleMessages({
@@ -294,11 +358,12 @@ export const useE3Plus = () => {
     [sendMultipleMessages]
   );
 
-  const isIdentified = (input: {
+  const isIdentified = (input?: {
     imei?: string;
     iccid?: string;
     firmware?: string;
-  }) => {
+  }): "fully_identified" | "partially_identified" | "not_identified" => {
+    if (!input) return "not_identified";
     const { imei, iccid, firmware } = input;
     const identified = [imei, iccid, firmware];
     if (identified.every((e) => e && e?.length > 0)) {
@@ -314,7 +379,7 @@ export const useE3Plus = () => {
     isIdentified,
     ports,
     handleIdentification,
-    handleGetProfile,
+    handleGetConfig,
     handleConfiguration,
     requestPort,
     handleAutoTest,

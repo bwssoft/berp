@@ -71,6 +71,7 @@ export default async function Page(props: Props) {
           configurationProfile={configurationProfile}
           technology={technology}
           client={client}
+          clients={[]}
         />
       </div>
     </div>

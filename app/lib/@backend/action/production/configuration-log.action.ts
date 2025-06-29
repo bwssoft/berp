@@ -8,7 +8,10 @@ import {
   findOneConfigurationLogUsecase,
   exportConfigurationLogUsecase,
 } from "@/app/lib/@backend/usecase";
+import { auth } from "@/auth";
 import { Filter } from "mongodb";
+import { statsConfigurationLogUsecase } from "../../usecase/production/configuration-log/stats-configuration-log.usecase";
+import { updateBulkConfigurationLogUsecase } from "../../usecase/production/configuration-log/update-bulk.configuration-log.usecase";
 
 export async function createOneConfigurationLog(
   input: Omit<IConfigurationLog, "id" | "created_at" | "user">
@@ -26,11 +29,15 @@ export async function createOneConfigurationLog(
 export async function createManyConfigurationLog(
   input: Omit<IConfigurationLog, "id" | "created_at" | "user">[]
 ) {
+  const session = await auth();
+  if (!session) throw Error("Not authenticated");
+
   const _input = input.map((i) => ({
     ...i,
     user: {
-      id: crypto.randomUUID(),
-      name: crypto.randomUUID(),
+      id: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
     },
   }));
   return await createManyConfigurationLogUsecase.execute(_input);
@@ -50,4 +57,17 @@ export async function findManyConfigurationLog(
 
 export async function exportConfigurationLog(input: Filter<IConfigurationLog>) {
   return await exportConfigurationLogUsecase.execute(input);
+}
+
+export async function statsConfigurationLog() {
+  return await statsConfigurationLogUsecase.execute();
+}
+
+export async function updateBulkConfigurationLog(
+  operations: {
+    query: { id: string };
+    value: Partial<IConfigurationLog>;
+  }[]
+) {
+  await updateBulkConfigurationLogUsecase.execute(operations);
 }

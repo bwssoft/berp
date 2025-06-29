@@ -22,7 +22,7 @@ export function ModuleControlList(props: Props) {
 
   const { restrictFeatureByProfile } = useAuth();
 
-  const hideViewButton = restrictFeatureByProfile("admin:profile:view");
+  const hasViewPermission = restrictFeatureByProfile("admin:profile:view");
 
   return (
     <>
@@ -42,7 +42,7 @@ export function ModuleControlList(props: Props) {
                 {control.name}
               </h3>
               <div className="w-fit mt-2 flex divide-x-2 divide-gray-300 text-sm text-gray-400 hover:cursor-pointer">
-                {hideViewButton && (
+                {hasViewPermission && (
                   <Link
                     href={`/admin/control/${control.id}/${profile?.id ?? ""}`}
                     key={control.id}
@@ -51,7 +51,7 @@ export function ModuleControlList(props: Props) {
                     Detalhes
                   </Link>
                 )}
-                {hideViewButton && (
+                {hasViewPermission && (
                   <p
                     className="text-gray-500 px-2 hover:underline hover:underline-offset-4 hover:text-blue-500"
                     onClick={() =>
@@ -67,18 +67,17 @@ export function ModuleControlList(props: Props) {
                 )}
               </div>
             </div>
-            {profile &&
-              profile?.locked_control_code.includes(control.code) && (
-                <span
-                  aria-hidden="true"
-                  className="absolute right-6 top-6 flex gap-2"
-                >
-                  <div className="mt-1 flex items-center text-xs text-green-600">
-                    <CheckCircleIcon className="w-4 h-4 mr-1" />
-                    Presente no perfil
-                  </div>
-                </span>
-              )}
+            {profile && profile?.locked_control_code.includes(control.code) && (
+              <span
+                aria-hidden="true"
+                className="absolute right-6 top-6 flex gap-2"
+              >
+                <div className="mt-1 flex items-center text-xs text-green-600">
+                  <CheckCircleIcon className="w-4 h-4 mr-1" />
+                  Presente no perfil
+                </div>
+              </span>
+            )}
           </li>
         ))}
       </ul>

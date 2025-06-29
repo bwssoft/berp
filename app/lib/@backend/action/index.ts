@@ -7,3 +7,4 @@ export * from "./omie";
 export * from "./auth";
 export * from "./logistic";
 export * from "./business";
+export * from "./cnpja";

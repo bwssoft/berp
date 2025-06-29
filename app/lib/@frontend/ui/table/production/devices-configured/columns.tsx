@@ -1,120 +1,273 @@
+// columns.tsx
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
+import { Device } from "@/app/lib/@backend/domain";
 import Link from "next/link";
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../../component";
-import { technologyConstants } from "@/app/lib/constant";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
-const statuses = {
-  progress: "text-gray-500 bg-gray-800/20",
-  success: "text-green-500 bg-green-800/20",
-  error: "text-rose-500 bg-rose-800/20",
-};
-
-const text = {
-  progress: "text-gray-800",
-  success: "text-green-800",
-  error: "text-rose-800",
-};
-export const columns: ColumnDef<{
+export interface Row {
   id: string;
   equipment: {
     serial: string;
     firmware: string;
+    imei?: string;
     iccid?: string;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
   };
   status: boolean;
   created_at: Date;
   technology: {
-    system_name: string;
+    system_name: Device.Model;
   };
-}>[] = [
+  desired_profile: {
+    name: string;
+    id: string;
+  };
+}
+
+/** Estilos para o badge de status */
+const statuses = {
+  true: "text-green-500 bg-green-800/20",
+  false: "text-rose-500 bg-rose-800/20",
+};
+const textColor = {
+  true: "text-green-800",
+  false: "text-rose-800",
+};
+const info = {
+  true: "Sucesso",
+  false: "Falha",
+};
+
+/** Colunas comuns a todas as tecnologias */
+const commonColumns: ColumnDef<Row>[] = [
   {
     header: "Status",
     accessorKey: "status",
     cell: ({ row }) => {
-      const { original } = row;
-      const status = original.status ? "success" : "error";
-      const label = original.status ? "Sucesso" : "Falha";
+      const s = String(row.original.status) as keyof typeof statuses;
       return (
         <div className="flex items-center gap-1">
-          <div className={cn(statuses[status], "flex-none rounded-full p-1")}>
+          <div className={cn(statuses[s], "flex-none rounded-full p-1 w-fit")}>
             <div className="h-1.5 w-1.5 rounded-full bg-current" />
           </div>
-          <div className={cn("hidden font-semibold sm:block", text[status])}>
-            {label}
+          <div className={cn("hidden font-semibold sm:block", textColor[s])}>
+            {info[s]}
           </div>
         </div>
       );
     },
   },
   {
-    header: "Serial",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const { original } = row;
-      return (
-        <p title={original.equipment.serial}>
-          {original.equipment.serial ?? "--"}
-        </p>
-      );
-    },
-  },
-  {
-    header: "Iccid",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const original = row.original;
-      return (
-        <p title={original.equipment.iccid}>
-          {original.equipment.iccid ?? "--"}
-        </p>
-      );
-    },
-  },
-  {
-    header: "Tecnologia",
-    accessorKey: "technology",
-    cell: ({ row }) => {
-      const { original } = row;
-      return (
-        technologyConstants.name[
-          original.technology
-            .system_name as keyof typeof technologyConstants.name
-        ] ?? "Unknown"
-      );
-    },
-  },
-  {
-    header: "Firmware",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const { original } = row;
-      return original.equipment.firmware;
-    },
-  },
-  {
-    header: "Data de criação",
+    header: "Data",
     accessorKey: "created_at",
-    cell: ({ row }) => {
-      const iput = row.original;
-      return iput.created_at.toLocaleString();
-    },
-  },
-  {
-    header: "Ação",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const { original } = row;
-      return (
-        <Link href={`/production/log/configurator/${original.id}`}>
-          <Button variant="ghost">
-            <ArrowTopRightOnSquareIcon aria-hidden="true" className="size-5" />
-          </Button>
-        </Link>
-      );
-    },
+    cell: ({ row }) => <p>{row.original.created_at.toLocaleString()}</p>,
   },
 ];
+
+/** Colunas específicas por tipo de dispositivo */
+const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
+  DM_E3_PLUS_4G: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.serial}>
+          {row.original.equipment.serial ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "IMEI",
+      accessorKey: "equipment.imei",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.imei}>
+          {row.original.equipment.imei ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "ICCID",
+      accessorKey: "equipment.iccid",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.iccid}>
+          {row.original.equipment.iccid ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Firmware",
+      accessorKey: "equipment.firmware",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.firmware}>
+          {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+  ],
+  DM_BWS_NB2: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.serial}>
+          {row.original.equipment.serial ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "IMEI",
+      accessorKey: "equipment.imei",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.imei}>
+          {row.original.equipment.imei ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "ICCID",
+      accessorKey: "equipment.iccid",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.iccid}>
+          {row.original.equipment.iccid ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Firmware",
+      accessorKey: "equipment.firmware",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.firmware}>
+          {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+  ],
+  DM_BWS_LORA: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.serial}>
+          {row.original.equipment.serial ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Firmware",
+      accessorKey: "equipment.firmware",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.firmware}>
+          {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Timestamp",
+      accessorKey: "equipment.lora_keys.timestamp",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.lora_keys?.timestamp}>
+          {row.original.equipment.lora_keys?.timestamp ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Device EUI",
+      accessorKey: "equipment.lora_keys.device_eui",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.lora_keys?.device_eui}>
+          {row.original.equipment.lora_keys?.device_eui ?? "--"}
+        </p>
+      ),
+    },
+  ],
+  DM_BWS_NB2_LORA: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.serial}>
+          {row.original.equipment.serial ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "IMEI",
+      accessorKey: "equipment.imei",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.imei}>
+          {row.original.equipment.imei ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "ICCID",
+      accessorKey: "equipment.iccid",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.iccid}>
+          {row.original.equipment.iccid ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Device Address",
+      accessorKey: "equipment.lora_keys.device_address",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.lora_keys?.device_address}>
+          {row.original.equipment.lora_keys?.device_address ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Device EUI",
+      accessorKey: "equipment.lora_keys.device_eui",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.lora_keys?.device_eui}>
+          {row.original.equipment.lora_keys?.device_eui ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Firmware",
+      accessorKey: "equipment.firmware",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.firmware}>
+          {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+  ],
+};
+
+/**
+ * Retorna o conjunto de colunas para o tipo de Device.Model informado.
+ */
+export function getColumns(type: Device.Model): ColumnDef<Row>[] {
+  return [
+    ...commonColumns,
+    ...(columnMap[type] || []),
+    {
+      header: "Ação",
+      accessorKey: "equipment",
+      cell: ({ row }) => {
+        const { original } = row;
+        return (
+          <Link
+            href={`/production/log/configurator/${original.id}`}
+            target="_blank"
+          >
+            <Button variant="ghost">
+              <ArrowTopRightOnSquareIcon
+                aria-hidden="true"
+                className="size-5"
+              />
+            </Button>
+          </Link>
+        );
+      },
+    },
+  ];
+}

@@ -4,7 +4,7 @@ import {
   updateOneProductionOrderById,
   deleteOneConfigurationProfileById,
 } from "@/app/lib/@backend/action";
-import { EType, EUseCase, IProductionOrder } from "@/app/lib/@backend/domain";
+import { EType, IProductionOrder } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
@@ -129,7 +129,6 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
       await updateOneProductionOrderById({ id: defaultValues?.id! }, data);
       const configuration_profile = await createOneConfigurationProfile({
         client_id,
-        use_case: EUseCase["CLIENT"],
         technology_id,
         type: EType["CAR"],
         config: {
@@ -143,7 +142,7 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
       });
       await updateOneProductionOrderLineItem(
         { id: production_order_id, line_item_id },
-        { configuration_profile_id: configuration_profile.id },
+        { configuration_profile_id: configuration_profile!.id },
         proposal_id
       );
 

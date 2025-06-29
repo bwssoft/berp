@@ -1,13 +1,16 @@
+import { Device } from "../../engineer";
+
 interface Technology {
   id: string;
-  system_name: string;
+  system_name: Device.Model;
 }
 
 interface Equipment {
-  imei: string;
   serial: string;
   firmware: string;
+  imei?: string;
   iccid?: string;
+  lora_keys?: Partial<Device.Equipment["lora_keys"]>;
 }
 
 interface User {
@@ -22,16 +25,4 @@ export interface IDeviceLog {
   user: User;
   status: boolean;
   created_at: Date;
-  metadata: Metadata;
 }
-
-type Message = {
-  request: string;
-  response?: string;
-};
-
-type Metadata = {
-  init_time: number;
-  end_time: number;
-  messages: Message[];
-};

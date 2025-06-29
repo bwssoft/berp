@@ -1,36 +1,73 @@
 "use client";
 
-import { DataTable } from "../../../component";
-import { columns } from "./columns";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/app/lib/@frontend/ui/component/table";
+import { getColumns, Row } from "./columns";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+} from "@tanstack/react-table";
+import { Device } from "@/app/lib/@backend/domain";
 
 interface Props {
-  data: {
-    id: string;
-    equipment: {
-      firmware: string;
-      serial: string;
-      iccid?: string;
-    };
-    status: boolean;
-    profile: {
-      name: string;
-      id: string;
-    };
-    created_at: Date;
-    technology: {
-      system_name: string;
-    };
-  }[];
+  data: Row[];
+  model: Device.Model;
 }
-export function DevicesConfiguredTable(props: Props) {
-  const { data } = props;
+
+export function DevicesConfiguredTable({ data, model }: Props) {
+  const table = useReactTable({
+    data,
+    columns: getColumns(model),
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      mobileDisplayValue={(data) => data.equipment.serial}
-      mobileKeyExtractor={() => Math.random().toString()}
-      className="w-full"
-    />
+    <div className="rounded-md border w-full">
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+
+        <TableBody>
+          {table.getRowModel().rows.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={data.length} className="h-24 text-center">
+                Nenhum dado encontrado
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

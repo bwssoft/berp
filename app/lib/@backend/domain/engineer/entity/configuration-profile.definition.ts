@@ -1,29 +1,35 @@
-export interface IConfigurationProfile {
+export interface IConfigurationProfile<
+  Specific extends
+    | E3PlusConfig
+    | E3Plus4GConfig
+    | BwsNb2Config
+    | BwsLoraConfig
+    | Bws4GConfig =
+    | E3PlusConfig
+    | E3Plus4GConfig
+    | BwsNb2Config
+    | BwsLoraConfig
+    | Bws4GConfig,
+> {
   id: string;
-  client_id: string;
-  use_case: EUseCase;
   name: string;
   type: EType;
-  config: Config;
+  config: Config<Specific>;
   created_at: Date;
   user_id: string;
-  technology_id: string;
   validation: Validation;
+  technology_id: string;
+  client_id?: string;
 }
 
-interface Config {
-  general: GeneralConfig;
-  specific?: E3Plus4GConfig | E3PlusConfig;
+export interface Config<Specific> {
+  general?: GeneralConfig;
+  specific?: Specific;
 }
 
 interface Validation {
   by_human: boolean;
   by_system: boolean;
-}
-
-export enum EUseCase {
-  CLIENT = "CLIENT",
-  INTERNAL = "INTERNAL",
 }
 
 export enum EType {
@@ -58,80 +64,234 @@ type IP = {
 type APN = {
   address: string;
   user: string;
-  password?: string;
+  password?: string | undefined;
 };
 
 type GeneralConfig = {
-  ip_primary?: IP;
-  ip_secondary?: IP;
-  dns_primary?: DNS;
-  dns_secondary?: DNS;
-  apn?: APN;
-  data_transmission_on?: number;
-  data_transmission_off?: number;
-  keep_alive?: number;
+  ip_primary?: IP | undefined;
+  ip_secondary?: IP | undefined;
+  dns_primary?: DNS | undefined;
+  dns_secondary?: DNS | undefined;
+  apn?: APN | undefined;
+  data_transmission_on?: number | undefined;
+  data_transmission_off?: number | undefined;
+  keep_alive?: number | undefined;
 };
 
 export type E3PlusConfig = {
-  password?: {
-    old?: string;
-    new?: string;
-  };
-  timezone?: number;
-  lock_type?: number;
-  odometer?: number;
-  accelerometer_sensitivity?: number;
-  economy_mode?: number;
-  sensitivity_adjustment?: number;
-  lbs_position?: boolean;
-  cornering_position_update?: boolean;
-  ignition_alert_power_cut?: boolean;
-  gprs_failure_alert?: boolean;
-  led?: boolean;
-  virtual_ignition?: boolean;
-  work_mode?: string;
-  operation_mode?: boolean;
-  optional_functions?: Record<string, boolean>;
-  max_speed?: number;
-  sleep?: number;
+  password?:
+    | {
+        old?: string | undefined;
+        new?: string | undefined;
+      }
+    | undefined;
+  timezone?: number | undefined;
+  lock_type?: number | undefined;
+  odometer?: number | undefined;
+  accelerometer_sensitivity?: number | undefined;
+  economy_mode?: number | undefined;
+  sensitivity_adjustment?: number | undefined;
+  lbs_position?: boolean | undefined;
+  cornering_position_update?: boolean | undefined;
+  ignition_alert_power_cut?: boolean | undefined;
+  gprs_failure_alert?: boolean | undefined;
+  led?: boolean | undefined;
+  virtual_ignition?: boolean | undefined;
+  work_mode?: string | undefined;
+  operation_mode?: boolean | undefined;
+  optional_functions?: Record<string, boolean> | undefined;
+  max_speed?: number | undefined;
+  sleep?: number | undefined;
 };
 
 export type E3Plus4GConfig = {
-  password?: {
-    old?: string;
-    new?: string;
-  };
-  timezone?: number;
-  lock_type?: number;
-  odometer?: number;
-  economy_mode?: number;
-  sensitivity_adjustment?: number;
-  lbs_position?: boolean;
-  cornering_position_update?: boolean;
-  led?: boolean;
-  virtual_ignition?: boolean;
-  virtual_ignition_by_voltage?: boolean;
-  virtual_ignition_by_movement?: boolean;
+  password?:
+    | {
+        old?: string | undefined;
+        new?: string | undefined;
+      }
+    | undefined;
+  timezone?: number | undefined;
+  lock_type?: number | undefined;
+  odometer?: number | undefined;
+  economy_mode?: number | undefined;
+  sensitivity_adjustment?: number | undefined;
+  lbs_position?: boolean | undefined;
+  cornering_position_update?: boolean | undefined;
+  led?: boolean | undefined;
+  virtual_ignition?: boolean | undefined;
+  virtual_ignition_by_voltage?: boolean | undefined;
+  virtual_ignition_by_movement?: boolean | undefined;
   optional_functions?: Record<string, boolean>;
-  max_speed?: number;
-  communication_type?: string;
-  protocol_type?: string;
-  anti_theft?: boolean;
-  horimeter?: number;
-  jammer_detection?: boolean;
-  clear_buffer?: boolean;
-  clear_horimeter?: boolean;
-  input_1?: number;
-  input_2?: number;
-  angle_adjustment?: number;
+  max_speed?: number | undefined;
+  communication_type?: string | undefined;
+  protocol_type?: string | undefined;
+  anti_theft?: boolean | undefined;
+  horimeter?: number | undefined;
+  jammer_detection?: boolean | undefined;
+  clear_buffer?: boolean | undefined;
+  clear_horimeter?: boolean | undefined;
+  input_1?: number | undefined;
+  input_2?: number | undefined;
+  angle_adjustment?: number | undefined;
   lock_type_progression?: {
-    n1: number;
-    n2: number;
+    n1: number | undefined;
+    n2: number | undefined;
   };
   ignition_by_voltage?: {
-    t1: number;
-    t2: number;
+    initial: number | undefined;
+    final: number | undefined;
   };
-  ack?: number;
-  ignition_status_hb?: boolean;
+  ack?: number | undefined;
+  ignition_status_hb?: boolean | undefined;
+};
+
+export type BwsNb2Config = {
+  data_transmission_event?: number | undefined;
+  time_to_sleep?: number | undefined;
+  odometer?: number | undefined;
+  virtual_ignition_12v?:
+    | { initial: number | undefined; final: number }
+    | undefined;
+  virtual_ignition_24v?:
+    | { initial: number | undefined; final: number }
+    | undefined;
+  heading_detection_angle?: number | undefined;
+  speed_alert_threshold?: number | undefined;
+  accel_threshold_for_ignition_on?: number | undefined;
+  accel_threshold_for_ignition_off?: number | undefined;
+  accel_threshold_for_movement?: number | undefined;
+  harsh_acceleration_threshold?: number | undefined;
+  harsh_braking_threshold?: number | undefined;
+  input_1?: string | undefined;
+  input_2?: string | undefined;
+  input_3?: string | undefined;
+  input_4?: string | undefined;
+  full_configuration_table?: string | undefined;
+  full_functionality_table?: string | undefined;
+  sleep_mode?: string | undefined;
+};
+
+export type BwsLoraConfig = {
+  odometer?: number | undefined;
+  data_transmission_sleep?: number | undefined;
+  virtual_ignition_12v?:
+    | { initial: number | undefined; final: number }
+    | undefined;
+  virtual_ignition_24v?:
+    | { initial: number | undefined; final: number }
+    | undefined;
+  heading?: boolean | undefined;
+  heading_event_mode?: boolean | undefined;
+  heading_detection_angle?: number | undefined;
+  speed_alert_threshold?: number | undefined;
+  accel_threshold_for_ignition_on?: number | undefined;
+  accel_threshold_for_ignition_off?: number | undefined;
+  accel_threshold_for_movement?: number | undefined;
+  harsh_acceleration_threshold?: number | undefined;
+  harsh_braking_threshold?: number | undefined;
+  data_transmission_position?: number | undefined;
+  led_lighting?: string | undefined;
+  p2p_mode_duration?: number | undefined;
+  lorawan_mode_duration?: number | undefined;
+  input_1?: string | undefined;
+  input_2?: string | undefined;
+  input_3?: string | undefined;
+  input_4?: string | undefined;
+  input_5?: string | undefined;
+  input_6?: string | undefined;
+  full_configuration_table?: string | undefined;
+  fifo_send_and_hold_times?: number[] | undefined;
+  lorawan_data_transmission_event?: number | undefined;
+  p2p_data_transmission_event?: number | undefined;
+  data_transmission_status?: number | undefined;
+  full_functionality_table?: string | undefined;
+  activation_type?: string | undefined;
+  mcu_configuration?: string | undefined;
+  output_table?: number[] | undefined;
+};
+
+export type BwsNb2LoraConfig = {
+  odometer?: number | undefined;
+  data_transmission_sleep?: number | undefined;
+  virtual_ignition_12v?:
+    | { initial: number | undefined; final: number }
+    | undefined;
+  virtual_ignition_24v?:
+    | { initial: number | undefined; final: number }
+    | undefined;
+  heading?: boolean | undefined;
+  heading_event_mode?: boolean | undefined;
+  heading_detection_angle?: number | undefined;
+  speed_alert_threshold?: number | undefined;
+  accel_threshold_for_ignition_on?: number | undefined;
+  accel_threshold_for_ignition_off?: number | undefined;
+  accel_threshold_for_movement?: number | undefined;
+  harsh_acceleration_threshold?: number | undefined;
+  harsh_braking_threshold?: number | undefined;
+  data_transmission_position?: number | undefined;
+  led_lighting?: string | undefined;
+  p2p_mode_duration?: number | undefined;
+  lorawan_mode_duration?: number | undefined;
+  input_1?: string | undefined;
+  input_2?: string | undefined;
+  input_3?: string | undefined;
+  input_4?: string | undefined;
+  input_5?: string | undefined;
+  input_6?: string | undefined;
+  full_configuration_table?: string | undefined;
+  fifo_send_and_hold_times?: number[] | undefined;
+  lorawan_data_transmission_event?: number | undefined;
+  p2p_data_transmission_event?: number | undefined;
+  data_transmission_status?: number | undefined;
+  full_functionality_table?: string | undefined;
+  activation_type?: string | undefined;
+  mcu_configuration?: string | undefined;
+  output_table?: number[] | undefined;
+
+  data_transmission_event?: number | undefined;
+  time_to_sleep?: number | undefined;
+  sleep_mode?: string | undefined;
+};
+
+export type Bws4GConfig = {
+  password?:
+    | {
+        old?: string | undefined;
+        new?: string | undefined;
+      }
+    | undefined;
+  timezone?: number | undefined;
+  lock_type?: number | undefined;
+  odometer?: number | undefined;
+  economy_mode?: number | undefined;
+  sensitivity_adjustment?: number | undefined;
+  lbs_position?: boolean | undefined;
+  cornering_position_update?: boolean | undefined;
+  led?: boolean | undefined;
+  virtual_ignition?: boolean | undefined;
+  virtual_ignition_by_voltage?: boolean | undefined;
+  virtual_ignition_by_movement?: boolean | undefined;
+  optional_functions?: Record<string, boolean>;
+  max_speed?: number | undefined;
+  communication_type?: string | undefined;
+  protocol_type?: string | undefined;
+  anti_theft?: boolean | undefined;
+  horimeter?: number | undefined;
+  jammer_detection?: boolean | undefined;
+  clear_buffer?: boolean | undefined;
+  clear_horimeter?: boolean | undefined;
+  input_1?: number | undefined;
+  input_2?: number | undefined;
+  angle_adjustment?: number | undefined;
+  lock_type_progression?: {
+    n1: number | undefined;
+    n2: number | undefined;
+  };
+  ignition_by_voltage?: {
+    initial: number | undefined;
+    final: number | undefined;
+  };
+  ack?: number | undefined;
+  ignition_status_hb?: boolean | undefined;
 };

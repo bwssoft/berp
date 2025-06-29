@@ -7,6 +7,7 @@ import {
   CubeIcon,
   DocumentTextIcon,
   TagIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../lib/@frontend/context";
 import { Package } from "lucide-react";
@@ -33,6 +34,12 @@ const navigation = [
     pathname: "/commercial/proposal",
     code: "commercial:proposal",
     icon: DocumentTextIcon, // remete a contratos, propostas e documentos
+  },
+  {
+    name: "Contas",
+    pathname: "/commercial/account",
+    code: "commercial:accounts",
+    icon: UserGroupIcon, // representa gestão de contas comerciais
   },
   {
     name: "Produtos",

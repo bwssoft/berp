@@ -1,11 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button, Toggle } from "../../../component";
-
-export interface ISector {
-    id: string;
-    name: string;
-    active: boolean;
-}
+import { ISector } from "@/app/lib/@backend/domain";
 
 export function sectorColumns(
     onToggle: (sector: ISector) => void

@@ -1,4 +1,5 @@
 export * from "./client.definition";
+export * from "./old-contact.definition";
 export * from "./contact.definition";
 export * from "./proposal.definition";
 export * from "./rule.definition";
@@ -7,3 +8,6 @@ export * from "./account.definition";
 export * from "./sector.definition";
 export * from "./product.category.definition";
 export * from "./product.definition";
+export * from "./address.definition";
+export * from "./historical.definition";
+export * from "./account-attachment.definition";

@@ -10,6 +10,7 @@ import {
 } from "@/app/lib/@backend/usecase";
 import { IConfigurationProfile } from "@/app/lib/@backend/domain";
 import { Filter } from "mongodb";
+import { statsConfigurationProfileUsecase } from "../../usecase/engineer/configuration-profile/stats-configuration-profile.usecase";
 
 export async function createOneConfigurationProfile(
   input: Omit<
@@ -50,4 +51,8 @@ export async function findOneConfigurationProfile(
   query: Partial<IConfigurationProfile>
 ) {
   return await findOneConfigurationProfileUsecase.execute(query);
+}
+
+export async function statsConfigurationProfile() {
+  return await statsConfigurationProfileUsecase.execute();
 }

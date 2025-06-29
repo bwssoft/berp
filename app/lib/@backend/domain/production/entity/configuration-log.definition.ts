@@ -1,39 +1,27 @@
 import { IConfigurationProfile } from "../../engineer";
 import { IDeviceLog } from "./device-log.definition";
 
+/**
+ * Log entry for a configuration profile change, extending the base device log.
+ */
 export interface IConfigurationLog extends IDeviceLog {
-  profile: {
-    id: string;
-    name: string;
-    config: ParsedProfile; // perfil desejado aplicado no dispositivo
-  };
+  /** Desired configuration object, if available. */
+  desired_profile: Pick<IConfigurationProfile, "id" | "name" | "config">;
+
+  /** Parsed configuration object, if available. */
+  applied_profile?: IConfigurationProfile["config"];
+
+  /** Whether the configuration has been checked. */
   checked: boolean;
-  // Mapeia cada chave do perfil com os valores desejados e os efetivamente aplicados,
-  // facilitando a verificação das diferenças (ex: { desired: 60, actual: 0 })
-  not_configured?: {
-    general?: NestedProfileDiff<ParsedProfile["general"]>;
-    specific?: NestedProfileDiff<ParsedProfile["specific"]>;
-  };
-  // Perfil retornado pelo dispositivo após a configuração (processo de double-check)
-  parsed_profile?: ParsedProfile;
-  // Dados brutos obtidos do dispositivo (ex: resposta dos comandos "CHECK", "CXIP" e "STATUS")
-  raw_profile?: [string, string][];
-  client?: Client | null;
+
+  checked_at?: Date;
+
+  messages: {
+    key: string;
+    request: string;
+    response?: string | null;
+  }[];
+
+  init_time: number;
+  end_time: number;
 }
-
-interface Client {
-  id: string;
-  trade_name: string;
-  company_name: string;
-  document: string;
-}
-
-export type ParsedProfile = IConfigurationProfile["config"];
-
-export type RawProfile = [string, string][]; // [["status", "SN="]]
-
-export type ProfileDiff = { value1: any; value2: any };
-
-type NestedProfileDiff<T> = T extends object
-  ? ProfileDiff | { [K in keyof T]?: NestedProfileDiff<T[K]> }
-  : ProfileDiff;

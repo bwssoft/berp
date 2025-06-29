@@ -30,6 +30,8 @@ const { auth, signIn, signOut, handlers } = NextAuth({
 
         const profile = await findOneProfile({ id: user.profile[0].id });
 
+        console.log("🚀 ~ authorize ~ profile:", profile);
+
         if (!profile) return null;
 
         const passwordsMatch = await bcrypt.compare(password, user.password);

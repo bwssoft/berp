@@ -1,6 +1,6 @@
 "use client";
 
-import { ITechnology } from "@/app/lib/@backend/domain";
+import { Device, ITechnology } from "@/app/lib/@backend/domain";
 import { Button, Spinner } from "@/app/lib/@frontend/ui/component";
 import {
   DevicesAutoTestedTable,
@@ -53,7 +53,12 @@ export function AutoTestPanel(props: Props) {
             </div>
           </div>
           <div className="mt-6">
-            <DevicesDetectedTable data={identified} />
+            {technology && (
+              <DevicesDetectedTable
+                data={identified}
+                model={Device.Model[technology.name.system as Device.Model]}
+              />
+            )}
             <div className="mt-6 flex justify-between gap-2">
               <Button
                 variant="default"

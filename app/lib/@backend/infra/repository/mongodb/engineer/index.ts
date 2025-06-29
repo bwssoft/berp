@@ -10,3 +10,4 @@ export * from "./technical-sheet.repository";
 export * from "./technology.repository";
 export * from "./input.repository";
 export * from "./input.category.repository";
+export * from "./serial.repository";

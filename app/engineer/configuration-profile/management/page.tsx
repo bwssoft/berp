@@ -1,34 +1,114 @@
-import { findManyConfigurationProfile } from "@/app/lib/@backend/action";
+import {
+  findManyConfigurationProfile,
+  statsConfigurationProfile,
+} from "@/app/lib/@backend/action";
 import ConfigurationProfileTable from "@/app/lib/@frontend/ui/table/engineer/configuration-profile/table";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Button } from "@/app/lib/@frontend/ui/component/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/lib/@frontend/ui/component/card";
+import { Separator } from "@/app/lib/@frontend/ui/component/separator";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 
-export default async function Example() {
-  const confiiguration_profiles = await findManyConfigurationProfile({});
+export default async function ConfigurationProfilePage() {
+  const [configurationProfiles, stats] = await Promise.all([
+    findManyConfigurationProfile({}),
+    statsConfigurationProfile(),
+  ]);
+
   return (
-    <div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <div>
-          <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Gestão de perfil de configuração
+    <div className="flex-1 space-y-6 p-6">
+      {/* Header Section */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Perfis de Configuração
           </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Uma lista de todos os perfil de configuração registrados na sua
-            conta.
+          <p className="text-sm text-muted-foreground">
+            Gerencie todos os perfis de configuração registrados na sua conta
           </p>
         </div>
 
-        <Link
-          href="/engineer/configuration-profile/form/create"
-          className="ml-auto flex items-center gap-x-1 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-        >
-          <PlusIcon className="-ml-1.5 h-5 w-5" aria-hidden="true" />
-          Novo perfil de configuração
-        </Link>
+        <Button asChild>
+          <Link href="/engineer/configuration-profile/form/create">
+            <Plus className="mr-2 h-4 w-4" />
+            Novo Perfil
+          </Link>
+        </Button>
       </div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <ConfigurationProfileTable data={confiiguration_profiles} />
+
+      <Separator />
+
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total de Perfis
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+            <p className="text-xs text-muted-foreground">perfis registrados</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Validados por Humano
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.validate_by_human}</div>
+            <p className="text-xs text-muted-foreground">validações manuais</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Validados por Sistema
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.validate_by_system}</div>
+            <p className="text-xs text-muted-foreground">
+              validações automáticas
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pendentes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.validate_pending}</div>
+            <p className="text-xs text-muted-foreground">
+              aguardando validação
+            </p>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Table Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Lista de Perfis</CardTitle>
+          <CardDescription>
+            Visualize e gerencie todos os perfis de configuração
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          <ConfigurationProfileTable data={configurationProfiles} />
+        </CardContent>
+      </Card>
     </div>
   );
 }
