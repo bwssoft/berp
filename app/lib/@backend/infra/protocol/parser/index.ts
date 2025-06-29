@@ -1,4 +1,4 @@
-export * from "./BWS4G";
+export * from "./bws-4g";
 export * from "./E3";
 export * from "./E34G";
 export * from "./lora";

@@ -881,7 +881,10 @@ export const useLora = () => {
     [sendMultipleMessages]
   );
 
-  const isIdentified = (input: { serial?: string; firmware?: string }) => {
+  const isIdentified = (input: {
+    serial?: string;
+    firmware?: string;
+  }): "fully_identified" | "partially_identified" | "not_identified" => {
     const { serial, firmware } = input;
     const identified = [serial, firmware];
     if (identified.every((e) => e && e.length > 0)) {
