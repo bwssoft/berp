@@ -266,6 +266,8 @@ export const useE3Plus = () => {
               status: false,
               equipment,
               messages: [],
+              init_time: 0,
+              end_time: 0,
             };
           }
         })

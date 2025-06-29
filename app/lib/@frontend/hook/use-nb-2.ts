@@ -76,6 +76,8 @@ const generateMessages = (
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([message, args]) => {
+    console.log("----generating messages------");
+    console.log("message", message);
     const _message = BwsNb2Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as Namespace.ConfigKeys] = _message;
@@ -96,12 +98,20 @@ export const useNB2 = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, msg: Message<string, { check?: string }>) => {
+    sendMessage: async (
+      port,
+      msg: Message<string, { delay_before?: number }>
+    ) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      const { command, timeout, check } = msg;
+      const { command, timeout, delay_before } = msg;
+      if (delay_before) await sleep(delay_before);
+      console.log("-------------------------");
+      console.log("command", command);
       await writeToPort(port, command);
-      const response = await readResponse(reader, check ?? command, timeout);
+      const response = await readResponse(reader, command, timeout);
+      console.log("response", response);
+
       await reader.cancel();
       reader.releaseLock();
       return response;
@@ -346,6 +356,7 @@ export const useNB2 = () => {
         {
           command: "RCN\r\n",
           key: "read_data_transmission_on",
+          delay_before: 1000,
         },
         {
           command: "RCW\r\n",
@@ -359,7 +370,6 @@ export const useNB2 = () => {
           command: "RCK\r\n",
           key: "read_keep_alive",
         },
-
         {
           command: "RIP1\r\n",
           key: "read_ip_primary",
@@ -377,13 +387,11 @@ export const useNB2 = () => {
           key: "read_dns_secondary",
         },
         { command: "RIAP\r\n", key: "read_apn" },
-
         {
           command: "RCS\r\n",
           key: "read_time_to_sleep",
         },
         { command: "RODM\r\n", key: "read_odometer" },
-
         {
           command: "RIG12\r\n",
           key: "read_virtual_ignition_12v",
@@ -392,7 +400,6 @@ export const useNB2 = () => {
           command: "RIG24\r\n",
           key: "read_virtual_ignition_24v",
         },
-
         {
           command: "RFA\r\n",
           key: "read_heading_detection_angle",
@@ -401,7 +408,6 @@ export const useNB2 = () => {
           command: "RFV\r\n",
           key: "read_speed_alert_threshold",
         },
-
         {
           command: "RFTON\r\n",
           key: "read_accel_threshold_for_ignition_on",
@@ -414,7 +420,6 @@ export const useNB2 = () => {
           command: "RFAV\r\n",
           key: "read_accel_threshold_for_movement",
         },
-
         {
           command: "RFMA\r\n",
           key: "read_harsh_acceleration_threshold",
@@ -423,7 +428,6 @@ export const useNB2 = () => {
           command: "RFMD\r\n",
           key: "read_harsh_braking_threshold",
         },
-
         {
           command: "RC\r\n",
           key: "read_full_configuration_table",
@@ -432,7 +436,6 @@ export const useNB2 = () => {
           command: "RF\r\n",
           key: "read_full_functionality_table",
         },
-
         {
           command: "RFSM\r\n",
           key: "read_sleep_mode",
@@ -561,6 +564,8 @@ export const useNB2 = () => {
               status: false,
               equipment,
               messages: [],
+              init_time: 0,
+              end_time: 0,
             };
           }
         })
@@ -702,12 +707,10 @@ export const useNB2 = () => {
         {
           key: "serial",
           command: `WINS=${serial}\r\n`,
-          check: "WINS",
         },
         {
           key: "imei",
           command: `WIMEI=${identification.imei}\r\n`,
-          check: "WIMEI",
         },
       ] as const;
 

@@ -83,12 +83,14 @@ export class BwsNb2Encoder {
 
   static virtual_ignition_12v(input: Voltage): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
-      return `WIG12=${input.initial},${input.final}\r\n`;
+      return undefined;
+    return `WIG12=${input.initial},${input.final}\r\n`;
   }
 
   static virtual_ignition_24v(input: Voltage): string | undefined {
     if (typeof input.initial !== "number" || typeof input.final !== "number")
-      return `WIG24=${input.initial},${input.final}\r\n`;
+      return undefined;
+    return `WIG24=${input.initial},${input.final}\r\n`;
   }
 
   static heading_detection_angle(input: number): string | undefined {

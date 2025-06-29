@@ -128,6 +128,7 @@ export namespace BWS4G {
 
 export class BWS4GParser {
   static check(input: string): Check | undefined {
+    if (typeof input !== "string") return undefined;
     let parsed: Check = {};
     const obj: Record<string, string> = {};
     const regex = /(\w+[:=][^ ]+)/g;

@@ -148,7 +148,7 @@ export class BwsNb2Parser {
   }
 
   /**
-   * Extrai o valor do tempo de sleep de uma string que contém "RCE=" seguido de um número.
+   * Extrai o valor do intervalo de transmissão em modo evento de uma string que contém "RCE=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de transmissão em evento.
    * @returns O valor numérico do tempo de transmissão em evento ou undefined se o formato não for válido.
@@ -297,7 +297,7 @@ export class BwsNb2Parser {
 
     const value = parseFloat(odometerValue);
 
-    return isNaN(value) ? undefined : value / 10;
+    return isNaN(value) ? undefined : value;
   }
 
   /**

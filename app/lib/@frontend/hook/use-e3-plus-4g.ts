@@ -225,7 +225,6 @@ export const useE3Plus4G = () => {
             });
             const end_time = Date.now();
             const responseEntries = Object.entries(response ?? {});
-
             let applied_profile = {} as Namespace.Profile;
             const { check, status, cxip } = response;
             if (check && status && cxip) {
@@ -282,6 +281,8 @@ export const useE3Plus4G = () => {
               status: false,
               equipment,
               messages: [],
+              init_time: 0,
+              end_time: 0,
             };
           }
         })

@@ -79,29 +79,40 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
         // check if each message sent has response and configured to the desired profile
         const result = configurationResult
-          .map(({ messages, status, equipment, applied_profile }) => {
-            const configuration_log: Omit<
-              IConfigurationLog,
-              "id" | "created_at" | "user"
-            > = {
-              equipment,
-              checked: false,
-              status,
-              applied_profile,
-              desired_profile: {
-                id: configuration_profile.id,
-                name: configuration_profile.name,
-                config: configuration_profile.config,
-              },
-              technology: {
-                id: technology!.id,
-                system_name: technology!.name.system,
-              },
+          .map(
+            ({
               messages,
-            };
+              status,
+              equipment,
+              applied_profile,
+              init_time,
+              end_time,
+            }) => {
+              const configuration_log: Omit<
+                IConfigurationLog,
+                "id" | "created_at" | "user"
+              > = {
+                equipment,
+                checked: false,
+                init_time,
+                end_time,
+                status,
+                applied_profile,
+                desired_profile: {
+                  id: configuration_profile.id,
+                  name: configuration_profile.name,
+                  config: configuration_profile.config,
+                },
+                technology: {
+                  id: technology!.id,
+                  system_name: technology!.name.system,
+                },
+                messages,
+              };
 
-            return configuration_log;
-          })
+              return configuration_log;
+            }
+          )
           .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
         // save result on database

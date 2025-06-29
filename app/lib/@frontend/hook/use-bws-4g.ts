@@ -281,6 +281,8 @@ export const useBWS4G = () => {
               status: false,
               equipment,
               messages: [],
+              init_time: 0,
+              end_time: 0,
             };
           }
         })

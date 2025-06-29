@@ -19,4 +19,7 @@ export interface IConfigurationLog extends IDeviceLog {
     request: string;
     response?: string | null;
   }[];
+
+  init_time: number;
+  end_time: number;
 }

@@ -523,6 +523,8 @@ export const useNB2Lora = () => {
               status: false,
               equipment,
               messages: [],
+              init_time: 0,
+              end_time: 0,
             };
           }
         })

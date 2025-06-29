@@ -81,6 +81,7 @@ interface Status {
 
 export class E3Parser {
   static check(input: string): Check | undefined {
+    if (typeof input !== "string") return undefined;
     let parsed: Check = {};
     const obj: Record<string, string> = {};
     const regex = /(\w+[:=][^ ]+)/g;

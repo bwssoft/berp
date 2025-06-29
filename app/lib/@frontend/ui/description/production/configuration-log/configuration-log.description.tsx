@@ -170,6 +170,11 @@ export function ConfigurationLogDescription({ data }: Props) {
           {/* Usuário */}
           <dt className="text-sm font-medium text-gray-700">Usuário</dt>
           <dd className="col-span-2 text-sm text-gray-600">{data.user.name}</dd>
+
+          <dt className="text-sm font-medium text-gray-700">Duração</dt>
+          <dd className="col-span-2 text-sm text-gray-600">
+            {(data.end_time - data.init_time) / 1000} s
+          </dd>
         </dl>
 
         <Separator className="col-span-3 my-4" />
@@ -230,7 +235,7 @@ export function ConfigurationLogDescription({ data }: Props) {
             </Table>
           ) : (
             <p className="text-sm text-gray-600 mt-2">
-              Sem diferenças encontradas.
+              Nenhum diferença encontrada.
             </p>
           )}
         </div>
