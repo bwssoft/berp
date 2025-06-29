@@ -21,7 +21,9 @@ import {
   DevicesDetectedTable,
 } from "@/app/lib/@frontend/ui/table";
 import { useConfiguration } from "@/app/lib/@frontend/hook";
-import { Settings, Zap, CheckCircle, Plus } from "lucide-react";
+import { Settings, Zap, CheckCircle, Plus, Loader2 } from "lucide-react";
+import { Switch } from "@/app/lib/@frontend/ui/component/switch";
+import { Label } from "@/app/lib/@frontend/ui/component/label";
 
 interface Props {
   configurationProfile: IConfigurationProfile | null;
@@ -31,10 +33,19 @@ interface Props {
 export function ConfiguratorPanel(props: Props) {
   const { configurationProfile, technology } = props;
 
-  const { identified, configured, configure, requestPort, isProcessing } =
-    useConfiguration({
-      technology,
-    });
+  const {
+    detected,
+    configured,
+    configure,
+    requestPort,
+    isConfiguring,
+    isDetecting,
+    autoConfigurationEnabled,
+    toggleAutoConfiguration,
+  } = useConfiguration({
+    technology,
+    configurationProfile,
+  });
 
   return (
     <div className="container mx-auto py-8 px-4 space-y-8">
@@ -64,6 +75,13 @@ export function ConfiguratorPanel(props: Props) {
             configurationProfile={configurationProfile}
             technology={technology}
           />
+          <div className="mt-6 flex items-center gap-2">
+            <Switch
+              checked={autoConfigurationEnabled}
+              onCheckedChange={(checked) => toggleAutoConfiguration(checked)}
+            />
+            <Label>Ativar configuração automática</Label>
+          </div>
         </CardContent>
       </Card>
 
@@ -90,7 +108,7 @@ export function ConfiguratorPanel(props: Props) {
           <CardContent className="ml-11 space-y-6">
             <div className="rounded-lg border">
               <DevicesDetectedTable
-                data={identified}
+                data={detected}
                 model={Device.Model[technology.name.system as Device.Model]}
               />
             </div>
@@ -100,16 +118,37 @@ export function ConfiguratorPanel(props: Props) {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button
-                  size="lg"
                   onClick={() =>
-                    configurationProfile && configure(configurationProfile)
+                    detected.length > 0 &&
+                    configurationProfile &&
+                    configure(detected, configurationProfile)
                   }
-                  disabled={isProcessing || !configurationProfile}
-                  className="min-w-[140px]"
+                  disabled={
+                    !configurationProfile ||
+                    detected.length === 0 ||
+                    isDetecting ||
+                    isConfiguring
+                  }
+                  className="min-w-[140px] flex items-center justify-center"
                 >
-                  <Settings className="mr-2 h-4 w-4" />
-                  Configurar
+                  {isDetecting ? (
+                    <>
+                      <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                      Detectando
+                    </>
+                  ) : isConfiguring ? (
+                    <>
+                      <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                      Configurando
+                    </>
+                  ) : (
+                    <>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Configurar
+                    </>
+                  )}
                 </Button>
+
                 {!configurationProfile && (
                   <p className="text-sm text-muted-foreground self-center">
                     Selecione um perfil de configuração para continuar
@@ -119,7 +158,6 @@ export function ConfiguratorPanel(props: Props) {
 
               <Button
                 variant="outline"
-                size="lg"
                 onClick={requestPort}
                 className="min-w-[140px]"
               >

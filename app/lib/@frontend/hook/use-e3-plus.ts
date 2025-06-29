@@ -360,11 +360,12 @@ export const useE3Plus = () => {
     [sendMultipleMessages]
   );
 
-  const isIdentified = (input: {
+  const isIdentified = (input?: {
     imei?: string;
     iccid?: string;
     firmware?: string;
   }): "fully_identified" | "partially_identified" | "not_identified" => {
+    if (!input) return "not_identified";
     const { imei, iccid, firmware } = input;
     const identified = [imei, iccid, firmware];
     if (identified.every((e) => e && e?.length > 0)) {
