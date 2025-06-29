@@ -1,9 +1,9 @@
-import { setLockedControl } from "@/app/lib/@backend/action";
 import { IControl, IProfile } from "@/app/lib/@backend/domain";
 import { useAuth } from "@/app/lib/@frontend/context";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
+import { setLockedControl } from "@/app/lib/@backend/action/admin/profile.action";
 
 interface Props {
   control: IControl;
@@ -38,13 +38,17 @@ export function useSetLockedProfileForm(props: Props) {
               operation: "add",
               control_name: control.name,
             });
-            
+
             if (!result?.success) {
               throw new Error(result?.error || "Failed to add permission");
             }
           } catch (error) {
             console.error("Error adding permissions:", error);
-            throw new Error(error instanceof Error ? error.message : "Failed to add permission");
+            throw new Error(
+              error instanceof Error
+                ? error.message
+                : "Failed to add permission"
+            );
           }
         } else {
           // === remoção dinâmica ===
@@ -75,13 +79,17 @@ export function useSetLockedProfileForm(props: Props) {
               operation: "remove",
               control_name: control.name,
             });
-            
+
             if (!result?.success) {
               throw new Error(result?.error || "Failed to remove permission");
             }
           } catch (error) {
             console.error("Error removing permissions:", error);
-            throw new Error(error instanceof Error ? error.message : "Failed to remove permission");
+            throw new Error(
+              error instanceof Error
+                ? error.message
+                : "Failed to remove permission"
+            );
           }
         }
 
@@ -92,8 +100,10 @@ export function useSetLockedProfileForm(props: Props) {
             arg ? "adicionado" : "removido"
           } do perfil '${profile.name}'`,
         });
-        
-        console.log(`Permission toggle success: ${control.name} ${arg ? "added to" : "removed from"} ${profile.name}`);
+
+        console.log(
+          `Permission toggle success: ${control.name} ${arg ? "added to" : "removed from"} ${profile.name}`
+        );
 
         // Refresh the session if the current user's profile was updated
         if (data?.user?.current_profile?.id === profile.id) {
@@ -108,11 +118,12 @@ export function useSetLockedProfileForm(props: Props) {
         toast({
           variant: "error",
           title: "Erro",
-          description: error instanceof Error 
-            ? `Falha: ${error.message}`
-            : "Falha ao atualizar permissões. Tente novamente.",
+          description:
+            error instanceof Error
+              ? `Falha: ${error.message}`
+              : "Falha ao atualizar permissões. Tente novamente.",
         });
-        
+
         // Try to refresh the profile anyway in case the operation partially succeeded
         if (data?.user?.current_profile?.id === profile.id) {
           try {

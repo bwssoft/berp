@@ -1,9 +1,9 @@
 "use client";
 
 import { toast } from "@/app/lib/@frontend/hook";
-import { activeProfile } from "@/app/lib/@backend/action";
 import { useCallback, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { activeProfile } from "@/app/lib/@backend/action/admin/profile.action";
 
 export function useActiveProfileDialog() {
   const [open, setOpen] = useState(false);

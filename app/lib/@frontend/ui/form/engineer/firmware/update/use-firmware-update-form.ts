@@ -1,9 +1,9 @@
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { updateOneFirmwareById } from '@/app/lib/@backend/action';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { IFirmware } from '@/app/lib/@backend/domain';
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { IFirmware } from "@/app/lib/@backend/domain";
+import { updateOneFirmwareById } from "@/app/lib/@backend/action/engineer/firmware/firmware.action";
 
 const schema = z.object({
   name: z.string().min(1, "Campo obrigatório"),
@@ -12,16 +12,18 @@ const schema = z.object({
   description: z.string(),
   file: z
     .any()
-    .refine((file) => file ? file instanceof File : true, "Arquivo inválido")
+    .refine((file) => (file ? file instanceof File : true), "Arquivo inválido"),
 });
 
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
-  defaultValues: IFirmware
+  defaultValues: IFirmware;
 }
 export function useFirmwareUpdateForm(props: Props) {
-  const { defaultValues: { file: oldFile, ...defaultValue } } = props
+  const {
+    defaultValues: { file: oldFile, ...defaultValue },
+  } = props;
 
   const {
     register,
@@ -32,20 +34,20 @@ export function useFirmwareUpdateForm(props: Props) {
     reset: hookFormReset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues: defaultValue
+    defaultValues: defaultValue,
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       //fazer a request
-      const { file: newFile, ...valuetoUpdate } = data
-      const formData = new FormData()
+      const { file: newFile, ...valuetoUpdate } = data;
+      const formData = new FormData();
 
       if (newFile) {
-        formData.append("file", newFile)
+        formData.append("file", newFile);
       }
 
-      const firmware = Object.assign(valuetoUpdate, { file: oldFile })
+      const firmware = Object.assign(valuetoUpdate, { file: oldFile });
 
       await updateOneFirmwareById({ id: defaultValue.id! }, firmware, formData);
       toast({
@@ -54,7 +56,7 @@ export function useFirmwareUpdateForm(props: Props) {
         variant: "success",
       });
     } catch (e) {
-      console.error(e)
+      console.error(e);
       toast({
         title: "Erro!",
         description: "Falha ao atualizar o firmware!",

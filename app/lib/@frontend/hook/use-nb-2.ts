@@ -153,188 +153,186 @@ export const useNB2 = () => {
     },
     [sendMultipleMessages]
   );
-  const handleGetProfile = useCallback(
-    async (ports: ISerialPort[]) => {
+  const handleGetConfig = useCallback(
+    async (detected: Namespace.Detected[]) => {
       const messages = [
         {
           command: "RCN\r\n",
           key: "data_transmission_on",
-          transform: BwsNb2Parser.data_transmission_on,
+          delay_before: 1000,
         },
         {
           command: "RCW\r\n",
           key: "data_transmission_off",
-          transform: BwsNb2Parser.data_transmission_off,
         },
         {
           command: "RCE\r\n",
           key: "data_transmission_event",
-          transform: BwsNb2Parser.data_transmission_event,
         },
         {
           command: "RCK\r\n",
           key: "keep_alive",
-          transform: BwsNb2Parser.keep_alive,
         },
-
         {
           command: "RIP1\r\n",
           key: "ip_primary",
-          transform: BwsNb2Parser.ip_primary,
         },
         {
           command: "RIP2\r\n",
           key: "ip_secondary",
-          transform: BwsNb2Parser.ip_secondary,
         },
         {
           command: "RID1\r\n",
           key: "dns_primary",
-          transform: BwsNb2Parser.dns_primary,
         },
         {
           command: "RID2\r\n",
           key: "dns_secondary",
-          transform: BwsNb2Parser.dns_secondary,
         },
-        { command: "RIAP\r\n", key: "apn", transform: BwsNb2Parser.apn },
-
+        { command: "RIAP\r\n", key: "apn" },
         {
           command: "RCS\r\n",
           key: "time_to_sleep",
-          transform: BwsNb2Parser.time_to_sleep,
         },
-        {
-          command: "RODM\r\n",
-          key: "odometer",
-          transform: BwsNb2Parser.odometer,
-        },
-
+        { command: "RODM\r\n", key: "odometer" },
         {
           command: "RIG12\r\n",
           key: "virtual_ignition_12v",
-          transform: BwsNb2Parser.virtual_ignition_12v,
         },
         {
           command: "RIG24\r\n",
           key: "virtual_ignition_24v",
-          transform: BwsNb2Parser.virtual_ignition_24v,
         },
-
         {
           command: "RFA\r\n",
           key: "heading_detection_angle",
-          transform: BwsNb2Parser.heading_detection_angle,
         },
         {
           command: "RFV\r\n",
           key: "speed_alert_threshold",
-          transform: BwsNb2Parser.speed_alert_threshold,
         },
-
         {
           command: "RFTON\r\n",
           key: "accel_threshold_for_ignition_on",
-          transform: BwsNb2Parser.accel_threshold_for_ignition_on,
         },
         {
           command: "RFTOF\r\n",
           key: "accel_threshold_for_ignition_off",
-          transform: BwsNb2Parser.accel_threshold_for_ignition_off,
         },
         {
           command: "RFAV\r\n",
           key: "accel_threshold_for_movement",
-          transform: BwsNb2Parser.accel_threshold_for_movement,
         },
-
         {
           command: "RFMA\r\n",
           key: "harsh_acceleration_threshold",
-          transform: BwsNb2Parser.harsh_acceleration_threshold,
         },
         {
           command: "RFMD\r\n",
           key: "harsh_braking_threshold",
-          transform: BwsNb2Parser.harsh_braking_threshold,
         },
-
-        {
-          command: "RIN1\r\n",
-          key: "input_1",
-          transform: BwsNb2Parser.input_1,
-        },
-        {
-          command: "RIN2\r\n",
-          key: "input_2",
-          transform: BwsNb2Parser.input_2,
-        },
-        {
-          command: "RIN3\r\n",
-          key: "input_3",
-          transform: BwsNb2Parser.input_3,
-        },
-        {
-          command: "RIN4\r\n",
-          key: "input_4",
-          transform: BwsNb2Parser.input_4,
-        },
-
         {
           command: "RC\r\n",
           key: "full_configuration_table",
-          transform: BwsNb2Parser.full_configuration_table,
         },
         {
           command: "RF\r\n",
           key: "full_functionality_table",
-          transform: BwsNb2Parser.full_functionality_table,
         },
-
         {
           command: "RFSM\r\n",
           key: "sleep_mode",
-          transform: BwsNb2Parser.sleep_mode,
         },
       ] as const;
 
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
-            const {
-              data_transmission_on,
-              data_transmission_off,
-              ip_primary,
-              ip_secondary,
-              apn,
-              keep_alive,
-              dns_primary,
-              dns_secondary,
-              ...specific
-            } = await sendMultipleMessages({
+            const response = await sendMultipleMessages({
               transport: port,
               messages,
             });
             return {
               port,
+              equipment,
               config: {
                 general: {
-                  data_transmission_on,
-                  data_transmission_off,
-                  ip_primary,
-                  ip_secondary,
-                  apn,
-                  keep_alive,
-                  dns_primary,
-                  dns_secondary,
+                  keep_alive: BwsNb2Parser.keep_alive(response.keep_alive),
+                  ip_primary: BwsNb2Parser.ip_primary(response.ip_primary),
+                  ip_secondary: BwsNb2Parser.ip_secondary(
+                    response.ip_secondary
+                  ),
+                  dns_primary: BwsNb2Parser.dns_primary(response.dns_primary),
+                  dns_secondary: BwsNb2Parser.dns_secondary(
+                    response.dns_secondary
+                  ),
+                  apn: BwsNb2Parser.apn(response.apn),
+                  data_transmission_on: BwsNb2Parser.data_transmission_on(
+                    response.data_transmission_on
+                  ),
+                  data_transmission_off: BwsNb2Parser.data_transmission_off(
+                    response.data_transmission_off
+                  ),
                 },
-                specific,
+                specific: {
+                  data_transmission_event: BwsNb2Parser.data_transmission_event(
+                    response.data_transmission_event
+                  ),
+                  time_to_sleep: BwsNb2Parser.time_to_sleep(
+                    response.time_to_sleep
+                  ),
+                  odometer: BwsNb2Parser.odometer(response.odometer),
+                  virtual_ignition_12v: BwsNb2Parser.virtual_ignition_12v(
+                    response.virtual_ignition_12v
+                  ),
+                  virtual_ignition_24v: BwsNb2Parser.virtual_ignition_24v(
+                    response.virtual_ignition_24v
+                  ),
+                  heading_detection_angle: BwsNb2Parser.heading_detection_angle(
+                    response.heading_detection_angle
+                  ),
+                  speed_alert_threshold: BwsNb2Parser.speed_alert_threshold(
+                    response.speed_alert_threshold
+                  ),
+                  accel_threshold_for_ignition_on:
+                    BwsNb2Parser.accel_threshold_for_ignition_on(
+                      response.accel_threshold_for_ignition_on
+                    ),
+                  accel_threshold_for_ignition_off:
+                    BwsNb2Parser.accel_threshold_for_ignition_off(
+                      response.accel_threshold_for_ignition_off
+                    ),
+                  accel_threshold_for_movement:
+                    BwsNb2Parser.accel_threshold_for_movement(
+                      response.accel_threshold_for_movement
+                    ),
+                  harsh_acceleration_threshold:
+                    BwsNb2Parser.harsh_acceleration_threshold(
+                      response.harsh_acceleration_threshold
+                    ),
+                  harsh_braking_threshold: BwsNb2Parser.harsh_braking_threshold(
+                    response.harsh_braking_threshold
+                  ),
+                  full_configuration_table:
+                    BwsNb2Parser.full_configuration_table(
+                      response.full_configuration_table
+                    ),
+                  full_functionality_table:
+                    BwsNb2Parser.full_functionality_table(
+                      response.full_functionality_table
+                    ),
+                  sleep_mode: BwsNb2Parser.sleep_mode(response.sleep_mode),
+                },
               },
-              raw: [],
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
-            console.error("[ERROR] handleGetProfile", error);
-            return { port };
+            console.error("[ERROR] handleGetConfig", error);
+            return { port, equipment, messages: [], config: {} };
           }
         })
       );
@@ -778,12 +776,13 @@ export const useNB2 = () => {
     [sendMultipleMessages]
   );
 
-  const isIdentified = (input: {
+  const isIdentified = (input?: {
     imei?: string;
     iccid?: string;
     serial?: string;
     firmware?: string;
   }): "fully_identified" | "partially_identified" | "not_identified" => {
+    if (!input) return "not_identified";
     const { serial, imei, iccid, firmware } = input;
     const identified = [serial, imei, iccid, firmware];
     if (identified.every((e) => e && e.length > 0)) {
@@ -799,7 +798,7 @@ export const useNB2 = () => {
     isIdentified,
     ports,
     handleIdentification,
-    handleGetProfile,
+    handleGetConfig,
     handleConfiguration,
     requestPort,
     handleAutoTest,

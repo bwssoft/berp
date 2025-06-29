@@ -1,8 +1,6 @@
-import {
-  findOneConfigurationProfile,
-  findOneTechnology,
-} from "@/app/lib/@backend/action";
+import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
 import { ConfiguratorPanel } from "./@components/configurator-panel";
+import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
 
 interface Props {
   searchParams: {

@@ -4,12 +4,13 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { findManyAccount, updateOneContact } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ContactItem } from "../create";
+import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { updateOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
 
 const schema = z
   .object({

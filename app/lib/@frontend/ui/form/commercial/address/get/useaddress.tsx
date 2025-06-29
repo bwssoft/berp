@@ -1,6 +1,5 @@
+import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { useQuery } from "@tanstack/react-query";
-import { findManyAddress } from "@/app/lib/@backend/action";
-import { IAddress } from "@/app/lib/@backend/domain";
 
 export const addressesQueryKey = (accountId: string) => [
   "addresses",

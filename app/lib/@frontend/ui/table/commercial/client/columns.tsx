@@ -1,4 +1,4 @@
-import { deleteOneClientById } from "@/app/lib/@backend/action";
+import { deleteOneClientById } from "@/app/lib/@backend/action/commercial/client.action";
 import { IClient } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";

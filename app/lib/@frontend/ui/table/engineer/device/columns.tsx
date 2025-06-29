@@ -2,7 +2,7 @@ import { IDevice, IProduct } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook";
-import { deleteOneDeviceById } from "@/app/lib/@backend/action";
+import { deleteOneDeviceById } from "@/app/lib/@backend/action/engineer/device.action";
 
 type Row = IDevice & { product: IProduct };
 

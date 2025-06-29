@@ -1,4 +1,3 @@
-export * from './create-one-category.usecase'
-export * from './create-many-category.usecase'
-export * from './delete-one-category.usecase'
-export * from './find-all-category.usecase'
+export * from "./create-one.input.category.usecase";
+export * from "./delete-one.input.category.usecase";
+export * from "./find-many.input.category.usecase";

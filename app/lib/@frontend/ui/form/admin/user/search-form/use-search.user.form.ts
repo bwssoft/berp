@@ -6,8 +6,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
-import { findManyProfile, findManyUser } from "@/app/lib/@backend/action";
 import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";
+import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
+import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
 
 const schema = z.object({
     quick: z.string().optional(),

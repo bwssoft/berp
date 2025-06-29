@@ -5,12 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/lib/@frontend/hook";
-import { findManyProfile, updateOneUser } from "@/app/lib/@backend/action";
 import { IUser } from "@/app/lib/@backend/domain";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useRouter } from "next/navigation";
 import { userConstants } from "@/app/lib/constant";
 import { useEffect } from "react";
+import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
+import { updateOneUser } from "@/app/lib/@backend/action/admin/user.action";
 
 const updateSchema = z
     .object({

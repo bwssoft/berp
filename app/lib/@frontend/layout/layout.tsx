@@ -1,4 +1,3 @@
-import { logout } from "../../@backend/action";
 import { useAuth } from "../context";
 import NavBar from "../ui/component/nav-bar";
 import { NavItem, SideBar } from "../ui/component/sidebar";

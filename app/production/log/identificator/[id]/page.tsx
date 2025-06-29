@@ -1,4 +1,4 @@
-import { findOneIdentificationLog } from "@/app/lib/@backend/action";
+import { findOneIdentificationLog } from "@/app/lib/@backend/action/production/identification-log.action";
 import { IdentificationLogDescription } from "@/app/lib/@frontend/ui/description";
 
 interface Props {

@@ -1,11 +1,11 @@
-"use-client"
+"use-client";
 
-import { Badge } from "@bwsoft/badge";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../../../component";
 import { IUser } from "@/app/lib/@backend/domain";
 import { ClockIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { Badge } from "../../../component/badge";
 
 interface Props {
   openAuditModal: (user: Pick<IUser, "name" | "id">) => void;
@@ -20,11 +20,7 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     cell: ({ row }) => {
       const { original } = row;
       return (
-        <Badge
-          variant="basic"
-          theme={original.active ? "green" : "gray"}
-          label={original.active ? "Ativo" : "Inativo"}
-        />
+        <Badge variant="outline">{original.active ? "Ativo" : "Inativo"}</Badge>
       );
     },
   },

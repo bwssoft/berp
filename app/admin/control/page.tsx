@@ -1,4 +1,5 @@
-import { findManyControl, findOneProfile } from "@/app/lib/@backend/action";
+import { findManyControl } from "@/app/lib/@backend/action/admin/control.action";
+import { findOneProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { ChooseProfileForm } from "@/app/lib/@frontend/ui/form";
 import { ModuleControlList } from "@/app/lib/@frontend/ui/list";
 

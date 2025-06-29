@@ -32,7 +32,7 @@ namespace Dto {
   }
   export interface Enterprise {
     id: string;
-    short_name: string;
+    name: { short: string; fantasy: string; legal: string };
   }
 }
 
@@ -79,10 +79,10 @@ class FindManyProductionOrderUsecase {
       {
         $lookup: {
           as: "enterprise",
-          from: "business-enterprise",
+          from: "business.enterprise",
           foreignField: "id",
           localField: "enterprise_id",
-          pipeline: [{ $project: { _id: 0, short_name: 1 } }],
+          pipeline: [{ $project: { _id: 0, name: 1 } }],
         },
       },
       {

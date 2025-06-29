@@ -3,8 +3,8 @@
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import React, { createContext, useCallback, useContext, useMemo } from "react";
-import { logout } from "../../@backend/action";
 import { IProfile, IUser } from "../../@backend/domain";
+import { logout } from "../../@backend/action/auth/login.action";
 
 type AuthUser = Partial<IUser> & { current_profile: IProfile };
 type RedirectOption<T> = T & { code: string };
@@ -39,30 +39,35 @@ export const AuthProvider = ({
       user: { ...data?.user, current_profile: input },
     });
   };
-  
+
   const refreshCurrentProfile = async (): Promise<boolean> => {
     try {
       if (!data?.user?.current_profile?.id) {
         console.warn("Cannot refresh profile: No current profile in session");
         return false;
       }
-      
+
       // Import locally to avoid circular dependencies
-      const { findOneProfile } = await import("@/app/lib/@backend/action");
-      
+      const { findOneProfile } = await import(
+        "@/app/lib/@backend/action/admin/profile.action"
+      );
+
       // Get the latest profile data
       const profileId = data.user.current_profile.id;
       console.log("Refreshing profile with ID:", profileId);
       const updatedProfile = await findOneProfile({ id: profileId });
-      
+
       if (!updatedProfile) {
         console.error("Failed to refresh profile: Profile not found");
         return false;
       }
-      
+
       // Log the updated profile permissions for debugging
-      console.log("Updated profile permissions:", updatedProfile.locked_control_code);
-      
+      console.log(
+        "Updated profile permissions:",
+        updatedProfile.locked_control_code
+      );
+
       // Update the session with fresh profile data
       await update({
         user: {
@@ -70,7 +75,7 @@ export const AuthProvider = ({
           current_profile: updatedProfile,
         },
       });
-      
+
       console.log("Profile refreshed successfully");
       return true;
     } catch (error) {

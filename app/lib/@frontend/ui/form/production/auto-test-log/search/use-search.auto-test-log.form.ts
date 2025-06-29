@@ -1,4 +1,4 @@
-import { exportAutoTestLog } from "@/app/lib/@backend/action";
+import { exportAutoTestLog } from "@/app/lib/@backend/action/production/auto-test-log.action";
 import { IAutoTestLog } from "@/app/lib/@backend/domain";
 import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 import { Filter } from "mongodb";

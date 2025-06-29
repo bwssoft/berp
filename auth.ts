@@ -1,10 +1,12 @@
 "use server";
+
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { findOneProfile, findOneUser } from "./app/lib/@backend/action";
+import { findOneUser } from "./app/lib/@backend/action/admin/user.action";
+import { findOneProfile } from "./app/lib/@backend/action/admin/profile.action";
 
 const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,

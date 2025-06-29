@@ -11,8 +11,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Kanban } from "./kanban";
 
 type CustomProductionOrder = IProductionOrder & {
-  product: Pick<IProduct, "id" | "name" | "color">
-  enterprise: Pick<IEnterprise, "id" | "short_name">
+  product: Pick<IProduct, "id" | "name" | "color">;
+  enterprise: Pick<IEnterprise, "id" | "name">;
 };
 
 interface Props {

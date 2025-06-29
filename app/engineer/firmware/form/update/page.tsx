@@ -1,4 +1,4 @@
-import { findOneFirmware } from "@/app/lib/@backend/action";
+import { findOneFirmware } from "@/app/lib/@backend/action/engineer/firmware/firmware.action";
 import { FirmwareUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {

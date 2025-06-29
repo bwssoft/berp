@@ -1,5 +1,5 @@
-import { findAllRequestToUpdate } from "@/app/lib/@backend/action";
-import { FirmwareRequestToUpdateTable } from "@/app/lib/@frontend/ui/component";
+import { findAllRequestToUpdate } from "@/app/lib/@backend/action/engineer/firmware/request-to-update.action";
+import { FirmwareRequestToUpdateTable } from "@/app/lib/@frontend/ui/table/engineer/firmware-request-to-update/table";
 
 export default async function Example() {
   const requests = await findAllRequestToUpdate();

@@ -5,7 +5,6 @@ import { useForm, useWatch, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook";
-import { createOneAddress } from "@/app/lib/@backend/action";
 import { isValidCEP } from "@/app/lib/util/is-valid-cep";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,6 +12,7 @@ import { addressesQueryKey } from "../get/useaddress";
 
 import type { INominatimInterface } from "@/app/lib/@backend/domain/@shared/gateway/nominatim.gateway.interface";
 import { nominatimGateway } from "@/app/lib/@backend/infra/gateway/nominatim/nominatim.gateway";
+import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
 
 const AddressFormSchema = z.object({
   address_search: z.string().optional(),
