@@ -353,13 +353,18 @@ export function useConfigurationProfileUpsertForm(props: Props) {
   });
   const handleSubmit = form.handleSubmit(
     async (data) => {
-      const { client_id, type, technology_id, config, id } = data;
+      const { id } = data;
+
+      const config = {
+        ...data,
+        specific: { ...data.config.specific },
+      };
+
+      delete (config.specific as any)?.technology_system_name;
 
       const profile = {
+        ...data,
         name: formatConfigurationProfileName(name),
-        client_id,
-        technology_id,
-        type,
         config,
       };
 

@@ -1,4 +1,4 @@
-export namespace LORA {
+export namespace BwsLora {
   export interface AutoTest {
     DEV: string; //DM_BWS_LORA,
     SN: string; //FFFFFFFF,
@@ -18,7 +18,7 @@ export namespace LORA {
   }
 }
 
-export class LORAParser {
+export class BwsLoraParser {
   /**
    * Extrai o valor do serial de uma string que contém "RINS=" seguido de um número.
    *
@@ -187,15 +187,15 @@ export class LORAParser {
    * @param input - A string que contém a informação do autotest.
    * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
    */
-  static auto_test(input: string): LORA.AutoTest | undefined {
+  static auto_test(input: string): BwsLora.AutoTest | undefined {
     const parts = input.split("AUTOTEST=");
     if (parts.length < 2) return undefined;
     const splited = parts[1].split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
-      acc[key as keyof LORA.AutoTest] = value;
+      acc[key as keyof BwsLora.AutoTest] = value;
       return acc;
-    }, {} as LORA.AutoTest);
+    }, {} as BwsLora.AutoTest);
   }
 
   /**

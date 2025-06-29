@@ -1,298 +1,300 @@
+type APN = {
+  address: string;
+  user: string;
+  password?: string;
+};
+
+type IP = {
+  ip: string;
+  port: number;
+};
+
+type DNS = {
+  address: string;
+  port: number;
+};
+
+type Timezone = number;
+
+type Locktype = number;
+
+type DataTransmission = number;
+
+type Odometer = number;
+
+type KeepAlive = number;
+
+type AccelerometerSensitivity = number;
+
+type SensitivityAdjustment = number;
+
+type EconomyMode = number;
+
+type LBSPosition = boolean;
+
+type CorneringPositionUpdate = boolean;
+
+type IgnitionAlertPowerCut = boolean;
+
+type GprsFailureAlert = boolean;
+
+type Led = boolean;
+
+type VirtualIgnition = boolean;
+
+type VirtualIgnitionByVoltage = boolean;
+
+type VirtualIgnitionByMovement = boolean;
+
+type MaxSpeed = number;
+
+type CommunicationType = "TCP" | "UDP";
+
+type ProtocolType = "E3+" | "GT06";
+
+type AntiTheft = boolean;
+
+type JammerDetection = boolean;
+
+type AngleAdjustment = number;
+
+type LockTypeProgression = {
+  n1: number;
+  n2: number;
+};
+
+type IgnitionByVoltage = {
+  initial: number;
+  final: number;
+};
+
+interface Check extends Object {
+  apn?: APN;
+  timezone?: Timezone;
+  lock_type?: Locktype;
+  data_transmission_on?: DataTransmission;
+  data_transmission_off?: DataTransmission;
+  odometer?: Odometer;
+  keep_alive?: KeepAlive;
+  accelerometer_sensitivity?: AccelerometerSensitivity;
+  economy_mode?: EconomyMode;
+  lbs_position?: LBSPosition;
+  cornering_position_update?: CorneringPositionUpdate;
+  led?: Led;
+  virtual_ignition?: VirtualIgnition;
+  max_speed?: number;
+  sensitivity_adjustment?: number;
+  virtual_ignition_by_movement?: VirtualIgnitionByMovement;
+  virtual_ignition_by_voltage?: VirtualIgnitionByVoltage;
+  communication_type?: CommunicationType;
+  protocol_type?: ProtocolType;
+  anti_theft?: AntiTheft;
+  jammer_detection?: JammerDetection;
+  angle_adjustment?: AngleAdjustment;
+  lock_type_progression?: LockTypeProgression;
+  ignition_by_voltage?: IgnitionByVoltage;
+  input_1?: number;
+  input_2?: number;
+  ack?: number;
+}
+
+interface Status {
+  [key: string]: string;
+}
+
 export namespace BWS4G {
   export interface AutoTest {
-    ACELC: string; //"STK8321"
-    ACELP: string; //"OK"
-    BATT_VOLT: string; //"0"
-    CHARGER: string; //"OK"
-    FW: string; //
-    GPS: string; //"OK"
-    GPSf: string; //"NOK"
-    IC: string; //"89554000000351060991"
-    ID_ACEL: string; //"35"
-    ID_MEM: string; //"20154016"
-    IM: string; //"123456789923964"
-    IN1: string; //"NOK"
-    IN2: string; //"OK"
-    MDM: string; //"OK"
-    OUT: string; //"NOK"
-    RSI: string; //"OK"
-    SN: string; //"16868634"
-    VCC: string; //"48"
-    TEMP: string; //"25"
-    DEV: string; // "DM_BWS_4G"
+    ACELC: string;
+    ACELP: string;
+    BATT_VOLT: string;
+    CHARGER: string;
+    FW: string;
+    GPS: string;
+    GPSf: string;
+    GSM: string;
+    IC: string;
+    ID_ACEL: string;
+    ID_MEM: string;
+    IN1: string;
+    IN2: string;
+    LTE: string;
+    OUT: string;
+    SN: string;
+    VCC: string;
+    SIMHW: string;
+    MEM: string;
   }
 }
 
 export class BWS4GParser {
-  /**
-   * Extrai o valor do serial de uma string que contém "RINS=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do serial.
-   * @returns O valor do serial ou undefined se o formato não for válido.
-   */
-  static serial(input: string): string | undefined {
-    const parts = input.split("RINS=");
+  static check(input: string): Check | undefined {
+    let parsed: Check = {};
+    const obj: Record<string, string> = {};
+    const regex = /(\w+[:=][^ ]+)/g;
+    const matches = input.match(regex);
 
-    if (parts.length < 2) return undefined;
+    if (matches) {
+      matches.forEach((pair) => {
+        let key: string | undefined;
+        let value: string | undefined;
 
-    const serialValue = parts[1].trim();
+        if (pair.includes("=")) {
+          [key, value] = pair.split("=");
+        } else if (pair.includes(":")) {
+          [key, value] = pair.split(":");
+        }
 
-    const value = serialValue.replace(/\s+/g, "");
+        if (key && value !== undefined) {
+          obj[key.trim()] = value.trim();
+        }
+      });
+    }
 
-    return value.length ? value : undefined;
+    if (Object.keys(obj).length > 0) {
+      Object.entries(obj).forEach((entrie) => {
+        const [key, value] = entrie;
+        if (key === "APN") {
+          parsed["apn"] = BWS4GParser.apn(value);
+        }
+        if (key === "TZ") {
+          parsed["timezone"] = BWS4GParser.timezone(value);
+        }
+        if (key === "OUT_MODE") {
+          parsed["lock_type"] = BWS4GParser.lock_type(value);
+        }
+        if (key === "HB") {
+          parsed["data_transmission_on"] =
+            BWS4GParser.data_transmission_on(value);
+          parsed["data_transmission_off"] =
+            BWS4GParser.data_transmission_off(value);
+        }
+        if (key === "DK") {
+          parsed["odometer"] = BWS4GParser.odometer(value);
+        }
+        if (key === "TX") {
+          parsed["keep_alive"] = BWS4GParser.keep_alive(value);
+        }
+        if (key === "ZD") {
+          parsed["accelerometer_sensitivity"] =
+            BWS4GParser.accelerometer_sensitivity(value);
+        }
+        if (key === "SDMS") {
+          parsed["economy_mode"] = BWS4GParser.economy_mode(value);
+        }
+        if (key === "LBS") {
+          parsed["lbs_position"] = BWS4GParser.lbs_position(value);
+        }
+        if (key === "TUR") {
+          parsed["cornering_position_update"] =
+            BWS4GParser.cornering_position_update(value);
+        }
+        if (key === "LED") {
+          parsed["led"] = BWS4GParser.led(value);
+        }
+        if (key === "IV") {
+          parsed["virtual_ignition"] = BWS4GParser.virtual_ignition(value);
+        }
+        if (key === "OD") {
+          parsed["max_speed"] = BWS4GParser.max_speed(value);
+        }
+
+        if (key === "ACCEL") {
+          parsed["virtual_ignition_by_movement"] =
+            BWS4GParser.virtual_ignition_by_movement(value);
+        }
+
+        if (key === "PROT_COM") {
+          parsed["communication_type"] = BWS4GParser.communication_type(value);
+        }
+
+        if (key === "PROT") {
+          parsed["protocol_type"] = BWS4GParser.protocol_type(value);
+        }
+
+        if (key === "AF") {
+          parsed["anti_theft"] = BWS4GParser.anti_theft(value);
+        }
+        if (key === "JD") {
+          parsed["jammer_detection"] = BWS4GParser.jammer_detection(value);
+        }
+        if (key === "TDET") {
+          parsed["angle_adjustment"] = BWS4GParser.angle_adjustment(value);
+        }
+        if (key === "DC") {
+          parsed["lock_type_progression"] =
+            BWS4GParser.lock_type_progression(value);
+        }
+        if (key === "Voltage") {
+          parsed["ignition_by_voltage"] =
+            BWS4GParser.ignition_by_voltage(value);
+        }
+        if (key === "VOLTAGE") {
+          parsed["virtual_ignition_by_voltage"] =
+            BWS4GParser.virtual_ignition_by_voltage(value);
+        }
+        if (key === "IN1_MODE") {
+          parsed["input_1"] = BWS4GParser.input_1(value);
+        }
+        if (key === "IN2_MODE") {
+          parsed["input_2"] = BWS4GParser.input_2(value);
+        }
+        if (key === "GS") {
+          parsed["sensitivity_adjustment"] =
+            BWS4GParser.sensitivity_adjustment(value);
+        }
+        if (key === "ACK") {
+          parsed["ack"] = BWS4GParser.ack(value);
+        }
+      });
+    }
+    return parsed;
   }
 
-  /**
-   * Extrai o valor do imei de uma string que contém "RIMEI=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do imei.
-   * @returns O valor do imei ou undefined se o formato não for válido.
-   */
-  static imei(input: string): string | undefined {
-    const parts = input.split("RIMEI=");
+  static status(input: string) {
+    const obj: Status = {};
+    const keyValuePairs = input.split(";");
 
-    if (parts.length < 2) return undefined;
+    keyValuePairs.forEach((pair) => {
+      let key: string | undefined;
+      let value: string | undefined;
 
-    const serialValue = parts[1].trim();
+      if (pair.includes(":")) {
+        [key, value] = pair.split(":");
+      }
 
-    const value = serialValue.replace(/\s+/g, "");
+      if (key && value !== undefined) {
+        obj[key.trim()] = value.trim();
+      }
+    });
 
-    return value.length ? value : undefined;
+    return obj;
   }
 
-  /**
-   * Extrai o valor do iccid de uma string que contém "ICCID=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do iccid.
-   * @returns O valor do iccid ou undefined se o formato não for válido.
-   */
-  static iccid(input: string): string | undefined {
-    const parts = input.split("ICCID=");
-
-    if (parts.length < 2) return undefined;
-
-    const serialValue = parts[1].trim();
-
-    const value = serialValue.replace(/\s+/g, "");
-
-    return value.length ? value : undefined;
+  static imei(input: string) {
+    if (!input.includes("IMEI=")) return undefined;
+    const imei = input.split("IMEI=")?.[1].replace(/\s+/g, "");
+    return imei.length ? imei : undefined;
   }
 
-  /**
-   * Extrai o valor do firmware de uma string que contém "RFW=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do firmware.
-   * @returns O valor do firmware ou undefined se o formato não for válido.
-   */
-  static firmware(input: string): string | undefined {
-    const parts = input.split("RFW=");
-
-    if (parts.length < 2) return undefined;
-
-    const serialValue = parts[1].trim();
-
-    const value = serialValue.replace(/\s+/g, "");
-
-    return value.length ? value : undefined;
+  static iccid(input: string) {
+    if (!input.includes("ICCID=")) return undefined;
+    const iccid = input.split("ICCID=")?.[1].replace(/\s+/g, "");
+    return iccid.length ? iccid : undefined;
   }
 
-  /**
-   * Extrai um objeto da resposta do comando auto test.
-   *
-   * @param input - A string que contém a informação do autotest.
-   * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
-   */
-  static auto_test(input: string): BWS4G.AutoTest | undefined {
-    const parts = input.split("AUTOTEST=");
-    if (parts.length < 2) return undefined;
-    const splited = parts[1].split(",");
-    return splited.reduce((acc, cur) => {
-      const [key, value] = cur.split(":");
-      acc[key as keyof BWS4G.AutoTest] = value;
-      return acc;
-    }, {} as BWS4G.AutoTest);
+  static firmware(input: string) {
+    if (!input.includes("BWSiot_E3+4G")) return undefined;
+    return input;
   }
 
-  /**
-   * Extrai o valor do odômetro de uma string que contém "RODM=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do odômetro.
-   * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
+  /*
+   * @example: www.bws.com,bws,bws
    */
-  static odometer(input: string): number | undefined {
-    const parts = input.split("RODM=");
-    if (parts.length < 2) return undefined;
-
-    const odometerValue = parts[1].trim();
-
-    const value = parseFloat(odometerValue);
-
-    return isNaN(value) ? undefined : value / 10;
-  }
-
-  /**
-   * Extrai o valor do tempo de transmissão de ignição ligada de uma string que contém "RCN=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do tempo de transmissão de ignição ligada.
-   * @returns O valor numérico do tempo de transmissão de ignição ligada ou undefined se o formato não for válido.
-   */
-  static data_transmission_on(input: string): number | undefined {
-    const parts = input.split("RCN=");
-    if (parts.length < 2) return undefined;
-
-    const dataTransmissionOn = parts[1].trim();
-
-    const value = parseFloat(dataTransmissionOn);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor do tempo de transmissão de ignição desligada de uma string que contém "RCW=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do tempo de transmissão de ignição desligada.
-   * @returns O valor numérico do tempo de transmissão de ignição desligada ou undefined se o formato não for válido.
-   */
-  static data_transmission_off(input: string): number | undefined {
-    const parts = input.split("RCW=");
-    if (parts.length < 2) return undefined;
-
-    const dataTransmissionOff = parts[1].trim();
-
-    const value = parseFloat(dataTransmissionOff);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor do tempo de sleep de uma string que contém "RCE=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do tempo de transmissão em evento.
-   * @returns O valor numérico do tempo de transmissão em evento ou undefined se o formato não for válido.
-   */
-  static data_transmission_event(input: string): number | undefined {
-    const parts = input.split("RCE=");
-
-    if (parts.length < 2) return undefined;
-
-    const dataTransmissionEvent = parts[1].trim();
-
-    const value = parseFloat(dataTransmissionEvent);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor do tempo de sleep de uma string que contém "RCS=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do tempo de sleep.
-   * @returns O valor numérico do tempo de sleep ou undefined se o formato não for válido.
-   */
-  static sleep(input: string): number | undefined {
-    const parts = input.split("RCS=");
-
-    if (parts.length < 2) return undefined;
-
-    const dataTransmissionEvent = parts[1].trim();
-
-    const value = parseFloat(dataTransmissionEvent);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor do tempo de keep alive de uma string que contém "RCK=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do tempo de keep alive.
-   * @returns O valor numérico do tempo de keep alive ou undefined se o formato não for válido.
-   */
-  static keep_alive(input: string): number | undefined {
-    const parts = input.split("RCK=");
-
-    if (parts.length < 2) return undefined;
-
-    const keep_alive = parts[1].trim();
-
-    const value = parseFloat(keep_alive);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor do ip primário de uma string que contém "RIP1=0.0.0.0:7001"
-   *
-   * @param input - A string que contém a informação do ip primário.
-   * @returns O valor numérico do ip primário ou undefined se o formato não for válido.
-   */
-  static ip_primary(input: string) {
-    const parts = input.split("RIP1=");
-    if (parts.length < 2) return undefined;
-    const [ip, port] = parts[1].split(":");
-    if (!ip || !port) return undefined;
-    return {
-      ip,
-      port: Number(port),
-    };
-  }
-  /**
-   * Extrai o valor do ip secundário de uma string que contém "RIP2=3.208.166.39:7001"
-   *
-   * @param input - A string que contém a informação do ip secundário.
-   * @returns O valor numérico do ip secundário ou undefined se o formato não for válido.
-   */
-  static ip_secondary(input: string) {
-    const parts = input.split("RIP2=");
-    if (parts.length < 2) return undefined;
-    const [ip, port] = parts[1].split(":");
-    if (!ip || !port) return undefined;
-    return {
-      ip,
-      port: Number(port),
-    };
-  }
-  /**
-   * Extrai o valor do dns primário de uma string que contém "RID1=gw.dev.bws-infra.com:7001"
-   *
-   * @param input - A string que contém a informação do dns primário.
-   * @returns O valor numérico do dns primário ou undefined se o formato não for válido.
-   */
-  static dns_primary(input: string) {
-    const parts = input.split("RID1=");
-    if (parts.length < 2) return undefined;
-    const [address, port] = parts[1].split(":");
-    if (!address || !port) return undefined;
-    return {
-      address,
-      port: Number(port),
-    };
-  }
-  /**
-   * Extrai o valor do dns secundário de uma string que contém "RID2=gw.bws-infra.com:7001"
-   *
-   * @param input - A string que contém a informação do dns secundário.
-   * @returns O valor numérico do dns secundário ou undefined se o formato não for válido.
-   */
-  static dns_secondary(input: string) {
-    const parts = input.split("RID2=");
-    if (parts.length < 2) return undefined;
-    const [address, port] = parts[1].split(":");
-    if (!address || !port) return undefined;
-    return {
-      address,
-      port: Number(port),
-    };
-  }
-  /**
-   * Extrai o valor da apn de uma string que contém "RIAP=nbiot.arqia.br,arqia,arqia"
-   *
-   * @param input - A string que contém a informação da apn.
-   * @returns O valor numérico da apn ou undefined se o formato não for válido.
-   */
-  static apn(input: string) {
-    const parts = input.split("RIAP=");
-    if (parts.length < 2) return undefined;
-    const [address, user, password] = parts[1].split(",");
-    if (!address || !user) return undefined;
+  static apn(input: string): APN | undefined {
+    const [address, user, password] = input.split(",");
+    if (!address || !user) {
+      return undefined;
+    }
     return {
       address,
       user,
@@ -300,175 +302,272 @@ export class BWS4GParser {
     };
   }
 
-  /**
-   * Extrai o valor da tensão 12V de uma string que contém "RIG12=110,150"
-   *
-   * @param input - A string que contém a informação da tensão 12V.
-   * @returns O valor numérico da tensão 12V ou undefined se o formato não for válido.
+  /*
+   * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
    */
-  static virtual_ignition_12v(input: string) {
-    const parts = input.split("RIG12=");
-    if (parts.length < 2) return undefined;
-    const [initial, final] = parts[1].split(",");
-    if (!initial || !final) return undefined;
+  static ip_primary(input: string) {
+    let result: IP;
+    const ips = input
+      .replace(/\s+/g, "")
+      .replace(/IP1=|IP2=/g, "")
+      .split(";");
+    const raw = ips?.[0];
+    const [ip, port] = raw.split(",");
+    result = { ip, port: Number(port) };
+    if (Object.keys(result).length === 0) return undefined;
+    return result;
+  }
+
+  /*
+   * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
+   */
+  static ip_secondary(input: string) {
+    let result: IP;
+    const ips = input
+      .replace(/\s+/g, "")
+      .replace(/IP1=|IP2=/g, "")
+      .split(";");
+    const raw = ips?.[1];
+    const [ip, port] = raw.split(",");
+    result = { ip, port: Number(port) };
+    if (Object.keys(result).length === 0) return undefined;
+    return result;
+  }
+
+  /*
+   * @example: DNS=dns.com:2000
+   */
+  static dns(input: string): DNS | undefined {
+    let result: DNS = {} as DNS;
+    const regex = input
+      .replace(/\s+/g, "")
+      .replace(/IP1=|IP2=|DNS=/g, "")
+      .split(";");
+    const [address, port] = regex[2].split(",");
+    if (address) {
+      result["address"] = address;
+    }
+    if (port && !Number.isNaN(port)) {
+      result["port"] = Number(port);
+    }
+    if (Object.keys(result).length === 0) return undefined;
+    return result;
+  }
+
+  /*
+   * @example E0 ou W3
+   */
+  static timezone(input: string): Timezone | undefined {
+    const east = input.includes("E");
+    if (east) {
+      const value = input.split("E")?.[1];
+      if (value) {
+        return Number(value);
+      }
+    } else {
+      const value = input.split("W")?.[1];
+      if (value) {
+        return Number(value) * -1;
+      }
+    }
+  }
+
+  /*
+   * @example 1 ou 2 ou 3
+   * tipo do bloqueio
+   */
+  static lock_type(input: string): Locktype | undefined {
+    if (["1", "2", "3"].every((el) => el !== input)) return undefined;
+    return Number(input);
+  }
+
+  /*
+   *@example 30, 180
+   */
+  static data_transmission_on(input: string): DataTransmission | undefined {
+    const [on, _] = input.split(",");
+    if (!on) return undefined;
+    if (Number.isNaN(on)) return undefined;
+    return Number(on);
+  }
+
+  /*
+   *@example 30, 180
+   */
+  static data_transmission_off(input: string): DataTransmission | undefined {
+    const [_, off] = input.split(",");
+    if (!off) return undefined;
+    if (Number.isNaN(off)) return undefined;
+    return Number(off);
+  }
+
+  /*
+   *@example 4500
+   */
+  static odometer(input: string): Odometer | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+
+  /*
+   *@example 30
+   */
+  static keep_alive(input: string): KeepAlive | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+
+  /*
+   *@example 30
+   */
+  static accelerometer_sensitivity(
+    input: string
+  ): AccelerometerSensitivity | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+
+  /*
+   *@example 30
+   */
+  static economy_mode(input: string): EconomyMode | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+
+  /*
+   * @example 30
+   */
+  static lbs_position(input: string): LBSPosition | undefined {
+    if (!input || (input !== "ON" && input !== "OFF")) return undefined;
+    return input === "ON" ? true : false;
+  }
+
+  static cornering_position_update(
+    input: string
+  ): CorneringPositionUpdate | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined;
+    return input === "1" ? true : false;
+  }
+
+  static led(input: string): Led | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined;
+    return input === "1" ? true : false;
+  }
+
+  static virtual_ignition(input: string): VirtualIgnition | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined;
+    return input === "1" ? true : false;
+  }
+
+  static virtual_ignition_by_voltage(
+    input: string
+  ): VirtualIgnitionByVoltage | undefined {
+    if (!input || (input !== "OFF" && input !== "ON")) return undefined;
+    return input === "ON" ? true : false;
+  }
+
+  static sensitivity_adjustment(
+    input: string
+  ): SensitivityAdjustment | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+
+  static auto_test(input: string): BWS4G.AutoTest | undefined {
+    if (!input.startsWith("SN:")) return undefined;
+    const splited = input.split(",");
+    return splited.reduce((acc, cur) => {
+      const [key, value] = cur.split(":");
+      acc[key as keyof BWS4G.AutoTest] = value;
+      return acc;
+    }, {} as BWS4G.AutoTest);
+  }
+
+  /*
+   * @example 30
+   */
+  static max_speed(input: string): MaxSpeed | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+
+  static virtual_ignition_by_movement(
+    input: string
+  ): VirtualIgnitionByMovement | undefined {
+    if (!input || (input !== "1" && input !== "0")) return undefined;
+    return input === "1" ? true : false;
+  }
+
+  static communication_type(input: string): CommunicationType | undefined {
+    if (!input || (input !== "TCP" && input !== "UDP")) return undefined;
+    return input;
+  }
+
+  static protocol_type(input: string): ProtocolType | undefined {
+    if (!input || (input !== "E3+" && input !== "GT06")) return undefined;
+    return input;
+  }
+
+  static anti_theft(input: string): AntiTheft | undefined {
+    if (!input || (input !== "OFF" && input !== "ON")) return undefined;
+    return input === "ON" ? true : false;
+  }
+
+  static jammer_detection(input: string): JammerDetection | undefined {
+    if (!input || (input !== "0,0" && input !== "1,0")) return undefined;
+    return input === "1,0" ? true : false;
+  }
+
+  static angle_adjustment(input: string): AngleAdjustment | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+  static lock_type_progression(input: string): LockTypeProgression | undefined {
+    const [n1, n2] = input.split(",");
+    if (!n1 || !n2) return undefined;
+    if (Number.isNaN(n1) || Number.isNaN(n2)) return undefined;
     return {
-      initial: parseFloat(initial),
-      final: parseFloat(final),
+      n1: Number(n2),
+      n2: Number(n1),
+    };
+  }
+  static ignition_by_voltage(input: string): IgnitionByVoltage | undefined {
+    const [initial, final] = input.split(",");
+    if (!initial || !final) return undefined;
+    if (Number.isNaN(initial) || Number.isNaN(final)) return undefined;
+    return {
+      initial: Number(initial),
+      final: Number(final),
     };
   }
 
-  /**
-   * Extrai o valor da tensão 24V de uma string que contém "RIG24=276,281"
-   *
-   * @param input - A string que contém a informação da tensão 24V.
-   * @returns O valor numérico da tensão 24V ou undefined se o formato não for válido.
+  static input_1(input: string): number | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+
+  static input_2(input: string): number | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+
+  static horimeter(input: string): number | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
+  }
+
+  /*
+   * @example 30
    */
-  static virtual_ignition_24v(input: string) {
-    const parts = input.split("RIG24=");
-    if (parts.length < 2) return undefined;
-    const [initial, final] = parts[1].split(",");
-    if (!initial || !final) return undefined;
-    return {
-      initial: parseFloat(initial),
-      final: parseFloat(final),
-    };
-  }
-  /**
-   * Extrai o valor do ângulo de uma string que contém "RFA=30"
-   *
-   * @param input - A string que contém a informação do ângulo.
-   * @returns O valor numérico do ângulo ou undefined se o formato não for válido.
-   */
-  static angle(input: string) {
-    const parts = input.split("RFA=");
-
-    if (parts.length < 2) return undefined;
-
-    const angle = parts[1].trim();
-
-    const value = parseFloat(angle);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor da velocidade de uma string que contém "RFV=100"
-   *
-   * @param input - A string que contém a informação da velocidade.
-   * @returns O valor numérico da velocidade ou undefined se o formato não for válido.
-   */
-  static speed(input: string) {
-    const parts = input.split("RFV=");
-
-    if (parts.length < 2) return undefined;
-
-    const speed = parts[1].trim();
-
-    const value = parseFloat(speed);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor da sensibilidade do acelerometro quando ligado de uma string que contém "RFTON=2"
-   *
-   * @param input - A string que contém a informação da sensibilidade do acelerometro quando ligado.
-   * @returns O valor numérico da sensibilidade do acelerometro quando ligado ou undefined se o formato não for válido.
-   */
-  static accel_threshold_for_ignition_on(input: string) {
-    const parts = input.split("RFTON=");
-
-    if (parts.length < 2) return undefined;
-
-    const speed = parts[1].trim();
-
-    const value = parseFloat(speed);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor da sensibilidade do acelerometro quando desligado de uma string que contém "RFTOF=3"
-   *
-   * @param input - A string que contém a informação da sensibilidade do acelerometro quando desligado.
-   * @returns O valor numérico da sensibilidade do acelerometro quando desligado ou undefined se o formato não for válido.
-   */
-  static accel_threshold_for_ignition_off(input: string) {
-    const parts = input.split("RFTOF=");
-
-    if (parts.length < 2) return undefined;
-
-    const speed = parts[1].trim();
-
-    const value = parseFloat(speed);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor da sensibilidade do acelerometro quando violado de uma string que contém "RFAV=150"
-   *
-   * @param input - A string que contém a informação da sensibilidade do acelerometro quando violado.
-   * @returns O valor numérico da sensibilidade do acelerometro quando violado ou undefined se o formato não for válido.
-   */
-  static accel_threshold_for_movement(input: string) {
-    const parts = input.split("RFAV=");
-
-    if (parts.length < 2) return undefined;
-
-    const speed = parts[1].trim();
-
-    const value = parseFloat(speed);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor da aceleração máxima de uma string que contém "RFMA=50"
-   *
-   * @param input - A string que contém a informação da aceleração máxima.
-   * @returns O valor numérico da aceleração máxima ou undefined se o formato não for válido.
-   */
-  static harsh_acceleration_threshold(input: string) {
-    const parts = input.split("RFMA=");
-
-    if (parts.length < 2) return undefined;
-
-    const speed = parts[1].trim();
-
-    const value = parseFloat(speed);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor da desaceleração máxima de uma string que contém "RFMD=45"
-   *
-   * @param input - A string que contém a informação da desaceleração máxima.
-   * @returns O valor numérico da desaceleração máxima ou undefined se o formato não for válido.
-   */
-  static harsh_braking_threshold(input: string) {
-    const parts = input.split("RFMD=");
-
-    if (parts.length < 2) return undefined;
-
-    const speed = parts[1].trim();
-
-    const value = parseFloat(speed);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  static input_1() {
-    return "" as any;
-  }
-  static input_2() {
-    return "" as any;
-  }
-  static input_3() {
-    return "" as any;
-  }
-  static input_4() {
-    return "" as any;
+  static ack(input: string): MaxSpeed | undefined {
+    if (!input || Number.isNaN(input)) return undefined;
+    return Number(input);
   }
 }
+
+// const check = "Sim=VAZIO SOS=PANIC APN=bws.br,bws,bws TZ=W0 HB=60,7200 MG=0 TX=300 BJ=0 ACCMODE=1 TDET=20 WKMODE=0 DD=0 OD=120 SDMS=2 TUR=1 PROT_COM=TCP DK=0 JD=1 LBS=ON OUT_MODE=2 LED=1 IV=1 ACC=1 GPRS=2G GPS=V PROT=E3+ DC=1500,8000 Voltage=13.50,12.50 AF=OFF GS=120 ACK=30 IN2_MODE=1 MQ=OFF
+
+// const status = "BATTERY EXTERNAL:11.49V;BATT_INT:0%;ACC:ON;GPRS:Ok;GPS:0;GSM:20;HR: ;Buffer Memory:0;Tech:4G E_UTRAN;IP:143.198.247.1;Port:2000;ENGINE MODE1"
+
+// const autotest SN:869671070546377,IC:89551805400523770076,FW:BWSiot_E3+4GW_V1.51 (DIV=100k+68k) (EG915U-LA) (Aug  9 2024 10:13:13),GPS:OK,GPSf:NOK,GSM:OK,LTE:OK,IN1:OK,IN2:NOK,OUT:NOK,ACELC:MC3632,ACELP:1,VCC:OK,CHARGER:OK,ID_ACEL:71,ID_MEM:C22536:BATT_VOLT:5.61V

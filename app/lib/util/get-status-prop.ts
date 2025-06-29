@@ -10,7 +10,7 @@ const getStatusProps = (value: boolean) => {
   const statusClass =
     data_analysis[String(value) as keyof typeof data_analysis];
   const Icon = value ? CheckIcon : XMarkIcon;
-  const text = value ? "Success" : "Failed";
+  const text = value ? "Sucesso" : "Falha";
   return { Icon, statusClass, text };
 };
 

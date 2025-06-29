@@ -86,56 +86,60 @@ export function ConfiguratorPanel(props: Props) {
             Visualize e configure os equipamentos conectados às portas seriais
           </CardDescription>
         </CardHeader>
-        <CardContent className="ml-11 space-y-6">
-          {technology && (
+        {technology ? (
+          <CardContent className="ml-11 space-y-6">
             <div className="rounded-lg border">
               <DevicesDetectedTable
                 data={identified}
                 model={Device.Model[technology.name.system as Device.Model]}
               />
             </div>
-          )}
 
-          <Separator />
+            <Separator />
 
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  size="lg"
+                  onClick={() =>
+                    configurationProfile && configure(configurationProfile)
+                  }
+                  disabled={isProcessing || !configurationProfile}
+                  className="min-w-[140px]"
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  Configurar
+                </Button>
+                {!configurationProfile && (
+                  <p className="text-sm text-muted-foreground self-center">
+                    Selecione um perfil de configuração para continuar
+                  </p>
+                )}
+              </div>
+
               <Button
+                variant="outline"
                 size="lg"
-                onClick={() => configure(configurationProfile)}
-                disabled={isProcessing || !configurationProfile}
+                onClick={requestPort}
                 className="min-w-[140px]"
               >
-                {isProcessing ? (
-                  <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
-                    Configurando...
-                  </>
-                ) : (
-                  <>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Configurar
-                  </>
-                )}
+                <Plus className="mr-2 h-4 w-4" />
+                Nova Porta
               </Button>
-              {!configurationProfile && (
-                <p className="text-sm text-muted-foreground self-center">
-                  Selecione um perfil de configuração para continuar
-                </p>
-              )}
             </div>
-
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={requestPort}
-              className="min-w-[140px]"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Nova Porta
-            </Button>
+          </CardContent>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <CheckCircle className="h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium text-muted-foreground mb-2">
+              Nenhuma tecnologia selecionada
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Complete as etapas anteriores para visualizar os equipamentos
+              detectados.
+            </p>
           </div>
-        </CardContent>
+        )}
       </Card>
 
       {/* Etapa 3: Verificação */}
@@ -163,24 +167,40 @@ export function ConfiguratorPanel(props: Props) {
               : "Aguardando configuração dos equipamentos"}
           </CardDescription>
         </CardHeader>
-        <CardContent className="ml-11">
-          {configured.length > 0 ? (
-            <div className="rounded-lg border">
-              <DevicesConfiguredTable data={configured} />
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <CheckCircle className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                Nenhum equipamento configurado
-              </h3>
-              <p className="text-sm text-muted-foreground max-w-md">
-                Complete as etapas anteriores para visualizar os equipamentos
-                configurados e os comandos enviados.
-              </p>
-            </div>
-          )}
-        </CardContent>
+        {technology ? (
+          <CardContent className="ml-11">
+            {configured.length > 0 ? (
+              <div className="rounded-lg border">
+                <DevicesConfiguredTable
+                  data={configured}
+                  model={Device.Model[technology.name.system as Device.Model]}
+                />
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <CheckCircle className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-medium text-muted-foreground mb-2">
+                  Nenhum equipamento configurado
+                </h3>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  Complete as etapas anteriores para visualizar os equipamentos
+                  configurados.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <CheckCircle className="h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium text-muted-foreground mb-2">
+              Nenhuma tecnologia selecionada
+            </h3>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Complete as etapas anteriores para visualizar os equipamentos
+              detectados.
+            </p>
+          </div>
+        )}
       </Card>
     </div>
   );

@@ -1,12 +1,36 @@
 import { useCallback } from "react";
-import { LORA, LORAParser, LORAEncoder } from "../../@backend/infra/protocol";
+import {
+  BwsLora,
+  BwsLoraParser,
+  BwsLoraEncoder,
+} from "../../@backend/infra/protocol";
 import { sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
-import { IConfigurationProfile } from "../../@backend/domain";
+import {
+  Device,
+  IConfigurationProfile,
+  BwsLoraConfig,
+} from "../../@backend/domain";
 import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 
-type ConfigKeys = keyof IConfigurationProfile["config"];
+namespace Namespace {
+  interface Equipment {
+    firmware: string;
+    serial: string;
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
+  }
+  export interface Detected {
+    port: ISerialPort;
+    equipment: Equipment;
+  }
+
+  export type Profile = IConfigurationProfile<BwsLoraConfig>["config"];
+
+  export type ConfigKeys = keyof NonNullable<Profile["specific"]>;
+}
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
@@ -43,15 +67,15 @@ const readResponse = async (
 
 const generateMessages = (
   profile: IConfigurationProfile
-): Record<ConfigKeys, string> => {
-  const response = {} as Record<ConfigKeys, string>;
+): Record<Namespace.ConfigKeys, string> => {
+  const response = {} as Record<Namespace.ConfigKeys, string>;
   Object.entries({
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([message, args]) => {
-    const _message = LORAEncoder.encoder({ command: message, args } as any);
+    const _message = BwsLoraEncoder.encoder({ command: message, args } as any);
     if (!_message) return;
-    response[message as ConfigKeys] = _message;
+    response[message as Namespace.ConfigKeys] = _message;
   });
   return response;
 };
@@ -93,47 +117,47 @@ export const useLora = () => {
         {
           key: "serial",
           command: `RINS\r`,
-          transform: LORAParser.serial,
+          transform: BwsLoraParser.serial,
         },
         {
           command: "RFW\r",
           key: "firmware",
-          transform: LORAParser.firmware,
+          transform: BwsLoraParser.firmware,
         },
         {
           key: "timestamp",
           command: `RTK\r`,
-          transform: LORAParser.timestamp,
+          transform: BwsLoraParser.timestamp,
         },
         {
           key: "device_address",
           command: `RDA\r`,
-          transform: LORAParser.device_address,
+          transform: BwsLoraParser.device_address,
         },
         {
           key: "device_eui",
           command: `RDE\r`,
-          transform: LORAParser.device_eui,
+          transform: BwsLoraParser.device_eui,
         },
         {
           key: "application_eui",
           command: `RAP\r`,
-          transform: LORAParser.application_eui,
+          transform: BwsLoraParser.application_eui,
         },
         {
           key: "application_key",
           command: `RAK\r`,
-          transform: LORAParser.application_key,
+          transform: BwsLoraParser.application_key,
         },
         {
           key: "application_session_key",
           command: `RASK\r`,
-          transform: LORAParser.application_session_key,
+          transform: BwsLoraParser.application_session_key,
         },
         {
           key: "network_session_key",
           command: `RNK\r`,
-          transform: LORAParser.network_session_key,
+          transform: BwsLoraParser.network_session_key,
         },
       ] as const;
       return await Promise.all(
@@ -158,144 +182,148 @@ export const useLora = () => {
   const handleGetProfile = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { command: "RODM\r", key: "odometer", transform: LORAParser.odometer },
+        {
+          command: "RODM\r",
+          key: "odometer",
+          transform: BwsLoraParser.odometer,
+        },
         {
           command: "RCW\r",
           key: "data_transmission_sleep",
-          transform: LORAParser.data_transmission_sleep,
+          transform: BwsLoraParser.data_transmission_sleep,
         },
 
         {
           command: "RIG1\r",
           key: "virtual_ignition_12v",
-          transform: LORAParser.virtual_ignition_12v,
+          transform: BwsLoraParser.virtual_ignition_12v,
         },
         {
           command: "RIG2\r",
           key: "virtual_ignition_24v",
-          transform: LORAParser.virtual_ignition_24v,
+          transform: BwsLoraParser.virtual_ignition_24v,
         },
 
-        { command: "RFH\r", key: "heading", transform: LORAParser.heading },
+        { command: "RFH\r", key: "heading", transform: BwsLoraParser.heading },
         {
           command: "RFHV\r",
           key: "heading_event_mode",
-          transform: LORAParser.heading_event_mode,
+          transform: BwsLoraParser.heading_event_mode,
         },
         {
           command: "RFA\r",
           key: "heading_detection_angle",
-          transform: LORAParser.heading_detection_angle,
+          transform: BwsLoraParser.heading_detection_angle,
         },
 
         {
           command: "RFV\r",
           key: "speed_alert_threshold",
-          transform: LORAParser.speed_alert_threshold,
+          transform: BwsLoraParser.speed_alert_threshold,
         },
         {
           command: "RFTON\r",
           key: "accel_threshold_for_ignition_on",
-          transform: LORAParser.accel_threshold_for_ignition_on,
+          transform: BwsLoraParser.accel_threshold_for_ignition_on,
         },
         {
           command: "RFTOF\r",
           key: "accel_threshold_for_ignition_off",
-          transform: LORAParser.accel_threshold_for_ignition_off,
+          transform: BwsLoraParser.accel_threshold_for_ignition_off,
         },
         {
           command: "RFAV\r",
           key: "accel_threshold_for_movement",
-          transform: LORAParser.accel_threshold_for_movement,
+          transform: BwsLoraParser.accel_threshold_for_movement,
         },
         {
           command: "RFMA\r",
           key: "harsh_acceleration_threshold",
-          transform: LORAParser.harsh_acceleration_threshold,
+          transform: BwsLoraParser.harsh_acceleration_threshold,
         },
         {
           command: "RFMD\r",
           key: "harsh_braking_threshold",
-          transform: LORAParser.harsh_braking_threshold,
+          transform: BwsLoraParser.harsh_braking_threshold,
         },
 
         {
           command: "RWTR\r",
           key: "data_transmission_position",
-          transform: LORAParser.data_transmission_position,
+          transform: BwsLoraParser.data_transmission_position,
         },
         {
           command: "RLED\r",
           key: "led_lighting",
-          transform: LORAParser.led_lighting,
+          transform: BwsLoraParser.led_lighting,
         },
 
         {
           command: "RLTO\r",
           key: "p2p_mode_duration",
-          transform: LORAParser.p2p_mode_duration,
+          transform: BwsLoraParser.p2p_mode_duration,
         },
         {
           command: "WWTO\r",
           key: "lorawan_mode_duration",
-          transform: LORAParser.lorawan_mode_duration,
+          transform: BwsLoraParser.lorawan_mode_duration,
         },
 
-        { command: "RIN1\r", key: "input_1", transform: LORAParser.input_1 },
-        { command: "RIN2\r", key: "input_2", transform: LORAParser.input_2 },
-        { command: "RIN3\r", key: "input_3", transform: LORAParser.input_3 },
-        { command: "RIN4\r", key: "input_4", transform: LORAParser.input_4 },
-        { command: "RIN5\r", key: "input_5", transform: LORAParser.input_5 },
-        { command: "RIN6\r", key: "input_6", transform: LORAParser.input_6 },
+        { command: "RIN1\r", key: "input_1", transform: BwsLoraParser.input_1 },
+        { command: "RIN2\r", key: "input_2", transform: BwsLoraParser.input_2 },
+        { command: "RIN3\r", key: "input_3", transform: BwsLoraParser.input_3 },
+        { command: "RIN4\r", key: "input_4", transform: BwsLoraParser.input_4 },
+        { command: "RIN5\r", key: "input_5", transform: BwsLoraParser.input_5 },
+        { command: "RIN6\r", key: "input_6", transform: BwsLoraParser.input_6 },
 
         {
           command: "RC\r",
           key: "full_configuration_table",
-          transform: LORAParser.full_configuration_table,
+          transform: BwsLoraParser.full_configuration_table,
         },
         {
           command: "RFIFO\r",
           key: "fifo_send_and_hold_times",
-          transform: LORAParser.fifo_send_and_hold_times,
+          transform: BwsLoraParser.fifo_send_and_hold_times,
         },
 
         {
           command: "REWTR\r",
           key: "lorawan_data_transmission_event",
-          transform: LORAParser.lorawan_data_transmission_event,
+          transform: BwsLoraParser.lorawan_data_transmission_event,
         },
         {
           command: "RELTR\r",
           key: "p2p_data_transmission_event",
-          transform: LORAParser.p2p_data_transmission_event,
+          transform: BwsLoraParser.p2p_data_transmission_event,
         },
 
         {
           command: "RTS\r",
           key: "data_transmission_status",
-          transform: LORAParser.data_transmission_status,
+          transform: BwsLoraParser.data_transmission_status,
         },
         {
           command: "RF\r",
           key: "full_functionality_table",
-          transform: LORAParser.full_functionality_table,
+          transform: BwsLoraParser.full_functionality_table,
         },
 
         {
           command: "RACT\r",
           key: "activation_type",
-          transform: LORAParser.activation_type,
+          transform: BwsLoraParser.activation_type,
         },
         {
           command: "RMC\r",
           key: "mcu_configuration",
-          transform: LORAParser.mcu_configuration,
+          transform: BwsLoraParser.mcu_configuration,
         },
 
         {
           command: "ROUT\r",
           key: "output_table",
-          transform: LORAParser.output_table,
+          transform: BwsLoraParser.output_table,
         },
       ] as const;
 
@@ -325,42 +353,297 @@ export const useLora = () => {
   );
   const handleConfiguration = useCallback(
     async (
-      ports: ISerialPort[],
+      detected: Namespace.Detected[],
       configuration_profile: IConfigurationProfile
     ) => {
-      const generatedMessages = generateMessages(configuration_profile);
-      const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, command]) => ({
-          key,
-          command,
-        })
-      );
+      const messages = [
+        ...typedObjectEntries(generateMessages(configuration_profile)).map(
+          ([key, command]) => ({
+            key,
+            command,
+          })
+        ),
+        { command: "RODM\r", key: "read_odometer", delay_before: 1000 },
+        {
+          command: "RCW\r",
+          key: "read_data_transmission_sleep",
+        },
+
+        {
+          command: "RIG1\r",
+          key: "read_virtual_ignition_12v",
+        },
+        {
+          command: "RIG2\r",
+          key: "read_virtual_ignition_24v",
+        },
+
+        { command: "RFH\r", key: "read_heading" },
+        {
+          command: "RFHV\r",
+          key: "read_heading_event_mode",
+        },
+        {
+          command: "RFA\r",
+          key: "read_heading_detection_angle",
+        },
+
+        {
+          command: "RFV\r",
+          key: "read_speed_alert_threshold",
+        },
+        {
+          command: "RFTON\r",
+          key: "read_accel_threshold_for_ignition_on",
+        },
+        {
+          command: "RFTOF\r",
+          key: "read_accel_threshold_for_ignition_off",
+        },
+        {
+          command: "RFAV\r",
+          key: "read_accel_threshold_for_movement",
+        },
+        {
+          command: "RFMA\r",
+          key: "read_harsh_acceleration_threshold",
+        },
+        {
+          command: "RFMD\r",
+          key: "read_harsh_braking_threshold",
+        },
+
+        {
+          command: "RWTR\r",
+          key: "read_data_transmission_position",
+        },
+        {
+          command: "RLED\r",
+          key: "read_led_lighting",
+        },
+
+        {
+          command: "RLTO\r",
+          key: "read_p2p_mode_duration",
+        },
+        {
+          command: "WWTO\r",
+          key: "read_lorawan_mode_duration",
+        },
+
+        { command: "RIN1\r", key: "read_input_1" },
+        { command: "RIN2\r", key: "read_input_2" },
+        { command: "RIN3\r", key: "read_input_3" },
+        { command: "RIN4\r", key: "read_input_4" },
+        { command: "RIN5\r", key: "read_input_5" },
+        { command: "RIN6\r", key: "read_input_6" },
+
+        {
+          command: "RC\r",
+          key: "read_full_configuration_table",
+        },
+        {
+          command: "RFIFO\r",
+          key: "read_fifo_send_and_hold_times",
+        },
+
+        {
+          command: "REWTR\r",
+          key: "read_lorawan_data_transmission_event",
+        },
+        {
+          command: "RELTR\r",
+          key: "read_p2p_data_transmission_event",
+        },
+
+        {
+          command: "RTS\r",
+          key: "read_data_transmission_status",
+        },
+        {
+          command: "RF\r",
+          key: "read_full_functionality_table",
+        },
+
+        {
+          command: "RACT\r",
+          key: "read_activation_type",
+        },
+        {
+          command: "RMC\r",
+          key: "read_mcu_configuration",
+        },
+
+        {
+          command: "ROUT\r",
+          key: "read_output_table",
+        },
+      ] as const;
+
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
             const init_time = Date.now();
             const response = await sendMultipleMessages({
               transport: port,
-              messages: configurationCommands,
+              messages,
             });
             const end_time = Date.now();
-            const responseEntries = Object.entries(response ?? {});
+            const {
+              read_odometer,
+              read_data_transmission_sleep,
+              read_virtual_ignition_12v,
+              read_virtual_ignition_24v,
+              read_heading,
+              read_heading_event_mode,
+              read_heading_detection_angle,
+              read_speed_alert_threshold,
+              read_accel_threshold_for_ignition_on,
+              read_accel_threshold_for_ignition_off,
+              read_accel_threshold_for_movement,
+              read_harsh_acceleration_threshold,
+              read_harsh_braking_threshold,
+              read_data_transmission_position,
+              read_led_lighting,
+              read_p2p_mode_duration,
+              read_lorawan_mode_duration,
+              read_input_1,
+              read_input_2,
+              read_input_3,
+              read_input_4,
+              read_input_5,
+              read_input_6,
+              read_full_configuration_table,
+              read_fifo_send_and_hold_times,
+              read_lorawan_data_transmission_event,
+              read_p2p_data_transmission_event,
+              read_data_transmission_status,
+              read_full_functionality_table,
+              read_activation_type,
+              read_mcu_configuration,
+              read_output_table,
+              ...configuration
+            } = response;
+            const configurationEntries = Object.entries(configuration ?? {});
             const status =
-              responseEntries.length > 0 &&
-              responseEntries.every(
+              configurationEntries.length > 0 &&
+              configurationEntries.every(
                 ([_, value]) => typeof value !== "undefined"
               );
+
             return {
+              equipment,
               port,
-              response,
-              messages: configurationCommands,
               init_time,
               end_time,
               status,
+              applied_profile: {
+                specific: {
+                  odometer: BwsLoraParser.odometer(read_odometer),
+                  data_transmission_sleep:
+                    BwsLoraParser.data_transmission_sleep(
+                      read_data_transmission_sleep
+                    ),
+                  virtual_ignition_12v: BwsLoraParser.virtual_ignition_12v(
+                    read_virtual_ignition_12v
+                  ),
+                  virtual_ignition_24v: BwsLoraParser.virtual_ignition_24v(
+                    read_virtual_ignition_24v
+                  ),
+                  heading: BwsLoraParser.heading(read_heading),
+                  heading_event_mode: BwsLoraParser.heading_event_mode(
+                    read_heading_event_mode
+                  ),
+                  heading_detection_angle:
+                    BwsLoraParser.heading_detection_angle(
+                      read_heading_detection_angle
+                    ),
+                  speed_alert_threshold: BwsLoraParser.speed_alert_threshold(
+                    read_speed_alert_threshold
+                  ),
+                  accel_threshold_for_ignition_on:
+                    BwsLoraParser.accel_threshold_for_ignition_on(
+                      read_accel_threshold_for_ignition_on
+                    ),
+                  accel_threshold_for_ignition_off:
+                    BwsLoraParser.accel_threshold_for_ignition_off(
+                      read_accel_threshold_for_ignition_off
+                    ),
+                  accel_threshold_for_movement:
+                    BwsLoraParser.accel_threshold_for_movement(
+                      read_accel_threshold_for_movement
+                    ),
+                  harsh_acceleration_threshold:
+                    BwsLoraParser.harsh_acceleration_threshold(
+                      read_harsh_acceleration_threshold
+                    ),
+                  harsh_braking_threshold:
+                    BwsLoraParser.harsh_braking_threshold(
+                      read_harsh_braking_threshold
+                    ),
+                  data_transmission_position:
+                    BwsLoraParser.data_transmission_position(
+                      read_data_transmission_position
+                    ),
+                  led_lighting: BwsLoraParser.led_lighting(read_led_lighting),
+                  p2p_mode_duration: BwsLoraParser.p2p_mode_duration(
+                    read_p2p_mode_duration
+                  ),
+                  lorawan_mode_duration: BwsLoraParser.lorawan_mode_duration(
+                    read_lorawan_mode_duration
+                  ),
+                  input_1: BwsLoraParser.input_1(read_input_1),
+                  input_2: BwsLoraParser.input_2(read_input_2),
+                  input_3: BwsLoraParser.input_3(read_input_3),
+                  input_4: BwsLoraParser.input_4(read_input_4),
+                  input_5: BwsLoraParser.input_5(read_input_5),
+                  input_6: BwsLoraParser.input_6(read_input_6),
+                  full_configuration_table:
+                    BwsLoraParser.full_configuration_table(
+                      read_full_configuration_table
+                    ),
+                  fifo_send_and_hold_times:
+                    BwsLoraParser.fifo_send_and_hold_times(
+                      read_fifo_send_and_hold_times
+                    ),
+                  lorawan_data_transmission_event:
+                    BwsLoraParser.lorawan_data_transmission_event(
+                      read_lorawan_data_transmission_event
+                    ),
+                  p2p_data_transmission_event:
+                    BwsLoraParser.p2p_data_transmission_event(
+                      read_p2p_data_transmission_event
+                    ),
+                  data_transmission_status:
+                    BwsLoraParser.data_transmission_status(
+                      read_data_transmission_status
+                    ),
+                  full_functionality_table:
+                    BwsLoraParser.full_functionality_table(
+                      read_full_functionality_table
+                    ),
+                  activation_type:
+                    BwsLoraParser.activation_type(read_activation_type),
+                  mcu_configuration: BwsLoraParser.mcu_configuration(
+                    read_mcu_configuration
+                  ),
+                  output_table: BwsLoraParser.output_table(read_output_table),
+                },
+              },
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
             console.error("[ERROR] handleConfiguration", error);
-            return { port };
+            return {
+              port,
+              status: false,
+              equipment,
+              messages: [],
+            };
           }
         })
       );
@@ -373,7 +656,10 @@ export const useLora = () => {
         ports.map(async (port) => {
           const resultTemplate = {
             port,
-            response: {} as Record<string, LORA.AutoTest | string | undefined>,
+            response: {} as Record<
+              string,
+              BwsLora.AutoTest | string | undefined
+            >,
             messages: [
               { key: "start", command: "START\r" },
               { key: "autotest_1", command: "AUTOTEST\r" },
@@ -415,7 +701,7 @@ export const useLora = () => {
                     {
                       key,
                       command: "AUTOTEST\r",
-                      transform: LORAParser.auto_test,
+                      transform: BwsLoraParser.auto_test,
                     },
                   ] as const,
                 });
@@ -500,42 +786,42 @@ export const useLora = () => {
         {
           key: "serial",
           command: `RINS\r`,
-          transform: LORAParser.serial,
+          transform: BwsLoraParser.serial,
         },
         {
           key: "timestamp",
           command: `RTK\r`,
-          transform: LORAParser.timestamp,
+          transform: BwsLoraParser.timestamp,
         },
         {
           key: "device_address",
           command: `RDA\r`,
-          transform: LORAParser.device_address,
+          transform: BwsLoraParser.device_address,
         },
         {
           key: "device_eui",
           command: `RDE\r`,
-          transform: LORAParser.device_eui,
+          transform: BwsLoraParser.device_eui,
         },
         {
           key: "application_eui",
           command: `RAP\r`,
-          transform: LORAParser.application_eui,
+          transform: BwsLoraParser.application_eui,
         },
         {
           key: "application_key",
           command: `RAK\r`,
-          transform: LORAParser.application_key,
+          transform: BwsLoraParser.application_key,
         },
         {
           key: "application_session_key",
           command: `RASK\r`,
-          transform: LORAParser.application_session_key,
+          transform: BwsLoraParser.application_session_key,
         },
         {
           key: "network_session_key",
           command: `RNK\r`,
-          transform: LORAParser.network_session_key,
+          transform: BwsLoraParser.network_session_key,
         },
       ] as const;
       try {

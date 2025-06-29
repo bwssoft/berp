@@ -1,4 +1,4 @@
-export namespace NB2 {
+export namespace BwsNb2 {
   export interface AutoTest {
     ACELC: string; //"STK8321"
     ACELP: string; //"OK"
@@ -23,7 +23,7 @@ export namespace NB2 {
   }
 }
 
-export class NB2Parser {
+export class BwsNb2Parser {
   /**
    * Extrai o valor do serial de uma string que contém "RINS=" seguido de um número.
    *
@@ -102,15 +102,15 @@ export class NB2Parser {
    * @param input - A string que contém a informação do autotest.
    * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
    */
-  static auto_test(input: string): NB2.AutoTest | undefined {
+  static auto_test(input: string): BwsNb2.AutoTest | undefined {
     const parts = input.split("AUTOTEST=");
     if (parts.length < 2) return undefined;
     const splited = parts[1].split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
-      acc[key as keyof NB2.AutoTest] = value;
+      acc[key as keyof BwsNb2.AutoTest] = value;
       return acc;
-    }, {} as NB2.AutoTest);
+    }, {} as BwsNb2.AutoTest);
   }
 
   /**

@@ -1,15 +1,37 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { E34GEncoder, E34GParser } from "../../@backend/infra/protocol";
-import { isIccid, typedObjectEntries } from "../../util";
-import { useCommunication } from "./use-communication";
+import { isIccid, sleep, typedObjectEntries } from "../../util";
+import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
-import { IConfigurationProfile } from "../../@backend/domain";
+import {
+  Device,
+  E3Plus4GConfig,
+  IConfigurationProfile,
+} from "../../@backend/domain";
 
-type ConfigKeys = keyof IConfigurationProfile["config"];
+namespace Namespace {
+  interface Equipment {
+    firmware: string;
+    serial: string;
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
+  }
+  export interface Detected {
+    port: ISerialPort;
+    equipment: Equipment;
+  }
+
+  export type Profile = IConfigurationProfile<E3Plus4GConfig>["config"];
+
+  export type ConfigKeys =
+    | keyof NonNullable<Profile["general"]>
+    | keyof NonNullable<Profile["specific"]>;
+}
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
-  timeout: number = 500
+  timeout: number = 3000
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
@@ -39,15 +61,15 @@ const readResponse = async (
 
 const generateMessages = (
   profile: IConfigurationProfile
-): Record<ConfigKeys, string> => {
-  const response = {} as Record<ConfigKeys, string>;
+): Record<Namespace.ConfigKeys, string> => {
+  const response = {} as Record<Namespace.ConfigKeys, string>;
   Object.entries({
     ...profile.config.general,
     ...profile.config.specific,
-  }).forEach(([message, args]) => {
-    const _message = E34GEncoder.encoder({ command: message, args } as any);
+  }).forEach(([command, args]) => {
+    const _message = E34GEncoder.encoder({ command, args } as any);
     if (!_message) return;
-    response[message as ConfigKeys] = _message;
+    response[command as Namespace.ConfigKeys] = _message;
   });
   return response;
 };
@@ -64,12 +86,18 @@ export const useE3Plus4G = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, msg) => {
+    sendMessage: async (
+      port,
+      msg: Message<string, { check?: string; delay_before?: number }>
+    ) => {
       const reader = await getReader(port);
-      if (!reader) throw new Error("Reader não disponível");
-      const { command, timeout } = msg;
+      const { command, timeout, delay_before } = msg;
+      if (delay_before) await sleep(delay_before);
+      console.log("-------------------------");
+      console.log("command", command);
       await writeToPort(port, command);
       const response = await readResponse(reader, timeout);
+      console.log("response", response);
       await reader.cancel();
       reader.releaseLock();
       return response;
@@ -98,7 +126,7 @@ export const useE3Plus4G = () => {
             });
             return { port, response: { ...response, serial: response.imei } };
           } catch (error) {
-            console.error("[ERROR] handleDetection", error);
+            console.error("[ERROR] handleDetection use-e3-plus-4g", error);
             return { port };
           }
         })
@@ -120,6 +148,13 @@ export const useE3Plus4G = () => {
               transport: port,
               messages,
             });
+            if (!check || !cxip || !status) {
+              console.error(
+                "[ERROR] handleGetProfile use-e3-plus-4g",
+                "CXIP ou CHECK ou STATUS não foram respondidos"
+              );
+              return { port };
+            }
             const {
               data_transmission_off,
               data_transmission_on,
@@ -156,7 +191,7 @@ export const useE3Plus4G = () => {
               ],
             };
           } catch (error) {
-            console.error("[ERROR] handleGetProfile", error);
+            console.error("[ERROR] handleGetProfile use-e3-plus-4g", error);
             return { port };
           }
         })
@@ -166,42 +201,88 @@ export const useE3Plus4G = () => {
   );
   const handleConfiguration = useCallback(
     async (
-      ports: ISerialPort[],
+      detected: Namespace.Detected[],
       configuration_profile: IConfigurationProfile
     ) => {
-      const generatedMessages = generateMessages(configuration_profile);
-      const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, command]) => ({
-          key,
-          command,
-        })
-      );
+      const messages = [
+        ...typedObjectEntries(generateMessages(configuration_profile)).map(
+          ([key, command]) => ({
+            key,
+            command,
+          })
+        ),
+        { command: "CHECK", key: "check", delay_before: 1000 },
+        { command: "CXIP", key: "cxip" },
+        { command: "STATUS", key: "status" },
+      ] as const;
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
             const init_time = Date.now();
             const response = await sendMultipleMessages({
               transport: port,
-              messages: configurationCommands,
+              messages,
             });
             const end_time = Date.now();
             const responseEntries = Object.entries(response ?? {});
-            const status =
-              responseEntries.length > 0 &&
-              responseEntries.every(
-                ([_, value]) => typeof value !== "undefined"
-              );
+
+            let applied_profile = {} as Namespace.Profile;
+            const { check, status, cxip } = response;
+            if (check && status && cxip) {
+              const {
+                data_transmission_off,
+                data_transmission_on,
+                apn,
+                keep_alive,
+                ...processed_check
+              } = E34GParser.check(check) ?? {};
+              const processed_status = E34GParser.status(status);
+              const ip_primary = E34GParser.ip_primary(cxip);
+              const ip_secondary = E34GParser.ip_secondary(cxip);
+              const dns_primary = E34GParser.dns(cxip);
+              const horimeter = E34GParser.horimeter(processed_status.HR);
+              applied_profile = {
+                general: {
+                  data_transmission_on,
+                  data_transmission_off,
+                  ip_primary,
+                  ip_secondary,
+                  apn,
+                  keep_alive,
+                  dns_primary,
+                },
+                specific: {
+                  ...processed_check,
+                  horimeter,
+                },
+              };
+            }
+
             return {
+              equipment,
               port,
-              response,
-              messages: configurationCommands,
               init_time,
               end_time,
-              status,
+              status:
+                responseEntries.length > 0 &&
+                responseEntries.every(
+                  ([_, value]) => typeof value !== "undefined"
+                ),
+              applied_profile,
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
-            console.error("[ERROR] handleConfiguration", error);
-            return { port };
+            console.error("[ERROR] handleConfiguration  use-e3-plus-4g", error);
+            return {
+              port,
+              status: false,
+              equipment,
+              messages: [],
+            };
           }
         })
       );
@@ -255,7 +336,7 @@ export const useE3Plus4G = () => {
               status,
             };
           } catch (error) {
-            console.error("[ERROR] handleAutoTest", error);
+            console.error("[ERROR] handleAutoTest e3-plus-4g", error);
             return { port };
           }
         })
@@ -287,7 +368,7 @@ export const useE3Plus4G = () => {
           status: true,
         };
       } catch (error) {
-        console.error("[ERROR] handleIdentification", error);
+        console.error("[ERROR] handleIdentification e3-plus-4g", error);
         return { port };
       }
     },
@@ -305,7 +386,7 @@ export const useE3Plus4G = () => {
         });
         return { port, response: { ...response, serial: response.imei } };
       } catch (error) {
-        console.error("[ERROR] handleGetIdentification", error);
+        console.error("[ERROR] handleGetIdentification e3-plus-4g", error);
         return { port };
       }
     },

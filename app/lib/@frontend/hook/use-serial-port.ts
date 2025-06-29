@@ -93,8 +93,8 @@ export const useSerialPort = (props: Props) => {
       }
 
       await port.close();
-    } catch (err) {
-      console.error("Error when close port", err);
+    } catch (error) {
+      throw error instanceof Error ? error : new Error("Error when close port");
     }
   };
 
@@ -102,11 +102,9 @@ export const useSerialPort = (props: Props) => {
     try {
       await port.forget();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error
-          : new Error("Error when forgetting serial port");
-      throw errorMessage;
+      throw error instanceof Error
+        ? error
+        : new Error("Error when forgetting serial port");
     }
   };
 
@@ -122,13 +120,11 @@ export const useSerialPort = (props: Props) => {
 
   const getReader = async (port: ISerialPort) => {
     if (!port?.readable) {
-      console.error("Readable stream not available");
-      return;
+      throw Error("Readable stream not available");
     }
 
     if (port.readable.locked) {
-      console.error("Readable stream is already locked");
-      return;
+      throw Error("Readable stream is already locked");
     }
 
     const reader = port.readable.getReader();
@@ -138,8 +134,7 @@ export const useSerialPort = (props: Props) => {
 
   const writeToPort = async (port: ISerialPort, data: string) => {
     if (!port.writable) {
-      console.error("Writable stream not available");
-      return;
+      throw new Error("Writable stream not available");
     }
 
     try {
@@ -151,7 +146,7 @@ export const useSerialPort = (props: Props) => {
       await writer.write(encoder.encode(data));
       writer.releaseLock();
     } catch (error) {
-      console.error("Error writing to port", error);
+      throw error instanceof Error ? error : new Error("Error writing to port");
     }
   };
 

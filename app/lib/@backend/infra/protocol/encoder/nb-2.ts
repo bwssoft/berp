@@ -25,7 +25,7 @@ type Encoder =
   | { command: "ip_secondary"; args: IP }
   | { command: "dns_primary"; args: DNS };
 
-export class NB2Encoder {
+export class BwsNb2Encoder {
   static data_transmission_on(input: number): string | undefined {
     if (!input || typeof input !== "number") return undefined;
     return `WCN=${input}\r\n`;
@@ -166,40 +166,40 @@ export class NB2Encoder {
 
   static commands() {
     return {
-      serial: NB2Encoder.serial,
-      imei: NB2Encoder.imei,
-      odometer: NB2Encoder.odometer,
-      data_transmission_on: NB2Encoder.data_transmission_on,
-      data_transmission_off: NB2Encoder.data_transmission_off,
-      data_transmission_event: NB2Encoder.data_transmission_event,
-      time_to_sleep: NB2Encoder.time_to_sleep,
-      keep_alive: NB2Encoder.keep_alive,
-      ip_primary: NB2Encoder.ip_primary,
-      ip_secondary: NB2Encoder.ip_secondary,
-      dns_primary: NB2Encoder.dns_primary,
-      dns_secondary: NB2Encoder.dns_secondary,
-      apn: NB2Encoder.apn,
-      virtual_ignition_12v: NB2Encoder.virtual_ignition_12v,
-      virtual_ignition_24v: NB2Encoder.virtual_ignition_24v,
-      heading_detection_angle: NB2Encoder.heading_detection_angle,
-      speed_alert_threshold: NB2Encoder.speed_alert_threshold,
+      serial: BwsNb2Encoder.serial,
+      imei: BwsNb2Encoder.imei,
+      odometer: BwsNb2Encoder.odometer,
+      data_transmission_on: BwsNb2Encoder.data_transmission_on,
+      data_transmission_off: BwsNb2Encoder.data_transmission_off,
+      data_transmission_event: BwsNb2Encoder.data_transmission_event,
+      time_to_sleep: BwsNb2Encoder.time_to_sleep,
+      keep_alive: BwsNb2Encoder.keep_alive,
+      ip_primary: BwsNb2Encoder.ip_primary,
+      ip_secondary: BwsNb2Encoder.ip_secondary,
+      dns_primary: BwsNb2Encoder.dns_primary,
+      dns_secondary: BwsNb2Encoder.dns_secondary,
+      apn: BwsNb2Encoder.apn,
+      virtual_ignition_12v: BwsNb2Encoder.virtual_ignition_12v,
+      virtual_ignition_24v: BwsNb2Encoder.virtual_ignition_24v,
+      heading_detection_angle: BwsNb2Encoder.heading_detection_angle,
+      speed_alert_threshold: BwsNb2Encoder.speed_alert_threshold,
       accel_threshold_for_ignition_on:
-        NB2Encoder.accel_threshold_for_ignition_on,
+        BwsNb2Encoder.accel_threshold_for_ignition_on,
       accel_threshold_for_ignition_off:
-        NB2Encoder.accel_threshold_for_ignition_off,
-      accel_threshold_for_movement: NB2Encoder.accel_threshold_for_movement,
-      harsh_acceleration_threshold: NB2Encoder.harsh_acceleration_threshold,
-      harsh_braking_threshold: NB2Encoder.harsh_braking_threshold,
-      input_1: NB2Encoder.input_1,
-      input_2: NB2Encoder.input_2,
-      input_3: NB2Encoder.input_3,
-      input_4: NB2Encoder.input_4,
+        BwsNb2Encoder.accel_threshold_for_ignition_off,
+      accel_threshold_for_movement: BwsNb2Encoder.accel_threshold_for_movement,
+      harsh_acceleration_threshold: BwsNb2Encoder.harsh_acceleration_threshold,
+      harsh_braking_threshold: BwsNb2Encoder.harsh_braking_threshold,
+      input_1: BwsNb2Encoder.input_1,
+      input_2: BwsNb2Encoder.input_2,
+      input_3: BwsNb2Encoder.input_3,
+      input_4: BwsNb2Encoder.input_4,
     };
   }
 
   static encoder(props: Encoder): string | undefined {
     const { command, args } = props;
-    const commands = NB2Encoder.commands();
+    const commands = BwsNb2Encoder.commands();
     return commands[command](args as any);
   }
 }

@@ -7,11 +7,33 @@ import {
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
-import { IConfigurationProfile } from "../../@backend/domain";
+import {
+  Device,
+  IConfigurationProfile,
+  BwsNb2LoraConfig,
+} from "../../@backend/domain";
 import { findOneSerial } from "../../@backend/action";
 import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 
-type ConfigKeys = keyof IConfigurationProfile["config"];
+namespace Namespace {
+  interface Equipment {
+    firmware: string;
+    serial: string;
+    imei?: string | undefined;
+    iccid?: string | undefined;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
+  }
+  export interface Detected {
+    port: ISerialPort;
+    equipment: Equipment;
+  }
+
+  export type Profile = IConfigurationProfile<BwsNb2LoraConfig>["config"];
+
+  export type ConfigKeys =
+    | keyof NonNullable<Profile["general"]>
+    | keyof NonNullable<Profile["specific"]>;
+}
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
@@ -47,15 +69,15 @@ const readResponse = async (
 
 const generateMessages = (
   profile: IConfigurationProfile
-): Record<ConfigKeys, string> => {
-  const response = {} as Record<ConfigKeys, string>;
+): Record<Namespace.ConfigKeys, string> => {
+  const response = {} as Record<Namespace.ConfigKeys, string>;
   Object.entries({
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([message, args]) => {
     const _message = NB2LORAEncoder.encoder({ command: message, args } as any);
     if (!_message) return;
-    response[message as ConfigKeys] = _message;
+    response[message as Namespace.ConfigKeys] = _message;
   });
   return response;
 };
@@ -305,42 +327,203 @@ export const useNB2Lora = () => {
   );
   const handleConfiguration = useCallback(
     async (
-      ports: ISerialPort[],
+      detected: Namespace.Detected[],
       configuration_profile: IConfigurationProfile
     ) => {
-      const generatedMessages = generateMessages(configuration_profile);
-      const configurationCommands = typedObjectEntries(generatedMessages).map(
-        ([key, command]) => ({
-          key,
-          command,
-        })
-      );
+      const messages = [
+        ...typedObjectEntries(generateMessages(configuration_profile)).map(
+          ([key, command]) => ({
+            key,
+            command,
+          })
+        ),
+        {
+          command: "RCN\r",
+          key: "read_data_transmission_on",
+        },
+        {
+          command: "RCW\r",
+          key: "read_data_transmission_off",
+        },
+        {
+          command: "RCE\r",
+          key: "read_data_transmission_event",
+        },
+        {
+          command: "RCK\r",
+          key: "read_keep_alive",
+        },
+
+        {
+          command: "RIP1\r",
+          key: "read_ip_primary",
+        },
+        {
+          command: "RIP2\r",
+          key: "read_ip_secondary",
+        },
+        {
+          command: "RID1\r",
+          key: "read_dns_primary",
+        },
+        {
+          command: "RID2\r",
+          key: "read_dns_secondary",
+        },
+        { command: "RIAP\r", key: "read_apn" },
+
+        {
+          command: "RCS\r",
+          key: "read_time_to_sleep",
+        },
+        { command: "RODM\r", key: "read_odometer" },
+
+        {
+          command: "RIG12\r",
+          key: "read_virtual_ignition_12v",
+        },
+        {
+          command: "RIG24\r",
+          key: "read_virtual_ignition_24v",
+        },
+
+        {
+          command: "RFA\r",
+          key: "read_heading_detection_angle",
+        },
+        {
+          command: "RFV\r",
+          key: "read_speed_alert_threshold",
+        },
+
+        {
+          command: "RFTON\r",
+          key: "read_accel_threshold_for_ignition_on",
+        },
+        {
+          command: "RFTOF\r",
+          key: "read_accel_threshold_for_ignition_off",
+        },
+        {
+          command: "RFAV\r",
+          key: "read_accel_threshold_for_movement",
+        },
+
+        {
+          command: "RFMA\r",
+          key: "read_harsh_acceleration_threshold",
+        },
+        {
+          command: "RFMD\r",
+          key: "read_harsh_braking_threshold",
+        },
+
+        {
+          command: "RC\r",
+          key: "read_full_configuration_table",
+        },
+        {
+          command: "RF\r",
+          key: "read_full_functionality_table",
+        },
+
+        {
+          command: "RFSM\r",
+          key: "read_sleep_mode",
+        },
+      ] as const;
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
             const init_time = Date.now();
             const response = await sendMultipleMessages({
               transport: port,
-              messages: configurationCommands,
+              messages,
             });
             const end_time = Date.now();
-            const responseEntries = Object.entries(response ?? {});
+            const {
+              read_data_transmission_on,
+              read_data_transmission_off,
+              read_data_transmission_event,
+              read_keep_alive,
+              read_ip_primary,
+              read_ip_secondary,
+              read_dns_primary,
+              read_dns_secondary,
+              read_apn,
+              read_time_to_sleep,
+              read_odometer,
+              read_virtual_ignition_12v,
+              read_virtual_ignition_24v,
+              read_heading_detection_angle,
+              read_speed_alert_threshold,
+              read_accel_threshold_for_ignition_on,
+              read_accel_threshold_for_ignition_off,
+              read_accel_threshold_for_movement,
+              read_harsh_acceleration_threshold,
+              read_harsh_braking_threshold,
+              read_full_configuration_table,
+              read_full_functionality_table,
+              read_sleep_mode,
+              ...configuration
+            } = response;
+            const configurationEntries = Object.entries(configuration ?? {});
             const status =
-              responseEntries.length > 0 &&
-              responseEntries.every(
+              configurationEntries.length > 0 &&
+              configurationEntries.every(
                 ([_, value]) => typeof value !== "undefined"
               );
             return {
+              equipment,
               port,
-              response,
-              messages: configurationCommands,
               init_time,
               end_time,
               status,
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
+              applied_profile: {
+                specific: {
+                  data_transmission_on: read_data_transmission_on,
+                  data_transmission_off: read_data_transmission_off,
+                  data_transmission_event: read_data_transmission_event,
+                  keep_alive: read_keep_alive,
+                  ip_primary: read_ip_primary,
+                  ip_secondary: read_ip_secondary,
+                  dns_primary: read_dns_primary,
+                  dns_secondary: read_dns_secondary,
+                  apn: read_apn,
+                  time_to_sleep: read_time_to_sleep,
+                  odometer: read_odometer,
+                  virtual_ignition_12v: read_virtual_ignition_12v,
+                  virtual_ignition_24v: read_virtual_ignition_24v,
+                  heading_detection_angle: read_heading_detection_angle,
+                  speed_alert_threshold: read_speed_alert_threshold,
+                  accel_threshold_for_ignition_on:
+                    read_accel_threshold_for_ignition_on,
+                  accel_threshold_for_ignition_off:
+                    read_accel_threshold_for_ignition_off,
+                  accel_threshold_for_movement:
+                    read_accel_threshold_for_movement,
+                  harsh_acceleration_threshold:
+                    read_harsh_acceleration_threshold,
+                  harsh_braking_threshold: read_harsh_braking_threshold,
+                  full_configuration_table: read_full_configuration_table,
+                  full_functionality_table: read_full_functionality_table,
+                  sleep_mode: read_sleep_mode,
+                },
+              },
             };
           } catch (error) {
             console.error("[ERROR] handleConfiguration", error);
-            return { port };
+            return {
+              port,
+              status: false,
+              equipment,
+              messages: [],
+            };
           }
         })
       );
