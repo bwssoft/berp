@@ -7,6 +7,7 @@ import {
   Cog6ToothIcon,
   IdentificationIcon,
 } from "@heroicons/react/24/outline";
+import { CheckCheckIcon } from "lucide-react";
 
 const actions = [
   {
@@ -36,8 +37,16 @@ const actions = [
     icon: IdentificationIcon,
     iconForeground: "text-cyan-700",
     iconBackground: "bg-cyan-50",
-    description:
-      "Grave identificações únicas nos dispositivos como parte do processo produtivo.",
+    description: "Grave identificações únicas nos dispositivos.",
+  },
+  {
+    title: "Checagem",
+    href: "/production/tool/check-configuration",
+    code: "production:tool:check",
+    icon: CheckCheckIcon,
+    iconForeground: "text-purple-700",
+    iconBackground: "bg-purple-50",
+    description: "Faça a checagem do perfil de configuração de equipamentos.",
   },
 ];
 

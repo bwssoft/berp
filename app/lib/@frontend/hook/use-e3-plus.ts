@@ -136,20 +136,22 @@ export const useE3Plus = () => {
     },
     [sendMultipleMessages]
   );
-  const handleGetProfile = useCallback(
-    async (ports: ISerialPort[]) => {
+  const handleGetConfig = useCallback(
+    async (detected: Namespace.Detected[]) => {
       const messages = [
         { command: "CHECK", key: "check" },
         { command: "CXIP", key: "cxip" },
         { command: "STATUS", key: "status" },
       ] as const;
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
-            const { check, cxip, status } = await sendMultipleMessages({
+            const response = await sendMultipleMessages({
               transport: port,
               messages,
             });
+
+            const { check, cxip } = response;
             const {
               data_transmission_off,
               data_transmission_on,
@@ -162,6 +164,7 @@ export const useE3Plus = () => {
             const dns_primary = E3Parser.dns(cxip);
             return {
               port,
+              equipment,
               config: {
                 general: {
                   data_transmission_on,
@@ -174,15 +177,15 @@ export const useE3Plus = () => {
                 },
                 specific: processed_check,
               },
-              raw: [
-                ["check", check],
-                ["cxip", cxip],
-                ["status", status],
-              ],
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
-            console.error("[ERROR] handleGetProfile", error);
-            return { port };
+            console.error("[ERROR] handleGetConfig", error);
+            return { port, equipment, messages: [], config: {} };
           }
         })
       );
@@ -215,33 +218,17 @@ export const useE3Plus = () => {
             });
             const end_time = Date.now();
             const responseEntries = Object.entries(response ?? {});
-
-            let applied_profile = {} as Namespace.Profile;
-            const { check, status, cxip } = response;
-            if (check && status && cxip) {
-              const {
-                data_transmission_off,
-                data_transmission_on,
-                apn,
-                keep_alive,
-                ...processed_check
-              } = E3Parser.check(check) ?? {};
-              const ip_primary = E3Parser.ip_primary(cxip);
-              const ip_secondary = E3Parser.ip_secondary(cxip);
-              const dns_primary = E3Parser.dns(cxip);
-              applied_profile = {
-                general: {
-                  data_transmission_on,
-                  data_transmission_off,
-                  ip_primary,
-                  ip_secondary,
-                  apn,
-                  keep_alive,
-                  dns_primary,
-                },
-                specific: processed_check,
-              };
-            }
+            const { check, cxip } = response;
+            const {
+              data_transmission_off,
+              data_transmission_on,
+              apn,
+              keep_alive,
+              ...processed_check
+            } = E3Parser.check(check) ?? {};
+            const ip_primary = E3Parser.ip_primary(cxip);
+            const ip_secondary = E3Parser.ip_secondary(cxip);
+            const dns_primary = E3Parser.dns(cxip);
             return {
               equipment,
               port,
@@ -252,7 +239,18 @@ export const useE3Plus = () => {
                 responseEntries.every(
                   ([_, value]) => typeof value !== "undefined"
                 ),
-              applied_profile,
+              applied_profile: {
+                general: {
+                  data_transmission_on,
+                  data_transmission_off,
+                  ip_primary,
+                  ip_secondary,
+                  apn,
+                  keep_alive,
+                  dns_primary,
+                },
+                specific: processed_check,
+              },
               messages: messages.map(({ key, command }) => ({
                 key,
                 request: command,
@@ -381,7 +379,7 @@ export const useE3Plus = () => {
     isIdentified,
     ports,
     handleIdentification,
-    handleGetProfile,
+    handleGetConfig,
     handleConfiguration,
     requestPort,
     handleAutoTest,

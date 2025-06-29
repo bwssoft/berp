@@ -11,6 +11,7 @@ import {
 import { ISerialPort } from "./use-serial-port";
 import { createManyConfigurationLog } from "../../@backend/action";
 import { useTechnology } from "./use-technology";
+import { useRouter } from "next/navigation";
 
 namespace Namespace {
   export interface UseConfigurationProps {
@@ -39,6 +40,8 @@ namespace Namespace {
 export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
   const { technology, configurationProfile } = props;
 
+  const router = useRouter();
+
   const [detected, setDetected] = useState<Namespace.Detected[]>([]);
   const detectedKey = useMemo(() => {
     return detected
@@ -57,6 +60,18 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
   const toggleAutoConfiguration = (checked: boolean) =>
     setAutoConfigurationEnabled(checked);
+
+  const [redirectToCheckEnabled, setRedirectToCheckEnabled] =
+    useState<boolean>(false);
+
+  const toggleRedirectToCheck = (checked: boolean) =>
+    setRedirectToCheckEnabled(checked);
+
+  const redirectToCheck = (configurationLog: IConfigurationLog[]) => {
+    router.push(
+      `/production/tool/check-configuration?technology_id=${technology!.id}&${configurationLog.map(({ id }) => `configuration_log_id[]=${id}`).join("&")}&auto_checking=true`
+    );
+  };
 
   // hook that handle interactions with devices
   const {
@@ -131,6 +146,8 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
       // update state with configuration process result
       setConfigured((prev) => prev.concat(dataSavedOnDb));
+
+      redirectToCheckEnabled && redirectToCheck(dataSavedOnDb);
     } catch (error) {
       console.error("[ERROR] configure use-configuration", error);
     } finally {
@@ -192,5 +209,8 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
     isDetecting,
     toggleAutoConfiguration,
     autoConfigurationEnabled,
+    redirectToCheckEnabled,
+    toggleRedirectToCheck,
+    redirectToCheck,
   };
 };

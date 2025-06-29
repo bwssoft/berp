@@ -1,4 +1,4 @@
-export namespace NB2LORA {
+export namespace BwsNb2Lora {
   export interface AutoTest {
     DEV: string; //DM_BWS_NB2_LORA
     SN: string; //FFFFFFFF
@@ -24,7 +24,11 @@ export namespace NB2LORA {
   }
 }
 
-export class NB2LORAParser {
+export class BwsNb2LoraParser {
+  /**
+   * LORA
+   *
+   * */
   /**
    * Extrai o valor do serial de uma string que contém "RINS=" seguido de um número.
    *
@@ -33,6 +37,7 @@ export class NB2LORAParser {
    */
   static serial(input: string): string | undefined {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RINS=");
 
     if (parts.length < 2) return undefined;
@@ -41,7 +46,7 @@ export class NB2LORAParser {
 
     const value = serialValue.replace(/\s+/g, "");
 
-    return value.length ? value.padStart(8, "0") : undefined;
+    return value.length ? value : undefined;
   }
 
   /**
@@ -50,8 +55,9 @@ export class NB2LORAParser {
    * @param input - A string que contém a informação do 'timestamp'.
    * @returns O valor do 'timestamp' ou undefined se o formato não for válido.
    */
-  static rtk(input: string): string | undefined {
+  static timestamp(input: string): string | undefined {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RTK=");
 
     if (parts.length < 2) return undefined;
@@ -69,8 +75,9 @@ export class NB2LORAParser {
    * @param input - A string que contém a informação do 'device address'.
    * @returns O valor do 'device address' ou undefined se o formato não for válido.
    */
-  static rda(input: string): string | undefined {
+  static device_address(input: string): string | undefined {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RDA=");
 
     if (parts.length < 2) return undefined;
@@ -88,8 +95,9 @@ export class NB2LORAParser {
    * @param input - A string que contém a informação do 'device eui'.
    * @returns O valor do 'device eui' ou undefined se o formato não for válido.
    */
-  static rde(input: string): string | undefined {
+  static device_eui(input: string): string | undefined {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RDE=");
 
     if (parts.length < 2) return undefined;
@@ -107,8 +115,9 @@ export class NB2LORAParser {
    * @param input - A string que contém a informação do 'application eui'.
    * @returns O valor do 'application eui' ou undefined se o formato não for válido.
    */
-  static rap(input: string): string | undefined {
+  static application_eui(input: string): string | undefined {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RAP=");
 
     if (parts.length < 2) return undefined;
@@ -126,8 +135,9 @@ export class NB2LORAParser {
    * @param input - A string que contém a informação do 'application key'.
    * @returns O valor do 'application key' ou undefined se o formato não for válido.
    */
-  static rak(input: string): string | undefined {
+  static application_key(input: string): string | undefined {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RAK=");
 
     if (parts.length < 2) return undefined;
@@ -145,8 +155,9 @@ export class NB2LORAParser {
    * @param input - A string que contém a informação do 'application session key'.
    * @returns O valor do 'application session key' ou undefined se o formato não for válido.
    */
-  static rask(input: string): string | undefined {
+  static application_session_key(input: string): string | undefined {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RASK=");
 
     if (parts.length < 2) return undefined;
@@ -164,8 +175,9 @@ export class NB2LORAParser {
    * @param input - A string que contém a informação do 'network session key'.
    * @returns O valor do 'network session key' ou undefined se o formato não for válido.
    */
-  static rnk(input: string): string | undefined {
+  static network_session_key(input: string): string | undefined {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RNK=");
 
     if (parts.length < 2) return undefined;
@@ -176,6 +188,256 @@ export class NB2LORAParser {
 
     return value.length ? value : undefined;
   }
+
+  /**
+   * Extrai o valor do tempo de transmissão de ignição desligada de uma string que contém "RCW=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do tempo de transmissão de ignição desligada.
+   * @returns O valor numérico do tempo de transmissão de ignição desligada ou undefined se o formato não for válido.
+   */
+  static data_transmission_sleep(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RCW=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = parseFloat(data);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static heading(input: string): boolean | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RFH=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    if (value !== "00" && value !== "01") return undefined;
+
+    return value === "01";
+  }
+
+  static heading_event_mode(input: string): boolean | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RFHV=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    if (value !== "00" && value !== "01") return undefined;
+
+    return value === "01";
+  }
+
+  static data_transmission_position(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RWTR=");
+
+    if (parts.length < 2) return undefined;
+
+    const speed = parts[1].trim();
+
+    const value = parseFloat(speed);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static led_lighting(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RLED=");
+
+    if (parts.length < 2) return undefined;
+
+    const led = parts[1].trim();
+
+    const value = led.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static p2p_mode_duration(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RLTO=");
+
+    if (parts.length < 2) return undefined;
+
+    const mode = parts[1].trim();
+
+    const value = parseFloat(mode);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static lorawan_mode_duration(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RWTO=");
+
+    if (parts.length < 2) return undefined;
+
+    const mode = parts[1].trim();
+
+    const value = parseFloat(mode);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static input_5(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RIN5=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static input_6(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RIN6=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static fifo_send_and_hold_times(input: string): number[] | undefined {
+    if (typeof input !== "string") return undefined;
+
+    // Regex: captura dois números (inteiros ou decimais) após "RFIFO="
+    const match = input.match(/^RFIFO=(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)$/);
+    if (!match) return undefined;
+
+    const [, sendStr, holdStr] = match;
+    const send = parseFloat(sendStr);
+    const hold = parseFloat(holdStr);
+
+    // Caso queira garantir números válidos, embora a regex já filtre
+    if (Number.isNaN(send) || Number.isNaN(hold)) return undefined;
+
+    return [send, hold];
+  }
+
+  static lorawan_data_transmission_event(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("REWTR=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = parseFloat(data);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static p2p_data_transmission_event(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RELTR=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = parseFloat(data);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static data_transmission_status(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RTS=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = parseFloat(data);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static activation_type(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RACT=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    if (value !== "00" && value !== "01") return undefined;
+
+    return value;
+  }
+
+  static mcu_configuration(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RMC=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static output_table(input: string): number[] | undefined {
+    if (typeof input !== "string") return undefined;
+
+    // Regex: captura três números (inteiros ou decimais) após "ROUT="
+    const match = input.match(
+      /^ROUT=(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)$/
+    );
+    if (!match) return undefined;
+
+    const [, firstStr, secondStr, thirdStr] = match;
+    const first = parseFloat(firstStr);
+    const second = parseFloat(secondStr);
+    const third = parseFloat(thirdStr);
+
+    // Caso queira garantir números válidos, embora a regex já filtre
+    if (Number.isNaN(first) || Number.isNaN(second) || Number.isNaN(third))
+      return undefined;
+
+    return [first, second, third];
+  }
+
+  /**
+   * NB2
+   */
 
   /**
    * Extrai o valor do imei de uma string que contém "RIMEI=" seguido de um número.
@@ -240,34 +502,16 @@ export class NB2LORAParser {
    * @param input - A string que contém a informação do autotest.
    * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
    */
-  static auto_test(input: string): NB2LORA.AutoTest | undefined {
+  static auto_test(input: string): BwsNb2Lora.AutoTest | undefined {
     if (typeof input !== "string") return undefined;
     const parts = input.split("AUTOTEST=");
     if (parts.length < 2) return undefined;
     const splited = parts[1].split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
-      acc[key as keyof NB2LORA.AutoTest] = value;
+      acc[key as keyof BwsNb2Lora.AutoTest] = value;
       return acc;
-    }, {} as NB2LORA.AutoTest);
-  }
-
-  /**
-   * Extrai o valor do odômetro de uma string que contém "RODM=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do odômetro.
-   * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
-   */
-  static odometer(input: string): number | undefined {
-    if (typeof input !== "string") return undefined;
-    const parts = input.split("RODM=");
-    if (parts.length < 2) return undefined;
-
-    const odometerValue = parts[1].trim();
-
-    const value = parseFloat(odometerValue);
-
-    return isNaN(value) ? undefined : value / 10;
+    }, {} as BwsNb2Lora.AutoTest);
   }
 
   /**
@@ -307,7 +551,7 @@ export class NB2LORAParser {
   }
 
   /**
-   * Extrai o valor do tempo de sleep de uma string que contém "RCE=" seguido de um número.
+   * Extrai o valor do intervalo de transmissão em modo evento de uma string que contém "RCE=" seguido de um número.
    *
    * @param input - A string que contém a informação do tempo de transmissão em evento.
    * @returns O valor numérico do tempo de transmissão em evento ou undefined se o formato não for válido.
@@ -315,25 +559,6 @@ export class NB2LORAParser {
   static data_transmission_event(input: string): number | undefined {
     if (typeof input !== "string") return undefined;
     const parts = input.split("RCE=");
-
-    if (parts.length < 2) return undefined;
-
-    const dataTransmissionEvent = parts[1].trim();
-
-    const value = parseFloat(dataTransmissionEvent);
-
-    return isNaN(value) ? undefined : value;
-  }
-
-  /**
-   * Extrai o valor do tempo de sleep de uma string que contém "RCS=" seguido de um número.
-   *
-   * @param input - A string que contém a informação do tempo de sleep.
-   * @returns O valor numérico do tempo de sleep ou undefined se o formato não for válido.
-   */
-  static sleep(input: string): number | undefined {
-    if (typeof input !== "string") return undefined;
-    const parts = input.split("RCS=");
 
     if (parts.length < 2) return undefined;
 
@@ -371,6 +596,7 @@ export class NB2LORAParser {
    */
   static ip_primary(input: string) {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIP1=");
     if (parts.length < 2) return undefined;
     const [ip, port] = parts[1].split(":");
@@ -388,6 +614,7 @@ export class NB2LORAParser {
    */
   static ip_secondary(input: string) {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIP2=");
     if (parts.length < 2) return undefined;
     const [ip, port] = parts[1].split(":");
@@ -405,7 +632,6 @@ export class NB2LORAParser {
    */
   static dns_primary(input: string) {
     if (typeof input !== "string") return undefined;
-
     const parts = input.split("RID1=");
     if (parts.length < 2) return undefined;
     const [address, port] = parts[1].split(":");
@@ -423,6 +649,7 @@ export class NB2LORAParser {
    */
   static dns_secondary(input: string) {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RID2=");
     if (parts.length < 2) return undefined;
     const [address, port] = parts[1].split(":");
@@ -453,6 +680,43 @@ export class NB2LORAParser {
   }
 
   /**
+   * Extrai o valor do tempo para inciar o sleep de uma string que contém "RCS=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do tempo para inicar o sleep.
+   * @returns O valor numérico do tempo para inicar o sleep ou undefined se o formato não for válido.
+   */
+  static time_to_sleep(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+    const parts = input.split("RCS=");
+
+    if (parts.length < 2) return undefined;
+
+    const dataTransmissionEvent = parts[1].trim();
+
+    const value = parseFloat(dataTransmissionEvent);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  /**
+   * Extrai o valor do odômetro de uma string que contém "RODM=" seguido de um número.
+   *
+   * @param input - A string que contém a informação do odômetro.
+   * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
+   */
+  static odometer(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+    const parts = input.split("RODM=");
+    if (parts.length < 2) return undefined;
+
+    const odometerValue = parts[1].trim();
+
+    const value = parseFloat(odometerValue);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  /**
    * Extrai o valor da tensão 12V de uma string que contém "RIG12=110,150"
    *
    * @param input - A string que contém a informação da tensão 12V.
@@ -460,6 +724,7 @@ export class NB2LORAParser {
    */
   static virtual_ignition_12v(input: string) {
     if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIG12=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -631,21 +896,98 @@ export class NB2LORAParser {
   static input_1(input: string) {
     if (typeof input !== "string") return undefined;
 
-    return "" as any;
+    const parts = input.split("RIN1=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_1 = parts[1].trim();
+
+    const value = parseFloat(input_1);
+
+    return isNaN(value) ? undefined : value;
   }
+
   static input_2(input: string) {
     if (typeof input !== "string") return undefined;
 
-    return "" as any;
+    const parts = input.split("RIN2=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_2 = parts[1].trim();
+
+    const value = parseFloat(input_2);
+
+    return isNaN(value) ? undefined : value;
   }
+
   static input_3(input: string) {
     if (typeof input !== "string") return undefined;
 
-    return "" as any;
+    const parts = input.split("RIN3=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_3 = parts[1].trim();
+
+    const value = parseFloat(input_3);
+
+    return isNaN(value) ? undefined : value;
   }
+
   static input_4(input: string) {
     if (typeof input !== "string") return undefined;
 
-    return "" as any;
+    const parts = input.split("RIN4=");
+
+    if (parts.length < 2) return undefined;
+
+    const input_4 = parts[1].trim();
+
+    const value = parseFloat(input_4);
+
+    return isNaN(value) ? undefined : value;
+  }
+
+  static full_configuration_table(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+    const parts = input.split("RC=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static full_functionality_table(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+    const parts = input.split("RF=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    return value.length ? value : undefined;
+  }
+
+  static sleep_mode(input: string) {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RFSM=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    if (value !== "00" && value !== "01") return undefined;
+
+    return value;
   }
 }

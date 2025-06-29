@@ -183,172 +183,233 @@ export const useLora = () => {
     },
     [sendMultipleMessages]
   );
-  const handleGetProfile = useCallback(
-    async (ports: ISerialPort[]) => {
+  const handleGetConfig = useCallback(
+    async (detected: Namespace.Detected[]) => {
       const messages = [
-        {
-          command: "RODM\r",
-          key: "odometer",
-          transform: BwsLoraParser.odometer,
-        },
+        { command: "RODM\r", key: "odometer", delay_before: 1000 },
         {
           command: "RCW\r",
           key: "data_transmission_sleep",
-          transform: BwsLoraParser.data_transmission_sleep,
         },
-
         {
           command: "RIG1\r",
           key: "virtual_ignition_12v",
-          transform: BwsLoraParser.virtual_ignition_12v,
         },
         {
           command: "RIG2\r",
           key: "virtual_ignition_24v",
-          transform: BwsLoraParser.virtual_ignition_24v,
         },
-
-        { command: "RFH\r", key: "heading", transform: BwsLoraParser.heading },
+        { command: "RFH\r", key: "heading" },
         {
           command: "RFHV\r",
           key: "heading_event_mode",
-          transform: BwsLoraParser.heading_event_mode,
         },
         {
           command: "RFA\r",
           key: "heading_detection_angle",
-          transform: BwsLoraParser.heading_detection_angle,
         },
-
         {
           command: "RFV\r",
           key: "speed_alert_threshold",
-          transform: BwsLoraParser.speed_alert_threshold,
         },
         {
           command: "RFTON\r",
           key: "accel_threshold_for_ignition_on",
-          transform: BwsLoraParser.accel_threshold_for_ignition_on,
         },
         {
           command: "RFTOF\r",
           key: "accel_threshold_for_ignition_off",
-          transform: BwsLoraParser.accel_threshold_for_ignition_off,
         },
         {
           command: "RFAV\r",
           key: "accel_threshold_for_movement",
-          transform: BwsLoraParser.accel_threshold_for_movement,
         },
         {
           command: "RFMA\r",
           key: "harsh_acceleration_threshold",
-          transform: BwsLoraParser.harsh_acceleration_threshold,
         },
         {
           command: "RFMD\r",
           key: "harsh_braking_threshold",
-          transform: BwsLoraParser.harsh_braking_threshold,
         },
-
         {
           command: "RWTR\r",
           key: "data_transmission_position",
-          transform: BwsLoraParser.data_transmission_position,
         },
         {
           command: "RLED\r",
           key: "led_lighting",
-          transform: BwsLoraParser.led_lighting,
         },
-
         {
           command: "RLTO\r",
           key: "p2p_mode_duration",
-          transform: BwsLoraParser.p2p_mode_duration,
         },
         {
-          command: "WWTO\r",
+          command: "RWTO\r",
           key: "lorawan_mode_duration",
-          transform: BwsLoraParser.lorawan_mode_duration,
         },
-
-        { command: "RIN1\r", key: "input_1", transform: BwsLoraParser.input_1 },
-        { command: "RIN2\r", key: "input_2", transform: BwsLoraParser.input_2 },
-        { command: "RIN3\r", key: "input_3", transform: BwsLoraParser.input_3 },
-        { command: "RIN4\r", key: "input_4", transform: BwsLoraParser.input_4 },
-        { command: "RIN5\r", key: "input_5", transform: BwsLoraParser.input_5 },
-        { command: "RIN6\r", key: "input_6", transform: BwsLoraParser.input_6 },
-
+        { command: "RIN1\r", key: "input_1" },
+        { command: "RIN2\r", key: "input_2" },
+        { command: "RIN3\r", key: "input_3" },
+        { command: "RIN4\r", key: "input_4" },
+        { command: "RIN5\r", key: "input_5" },
+        { command: "RIN6\r", key: "input_6" },
         {
           command: "RC\r",
           key: "full_configuration_table",
-          transform: BwsLoraParser.full_configuration_table,
         },
         {
           command: "RFIFO\r",
           key: "fifo_send_and_hold_times",
-          transform: BwsLoraParser.fifo_send_and_hold_times,
         },
-
         {
           command: "REWTR\r",
           key: "lorawan_data_transmission_event",
-          transform: BwsLoraParser.lorawan_data_transmission_event,
         },
         {
           command: "RELTR\r",
           key: "p2p_data_transmission_event",
-          transform: BwsLoraParser.p2p_data_transmission_event,
         },
-
         {
           command: "RTS\r",
           key: "data_transmission_status",
-          transform: BwsLoraParser.data_transmission_status,
         },
         {
           command: "RF\r",
           key: "full_functionality_table",
-          transform: BwsLoraParser.full_functionality_table,
         },
-
         {
           command: "RACT\r",
           key: "activation_type",
-          transform: BwsLoraParser.activation_type,
         },
         {
           command: "RMC\r",
           key: "mcu_configuration",
-          transform: BwsLoraParser.mcu_configuration,
         },
-
         {
           command: "ROUT\r",
           key: "output_table",
-          transform: BwsLoraParser.output_table,
         },
       ] as const;
 
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
-            const specific = await sendMultipleMessages({
+            const response = await sendMultipleMessages({
               transport: port,
               messages,
             });
             return {
               port,
+              equipment,
               config: {
                 general: {},
-                specific,
+                specific: {
+                  odometer: BwsLoraParser.odometer(response.odometer),
+                  data_transmission_sleep:
+                    BwsLoraParser.data_transmission_sleep(
+                      response.data_transmission_sleep
+                    ),
+                  virtual_ignition_12v: BwsLoraParser.virtual_ignition_12v(
+                    response.virtual_ignition_12v
+                  ),
+                  virtual_ignition_24v: BwsLoraParser.virtual_ignition_24v(
+                    response.virtual_ignition_24v
+                  ),
+                  heading: BwsLoraParser.heading(response.heading),
+                  heading_event_mode: BwsLoraParser.heading_event_mode(
+                    response.heading_event_mode
+                  ),
+                  heading_detection_angle:
+                    BwsLoraParser.heading_detection_angle(
+                      response.heading_detection_angle
+                    ),
+                  speed_alert_threshold: BwsLoraParser.speed_alert_threshold(
+                    response.speed_alert_threshold
+                  ),
+                  accel_threshold_for_ignition_on:
+                    BwsLoraParser.accel_threshold_for_ignition_on(
+                      response.accel_threshold_for_ignition_on
+                    ),
+                  accel_threshold_for_ignition_off:
+                    BwsLoraParser.accel_threshold_for_ignition_off(
+                      response.accel_threshold_for_ignition_off
+                    ),
+                  accel_threshold_for_movement:
+                    BwsLoraParser.accel_threshold_for_movement(
+                      response.accel_threshold_for_movement
+                    ),
+                  harsh_acceleration_threshold:
+                    BwsLoraParser.harsh_acceleration_threshold(
+                      response.harsh_acceleration_threshold
+                    ),
+                  harsh_braking_threshold:
+                    BwsLoraParser.harsh_braking_threshold(
+                      response.harsh_braking_threshold
+                    ),
+                  data_transmission_position:
+                    BwsLoraParser.data_transmission_position(
+                      response.data_transmission_position
+                    ),
+                  led_lighting: BwsLoraParser.led_lighting(
+                    response.led_lighting
+                  ),
+                  p2p_mode_duration: BwsLoraParser.p2p_mode_duration(
+                    response.p2p_mode_duration
+                  ),
+                  lorawan_mode_duration: BwsLoraParser.lorawan_mode_duration(
+                    response.lorawan_mode_duration
+                  ),
+                  input_1: BwsLoraParser.input_1(response.input_1),
+                  input_2: BwsLoraParser.input_2(response.input_2),
+                  input_3: BwsLoraParser.input_3(response.input_3),
+                  input_4: BwsLoraParser.input_4(response.input_4),
+                  input_5: BwsLoraParser.input_5(response.input_5),
+                  input_6: BwsLoraParser.input_6(response.input_6),
+                  full_configuration_table:
+                    BwsLoraParser.full_configuration_table(
+                      response.full_configuration_table
+                    ),
+                  fifo_send_and_hold_times:
+                    BwsLoraParser.fifo_send_and_hold_times(
+                      response.fifo_send_and_hold_times
+                    ),
+                  lorawan_data_transmission_event:
+                    BwsLoraParser.lorawan_data_transmission_event(
+                      response.lorawan_data_transmission_event
+                    ),
+                  p2p_data_transmission_event:
+                    BwsLoraParser.p2p_data_transmission_event(
+                      response.p2p_data_transmission_event
+                    ),
+                  data_transmission_status:
+                    BwsLoraParser.data_transmission_status(
+                      response.data_transmission_status
+                    ),
+                  full_functionality_table:
+                    BwsLoraParser.full_functionality_table(
+                      response.full_functionality_table
+                    ),
+                  activation_type: BwsLoraParser.activation_type(
+                    response.activation_type
+                  ),
+                  mcu_configuration: BwsLoraParser.mcu_configuration(
+                    response.mcu_configuration
+                  ),
+                  output_table: BwsLoraParser.output_table(
+                    response.output_table
+                  ),
+                },
               },
-              raw: [],
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
-            console.error("[ERROR] handleGetProfile", error);
-            return { port };
+            console.error("[ERROR] handleGetConfig", error);
+            return { port, equipment, messages: [], config: {} };
           }
         })
       );
@@ -901,7 +962,7 @@ export const useLora = () => {
     isIdentified,
     ports,
     handleIdentification,
-    handleGetProfile,
+    handleGetConfig,
     handleConfiguration,
     requestPort,
     handleAutoTest,

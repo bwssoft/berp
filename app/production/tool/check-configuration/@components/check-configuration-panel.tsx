@@ -2,6 +2,7 @@
 
 import {
   Device,
+  IConfigurationLog,
   type IConfigurationProfile,
   type ITechnology,
 } from "@/app/lib/@backend/domain";
@@ -16,48 +17,45 @@ import {
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { TechnologyAndConfigurationProfileSearchForm } from "@/app/lib/@frontend/ui/form";
-import {
-  DevicesConfiguredTable,
-  DevicesDetectedTable,
-} from "@/app/lib/@frontend/ui/table";
-import { useConfiguration } from "@/app/lib/@frontend/hook";
+import { DevicesDetectedTable } from "@/app/lib/@frontend/ui/table";
 import {
   Settings,
   Zap,
   CheckCircle,
   Plus,
   Loader2,
-  SquareArrowDownRight,
-  SquareArrowUpRight,
-  ExternalLink,
+  CheckCheckIcon,
 } from "lucide-react";
 import { Switch } from "@/app/lib/@frontend/ui/component/switch";
 import { Label } from "@/app/lib/@frontend/ui/component/label";
-import Link from "next/link";
+import { useCheckConfiguration } from "@/app/lib/@frontend/hook/use-check-configuration";
+import { DevicesCheckedTable } from "@/app/lib/@frontend/ui/table/production/devices-checked";
 
 interface Props {
-  configurationProfile: IConfigurationProfile | null;
+  configurationProfile?: IConfigurationProfile | null;
+  configurationLog?: IConfigurationLog[] | null;
   technology: ITechnology | null;
+  autoChecking?: boolean;
 }
 
-export function ConfiguratorPanel(props: Props) {
-  const { configurationProfile, technology } = props;
+export function CheckConfigurationPanel(props: Props) {
+  const { configurationProfile, configurationLog, technology, autoChecking } =
+    props;
 
   const {
     detected,
-    configured,
-    configure,
+    checked,
+    check,
     requestPort,
-    isConfiguring,
+    isChecking,
     isDetecting,
-    autoConfigurationEnabled,
-    toggleAutoConfiguration,
-    redirectToCheckEnabled,
-    toggleRedirectToCheck,
-    redirectToCheck,
-  } = useConfiguration({
+    autoCheckingEnabled,
+    toggleAutoChecking,
+  } = useCheckConfiguration({
     technology,
     configurationProfile,
+    configurationLog,
+    autoChecking,
   });
 
   return (
@@ -90,17 +88,10 @@ export function ConfiguratorPanel(props: Props) {
           />
           <div className="mt-6 flex items-center gap-2">
             <Switch
-              checked={autoConfigurationEnabled}
-              onCheckedChange={(checked) => toggleAutoConfiguration(checked)}
+              checked={autoCheckingEnabled}
+              onCheckedChange={(checked) => toggleAutoChecking(checked)}
             />
-            <Label>Ativar configuração automática</Label>
-          </div>
-          <div className="mt-6 flex items-center gap-2">
-            <Switch
-              checked={redirectToCheckEnabled}
-              onCheckedChange={(checked) => toggleRedirectToCheck(checked)}
-            />
-            <Label>Ativar redirecionamento para checagem</Label>
+            <Label>Ativar checagem automática</Label>
           </div>
         </CardContent>
       </Card>
@@ -121,7 +112,7 @@ export function ConfiguratorPanel(props: Props) {
             </div>
           </div>
           <CardDescription className="ml-11">
-            Visualize e configure os equipamentos conectados às portas seriais
+            Visualize e check os equipamentos conectados às portas seriais
           </CardDescription>
         </CardHeader>
         {technology ? (
@@ -140,14 +131,13 @@ export function ConfiguratorPanel(props: Props) {
                 <Button
                   onClick={() =>
                     detected.length > 0 &&
-                    configurationProfile &&
-                    configure(detected, configurationProfile)
+                    check(detected, configurationProfile, configurationLog)
                   }
                   disabled={
-                    !configurationProfile ||
                     detected.length === 0 ||
                     isDetecting ||
-                    isConfiguring
+                    isChecking ||
+                    autoCheckingEnabled
                   }
                   className="min-w-[140px] flex items-center justify-center"
                 >
@@ -156,15 +146,15 @@ export function ConfiguratorPanel(props: Props) {
                       <Loader2 className="animate-spin mr-2 h-4 w-4" />
                       Detectando
                     </>
-                  ) : isConfiguring ? (
+                  ) : isChecking ? (
                     <>
                       <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                      Configurando
+                      Checando
                     </>
                   ) : (
                     <>
-                      <Settings className="mr-2 h-4 w-4" />
-                      Configurar
+                      <CheckCheckIcon className="mr-2 h-4 w-4" />
+                      Checar
                     </>
                   )}
                 </Button>
@@ -205,41 +195,32 @@ export function ConfiguratorPanel(props: Props) {
         <CardHeader className="pb-4">
           <div className="flex items-center gap-3">
             <Badge
-              variant={configured.length > 0 ? "default" : "secondary"}
+              variant={checked.length > 0 ? "default" : "secondary"}
               className="w-8 h-8 rounded-full flex items-center justify-center p-0"
             >
               3
             </Badge>
             <div className="flex items-center gap-2">
               <CheckCircle
-                className={`h-5 w-5 ${configured.length > 0 ? "text-primary" : "text-muted-foreground"}`}
+                className={`h-5 w-5 ${checked.length > 0 ? "text-primary" : "text-muted-foreground"}`}
               />
               <CardTitle className="text-xl">
                 Verificação e Resultados
               </CardTitle>
             </div>
-            <Button
-              variant="link"
-              disabled={!configured.length}
-              onClick={() => redirectToCheck(configured)}
-              className="ml-auto"
-            >
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Checar configurações
-            </Button>
           </div>
           <CardDescription className="ml-11">
-            {configured.length > 0
-              ? `${configured.length} equipamento(s) configurado(s) com sucesso`
+            {checked.length > 0
+              ? `${checked.length} equipamento(s) configurado(s) com sucesso`
               : "Aguardando configuração dos equipamentos"}
           </CardDescription>
         </CardHeader>
         {technology ? (
           <CardContent className="ml-11">
-            {configured.length > 0 ? (
+            {checked.length > 0 ? (
               <div className="rounded-lg border">
-                <DevicesConfiguredTable
-                  data={configured}
+                <DevicesCheckedTable
+                  data={checked}
                   model={Device.Model[technology.name.system as Device.Model]}
                 />
               </div>
@@ -251,7 +232,7 @@ export function ConfiguratorPanel(props: Props) {
                 </h3>
                 <p className="text-sm text-muted-foreground max-w-md">
                   Complete as etapas anteriores para visualizar os equipamentos
-                  configurados.
+                  checados.
                 </p>
               </div>
             )}
