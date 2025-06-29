@@ -1,4 +1,4 @@
-import { updateOneComponentById } from "@/app/lib/@backend/action";
+import { updateOneComponentById } from "@/app/lib/@backend/action/engineer/component/component.action";
 import { Component, IComponent } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -1,4 +1,4 @@
-import { findManyProduct } from "@/app/lib/@backend/action/engineer/product/product.action";
+import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
 import { findOneProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
 import { ProductionOrderUpdateForm } from "@/app/lib/@frontend/ui/component";
 

@@ -5,12 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import {
-  findManyProduct,
-  findManyComponent,
-  findManyInput,
-  createOneItem,
-} from "@/app/lib/@backend/action";
+
 import {
   Item,
   type IProduct,
@@ -18,6 +13,10 @@ import {
   type IInput,
 } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
+import { findManyInput } from "@/app/lib/@backend/action/engineer/input/input.action";
+import { createOneItem } from "@/app/lib/@backend/action/logistic/item.action";
+import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { findManyComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
 
 // Schema aprimorado com validação mais robusta
 export const createItemSchema = z.object({

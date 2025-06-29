@@ -1,4 +1,4 @@
-import { findManyProductCategory } from "@/app/lib/@backend/action";
+import { findManyProductCategory } from "@/app/lib/@backend/action/commercial/product/product.category.action";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { CreateOneProductForm } from "@/app/lib/@frontend/ui/form";
 

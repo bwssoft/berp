@@ -1,4 +1,4 @@
-import { createOneBase, createOneProfile } from "@/app/lib/@backend/action";
+import { createOneBase } from "@/app/lib/@backend/action/logistic/base.action";
 import { Base } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";

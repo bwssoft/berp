@@ -16,9 +16,12 @@ import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useRouter } from "next/navigation";
 import { debounce } from "lodash";
-import { fetchCnpjData, fetchNameData } from "@/app/lib/@backend/action/cnpja";
 import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import {
+  fetchCnpjData,
+  fetchNameData,
+} from "@/app/lib/@backend/action/cnpja/cnpja.action";
 
 const schema = z
   .object({

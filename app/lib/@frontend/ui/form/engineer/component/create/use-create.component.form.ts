@@ -4,10 +4,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Component, IComponent } from "@/app/lib/@backend/domain";
-import { createOneComponent } from "@/app/lib/@backend/action";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook";
+import { createOneComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
 
 // Schema de validação com Zod
 const componentSchema = z.object({

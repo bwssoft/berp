@@ -1,4 +1,5 @@
-import { findManyEnterprise, findOneBase } from "@/app/lib/@backend/action";
+import { findManyEnterprise } from "@/app/lib/@backend/action/business/enterprise.action";
+import { findOneBase } from "@/app/lib/@backend/action/logistic/base.action";
 import {
   BackButton,
   UpdateOneBaseForm,

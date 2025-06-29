@@ -1,5 +1,5 @@
-import { findManyMovement } from "@/app/lib/@backend/action";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { findManyMovement } from "@/app/lib/@backend/action/logistic/movement.action";
 import { IMovement } from "@/app/lib/@backend/domain";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { MovementTable } from "@/app/lib/@frontend/ui/table";

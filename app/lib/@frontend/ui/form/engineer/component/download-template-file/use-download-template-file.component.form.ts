@@ -1,4 +1,4 @@
-import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component";
+import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component/component.category.action";
 import { IComponentCategory } from "@/app/lib/@backend/domain";
 import ExcelJS from "exceljs";
 

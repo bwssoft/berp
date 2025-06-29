@@ -1,4 +1,4 @@
-import { findManyComponentCategory } from "@/app/lib/@backend/action";
+import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component/component.category.action";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { CreateOneComponentForm } from "@/app/lib/@frontend/ui/form";
 
