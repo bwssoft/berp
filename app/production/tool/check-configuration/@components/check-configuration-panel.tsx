@@ -17,7 +17,6 @@ import {
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { TechnologyAndConfigurationProfileSearchForm } from "@/app/lib/@frontend/ui/form";
-import { DevicesDetectedTable } from "@/app/lib/@frontend/ui/table";
 import {
   Settings,
   Zap,
@@ -29,7 +28,8 @@ import {
 import { Switch } from "@/app/lib/@frontend/ui/component/switch";
 import { Label } from "@/app/lib/@frontend/ui/component/label";
 import { useCheckConfiguration } from "@/app/lib/@frontend/hook/use-check-configuration";
-import { DevicesCheckedTable } from "@/app/lib/@frontend/ui/table/production/devices-checked";
+import { DevicesDetectedTable } from "@/app/lib/@frontend/ui/table/production/devices-detected/table";
+import { DevicesCheckedTable } from "@/app/lib/@frontend/ui/table/production/devices-checked/table";
 
 interface Props {
   configurationProfile?: IConfigurationProfile | null;

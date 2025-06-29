@@ -13,7 +13,6 @@ export * from "../../layout";
 export * from "./radio";
 export * from "./select";
 export * from "./sidebar";
-export * from "../table";
 export * from "./tabs";
 export * from "./text-area";
 export * from "./toast";

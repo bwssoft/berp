@@ -2,7 +2,7 @@ import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action"
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { IProfile } from "@/app/lib/@backend/domain";
 import { SearchProfileForm } from "@/app/lib/@frontend/ui/form";
-import { ProfileTable } from "@/app/lib/@frontend/ui/table";
+import { ProfileTable } from "@/app/lib/@frontend/ui/table/admin/profile/profile.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Filter } from "mongodb";
 import Link from "next/link";

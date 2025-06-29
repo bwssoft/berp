@@ -5,11 +5,11 @@ import {
   Button,
   Checkbox,
   Combobox,
-  ContactTable,
   Input,
   useCreateContactAccount,
 } from "../../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
+import { ContactTable } from "@/app/lib/@frontend/ui/table/commercial/contact/table";
 
 type Props = {
   closeModal?: () => void;

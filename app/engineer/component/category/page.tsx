@@ -2,7 +2,7 @@ import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restric
 import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component/component.category.action";
 import { IComponentCategory } from "@/app/lib/@backend/domain";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
-import { ComponentCategoryTable } from "@/app/lib/@frontend/ui/table";
+import { ComponentCategoryTable } from "@/app/lib/@frontend/ui/table/engineer/component/component.category.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Filter } from "mongodb";
 import Link from "next/link";
