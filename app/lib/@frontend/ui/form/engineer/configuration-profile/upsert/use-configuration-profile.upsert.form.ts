@@ -179,7 +179,7 @@ export const e3Plus4GConfigSchema = z.object({
 export const nb2ConfigSchema = z.object({
   data_transmission_event: twoBytesSchema.optional(),
   odometer,
-  sleep: twoBytesSchema.optional(),
+  time_to_sleep: twoBytesSchema.optional(),
   virtual_ignition_12v: z
     .object({
       initial: twoBytesSchema,
@@ -210,11 +210,11 @@ export const nb2ConfigSchema = z.object({
     .optional(),
   heading_detection_angle: z.coerce.number().min(0).max(180).optional(),
   speed_alert_threshold: oneBytesSchema.optional(),
-  accel_threshold_for_ignition_on: z.coerce.number().positive().optional(),
-  accel_threshold_for_ignition_off: z.coerce.number().positive().optional(),
-  accel_threshold_for_movement: z.coerce.number().positive().optional(),
-  harsh_acceleration_threshold: z.coerce.number().positive().optional(),
-  harsh_braking_threshold: z.coerce.number().positive().optional(),
+  accel_threshold_for_ignition_on: oneBytesSchema.optional(),
+  accel_threshold_for_ignition_off: oneBytesSchema.optional(),
+  accel_threshold_for_movement: twoBytesSchema.optional(),
+  harsh_acceleration_threshold: twoBytesSchema.optional(),
+  harsh_braking_threshold: twoBytesSchema.optional(),
   input_1: z.coerce.number().optional(),
   input_2: z.coerce.number().optional(),
   input_3: z.coerce.number().optional(),
@@ -263,11 +263,11 @@ export const loraConfigSchema = z.object({
   heading_event_mode: z.boolean().default(false),
   heading_detection_angle: z.coerce.number().min(0).max(180).optional(),
   speed_alert_threshold: oneBytesSchema.optional(),
-  accel_threshold_for_ignition_on: z.coerce.number().positive().optional(),
-  accel_threshold_for_ignition_off: z.coerce.number().positive().optional(),
-  accel_threshold_for_movement: z.coerce.number().positive().optional(),
-  harsh_acceleration_threshold: z.coerce.number().positive().optional(),
-  harsh_braking_threshold: z.coerce.number().positive().optional(),
+  accel_threshold_for_ignition_on: oneBytesSchema.optional(),
+  accel_threshold_for_ignition_off: oneBytesSchema.optional(),
+  accel_threshold_for_movement: twoBytesSchema.optional(),
+  harsh_acceleration_threshold: twoBytesSchema.optional(),
+  harsh_braking_threshold: twoBytesSchema.optional(),
 
   full_configuration_table: z.string().optional(),
   full_functionality_table: z.string().optional(),
@@ -353,13 +353,18 @@ export function useConfigurationProfileUpsertForm(props: Props) {
   });
   const handleSubmit = form.handleSubmit(
     async (data) => {
-      const { client_id, type, technology_id, config, id } = data;
+      const { id } = data;
+
+      const config = {
+        general: { ...data.config.general },
+        specific: { ...data.config.specific },
+      };
+
+      delete (config.specific as any)?.technology_system_name;
 
       const profile = {
+        ...data,
         name: formatConfigurationProfileName(name),
-        client_id,
-        technology_id,
-        type,
         config,
       };
 
@@ -394,7 +399,9 @@ export function useConfigurationProfileUpsertForm(props: Props) {
       }
     },
     (error) => {
-      console.error("Erro de validação ao registrar perfil:", error);
+      console.error("Erro de validação ao registrar perfil");
+      console.error(error);
+      console.error(form.watch());
       toast({
         title: "Erro de Validação",
         description: "Revise os campos obrigatórios e tente novamente.",
@@ -452,6 +459,10 @@ export function useConfigurationProfileUpsertForm(props: Props) {
   useEffect(() => {
     if (defaultValues) {
       form.reset(defaultValues.configurationProfile);
+      form.setValue(
+        "config.specific.technology_system_name",
+        defaultValues.technology.name.system as TechnologySystemName
+      );
       handleChangeName({
         document: defaultValues.client.document.value,
         technology: defaultValues.technology.name.brand,

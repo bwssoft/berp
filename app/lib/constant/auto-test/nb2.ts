@@ -1,6 +1,6 @@
-import { NB2 } from "../../@backend/infra/protocol";
+import { BwsNb2 } from "../../@backend/infra/protocol";
 
-const autoTestAnalisys: { [key in keyof NB2.AutoTest]?: string } = {
+const autoTestAnalisys: { [key in keyof BwsNb2.AutoTest]?: string } = {
   ACELC: "ACELC",
   ACELP: "ACELP",
   BATT_VOLT: "BATT_VOLT",
@@ -21,6 +21,6 @@ const autoTestAnalisys: { [key in keyof NB2.AutoTest]?: string } = {
   VCC: "VCC",
 };
 
-export const autoTestNB2 = {
+export const autoTestBwsNb2 = {
   autoTestAnalisys,
 };

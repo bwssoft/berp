@@ -4,6 +4,7 @@ import {
   IConfigurationLogRepository,
 } from "@/app/lib/@backend/domain";
 import { configurationLogRepository } from "@/app/lib/@backend/infra";
+import { RemoveFields } from "../../../decorators";
 
 class CreateManyConfigurationLogUsecase {
   repository: IConfigurationLogRepository;
@@ -12,6 +13,7 @@ class CreateManyConfigurationLogUsecase {
     this.repository = configurationLogRepository;
   }
 
+  @RemoveFields("_id")
   async execute(input: Omit<IConfigurationLog, "id" | "created_at">[]) {
     const _input: IConfigurationLog[] = [];
     for (const p in input) {

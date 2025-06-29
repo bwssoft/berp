@@ -1,4 +1,4 @@
-export namespace LORA {
+export namespace BwsLora {
   export interface AutoTest {
     DEV: string; //DM_BWS_LORA,
     SN: string; //FFFFFFFF,
@@ -18,7 +18,7 @@ export namespace LORA {
   }
 }
 
-export class LORAParser {
+export class BwsLoraParser {
   /**
    * Extrai o valor do serial de uma string que contém "RINS=" seguido de um número.
    *
@@ -26,6 +26,8 @@ export class LORAParser {
    * @returns O valor do serial ou undefined se o formato não for válido.
    */
   static serial(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RINS=");
 
     if (parts.length < 2) return undefined;
@@ -44,6 +46,8 @@ export class LORAParser {
    * @returns O valor do 'timestamp' ou undefined se o formato não for válido.
    */
   static timestamp(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RTK=");
 
     if (parts.length < 2) return undefined;
@@ -62,6 +66,8 @@ export class LORAParser {
    * @returns O valor do 'device address' ou undefined se o formato não for válido.
    */
   static device_address(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RDA=");
 
     if (parts.length < 2) return undefined;
@@ -80,6 +86,8 @@ export class LORAParser {
    * @returns O valor do 'device eui' ou undefined se o formato não for válido.
    */
   static device_eui(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RDE=");
 
     if (parts.length < 2) return undefined;
@@ -98,6 +106,8 @@ export class LORAParser {
    * @returns O valor do 'application eui' ou undefined se o formato não for válido.
    */
   static application_eui(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RAP=");
 
     if (parts.length < 2) return undefined;
@@ -116,6 +126,8 @@ export class LORAParser {
    * @returns O valor do 'application key' ou undefined se o formato não for válido.
    */
   static application_key(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RAK=");
 
     if (parts.length < 2) return undefined;
@@ -134,6 +146,8 @@ export class LORAParser {
    * @returns O valor do 'application session key' ou undefined se o formato não for válido.
    */
   static application_session_key(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RASK=");
 
     if (parts.length < 2) return undefined;
@@ -152,6 +166,8 @@ export class LORAParser {
    * @returns O valor do 'network session key' ou undefined se o formato não for válido.
    */
   static network_session_key(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RNK=");
 
     if (parts.length < 2) return undefined;
@@ -170,6 +186,8 @@ export class LORAParser {
    * @returns O valor do firmware ou undefined se o formato não for válido.
    */
   static firmware(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFW=");
 
     if (parts.length < 2) return undefined;
@@ -187,15 +205,17 @@ export class LORAParser {
    * @param input - A string que contém a informação do autotest.
    * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
    */
-  static auto_test(input: string): LORA.AutoTest | undefined {
+  static auto_test(input: string): BwsLora.AutoTest | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("AUTOTEST=");
     if (parts.length < 2) return undefined;
     const splited = parts[1].split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
-      acc[key as keyof LORA.AutoTest] = value;
+      acc[key as keyof BwsLora.AutoTest] = value;
       return acc;
-    }, {} as LORA.AutoTest);
+    }, {} as BwsLora.AutoTest);
   }
 
   /**
@@ -205,6 +225,8 @@ export class LORAParser {
    * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
    */
   static odometer(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RODM=");
     if (parts.length < 2) return undefined;
 
@@ -212,7 +234,7 @@ export class LORAParser {
 
     const value = parseFloat(odometerValue);
 
-    return isNaN(value) ? undefined : value / 10;
+    return isNaN(value) ? undefined : value;
   }
 
   /**
@@ -222,6 +244,8 @@ export class LORAParser {
    * @returns O valor numérico do tempo de transmissão de ignição desligada ou undefined se o formato não for válido.
    */
   static data_transmission_sleep(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RCW=");
 
     if (parts.length < 2) return undefined;
@@ -242,6 +266,8 @@ export class LORAParser {
   static virtual_ignition_12v(
     input: string
   ): { initial: number; final: number } | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIG1=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -261,6 +287,8 @@ export class LORAParser {
   static virtual_ignition_24v(
     input: string
   ): { initial: number; final: number } | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIG2=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -272,6 +300,8 @@ export class LORAParser {
   }
 
   static heading(input: string): boolean | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFH=");
 
     if (parts.length < 2) return undefined;
@@ -286,6 +316,8 @@ export class LORAParser {
   }
 
   static heading_event_mode(input: string): boolean | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFHV=");
 
     if (parts.length < 2) return undefined;
@@ -306,6 +338,8 @@ export class LORAParser {
    * @returns O valor numérico do ângulo ou undefined se o formato não for válido.
    */
   static heading_detection_angle(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFA=");
 
     if (parts.length < 2) return undefined;
@@ -324,6 +358,8 @@ export class LORAParser {
    * @returns O valor numérico da velocidade ou undefined se o formato não for válido.
    */
   static speed_alert_threshold(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFV=");
 
     if (parts.length < 2) return undefined;
@@ -342,6 +378,8 @@ export class LORAParser {
    * @returns O valor numérico da sensibilidade do acelerometro quando ligado ou undefined se o formato não for válido.
    */
   static accel_threshold_for_ignition_on(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFTON=");
 
     if (parts.length < 2) return undefined;
@@ -360,6 +398,8 @@ export class LORAParser {
    * @returns O valor numérico da sensibilidade do acelerometro quando desligado ou undefined se o formato não for válido.
    */
   static accel_threshold_for_ignition_off(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFTOF=");
 
     if (parts.length < 2) return undefined;
@@ -378,6 +418,8 @@ export class LORAParser {
    * @returns O valor numérico da sensibilidade do acelerometro quando violado ou undefined se o formato não for válido.
    */
   static accel_threshold_for_movement(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFAV=");
 
     if (parts.length < 2) return undefined;
@@ -396,6 +438,8 @@ export class LORAParser {
    * @returns O valor numérico da aceleração máxima ou undefined se o formato não for válido.
    */
   static harsh_acceleration_threshold(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFMA=");
 
     if (parts.length < 2) return undefined;
@@ -414,6 +458,8 @@ export class LORAParser {
    * @returns O valor numérico da desaceleração máxima ou undefined se o formato não for válido.
    */
   static harsh_braking_threshold(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFMD=");
 
     if (parts.length < 2) return undefined;
@@ -426,6 +472,8 @@ export class LORAParser {
   }
 
   static data_transmission_position(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RWTR=");
 
     if (parts.length < 2) return undefined;
@@ -438,6 +486,8 @@ export class LORAParser {
   }
 
   static led_lighting(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RLED=");
 
     if (parts.length < 2) return undefined;
@@ -450,6 +500,8 @@ export class LORAParser {
   }
 
   static p2p_mode_duration(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RLTO=");
 
     if (parts.length < 2) return undefined;
@@ -462,7 +514,9 @@ export class LORAParser {
   }
 
   static lorawan_mode_duration(input: string): number | undefined {
-    const parts = input.split("WWTO=");
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("RWTO=");
 
     if (parts.length < 2) return undefined;
 
@@ -474,6 +528,8 @@ export class LORAParser {
   }
 
   static input_1(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN1=");
 
     if (parts.length < 2) return undefined;
@@ -486,6 +542,8 @@ export class LORAParser {
   }
 
   static input_2(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN2=");
 
     if (parts.length < 2) return undefined;
@@ -498,6 +556,8 @@ export class LORAParser {
   }
 
   static input_3(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN3=");
 
     if (parts.length < 2) return undefined;
@@ -510,6 +570,8 @@ export class LORAParser {
   }
 
   static input_4(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN4=");
 
     if (parts.length < 2) return undefined;
@@ -522,6 +584,8 @@ export class LORAParser {
   }
 
   static input_5(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN5=");
 
     if (parts.length < 2) return undefined;
@@ -534,6 +598,8 @@ export class LORAParser {
   }
 
   static input_6(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN6=");
 
     if (parts.length < 2) return undefined;
@@ -546,6 +612,8 @@ export class LORAParser {
   }
 
   static full_configuration_table(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RC=");
 
     if (parts.length < 2) return undefined;
@@ -558,6 +626,8 @@ export class LORAParser {
   }
 
   static fifo_send_and_hold_times(input: string): number[] | undefined {
+    if (typeof input !== "string") return undefined;
+
     // Regex: captura dois números (inteiros ou decimais) após "RFIFO="
     const match = input.match(/^RFIFO=(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)$/);
     if (!match) return undefined;
@@ -573,6 +643,8 @@ export class LORAParser {
   }
 
   static lorawan_data_transmission_event(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("REWTR=");
 
     if (parts.length < 2) return undefined;
@@ -585,6 +657,8 @@ export class LORAParser {
   }
 
   static p2p_data_transmission_event(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RELTR=");
 
     if (parts.length < 2) return undefined;
@@ -597,6 +671,8 @@ export class LORAParser {
   }
 
   static data_transmission_status(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RTS=");
 
     if (parts.length < 2) return undefined;
@@ -609,6 +685,8 @@ export class LORAParser {
   }
 
   static full_functionality_table(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RF=");
 
     if (parts.length < 2) return undefined;
@@ -621,6 +699,8 @@ export class LORAParser {
   }
 
   static activation_type(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RACT=");
 
     if (parts.length < 2) return undefined;
@@ -635,6 +715,8 @@ export class LORAParser {
   }
 
   static mcu_configuration(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RMC=");
 
     if (parts.length < 2) return undefined;
@@ -647,6 +729,8 @@ export class LORAParser {
   }
 
   static output_table(input: string): number[] | undefined {
+    if (typeof input !== "string") return undefined;
+
     // Regex: captura três números (inteiros ou decimais) após "ROUT="
     const match = input.match(
       /^ROUT=(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?),\s*(\d+(?:\.\d+)?)$/

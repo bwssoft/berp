@@ -1,6 +1,6 @@
 type Encoder = { command: "data_transmission_sleep"; args: number };
 
-export class LORAEncoder {
+export class BwsLoraEncoder {
   static serial(serial: string): string {
     return `WINS=${serial}\r`;
   }
@@ -185,55 +185,55 @@ export class LORAEncoder {
 
   static commands() {
     return {
-      serial: LORAEncoder.serial,
-      data_transmission_sleep: LORAEncoder.data_transmission_sleep,
-      lorawan_mode_duration: LORAEncoder.lorawan_mode_duration,
-      p2p_mode_duration: LORAEncoder.p2p_mode_duration,
-      data_transmission_position: LORAEncoder.data_transmission_position,
+      serial: BwsLoraEncoder.serial,
+      data_transmission_sleep: BwsLoraEncoder.data_transmission_sleep,
+      lorawan_mode_duration: BwsLoraEncoder.lorawan_mode_duration,
+      p2p_mode_duration: BwsLoraEncoder.p2p_mode_duration,
+      data_transmission_position: BwsLoraEncoder.data_transmission_position,
       lorawan_data_transmission_event:
-        LORAEncoder.lorawan_data_transmission_event,
-      p2p_data_transmission_event: LORAEncoder.p2p_data_transmission_event,
-      data_transmission_status: LORAEncoder.data_transmission_status,
-      odometer: LORAEncoder.odometer,
-      virtual_ignition_12v: LORAEncoder.virtual_ignition_12v,
-      virtual_ignition_24v: LORAEncoder.virtual_ignition_24v,
-      activation_type: LORAEncoder.activation_type,
-      heading: LORAEncoder.heading,
-      heading_detection_angle: LORAEncoder.heading_detection_angle,
-      heading_event_mode: LORAEncoder.heading_event_mode,
-      speed_alert_threshold: LORAEncoder.speed_alert_threshold,
+        BwsLoraEncoder.lorawan_data_transmission_event,
+      p2p_data_transmission_event: BwsLoraEncoder.p2p_data_transmission_event,
+      data_transmission_status: BwsLoraEncoder.data_transmission_status,
+      odometer: BwsLoraEncoder.odometer,
+      virtual_ignition_12v: BwsLoraEncoder.virtual_ignition_12v,
+      virtual_ignition_24v: BwsLoraEncoder.virtual_ignition_24v,
+      activation_type: BwsLoraEncoder.activation_type,
+      heading: BwsLoraEncoder.heading,
+      heading_detection_angle: BwsLoraEncoder.heading_detection_angle,
+      heading_event_mode: BwsLoraEncoder.heading_event_mode,
+      speed_alert_threshold: BwsLoraEncoder.speed_alert_threshold,
       accel_threshold_for_ignition_on:
-        LORAEncoder.accel_threshold_for_ignition_on,
+        BwsLoraEncoder.accel_threshold_for_ignition_on,
       accel_threshold_for_ignition_off:
-        LORAEncoder.accel_threshold_for_ignition_off,
-      accel_threshold_for_movement: LORAEncoder.accel_threshold_for_movement,
-      harsh_acceleration_threshold: LORAEncoder.harsh_acceleration_threshold,
-      harsh_braking_threshold: LORAEncoder.harsh_braking_threshold,
-      full_functionality_table: LORAEncoder.full_functionality_table,
-      full_configuration_table: LORAEncoder.full_configuration_table,
-      led_lighting: LORAEncoder.led_lighting,
-      fifo_send_and_hold_times: LORAEncoder.fifo_send_and_hold_times,
-      mcu_configuration: LORAEncoder.mcu_configuration,
-      output_table: LORAEncoder.output_table,
-      input_1: LORAEncoder.input_1,
-      input_2: LORAEncoder.input_2,
-      input_3: LORAEncoder.input_3,
-      input_4: LORAEncoder.input_4,
-      input_5: LORAEncoder.input_5,
-      input_6: LORAEncoder.input_6,
-      timestamp: LORAEncoder.timestamp,
-      device_eui: LORAEncoder.device_eui,
-      application_eui: LORAEncoder.application_eui,
-      application_key: LORAEncoder.application_key,
-      device_address: LORAEncoder.device_address,
-      network_session_key: LORAEncoder.network_session_key,
-      application_session_key: LORAEncoder.application_session_key,
+        BwsLoraEncoder.accel_threshold_for_ignition_off,
+      accel_threshold_for_movement: BwsLoraEncoder.accel_threshold_for_movement,
+      harsh_acceleration_threshold: BwsLoraEncoder.harsh_acceleration_threshold,
+      harsh_braking_threshold: BwsLoraEncoder.harsh_braking_threshold,
+      full_functionality_table: BwsLoraEncoder.full_functionality_table,
+      full_configuration_table: BwsLoraEncoder.full_configuration_table,
+      led_lighting: BwsLoraEncoder.led_lighting,
+      fifo_send_and_hold_times: BwsLoraEncoder.fifo_send_and_hold_times,
+      mcu_configuration: BwsLoraEncoder.mcu_configuration,
+      output_table: BwsLoraEncoder.output_table,
+      input_1: BwsLoraEncoder.input_1,
+      input_2: BwsLoraEncoder.input_2,
+      input_3: BwsLoraEncoder.input_3,
+      input_4: BwsLoraEncoder.input_4,
+      input_5: BwsLoraEncoder.input_5,
+      input_6: BwsLoraEncoder.input_6,
+      timestamp: BwsLoraEncoder.timestamp,
+      device_eui: BwsLoraEncoder.device_eui,
+      application_eui: BwsLoraEncoder.application_eui,
+      application_key: BwsLoraEncoder.application_key,
+      device_address: BwsLoraEncoder.device_address,
+      network_session_key: BwsLoraEncoder.network_session_key,
+      application_session_key: BwsLoraEncoder.application_session_key,
     };
   }
 
   static encoder(props: Encoder): string | undefined {
     const { command, args } = props;
-    const commands = LORAEncoder.commands();
+    const commands = BwsLoraEncoder.commands();
     return commands[command](args as any);
   }
 }

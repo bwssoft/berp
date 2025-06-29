@@ -5,7 +5,8 @@ import { cn } from "@/app/lib/util";
 import Link from "next/link";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../../component";
-import { technologyConstants } from "@/app/lib/constant";
+import { deviceConstants } from "@/app/lib/constant";
+import { Device } from "@/app/lib/@backend/domain";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",
@@ -31,7 +32,7 @@ export const columns: ColumnDef<{
   status: boolean;
   created_at: Date;
   technology: {
-    system_name: string;
+    system_name: Device.Model;
   };
 }>[] = [
   {
@@ -82,12 +83,7 @@ export const columns: ColumnDef<{
     accessorKey: "technology",
     cell: ({ row }) => {
       const { original } = row;
-      return (
-        technologyConstants.name[
-          original.technology
-            .system_name as keyof typeof technologyConstants.name
-        ] ?? "Unknown"
-      );
+      return deviceConstants.model[original.technology.system_name] ?? "--";
     },
   },
   {
