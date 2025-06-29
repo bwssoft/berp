@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { BWS4GEncoder, BWS4GParser } from "../../@backend/infra/protocol";
+import { Bws4GEncoder, Bws4GParser } from "../../@backend/infra/protocol";
 import { isIccid, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
@@ -67,7 +67,7 @@ const generateMessages = (
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([command, args]) => {
-    const _message = BWS4GEncoder.encoder({ command, args } as any);
+    const _message = Bws4GEncoder.encoder({ command, args } as any);
     if (!_message) return;
     response[command as Namespace.ConfigKeys] = _message;
   });
@@ -113,9 +113,9 @@ export const useBWS4G = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { command: "IMEI", key: "imei", transform: BWS4GParser.imei },
-        { command: "ICCID", key: "iccid", transform: BWS4GParser.iccid },
-        { command: "ET", key: "firmware", transform: BWS4GParser.firmware },
+        { command: "IMEI", key: "imei", transform: Bws4GParser.imei },
+        { command: "ICCID", key: "iccid", transform: Bws4GParser.iccid },
+        { command: "ET", key: "firmware", transform: Bws4GParser.firmware },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -161,12 +161,14 @@ export const useBWS4G = () => {
               apn,
               keep_alive,
               ...processed_check
-            } = BWS4GParser.check(check) ?? {};
-            const processed_status = BWS4GParser.status(status);
-            const ip_primary = BWS4GParser.ip_primary(cxip);
-            const ip_secondary = BWS4GParser.ip_secondary(cxip);
-            const dns_primary = BWS4GParser.dns(cxip);
-            const horimeter = BWS4GParser.horimeter(processed_status.HR);
+            } = Bws4GParser.check(check) ?? {};
+            const processed_status = Bws4GParser.status(status);
+            const ip_primary = Bws4GParser.ip_primary(cxip);
+            const ip_secondary = Bws4GParser.ip_secondary(cxip);
+            const dns_primary = Bws4GParser.dns(cxip);
+            const horimeter = processed_status?.HR
+              ? Bws4GParser.horimeter(processed_status.HR)
+              : undefined;
             return {
               port,
               config: {
@@ -235,12 +237,14 @@ export const useBWS4G = () => {
                 apn,
                 keep_alive,
                 ...processed_check
-              } = BWS4GParser.check(check) ?? {};
-              const processed_status = BWS4GParser.status(status);
-              const ip_primary = BWS4GParser.ip_primary(cxip);
-              const ip_secondary = BWS4GParser.ip_secondary(cxip);
-              const dns_primary = BWS4GParser.dns(cxip);
-              const horimeter = BWS4GParser.horimeter(processed_status.HR);
+              } = Bws4GParser.check(check) ?? {};
+              const processed_status = Bws4GParser.status(status);
+              const ip_primary = Bws4GParser.ip_primary(cxip);
+              const ip_secondary = Bws4GParser.ip_secondary(cxip);
+              const dns_primary = Bws4GParser.dns(cxip);
+              const horimeter = processed_status?.HR
+                ? Bws4GParser.horimeter(processed_status.HR)
+                : undefined;
               applied_profile = {
                 general: {
                   data_transmission_on,
@@ -296,7 +300,7 @@ export const useBWS4G = () => {
         {
           key: "autotest",
           command: "AUTOTEST",
-          transform: BWS4GParser.auto_test,
+          transform: Bws4GParser.auto_test,
           timeout: 25000,
         },
       ] as const;
@@ -378,7 +382,7 @@ export const useBWS4G = () => {
   const handleGetIdentification = useCallback(
     async (port: ISerialPort) => {
       const messages = [
-        { command: "IMEI", key: "imei", transform: BWS4GParser.imei },
+        { command: "IMEI", key: "imei", transform: Bws4GParser.imei },
       ] as const;
       try {
         const response = await sendMultipleMessages({
@@ -398,7 +402,7 @@ export const useBWS4G = () => {
     imei?: string;
     iccid?: string;
     firmware?: string;
-  }) => {
+  }): "fully_identified" | "partially_identified" | "not_identified" => {
     const { imei, iccid, firmware } = input;
     const identified = [imei, iccid, firmware];
     if (identified.every((e) => e && e?.length > 0)) {

@@ -402,7 +402,7 @@ export const useE3Plus4G = () => {
     imei?: string;
     iccid?: string;
     firmware?: string;
-  }) => {
+  }): "fully_identified" | "partially_identified" | "not_identified" => {
     const { imei, iccid, firmware } = input;
     const identified = [imei, iccid, firmware];
     if (identified.every((e) => e && e?.length > 0)) {
