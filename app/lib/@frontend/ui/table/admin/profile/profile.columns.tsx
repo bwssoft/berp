@@ -1,10 +1,10 @@
 "use client";
 import { IProfile } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@bwsoft/badge";
 import { ClockIcon, UsersIcon } from "@heroicons/react/24/outline";
 import { Button, Toggle } from "../../../component";
 import React from "react";
+import { Badge } from "../../../component/badge";
 
 interface Props {
   openActiveDialog: (id: string, value: boolean) => void;
@@ -21,11 +21,7 @@ export const columns = (props: Props): ColumnDef<IProfile>[] => [
     cell: ({ row }) => {
       const { original } = row;
       return (
-        <Badge
-          variant="basic"
-          theme={original.active ? "green" : "gray"}
-          label={original.active ? "Ativo" : "Inativo"}
-        />
+        <Badge variant="outline">{original.active ? "Ativo" : "Inativo"}</Badge>
       );
     },
   },
@@ -43,8 +39,11 @@ export const columns = (props: Props): ColumnDef<IProfile>[] => [
     cell: ({ row }) => {
       const { original } = row;
 
-      const hideActiveButton = props.restrictFeatureByProfile("admin:profile:inactive");
-      const hideViewButton = props.restrictFeatureByProfile("admin:profile:view");
+      const hideActiveButton = props.restrictFeatureByProfile(
+        "admin:profile:inactive"
+      );
+      const hideViewButton =
+        props.restrictFeatureByProfile("admin:profile:view");
 
       return (
         <td className="flex gap-2 items-center">
@@ -70,7 +69,7 @@ export const columns = (props: Props): ColumnDef<IProfile>[] => [
               </Button>
             </>
           )}
-          
+
           {hideActiveButton && (
             <button
               onClick={() =>

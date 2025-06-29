@@ -2,11 +2,13 @@
 
 import {
   BriefcaseIcon,
+  CubeIcon,
   DocumentTextIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
 import { GridList } from "../lib/@frontend/ui/component";
 import { useAuth } from "../lib/@frontend/context";
+import { Package } from "lucide-react";
 
 const actions = [
   {
@@ -28,6 +30,15 @@ const actions = [
     iconBackground: "bg-lime-50",
     description:
       "Crie, edite e acompanhe propostas comerciais de forma organizada.",
+  },
+  {
+    title: "Produtos",
+    href: "/commercial/product",
+    code: "commercial:product",
+    icon: Package, // remete a contratos, propostas e documentos
+    iconForeground: "text-blue-700",
+    iconBackground: "bg-blue-50",
+    description: "Crie, edite e acompanhe produtos.",
   },
   {
     title: "Contas",

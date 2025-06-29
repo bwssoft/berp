@@ -4,11 +4,11 @@ import {
   CreateAnnexModal,
   useCreateAnnexModal,
 } from "@/app/lib/@frontend/ui/modal";
-import { AccountAttachmentsTable } from "@/app/lib/@frontend/ui/table";
 import { FolderOpenIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { findManyAccountAttachments } from "@/app/lib/@backend/action/commercial/account-attachment.find.action";
 import { useEffect, useState } from "react";
 import { IAccountAttachment } from "@/app/lib/@backend/domain";
+import { AccountAttachmentsTable } from "@/app/lib/@frontend/ui/table/commercial/account/accountAttachments/table";
 
 export default function Page() {
   const { openModal, open, closeModal } = useCreateAnnexModal();

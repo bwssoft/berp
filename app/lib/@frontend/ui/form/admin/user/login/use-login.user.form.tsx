@@ -2,10 +2,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook";
-import { authenticate } from "@/app/lib/@backend/action";
 import { auth } from "@/auth";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { authenticate } from "@/app/lib/@backend/action/auth/login.action";
 
 const schema = z.object({
   username: z.string(),

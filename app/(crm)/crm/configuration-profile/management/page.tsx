@@ -1,7 +1,5 @@
-import {
-  findManyConfigurationProfile,
-  findOneClientWithConfigurationProfile,
-} from "@/app/lib/@backend/action";
+import { findOneClientWithConfigurationProfile } from "@/app/lib/@backend/action/commercial/client.action";
+import { findManyConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
 import ConfigurationProfileTableCrm from "@/app/lib/@frontend/ui/table/engineer/configuration-profile-crm/table";
 import Link from "next/link";
 

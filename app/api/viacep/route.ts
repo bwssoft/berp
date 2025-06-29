@@ -1,5 +1,5 @@
+import { getAddressByCep } from "@/app/lib/@backend/action/commercial/address.action";
 import { NextRequest, NextResponse } from "next/server";
-import { getAddressByCep } from "@/app/lib/@backend/action";
 
 export async function GET(request: NextRequest) {
     const cep = request.nextUrl.searchParams.get("cep") ?? "";

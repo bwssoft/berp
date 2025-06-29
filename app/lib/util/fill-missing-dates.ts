@@ -1,21 +1,21 @@
-import { IInput, IProduct } from "@/app/lib/@backend/domain"
+import { IComponent, IProduct } from "@/app/lib/@backend/domain";
 
 export function fillMissingDates(
   data: {
-    enter: number
-    exit: number
-    balance: number
-    input: IInput
+    enter: number;
+    exit: number;
+    balance: number;
+    input: IComponent;
     stocks: {
-      day: string
-      enter: number
-      exit: number
-      balance: number
-    }[]
+      day: string;
+      enter: number;
+      exit: number;
+      balance: number;
+    }[];
   }[],
   allDates: string[],
   extractValue: (arg: any) => any
-): { name: string, data: any[] }[] {
+): { name: string; data: any[] }[] {
   return data.map((d) => {
     const dataByDate: { [key: string]: number } = {};
     d.stocks.forEach((_d: any) => {
@@ -34,22 +34,24 @@ export function fillMissingDates(
 
 export function fillMissingDatesOnInputAnalysisPage(
   data: {
-    input: IInput
+    input: IComponent;
     stocks: {
-      date: { day: number, year: number, month: number }
-      enter: number
-      exit: number
-      balance: number
-      cumulative_balance: number
-    }[]
+      date: { day: number; year: number; month: number };
+      enter: number;
+      exit: number;
+      balance: number;
+      cumulative_balance: number;
+    }[];
   }[],
   allDates: string[],
   extractValue: (arg: any) => any
-): { name: string, data: any[] }[] {
+): { name: string; data: any[] }[] {
   return data.map((d) => {
     const dataByDate: { [key: string]: number } = {};
     d.stocks.forEach((_d: any) => {
-      dataByDate[`${_d.date.year}-${String(_d.date.month).padStart(2, '0')}-${String(_d.date.day).padStart(2, '0')}`] = extractValue(_d);
+      dataByDate[
+        `${_d.date.year}-${String(_d.date.month).padStart(2, "0")}-${String(_d.date.day).padStart(2, "0")}`
+      ] = extractValue(_d);
     });
 
     const filledData = allDates.map((date) => dataByDate[date] || 0);
@@ -64,22 +66,24 @@ export function fillMissingDatesOnInputAnalysisPage(
 
 export function fillMissingDatesOnProductAnalysisPage(
   data: {
-    product: IProduct
+    product: IProduct;
     stocks: {
-      date: { day: number, year: number, month: number }
-      enter: number
-      exit: number
-      balance: number
-      cumulative_balance: number
-    }[]
+      date: { day: number; year: number; month: number };
+      enter: number;
+      exit: number;
+      balance: number;
+      cumulative_balance: number;
+    }[];
   }[],
   allDates: string[],
   extractValue: (arg: any) => any
-): { name: string, data: any[] }[] {
+): { name: string; data: any[] }[] {
   return data.map((d) => {
     const dataByDate: { [key: string]: number } = {};
     d.stocks.forEach((_d: any) => {
-      dataByDate[`${_d.date.year}-${String(_d.date.month).padStart(2, '0')}-${String(_d.date.day).padStart(2, '0')}`] = extractValue(_d);
+      dataByDate[
+        `${_d.date.year}-${String(_d.date.month).padStart(2, "0")}-${String(_d.date.day).padStart(2, "0")}`
+      ] = extractValue(_d);
     });
 
     const filledData = allDates.map((date) => dataByDate[date] || 0);

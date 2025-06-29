@@ -1,13 +1,13 @@
 import {
   findManyClient,
-  findAllNegotiationType,
-  findManyProduct,
-  findManyProductionOrder,
   findOneClient,
-  findOneFinancialOrder,
-  findManyConfigurationProfile,
-} from "@/app/lib/@backend/action";
-import { findOneProposal } from "@/app/lib/@backend/action";
+} from "@/app/lib/@backend/action/commercial/client.action";
+import { findAllNegotiationType } from "@/app/lib/@backend/action/commercial/negotiation-type.action";
+import { findOneProposal } from "@/app/lib/@backend/action/commercial/proposal.action";
+import { findManyConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { findOneFinancialOrder } from "@/app/lib/@backend/action/financial/financial-order.action";
+import { findManyProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
 import {
   ProposalUpdateForm,
   FinancialOrderFromProposalCreateForm,
@@ -39,7 +39,7 @@ export default async function Page(props: Props) {
   const [
     clients,
     client,
-    products,
+    { docs: products },
     negotiationType,
     financialOrder,
     productionOrders,
@@ -47,7 +47,7 @@ export default async function Page(props: Props) {
   ] = await Promise.all([
     findManyClient({}),
     findOneClient({ id: proposal.client_id }),
-    findManyProduct(),
+    findManyProduct({ filter: {} }),
     findAllNegotiationType(),
     findOneFinancialOrder({ proposal_id: proposal.id }),
     findManyProductionOrder({ "proposal.id": proposal.id }),

@@ -4,6 +4,7 @@ import { Layout } from "@/app/lib/@frontend/ui/component";
 import {
   AdjustmentsVerticalIcon,
   BriefcaseIcon,
+  CircleStackIcon,
   ClipboardIcon,
   HomeIcon,
   RectangleStackIcon,
@@ -45,5 +46,11 @@ const navigation = [
     icon: BriefcaseIcon,
     pathname: "/commercial",
     code: "commercial",
+  },
+  {
+    name: "Logistica",
+    icon: CircleStackIcon,
+    pathname: "/logistic",
+    code: "logistic",
   },
 ];

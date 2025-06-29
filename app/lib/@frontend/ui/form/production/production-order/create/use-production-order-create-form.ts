@@ -1,14 +1,15 @@
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { createOneProductionOrder } from '@/app/lib/@backend/action';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
 const schema = z.object({
   priority: z.enum(["high", "medium", "low"]),
-  description: z.string().min(1, 'Esse campo não pode ser vazio'),
+  description: z.string().min(1, "Esse campo não pode ser vazio"),
   files: z.any(),
-  products: z.array(z.object({ product_id: z.string(), quantity: z.coerce.number() })),
+  products: z.array(
+    z.object({ product_id: z.string(), quantity: z.coerce.number() })
+  ),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -47,8 +48,8 @@ export function useProductionOrderCreateForm() {
     }
   });
 
-  const handleAppendProduct = append
-  const handleRemoveProduct = remove
+  const handleAppendProduct = append;
+  const handleRemoveProduct = remove;
 
   return {
     register,
@@ -59,6 +60,6 @@ export function useProductionOrderCreateForm() {
     reset: hookFormReset,
     productsOnForm: fields,
     handleAppendProduct,
-    handleRemoveProduct
+    handleRemoveProduct,
   };
 }

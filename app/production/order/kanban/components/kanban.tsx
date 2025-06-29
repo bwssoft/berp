@@ -1,8 +1,9 @@
 "use client";
+
 import {
   findOneProductionOrder,
   updateOneProductionOrderById,
-} from "@/app/lib/@backend/action";
+} from "@/app/lib/@backend/action/production/production-order.action";
 import {
   IProduct,
   IProductionOrder,
@@ -20,7 +21,7 @@ const ItemType = "CARD";
 
 type CustomProductionOrder = IProductionOrder & {
   product: Pick<IProduct, "id" | "name" | "color">;
-  enterprise: Pick<IEnterprise, "id" | "short_name">;
+  enterprise: Pick<IEnterprise, "id" | "name">;
 };
 
 interface CardProps {
@@ -63,7 +64,7 @@ const Card: React.FC<CardProps> = ({ order, index, moveCard }) => {
         <div className="w-full flex justify-between items-center">
           <p>OP-{order.code.toString().padStart(5, "0")}</p>
           <p className="text-gray-400">
-            {order.enterprise.short_name.toUpperCase()}
+            {order.enterprise.name.short.toUpperCase()}
           </p>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { deleteOneProductionOrderById } from "@/app/lib/@backend/action";
+import { deleteOneProductionOrderById } from "@/app/lib/@backend/action/production/production-order.action";
 import { IProductionOrder } from "@/app/lib/@backend/domain";
 import { productionOrderConstants } from "@/app/lib/constant/production-order";
 import { ColumnDef } from "@tanstack/react-table";

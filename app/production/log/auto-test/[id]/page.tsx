@@ -1,4 +1,4 @@
-import { findOneAutoTestLog } from "@/app/lib/@backend/action";
+import { findOneAutoTestLog } from "@/app/lib/@backend/action/production/auto-test-log.action";
 import { AutoTestLogDescription } from "@/app/lib/@frontend/ui/description";
 
 interface Props {

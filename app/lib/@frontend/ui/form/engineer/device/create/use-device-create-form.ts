@@ -1,9 +1,9 @@
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { createOneDevice } from "@/app/lib/@backend/action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Device } from "@/app/lib/@backend/domain";
+import { createOneDevice } from "@/app/lib/@backend/action/engineer/device.action";
 
 const schema = z.object({
   equipment: z.object({

@@ -1,10 +1,13 @@
 "use client";
+
 import {
   fetchCnpjData,
   fetchNameData,
+} from "@/app/lib/@backend/action/cnpja/cnpja.action";
+import {
   findManyAccount,
   updateOneAccount,
-} from "@/app/lib/@backend/action";
+} from "@/app/lib/@backend/action/commercial/account.action";
 import { EconomicGroup } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";

@@ -1,14 +1,12 @@
-import {
-  findManyClient,
-  findAllNegotiationType,
-  findManyProduct,
-} from "@/app/lib/@backend/action";
+import { findManyClient } from "@/app/lib/@backend/action/commercial/client.action";
+import { findAllNegotiationType } from "@/app/lib/@backend/action/commercial/negotiation-type.action";
+import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
 import { ProposalCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
-  const [clients, products, negotiationType] = await Promise.all([
+  const [clients, { docs: products }, negotiationType] = await Promise.all([
     findManyClient({}),
-    findManyProduct(),
+    findManyProduct({ filter: {} }),
     findAllNegotiationType(),
   ]);
   return (

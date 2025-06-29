@@ -1,8 +1,8 @@
-import { findManyProduct } from "@/app/lib/@backend/action";
+import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
 import { ProductionOrderCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {
-  const products = await findManyProduct();
+  const { docs: products } = await findManyProduct({ filter: {} });
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

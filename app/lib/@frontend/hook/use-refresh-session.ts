@@ -1,8 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { findOneProfile } from "@/app/lib/@backend/action";
 import { useState, useCallback } from "react";
+import { findOneProfile } from "../../@backend/action/admin/profile.action";
 
 /**
  * A custom hook to refresh the user session with updated profile data without reloading the page
@@ -11,23 +11,23 @@ import { useState, useCallback } from "react";
 export function useRefreshSession() {
   const { data, update } = useSession();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
+
   // Function to refresh the current session with the latest profile data
   const refreshSession = useCallback(async () => {
     if (!data?.user?.current_profile?.id) return false;
-    
+
     try {
       setIsRefreshing(true);
       const profileId = data.user.current_profile.id;
-      
+
       // Get the latest profile data
       const updatedProfile = await findOneProfile({ id: profileId });
-      
+
       if (!updatedProfile) {
         console.error("Failed to fetch updated profile");
         return false;
       }
-      
+
       // Update the session with fresh profile data
       await update({
         user: {
@@ -35,7 +35,7 @@ export function useRefreshSession() {
           current_profile: updatedProfile,
         },
       });
-      
+
       console.log("Session updated successfully with fresh profile data");
       return true;
     } catch (error) {
@@ -45,6 +45,6 @@ export function useRefreshSession() {
       setIsRefreshing(false);
     }
   }, [data, update]);
-  
+
   return { refreshSession, isRefreshing };
 }

@@ -1,4 +1,4 @@
-import { exportConfigurationLog } from "@/app/lib/@backend/action";
+import { exportConfigurationLog } from "@/app/lib/@backend/action/production/configuration-log.action";
 import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
 import { Filter } from "mongodb";

@@ -1,10 +1,10 @@
 "use client";
 
-import { updateOneAccount } from "@/app/lib/@backend/action";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useState, useEffect } from "react";
 import { IAccount, IContact } from "@/app/lib/@backend/domain";
 import { useQueryClient } from "@tanstack/react-query";
+import { updateOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 
 interface Props {
   contacts?: {

@@ -8,8 +8,8 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { isValidCEP } from "@/app/lib/util/is-valid-cep";
 import { useRouter } from "next/navigation";
 import { IAddress } from "@/app/lib/@backend/domain";
-import { updateOneAddress } from "@/app/lib/@backend/action";
 import { useQueryClient } from "@tanstack/react-query";
+import { updateOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
 
 const AddressFormSchema = z.object({
   zip_code: z.string().min(8, "CEP obrigatório").refine(isValidCEP, {

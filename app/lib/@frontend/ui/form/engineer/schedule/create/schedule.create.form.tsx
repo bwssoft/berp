@@ -80,6 +80,7 @@ export function ScheduleCreateForm(props: Props) {
                 ]}
                 keyExtractor={(d) => d.id}
                 valueExtractor={(d) => d.label}
+                labelExtractor={(d) => d.label}
                 onChange={({ value }) =>
                   setValue("commandSetup.isMultiple", value === "true")
                 }

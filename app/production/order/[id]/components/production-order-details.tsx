@@ -1,15 +1,13 @@
 "use client";
 
-import {
-  IProductionOrder
-} from "@/app/lib/@backend/domain";
+import { IProductionOrder } from "@/app/lib/@backend/domain";
 import { formatDate } from "@/app/lib/util";
 import { productionOrderConstants } from "@/app/lib/constant";
 
 type ProductionOrderDetailsProps = {
   productionOrder: IProductionOrder & {
-    product: { name: string }
-    enterprise: { short_name: string }
+    product: { name: string };
+    enterprise: { name: { short: string } };
   };
 };
 
@@ -43,7 +41,7 @@ export function ProductionOrderDetails({
               Empresa
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {productionOrder.enterprise.short_name}
+              {productionOrder.enterprise.name.short}
             </dd>
           </div>
 
@@ -98,18 +96,13 @@ export function ProductionOrderDetails({
             </dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               {productionOrder.line_items.map((li, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2"
-                >
-                  <p>{li.parcial_quantity} un.</p>{" "}-
+                <div key={idx} className="flex items-center gap-2">
+                  <p>{li.parcial_quantity} un.</p> -
                   <p>{li.configuration_profile_id}</p>
                 </div>
               ))}
             </dd>
           </div>
-
-
 
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">

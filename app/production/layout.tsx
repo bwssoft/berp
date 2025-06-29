@@ -14,6 +14,7 @@ import {
   ViewColumnsIcon, // Processo Produtivo
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../lib/@frontend/context";
+import { CheckCheckIcon } from "lucide-react";
 
 export default function ProductionLayout({
   children,
@@ -81,6 +82,12 @@ const navigation = [
         pathname: "/production/tool/identificator",
         code: "production:tool:identifier",
         icon: IdentificationIcon,
+      },
+      {
+        name: "Checagem",
+        pathname: "/production/tool/check-configuration",
+        code: "production:tool:check",
+        icon: CheckCheckIcon,
       },
     ],
   },
