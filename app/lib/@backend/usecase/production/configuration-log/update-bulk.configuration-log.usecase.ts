@@ -19,7 +19,11 @@ class UpdateBulkConfigurationLogUsecase {
     }[]
   ) {
     return await this.repository.updateBulk(
-      operations.map(({ query, value }) => ({ query, value: { $set: value } }))
+      operations.map(({ query, value }) => ({
+        filter: query,
+        update: { $set: value },
+        upsert: false,
+      }))
     );
   }
 }

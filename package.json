@@ -13,10 +13,12 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.696.0",
     "@bwsoft/accordion": "^2.5.10",
+    "@bwsoft/badge": "^2.0.7",
     "@bwsoft/button": "^2.0.5",
     "@bwsoft/toggle": "^2.0.7",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@faker-js/faker": "^8.4.1",
     "@fileforge/react-print": "^0.1.150",
     "@grpc/grpc-js": "^1.13.2",
