@@ -134,27 +134,21 @@ export const useE3Plus4G = () => {
     },
     [sendMultipleMessages]
   );
-  const handleGetProfile = useCallback(
-    async (ports: ISerialPort[]) => {
+  const handleGetConfig = useCallback(
+    async (detected: Namespace.Detected[]) => {
       const messages = [
         { command: "CHECK", key: "check" },
         { command: "CXIP", key: "cxip" },
         { command: "STATUS", key: "status" },
       ] as const;
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
-            const { check, cxip, status } = await sendMultipleMessages({
+            const response = await sendMultipleMessages({
               transport: port,
               messages,
             });
-            if (!check || !cxip || !status) {
-              console.error(
-                "[ERROR] handleGetProfile use-e3-plus-4g",
-                "CXIP ou CHECK ou STATUS não foram respondidos"
-              );
-              return { port };
-            }
+            const { check, cxip, status } = response;
             const {
               data_transmission_off,
               data_transmission_on,
@@ -171,6 +165,7 @@ export const useE3Plus4G = () => {
               : undefined;
             return {
               port,
+              equipment,
               config: {
                 general: {
                   data_transmission_on,
@@ -186,15 +181,15 @@ export const useE3Plus4G = () => {
                   horimeter,
                 },
               },
-              raw: [
-                ["check", check],
-                ["cxip", cxip],
-                ["status", status],
-              ],
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
-            console.error("[ERROR] handleGetProfile use-e3-plus-4g", error);
-            return { port };
+            console.error("[ERROR] handleGetConfig use-e3-plus-4g", error);
+            return { port, equipment, messages: [], config: {} };
           }
         })
       );
@@ -227,24 +222,32 @@ export const useE3Plus4G = () => {
             });
             const end_time = Date.now();
             const responseEntries = Object.entries(response ?? {});
-            let applied_profile = {} as Namespace.Profile;
             const { check, status, cxip } = response;
-            if (check && status && cxip) {
-              const {
-                data_transmission_off,
-                data_transmission_on,
-                apn,
-                keep_alive,
-                ...processed_check
-              } = E34GParser.check(check) ?? {};
-              const processed_status = E34GParser.status(status);
-              const ip_primary = E34GParser.ip_primary(cxip);
-              const ip_secondary = E34GParser.ip_secondary(cxip);
-              const dns_primary = E34GParser.dns(cxip);
-              const horimeter = processed_status?.HR
-                ? E34GParser.horimeter(processed_status.HR)
-                : undefined;
-              applied_profile = {
+            const {
+              data_transmission_off,
+              data_transmission_on,
+              apn,
+              keep_alive,
+              ...processed_check
+            } = E34GParser.check(check) ?? {};
+            const processed_status = E34GParser.status(status);
+            const ip_primary = E34GParser.ip_primary(cxip);
+            const ip_secondary = E34GParser.ip_secondary(cxip);
+            const dns_primary = E34GParser.dns(cxip);
+            const horimeter = processed_status?.HR
+              ? E34GParser.horimeter(processed_status.HR)
+              : undefined;
+            return {
+              equipment,
+              port,
+              init_time,
+              end_time,
+              status:
+                responseEntries.length > 0 &&
+                responseEntries.every(
+                  ([_, value]) => typeof value !== "undefined"
+                ),
+              applied_profile: {
                 general: {
                   data_transmission_on,
                   data_transmission_off,
@@ -258,20 +261,7 @@ export const useE3Plus4G = () => {
                   ...processed_check,
                   horimeter,
                 },
-              };
-            }
-
-            return {
-              equipment,
-              port,
-              init_time,
-              end_time,
-              status:
-                responseEntries.length > 0 &&
-                responseEntries.every(
-                  ([_, value]) => typeof value !== "undefined"
-                ),
-              applied_profile,
+              },
               messages: messages.map(({ key, command }) => ({
                 key,
                 request: command,
@@ -398,11 +388,12 @@ export const useE3Plus4G = () => {
     [sendMultipleMessages]
   );
 
-  const isIdentified = (input: {
+  const isIdentified = (input?: {
     imei?: string;
     iccid?: string;
     firmware?: string;
   }): "fully_identified" | "partially_identified" | "not_identified" => {
+    if (!input) return "not_identified";
     const { imei, iccid, firmware } = input;
     const identified = [imei, iccid, firmware];
     if (identified.every((e) => e && e?.length > 0)) {
@@ -418,7 +409,7 @@ export const useE3Plus4G = () => {
     isIdentified,
     ports,
     handleIdentification,
-    handleGetProfile,
+    handleGetConfig,
     handleConfiguration,
     requestPort,
     handleAutoTest,

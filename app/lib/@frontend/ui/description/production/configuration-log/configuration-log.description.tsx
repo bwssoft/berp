@@ -161,6 +161,11 @@ export function ConfigurationLogDescription({ data }: Props) {
             {data.checked ? "Sim" : "Não"}
           </dd>
 
+          <dt className="text-sm font-medium text-gray-700">Verificado em</dt>
+          <dd className="col-span-2 text-sm text-gray-600">
+            {data.checked_at ? data.checked_at.toLocaleString() : "--"}
+          </dd>
+
           {/* Criado em */}
           <dt className="text-sm font-medium text-gray-700">Criado em</dt>
           <dd className="col-span-2 text-sm text-gray-600">

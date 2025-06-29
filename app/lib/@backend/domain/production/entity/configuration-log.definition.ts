@@ -14,6 +14,8 @@ export interface IConfigurationLog extends IDeviceLog {
   /** Whether the configuration has been checked. */
   checked: boolean;
 
+  checked_at?: Date;
+
   messages: {
     key: string;
     request: string;

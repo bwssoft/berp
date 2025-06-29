@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import {
-  NB2LORA,
-  NB2LORAParser,
-  NB2LORAEncoder,
+  BwsNb2Lora,
+  BwsNb2LoraParser,
+  BwsNb2LoraEncoder,
 } from "../../@backend/infra/protocol";
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
@@ -75,7 +75,10 @@ const generateMessages = (
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([message, args]) => {
-    const _message = NB2LORAEncoder.encoder({ command: message, args } as any);
+    const _message = BwsNb2LoraEncoder.encoder({
+      command: message,
+      args,
+    } as any);
     if (!_message) return;
     response[message as Namespace.ConfigKeys] = _message;
   });
@@ -120,42 +123,61 @@ export const useNB2Lora = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { command: "RIMEI\r\n", key: "imei", transform: NB2LORAParser.imei },
-        { command: "ICCID\r\n", key: "iccid", transform: NB2LORAParser.iccid },
-        { command: "RINS\r\n", key: "serial", transform: NB2LORAParser.serial },
         {
-          key: "da",
-          command: `LRDA\r\n`,
-          check: "RDA",
-          transform: NB2LORAParser.rda,
+          key: "serial",
+          command: `RINS\r`,
+          transform: BwsNb2LoraParser.serial,
         },
         {
-          key: "de",
-          command: `LRDE\r\n`,
-          check: "RDE",
-          transform: NB2LORAParser.rde,
-        },
-        {
-          command: "RFW\r\n",
+          command: "RFW\r",
           key: "firmware",
-          transform: NB2LORAParser.firmware,
+          transform: BwsNb2LoraParser.firmware,
+        },
+        {
+          key: "timestamp",
+          command: `RTK\r`,
+          transform: BwsNb2LoraParser.timestamp,
+        },
+        {
+          key: "device_address",
+          command: `RDA\r`,
+          transform: BwsNb2LoraParser.device_address,
+        },
+        {
+          key: "device_eui",
+          command: `RDE\r`,
+          transform: BwsNb2LoraParser.device_eui,
+        },
+        {
+          key: "application_eui",
+          command: `RAP\r`,
+          transform: BwsNb2LoraParser.application_eui,
+        },
+        {
+          key: "application_key",
+          command: `RAK\r`,
+          transform: BwsNb2LoraParser.application_key,
+        },
+        {
+          key: "application_session_key",
+          command: `RASK\r`,
+          transform: BwsNb2LoraParser.application_session_key,
+        },
+        {
+          key: "network_session_key",
+          command: `RNK\r`,
+          transform: BwsNb2LoraParser.network_session_key,
         },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            const { firmware, iccid, imei, serial, ...lora_keys } =
+            const { serial, firmware, ...lora_keys } =
               await sendMultipleMessages({
                 transport: port,
                 messages,
               });
-            const response = {
-              firmware,
-              iccid,
-              imei,
-              serial,
-              lora_keys,
-            };
+            const response = { serial, firmware, lora_keys };
             return { port, response };
           } catch (error) {
             console.error("[ERROR] handleDetection", error);
@@ -166,159 +188,233 @@ export const useNB2Lora = () => {
     },
     [sendMultipleMessages]
   );
-  const handleGetProfile = useCallback(
-    async (ports: ISerialPort[]) => {
+  const handleGetConfig = useCallback(
+    async (detected: Namespace.Detected[]) => {
       const messages = [
+        { command: "RODM\r", key: "odometer", delay_before: 1000 },
         {
-          command: "RODM\r\n",
-          key: "odometer",
-          transform: NB2LORAParser.odometer,
+          command: "RCW\r",
+          key: "data_transmission_sleep",
         },
         {
-          command: "RCN\r\n",
-          key: "data_transmission_on",
-          transform: NB2LORAParser.data_transmission_on,
-        },
-        {
-          command: "RCW\r\n",
-          key: "data_transmission_off",
-          transform: NB2LORAParser.data_transmission_off,
-        },
-        {
-          command: "RCE\r\n",
-          key: "data_transmission_event",
-          transform: NB2LORAParser.data_transmission_event,
-        },
-        { command: "RCS\r\n", key: "sleep", transform: NB2LORAParser.sleep },
-        {
-          command: "RCK\r\n",
-          key: "keep_alive",
-          transform: NB2LORAParser.keep_alive,
-        },
-        {
-          command: "RIP1\r\n",
-          key: "ip_primary",
-          transform: NB2LORAParser.ip_primary,
-        },
-        {
-          command: "RIP2\r\n",
-          key: "ip_secondary",
-          transform: NB2LORAParser.ip_secondary,
-        },
-        {
-          command: "RID1\r\n",
-          key: "dns_primary",
-          transform: NB2LORAParser.dns_primary,
-        },
-        {
-          command: "RID2\r\n",
-          key: "dns_secondary",
-          transform: NB2LORAParser.dns_secondary,
-        },
-        { command: "RIAP\r\n", key: "apn", transform: NB2LORAParser.apn },
-        {
-          command: "RIG12\r\n",
+          command: "RIG1\r",
           key: "virtual_ignition_12v",
-          transform: NB2LORAParser.virtual_ignition_12v,
         },
         {
-          command: "RIG24\r\n",
+          command: "RIG2\r",
           key: "virtual_ignition_24v",
-          transform: NB2LORAParser.virtual_ignition_24v,
+        },
+        { command: "RFH\r", key: "heading" },
+        {
+          command: "RFHV\r",
+          key: "heading_event_mode",
         },
         {
-          command: "RFA\r\n",
+          command: "RFA\r",
           key: "heading_detection_angle",
-          transform: NB2LORAParser.heading_detection_angle,
         },
         {
-          command: "RFV\r\n",
+          command: "RFV\r",
           key: "speed_alert_threshold",
-          transform: NB2LORAParser.speed_alert_threshold,
         },
         {
-          command: "RFTON\r\n",
+          command: "RFTON\r",
           key: "accel_threshold_for_ignition_on",
-          transform: NB2LORAParser.accel_threshold_for_ignition_on,
         },
         {
-          command: "RFTOF\r\n",
+          command: "RFTOF\r",
           key: "accel_threshold_for_ignition_off",
-          transform: NB2LORAParser.accel_threshold_for_ignition_off,
         },
         {
-          command: "RFAV\r\n",
+          command: "RFAV\r",
           key: "accel_threshold_for_movement",
-          transform: NB2LORAParser.accel_threshold_for_movement,
         },
         {
-          command: "RFMA\r\n",
+          command: "RFMA\r",
           key: "harsh_acceleration_threshold",
-          transform: NB2LORAParser.harsh_acceleration_threshold,
         },
         {
-          command: "RFMD\r\n",
+          command: "RFMD\r",
           key: "harsh_braking_threshold",
-          transform: NB2LORAParser.harsh_braking_threshold,
         },
         {
-          command: "RIN1\r\n",
-          key: "input_1",
-          transform: NB2LORAParser.input_1,
+          command: "RWTR\r",
+          key: "data_transmission_position",
         },
         {
-          command: "RIN2\r\n",
-          key: "input_2",
-          transform: NB2LORAParser.input_2,
+          command: "RLED\r",
+          key: "led_lighting",
         },
         {
-          command: "RIN3\r\n",
-          key: "input_3",
-          transform: NB2LORAParser.input_3,
+          command: "RLTO\r",
+          key: "p2p_mode_duration",
         },
         {
-          command: "RIN4\r\n",
-          key: "input_4",
-          transform: NB2LORAParser.input_4,
+          command: "RWTO\r",
+          key: "lorawan_mode_duration",
+        },
+        { command: "RIN1\r", key: "input_1" },
+        { command: "RIN2\r", key: "input_2" },
+        { command: "RIN3\r", key: "input_3" },
+        { command: "RIN4\r", key: "input_4" },
+        { command: "RIN5\r", key: "input_5" },
+        { command: "RIN6\r", key: "input_6" },
+        {
+          command: "RC\r",
+          key: "full_configuration_table",
+        },
+        {
+          command: "RFIFO\r",
+          key: "fifo_send_and_hold_times",
+        },
+        {
+          command: "REWTR\r",
+          key: "lorawan_data_transmission_event",
+        },
+        {
+          command: "RELTR\r",
+          key: "p2p_data_transmission_event",
+        },
+        {
+          command: "RTS\r",
+          key: "data_transmission_status",
+        },
+        {
+          command: "RF\r",
+          key: "full_functionality_table",
+        },
+        {
+          command: "RACT\r",
+          key: "activation_type",
+        },
+        {
+          command: "RMC\r",
+          key: "mcu_configuration",
+        },
+        {
+          command: "ROUT\r",
+          key: "output_table",
         },
       ] as const;
+
       return await Promise.all(
-        ports.map(async (port) => {
+        detected.map(async ({ port, equipment }) => {
           try {
-            const {
-              data_transmission_on,
-              data_transmission_off,
-              ip_primary,
-              ip_secondary,
-              apn,
-              keep_alive,
-              dns_primary,
-              dns_secondary,
-              ...specific
-            } = await sendMultipleMessages({
+            const response = await sendMultipleMessages({
               transport: port,
               messages,
             });
             return {
               port,
+              equipment,
               config: {
-                general: {
-                  data_transmission_on,
-                  data_transmission_off,
-                  ip_primary,
-                  ip_secondary,
-                  apn,
-                  keep_alive,
-                  dns_primary,
-                  dns_secondary,
+                general: {},
+                specific: {
+                  odometer: BwsNb2LoraParser.odometer(response.odometer),
+                  data_transmission_sleep:
+                    BwsNb2LoraParser.data_transmission_sleep(
+                      response.data_transmission_sleep
+                    ),
+                  virtual_ignition_12v: BwsNb2LoraParser.virtual_ignition_12v(
+                    response.virtual_ignition_12v
+                  ),
+                  virtual_ignition_24v: BwsNb2LoraParser.virtual_ignition_24v(
+                    response.virtual_ignition_24v
+                  ),
+                  heading: BwsNb2LoraParser.heading(response.heading),
+                  heading_event_mode: BwsNb2LoraParser.heading_event_mode(
+                    response.heading_event_mode
+                  ),
+                  heading_detection_angle:
+                    BwsNb2LoraParser.heading_detection_angle(
+                      response.heading_detection_angle
+                    ),
+                  speed_alert_threshold: BwsNb2LoraParser.speed_alert_threshold(
+                    response.speed_alert_threshold
+                  ),
+                  accel_threshold_for_ignition_on:
+                    BwsNb2LoraParser.accel_threshold_for_ignition_on(
+                      response.accel_threshold_for_ignition_on
+                    ),
+                  accel_threshold_for_ignition_off:
+                    BwsNb2LoraParser.accel_threshold_for_ignition_off(
+                      response.accel_threshold_for_ignition_off
+                    ),
+                  accel_threshold_for_movement:
+                    BwsNb2LoraParser.accel_threshold_for_movement(
+                      response.accel_threshold_for_movement
+                    ),
+                  harsh_acceleration_threshold:
+                    BwsNb2LoraParser.harsh_acceleration_threshold(
+                      response.harsh_acceleration_threshold
+                    ),
+                  harsh_braking_threshold:
+                    BwsNb2LoraParser.harsh_braking_threshold(
+                      response.harsh_braking_threshold
+                    ),
+                  data_transmission_position:
+                    BwsNb2LoraParser.data_transmission_position(
+                      response.data_transmission_position
+                    ),
+                  led_lighting: BwsNb2LoraParser.led_lighting(
+                    response.led_lighting
+                  ),
+                  p2p_mode_duration: BwsNb2LoraParser.p2p_mode_duration(
+                    response.p2p_mode_duration
+                  ),
+                  lorawan_mode_duration: BwsNb2LoraParser.lorawan_mode_duration(
+                    response.lorawan_mode_duration
+                  ),
+                  input_1: BwsNb2LoraParser.input_1(response.input_1),
+                  input_2: BwsNb2LoraParser.input_2(response.input_2),
+                  input_3: BwsNb2LoraParser.input_3(response.input_3),
+                  input_4: BwsNb2LoraParser.input_4(response.input_4),
+                  input_5: BwsNb2LoraParser.input_5(response.input_5),
+                  input_6: BwsNb2LoraParser.input_6(response.input_6),
+                  full_configuration_table:
+                    BwsNb2LoraParser.full_configuration_table(
+                      response.full_configuration_table
+                    ),
+                  fifo_send_and_hold_times:
+                    BwsNb2LoraParser.fifo_send_and_hold_times(
+                      response.fifo_send_and_hold_times
+                    ),
+                  lorawan_data_transmission_event:
+                    BwsNb2LoraParser.lorawan_data_transmission_event(
+                      response.lorawan_data_transmission_event
+                    ),
+                  p2p_data_transmission_event:
+                    BwsNb2LoraParser.p2p_data_transmission_event(
+                      response.p2p_data_transmission_event
+                    ),
+                  data_transmission_status:
+                    BwsNb2LoraParser.data_transmission_status(
+                      response.data_transmission_status
+                    ),
+                  full_functionality_table:
+                    BwsNb2LoraParser.full_functionality_table(
+                      response.full_functionality_table
+                    ),
+                  activation_type: BwsNb2LoraParser.activation_type(
+                    response.activation_type
+                  ),
+                  mcu_configuration: BwsNb2LoraParser.mcu_configuration(
+                    response.mcu_configuration
+                  ),
+                  output_table: BwsNb2LoraParser.output_table(
+                    response.output_table
+                  ),
                 },
-                specific,
               },
-              raw: [],
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
             };
           } catch (error) {
-            console.error("[ERROR] handleGetProfile", error);
-            return { port };
+            console.error("[ERROR] handleGetConfig", error);
+            return { port, equipment, messages: [], config: {} };
           }
         })
       );
@@ -540,7 +636,7 @@ export const useNB2Lora = () => {
             port,
             response: {} as Record<
               string,
-              NB2LORA.AutoTest | string | undefined
+              BwsNb2Lora.AutoTest | string | undefined
             >,
             messages: [
               { key: "start", command: "START\r\n" },
@@ -584,7 +680,7 @@ export const useNB2Lora = () => {
                     {
                       key,
                       command: "AUTOTEST",
-                      transform: NB2LORAParser.auto_test,
+                      transform: BwsNb2LoraParser.auto_test,
                     },
                   ] as const,
                 });
@@ -694,60 +790,60 @@ export const useNB2Lora = () => {
         {
           key: "serial_nb",
           command: `RINS\r\n`,
-          transform: NB2LORAParser.serial,
+          transform: BwsNb2LoraParser.serial,
         },
         {
           key: "imei",
           command: `RIMEI\r\n`,
-          transform: NB2LORAParser.imei,
+          transform: BwsNb2LoraParser.imei,
         },
         {
           key: "serial_lora",
           command: `LRINS\r\n`,
           check: "RINS",
-          transform: NB2LORAParser.serial,
+          transform: BwsNb2LoraParser.serial,
         },
         {
-          key: "tk",
+          key: "timestamp",
           command: `LRTK\r\n`,
           check: "RTK",
-          transform: NB2LORAParser.rtk,
+          transform: BwsNb2LoraParser.timestamp,
         },
         {
-          key: "da",
+          key: "device_address",
           command: `LRDA\r\n`,
           check: "RDA",
-          transform: NB2LORAParser.rda,
+          transform: BwsNb2LoraParser.device_address,
         },
         {
-          key: "de",
+          key: "device_eui",
           command: `LRDE\r\n`,
           check: "RDE",
-          transform: NB2LORAParser.rde,
+          transform: BwsNb2LoraParser.device_eui,
         },
         {
-          key: "ap",
+          key: "application_eui",
           command: `LRAP\r\n`,
           check: "RAP",
-          transform: NB2LORAParser.rap,
+          transform: BwsNb2LoraParser.application_eui,
         },
         {
-          key: "ak",
+          key: "application_key",
           command: `LRAK\r\n`,
           check: "RAK",
-          transform: NB2LORAParser.rak,
+          transform: BwsNb2LoraParser.application_key,
         },
         {
-          key: "ask",
+          key: "application_session_key",
           command: `LRASK\r\n`,
           check: "RASK",
-          transform: NB2LORAParser.rask,
+          transform: BwsNb2LoraParser.application_session_key,
         },
         {
-          key: "nk",
+          key: "network_session_key",
           command: `LRNK\r\n`,
           check: "RNK",
-          transform: NB2LORAParser.rnk,
+          transform: BwsNb2LoraParser.network_session_key,
         },
       ] as const;
 
@@ -769,13 +865,13 @@ export const useNB2Lora = () => {
           !isImei(readResponse.imei) ||
           !readResponse.serial_nb ||
           !readResponse.serial_lora ||
-          !readResponse.tk ||
-          !readResponse.da ||
-          !readResponse.de ||
-          !readResponse.ap ||
-          !readResponse.ak ||
-          !readResponse.ask ||
-          !readResponse.nk
+          !readResponse.timestamp ||
+          !readResponse.device_address ||
+          !readResponse.device_eui ||
+          !readResponse.application_eui ||
+          !readResponse.application_key ||
+          !readResponse.application_session_key ||
+          !readResponse.network_session_key
         ) {
           return { ok: false, port, error: "IMEI ou Serial inválido" };
         }
@@ -783,8 +879,8 @@ export const useNB2Lora = () => {
         const status =
           identification.serial === readResponse.serial_nb &&
           identification.serial === readResponse.serial_lora &&
-          identification.serial === readResponse.da &&
-          timestamp === readResponse.tk &&
+          identification.serial === readResponse.device_address &&
+          timestamp === readResponse.timestamp &&
           identification.imei === readResponse.imei;
 
         return {
@@ -799,13 +895,13 @@ export const useNB2Lora = () => {
             serial: readResponse.serial_nb,
             imei: readResponse.imei,
             lora_keys: {
-              tk: readResponse.tk,
-              da: readResponse.da,
-              de: readResponse.de,
-              ap: readResponse.ap,
-              ak: readResponse.ak,
-              ask: readResponse.ask,
-              nk: readResponse.nk,
+              timestamp: readResponse.timestamp,
+              device_address: readResponse.device_address,
+              device_eui: readResponse.device_eui,
+              application_eui: readResponse.application_eui,
+              application_key: readResponse.application_key,
+              application_session_key: readResponse.application_session_key,
+              network_session_key: readResponse.network_session_key,
             },
           },
         };
@@ -820,12 +916,13 @@ export const useNB2Lora = () => {
     },
     [sendMultipleMessages]
   );
-  const isIdentified = (input: {
+  const isIdentified = (input?: {
     imei?: string;
     iccid?: string;
     serial?: string;
     firmware?: string;
   }): "fully_identified" | "partially_identified" | "not_identified" => {
+    if (!input) return "not_identified";
     const { serial, imei, iccid, firmware } = input;
     const identified = [serial, imei, iccid, firmware];
     if (identified.every((e) => e && e.length > 0)) {
@@ -841,7 +938,7 @@ export const useNB2Lora = () => {
     isIdentified,
     ports,
     handleIdentification,
-    handleGetProfile,
+    handleGetConfig,
     handleConfiguration,
     requestPort,
     handleAutoTest,

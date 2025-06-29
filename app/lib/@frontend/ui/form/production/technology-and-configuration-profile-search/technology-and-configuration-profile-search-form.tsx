@@ -13,8 +13,8 @@ import {
 import { Label } from "../../../component/label";
 
 interface Props {
-  configurationProfile: IConfigurationProfile | null;
-  technology: ITechnology | null;
+  configurationProfile?: IConfigurationProfile | null;
+  technology?: ITechnology | null;
 }
 export function TechnologyAndConfigurationProfileSearchForm(props: Props) {
   const { configurationProfile, technology } = props;

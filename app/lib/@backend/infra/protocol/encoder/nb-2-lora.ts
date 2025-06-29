@@ -25,7 +25,7 @@ type Encoder =
   | { command: "ip_secondary"; args: IP }
   | { command: "dns_primary"; args: DNS };
 
-export class NB2LORAEncoder {
+export class BwsNb2LoraEncoder {
   static serial(input: string): string | undefined {
     if (!input || typeof input !== "string") return undefined;
     return `WINS=${input}\r\n`;
@@ -130,34 +130,35 @@ export class NB2LORAEncoder {
 
   static commands() {
     return {
-      serial: NB2LORAEncoder.serial,
-      imei: NB2LORAEncoder.imei,
-      odometer: NB2LORAEncoder.odometer,
-      data_transmission_on: NB2LORAEncoder.data_transmission_on,
-      data_transmission_off: NB2LORAEncoder.data_transmission_off,
-      data_transmission_event: NB2LORAEncoder.data_transmission_event,
-      sleep: NB2LORAEncoder.sleep,
-      keep_alive: NB2LORAEncoder.keep_alive,
-      ip_primary: NB2LORAEncoder.ip_primary,
-      ip_secondary: NB2LORAEncoder.ip_secondary,
-      dns_primary: NB2LORAEncoder.dns_primary,
-      dns_secondary: NB2LORAEncoder.dns_secondary,
-      apn: NB2LORAEncoder.apn,
-      virtual_ignition_12v: NB2LORAEncoder.virtual_ignition_12v,
-      virtual_ignition_24v: NB2LORAEncoder.virtual_ignition_24v,
-      heading_detection_angle: NB2LORAEncoder.heading_detection_angle,
-      speed_alert_threshold: NB2LORAEncoder.speed_alert_threshold,
+      serial: BwsNb2LoraEncoder.serial,
+      imei: BwsNb2LoraEncoder.imei,
+      odometer: BwsNb2LoraEncoder.odometer,
+      data_transmission_on: BwsNb2LoraEncoder.data_transmission_on,
+      data_transmission_off: BwsNb2LoraEncoder.data_transmission_off,
+      data_transmission_event: BwsNb2LoraEncoder.data_transmission_event,
+      sleep: BwsNb2LoraEncoder.sleep,
+      keep_alive: BwsNb2LoraEncoder.keep_alive,
+      ip_primary: BwsNb2LoraEncoder.ip_primary,
+      ip_secondary: BwsNb2LoraEncoder.ip_secondary,
+      dns_primary: BwsNb2LoraEncoder.dns_primary,
+      dns_secondary: BwsNb2LoraEncoder.dns_secondary,
+      apn: BwsNb2LoraEncoder.apn,
+      virtual_ignition_12v: BwsNb2LoraEncoder.virtual_ignition_12v,
+      virtual_ignition_24v: BwsNb2LoraEncoder.virtual_ignition_24v,
+      heading_detection_angle: BwsNb2LoraEncoder.heading_detection_angle,
+      speed_alert_threshold: BwsNb2LoraEncoder.speed_alert_threshold,
       accel_threshold_for_ignition_on:
-        NB2LORAEncoder.accel_threshold_for_ignition_on,
+        BwsNb2LoraEncoder.accel_threshold_for_ignition_on,
       accel_threshold_for_ignition_off:
-        NB2LORAEncoder.accel_threshold_for_ignition_off,
-      accel_threshold_for_movement: NB2LORAEncoder.accel_threshold_for_movement,
+        BwsNb2LoraEncoder.accel_threshold_for_ignition_off,
+      accel_threshold_for_movement:
+        BwsNb2LoraEncoder.accel_threshold_for_movement,
     };
   }
 
   static encoder(props: Encoder): string | undefined {
     const { command, args } = props;
-    const commands = NB2LORAEncoder.commands();
+    const commands = BwsNb2LoraEncoder.commands();
     return commands[command](args as any);
   }
 }

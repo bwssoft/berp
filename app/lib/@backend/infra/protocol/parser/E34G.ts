@@ -129,8 +129,6 @@ export namespace E34G {
 export class E34GParser {
   static check(input: string): Check | undefined {
     if (typeof input !== "string") return undefined;
-
-    if (typeof input !== "string") return undefined;
     let parsed: Check = {};
     const obj: Record<string, string> = {};
     const regex = /(\w+[:=][^ ]+)/g;
