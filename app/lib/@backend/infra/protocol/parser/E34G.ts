@@ -129,6 +129,8 @@ export namespace E34G {
 export class E34GParser {
   static check(input: string): Check | undefined {
     if (typeof input !== "string") return undefined;
+
+    if (typeof input !== "string") return undefined;
     let parsed: Check = {};
     const obj: Record<string, string> = {};
     const regex = /(\w+[:=][^ ]+)/g;
@@ -272,18 +274,21 @@ export class E34GParser {
   }
 
   static imei(input: string) {
+    if (typeof input !== "string") return undefined;
     if (!input.includes("IMEI=")) return undefined;
     const imei = input.split("IMEI=")?.[1].replace(/\s+/g, "");
     return imei.length ? imei : undefined;
   }
 
   static iccid(input: string) {
+    if (typeof input !== "string") return undefined;
     if (!input.includes("ICCID=")) return undefined;
     const iccid = input.split("ICCID=")?.[1].replace(/\s+/g, "");
     return iccid.length ? iccid : undefined;
   }
 
   static firmware(input: string) {
+    if (typeof input !== "string") return undefined;
     if (!input.includes("BWSiot_E3+4G")) return undefined;
     return input;
   }
@@ -292,6 +297,8 @@ export class E34GParser {
    * @example: www.bws.com,bws,bws
    */
   static apn(input: string): APN | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [address, user, password] = input.split(",");
     if (!address || !user) {
       return undefined;
@@ -307,6 +314,8 @@ export class E34GParser {
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
    */
   static ip_primary(input: string) {
+    if (typeof input !== "string") return undefined;
+
     let result: IP;
     const ips = input
       .replace(/\s+/g, "")
@@ -323,6 +332,8 @@ export class E34GParser {
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
    */
   static ip_secondary(input: string) {
+    if (typeof input !== "string") return undefined;
+
     let result: IP;
     const ips = input
       .replace(/\s+/g, "")
@@ -339,6 +350,8 @@ export class E34GParser {
    * @example: DNS=dns.com:2000
    */
   static dns(input: string): DNS | undefined {
+    if (typeof input !== "string") return undefined;
+
     let result: DNS = {} as DNS;
     const regex = input
       .replace(/\s+/g, "")
@@ -359,6 +372,8 @@ export class E34GParser {
    * @example E0 ou W3
    */
   static timezone(input: string): Timezone | undefined {
+    if (typeof input !== "string") return undefined;
+
     const east = input.includes("E");
     if (east) {
       const value = input.split("E")?.[1];
@@ -378,6 +393,8 @@ export class E34GParser {
    * tipo do bloqueio
    */
   static lock_type(input: string): Locktype | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (["1", "2", "3"].every((el) => el !== input)) return undefined;
     return Number(input);
   }
@@ -386,6 +403,8 @@ export class E34GParser {
    *@example 30, 180
    */
   static data_transmission_on(input: string): DataTransmission | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [on, _] = input.split(",");
     if (!on) return undefined;
     if (Number.isNaN(on)) return undefined;
@@ -396,6 +415,8 @@ export class E34GParser {
    *@example 30, 180
    */
   static data_transmission_off(input: string): DataTransmission | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [_, off] = input.split(",");
     if (!off) return undefined;
     if (Number.isNaN(off)) return undefined;
@@ -406,6 +427,8 @@ export class E34GParser {
    *@example 4500
    */
   static odometer(input: string): Odometer | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -414,6 +437,8 @@ export class E34GParser {
    *@example 30
    */
   static keep_alive(input: string): KeepAlive | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -424,6 +449,8 @@ export class E34GParser {
   static accelerometer_sensitivity(
     input: string
   ): AccelerometerSensitivity | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -432,6 +459,8 @@ export class E34GParser {
    *@example 30
    */
   static economy_mode(input: string): EconomyMode | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -440,6 +469,8 @@ export class E34GParser {
    * @example 30
    */
   static lbs_position(input: string): LBSPosition | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "ON" && input !== "OFF")) return undefined;
     return input === "ON" ? true : false;
   }
@@ -447,16 +478,22 @@ export class E34GParser {
   static cornering_position_update(
     input: string
   ): CorneringPositionUpdate | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static led(input: string): Led | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static virtual_ignition(input: string): VirtualIgnition | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
@@ -464,6 +501,8 @@ export class E34GParser {
   static virtual_ignition_by_voltage(
     input: string
   ): VirtualIgnitionByVoltage | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "OFF" && input !== "ON")) return undefined;
     return input === "ON" ? true : false;
   }
@@ -471,11 +510,15 @@ export class E34GParser {
   static sensitivity_adjustment(
     input: string
   ): SensitivityAdjustment | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
 
   static auto_test(input: string): E34G.AutoTest | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input.startsWith("SN:")) return undefined;
     const splited = input.split(",");
     return splited.reduce((acc, cur) => {
@@ -489,6 +532,8 @@ export class E34GParser {
    * @example 30
    */
   static max_speed(input: string): MaxSpeed | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -496,35 +541,49 @@ export class E34GParser {
   static virtual_ignition_by_movement(
     input: string
   ): VirtualIgnitionByMovement | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static communication_type(input: string): CommunicationType | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "TCP" && input !== "UDP")) return undefined;
     return input;
   }
 
   static protocol_type(input: string): ProtocolType | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "E3+" && input !== "GT06")) return undefined;
     return input;
   }
 
   static anti_theft(input: string): AntiTheft | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "OFF" && input !== "ON")) return undefined;
     return input === "ON" ? true : false;
   }
 
   static jammer_detection(input: string): JammerDetection | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "0,0" && input !== "1,0")) return undefined;
     return input === "1,0" ? true : false;
   }
 
   static angle_adjustment(input: string): AngleAdjustment | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
   static lock_type_progression(input: string): LockTypeProgression | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [n1, n2] = input.split(",");
     if (!n1 || !n2) return undefined;
     if (Number.isNaN(n1) || Number.isNaN(n2)) return undefined;
@@ -534,6 +593,8 @@ export class E34GParser {
     };
   }
   static ignition_by_voltage(input: string): IgnitionByVoltage | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [initial, final] = input.split(",");
     if (!initial || !final) return undefined;
     if (Number.isNaN(initial) || Number.isNaN(final)) return undefined;
@@ -544,16 +605,22 @@ export class E34GParser {
   }
 
   static input_1(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
 
   static input_2(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
 
   static horimeter(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -562,6 +629,8 @@ export class E34GParser {
    * @example 30
    */
   static ack(input: string): MaxSpeed | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }

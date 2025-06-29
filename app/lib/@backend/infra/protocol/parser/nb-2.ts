@@ -31,6 +31,7 @@ export class BwsNb2Parser {
    * @returns O valor do serial ou undefined se o formato não for válido.
    */
   static serial(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RINS=");
 
     if (parts.length < 2) return undefined;
@@ -49,6 +50,7 @@ export class BwsNb2Parser {
    * @returns O valor do imei ou undefined se o formato não for válido.
    */
   static imei(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RIMEI=");
 
     if (parts.length < 2) return undefined;
@@ -67,6 +69,7 @@ export class BwsNb2Parser {
    * @returns O valor do iccid ou undefined se o formato não for válido.
    */
   static iccid(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("ICCID=");
 
     if (parts.length < 2) return undefined;
@@ -85,6 +88,7 @@ export class BwsNb2Parser {
    * @returns O valor do firmware ou undefined se o formato não for válido.
    */
   static firmware(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RFW=");
 
     if (parts.length < 2) return undefined;
@@ -103,6 +107,7 @@ export class BwsNb2Parser {
    * @returns O objeto do resultado do auto test ou undefined se o formato não for válido.
    */
   static auto_test(input: string): BwsNb2.AutoTest | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("AUTOTEST=");
     if (parts.length < 2) return undefined;
     const splited = parts[1].split(",");
@@ -120,6 +125,7 @@ export class BwsNb2Parser {
    * @returns O valor numérico do tempo de transmissão de ignição ligada ou undefined se o formato não for válido.
    */
   static data_transmission_on(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCN=");
     if (parts.length < 2) return undefined;
 
@@ -137,6 +143,7 @@ export class BwsNb2Parser {
    * @returns O valor numérico do tempo de transmissão de ignição desligada ou undefined se o formato não for válido.
    */
   static data_transmission_off(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCW=");
     if (parts.length < 2) return undefined;
 
@@ -154,6 +161,7 @@ export class BwsNb2Parser {
    * @returns O valor numérico do tempo de transmissão em evento ou undefined se o formato não for válido.
    */
   static data_transmission_event(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCE=");
 
     if (parts.length < 2) return undefined;
@@ -172,6 +180,7 @@ export class BwsNb2Parser {
    * @returns O valor numérico do tempo de keep alive ou undefined se o formato não for válido.
    */
   static keep_alive(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCK=");
 
     if (parts.length < 2) return undefined;
@@ -190,6 +199,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico do ip primário ou undefined se o formato não for válido.
    */
   static ip_primary(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIP1=");
     if (parts.length < 2) return undefined;
     const [ip, port] = parts[1].split(":");
@@ -206,6 +217,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico do ip secundário ou undefined se o formato não for válido.
    */
   static ip_secondary(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIP2=");
     if (parts.length < 2) return undefined;
     const [ip, port] = parts[1].split(":");
@@ -222,6 +235,7 @@ export class BwsNb2Parser {
    * @returns O valor numérico do dns primário ou undefined se o formato não for válido.
    */
   static dns_primary(input: string) {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RID1=");
     if (parts.length < 2) return undefined;
     const [address, port] = parts[1].split(":");
@@ -238,6 +252,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico do dns secundário ou undefined se o formato não for válido.
    */
   static dns_secondary(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RID2=");
     if (parts.length < 2) return undefined;
     const [address, port] = parts[1].split(":");
@@ -254,6 +270,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico da apn ou undefined se o formato não for válido.
    */
   static apn(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIAP=");
     if (parts.length < 2) return undefined;
     const [address, user, password] = parts[1].split(",");
@@ -272,6 +290,7 @@ export class BwsNb2Parser {
    * @returns O valor numérico do tempo para inicar o sleep ou undefined se o formato não for válido.
    */
   static time_to_sleep(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RCS=");
 
     if (parts.length < 2) return undefined;
@@ -290,6 +309,7 @@ export class BwsNb2Parser {
    * @returns O valor numérico do odômetro ou undefined se o formato não for válido.
    */
   static odometer(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RODM=");
     if (parts.length < 2) return undefined;
 
@@ -307,6 +327,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico da tensão 12V ou undefined se o formato não for válido.
    */
   static virtual_ignition_12v(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIG12=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -324,6 +346,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico da tensão 24V ou undefined se o formato não for válido.
    */
   static virtual_ignition_24v(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIG24=");
     if (parts.length < 2) return undefined;
     const [initial, final] = parts[1].split(",");
@@ -340,6 +364,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico do ângulo ou undefined se o formato não for válido.
    */
   static heading_detection_angle(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFA=");
 
     if (parts.length < 2) return undefined;
@@ -358,6 +384,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico da velocidade ou undefined se o formato não for válido.
    */
   static speed_alert_threshold(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFV=");
 
     if (parts.length < 2) return undefined;
@@ -376,6 +404,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico da sensibilidade do acelerometro quando ligado ou undefined se o formato não for válido.
    */
   static accel_threshold_for_ignition_on(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFTON=");
 
     if (parts.length < 2) return undefined;
@@ -394,6 +424,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico da sensibilidade do acelerometro quando desligado ou undefined se o formato não for válido.
    */
   static accel_threshold_for_ignition_off(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFTOF=");
 
     if (parts.length < 2) return undefined;
@@ -412,6 +444,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico da sensibilidade do acelerometro quando violado ou undefined se o formato não for válido.
    */
   static accel_threshold_for_movement(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFAV=");
 
     if (parts.length < 2) return undefined;
@@ -430,6 +464,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico da aceleração máxima ou undefined se o formato não for válido.
    */
   static harsh_acceleration_threshold(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFMA=");
 
     if (parts.length < 2) return undefined;
@@ -448,6 +484,8 @@ export class BwsNb2Parser {
    * @returns O valor numérico da desaceleração máxima ou undefined se o formato não for válido.
    */
   static harsh_braking_threshold(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFMD=");
 
     if (parts.length < 2) return undefined;
@@ -460,6 +498,8 @@ export class BwsNb2Parser {
   }
 
   static input_1(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN1=");
 
     if (parts.length < 2) return undefined;
@@ -472,6 +512,8 @@ export class BwsNb2Parser {
   }
 
   static input_2(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN2=");
 
     if (parts.length < 2) return undefined;
@@ -484,6 +526,8 @@ export class BwsNb2Parser {
   }
 
   static input_3(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN3=");
 
     if (parts.length < 2) return undefined;
@@ -496,6 +540,8 @@ export class BwsNb2Parser {
   }
 
   static input_4(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RIN4=");
 
     if (parts.length < 2) return undefined;
@@ -508,6 +554,7 @@ export class BwsNb2Parser {
   }
 
   static full_configuration_table(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RC=");
 
     if (parts.length < 2) return undefined;
@@ -520,6 +567,7 @@ export class BwsNb2Parser {
   }
 
   static full_functionality_table(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
     const parts = input.split("RF=");
 
     if (parts.length < 2) return undefined;
@@ -532,6 +580,8 @@ export class BwsNb2Parser {
   }
 
   static sleep_mode(input: string) {
+    if (typeof input !== "string") return undefined;
+
     const parts = input.split("RFSM=");
 
     if (parts.length < 2) return undefined;

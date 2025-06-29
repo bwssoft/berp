@@ -82,6 +82,8 @@ interface Status {
 export class E3Parser {
   static check(input: string): Check | undefined {
     if (typeof input !== "string") return undefined;
+
+    if (typeof input !== "string") return undefined;
     let parsed: Check = {};
     const obj: Record<string, string> = {};
     const regex = /(\w+[:=][^ ]+)/g;
@@ -171,6 +173,7 @@ export class E3Parser {
   }
 
   static status(input: string) {
+    if (typeof input !== "string") return undefined;
     const obj: Status = {};
     const keyValuePairs = input.split(";");
 
@@ -191,16 +194,22 @@ export class E3Parser {
   }
 
   static imei(input: string) {
+    if (typeof input !== "string") return undefined;
+
     if (!input.includes("IMEI=")) return undefined;
     return input.split("IMEI=")?.[1].trim() ?? undefined;
   }
 
   static iccid(input: string) {
+    if (typeof input !== "string") return undefined;
+
     if (!input.includes("ICCID=")) return undefined;
     return input.split("ICCID=")?.[1].trim() ?? undefined;
   }
 
   static firmware(input: string) {
+    if (typeof input !== "string") return undefined;
+
     if (!input.includes("<VER:")) return undefined;
     return input;
   }
@@ -209,6 +218,7 @@ export class E3Parser {
    * @example: www.bws.com,bws,bws
    */
   static apn(input: string): APN | undefined {
+    if (typeof input !== "string") return undefined;
     const [address, user, password] = input.split(",");
     if (!address || !user) {
       return undefined;
@@ -224,6 +234,7 @@ export class E3Parser {
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
    */
   static ip_primary(input: string) {
+    if (typeof input !== "string") return undefined;
     let result: IP;
     const ips = input.replace(/IP1=|IP2=/g, "").split(" ");
     const raw = ips?.[0];
@@ -237,6 +248,7 @@ export class E3Parser {
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
    */
   static ip_secondary(input: string) {
+    if (typeof input !== "string") return undefined;
     let result: IP;
     const ips = input.replace(/IP1=|IP2=/g, "").split(" ");
     const raw = ips?.[1];
@@ -250,6 +262,7 @@ export class E3Parser {
    * @example: DNS=dns.com:2000
    */
   static dns(input: string): DNS | undefined {
+    if (typeof input !== "string") return undefined;
     let result: DNS = {} as DNS;
     const dns = input.replace(/DNS=/g, "").split(":");
     const address = dns?.[0];
@@ -268,6 +281,8 @@ export class E3Parser {
    * @example E0 ou W3
    */
   static timezone(input: string): Timezone | undefined {
+    if (typeof input !== "string") return undefined;
+
     const east = input.includes("E");
     if (east) {
       const value = input.split("E")?.[1];
@@ -287,6 +302,8 @@ export class E3Parser {
    * tipo do bloqueio
    */
   static lock_type(input: string): Locktype | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (["1", "2", "3"].every((el) => el !== input)) return undefined;
     return Number(input);
   }
@@ -295,6 +312,8 @@ export class E3Parser {
    *@example 30, 180
    */
   static data_transmission_on(input: string): DataTransmission | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [on, _] = input.split(",");
     if (!on) return undefined;
     if (Number.isNaN(on)) return undefined;
@@ -305,6 +324,8 @@ export class E3Parser {
    *@example 30, 180
    */
   static data_transmission_off(input: string): DataTransmission | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [_, off] = input.split(",");
     if (!off) return undefined;
     if (Number.isNaN(off)) return undefined;
@@ -315,6 +336,8 @@ export class E3Parser {
    *@example 4500
    */
   static odometer(input: string): Odometer | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -323,6 +346,8 @@ export class E3Parser {
    *@example 30
    */
   static keep_alive(input: string): KeepAlive | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -333,6 +358,8 @@ export class E3Parser {
   static accelerometer_sensitivity(
     input: string
   ): AccelerometerSensitivity | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -341,6 +368,8 @@ export class E3Parser {
    *@example 30
    */
   static economy_mode(input: string): EconomyMode | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -349,6 +378,8 @@ export class E3Parser {
    * @example 30
    */
   static lbs_position(input: string): LBSPosition | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
@@ -356,6 +387,8 @@ export class E3Parser {
   static cornering_position_update(
     input: string
   ): CorneringPositionUpdate | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
@@ -363,26 +396,36 @@ export class E3Parser {
   static ignition_alert_power_cut(
     input: string
   ): IgnitionAlertPowerCut | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static gprs_failure_alert(input: string): GprsFailureAlert | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static led(input: string): Led | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static virtual_ignition(input: string): VirtualIgnition | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static work_mode(input: string): WorkMode | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || !["SLAVE", "MASTER", "NEGATIVE"].includes(input)) {
       return undefined;
     }
@@ -390,6 +433,8 @@ export class E3Parser {
   }
 
   static operation_mode(input: string): OperationMode | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
@@ -397,6 +442,8 @@ export class E3Parser {
   static sensitivity_adjustment(
     input: string
   ): SensitivityAdjustment | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input.includes("GS:")) return undefined;
     let gs = input.split("GS:")?.[1];
     gs = gs.split(",")?.[0];
@@ -408,6 +455,8 @@ export class E3Parser {
    * @example 30
    */
   static max_speed(input: string): MaxSpeed | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -416,6 +465,8 @@ export class E3Parser {
    * @example 0,0
    */
   static sleep(input: string): Sleep | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [sleep, _] = input.split(",");
     if (!sleep || Number.isNaN(sleep)) return undefined;
     return Number(sleep);

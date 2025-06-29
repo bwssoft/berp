@@ -93,18 +93,22 @@ export const useLora = () => {
       });
     },
     closeTransport: closePort,
-    sendMessage: async (port, msg: Message<any, { check?: string }>) => {
+    sendMessage: async (port, msg: Message<any, { delay_before?: number }>) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      const { command, timeout, check } = msg;
+      const { command, timeout, delay_before } = msg;
+      if (delay_before) await sleep(delay_before);
+      console.log("-------------------------");
+      console.log("command", command);
       await writeToPort(port, command);
-      const response = await readResponse(reader, check ?? command, timeout);
+      const response = await readResponse(reader, command, timeout);
+      console.log("response", response);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
     options: {
-      delayBetweenMessages: 100,
+      delayBetweenMessages: 200,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -368,7 +372,6 @@ export const useLora = () => {
           command: "RCW\r",
           key: "read_data_transmission_sleep",
         },
-
         {
           command: "RIG1\r",
           key: "read_virtual_ignition_12v",
@@ -377,7 +380,6 @@ export const useLora = () => {
           command: "RIG2\r",
           key: "read_virtual_ignition_24v",
         },
-
         { command: "RFH\r", key: "read_heading" },
         {
           command: "RFHV\r",
@@ -387,7 +389,6 @@ export const useLora = () => {
           command: "RFA\r",
           key: "read_heading_detection_angle",
         },
-
         {
           command: "RFV\r",
           key: "read_speed_alert_threshold",
@@ -412,7 +413,6 @@ export const useLora = () => {
           command: "RFMD\r",
           key: "read_harsh_braking_threshold",
         },
-
         {
           command: "RWTR\r",
           key: "read_data_transmission_position",
@@ -421,23 +421,20 @@ export const useLora = () => {
           command: "RLED\r",
           key: "read_led_lighting",
         },
-
         {
           command: "RLTO\r",
           key: "read_p2p_mode_duration",
         },
         {
-          command: "WWTO\r",
+          command: "RWTO\r",
           key: "read_lorawan_mode_duration",
         },
-
         { command: "RIN1\r", key: "read_input_1" },
         { command: "RIN2\r", key: "read_input_2" },
         { command: "RIN3\r", key: "read_input_3" },
         { command: "RIN4\r", key: "read_input_4" },
         { command: "RIN5\r", key: "read_input_5" },
         { command: "RIN6\r", key: "read_input_6" },
-
         {
           command: "RC\r",
           key: "read_full_configuration_table",
@@ -446,7 +443,6 @@ export const useLora = () => {
           command: "RFIFO\r",
           key: "read_fifo_send_and_hold_times",
         },
-
         {
           command: "REWTR\r",
           key: "read_lorawan_data_transmission_event",
@@ -455,7 +451,6 @@ export const useLora = () => {
           command: "RELTR\r",
           key: "read_p2p_data_transmission_event",
         },
-
         {
           command: "RTS\r",
           key: "read_data_transmission_status",
@@ -464,7 +459,6 @@ export const useLora = () => {
           command: "RF\r",
           key: "read_full_functionality_table",
         },
-
         {
           command: "RACT\r",
           key: "read_activation_type",
@@ -473,7 +467,6 @@ export const useLora = () => {
           command: "RMC\r",
           key: "read_mcu_configuration",
         },
-
         {
           command: "ROUT\r",
           key: "read_output_table",
@@ -775,12 +768,10 @@ export const useLora = () => {
         {
           key: "serial",
           command: `WINS=${serial}\r`,
-          check: "WINS",
         },
         {
           key: "timestamp",
           command: `WTK=${timestamp}\r`,
-          check: "WTK",
         },
       ] as const;
 

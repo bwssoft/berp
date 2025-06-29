@@ -166,7 +166,9 @@ export const useE3Plus4G = () => {
             const ip_primary = E34GParser.ip_primary(cxip);
             const ip_secondary = E34GParser.ip_secondary(cxip);
             const dns_primary = E34GParser.dns(cxip);
-            const horimeter = E34GParser.horimeter(processed_status.HR);
+            const horimeter = processed_status?.HR
+              ? E34GParser.horimeter(processed_status.HR)
+              : undefined;
             return {
               port,
               config: {
@@ -239,7 +241,9 @@ export const useE3Plus4G = () => {
               const ip_primary = E34GParser.ip_primary(cxip);
               const ip_secondary = E34GParser.ip_secondary(cxip);
               const dns_primary = E34GParser.dns(cxip);
-              const horimeter = E34GParser.horimeter(processed_status.HR);
+              const horimeter = processed_status?.HR
+                ? E34GParser.horimeter(processed_status.HR)
+                : undefined;
               applied_profile = {
                 general: {
                   data_transmission_on,

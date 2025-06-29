@@ -102,7 +102,7 @@ interface Status {
   [key: string]: string;
 }
 
-export namespace BWS4G {
+export namespace Bws4G {
   export interface AutoTest {
     ACELC: string;
     ACELP: string;
@@ -126,8 +126,10 @@ export namespace BWS4G {
   }
 }
 
-export class BWS4GParser {
+export class Bws4GParser {
   static check(input: string): Check | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (typeof input !== "string") return undefined;
     let parsed: Check = {};
     const obj: Record<string, string> = {};
@@ -155,96 +157,96 @@ export class BWS4GParser {
       Object.entries(obj).forEach((entrie) => {
         const [key, value] = entrie;
         if (key === "APN") {
-          parsed["apn"] = BWS4GParser.apn(value);
+          parsed["apn"] = Bws4GParser.apn(value);
         }
         if (key === "TZ") {
-          parsed["timezone"] = BWS4GParser.timezone(value);
+          parsed["timezone"] = Bws4GParser.timezone(value);
         }
         if (key === "OUT_MODE") {
-          parsed["lock_type"] = BWS4GParser.lock_type(value);
+          parsed["lock_type"] = Bws4GParser.lock_type(value);
         }
         if (key === "HB") {
           parsed["data_transmission_on"] =
-            BWS4GParser.data_transmission_on(value);
+            Bws4GParser.data_transmission_on(value);
           parsed["data_transmission_off"] =
-            BWS4GParser.data_transmission_off(value);
+            Bws4GParser.data_transmission_off(value);
         }
         if (key === "DK") {
-          parsed["odometer"] = BWS4GParser.odometer(value);
+          parsed["odometer"] = Bws4GParser.odometer(value);
         }
         if (key === "TX") {
-          parsed["keep_alive"] = BWS4GParser.keep_alive(value);
+          parsed["keep_alive"] = Bws4GParser.keep_alive(value);
         }
         if (key === "ZD") {
           parsed["accelerometer_sensitivity"] =
-            BWS4GParser.accelerometer_sensitivity(value);
+            Bws4GParser.accelerometer_sensitivity(value);
         }
         if (key === "SDMS") {
-          parsed["economy_mode"] = BWS4GParser.economy_mode(value);
+          parsed["economy_mode"] = Bws4GParser.economy_mode(value);
         }
         if (key === "LBS") {
-          parsed["lbs_position"] = BWS4GParser.lbs_position(value);
+          parsed["lbs_position"] = Bws4GParser.lbs_position(value);
         }
         if (key === "TUR") {
           parsed["cornering_position_update"] =
-            BWS4GParser.cornering_position_update(value);
+            Bws4GParser.cornering_position_update(value);
         }
         if (key === "LED") {
-          parsed["led"] = BWS4GParser.led(value);
+          parsed["led"] = Bws4GParser.led(value);
         }
         if (key === "IV") {
-          parsed["virtual_ignition"] = BWS4GParser.virtual_ignition(value);
+          parsed["virtual_ignition"] = Bws4GParser.virtual_ignition(value);
         }
         if (key === "OD") {
-          parsed["max_speed"] = BWS4GParser.max_speed(value);
+          parsed["max_speed"] = Bws4GParser.max_speed(value);
         }
 
         if (key === "ACCEL") {
           parsed["virtual_ignition_by_movement"] =
-            BWS4GParser.virtual_ignition_by_movement(value);
+            Bws4GParser.virtual_ignition_by_movement(value);
         }
 
         if (key === "PROT_COM") {
-          parsed["communication_type"] = BWS4GParser.communication_type(value);
+          parsed["communication_type"] = Bws4GParser.communication_type(value);
         }
 
         if (key === "PROT") {
-          parsed["protocol_type"] = BWS4GParser.protocol_type(value);
+          parsed["protocol_type"] = Bws4GParser.protocol_type(value);
         }
 
         if (key === "AF") {
-          parsed["anti_theft"] = BWS4GParser.anti_theft(value);
+          parsed["anti_theft"] = Bws4GParser.anti_theft(value);
         }
         if (key === "JD") {
-          parsed["jammer_detection"] = BWS4GParser.jammer_detection(value);
+          parsed["jammer_detection"] = Bws4GParser.jammer_detection(value);
         }
         if (key === "TDET") {
-          parsed["angle_adjustment"] = BWS4GParser.angle_adjustment(value);
+          parsed["angle_adjustment"] = Bws4GParser.angle_adjustment(value);
         }
         if (key === "DC") {
           parsed["lock_type_progression"] =
-            BWS4GParser.lock_type_progression(value);
+            Bws4GParser.lock_type_progression(value);
         }
         if (key === "Voltage") {
           parsed["ignition_by_voltage"] =
-            BWS4GParser.ignition_by_voltage(value);
+            Bws4GParser.ignition_by_voltage(value);
         }
         if (key === "VOLTAGE") {
           parsed["virtual_ignition_by_voltage"] =
-            BWS4GParser.virtual_ignition_by_voltage(value);
+            Bws4GParser.virtual_ignition_by_voltage(value);
         }
         if (key === "IN1_MODE") {
-          parsed["input_1"] = BWS4GParser.input_1(value);
+          parsed["input_1"] = Bws4GParser.input_1(value);
         }
         if (key === "IN2_MODE") {
-          parsed["input_2"] = BWS4GParser.input_2(value);
+          parsed["input_2"] = Bws4GParser.input_2(value);
         }
         if (key === "GS") {
           parsed["sensitivity_adjustment"] =
-            BWS4GParser.sensitivity_adjustment(value);
+            Bws4GParser.sensitivity_adjustment(value);
         }
         if (key === "ACK") {
-          parsed["ack"] = BWS4GParser.ack(value);
+          parsed["ack"] = Bws4GParser.ack(value);
         }
       });
     }
@@ -252,6 +254,7 @@ export class BWS4GParser {
   }
 
   static status(input: string) {
+    if (typeof input !== "string") return undefined;
     const obj: Status = {};
     const keyValuePairs = input.split(";");
 
@@ -272,18 +275,21 @@ export class BWS4GParser {
   }
 
   static imei(input: string) {
+    if (typeof input !== "string") return undefined;
     if (!input.includes("IMEI=")) return undefined;
     const imei = input.split("IMEI=")?.[1].replace(/\s+/g, "");
     return imei.length ? imei : undefined;
   }
 
   static iccid(input: string) {
+    if (typeof input !== "string") return undefined;
     if (!input.includes("ICCID=")) return undefined;
     const iccid = input.split("ICCID=")?.[1].replace(/\s+/g, "");
     return iccid.length ? iccid : undefined;
   }
 
   static firmware(input: string) {
+    if (typeof input !== "string") return undefined;
     if (!input.includes("BWSiot_E3+4G")) return undefined;
     return input;
   }
@@ -292,6 +298,8 @@ export class BWS4GParser {
    * @example: www.bws.com,bws,bws
    */
   static apn(input: string): APN | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [address, user, password] = input.split(",");
     if (!address || !user) {
       return undefined;
@@ -307,6 +315,8 @@ export class BWS4GParser {
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
    */
   static ip_primary(input: string) {
+    if (typeof input !== "string") return undefined;
+
     let result: IP;
     const ips = input
       .replace(/\s+/g, "")
@@ -323,6 +333,8 @@ export class BWS4GParser {
    * @example: IP1=161.35.12.221:5454 IP2=161.35.12.221:5454
    */
   static ip_secondary(input: string) {
+    if (typeof input !== "string") return undefined;
+
     let result: IP;
     const ips = input
       .replace(/\s+/g, "")
@@ -339,6 +351,8 @@ export class BWS4GParser {
    * @example: DNS=dns.com:2000
    */
   static dns(input: string): DNS | undefined {
+    if (typeof input !== "string") return undefined;
+
     let result: DNS = {} as DNS;
     const regex = input
       .replace(/\s+/g, "")
@@ -359,6 +373,8 @@ export class BWS4GParser {
    * @example E0 ou W3
    */
   static timezone(input: string): Timezone | undefined {
+    if (typeof input !== "string") return undefined;
+
     const east = input.includes("E");
     if (east) {
       const value = input.split("E")?.[1];
@@ -378,6 +394,8 @@ export class BWS4GParser {
    * tipo do bloqueio
    */
   static lock_type(input: string): Locktype | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (["1", "2", "3"].every((el) => el !== input)) return undefined;
     return Number(input);
   }
@@ -386,6 +404,8 @@ export class BWS4GParser {
    *@example 30, 180
    */
   static data_transmission_on(input: string): DataTransmission | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [on, _] = input.split(",");
     if (!on) return undefined;
     if (Number.isNaN(on)) return undefined;
@@ -396,6 +416,8 @@ export class BWS4GParser {
    *@example 30, 180
    */
   static data_transmission_off(input: string): DataTransmission | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [_, off] = input.split(",");
     if (!off) return undefined;
     if (Number.isNaN(off)) return undefined;
@@ -406,6 +428,8 @@ export class BWS4GParser {
    *@example 4500
    */
   static odometer(input: string): Odometer | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -414,6 +438,8 @@ export class BWS4GParser {
    *@example 30
    */
   static keep_alive(input: string): KeepAlive | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -424,6 +450,8 @@ export class BWS4GParser {
   static accelerometer_sensitivity(
     input: string
   ): AccelerometerSensitivity | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -432,6 +460,8 @@ export class BWS4GParser {
    *@example 30
    */
   static economy_mode(input: string): EconomyMode | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -440,6 +470,8 @@ export class BWS4GParser {
    * @example 30
    */
   static lbs_position(input: string): LBSPosition | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "ON" && input !== "OFF")) return undefined;
     return input === "ON" ? true : false;
   }
@@ -447,16 +479,22 @@ export class BWS4GParser {
   static cornering_position_update(
     input: string
   ): CorneringPositionUpdate | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static led(input: string): Led | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static virtual_ignition(input: string): VirtualIgnition | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
@@ -464,6 +502,8 @@ export class BWS4GParser {
   static virtual_ignition_by_voltage(
     input: string
   ): VirtualIgnitionByVoltage | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "OFF" && input !== "ON")) return undefined;
     return input === "ON" ? true : false;
   }
@@ -471,24 +511,30 @@ export class BWS4GParser {
   static sensitivity_adjustment(
     input: string
   ): SensitivityAdjustment | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
 
-  static auto_test(input: string): BWS4G.AutoTest | undefined {
+  static auto_test(input: string): Bws4G.AutoTest | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input.startsWith("SN:")) return undefined;
     const splited = input.split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
-      acc[key as keyof BWS4G.AutoTest] = value;
+      acc[key as keyof Bws4G.AutoTest] = value;
       return acc;
-    }, {} as BWS4G.AutoTest);
+    }, {} as Bws4G.AutoTest);
   }
 
   /*
    * @example 30
    */
   static max_speed(input: string): MaxSpeed | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -496,35 +542,49 @@ export class BWS4GParser {
   static virtual_ignition_by_movement(
     input: string
   ): VirtualIgnitionByMovement | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
   }
 
   static communication_type(input: string): CommunicationType | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "TCP" && input !== "UDP")) return undefined;
     return input;
   }
 
   static protocol_type(input: string): ProtocolType | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "E3+" && input !== "GT06")) return undefined;
     return input;
   }
 
   static anti_theft(input: string): AntiTheft | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "OFF" && input !== "ON")) return undefined;
     return input === "ON" ? true : false;
   }
 
   static jammer_detection(input: string): JammerDetection | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || (input !== "0,0" && input !== "1,0")) return undefined;
     return input === "1,0" ? true : false;
   }
 
   static angle_adjustment(input: string): AngleAdjustment | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
   static lock_type_progression(input: string): LockTypeProgression | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [n1, n2] = input.split(",");
     if (!n1 || !n2) return undefined;
     if (Number.isNaN(n1) || Number.isNaN(n2)) return undefined;
@@ -534,6 +594,8 @@ export class BWS4GParser {
     };
   }
   static ignition_by_voltage(input: string): IgnitionByVoltage | undefined {
+    if (typeof input !== "string") return undefined;
+
     const [initial, final] = input.split(",");
     if (!initial || !final) return undefined;
     if (Number.isNaN(initial) || Number.isNaN(final)) return undefined;
@@ -544,16 +606,22 @@ export class BWS4GParser {
   }
 
   static input_1(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
 
   static input_2(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
 
   static horimeter(input: string): number | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
@@ -562,6 +630,8 @@ export class BWS4GParser {
    * @example 30
    */
   static ack(input: string): MaxSpeed | undefined {
+    if (typeof input !== "string") return undefined;
+
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
