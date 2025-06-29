@@ -1,1 +1,0 @@
-export * from './product-transaction.create.form'

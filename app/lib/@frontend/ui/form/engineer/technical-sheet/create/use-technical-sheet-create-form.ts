@@ -1,5 +1,5 @@
 import { createOneTechnicalSheet } from "@/app/lib/@backend/action";
-import { IInput } from "@/app/lib/@backend/domain";
+import { IComponent } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +20,7 @@ const schema = z.object({
 export type Schema = z.infer<typeof schema>;
 
 type UseTechnicalSheetCreateFormParams = {
-  inputs: IInput[];
+  inputs: IComponent[];
 };
 
 export function useTechnicalSheetCreateForm({

@@ -7,7 +7,6 @@ import {
   createOneTechnicalSheetUsecase,
   deleteOneTechnicalSheetUsecase,
   findAllTechnicalSheetUsecase,
-  findManyTechnicalSheetWithInputsUsecase,
   findOneTechnicalSheetUsecase,
   updateOneTechnicalSheetUsecase,
 } from "@/app/lib/@backend/usecase";
@@ -43,10 +42,4 @@ export async function findAllTechnicalSheet(
   params: Filter<ITechnicalSheet>
 ): Promise<ITechnicalSheet[]> {
   return await findAllTechnicalSheetUsecase.execute(params);
-}
-
-export async function findManyTechnicalSheetWithInputs(
-  params: Filter<ITechnicalSheet>
-) {
-  return await findManyTechnicalSheetWithInputsUsecase.execute(params);
 }

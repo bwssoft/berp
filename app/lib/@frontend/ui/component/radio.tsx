@@ -5,21 +5,41 @@ import { useEffect, useState } from "react";
 export function Radio<T>(props: {
   data: T[];
   keyExtractor: (arg: T) => string | number;
-  valueExtractor: (arg: T) => string | number;
+  labelExtractor: (arg: T) => string | number;
+  valueExtractor: (arg: T) => unknown; // pode ser qualquer tipo: string, number, object, array
   label?: string;
+  help?: string;
+  error?: string;
   onChange?: (arg: T) => void;
   name: string;
   defaultValue?: T;
 }) {
-  const { label, data, keyExtractor, valueExtractor, defaultValue, onChange } =
-    props;
+  const {
+    label,
+    data,
+    keyExtractor,
+    labelExtractor,
+    valueExtractor,
+    defaultValue,
+    onChange,
+    name,
+    help,
+    error,
+  } = props;
 
   const [selectedValue, setSelectedValue] = useState(defaultValue);
 
-  // useEffect to update selected value when defaultValue changes
+  // Atualiza selectedValue quando defaultValue mudar
   useEffect(() => {
     setSelectedValue(defaultValue);
   }, [defaultValue]);
+
+  // Função para comparar valores extraídos
+  const isSelected = (a: T, b: T) => {
+    return (
+      JSON.stringify(valueExtractor(a)) === JSON.stringify(valueExtractor(b))
+    );
+  };
 
   return (
     <fieldset className="w-full">
@@ -28,22 +48,21 @@ export function Radio<T>(props: {
           {label}
         </legend>
       )}
+      {error && <p className="mt-2 text-sm text-red-600 absolute">{error}</p>}
+      {help && <p className={"mt-2 text-sm text-gray-400"}>{help}</p>}
       <div className="mt-4 divide-y divide-gray-200 border-b border-t border-gray-200">
         {data.map((op, opIdx) => (
           <div
-            key={opIdx}
+            key={keyExtractor(op)}
             className="relative flex items-start justify-start py-4"
           >
             <div className="mr-3 flex h-6 items-center">
               <input
                 id={`radio-${keyExtractor(op)}`}
-                name="plan"
+                name={name}
                 type="radio"
                 className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600"
-                checked={
-                  selectedValue &&
-                  valueExtractor(op) === valueExtractor(selectedValue)
-                }
+                checked={selectedValue ? isSelected(op, selectedValue) : false}
                 onChange={() => {
                   setSelectedValue(op);
                   onChange?.(op);
@@ -55,7 +74,7 @@ export function Radio<T>(props: {
                 htmlFor={`radio-${keyExtractor(op)}`}
                 className="select-none font-medium text-gray-900"
               >
-                {valueExtractor(op)}
+                {String(labelExtractor(op))}
               </label>
             </div>
           </div>

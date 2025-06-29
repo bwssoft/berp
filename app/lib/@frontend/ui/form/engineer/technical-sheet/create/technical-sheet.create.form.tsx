@@ -1,12 +1,12 @@
 "use client";
-import { IInput, IProduct } from "@/app/lib/@backend/domain";
+import { IComponent, IProduct } from "@/app/lib/@backend/domain";
 import { Controller } from "react-hook-form";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { FileUpload } from "@/app/lib/@frontend/ui/component/input-file";
 import { useTechnicalSheetCreateForm } from "./use-technical-sheet-create-form";
 
 type TechnicalSheetCreateFormProps = {
-  inputs: IInput[];
+  inputs: IComponent[];
   products: IProduct[];
 };
 

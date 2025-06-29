@@ -39,7 +39,7 @@ export default async function Page(props: Props) {
   const [
     clients,
     client,
-    products,
+    { docs: products },
     negotiationType,
     financialOrder,
     productionOrders,
@@ -47,7 +47,7 @@ export default async function Page(props: Props) {
   ] = await Promise.all([
     findManyClient({}),
     findOneClient({ id: proposal.client_id }),
-    findManyProduct(),
+    findManyProduct({ filter: {} }),
     findAllNegotiationType(),
     findOneFinancialOrder({ proposal_id: proposal.id }),
     findManyProductionOrder({ "proposal.id": proposal.id }),

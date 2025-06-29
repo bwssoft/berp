@@ -1,4 +1,4 @@
-import { IProduct } from "./product.definition";
+import { IProduct } from "../../commercial";
 
 interface IDevice {
   id: string;

@@ -4,9 +4,9 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 
 interface PaginationProps {
   currentPage: number;
-  totalPages:  number;
-  totalItems:  number;
-  limit:       number;
+  totalPages: number;
+  totalItems: number;
+  limit: number;
   onPageChange: (page: number) => void;
 }
 
@@ -17,7 +17,6 @@ export function Pagination({
   limit,
   onPageChange,
 }: PaginationProps) {
-
   const goTo = (p: number) => {
     if (p < 1 || p > totalPages) return;
     onPageChange(p);
@@ -35,7 +34,7 @@ export function Pagination({
     if (currentPage > 4) pages.push("ellipsis");
 
     const start = Math.max(2, currentPage - 1);
-    const end   = Math.min(totalPages - 1, currentPage + 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
     for (let p = start; p <= end; p++) show(p);
 
     if (currentPage < totalPages - 3) pages.push("ellipsis");
@@ -46,7 +45,7 @@ export function Pagination({
 
   /* ---------- intervalo exibido ---------- */
   const firstItem = (currentPage - 1) * limit + 1;
-  const lastItem  = Math.min(currentPage * limit, totalItems);
+  const lastItem = Math.min(currentPage * limit, totalItems);
 
   /* ---------- JSX ---------- */
   return (
@@ -72,9 +71,11 @@ export function Pagination({
       {/* Desktop */}
       <div className="hidden sm:flex sm:w-full sm:justify-between">
         <div className="hidden sm:block text-gray-600 text-sm font-medium">
-          Exibindo <span className="font-semibold">{firstItem}</span> a <span className="font-semibold">{lastItem}</span> de <span className="font-semibold">{totalItems}</span> resultados
+          Exibindo <span className="font-semibold">{firstItem}</span> a{" "}
+          <span className="font-semibold">{lastItem}</span> de{" "}
+          <span className="font-semibold">{totalItems}</span> resultados
         </div>
-        
+
         <nav
           className="isolate inline-flex -space-x-px rounded-md shadow-xs"
           aria-label="Pagination"
@@ -104,7 +105,7 @@ export function Pagination({
                 aria-current={p === currentPage ? "page" : undefined}
                 className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 ${
                   p === currentPage
-                    ? "z-10 bg-indigo-600 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    ? "z-10 bg-blue-600 text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     : "text-gray-900 hover:bg-gray-50"
                 }`}
               >

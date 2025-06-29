@@ -1,46 +1,24 @@
 export interface IInput {
-  id: string
+  id: string;
+  sku: string; //category+variavel
+  seq: number;
+  category: Input.Category;
+  name: string;
+  color: string;
+  active: boolean;
+  created_at: Date;
 
-  name: string
-  measure_unit: MeasureUnit
-  color: string
+  spec?: Record<string, string>;
+  files?: string[];
+  description?: string;
+  price?: number;
 
-  files?: string[]
-  description?: string
-  price?: number
-
-  category: Category
-  code: number
-
-  created_at: Date
-
-  manufacturer: Manufacturer[]
+  updated_at?: Date;
 }
 
-type Manufacturer = {
-  code: string
-  name: string
+export namespace Input {
+  export type Category = {
+    id: string;
+    code: string;
+  };
 }
-
-type Category =
-  | "cap"
-  | "dio"
-  | "fet"
-  | "swa"
-  | "dcd"
-  | "res"
-  | "con"
-  | "mod"
-  | "ldo"
-  | "led"
-  | "sen"
-  | "ind"
-  | "mem"
-  | "ic"
-  | "ant"
-  | "fus"
-  | "swi"
-  | "swa"
-  | "trn";
-
-type MeasureUnit = 'cm' | 'm' | 'kg' | 'g' | 'ml' | 'l' | 'un'

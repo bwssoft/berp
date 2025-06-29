@@ -262,7 +262,7 @@ export function SideBar(props: Props) {
             {/* Profile dropdown */}
             <Menu as="div" className="relative ml-3 block lg:hidden">
               <div>
-                <MenuButton className="relative flex rounded-full bg-white text-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-hidden">
+                <MenuButton className="relative flex rounded-full bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-hidden">
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
                   <img

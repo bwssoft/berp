@@ -5,10 +5,10 @@ import { BaseRepository } from "../@base";
 class InputRepository extends BaseRepository<IInput> {
   constructor() {
     super({
-      collection: "input",
-      db: "berp"
+      collection: "engineer.input",
+      db: "berp",
     });
   }
 }
 
-export const inputRepository = singleton(InputRepository)
+export const inputRepository = singleton(InputRepository);
