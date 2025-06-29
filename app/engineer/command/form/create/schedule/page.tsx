@@ -1,8 +1,6 @@
-import {
-  findAllCommand,
-  findAllDevice,
-  findAllFirmware,
-} from "@/app/lib/@backend/action";
+import { findAllCommand } from "@/app/lib/@backend/action/engineer/command/command.action";
+import { findAllDevice } from "@/app/lib/@backend/action/engineer/device.action";
+import { findAllFirmware } from "@/app/lib/@backend/action/engineer/firmware/firmware.action";
 import { ScheduleCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {

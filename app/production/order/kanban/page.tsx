@@ -1,7 +1,7 @@
-import { findManyProductionOrder } from "@/app/lib/@backend/action";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { KanbanContainer } from "./components/kanban-container";
+import { findManyProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
 
 export const revalidate = 10;
 

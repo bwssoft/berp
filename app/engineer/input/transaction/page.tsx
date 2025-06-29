@@ -1,4 +1,4 @@
-import { findAllInputTransactionWithInput } from "@/app/lib/@backend/action";
+import { findAllInputTransactionWithInput } from "@/app/lib/@backend/action/engineer/input/input-transaction.action";
 import { InputTransactionTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";

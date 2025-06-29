@@ -2,7 +2,7 @@ import {
   findAllInputStock,
   getInputStockInsight,
   updateInputStock,
-} from "@/app/lib/@backend/action";
+} from "@/app/lib/@backend/action/engineer/input/input-stock.action";
 import {
   Button,
   BarChart,

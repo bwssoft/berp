@@ -4,17 +4,18 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  createOneContact,
-  findManyAccount,
-  findOneAccount,
-  updateOneAccount,
-} from "@/app/lib/@backend/action";
+
 import { toast } from "@/app/lib/@frontend/hook";
 import { useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import {
+  findManyAccount,
+  findOneAccount,
+  updateOneAccount,
+} from "@/app/lib/@backend/action/commercial/account.action";
+import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
 
 // Define the preferred contact interface
 export interface PreferredContact {

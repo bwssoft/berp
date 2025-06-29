@@ -1,14 +1,14 @@
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { createOneInputTransaction } from '@/app/lib/@backend/action';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { createOneInputTransaction } from "@/app/lib/@backend/action/engineer/input/input-transaction.action";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const schema = z.object({
   type: z.enum(["enter", "exit"]),
   input_id: z.string(),
   quantity: z.coerce.number(),
-  files: z.any()
+  files: z.any(),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -26,7 +26,7 @@ export function useInputTransacionCreateForm() {
   });
 
   const handleSubmit = hookFormSubmit(async (data) => {
-    const type = data.type === "enter" ? "Entrada" : "Saída"
+    const type = data.type === "enter" ? "Entrada" : "Saída";
     try {
       //fazer a request
       await createOneInputTransaction(data);

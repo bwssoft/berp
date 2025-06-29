@@ -1,24 +1,27 @@
-import { createManyInputCategories } from "@/app/lib/@backend/action";
 import { IInputCategory } from "@/app/lib/@backend/domain";
 import { xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook";
+import { createManyInputCategories } from "@/app/lib/@backend/action/engineer/input/input-category.action";
 
 interface IInputCategorySheet {
   Código: string;
   Nome: string;
 }
 
-interface IInputCategoryCreate extends Omit<IInputCategory, 'id' | 'created_at'> { }
+interface IInputCategoryCreate
+  extends Omit<IInputCategory, "id" | "created_at"> {}
 
 const schema = z.object({
-  inputs: z.array(z.object({
-    name: z.string().min(1, 'Esse campo não pode ser vazio'),
-    code: z.string().min(1, 'Esse campo não pode ser vazio'),
-  }))
-})
+  inputs: z.array(
+    z.object({
+      name: z.string().min(1, "Esse campo não pode ser vazio"),
+      code: z.string().min(1, "Esse campo não pode ser vazio"),
+    })
+  ),
+});
 
 export type InputCategoryFromFileSchema = z.infer<typeof schema>;
 
@@ -31,12 +34,16 @@ export function useInputCategoryCreateFromFileForm() {
     control,
     setValue,
   } = useForm<InputCategoryFromFileSchema>({
-    resolver: zodResolver(schema)
+    resolver: zodResolver(schema),
   });
 
-  const { fields: inputs, append, remove } = useFieldArray({
+  const {
+    fields: inputs,
+    append,
+    remove,
+  } = useFieldArray({
     control,
-    name: "inputs"
+    name: "inputs",
   });
 
   const handleAppendInput = append;
@@ -55,25 +62,30 @@ export function useInputCategoryCreateFromFileForm() {
         title: "Erro!",
         description: "Falha ao registrar o insumo!",
         variant: "error",
-      })
+      });
     }
   });
 
   async function handleFile(fileList: File[] | null) {
-    const inputs = await xlsxToJson<IInputCategoryCreate>(fileList, handleFormatInputFromFile);
+    const inputs = await xlsxToJson<IInputCategoryCreate>(
+      fileList,
+      handleFormatInputFromFile
+    );
     inputs?.forEach((input) =>
       handleAppendInput({
         code: input.code,
-        name: input.name
+        name: input.name,
       })
-    )
+    );
   }
 
-  function handleFormatInputFromFile(obj: IInputCategorySheet): IInputCategoryCreate {
+  function handleFormatInputFromFile(
+    obj: IInputCategorySheet
+  ): IInputCategoryCreate {
     return {
       code: obj.Código,
-      name: obj.Nome
-    }
+      name: obj.Nome,
+    };
   }
 
   return {
@@ -86,5 +98,5 @@ export function useInputCategoryCreateFromFileForm() {
     handleAppendInput,
     handleRemoveInput,
     hookFormReset,
-  }
+  };
 }

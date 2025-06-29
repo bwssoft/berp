@@ -1,8 +1,6 @@
-import {
-  findManyClient,
-  findAllNegotiationType,
-  findManyProduct,
-} from "@/app/lib/@backend/action";
+import { findManyClient } from "@/app/lib/@backend/action/commercial/client.action";
+import { findAllNegotiationType } from "@/app/lib/@backend/action/commercial/negotiation-type.action";
+import { findManyProduct } from "@/app/lib/@backend/action/engineer/product/product.action";
 import { ProposalCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {

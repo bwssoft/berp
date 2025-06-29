@@ -1,4 +1,4 @@
-import { findOneTechnology } from "@/app/lib/@backend/action";
+import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
 import { IdentificationPanel } from "./@components/identificator-panel";
 
 interface Props {

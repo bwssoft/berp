@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook";
 import { IInputCategory } from "@/app/lib/@backend/domain";
-import { deleteOneInputCategoryById } from "@/app/lib/@backend/action";
+import { deleteOneInputCategoryById } from "@/app/lib/@backend/action/engineer/input/input-category.action";
 
 export const inputCategoryColumns: ColumnDef<IInputCategory>[] = [
   {

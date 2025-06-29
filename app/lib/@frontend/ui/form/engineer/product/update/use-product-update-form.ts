@@ -1,20 +1,28 @@
-import { updateOneProductById } from "@/app/lib/@backend/action";
-import { IProduct, } from "@/app/lib/@backend/domain";
+import { updateOneProductById } from "@/app/lib/@backend/action/engineer/product/product.action";
+import { IProduct } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
-  name: z.string({ required_error: "Esse campo não pode ser vazio" }).min(1, "Esse campo não pode ser vazio"),
-  description: z.string({ required_error: "Esse campo não pode ser vazio" }).min(1, "Esse campo não pode ser vazio"),
+  name: z
+    .string({ required_error: "Esse campo não pode ser vazio" })
+    .min(1, "Esse campo não pode ser vazio"),
+  description: z
+    .string({ required_error: "Esse campo não pode ser vazio" })
+    .min(1, "Esse campo não pode ser vazio"),
   color: z.string(),
   category: z.string(),
   price: z.coerce.number().nonnegative(),
   files: z.array(z.any()).default([]),
-  bom: z.array(z.object({ input_id: z.string(), quantity: z.coerce.number() })).default([]),
-  process_execution: z.array(z.object({ id: z.string(), step: z.string() })).default([]),
-  technology_id: z.string()
+  bom: z
+    .array(z.object({ input_id: z.string(), quantity: z.coerce.number() }))
+    .default([]),
+  process_execution: z
+    .array(z.object({ id: z.string(), step: z.string() }))
+    .default([]),
+  technology_id: z.string(),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -41,7 +49,7 @@ export function useProductUpdateForm(props: Props) {
   const {
     fields: bom,
     append: handleAppendBom,
-    remove: handleRemoveBom
+    remove: handleRemoveBom,
   } = useFieldArray({
     control,
     name: "bom",
@@ -50,7 +58,7 @@ export function useProductUpdateForm(props: Props) {
   const {
     fields: process_execution,
     append: handleAppendProcessToProduce,
-    remove: handleRemoveProcessToProduce
+    remove: handleRemoveProcessToProduce,
   } = useFieldArray({
     control,
     name: "process_execution",

@@ -1,12 +1,12 @@
-import {
-  analyzeTemporalProductStock,
-  countProductTransaction,
-  findManyProduct,
-  getTotalValueInProductStock,
-} from "@/app/lib/@backend/action";
 import { MultilineChart, BarChart } from "@/app/lib/@frontend/ui/component";
 import { fillMissingDatesOnProductAnalysisPage } from "@/app/lib/util";
 import { ProductSelect } from "./components/productSelect";
+import { findManyProduct } from "@/app/lib/@backend/action/engineer/product/product.action";
+import {
+  analyzeTemporalProductStock,
+  getTotalValueInProductStock,
+} from "@/app/lib/@backend/action/engineer/product/product-stock.action";
+import { countProductTransaction } from "@/app/lib/@backend/action/engineer/product/product-transaction.action";
 
 interface Props {
   searchParams: {

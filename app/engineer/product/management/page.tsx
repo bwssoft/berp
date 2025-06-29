@@ -1,4 +1,4 @@
-import { findManyProduct } from "@/app/lib/@backend/action";
+import { findManyProduct } from "@/app/lib/@backend/action/engineer/product/product.action";
 import { ProductTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";

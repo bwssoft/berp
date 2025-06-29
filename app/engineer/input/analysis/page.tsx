@@ -1,12 +1,12 @@
 import { MultilineChart, BarChart } from "@/app/lib/@frontend/ui/component";
 import { fillMissingDatesOnInputAnalysisPage } from "@/app/lib/util/fill-missing-dates";
 import { InputSelect } from "./components/input-select";
+import { findManyInput } from "@/app/lib/@backend/action/engineer/input/input.action";
 import {
   analyzeTemporalInputStock,
-  countInputTransaction,
-  findManyInput,
   getTotalValueInInputStock,
-} from "@/app/lib/@backend/action";
+} from "@/app/lib/@backend/action/engineer/input/input-stock.action";
+import { countInputTransaction } from "@/app/lib/@backend/action/engineer/input/input-transaction.action";
 
 interface Props {
   searchParams: {

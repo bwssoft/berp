@@ -1,4 +1,4 @@
-import { findManyProductionOrder } from "@/app/lib/@backend/action";
+import { findManyProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
 import { ProductionOrderTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";

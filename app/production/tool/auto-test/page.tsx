@@ -1,4 +1,4 @@
-import { findOneTechnology } from "@/app/lib/@backend/action";
+import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
 import { AutoTestPanel } from "./@components/auto-test";
 
 interface Props {

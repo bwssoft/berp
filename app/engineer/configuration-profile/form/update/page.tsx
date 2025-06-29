@@ -1,10 +1,12 @@
 import {
   findManyClient,
-  findManyTechnology,
   findOneClient,
-  findOneConfigurationProfile,
+} from "@/app/lib/@backend/action/commercial/client.action";
+import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+import {
+  findManyTechnology,
   findOneTechnology,
-} from "@/app/lib/@backend/action";
+} from "@/app/lib/@backend/action/engineer/technology.action";
 import { ConfigurationProfileUpsertForm } from "@/app/lib/@frontend/ui/form";
 
 interface Props {

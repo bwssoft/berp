@@ -1,4 +1,5 @@
-import { findManyProduct, findOneDevice } from "@/app/lib/@backend/action";
+import { findOneDevice } from "@/app/lib/@backend/action/engineer/device.action";
+import { findManyProduct } from "@/app/lib/@backend/action/engineer/product/product.action";
 import { DeviceUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {

@@ -1,4 +1,4 @@
-import { findOneCommand } from "@/app/lib/@backend/action";
+import { findOneCommand } from "@/app/lib/@backend/action/engineer/command/command.action";
 import { CommandUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {

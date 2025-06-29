@@ -1,4 +1,4 @@
-import { findAllCommand } from "@/app/lib/@backend/action";
+import { findAllCommand } from "@/app/lib/@backend/action/engineer/command/command.action";
 import { CommandTable } from "@/app/lib/@frontend/ui/table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";

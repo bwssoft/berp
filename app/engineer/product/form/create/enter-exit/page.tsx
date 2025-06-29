@@ -1,4 +1,4 @@
-import { findManyProduct } from "@/app/lib/@backend/action";
+import { findManyProduct } from "@/app/lib/@backend/action/engineer/product/product.action";
 import { ProductTransactionCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {

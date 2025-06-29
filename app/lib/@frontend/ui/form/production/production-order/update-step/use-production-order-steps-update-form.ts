@@ -1,5 +1,5 @@
-import { updateOneProductionOrderById } from "@/app/lib/@backend/action";
-import { IProductionOrder, IProductionOrderLegacy } from "@/app/lib/@backend/domain";
+import { updateOneProductionOrderById } from "@/app/lib/@backend/action/production/production-order.action";
+import { IProductionOrderLegacy } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -66,10 +66,9 @@ export function useProductionOrderStepsUpdateForm({
     ];
 
     try {
-      await updateOneProductionOrderById(
-        { id: productionOrder.id },
-        { production_process: updatedProcessData } as any
-      );
+      await updateOneProductionOrderById({ id: productionOrder.id }, {
+        production_process: updatedProcessData,
+      } as any);
 
       toast({
         title: "Sucesso!",

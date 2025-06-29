@@ -1,4 +1,5 @@
-import { deleteOneContact, findOneAccount } from "@/app/lib/@backend/action";
+import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { deleteOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import { IContact } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

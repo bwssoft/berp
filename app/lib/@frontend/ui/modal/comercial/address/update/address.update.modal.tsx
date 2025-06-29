@@ -3,7 +3,6 @@
 import React from "react";
 import { AddressUpdateForm } from "../../../../form/commercial/address/update";
 import { Modal, ModalBody, ModalContent } from "../../../../component";
-import { findManyAddress } from "@/app/lib/@backend/action";
 import { IAddress } from "@/app/lib/@backend/domain";
 
 interface AddressProps {

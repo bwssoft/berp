@@ -1,8 +1,8 @@
-import { deleteOneFirmwareById } from "@/app/lib/@backend/action";
 import { IFirmware } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook";
+import { deleteOneFirmwareById } from "@/app/lib/@backend/action/engineer/firmware/firmware.action";
 
 export const columns: ColumnDef<IFirmware>[] = [
   {

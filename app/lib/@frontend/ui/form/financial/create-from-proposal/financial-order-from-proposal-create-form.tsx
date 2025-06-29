@@ -9,10 +9,10 @@ import {
   ChevronDownIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { createFinancialOrderFromProposal } from "@/app/lib/@backend/action";
 import { IFinancialOrder } from "@/app/lib/@backend/domain";
 import { saleOrderConstants } from "@/app/lib/constant/sale-order";
 import { Button } from "../../../component";
+import { createFinancialOrderFromProposal } from "@/app/lib/@backend/action/financial/financial-order.action";
 
 interface Props {
   proposal_id: string;

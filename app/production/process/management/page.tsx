@@ -1,4 +1,4 @@
-import { findAllProductionProcess } from "@/app/lib/@backend/action";
+import { findAllProductionProcess } from "@/app/lib/@backend/action/production/production-process.action";
 import { ProductionProcessTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";

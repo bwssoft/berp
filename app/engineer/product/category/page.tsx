@@ -1,4 +1,4 @@
-import { findManyProductCategory } from "@/app/lib/@backend/action";
+import { findManyProductCategory } from "@/app/lib/@backend/action/engineer/product/product-category.action";
 import { ProductCategoryTable } from "@/app/lib/@frontend/ui/table";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";

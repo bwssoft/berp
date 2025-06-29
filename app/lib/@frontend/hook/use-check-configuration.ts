@@ -9,12 +9,9 @@ import {
   ITechnology,
 } from "../../@backend/domain";
 import { ISerialPort } from "./use-serial-port";
-import {
-  createManyConfigurationLog,
-  updateBulkConfigurationLog,
-} from "../../@backend/action";
 import { useTechnology } from "./use-technology";
 import { diffObjects } from "../../util/get-object-diff";
+import { updateBulkConfigurationLog } from "../../@backend/action/production/configuration-log.action";
 
 namespace Namespace {
   export interface UseConfigurationProps {

@@ -1,4 +1,4 @@
-import { findManyInput } from "@/app/lib/@backend/action";
+import { findManyInput } from "@/app/lib/@backend/action/engineer/input/input.action";
 import { InputTable } from "@/app/lib/@frontend/ui/component";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";

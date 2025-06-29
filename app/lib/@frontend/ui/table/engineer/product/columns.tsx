@@ -1,8 +1,8 @@
-import { deleteOneProductById } from "@/app/lib/@backend/action";
 import { IProduct } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook";
+import { deleteOneProductById } from "@/app/lib/@backend/action/engineer/product/product.action";
 
 export const columns: ColumnDef<IProduct>[] = [
   {

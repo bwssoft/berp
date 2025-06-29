@@ -1,4 +1,4 @@
-import { findOneClient } from "@/app/lib/@backend/action";
+import { findOneClient } from "@/app/lib/@backend/action/commercial/client.action";
 import { ClientUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {

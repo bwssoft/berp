@@ -1,4 +1,4 @@
-import { findOneProfile } from "@/app/lib/@backend/action";
+import { findOneProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { useAuth } from "@/app/lib/@frontend/context";
 
 export function useViewOneUserForm() {

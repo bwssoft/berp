@@ -1,8 +1,8 @@
-import { deleteOneInputById } from "@/app/lib/@backend/action";
 import { IInput } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook";
+import { deleteOneInputById } from "@/app/lib/@backend/action/engineer/input/input.action";
 
 export const columns: ColumnDef<IInput>[] = [
   {

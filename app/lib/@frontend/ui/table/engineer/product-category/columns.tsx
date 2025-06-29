@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { toast } from "@/app/lib/@frontend/hook";
 import { IProductCategory } from "@/app/lib/@backend/domain";
-import { deleteOneProductCategoryById } from "@/app/lib/@backend/action";
+import { deleteOneProductCategoryById } from "@/app/lib/@backend/action/engineer/product/product-category.action";
 
 export const columns: ColumnDef<IProductCategory>[] = [
   {

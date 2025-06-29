@@ -1,9 +1,7 @@
-import {
-  findManyInput,
-  findManyProductCategory,
-  findManyTechnology,
-  findOneProduct,
-} from "@/app/lib/@backend/action";
+import { findManyInput } from "@/app/lib/@backend/action/engineer/input/input.action";
+import { findManyProductCategory } from "@/app/lib/@backend/action/engineer/product/product-category.action";
+import { findOneProduct } from "@/app/lib/@backend/action/engineer/product/product.action";
+import { findManyTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
 import { ProductUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {

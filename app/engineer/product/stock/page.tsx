@@ -2,7 +2,7 @@ import {
   findAllProductStock,
   getProductStockInsights,
   updateProductStock,
-} from "@/app/lib/@backend/action";
+} from "@/app/lib/@backend/action/engineer/product/product-stock.action";
 import {
   Button,
   BarChart,

@@ -1,4 +1,4 @@
-import { findOneUser } from "@/app/lib/@backend/action";
+import { findOneUser } from "@/app/lib/@backend/action/admin/user.action";
 import { ViewOneUserForm } from "@/app/lib/@frontend/ui/form";
 
 interface Props {

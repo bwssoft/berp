@@ -1,4 +1,4 @@
-import { findManyInput } from "@/app/lib/@backend/action";
+import { findManyInput } from "@/app/lib/@backend/action/engineer/input/input.action";
 import { InputTransactionCreateForm } from "@/app/lib/@frontend/ui/component";
 
 export default async function Page() {

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback } from "react";
 import { E34GEncoder, E34GParser } from "../../@backend/infra/protocol";
 import { isIccid, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";

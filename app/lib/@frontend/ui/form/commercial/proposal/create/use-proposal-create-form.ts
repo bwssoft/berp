@@ -1,4 +1,4 @@
-import { createOneProposal } from '@/app/lib/@backend/action';
+import { createOneProposal } from '@/app/lib/@backend/action/commercial/proposal.action';
 import { Currency, FreightType, IClient } from '@/app/lib/@backend/domain';
 import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';

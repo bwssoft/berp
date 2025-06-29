@@ -1,4 +1,4 @@
-import { deleteOneProductionProcessById } from "@/app/lib/@backend/action";
+import { deleteOneProductionProcessById } from "@/app/lib/@backend/action/production/production-process.action";
 import { ITechnicalSheet } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";

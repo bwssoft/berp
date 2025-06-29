@@ -1,12 +1,12 @@
-import { createOneInput } from '@/app/lib/@backend/action';
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { createOneInput } from "@/app/lib/@backend/action/engineer/input/input.action";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
 const schema = z.object({
-  name: z.string().min(1, 'Esse campo não pode ser vazio'),
+  name: z.string().min(1, "Esse campo não pode ser vazio"),
   measure_unit: z.enum(["cm", "m", "kg", "g", "ml", "l", "un"]),
   category: z.enum([
     "cap",
@@ -26,16 +26,18 @@ const schema = z.object({
     "ant",
     "fus",
     "swi",
-    "trn"
+    "trn",
   ]),
   files: z.any(),
   color: z.string(),
   description: z.string().optional(),
   price: z.coerce.number().nonnegative().optional(),
-  manufacturer: z.array(z.object({
-    code: z.string(),
-    name: z.string(),
-  }))
+  manufacturer: z.array(
+    z.object({
+      code: z.string(),
+      name: z.string(),
+    })
+  ),
 });
 
 export type Schema = z.infer<typeof schema>;
@@ -52,14 +54,17 @@ export function useInputCreateForm() {
     resolver: zodResolver(schema),
   });
 
-  const { fields: manufacturer, append, remove } = useFieldArray({
+  const {
+    fields: manufacturer,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: "manufacturer",
   });
 
-  const handleAppedManufacturer = append
-  const handleRemoveManufacturer = remove
-
+  const handleAppedManufacturer = append;
+  const handleRemoveManufacturer = remove;
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {

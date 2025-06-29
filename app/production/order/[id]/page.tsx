@@ -1,12 +1,6 @@
 "use server";
 
-import {
-  findOneClient,
-  findOneProductionOrder,
-} from "@/app/lib/@backend/action";
-import {
-  IClient,
-} from "@/app/lib/@backend/domain";
+import { IClient } from "@/app/lib/@backend/domain";
 import {
   Tabs,
   TabsContent,
@@ -21,6 +15,8 @@ import {
   ProductsDetails,
 } from "./components";
 import { PrintProductionOrder } from "./components/print-production-order";
+import { findOneProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
+import { findOneClient } from "@/app/lib/@backend/action/commercial/client.action";
 
 type ProductionOrderViewPageProps = {
   params: { id: string };
@@ -29,31 +25,37 @@ type ProductionOrderViewPageProps = {
 export default async function Page({ params }: ProductionOrderViewPageProps) {
   const productionOrderData = await findOneProductionOrder({
     id: params.id,
-  })
+  });
 
-  if (!productionOrderData) return <div>
-    <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+  if (!productionOrderData)
+    return (
       <div>
-        <h1 className="text-base font-semibold leading-7 text-gray-900">
-          OP não encontrada
-        </h1>
+        <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+          <div>
+            <h1 className="text-base font-semibold leading-7 text-gray-900">
+              OP não encontrada
+            </h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    );
 
   const clientData = (await findOneClient({
     id: productionOrderData?.client_id,
   })) as IClient | null;
 
-  if (!clientData) return <div>
-    <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+  if (!clientData)
+    return (
       <div>
-        <h1 className="text-base font-semibold leading-7 text-gray-900">
-          Cliente não encontrado
-        </h1>
+        <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
+          <div>
+            <h1 className="text-base font-semibold leading-7 text-gray-900">
+              Cliente não encontrado
+            </h1>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    );
 
   return (
     <div className="w-full h-full relative">
@@ -63,7 +65,10 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
           product={productionOrderData.product}
           client={clientData}
         />
-        <Link href="/production/production-order/kanban" title="Fechar o modal de Ordem de Produção" >
+        <Link
+          href="/production/production-order/kanban"
+          title="Fechar o modal de Ordem de Produção"
+        >
           <XMarkIcon height={22} width={22} />
         </Link>
       </div>
@@ -81,9 +86,7 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
         </TabsList>
 
         <TabsContent value="production-order-data">
-          <ProductionOrderDetails
-            productionOrder={productionOrderData}
-          />
+          <ProductionOrderDetails productionOrder={productionOrderData} />
         </TabsContent>
 
         <TabsContent value="client-data">
@@ -91,9 +94,7 @@ export default async function Page({ params }: ProductionOrderViewPageProps) {
         </TabsContent>
 
         <TabsContent value="products-data">
-          <ProductsDetails
-            product={productionOrderData.product}
-          />
+          <ProductsDetails product={productionOrderData.product} />
         </TabsContent>
 
         <TabsContent value="process-execution">

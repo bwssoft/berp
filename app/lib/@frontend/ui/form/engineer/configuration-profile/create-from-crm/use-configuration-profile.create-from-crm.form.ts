@@ -1,4 +1,3 @@
-import { createOneConfigurationProfile } from "@/app/lib/@backend/action";
 import { EType, IClient } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +13,7 @@ import {
   e3PlusConfigSchema,
   generalConfigSchema,
 } from "../upsert/use-configuration-profile.upsert.form";
+import { createOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
 
 // Esquema principal
 const schema = z.object({

@@ -1,5 +1,5 @@
 "use client";
-import { findManyUser } from "@/app/lib/@backend/action";
+import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
 import { IProfile, IUser } from "@/app/lib/@backend/domain";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { useQuery } from "@tanstack/react-query";

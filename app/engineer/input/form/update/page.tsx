@@ -1,4 +1,4 @@
-import { findOneInput } from "@/app/lib/@backend/action";
+import { findOneInput } from "@/app/lib/@backend/action/engineer/input/input.action";
 import { InputUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {

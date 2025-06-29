@@ -1,6 +1,6 @@
-import { findAllInputCategories } from "@/app/lib/@backend/action";
+import { findAllInputCategories } from "@/app/lib/@backend/action/engineer/input/input-category.action";
 import { IInputCategory } from "@/app/lib/@backend/domain/engineer/entity/input-category.definition";
-import ExcelJS from 'exceljs';
+import ExcelJS from "exceljs";
 
 export function useDownloadInputBOMForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -17,10 +17,11 @@ export function useDownloadInputBOMForm() {
       type: "list",
       allowBlank: false,
       formulae: formatCategoriesSheetValidationFormulae(inputCategories),
-      operator: 'equal',
+      operator: "equal",
       showErrorMessage: true,
-      errorStyle: 'error',
-      error: 'Só é possível preencher com um dos valores disponíveis na lista. Se precisar de mais categorias cadastre uma nova em Engenharia > Insumos > Categorias.'
+      errorStyle: "error",
+      error:
+        "Só é possível preencher com um dos valores disponíveis na lista. Se precisar de mais categorias cadastre uma nova em Engenharia > Insumos > Categorias.",
     });
 
     const sheetBuffer = await workbook.xlsx.writeBuffer();
@@ -28,34 +29,34 @@ export function useDownloadInputBOMForm() {
     if (sheetBuffer) {
       const blob = new Blob([sheetBuffer]);
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = 'create-input-from-file.xlsx';
+      link.download = "create-input-from-file.xlsx";
       link.click();
       URL.revokeObjectURL(url);
     }
   }
 
   function prepareInputSheet(workbook: ExcelJS.Workbook) {
-    let sheet = workbook.addWorksheet('Planilha');
+    let sheet = workbook.addWorksheet("Planilha");
 
     // Adiciona os headers da planilha.
     sheet.addRow([
-      'Categoria',
-      'Nome',
-      'Part Number 1',
-      'Nome Fornecedor 1',
-      'Part Number 2',
-      'Nome Fornecedor 2',
-      'Part Number 3',
-      'Nome Fornecedor 3',
-      'Preço',
-      'Unidade de Medida'
+      "Categoria",
+      "Nome",
+      "Part Number 1",
+      "Nome Fornecedor 1",
+      "Part Number 2",
+      "Nome Fornecedor 2",
+      "Part Number 3",
+      "Nome Fornecedor 3",
+      "Preço",
+      "Unidade de Medida",
     ]);
 
-    // Torna o texto da coluna de header em negrito. 
+    // Torna o texto da coluna de header em negrito.
     sheet.getRow(1).font = {
-      bold: true
+      bold: true,
     };
 
     // Adiciona as opções fixas de unidade de medida.
@@ -65,10 +66,10 @@ export function useDownloadInputBOMForm() {
       allowBlank: false,
       formulae: ['"cm,m,kg,g,ml,l,un"'],
       showErrorMessage: true,
-      operator: 'equal',
-      errorStyle: 'error',
-      error: 'Só é possível preencher com um dos valores disponíveis na lista.',
-    })
+      operator: "equal",
+      errorStyle: "error",
+      error: "Só é possível preencher com um dos valores disponíveis na lista.",
+    });
 
     // Adiciona formatação de moeda na coluna de Preço.
     sheet.getColumn(9).numFmt = '"R$ "#,##0.00;[Red]\-"R$ "#,##0.00';
@@ -80,10 +81,10 @@ export function useDownloadInputBOMForm() {
       allowBlank: false,
       formulae: [0, 9999999],
       showErrorMessage: true,
-      operator: 'between',
+      operator: "between",
       showInputMessage: true,
-      prompt: 'Use a virgula para valores decimais'
-    })
+      prompt: "Use a virgula para valores decimais",
+    });
 
     // Formata a largura das colunas utilizadas para um melhor espaçamento.
     formatSheetColumnsWidth(sheet);
@@ -97,7 +98,7 @@ export function useDownloadInputBOMForm() {
       const column = worksheet.columns[i];
       for (let j = 1; j < (column.values ?? []).length; j += 1) {
         //@ts-expect-error column.values pode sr undefined, mas nesse caso especifico do template
-        //                 não tem muito problema, pois os valores da linha de header do Excel 
+        //                 não tem muito problema, pois os valores da linha de header do Excel
         //                 é sempre fixo.
         const columnLength = column.values[j].length + 10;
         if (columnLength > dataMax) {
@@ -108,24 +109,26 @@ export function useDownloadInputBOMForm() {
     }
   }
 
-  function formatCategoriesSheetValidationFormulae(categories: IInputCategory[]) {
+  function formatCategoriesSheetValidationFormulae(
+    categories: IInputCategory[]
+  ) {
     const formulae = categories.reduce((formulae, category, index) => {
       const option = category.code.toUpperCase();
       if (index === 0) {
-        return `${option},`
+        return `${option},`;
       }
 
       if (index === categories.length) {
-        return `${formulae}${option}`
+        return `${formulae}${option}`;
       }
 
-      return `${formulae}${option},`
-    }, "")
+      return `${formulae}${option},`;
+    }, "");
 
-    return [`"${formulae}"`]
+    return [`"${formulae}"`];
   }
 
   return {
-    handleSubmit
-  }
+    handleSubmit,
+  };
 }
