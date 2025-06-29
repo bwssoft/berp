@@ -11,6 +11,7 @@ import {
 
 import { GridList } from "../lib/@frontend/ui/component";
 import { useAuth } from "../lib/@frontend/context";
+import { Cpu, InspectionPanel, Wrench } from "lucide-react";
 
 const actions = [
   {
@@ -18,8 +19,8 @@ const actions = [
     href: "/engineer/command",
     code: "engineer:command",
     icon: ArrowPathIcon, // Representa ações/execução
-    iconForeground: "text-indigo-700",
-    iconBackground: "bg-indigo-50",
+    iconForeground: "text-blue-700",
+    iconBackground: "bg-blue-50",
     description:
       "Gerencie os comandos enviados aos dispositivos em tempo real ou agendados.",
   },
@@ -54,31 +55,29 @@ const actions = [
       "Gerencie as versões de firmware dos dispositivos e atualizações.",
   },
   {
-    title: "Insumos",
-    href: "/engineer/input",
-    code: "engineer:input",
-    icon: ArchiveBoxIcon, // Representa estoque/insumos
+    title: "Componentes",
+    href: "/engineer/component",
+    code: "engineer:component",
+    icon: Cpu, // Representa estoque/insumos
     iconForeground: "text-teal-700",
     iconBackground: "bg-teal-50",
-    description:
-      "Controle de entrada e gerenciamento de insumos utilizados na produção.",
+    description: "Gerencie os componentes utilizados no sistema.",
   },
   {
-    title: "Produtos",
-    href: "/engineer/product/management",
-    code: "engineer:product",
-    icon: CubeIcon, // Representa produtos físicos
+    title: "Insumos",
+    href: "/engineer/input/management",
+    code: "engineer:input",
+    icon: Wrench, // Representa produtos físicos
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
-    description:
-      "Visualize e gerencie os produtos finais resultantes do processo da Engenharia.",
+    description: "Visualize e gerencie os insumos da Engenharia.",
   },
 ];
 
 export default function Page() {
-  const { navigationByProfile} = useAuth();
+  const { navigationByProfile } = useAuth();
   const options = navigationByProfile(actions);
-  
+
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

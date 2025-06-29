@@ -1,20 +1,28 @@
-import { InputCreateForm } from "@/app/lib/@frontend/ui/component";
+import { findManyInputCategory } from "@/app/lib/@backend/action";
+import { BackButton } from "@/app/lib/@frontend/ui/component";
+import { CreateOneInputForm } from "@/app/lib/@frontend/ui/form";
 
-export default function Page() {
+export default async function Page() {
+  const { docs: categories } = await findManyInputCategory({ filter: {} });
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <div>
-          <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Registro de insumos
-          </h1>
-          <p className="mt-1 text-sm leading-6 text-gray-600">
-            Preencha o formulário abaixo para registrar um insumo.
-          </p>
+      <div className="w-4/6 ring-1 ring-inset ring-gray-200 bg-white rounded-md px-6 py-8">
+        <div className="flex items-end gap-4">
+          <BackButton />
+          <div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">
+                Criar Novo Insumo
+              </h1>
+              <p className="text-sm text-gray-600">
+                Preencha os dados para criar um novo insumo.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <InputCreateForm />
+        <div className="mt-8">
+          <CreateOneInputForm categories={categories} />
+        </div>
       </div>
     </div>
   );

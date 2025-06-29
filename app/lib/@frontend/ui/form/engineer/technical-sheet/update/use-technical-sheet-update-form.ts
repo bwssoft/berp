@@ -1,5 +1,5 @@
 import { updateOneTechnicalSheetById } from "@/app/lib/@backend/action/engineer/technical-sheet.action";
-import { IInput, ITechnicalSheet } from "@/app/lib/@backend/domain";
+import { IComponent, ITechnicalSheet } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,7 +21,7 @@ export type Schema = z.infer<typeof schema>;
 
 type UseTechnicalSheetUpdateFormParams = {
   technicalSheet: ITechnicalSheet;
-  inputs: IInput[];
+  inputs: IComponent[];
 };
 
 export function useTechnicalSheetUpdateForm({

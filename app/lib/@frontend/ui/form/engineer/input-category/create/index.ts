@@ -1,1 +1,1 @@
-export * from "./input-category.create.form"
+export * from "./create.input.category.form";

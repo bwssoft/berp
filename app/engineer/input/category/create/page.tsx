@@ -1,21 +1,26 @@
-import { InputCategoryCreateForm } from "@/app/lib/@frontend/ui/form/engineer/input-category/create/input-category.create.form";
+import { BackButton } from "@/app/lib/@frontend/ui/component";
+import { CreateOneInputCategoryForm } from "@/app/lib/@frontend/ui/form";
 
-export default function InputCategoryCreatePage() {
+export default async function Page() {
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <div>
-          <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Registro de categoria de insumo
-          </h1>
-          <p className="mt-1 text-sm leading-6 text-gray-600">
-            Preencha o formulário abaixo para registrar uma nova categoria para
-            os insumos.
-          </p>
+      <div className="w-4/6 ring-1 ring-inset ring-gray-200 bg-white rounded-md px-6 py-8">
+        <div className="flex items-end gap-4">
+          <BackButton />
+          <div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">
+                Criar Nova Categoria de Insumo
+              </h1>
+              <p className="text-sm text-gray-600">
+                Preencha os dados para criar uma nova categoria.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <InputCategoryCreateForm />
+        <div className="mt-8">
+          <CreateOneInputCategoryForm />
+        </div>
       </div>
     </div>
   );
