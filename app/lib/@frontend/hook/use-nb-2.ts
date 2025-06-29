@@ -783,7 +783,7 @@ export const useNB2 = () => {
     iccid?: string;
     serial?: string;
     firmware?: string;
-  }) => {
+  }): "fully_identified" | "partially_identified" | "not_identified" => {
     const { serial, imei, iccid, firmware } = input;
     const identified = [serial, imei, iccid, firmware];
     if (identified.every((e) => e && e.length > 0)) {

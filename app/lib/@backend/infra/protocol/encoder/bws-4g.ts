@@ -25,7 +25,7 @@ type Encoder =
   | { command: "ip_secondary"; args: IP }
   | { command: "dns_primary"; args: DNS };
 
-export class BWS4GEncoder {
+export class Bws4GEncoder {
   static serial(input: string): string | undefined {
     if (!input || typeof input !== "string") return undefined;
     return `WINS=${input}\r\n`;
@@ -130,34 +130,34 @@ export class BWS4GEncoder {
 
   static commands() {
     return {
-      serial: BWS4GEncoder.serial,
-      imei: BWS4GEncoder.imei,
-      odometer: BWS4GEncoder.odometer,
-      data_transmission_on: BWS4GEncoder.data_transmission_on,
-      data_transmission_off: BWS4GEncoder.data_transmission_off,
-      data_transmission_event: BWS4GEncoder.data_transmission_event,
-      sleep: BWS4GEncoder.sleep,
-      keep_alive: BWS4GEncoder.keep_alive,
-      ip_primary: BWS4GEncoder.ip_primary,
-      ip_secondary: BWS4GEncoder.ip_secondary,
-      dns_primary: BWS4GEncoder.dns_primary,
-      dns_secondary: BWS4GEncoder.dns_secondary,
-      apn: BWS4GEncoder.apn,
-      virtual_ignition_12v: BWS4GEncoder.virtual_ignition_12v,
-      virtual_ignition_24v: BWS4GEncoder.virtual_ignition_24v,
-      angle: BWS4GEncoder.angle,
-      speed: BWS4GEncoder.speed,
+      serial: Bws4GEncoder.serial,
+      imei: Bws4GEncoder.imei,
+      odometer: Bws4GEncoder.odometer,
+      data_transmission_on: Bws4GEncoder.data_transmission_on,
+      data_transmission_off: Bws4GEncoder.data_transmission_off,
+      data_transmission_event: Bws4GEncoder.data_transmission_event,
+      sleep: Bws4GEncoder.sleep,
+      keep_alive: Bws4GEncoder.keep_alive,
+      ip_primary: Bws4GEncoder.ip_primary,
+      ip_secondary: Bws4GEncoder.ip_secondary,
+      dns_primary: Bws4GEncoder.dns_primary,
+      dns_secondary: Bws4GEncoder.dns_secondary,
+      apn: Bws4GEncoder.apn,
+      virtual_ignition_12v: Bws4GEncoder.virtual_ignition_12v,
+      virtual_ignition_24v: Bws4GEncoder.virtual_ignition_24v,
+      angle: Bws4GEncoder.angle,
+      speed: Bws4GEncoder.speed,
       accel_threshold_for_ignition_on:
-        BWS4GEncoder.accel_threshold_for_ignition_on,
+        Bws4GEncoder.accel_threshold_for_ignition_on,
       accel_threshold_for_ignition_off:
-        BWS4GEncoder.accel_threshold_for_ignition_off,
-      accel_threshold_for_movement: BWS4GEncoder.accel_threshold_for_movement,
+        Bws4GEncoder.accel_threshold_for_ignition_off,
+      accel_threshold_for_movement: Bws4GEncoder.accel_threshold_for_movement,
     };
   }
 
   static encoder(props: Encoder): string | undefined {
     const { command, args } = props;
-    const commands = BWS4GEncoder.commands();
+    const commands = Bws4GEncoder.commands();
     return commands[command](args as any);
   }
 }
