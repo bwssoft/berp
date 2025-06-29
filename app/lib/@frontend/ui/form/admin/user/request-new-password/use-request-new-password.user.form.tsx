@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook";
-import { requestNewPassword } from "@/app/lib/@backend/action";
 import { useRouter } from "next/navigation";
+import { requestNewPassword } from "@/app/lib/@backend/action/admin/user.action";
 
 const schema = z.object({
   email: z.string(),

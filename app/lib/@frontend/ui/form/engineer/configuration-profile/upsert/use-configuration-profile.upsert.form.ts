@@ -1,8 +1,4 @@
 import {
-  createOneConfigurationProfile,
-  updateOneConfigurationProfileById,
-} from "@/app/lib/@backend/action";
-import {
   Device,
   EType,
   IClient,
@@ -15,6 +11,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { formatConfigurationProfileName } from "../util";
+import {
+  createOneConfigurationProfile,
+  updateOneConfigurationProfileById,
+} from "@/app/lib/@backend/action/engineer/configuration-profile.action";
 
 const twoBytesSchema = z.coerce
   .number()

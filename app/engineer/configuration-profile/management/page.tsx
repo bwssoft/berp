@@ -1,7 +1,3 @@
-import {
-  findManyConfigurationProfile,
-  statsConfigurationProfile,
-} from "@/app/lib/@backend/action";
 import ConfigurationProfileTable from "@/app/lib/@frontend/ui/table/engineer/configuration-profile/table";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
@@ -14,6 +10,10 @@ import {
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import {
+  findManyConfigurationProfile,
+  statsConfigurationProfile,
+} from "@/app/lib/@backend/action/engineer/configuration-profile.action";
 
 export default async function ConfigurationProfilePage() {
   const [configurationProfiles, stats] = await Promise.all([

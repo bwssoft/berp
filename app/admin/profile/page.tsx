@@ -1,4 +1,4 @@
-import { findManyProfile } from "@/app/lib/@backend/action";
+import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { IProfile } from "@/app/lib/@backend/domain";
 import { SearchProfileForm } from "@/app/lib/@frontend/ui/form";
@@ -17,11 +17,15 @@ interface Props {
   };
 }
 export default async function Example(props: Props) {
-  const { searchParams: { page, ...rest } } = props;
+  const {
+    searchParams: { page, ...rest },
+  } = props;
   const _page = page ? Number(page) : 1;
   const profiles = await findManyProfile(query(rest), _page);
 
-  const hideCreateButton = await restrictFeatureByProfile("admin:profile:create");
+  const hideCreateButton = await restrictFeatureByProfile(
+    "admin:profile:create"
+  );
   return (
     <div>
       <div className="flex flex-wrap justify-between items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

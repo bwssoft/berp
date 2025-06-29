@@ -9,9 +9,9 @@ import {
   ITechnology,
 } from "../../@backend/domain";
 import { ISerialPort } from "./use-serial-port";
-import { createManyConfigurationLog } from "../../@backend/action";
 import { useTechnology } from "./use-technology";
 import { useRouter } from "next/navigation";
+import { createManyConfigurationLog } from "../../@backend/action/production/configuration-log.action";
 
 namespace Namespace {
   export interface UseConfigurationProps {

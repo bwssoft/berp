@@ -12,8 +12,8 @@ import {
   IConfigurationProfile,
   BwsNb2LoraConfig,
 } from "../../@backend/domain";
-import { findOneSerial } from "../../@backend/action";
 import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
+import { findOneSerial } from "../../@backend/action/engineer/serial.action";
 
 namespace Namespace {
   interface Equipment {

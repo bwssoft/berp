@@ -1,5 +1,5 @@
-import { findManyProductCategory } from "@/app/lib/@backend/action";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { findManyProductCategory } from "@/app/lib/@backend/action/commercial/product/product.category.action";
 import { IProductCategory } from "@/app/lib/@backend/domain";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { ProductCategoryTable } from "@/app/lib/@frontend/ui/table";

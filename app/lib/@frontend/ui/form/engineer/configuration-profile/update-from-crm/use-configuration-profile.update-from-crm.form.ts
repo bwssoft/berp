@@ -1,4 +1,3 @@
-import { updateOneConfigurationProfileById } from "@/app/lib/@backend/action";
 import {
   EType,
   IClient,
@@ -18,6 +17,7 @@ import {
   loraConfigSchema,
   nb2ConfigSchema,
 } from "../upsert/use-configuration-profile.upsert.form";
+import { updateOneConfigurationProfileById } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
 
 // Esquema principal
 const schema = z.object({

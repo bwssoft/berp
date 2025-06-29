@@ -1,4 +1,4 @@
-import { findOneConfigurationLog } from "@/app/lib/@backend/action";
+import { findOneConfigurationLog } from "@/app/lib/@backend/action/production/configuration-log.action";
 import { ConfigurationLogDescription } from "@/app/lib/@frontend/ui/description";
 
 interface Props {

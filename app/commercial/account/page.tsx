@@ -1,5 +1,5 @@
-import { findManyAccount } from "@/app/lib/@backend/action";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { IAccount } from "@/app/lib/@backend/domain";
 import { AccountFilterForm } from "@/app/lib/@frontend/ui/form/commercial/account/search/search.account.form";
 import { AccountTable } from "@/app/lib/@frontend/ui/table/commercial/account";

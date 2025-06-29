@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { findManyAccount } from "@/app/lib/@backend/action";
 import { IAccount, IContact } from "@/app/lib/@backend/domain";
+import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
 
 const PAGE_SIZE = 10;
 const currentPage = 1;

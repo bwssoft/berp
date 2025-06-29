@@ -1,4 +1,4 @@
-import { findManyAutoTestLog } from "@/app/lib/@backend/action";
+import { findManyAutoTestLog } from "@/app/lib/@backend/action/production/auto-test-log.action";
 import { IAutoTestLog } from "@/app/lib/@backend/domain";
 import { AutoTestLogSearchForm } from "@/app/lib/@frontend/ui/form";
 import { DevicesAutoTestedTable } from "@/app/lib/@frontend/ui/table";

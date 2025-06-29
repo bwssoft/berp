@@ -1,4 +1,4 @@
-import { createOneProfile } from "@/app/lib/@backend/action";
+import { createOneProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";

@@ -1,1 +1,0 @@
-export * from "./get-sale-order-attachment-url"

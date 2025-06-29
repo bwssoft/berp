@@ -1,5 +1,5 @@
-import { findManyBase } from "@/app/lib/@backend/action";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { findManyBase } from "@/app/lib/@backend/action/logistic/base.action";
 import { IBase } from "@/app/lib/@backend/domain";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { BaseTable } from "@/app/lib/@frontend/ui/table";

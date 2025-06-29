@@ -1,4 +1,4 @@
-import { findManyUser } from "@/app/lib/@backend/action";
+import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { IUser } from "@/app/lib/@backend/domain";
 import { SearchUserForm } from "@/app/lib/@frontend/ui/form/admin/user/search-form/search.user.form";

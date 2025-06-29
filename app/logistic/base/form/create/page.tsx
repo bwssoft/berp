@@ -1,4 +1,4 @@
-import { findManyEnterprise } from "@/app/lib/@backend/action";
+import { findManyEnterprise } from "@/app/lib/@backend/action/business/enterprise.action";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { CreateOneBaseForm } from "@/app/lib/@frontend/ui/form";
 

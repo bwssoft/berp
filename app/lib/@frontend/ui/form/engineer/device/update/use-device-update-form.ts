@@ -1,5 +1,4 @@
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { updateOneDeviceById } from "@/app/lib/@backend/action";
 import { IDevice } from "@/app/lib/@backend/domain";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

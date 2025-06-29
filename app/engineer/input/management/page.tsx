@@ -1,5 +1,5 @@
-import { findManyInput } from "@/app/lib/@backend/action";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { findManyInput } from "@/app/lib/@backend/action/engineer/input/input.action";
 import { IInput } from "@/app/lib/@backend/domain";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { InputTable } from "@/app/lib/@frontend/ui/table";

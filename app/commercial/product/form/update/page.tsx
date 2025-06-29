@@ -1,7 +1,5 @@
-import {
-  findManyProductCategory,
-  findOneProduct,
-} from "@/app/lib/@backend/action";
+import { findOneProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { findManyProductCategory } from "@/app/lib/@backend/action/commercial/product/product.category.action";
 import {
   BackButton,
   UpdateOneProductForm,

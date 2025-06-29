@@ -11,7 +11,6 @@ import {
   LinkIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
-import { createProductionOrderFromProposal } from "@/app/lib/@backend/action";
 import {
   IClient,
   IConfigurationProfile,
@@ -23,6 +22,7 @@ import { Button, Combobox, Error } from "../../../../component";
 import { Controller } from "react-hook-form";
 import { nanoid } from "nanoid";
 import Link from "next/link";
+import { createProductionOrderFromProposal } from "@/app/lib/@backend/action/production/production-order.action";
 
 interface ProductionOrderFromProposalCreateFormProps {
   proposal_id: string;

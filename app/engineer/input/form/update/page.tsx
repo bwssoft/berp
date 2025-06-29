@@ -1,4 +1,5 @@
-import { findManyInputCategory, findOneInput } from "@/app/lib/@backend/action";
+import { findOneInput } from "@/app/lib/@backend/action/engineer/input/input.action";
+import { findManyInputCategory } from "@/app/lib/@backend/action/engineer/input/input.category.action";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { UpdateOneInputForm } from "@/app/lib/@frontend/ui/form";
 

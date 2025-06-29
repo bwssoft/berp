@@ -1,9 +1,7 @@
-import {
-  findManyConfigurationLog,
-  findOneConfigurationProfile,
-  findOneTechnology,
-} from "@/app/lib/@backend/action";
+import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
 import { CheckConfigurationPanel } from "./@components/check-configuration-panel";
+import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { findManyConfigurationLog } from "@/app/lib/@backend/action/production/configuration-log.action";
 
 interface Props {
   searchParams: {

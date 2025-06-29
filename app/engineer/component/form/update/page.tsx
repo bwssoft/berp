@@ -1,7 +1,5 @@
-import {
-  findManyComponentCategory,
-  findOneComponent,
-} from "@/app/lib/@backend/action";
+import { findOneComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
+import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component/component.category.action";
 import {
   BackButton,
   UpdateOneComponentForm,

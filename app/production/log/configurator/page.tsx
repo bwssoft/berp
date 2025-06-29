@@ -1,7 +1,7 @@
 import {
   findManyConfigurationLog,
   statsConfigurationLog,
-} from "@/app/lib/@backend/action";
+} from "@/app/lib/@backend/action/production/configuration-log.action";
 import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import { statsConfigurationLogUsecase } from "@/app/lib/@backend/usecase/production/configuration-log/stats-configuration-log.usecase";
 import { Button } from "@/app/lib/@frontend/ui/component";

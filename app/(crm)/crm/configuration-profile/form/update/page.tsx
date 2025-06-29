@@ -1,9 +1,9 @@
+import { findOneClient } from "@/app/lib/@backend/action/commercial/client.action";
+import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
 import {
   findManyTechnology,
-  findOneClient,
-  findOneConfigurationProfile,
   findOneTechnology,
-} from "@/app/lib/@backend/action";
+} from "@/app/lib/@backend/action/engineer/technology.action";
 import { ConfigurationProfileUpdateFromCrmForm } from "@/app/lib/@frontend/ui/form/engineer/configuration-profile/update-from-crm";
 
 interface Props {

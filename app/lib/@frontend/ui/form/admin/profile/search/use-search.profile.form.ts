@@ -6,8 +6,9 @@ import { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { findManyProfile, findManyUser } from "@/app/lib/@backend/action";
 import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
+import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
 
 const schema = z.object({
   quick: z.string().optional(),
@@ -82,7 +83,7 @@ export const useSearchProfileForm = () => {
         filter["name"] = { $regex: profileSearchTerm, $options: "i" };
       }
       const { docs } = await findManyProfile(filter);
-      return docs
+      return docs;
     },
   });
 
@@ -114,7 +115,7 @@ export const useSearchProfileForm = () => {
       active: data.active?.map(({ value }) => value),
     };
 
-    handleParamsChange({...params});
+    handleParamsChange({ ...params });
     toggleModal();
   });
 

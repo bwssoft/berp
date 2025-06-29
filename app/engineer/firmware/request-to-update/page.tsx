@@ -1,4 +1,4 @@
-import { findAllRequestToUpdate } from "@/app/lib/@backend/action";
+import { findAllRequestToUpdate } from "@/app/lib/@backend/action/engineer/firmware/request-to-update.action";
 import { FirmwareRequestToUpdateTable } from "@/app/lib/@frontend/ui/component";
 
 export default async function Example() {

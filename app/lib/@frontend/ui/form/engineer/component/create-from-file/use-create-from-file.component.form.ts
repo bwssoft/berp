@@ -1,4 +1,4 @@
-import { createManyComponent } from "@/app/lib/@backend/action";
+import { createManyComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
 import {
   Component,
   IComponent,

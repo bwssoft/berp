@@ -1,4 +1,5 @@
-import { findManyClient, findManyTechnology } from "@/app/lib/@backend/action";
+import { findManyClient } from "@/app/lib/@backend/action/commercial/client.action";
+import { findManyTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
 import { ConfigurationProfileUpsertForm } from "@/app/lib/@frontend/ui/form";
 
 export default async function Page() {

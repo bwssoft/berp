@@ -15,7 +15,7 @@ import {
   Package,
   Wrench,
 } from "lucide-react";
-import { confirmManyMovement } from "@/app/lib/@backend/action";
+import { confirmManyMovement } from "@/app/lib/@backend/action/logistic/movement.action";
 
 interface Props {
   restrictFeatureByProfile: (code: string) => boolean;

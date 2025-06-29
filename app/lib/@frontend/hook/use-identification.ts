@@ -4,11 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Device, IIdentificationLog, ITechnology } from "../../@backend/domain";
 import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
-import {
-  upsertOneDevice,
-  createOneIdentificationLog,
-} from "../../@backend/action";
+
 import { toast } from "./use-toast";
+import { createOneIdentificationLog } from "../../@backend/action/production/identification-log.action";
+import { upsertOneDevice } from "../../@backend/action/engineer/device.action";
 
 namespace Namespace {
   export interface useIdentificationProps {

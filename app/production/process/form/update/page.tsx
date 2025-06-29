@@ -1,4 +1,4 @@
-import { findOneProductionProcess } from "@/app/lib/@backend/action";
+import { findOneProductionProcess } from "@/app/lib/@backend/action/production/production-process.action";
 import { ProductionProcessUpdateForm } from "@/app/lib/@frontend/ui/component";
 
 interface Props {

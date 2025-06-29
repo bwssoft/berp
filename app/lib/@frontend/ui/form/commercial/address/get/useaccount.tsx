@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { findOneAccount } from "@/app/lib/@backend/action";
 import { IAccount } from "@/app/lib/@backend/domain";
+import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 
 export function useAccount(id: string) {
     const [account, setAccount] = useState<IAccount | null>(null);

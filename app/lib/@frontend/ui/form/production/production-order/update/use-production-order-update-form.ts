@@ -1,32 +1,34 @@
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { updateOneProductionOrderById } from '@/app/lib/@backend/action';
-import { IProductionOrder } from '@/app/lib/@backend/domain';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { IProductionOrder } from "@/app/lib/@backend/domain";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
 const schema = z.object({
   priority: z.enum(["high", "medium", "low"]),
-  stage: z.enum(["to_produce",
+  stage: z.enum([
+    "to_produce",
     "producing",
     "quality",
     "checked",
     "completed",
-    "stored"
+    "stored",
   ]),
-  description: z.string().min(1, 'Esse campo não pode ser vazio'),
+  description: z.string().min(1, "Esse campo não pode ser vazio"),
   files: z.any(),
-  products: z.array(z.object({ product_id: z.string(), quantity: z.coerce.number() })),
+  products: z.array(
+    z.object({ product_id: z.string(), quantity: z.coerce.number() })
+  ),
 });
 
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
-  defaultValues: IProductionOrder
+  defaultValues: IProductionOrder;
 }
 
 export function useProductionOrderUpdateForm(props: Props) {
-  const { defaultValues } = props
+  const { defaultValues } = props;
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -61,8 +63,8 @@ export function useProductionOrderUpdateForm(props: Props) {
     }
   });
 
-  const handleAppendProduct = append
-  const handleRemoveProduct = remove
+  const handleAppendProduct = append;
+  const handleRemoveProduct = remove;
 
   return {
     register,
@@ -73,6 +75,6 @@ export function useProductionOrderUpdateForm(props: Props) {
     reset: hookFormReset,
     productsOnForm: fields,
     handleAppendProduct,
-    handleRemoveProduct
+    handleRemoveProduct,
   };
 }

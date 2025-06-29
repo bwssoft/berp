@@ -1,4 +1,4 @@
-import { deleteOneConfigurationProfileById } from "@/app/lib/@backend/action";
+import { deleteOneConfigurationProfileById } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
 import { toast } from "@/app/lib/@frontend/hook";
 import {
   CheckCircleIcon,

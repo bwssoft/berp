@@ -1,5 +1,5 @@
-import { findManyComponent } from "@/app/lib/@backend/action";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { findManyComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
 import { IComponent } from "@/app/lib/@backend/domain";
 import { BackButton } from "@/app/lib/@frontend/ui/component";
 import { ComponentTable } from "@/app/lib/@frontend/ui/table";

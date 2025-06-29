@@ -1,4 +1,4 @@
-import { createOneTechnicalSheet } from "@/app/lib/@backend/action";
+import { createOneTechnicalSheet } from "@/app/lib/@backend/action/engineer/technical-sheet.action";
 import { IComponent } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { xlsxToJson } from "@/app/lib/util";

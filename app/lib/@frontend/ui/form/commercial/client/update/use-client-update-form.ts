@@ -1,9 +1,16 @@
-import { toast } from '@/app/lib/@frontend/hook/use-toast';
-import { updateOneClientById } from '@/app/lib/@backend/action';
-import { ClientSectorEnum, ContactDepartmentEnum, ContactRoleEnum, DocumentValueEnum, IClient, TaxRegime } from '@/app/lib/@backend/domain';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import {
+  ClientSectorEnum,
+  ContactDepartmentEnum,
+  ContactRoleEnum,
+  DocumentValueEnum,
+  IClient,
+  TaxRegime,
+} from "@/app/lib/@backend/domain";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
+import { updateOneClientById } from "@/app/lib/@backend/action/commercial/client.action";
 
 const schema = z.object({
   trade_name: z.string(),
@@ -11,7 +18,7 @@ const schema = z.object({
   sector: z.nativeEnum(ClientSectorEnum),
   document: z.object({
     type: z.nativeEnum(DocumentValueEnum).default(DocumentValueEnum["CNPJ"]),
-    value: z.string()
+    value: z.string(),
   }),
   tax_details: z.object({
     state_registration: z.string(),
@@ -25,29 +32,31 @@ const schema = z.object({
     street: z.string(),
     district: z.string(),
     city: z.string(),
-    postal_code: z.string()
+    postal_code: z.string(),
   }),
-  contacts: z.array(z.object({
-    id: z.string(),
-    role: z.nativeEnum(ContactRoleEnum),
-    department: z.nativeEnum(ContactDepartmentEnum),
-    phone: z.string(),
-    email: z.string(),
-    name: z.string(),
-    can_sign_contract: z.boolean().default(false),
-    can_receive_document: z.boolean().default(false),
-    created_at: z.coerce.date()
-  }))
+  contacts: z.array(
+    z.object({
+      id: z.string(),
+      role: z.nativeEnum(ContactRoleEnum),
+      department: z.nativeEnum(ContactDepartmentEnum),
+      phone: z.string(),
+      email: z.string(),
+      name: z.string(),
+      can_sign_contract: z.boolean().default(false),
+      can_receive_document: z.boolean().default(false),
+      created_at: z.coerce.date(),
+    })
+  ),
 });
 
 export type Schema = z.infer<typeof schema>;
 
 interface Props {
-  defaultValues: IClient
+  defaultValues: IClient;
 }
 
 export function useClientUpdateForm(props: Props) {
-  const { defaultValues } = props
+  const { defaultValues } = props;
   const {
     register,
     handleSubmit: hookFormSubmit,
@@ -57,16 +66,20 @@ export function useClientUpdateForm(props: Props) {
     reset: hookFormReset,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
-    defaultValues
+    defaultValues,
   });
 
-  const { fields: contacts, append, remove } = useFieldArray({
+  const {
+    fields: contacts,
+    append,
+    remove,
+  } = useFieldArray({
     control,
     name: "contacts",
   });
 
-  const handleAppendContact = append
-  const handleRemoveContact = remove
+  const handleAppendContact = append;
+  const handleRemoveContact = remove;
 
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
