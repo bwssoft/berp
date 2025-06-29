@@ -10,7 +10,7 @@ import {
   ITechnology,
 } from "../../@backend/domain";
 import { toast } from "./use-toast";
-import { checkWithDifference } from "../../util";
+import { checkWithDifference, sleep } from "../../util";
 import { ISerialPort } from "./use-serial-port";
 import { createManyConfigurationLog } from "../../@backend/action";
 import { useTechnology } from "./use-technology";
@@ -59,126 +59,75 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
   // function that handle the configuration process, check if the process was successful and save result on database
   const configure = useCallback(
-    async (configuration_profile: IConfigurationProfile | null) => {
-      if (configuration_profile === null) {
-        toast({
-          variant: "error",
-          title: "Erro!",
-          description: "Selecione um perfil de configuração",
-        });
-        return;
-      }
-
+    async (configuration_profile: IConfigurationProfile) => {
       isConfiguring.current = true;
       setIsProcessing(true);
 
-      // configure devices
-      const configurationResult = await handleConfiguration(
-        identified
-          .filter((i) => i.equipment.serial && i.equipment.firmware)
-          .map(({ port }) => port),
-        configuration_profile
-      );
+      try {
+        const validIdentified = identified.filter(
+          (
+            i
+          ): i is (typeof identified)[number] & {
+            equipment: { serial: string; firmware: string };
+          } => Boolean(i.equipment.serial && i.equipment.firmware)
+        );
 
-      // obtain device profile after configuration process
-      const profileResult = await handleGetProfile(ports);
+        const configurationResult = await handleConfiguration(
+          validIdentified,
+          configuration_profile
+        );
 
-      delete (configuration_profile.config?.specific as E3Plus4GConfig)
-        ?.password;
-
-      // check if each message sent has response and configured to the desired profile
-      const result = configurationResult
-        .map(({ port, response, messages, end_time, init_time, status }) => {
-          if (!response || !messages || !end_time || !init_time)
-            return undefined;
-
-          const { equipment } = identified.find((el) => el.port === port) ?? {};
-
-          if (!equipment || !technology) return undefined;
-
-          const profileAfterConfiguration = profileResult.find(
-            (el) => el.port === port
-          );
-
-          if (!profileAfterConfiguration?.config) return undefined;
-
-          const { difference: generalDiff } = checkWithDifference(
-            configuration_profile.config?.general,
-            profileAfterConfiguration?.config?.general
-          );
-
-          const { difference: specificDiff } = checkWithDifference(
-            configuration_profile.config?.specific,
-            profileAfterConfiguration?.config?.specific
-          );
-
-          const configuration_log: Omit<
-            IConfigurationLog,
-            "id" | "created_at" | "user"
-          > = {
-            profile: {
-              id: configuration_profile.id,
-              name: configuration_profile.name,
-              config: configuration_profile.config,
-            },
-            technology: {
-              id: technology.id,
-              system_name: technology.name.system,
-            },
-            equipment: {
-              firmware: equipment.firmware!,
-              serial: equipment.serial!,
-              iccid: equipment.iccid,
-              imei: equipment.imei,
-              lora_keys: equipment.lora_keys,
-            },
-            checked: false,
-            status,
-            metadata: {
-              messages: messages.map(({ key, command }) => ({
-                request: command,
-                response: response[key],
-              })),
-              end_time,
+        // check if each message sent has response and configured to the desired profile
+        const result = configurationResult
+          .map(
+            ({
+              messages,
+              status,
+              equipment,
+              applied_profile,
               init_time,
-            },
-            not_configured: {
-              general: generalDiff,
-              specific: specificDiff,
-            },
-            raw_profile: profileAfterConfiguration.raw as [string, string][],
-            parsed_profile: profileAfterConfiguration.config,
-            client: client
-              ? {
-                  id: client.id,
-                  trade_name: client.trade_name,
-                  company_name: client.company_name,
-                  document: client.document.value,
-                }
-              : null,
-          };
+              end_time,
+            }) => {
+              const configuration_log: Omit<
+                IConfigurationLog,
+                "id" | "created_at" | "user"
+              > = {
+                equipment,
+                checked: false,
+                init_time,
+                end_time,
+                status,
+                applied_profile,
+                desired_profile: {
+                  id: configuration_profile.id,
+                  name: configuration_profile.name,
+                  config: configuration_profile.config,
+                },
+                technology: {
+                  id: technology!.id,
+                  system_name: technology!.name.system,
+                },
+                messages,
+              };
 
-          return configuration_log;
-        })
-        .filter((el): el is NonNullable<typeof el> => el !== undefined);
+              return configuration_log;
+            }
+          )
+          .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
-      // save result on database
-      const dataSavedOnDb = await createManyConfigurationLog(result);
+        // save result on database
+        const dataSavedOnDb = await createManyConfigurationLog(result);
 
-      // update state with configuration process result
-      setConfigured((prev) => prev.concat(dataSavedOnDb));
-
-      isConfiguring.current = false;
-      setIsProcessing(false);
+        // update state with configuration process result
+        setConfigured((prev) => prev.concat(dataSavedOnDb));
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        isConfiguring.current = false;
+        setIsProcessing(false);
+      }
     },
-    [
-      client,
-      handleConfiguration,
-      handleGetProfile,
-      identified,
-      ports,
-      technology,
-    ]
+    [handleConfiguration, handleGetProfile, identified, ports, technology]
   );
 
   // useEffect used to identify devices when connected via serial ports

@@ -127,14 +127,14 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
           lora_keys: equipment?.lora_keys,
         },
         status,
-        metadata: {
-          messages: messages.map(({ key, command }) => ({
-            request: command,
-            response: response[key as keyof typeof response],
-          })),
-          end_time,
-          init_time,
-        },
+        // metadata: {
+        //   messages: messages.map(({ key, command }) => ({
+        //     request: command,
+        //     response: response[key as keyof typeof response],
+        //   })),
+        //   end_time,
+        //   init_time,
+        // },
         technology: {
           id: technology.id,
           system_name: technology.name.system,

@@ -92,8 +92,7 @@ export function IdentificationLogDescription({ data }: Props) {
             </dd>
           </div>
 
-          {/* Metadata - Test Duration */}
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          {/* <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">
               Test Duration
             </dt>
@@ -102,7 +101,6 @@ export function IdentificationLogDescription({ data }: Props) {
             </dd>
           </div>
 
-          {/* Metadata - messages */}
           {data.metadata.messages && data.metadata.messages.length > 0 && (
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
               <dt className="text-sm/6 font-medium text-gray-900">Messages</dt>
@@ -131,7 +129,7 @@ export function IdentificationLogDescription({ data }: Props) {
                 </ul>
               </dd>
             </div>
-          )}
+          )} */}
         </dl>
       </div>
     </div>

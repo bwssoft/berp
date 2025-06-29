@@ -45,7 +45,6 @@ export function AutoTestLogDescription({ data }: Props) {
               <span className={`mr-2 ${statusClass}`}>{text}</span>
             </dd>
           </div>
-
           {/* Analysis */}
           {data.analysis && Object.keys(data.analysis).length > 0 && (
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -67,7 +66,6 @@ export function AutoTestLogDescription({ data }: Props) {
               </dd>
             </div>
           )}
-
           {/* Equipment Information */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">IMEI</dt>
@@ -97,7 +95,6 @@ export function AutoTestLogDescription({ data }: Props) {
               </dd>
             </div>
           )}
-
           {/* Technology */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">Technology</dt>
@@ -105,7 +102,6 @@ export function AutoTestLogDescription({ data }: Props) {
               {data.technology.system_name}
             </dd>
           </div>
-
           {/* Created At */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">Created At</dt>
@@ -113,7 +109,6 @@ export function AutoTestLogDescription({ data }: Props) {
               {formattedCreatedAt}
             </dd>
           </div>
-
           {/* User ID */}
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">User ID</dt>
@@ -121,9 +116,7 @@ export function AutoTestLogDescription({ data }: Props) {
               {data.user.name}
             </dd>
           </div>
-
-          {/* Metadata - Test Duration */}
-          <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          {/* <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm/6 font-medium text-gray-900">
               Test Duration
             </dt>
@@ -131,8 +124,6 @@ export function AutoTestLogDescription({ data }: Props) {
               {(data.metadata.end_time - data.metadata.init_time) / 1000}s
             </dd>
           </div>
-
-          {/* Metadata - messages */}
           {data.metadata.messages && data.metadata.messages.length > 0 && (
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
               <dt className="text-sm/6 font-medium text-gray-900">Messages</dt>
@@ -166,7 +157,7 @@ export function AutoTestLogDescription({ data }: Props) {
                 </ul>
               </dd>
             </div>
-          )}
+          )} */}
         </dl>
       </div>
     </div>

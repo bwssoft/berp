@@ -1,4 +1,4 @@
-import { E34G, NB2 } from "../../../infra/protocol";
+import { E34G, BwsNb2 } from "../../../infra/protocol";
 import { IDeviceLog } from "./device-log.definition";
 
 export interface IAutoTestLog extends IDeviceLog {
@@ -6,5 +6,5 @@ export interface IAutoTestLog extends IDeviceLog {
 }
 
 type Analysis = {
-  [K in keyof NB2.AutoTest | keyof E34G.AutoTest]?: boolean;
+  [K in keyof BwsNb2.AutoTest | keyof E34G.AutoTest]?: boolean;
 };

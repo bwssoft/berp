@@ -23,6 +23,26 @@ export interface Props<Transport, M extends object = {}> {
   };
 }
 
+class RetryableMessageError extends Error {
+  constructor(
+    message: string,
+    readonly meta: { command: string; attempt: number; cause?: unknown }
+  ) {
+    super(message);
+    this.name = "RetryableMessageError";
+  }
+}
+
+class RetryLimitExceededError extends Error {
+  constructor(
+    message: string,
+    readonly meta?: { command?: string; attempts?: number }
+  ) {
+    super(message);
+    this.name = "RetryLimitExceededError";
+  }
+}
+
 export function useCommunication<Transport, M extends object = {}>(
   props: Props<Transport, M>
 ) {
@@ -50,14 +70,19 @@ export function useCommunication<Transport, M extends object = {}>(
           }
           return undefined;
         } catch (error) {
-          console.error(
-            `ERROR [sendSingleMessage] tentativa ${attempts + 1} para "${msg.command}":`,
-            error
+          const err = new RetryableMessageError(
+            `Erro ao enviar mensagem "${msg.command}", tentativa ${attempts + 1}.`,
+            { command: msg.command, attempt: attempts + 1, cause: error }
           );
+          console.error(err);
         }
         attempts++;
       }
-      return undefined;
+
+      throw new RetryLimitExceededError(
+        `Limite de tentativas excedido para comando "${msg.command}".`,
+        { command: msg.command, attempts }
+      );
     },
     [maxRetriesPerMessage, sendMessage]
   );
@@ -76,7 +101,12 @@ export function useCommunication<Transport, M extends object = {}>(
     }> => {
       const { transport, messages, depth = 0 } = input;
       if (depth >= maxOverallRetries) {
-        throw new Error("Número máximo de tentativas atingido.");
+        throw new RetryLimitExceededError(
+          "Limite máximo de tentativas para grupo de mensagens.",
+          {
+            attempts: depth,
+          }
+        );
       }
 
       const results = {} as any;
@@ -92,7 +122,6 @@ export function useCommunication<Transport, M extends object = {}>(
         await closeTransport(transport);
         return results;
       } catch (err) {
-        console.error("ERROR [sendMultipleMessages]", err);
         await closeTransport(transport);
         return sendMultipleMessages({ transport, messages, depth: depth + 1 });
       }
