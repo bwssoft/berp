@@ -43,7 +43,6 @@ const readResponse = async (
   const decoder = new TextDecoder();
   let buffer = "";
 
-  // limpa o comando e, se não houver "=", adiciona um
   const base = command.replace("\r\n", "");
   const cmp = base.includes("=") ? base : `${base}=`;
 
