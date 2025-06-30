@@ -1,11 +1,10 @@
 import {
     Badge,
+    Button,
     Card,
     CardContent,
     CardHeader,
     CardTitle,
-    InfoField,
-    SectionCard,
 } from "@/app/lib/@frontend/ui/component";
 
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
@@ -13,16 +12,12 @@ import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.ac
 import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import {
     AlertCircle,
-    Building2,
     CheckCircle,
-    DollarSign,
     Phone,
-    Tag,
-    User,
-    Users,
+    MapPin,
+    Plus,
     XCircle,
 } from "lucide-react";
-import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.card";
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
@@ -74,7 +69,6 @@ export default async function Page({ searchParams }: Props) {
 
             {/* Segunda linha - Contatos e Endereços com mesma altura */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-
                 {/* Card de Contatos */}
                 <div className="lg:col-span-1 h-full">
                   {account.docs[0].contacts?.map((contact, idx) => (
@@ -126,9 +120,63 @@ export default async function Page({ searchParams }: Props) {
                         </Card>
                     )}
                 </div>
-
                 {/* Card de Endereços - Ocupa 2 colunas */}
-                <div className="lg:col-span-2 h-full"></div>
+
+                <Card className="flex flex-col h-full">
+                    <CardHeader className="pb-3 flex-shrink-0">
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="flex items-center gap-2 text-lg">
+                                <MapPin className="h-5 w-5 text-primary" />
+                                Endereços
+                                {address?.length && (
+                                    <Badge
+                                        variant="secondary"
+                                        className="text-xs"
+                                    >
+                                        {address.length}
+                                    </Badge>
+                                )}
+                            </CardTitle>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                aria-label="Adicionar endereço"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="flex-1 flex flex-col">
+                        <div className="lg:col-span-2 h-full"></div>
+                        <div className="lg:col-span-2 h-full space-y-3">
+                            {address.length > 0 ? (
+                                <div className="flex flex-wrap gap-3">
+                                    {address.map((addr) => (
+                                        <AddressCard
+                                            key={addr.id}
+                                            title="Endereço:"
+                                            address={addr}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>
+                                            Nenhum endereço encontrado
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p>
+                                            Cadastre um endereço para este
+                                            cliente.
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
