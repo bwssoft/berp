@@ -1,4 +1,3 @@
-import { IAddress } from "@/app/lib/@backend/domain";
 import {
   Badge,
   Card,
@@ -6,16 +5,10 @@ import {
   CardHeader,
   CardTitle,
   InfoField,
-  SectionCard,
 } from "@/app/lib/@frontend/ui/component";
-import { AddressCard } from "@/app/lib/@frontend/ui/list/comercial/address/address.card";
-import { ContactCard } from "@/app/lib/@frontend/ui/list/comercial/contact/contact.card";
 import {
-  SearchContactModal,
   UpdateEconomicGroupAccountModal,
 } from "@/app/lib/@frontend/ui/modal";
-import { CreateContact } from "../../form/create/tab/contact/create-contact";
-import { CreateAddressModal } from "../../form/create/tab/address/create-address";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
@@ -30,6 +23,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
+import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.card";
 
 interface Props {
   searchParams: {
@@ -346,8 +340,17 @@ export default async function Page({ searchParams }: Props) {
 
       {/* Segunda linha - Contatos e Endereços com mesma altura */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+
         {/* Card de Contatos */}
-        <div className="lg:col-span-1 h-full"></div>
+        <div className="lg:col-span-1 h-full">
+          {account.docs[0].contacts?.map((contact, idx) => (
+            <ContactCard
+              key={contact.id ?? idx}
+              contact={contact}
+              accountId={accountId}
+            />
+          ))}
+        </div>
 
         {/* Card de Endereços - Ocupa 2 colunas */}
         <div className="lg:col-span-2 h-full"></div>
