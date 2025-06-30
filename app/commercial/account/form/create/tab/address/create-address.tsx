@@ -3,6 +3,7 @@
 import { useAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/use-address.modal";
 import { AddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
 import { Button } from "@/app/lib/@frontend/ui/component";
+import { Plus } from "lucide-react";
 
 interface Props {
   id: string;
@@ -15,8 +16,12 @@ export function CreateAddressModal({ id }: Props) {
     <>
       <AddressModal open={open} closeModal={closeModal} accountId={id} />
       <div className="flex justify-end items-end gap-4 mt-4">
-        <Button onClick={openModal} type="button" className="h-fit">
-          Novo
+        <Button
+          variant={"ghost"}
+          className="border px-3 py-3"
+          onClick={openModal}
+        >
+          <Plus className="h-4 w-4" />
         </Button>
       </div>
     </>

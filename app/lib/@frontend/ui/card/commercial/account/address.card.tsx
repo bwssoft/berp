@@ -1,309 +1,278 @@
 "use client";
 
 import { toast } from "@/app/lib/@frontend/hook";
-import { Copy, RotateCcw, Edit, Archive } from "lucide-react";
+import { Copy, RotateCcw, Edit, Archive, Trash } from "lucide-react";
 import {
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
 } from "../../../component";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Badge } from "@bwsoft/badge";
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "../../../component/tooltip";
 import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "../../../component/alert-dialog";
 import {
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogDescription,
 } from "@radix-ui/react-alert-dialog";
 import { Separator } from "../../../component/separator";
 
 interface IAddress {
-    id?: string | undefined;
-    accountId?: string;
-    street?: string | undefined;
-    district?: string | undefined;
-    city?: string | undefined;
-    zip_code?: string | undefined;
-    state?: string | undefined;
-    number?: string | undefined;
-    complement?: string | undefined;
-    reference_point?: string | undefined;
-    type?: ("Comercial" | "Entrega" | "Faturamento" | "Residencial")[];
-    created_at?: Date;
-    updated_at?: Date;
+  id?: string | undefined;
+  accountId?: string;
+  street?: string | undefined;
+  district?: string | undefined;
+  city?: string | undefined;
+  zip_code?: string | undefined;
+  state?: string | undefined;
+  number?: string | undefined;
+  complement?: string | undefined;
+  reference_point?: string | undefined;
+  type?: ("Comercial" | "Entrega" | "Faturamento" | "Residencial")[];
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 interface AddressCardProps {
-    title?: string;
-    address: IAddress;
-    onRefresh?: () => void;
-    onCopy?: () => void;
-    onEdit?: (address: IAddress) => void;
-    onDelete?: (addressId: string) => void;
+  title?: string;
+  address: IAddress;
+  onRefresh?: () => void;
+  onCopy?: () => void;
+  onEdit?: (address: IAddress) => void;
+  onDelete?: (addressId: string) => void;
 }
 
 export function AddressCard({
-    title = "Endereço",
-    address,
-    onRefresh,
-    onCopy,
-    onEdit,
-    onDelete,
+  title = "Endereço",
+  address,
+  onRefresh,
+  onCopy,
+  onEdit,
+  onDelete,
 }: AddressCardProps) {
-    const handleCopy = async () => {
-        if (onCopy) {
-            onCopy();
-            return;
-        }
+  const handleCopy = async () => {
+    if (onCopy) {
+      onCopy();
+      return;
+    }
 
-        try {
-            const {
-                street,
-                number,
-                district,
-                city,
-                state,
-                zip_code,
-                complement,
-                reference_point,
-            } = address;
+    try {
+      const {
+        street,
+        number,
+        district,
+        city,
+        state,
+        zip_code,
+        complement,
+        reference_point,
+      } = address;
 
-            let text = `${street}, ${number}, ${district}\n${city} - ${state}, ${zip_code}`;
+      let text = `${street}, ${number}, ${district}\n${city} - ${state}, ${zip_code}`;
 
-            if (complement) {
-                text += `\nComplemento: ${complement}`;
-            }
+      if (complement) {
+        text += `\nComplemento: ${complement}`;
+      }
 
-            if (reference_point) {
-                text += `\nPonto de Referência: ${reference_point}`;
-            }
+      if (reference_point) {
+        text += `\nPonto de Referência: ${reference_point}`;
+      }
 
-            await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(text);
 
-            toast({
-                title: "Sucesso!",
-                description: "Endereço copiado para a área de transferência.",
-            });
-        } catch (error) {
-            toast({
-                title: "Erro",
-                description: "Não foi possível copiar o endereço.",
-                variant: "error",
-            });
-        }
-    };
+      toast({
+        title: "Sucesso!",
+        description: "Endereço copiado para a área de transferência.",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível copiar o endereço.",
+        variant: "error",
+      });
+    }
+  };
 
-    const handleEdit = () => {
-        if (onEdit) {
-            onEdit(address);
-        }
-    };
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit(address);
+    }
+  };
 
-    const handleDelete = () => {
-        if (onDelete && address.id) {
-            onDelete(address.id);
-        }
-    };
+  const handleDelete = () => {
+    if (onDelete && address.id) {
+      onDelete(address.id);
+    }
+  };
 
-    const formatAddress = () => {
-        const parts = [];
+  const formatAddress = () => {
+    const parts = [];
 
-        if (address.street && address.number && address.district) {
-            parts.push(
-                `${address.street}, ${address.number}, ${address.district}`
-            );
-        }
+    if (address.street && address.number && address.district) {
+      parts.push(`${address.street}, ${address.number}, ${address.district}`);
+    }
 
-        if (address.city && address.state && address.zip_code) {
-            parts.push(
-                `${address.city} - ${address.state}, ${address.zip_code}`
-            );
-        }
+    if (address.city && address.state && address.zip_code) {
+      parts.push(`${address.city} - ${address.state}, ${address.zip_code}`);
+    }
 
-        return parts;
-    };
+    return parts;
+  };
 
-    const addressParts = formatAddress();
+  const addressParts = formatAddress();
 
-    return (
-        <TooltipProvider>
-            <Card className="w-full max-w-sm transition-all duration-200 hover:shadow-md">
-                <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 space-y-2">
-                            <CardTitle className="text-base font-semibold leading-none">
-                                {title}
-                            </CardTitle>
+  return (
+    <TooltipProvider>
+      <Card className="w-full max-w-sm transition-all duration-200 hover:shadow-md">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 space-y-2">
+              <CardTitle className="text-base font-semibold leading-none">
+                {title}
+              </CardTitle>
 
-                            {address.type && address.type.length > 0 && (
-                                <div className="flex flex-wrap gap-1">
-                                    {address.type.map((type, index) => (
-                                        <Badge
-                                            label={type}
-                                            key={index}
-                                            variant="rounded"
-                                            className="text-xs font-medium"
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+              {address.type && address.type.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {address.type.map((type, index) => (
+                    <Badge
+                      label={type}
+                      key={index}
+                      variant="rounded"
+                      className="text-xs font-medium"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
 
-                        <div className="flex gap-1">
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                        onClick={onRefresh}
-                                        aria-label="Atualizar endereço"
-                                    >
-                                        <RotateCcw className="h-4 w-4" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                    <p>Atualizar</p>
-                                </TooltipContent>
-                            </Tooltip>
+            <div className="flex gap-1">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    onClick={onRefresh}
+                    aria-label="Atualizar endereço"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Atualizar</p>
+                </TooltipContent>
+              </Tooltip>
 
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                        onClick={handleCopy}
-                                        aria-label="Copiar endereço"
-                                    >
-                                        <Copy className="h-4 w-4" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                    <p>Copiar endereço</p>
-                                </TooltipContent>
-                            </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    onClick={handleCopy}
+                    aria-label="Copiar endereço"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Copiar endereço</p>
+                </TooltipContent>
+              </Tooltip>
 
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                        onClick={handleEdit}
-                                        aria-label="Editar endereço"
-                                    >
-                                        <Edit className="h-4 w-4" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                    <p>Editar endereço</p>
-                                </TooltipContent>
-                            </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                    onClick={handleEdit}
+                    aria-label="Editar endereço"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Editar endereço</p>
+                </TooltipContent>
+              </Tooltip>
 
-                            <AlertDialog>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                                            aria-label="Excluir endereço"
-                                            asChild
-                                        >
-                                            <AlertDialogTrigger>
-                                                <Archive className="h-4 w-4" />
-                                            </AlertDialogTrigger>
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top">
-                                        <p>Excluir endereço</p>
-                                    </TooltipContent>
-                                </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    aria-label="Excluir endereço"
+                    asChild
+                    onClick={handleDelete}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Excluir endereço</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </div>
+        </CardHeader>
 
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>
-                                            Excluir endereço
-                                        </AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            Tem certeza que deseja excluir este
-                                            endereço? Esta ação não pode ser
-                                            desfeita.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>
-                                            Cancelar
-                                        </AlertDialogCancel>
-                                        <AlertDialogAction
-                                            onClick={handleDelete}
-                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                        >
-                                            Confirmar exclusão
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </div>
+        <CardContent className="pt-0">
+          <div className="space-y-2">
+            {addressParts.map((part, index) => (
+              <div
+                key={index}
+                className={
+                  index === 0
+                    ? "font-medium text-sm"
+                    : "text-sm text-muted-foreground"
+                }
+              >
+                {part}
+              </div>
+            ))}
+
+            {(address.complement || address.reference_point) && (
+              <>
+                <Separator className="my-3" />
+                <div className="space-y-1">
+                  {address.complement && (
+                    <div className="text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">
+                        Complemento:
+                      </span>{" "}
+                      {address.complement}
                     </div>
-                </CardHeader>
-
-                <CardContent className="pt-0">
-                    <div className="space-y-2">
-                        {addressParts.map((part, index) => (
-                            <div
-                                key={index}
-                                className={
-                                    index === 0
-                                        ? "font-medium text-sm"
-                                        : "text-sm text-muted-foreground"
-                                }
-                            >
-                                {part}
-                            </div>
-                        ))}
-
-                        {(address.complement || address.reference_point) && (
-                            <>
-                                <Separator className="my-3" />
-                                <div className="space-y-1">
-                                    {address.complement && (
-                                        <div className="text-xs text-muted-foreground">
-                                            <span className="font-medium text-foreground">
-                                                Complemento:
-                                            </span>{" "}
-                                            {address.complement}
-                                        </div>
-                                    )}
-                                    {address.reference_point && (
-                                        <div className="text-xs text-muted-foreground">
-                                            <span className="font-medium text-foreground">
-                                                Ponto de Referência:
-                                            </span>{" "}
-                                            {address.reference_point}
-                                        </div>
-                                    )}
-                                </div>
-                            </>
-                        )}
+                  )}
+                  {address.reference_point && (
+                    <div className="text-xs text-muted-foreground">
+                      <span className="font-medium text-foreground">
+                        Ponto de Referência:
+                      </span>{" "}
+                      {address.reference_point}
                     </div>
-                </CardContent>
-            </Card>
-        </TooltipProvider>
-    );
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </TooltipProvider>
+  );
 }

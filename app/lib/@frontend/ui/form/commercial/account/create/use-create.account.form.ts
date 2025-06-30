@@ -418,5 +418,6 @@ export function useCreateAccountForm() {
     debouncedValidationHolding,
     debouncedValidationControlled,
     disabledFields,
+    form: methods,
   };
 }
