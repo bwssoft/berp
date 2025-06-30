@@ -35,10 +35,15 @@ namespace Namespace {
 
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
+  command: string,
   timeout: number = 3000
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
+
+  const base = command.replace("\r\n", "");
+  const cmp = base.includes("=") ? base : `${base}=`;
+
   const timeoutPromise = new Promise<undefined>((resolve) =>
     setTimeout(() => resolve(undefined), timeout)
   );
@@ -47,12 +52,15 @@ const readResponse = async (
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
+
       const chunk = decoder.decode(value);
       buffer += chunk;
-      let lines = buffer.split("\r\n");
+
+      const lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
+
       for (const line of lines) {
-        if (line.length > 0) {
+        if (line.length > 0 && line.includes(cmp)) {
           return line;
         }
       }
@@ -100,7 +108,7 @@ export const useBWS4G = () => {
       console.log("-------------------------");
       console.log("command", command);
       await writeToPort(port, command);
-      const response = await readResponse(reader, timeout);
+      const response = await readResponse(reader, command, timeout);
       console.log("response", response);
       await reader.cancel();
       reader.releaseLock();
@@ -117,9 +125,11 @@ export const useBWS4G = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
+        { command: "DF", key: "debug_off" },
         { command: "IMEI", key: "imei", transform: Bws4gParser.imei },
         { command: "ICCID", key: "iccid", transform: Bws4gParser.iccid },
         { command: "ET", key: "firmware", transform: Bws4gParser.firmware },
+        { command: "DN", key: "debug_on" },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
