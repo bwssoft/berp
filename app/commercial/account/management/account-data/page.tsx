@@ -238,11 +238,7 @@ export default async function Page({ searchParams }: Props) {
                   </div>
                   {/* Botão de editar movido para o header */}
                   {hasPermissionEconomicGroup && _acccount.id && (
-                    // <UpdateEconomicGroupAccountModal
-                    //   _acccountId={_acccount.id}
-                    // />
-
-                    <div></div>
+                    <UpdateEconomicGroupAccountModal accountId={_acccount.id} />
                   )}
                 </CardTitle>
               </CardHeader>
@@ -250,10 +246,19 @@ export default async function Page({ searchParams }: Props) {
                 {/* Holding */}
                 {_acccount.economic_group_holding && (
                   <div className="space-y-3 mb-6">
-                    <InfoField
-                      label="Empresa Holding"
-                      value={`${_acccount.economic_group_holding.name} / ${_acccount.economic_group_holding.taxId}`}
-                    />
+                    <div
+                      className="p-3 rounded-md bg-muted/30 border hover:bg-muted/50 transition-colors"
+                      role="listitem"
+                    >
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-foreground">
+                          {_acccount.economic_group_holding.name}
+                        </p>
+                        <p className="text-xs font-mono text-muted-foreground">
+                          {_acccount.economic_group_holding.taxId}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
 
