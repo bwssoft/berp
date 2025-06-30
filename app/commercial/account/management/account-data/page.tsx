@@ -1,5 +1,6 @@
 import {
     Badge,
+    Button,
     Card,
     CardContent,
     CardHeader,
@@ -16,6 +17,8 @@ import {
     Building2,
     CheckCircle,
     DollarSign,
+    MapPin,
+    Plus,
     Tag,
     User,
     Users,
@@ -72,45 +75,73 @@ export default async function Page({ searchParams }: Props) {
 
             {/* Segunda linha - Contatos e Endereços com mesma altura */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-
                 {/* Card de Contatos */}
                 <div className="lg:col-span-1 h-full">
-          {account.docs[0].contacts?.map((contact, idx) => (
-            <ContactCard
-              key={contact.id ?? idx}
-              contact={contact}
-              accountId={accountId}
-            />
-          ))}
-        </div>
-
-                <div className="lg:col-span-2 h-full space-y-3">
-                    {address.length > 0 ? (
-                        <div className="flex flex-wrap gap-3">
-                            {address.map((addr) => (
-                                <AddressCard
-                                    key={addr.id}
-                                    title="Endereço:"
-                                    address={addr}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>
-                                    Nenhum endereço encontrado
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p>Cadastre um endereço para este cliente.</p>
-                            </CardContent>
-                        </Card>
-                    )}
+                    {account.docs[0].contacts?.map((contact, idx) => (
+                        <ContactCard
+                            key={contact.id ?? idx}
+                            contact={contact}
+                            accountId={accountId}
+                        />
+                    ))}
                 </div>
-
                 {/* Card de Endereços - Ocupa 2 colunas */}
-                <div className="lg:col-span-2 h-full"></div>
+
+                <Card className="flex flex-col h-full">
+                    <CardHeader className="pb-3 flex-shrink-0">
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="flex items-center gap-2 text-lg">
+                                <MapPin className="h-5 w-5 text-primary" />
+                                Endereços
+                                {address?.length && (
+                                    <Badge
+                                        variant="secondary"
+                                        className="text-xs"
+                                    >
+                                        {address.length}
+                                    </Badge>
+                                )}
+                            </CardTitle>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                aria-label="Adicionar endereço"
+                            >
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="flex-1 flex flex-col">
+                        <div className="lg:col-span-2 h-full"></div>
+                        <div className="lg:col-span-2 h-full space-y-3">
+                            {address.length > 0 ? (
+                                <div className="flex flex-wrap gap-3">
+                                    {address.map((addr) => (
+                                        <AddressCard
+                                            key={addr.id}
+                                            title="Endereço:"
+                                            address={addr}
+                                        />
+                                    ))}
+                                </div>
+                            ) : (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>
+                                            Nenhum endereço encontrado
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p>
+                                            Cadastre um endereço para este
+                                            cliente.
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
