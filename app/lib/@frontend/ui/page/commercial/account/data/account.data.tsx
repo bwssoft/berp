@@ -2,20 +2,21 @@
 
 import {
   Badge,
+  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/app/lib/@frontend/ui/component";
 
-import { AlertCircle, CheckCircle, Phone, MapPin, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Phone, MapPin, XCircle, Plus } from "lucide-react";
 import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.card";
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
 import { IAccount, IAddress } from "@/app/lib/@backend/domain";
 import { CreateAddressModal } from "@/app/commercial/account/form/create/tab/address/create-address";
-import { CreateContact } from "@/app/commercial/account/form/create/tab/contact/create-contact";
+import { CreateContactModal, useCreateContactModal } from "../../../../modal";
 
 interface Props {
   account: IAccount;
@@ -49,8 +50,13 @@ export function AccountDataPage(props: Props) {
    */
 
   const modalCreateContact = {};
-
-  /**
+  const {
+    open: openContact,
+    openModal: openModalContact,
+    closeModal: closeModalContact,
+  } = useCreateContactModal();
+  
+  /**  
    * MODAL ATUALIZAÇÃO - CONTATO
    */
 
@@ -98,7 +104,10 @@ export function AccountDataPage(props: Props) {
                   {account.contacts?.length}
                 </Badge>
               </CardTitle>
-              {hasPermissionContacts && <CreateContact />}
+              <Button variant={"ghost"} className="border px-3 py-3" onClick={openModalContact}>
+                <Plus className="h-4 w-4" />
+              </Button>
+              <CreateContactModal open={openContact} closeModal={closeModalContact} />
             </div>
           </CardHeader>
           <CardContent className="flex gap-2">

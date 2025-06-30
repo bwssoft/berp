@@ -1,5 +1,3 @@
-"use client";
-
 import { Users } from "lucide-react";
 import {
   Badge,
@@ -11,7 +9,7 @@ import {
 import { IAccount } from "@/app/lib/@backend/domain";
 import { UpdateEconomicGroupAccountModal } from "../../../modal";
 
-export async function EconomicGroupCard({
+export function EconomicGroupCard({
   account,
   hasPermissionEconomicGroup,
 }: {
