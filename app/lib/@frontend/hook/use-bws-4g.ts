@@ -1,6 +1,10 @@
 import { useCallback } from "react";
-import { Bws4GEncoder, Bws4GParser } from "../../@backend/infra/protocol";
-import { isIccid, sleep, typedObjectEntries } from "../../util";
+import {
+  Bws4g,
+  Bws4GEncoder,
+  Bws4gParser,
+} from "../../@backend/infra/protocol";
+import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import {
@@ -113,9 +117,9 @@ export const useBWS4G = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { command: "IMEI", key: "imei", transform: Bws4GParser.imei },
-        { command: "ICCID", key: "iccid", transform: Bws4GParser.iccid },
-        { command: "ET", key: "firmware", transform: Bws4GParser.firmware },
+        { command: "IMEI", key: "imei", transform: Bws4gParser.imei },
+        { command: "ICCID", key: "iccid", transform: Bws4gParser.iccid },
+        { command: "ET", key: "firmware", transform: Bws4gParser.firmware },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -155,13 +159,13 @@ export const useBWS4G = () => {
               apn,
               keep_alive,
               ...processed_check
-            } = Bws4GParser.check(check) ?? {};
-            const processed_status = Bws4GParser.status(status);
-            const ip_primary = Bws4GParser.ip_primary(cxip);
-            const ip_secondary = Bws4GParser.ip_secondary(cxip);
-            const dns_primary = Bws4GParser.dns(cxip);
+            } = Bws4gParser.check(check) ?? {};
+            const processed_status = Bws4gParser.status(status);
+            const ip_primary = Bws4gParser.ip_primary(cxip);
+            const ip_secondary = Bws4gParser.ip_secondary(cxip);
+            const dns_primary = Bws4gParser.dns(cxip);
             const horimeter = processed_status?.HR
-              ? Bws4GParser.horimeter(processed_status.HR)
+              ? Bws4gParser.horimeter(processed_status.HR)
               : undefined;
             return {
               port,
@@ -229,13 +233,13 @@ export const useBWS4G = () => {
               apn,
               keep_alive,
               ...processed_check
-            } = Bws4GParser.check(check) ?? {};
-            const processed_status = Bws4GParser.status(status);
-            const ip_primary = Bws4GParser.ip_primary(cxip);
-            const ip_secondary = Bws4GParser.ip_secondary(cxip);
-            const dns_primary = Bws4GParser.dns(cxip);
+            } = Bws4gParser.check(check) ?? {};
+            const processed_status = Bws4gParser.status(status);
+            const ip_primary = Bws4gParser.ip_primary(cxip);
+            const ip_secondary = Bws4gParser.ip_secondary(cxip);
+            const dns_primary = Bws4gParser.dns(cxip);
             const horimeter = processed_status?.HR
-              ? Bws4GParser.horimeter(processed_status.HR)
+              ? Bws4gParser.horimeter(processed_status.HR)
               : undefined;
             return {
               equipment,
@@ -286,53 +290,118 @@ export const useBWS4G = () => {
   );
   const handleAutoTest = useCallback(
     async (ports: ISerialPort[]) => {
-      const messages = [
-        {
-          key: "autotest",
-          command: "AUTOTEST",
-          transform: Bws4GParser.auto_test,
-          timeout: 25000,
-        },
-      ] as const;
       return await Promise.all(
         ports.map(async (port) => {
+          const resultTemplate = {
+            port,
+            response: {} as Record<string, Bws4g.AutoTest | string | undefined>,
+            messages: [
+              { key: "start", command: "START" },
+              { key: "autotest_1", command: "AUTOTEST" },
+              { key: "autotest_2", command: "AUTOTEST" },
+              { key: "autotest_3", command: "AUTOTEST" },
+              { key: "autotest_4", command: "AUTOTEST" },
+              { key: "autotest_5", command: "AUTOTEST" },
+            ],
+            analysis: {} as Record<string, boolean>,
+            init_time: Date.now(),
+            end_time: 0,
+            status: false,
+          };
+
           try {
-            const init_time = Date.now();
-            const response = await sendMultipleMessages({
+            // 1. Envia comando START
+            const startResponse = await sendMultipleMessages({
               transport: port,
-              messages,
+              messages: [{ key: "start", command: "START\r\n" }] as const,
             });
+            resultTemplate.response["start"] = startResponse.start;
 
-            const { autotest } = response;
+            // 2. Configuração do loop de AUTOTEST
+            const autotestTimeout = 25000; // 25s timeout total
+            const startTime = Date.now();
+            let remainingAttempts = 5;
+            let lastBattResult = false;
 
-            const analysis = {
-              SIMHW: isIccid(autotest?.["IC"] ?? ""),
-              GPS: autotest?.["GPS"] === "OK" ? true : false,
-              IN1: autotest?.["IN1"] === "OK" ? true : false,
-              IN2: autotest?.["IN2"] === "OK" ? true : false,
-              OUT: autotest?.["OUT"] === "OK" ? true : false,
-              ACELP: autotest?.["ACELP"] === "OK" ? true : false,
-              VCC: autotest?.["VCC"] === "OK" ? true : false,
-              CHARGER: autotest?.["CHARGER"] === "OK" ? true : false,
-              MEM:
-                autotest?.["ID_MEM"]?.length && autotest?.["ID_MEM"]?.length > 0
-                  ? true
-                  : false,
-            };
-            const status = Object.values(analysis).every(Boolean);
-            const end_time = Date.now();
-            return {
-              port,
-              response,
-              messages,
-              analysis,
-              init_time,
-              end_time,
-              status,
-            };
+            while (
+              remainingAttempts > 0 &&
+              Date.now() - startTime < autotestTimeout
+            ) {
+              const key = `autotest_${5 - remainingAttempts + 1}`;
+              try {
+                await sleep(2000); // Intervalo entre tentativas
+
+                const autotestResponse = await sendMultipleMessages({
+                  transport: port,
+                  messages: [
+                    {
+                      key,
+                      command: "AUTOTEST",
+                      transform: Bws4gParser.auto_test,
+                    },
+                  ] as const,
+                });
+
+                const autotest = autotestResponse[key];
+
+                if (!autotest) continue;
+
+                const BATT_VOLT = Number(autotest["BATT_VOLT"]);
+                const VCC = Number(autotest["VCC"]);
+                const TEMP = Number(autotest["TEMP"]);
+
+                const isBattGood =
+                  !isNaN(BATT_VOLT) && BATT_VOLT <= 450 && BATT_VOLT >= 400;
+
+                resultTemplate.analysis = {
+                  DEV: autotest["DEV"] === "DM_BWS_4G",
+                  ACELC: Boolean(autotest["ACELC"]?.length),
+                  ACELP: autotest["ACELP"] === "OK",
+                  BATT_VOLT: lastBattResult || isBattGood,
+                  CHARGER: autotest["CHARGER"] === "OK",
+                  FW: Boolean(autotest["FW"]?.length),
+                  GPS: autotest["GPS"] === "OK",
+                  // GPSf: autotest["GPSf"] === "OK",
+                  IC: isIccid(autotest["IC"] ?? ""),
+                  ID_ACEL: Boolean(autotest["ID_ACEL"]?.length),
+                  // ID_MEM: Boolean(autotest["ID_MEM"]?.length),
+                  IM: isImei(autotest["IM"] ?? ""),
+                  IN1: autotest["IN1"] === "OK",
+                  IN2: autotest["IN2"] === "OK",
+                  MDM: autotest["MDM"] === "OK",
+                  OUT: autotest["OUT"] === "OK",
+                  RSI: autotest["RSI"] === "OK",
+                  SN: Boolean(autotest["SN"]?.length),
+                  VCC: !isNaN(VCC) && VCC <= 1400 && VCC >= 1200,
+                  TEMP: !isNaN(TEMP) && TEMP <= 28 && TEMP >= 23,
+                };
+
+                lastBattResult = resultTemplate.analysis.BATT_VOLT;
+
+                const statusValues = Object.values(resultTemplate.analysis);
+
+                resultTemplate.status =
+                  statusValues.length > 0 &&
+                  Object.values(resultTemplate.analysis).every(Boolean);
+
+                resultTemplate.response[key] = autotest;
+
+                if (resultTemplate.status) break;
+              } catch (error) {
+                console.warn(
+                  `Attempt ${5 - remainingAttempts + 1} failed`,
+                  error
+                );
+              }
+              remainingAttempts--;
+            }
+
+            resultTemplate.end_time = Date.now();
+            return resultTemplate;
           } catch (error) {
-            console.error("[ERROR] handleAutoTest e3-plus-4g", error);
-            return { port };
+            console.error("[ERROR] handleAutoTest", error);
+            resultTemplate.end_time = Date.now();
+            return resultTemplate;
           }
         })
       );
@@ -372,7 +441,7 @@ export const useBWS4G = () => {
   const handleGetIdentification = useCallback(
     async (port: ISerialPort) => {
       const messages = [
-        { command: "IMEI", key: "imei", transform: Bws4GParser.imei },
+        { command: "IMEI", key: "imei", transform: Bws4gParser.imei },
       ] as const;
       try {
         const response = await sendMultipleMessages({
