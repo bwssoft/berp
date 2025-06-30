@@ -216,16 +216,15 @@ export function AddressCard({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                    aria-label="Excluir endereço"
-                    asChild
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
                     onClick={handleDelete}
+                    aria-label="Excluir Endereço"
                   >
                     <Trash className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">
-                  <p>Excluir endereço</p>
+                  <p>Excluir Endereço</p>
                 </TooltipContent>
               </Tooltip>
             </div>

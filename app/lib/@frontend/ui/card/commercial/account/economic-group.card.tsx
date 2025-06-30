@@ -1,3 +1,5 @@
+"use client";
+
 import { Users } from "lucide-react";
 import {
   Badge,
@@ -8,13 +10,14 @@ import {
 } from "../../../component";
 import { IAccount } from "@/app/lib/@backend/domain";
 import { UpdateEconomicGroupAccountModal } from "../../../modal";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 
-export async function EconomicGroupCard({ account }: { account: IAccount }) {
-  const hasPermissionEconomicGroup = await restrictFeatureByProfile(
-    "commercial:accounts:access:tab:data:group-edit"
-  );
-
+export async function EconomicGroupCard({
+  account,
+  hasPermissionEconomicGroup,
+}: {
+  account: IAccount;
+  hasPermissionEconomicGroup: boolean;
+}) {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="pb-4 flex-shrink-0">

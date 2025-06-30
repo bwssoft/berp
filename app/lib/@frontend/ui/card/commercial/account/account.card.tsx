@@ -1,3 +1,5 @@
+"use client";
+
 import { Building2, DollarSign, Tag, User } from "lucide-react";
 import {
   Badge,
@@ -7,9 +9,9 @@ import {
   CardTitle,
   InfoField,
 } from "../../../component";
-import { StatusBadge } from "@/app/commercial/account/management/account-data/page";
 import { Separator } from "../../../component/separator";
 import { IAccount } from "@/app/lib/@backend/domain";
+import { StatusBadge } from "../../../page/commercial/account/data/account.data";
 
 export function AccountCard({ account }: { account: IAccount }) {
   const isCompany = account.document.type === "cnpj";
