@@ -42,6 +42,11 @@ const readResponse = async (
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
+
+  // limpa o comando e, se não houver "=", adiciona um
+  const base = command.replace("\r\n", "");
+  const cmp = base.includes("=") ? base : `${base}=`;
+
   const timeoutPromise = new Promise<undefined>((resolve) =>
     setTimeout(() => resolve(undefined), timeout)
   );
@@ -54,10 +59,12 @@ const readResponse = async (
       const chunk = decoder.decode(value);
       buffer += chunk;
 
-      let lines = buffer.split("\r\n");
+      const lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
+
       for (const line of lines) {
-        if (line.length > 0 && line.includes(command.replace("\r\n", ""))) {
+        // agora compara usando cmp
+        if (line.length > 0 && line.includes(cmp)) {
           return line;
         }
       }
