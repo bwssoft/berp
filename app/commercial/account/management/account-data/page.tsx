@@ -16,6 +16,7 @@ import {
     Building2,
     CheckCircle,
     DollarSign,
+    Phone,
     Tag,
     User,
     Users,
@@ -27,6 +28,7 @@ import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/acco
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
 import { IAddress } from "@/app/lib/@backend/domain";
+import { CreateContact } from "../../form/create/tab/contact/create-contact";
 
 interface Props {
     searchParams: {
@@ -75,14 +77,30 @@ export default async function Page({ searchParams }: Props) {
 
                 {/* Card de Contatos */}
                 <div className="lg:col-span-1 h-full">
-          {account.docs[0].contacts?.map((contact, idx) => (
-            <ContactCard
-              key={contact.id ?? idx}
-              contact={contact}
-              accountId={accountId}
-            />
-          ))}
-        </div>
+                  {account.docs[0].contacts?.map((contact, idx) => (
+                    <Card key={`${contact.name}${idx}`}>
+                      <CardHeader className="pb-3 flex-shrink-0">
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="flex items-center gap-2 text-lg">
+                                <Phone className="h-5 w-5 text-primary" />
+                                Contatos
+                                <Badge variant="secondary" className="text-xs">
+                                    {account.docs[0].contacts?.length}
+                                </Badge>
+                            </CardTitle>
+                            <CreateContact />
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <ContactCard
+                          key={contact.id ?? idx}
+                          contact={contact}
+                          accountId={accountId}
+                        />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
 
                 <div className="lg:col-span-2 h-full space-y-3">
                     {address.length > 0 ? (
