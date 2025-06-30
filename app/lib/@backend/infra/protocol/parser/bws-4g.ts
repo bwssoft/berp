@@ -102,31 +102,32 @@ interface Status {
   [key: string]: string;
 }
 
-export namespace Bws4G {
+export namespace Bws4g {
   export interface AutoTest {
-    ACELC: string;
-    ACELP: string;
-    BATT_VOLT: string;
-    CHARGER: string;
-    FW: string;
-    GPS: string;
-    GPSf: string;
-    GSM: string;
-    IC: string;
-    ID_ACEL: string;
-    ID_MEM: string;
-    IN1: string;
-    IN2: string;
-    LTE: string;
-    OUT: string;
-    SN: string;
-    VCC: string;
-    SIMHW: string;
-    MEM: string;
+    DEV: string; //DM_BWS_4G,
+    SN: string; //99101210,
+    IC: string; //89555480000070821034,
+    IM: string; //860710052284208,
+    FW: string; //BWSiot_E3+4G_SC_V0.0.34 (MASA) (Jun 30 2025 14:11:23),
+    GPS: string; //OK,
+    GPSf: string; //NOK,
+    MDM: string; //OK,
+    RSI: string; //OK,
+    IN1: string; //NOK,
+    IN2: string; //NOK,
+    OUT: string; //NOK,
+    ACELC: string; //STK8321,
+    ACELP: string; //OK,
+    ID_ACEL: string; //35,
+    ID_MEM: string; //000,
+    VCC: string; //1353,
+    BATT_VOLT: string; //415,
+    CHARGER: string; //OK,
+    TEMP: string; //25
   }
 }
 
-export class Bws4GParser {
+export class Bws4gParser {
   static check(input: string): Check | undefined {
     if (typeof input !== "string") return undefined;
 
@@ -157,96 +158,96 @@ export class Bws4GParser {
       Object.entries(obj).forEach((entrie) => {
         const [key, value] = entrie;
         if (key === "APN") {
-          parsed["apn"] = Bws4GParser.apn(value);
+          parsed["apn"] = Bws4gParser.apn(value);
         }
         if (key === "TZ") {
-          parsed["timezone"] = Bws4GParser.timezone(value);
+          parsed["timezone"] = Bws4gParser.timezone(value);
         }
         if (key === "OUT_MODE") {
-          parsed["lock_type"] = Bws4GParser.lock_type(value);
+          parsed["lock_type"] = Bws4gParser.lock_type(value);
         }
         if (key === "HB") {
           parsed["data_transmission_on"] =
-            Bws4GParser.data_transmission_on(value);
+            Bws4gParser.data_transmission_on(value);
           parsed["data_transmission_off"] =
-            Bws4GParser.data_transmission_off(value);
+            Bws4gParser.data_transmission_off(value);
         }
         if (key === "DK") {
-          parsed["odometer"] = Bws4GParser.odometer(value);
+          parsed["odometer"] = Bws4gParser.odometer(value);
         }
         if (key === "TX") {
-          parsed["keep_alive"] = Bws4GParser.keep_alive(value);
+          parsed["keep_alive"] = Bws4gParser.keep_alive(value);
         }
         if (key === "ZD") {
           parsed["accelerometer_sensitivity"] =
-            Bws4GParser.accelerometer_sensitivity(value);
+            Bws4gParser.accelerometer_sensitivity(value);
         }
         if (key === "SDMS") {
-          parsed["economy_mode"] = Bws4GParser.economy_mode(value);
+          parsed["economy_mode"] = Bws4gParser.economy_mode(value);
         }
         if (key === "LBS") {
-          parsed["lbs_position"] = Bws4GParser.lbs_position(value);
+          parsed["lbs_position"] = Bws4gParser.lbs_position(value);
         }
         if (key === "TUR") {
           parsed["cornering_position_update"] =
-            Bws4GParser.cornering_position_update(value);
+            Bws4gParser.cornering_position_update(value);
         }
         if (key === "LED") {
-          parsed["led"] = Bws4GParser.led(value);
+          parsed["led"] = Bws4gParser.led(value);
         }
         if (key === "IV") {
-          parsed["virtual_ignition"] = Bws4GParser.virtual_ignition(value);
+          parsed["virtual_ignition"] = Bws4gParser.virtual_ignition(value);
         }
         if (key === "OD") {
-          parsed["max_speed"] = Bws4GParser.max_speed(value);
+          parsed["max_speed"] = Bws4gParser.max_speed(value);
         }
 
         if (key === "ACCEL") {
           parsed["virtual_ignition_by_movement"] =
-            Bws4GParser.virtual_ignition_by_movement(value);
+            Bws4gParser.virtual_ignition_by_movement(value);
         }
 
         if (key === "PROT_COM") {
-          parsed["communication_type"] = Bws4GParser.communication_type(value);
+          parsed["communication_type"] = Bws4gParser.communication_type(value);
         }
 
         if (key === "PROT") {
-          parsed["protocol_type"] = Bws4GParser.protocol_type(value);
+          parsed["protocol_type"] = Bws4gParser.protocol_type(value);
         }
 
         if (key === "AF") {
-          parsed["anti_theft"] = Bws4GParser.anti_theft(value);
+          parsed["anti_theft"] = Bws4gParser.anti_theft(value);
         }
         if (key === "JD") {
-          parsed["jammer_detection"] = Bws4GParser.jammer_detection(value);
+          parsed["jammer_detection"] = Bws4gParser.jammer_detection(value);
         }
         if (key === "TDET") {
-          parsed["angle_adjustment"] = Bws4GParser.angle_adjustment(value);
+          parsed["angle_adjustment"] = Bws4gParser.angle_adjustment(value);
         }
         if (key === "DC") {
           parsed["lock_type_progression"] =
-            Bws4GParser.lock_type_progression(value);
+            Bws4gParser.lock_type_progression(value);
         }
         if (key === "Voltage") {
           parsed["ignition_by_voltage"] =
-            Bws4GParser.ignition_by_voltage(value);
+            Bws4gParser.ignition_by_voltage(value);
         }
         if (key === "VOLTAGE") {
           parsed["virtual_ignition_by_voltage"] =
-            Bws4GParser.virtual_ignition_by_voltage(value);
+            Bws4gParser.virtual_ignition_by_voltage(value);
         }
         if (key === "IN1_MODE") {
-          parsed["input_1"] = Bws4GParser.input_1(value);
+          parsed["input_1"] = Bws4gParser.input_1(value);
         }
         if (key === "IN2_MODE") {
-          parsed["input_2"] = Bws4GParser.input_2(value);
+          parsed["input_2"] = Bws4gParser.input_2(value);
         }
         if (key === "GS") {
           parsed["sensitivity_adjustment"] =
-            Bws4GParser.sensitivity_adjustment(value);
+            Bws4gParser.sensitivity_adjustment(value);
         }
         if (key === "ACK") {
-          parsed["ack"] = Bws4GParser.ack(value);
+          parsed["ack"] = Bws4gParser.ack(value);
         }
       });
     }
@@ -517,16 +518,16 @@ export class Bws4GParser {
     return Number(input);
   }
 
-  static auto_test(input: string): Bws4G.AutoTest | undefined {
+  static auto_test(input: string): Bws4g.AutoTest | undefined {
     if (typeof input !== "string") return undefined;
 
     if (!input.startsWith("SN:")) return undefined;
     const splited = input.split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
-      acc[key as keyof Bws4G.AutoTest] = value;
+      acc[key as keyof Bws4g.AutoTest] = value;
       return acc;
-    }, {} as Bws4G.AutoTest);
+    }, {} as Bws4g.AutoTest);
   }
 
   /*
