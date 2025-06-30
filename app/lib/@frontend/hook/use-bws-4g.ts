@@ -313,7 +313,7 @@ export const useBWS4G = () => {
             // 1. Envia comando START
             const startResponse = await sendMultipleMessages({
               transport: port,
-              messages: [{ key: "start", command: "START\r\n" }] as const,
+              messages: [{ key: "start", command: "START" }] as const,
             });
             resultTemplate.response["start"] = startResponse.start;
 
