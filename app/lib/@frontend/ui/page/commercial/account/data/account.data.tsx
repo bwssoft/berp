@@ -1,12 +1,13 @@
 "use client";
 
 import {
-    Badge,
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Dialog,
 } from "@/app/lib/@frontend/ui/component";
 
 import {
@@ -21,11 +22,12 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import { IAccount, IAddress } from "@/app/lib/@backend/domain";
+import { IAccount, IAddress, IContact } from "@/app/lib/@backend/domain";
 import { CreateAddressModal } from "@/app/commercial/account/form/create/tab/address/create-address";
-import { CreateContactModal, useCreateContactModal } from "../../../../modal";
-import { useAddressModal } from "../../../../modal/comercial/address/use-address.modal";
-import { useAddressUpdateModal } from "../../../../modal/comercial/address/update/use-address.update.modal";
+import { CreateContactModal, UpdateContactModal, useCreateContactModal, useUpdateContactModal } from "../../../../modal";
+import { useState } from "react";
+import { deleteOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import { toast } from "@/app/lib/@frontend/hook";
 
 interface Props {
     account: IAccount;
@@ -37,20 +39,41 @@ interface Props {
     };
 }
 export function AccountDataPage(props: Props) {
-    const {
-        account,
-        address,
-        permissions: {
-            hasPermissionContacts,
-            hasPermissionAddresses,
-            hasPermissionEconomicGroup,
-        },
-    } = props;
-    const isCompany = account.document.type === "cnpj";
+  const {
+    account,
+    address,
+    permissions: {
+      hasPermissionContacts,
+      hasPermissionAddresses,
+      hasPermissionEconomicGroup,
+    },
+  } = props;
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<IContact>();
+  const isCompany = account.document.type === "cnpj";
 
-    /**
-     * MODAL ATUALIZAÇÃO - GRUPO ECONOMICO
-     */
+  const deleteContact = async (id: string) => {
+    try {
+      await deleteOneContact({ id });
+      setOpenModalDelete(false);
+      toast({
+        title: "Sucesso",
+        description: "Contato deletado com sucesso",
+        variant: "success",
+      });
+    } catch (err) {
+      console.log(err);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao deletar contato",
+        variant: "error",
+      });
+    }
+  };
+  
+  /**
+   * MODAL ATUALIZAÇÃO - GRUPO ECONOMICO
+  */
 
     const modalEconomicGroup = {};
 
@@ -80,6 +103,16 @@ export function AccountDataPage(props: Props) {
         closeModal: closeModalContact,
     } = useCreateContactModal();
 
+ 
+  /**
+   * MODAL ATUALIZAÇÃO - CONTATO
+  */
+  const { 
+    open: openUpdateContact, 
+    openModal: openUpdateModalContact, 
+    closeModal: closeUpdateModalContact 
+  } = useUpdateContactModal();       
+
     /**
      * MODAL ATUALIZAÇÃO - CONTATO
      */
@@ -98,24 +131,72 @@ export function AccountDataPage(props: Props) {
 
     const modalUpdateAddress = {};
 
-    return (
-        <div className="w-full max-w-[1400px] mx-auto space-y-6">
-            {/* Seção Principal - Dados da Empresa + Grupo Econômico lado a lado com mesma altura */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
-                <AccountCard account={account} />
-
-                {/* Card de Grupo Econômico - Lado Direito - Apenas para empresas */}
-                {isCompany &&
-                    (account.economic_group_holding ||
-                        account.economic_group_controlled) && (
-                        <EconomicGroupCard
-                            account={account}
-                            hasPermissionEconomicGroup={
-                                hasPermissionEconomicGroup
-                            }
-                        />
-                    )}
+      {/* Segunda linha - Contatos e Endereços com mesma altura */}
+      <div className="grid grid-cols-1 gap-6 items-stretch">
+        {/* Card de Contatos */}
+        <Card className="w-full">
+          <CardHeader className="pb-3 flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Phone className="h-5 w-5 text-primary" />
+                Contatos
+                <Badge variant="secondary" className="text-xs">
+                  {account.contacts?.length}
+                </Badge>
+              </CardTitle>
+              {hasPermissionContacts && (
+                <Button
+                  variant={"ghost"}
+                  className="border px-3 py-3"
+                  onClick={openModalContact}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              )}
+              <CreateContactModal open={openCreateContact} closeModal={closeModalContact} />
             </div>
+          </CardHeader>
+          <CardContent className="flex gap-2">
+            {(account.contacts ?? [])?.map((contact, idx) => (
+              <ContactCard
+                key={contact.id ?? idx}
+                contact={contact}
+                accountId={account.id!}
+                onClickEditContactButton={() => {setSelectedContact(contact), openUpdateModalContact()}}
+                onClickDeleteButton={() => {setOpenModalDelete(true), setSelectedContact(contact)}}
+              />
+            ))}
+            
+            {/* Modal para confirmar exclusao de contato */}
+            <Dialog open={openModalDelete} setOpen={setOpenModalDelete}>
+              <div className="p-4">
+                <h2 className="text-lg font-semibold">Excluir contato</h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  Tem certeza que deseja excluir esse contato?
+                </p>
+
+                <div className="mt-6 flex justify-end gap-2">
+                  <Button
+                    variant="secondary"
+                    onClick={() => setOpenModalDelete(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button variant="default" onClick={() => selectedContact && deleteContact(selectedContact.id)}>
+                    Confirmar
+                  </Button>
+                </div>
+              </div>
+            </Dialog>
+
+            {/* modal de atualização de contato */}
+            <UpdateContactModal
+              contact={selectedContact!}
+              open={openUpdateContact}
+              closeModal={closeUpdateModalContact}
+            />
+          </CardContent>
+        </Card>
 
             {/* Segunda linha - Contatos e Endereços com mesma altura */}
             <div className="grid grid-cols-1 gap-6 items-stretch">
