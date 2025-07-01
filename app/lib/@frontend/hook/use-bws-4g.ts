@@ -41,9 +41,6 @@ const readResponse = async (
   const decoder = new TextDecoder();
   let buffer = "";
 
-  const base = command.replace("\r\n", "");
-  const cmp = base.includes("=") ? base : `${base}=`;
-
   const timeoutPromise = new Promise<undefined>((resolve) =>
     setTimeout(() => resolve(undefined), timeout)
   );
@@ -60,7 +57,7 @@ const readResponse = async (
       buffer = lines.pop() || "";
 
       for (const line of lines) {
-        if (line.length > 0 && line.includes(cmp)) {
+        if (line.length > 0 && line.includes(command)) {
           return line;
         }
       }
@@ -103,12 +100,16 @@ export const useBWS4G = () => {
       msg: Message<string, { check?: string; delay_before?: number }>
     ) => {
       const reader = await getReader(port);
-      const { command, timeout, delay_before } = msg;
+      const { command, timeout, delay_before, check } = msg;
       if (delay_before) await sleep(delay_before);
       console.log("-------------------------");
       console.log("command", command);
       await writeToPort(port, command);
-      const response = await readResponse(reader, command, timeout);
+      const response = await readResponse(
+        reader,
+        check ?? command.replace("\r\n", ""),
+        timeout
+      );
       console.log("response", response);
       await reader.cancel();
       reader.releaseLock();
@@ -125,11 +126,11 @@ export const useBWS4G = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { command: "DF", key: "debug_off" },
+        { command: "DF", key: "debug_off", check: "Debug OFF" },
         { command: "IMEI", key: "imei", transform: Bws4gParser.imei },
         { command: "ICCID", key: "iccid", transform: Bws4gParser.iccid },
         { command: "ET", key: "firmware", transform: Bws4gParser.firmware },
-        { command: "DN", key: "debug_on" },
+        { command: "DN", key: "debug_on", check: "Debug ON" },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
