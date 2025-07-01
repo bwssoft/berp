@@ -265,6 +265,7 @@ export function useCreateContactAccount(closeModal: () => void) {
     const { success, error } = await createOneContact({
       ...data,
       accountId: accountId ?? undefined,
+      contractEnabled: data.contractEnabled ? true : false,
       contactItems:
         data.contactItems?.map((item) => ({
           ...item,

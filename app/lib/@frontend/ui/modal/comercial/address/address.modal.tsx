@@ -10,7 +10,11 @@ interface AddressProps {
   closeModal: () => void;
   accountId: string;
 }
-export function AddressModal({ open, closeModal, accountId }: AddressProps) {
+export function CreatedAddressModal({
+  open,
+  closeModal,
+  accountId,
+}: AddressProps) {
   return (
     <Modal
       open={open}

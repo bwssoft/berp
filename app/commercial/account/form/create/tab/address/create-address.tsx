@@ -1,7 +1,7 @@
 "use client";
 
 import { useAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/use-address.modal";
-import { AddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
+import { CreatedAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
 import { Button } from "@/app/lib/@frontend/ui/component";
 import { Plus } from "lucide-react";
 
@@ -14,7 +14,7 @@ export function CreateAddressModal({ id }: Props) {
 
   return (
     <>
-      <AddressModal open={open} closeModal={closeModal} accountId={id} />
+      <CreatedAddressModal open={open} closeModal={closeModal} accountId={id} />
       <div className="flex justify-end items-end gap-4 mt-4">
         <Button
           variant={"ghost"}
