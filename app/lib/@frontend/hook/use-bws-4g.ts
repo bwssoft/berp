@@ -343,7 +343,10 @@ export const useBWS4G = () => {
             // 1. Envia comando START
             const startResponse = await sendMultipleMessages({
               transport: port,
-              messages: [{ key: "start", command: "START" }] as const,
+              messages: [
+                { key: "debug_off", command: "DF" },
+                { key: "start", command: "START" },
+              ] as const,
             });
             resultTemplate.response["start"] = startResponse.start;
 
@@ -425,6 +428,13 @@ export const useBWS4G = () => {
               }
               remainingAttempts--;
             }
+
+            await sendMultipleMessages({
+              transport: port,
+              messages: [
+                { key: "debug_on", command: "DN", matcher: "Debug ON" },
+              ] as const,
+            });
 
             resultTemplate.end_time = Date.now();
             return resultTemplate;
