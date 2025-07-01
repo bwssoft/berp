@@ -82,8 +82,8 @@ export function AddressCard({
         <div className="shadow-xl rounded-xl bg-slate-100 p-5 text-gray-800 h-70 w-96">
             <AddressUpdateModal
                 address={address}
-                closeModal={closeModal}
-                open={open}
+                closeUpdateModal={closeModal}
+                openUpdateModal={open}
             />
             <div className="flex items-center justify-between font-semibold">
                 {title} {address.type?.join(" / ")}
