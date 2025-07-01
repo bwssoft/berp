@@ -31,7 +31,6 @@ import {
 } from "@radix-ui/react-alert-dialog";
 import { Separator } from "../../../component/separator";
 import { AddressUpdateModal } from "../../../modal/comercial/address/update";
-import { useAddressModal } from "../../../modal/comercial/address/update/use-address.update.modal";
 
 interface IAddress {
     id?: string | undefined;
@@ -56,6 +55,8 @@ interface AddressCardProps {
     onCopy?: () => void;
     onEdit?: (address: IAddress) => void;
     onDelete?: (addressId: string) => void;
+    closeUpdateModal: () => void;
+    openUpdateModal?: boolean;
 }
 
 export function AddressCard({
@@ -65,6 +66,8 @@ export function AddressCard({
     onCopy,
     onEdit,
     onDelete,
+    closeUpdateModal,
+    openUpdateModal,
 }: AddressCardProps) {
     const handleCopy = async () => {
         if (onCopy) {
@@ -109,19 +112,13 @@ export function AddressCard({
         }
     };
 
-    const { closeModal, open } = useAddressModal();
-
     const handleEdit = () => {
         if (onEdit) {
             onEdit(address);
         }
     };
 
-    const handleDelete = () => {
-        if (onDelete && address.id) {
-            onDelete(address.id);
-        }
-    };
+    const handleDelete = () => {};
 
     const formatAddress = () => {
         const parts = [];
@@ -282,8 +279,8 @@ export function AddressCard({
             </Card>
             <AddressUpdateModal
                 address={address}
-                closeModal={closeModal}
-                open={open}
+                closeUpdateModal={closeUpdateModal}
+                openUpdateModal={openUpdateModal}
             />
         </TooltipProvider>
     );
