@@ -7,6 +7,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Dialog,
 } from "@/app/lib/@frontend/ui/component";
 
 import { AlertCircle, CheckCircle, Phone, MapPin, XCircle, Plus } from "lucide-react";
@@ -14,9 +15,12 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import { IAccount, IAddress } from "@/app/lib/@backend/domain";
+import { IAccount, IAddress, IContact } from "@/app/lib/@backend/domain";
 import { CreateAddressModal } from "@/app/commercial/account/form/create/tab/address/create-address";
-import { CreateContactModal, useCreateContactModal } from "../../../../modal";
+import { CreateContactModal, UpdateContactModal, useCreateContactModal, useUpdateContactModal } from "../../../../modal";
+import { useState } from "react";
+import { deleteOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import { toast } from "@/app/lib/@frontend/hook";
 
 interface Props {
   account: IAccount;
@@ -37,39 +41,63 @@ export function AccountDataPage(props: Props) {
       hasPermissionEconomicGroup,
     },
   } = props;
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<IContact>();
   const isCompany = account.document.type === "cnpj";
 
+  const deleteContact = async (id: string) => {
+    try {
+      await deleteOneContact({ id });
+      setOpenModalDelete(false);
+      toast({
+        title: "Sucesso",
+        description: "Contato deletado com sucesso",
+        variant: "success",
+      });
+    } catch (err) {
+      console.log(err);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao deletar contato",
+        variant: "error",
+      });
+    }
+  };
+  
   /**
    * MODAL ATUALIZAÇÃO - GRUPO ECONOMICO
-   */
+  */
 
   const modalEconomicGroup = {};
 
   /**
    * MODAL CRIAÇÃO - CONTATO
-   */
-
-  const modalCreateContact = {};
-  const {
-    open: openContact,
-    openModal: openModalContact,
-    closeModal: closeModalContact,
+  */
+ 
+ const {
+   open: openCreateContact,
+   openModal: openModalContact,
+   closeModal: closeModalContact,
   } = useCreateContactModal();
   
   /**  
    * MODAL ATUALIZAÇÃO - CONTATO
-   */
-
-  const modalUpdateContact = {};
+  */
+  const { 
+    closeModal, 
+    open: openUpdateContact, 
+    openModal: openUpdateModalContact, 
+    closeModal: closeUpdateModalContact 
+  } = useUpdateContactModal();       
 
   /**
-   * MODAL CRIAÇÃO - CONTATO
+   * MODAL CRIAÇÃO - ENDEREÇO
    */
 
   const modalCreateAddress = {};
 
   /**
-   * MODAL ATUALIZAÇÃO - CONTATO
+   * MODAL ATUALIZAÇÃO - ENDEREÇO
    */
 
   const modalUpdateAddress = {};
@@ -107,7 +135,7 @@ export function AccountDataPage(props: Props) {
               <Button variant={"ghost"} className="border px-3 py-3" onClick={openModalContact}>
                 <Plus className="h-4 w-4" />
               </Button>
-              <CreateContactModal open={openContact} closeModal={closeModalContact} />
+              <CreateContactModal open={openCreateContact} closeModal={closeModalContact} />
             </div>
           </CardHeader>
           <CardContent className="flex gap-2">
@@ -116,8 +144,39 @@ export function AccountDataPage(props: Props) {
                 key={contact.id ?? idx}
                 contact={contact}
                 accountId={account.id!}
+                onClickEditContactButton={() => {setSelectedContact(contact), openUpdateModalContact()}}
+                onClickDeleteButton={() => {setOpenModalDelete(true), setSelectedContact(contact)}}
               />
             ))}
+            
+            {/* Modal para confirmar exclusao de contato */}
+            <Dialog open={openModalDelete} setOpen={setOpenModalDelete}>
+              <div className="p-4">
+                <h2 className="text-lg font-semibold">Excluir contato</h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  Tem certeza que deseja excluir esse contato?
+                </p>
+
+                <div className="mt-6 flex justify-end gap-2">
+                  <Button
+                    variant="secondary"
+                    onClick={() => setOpenModalDelete(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button variant="default" onClick={() => selectedContact && deleteContact(selectedContact.id)}>
+                    Confirmar
+                  </Button>
+                </div>
+              </div>
+            </Dialog>
+
+            {/* modal de atualização de contato */}
+            <UpdateContactModal
+              contact={selectedContact!}
+              open={openUpdateContact}
+              closeModal={closeUpdateModalContact}
+            />
           </CardContent>
         </Card>
 

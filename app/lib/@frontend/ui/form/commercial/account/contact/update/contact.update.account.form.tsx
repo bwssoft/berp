@@ -174,7 +174,7 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
       </div>
 
       <div className="flex justify-end gap-4 w-full">
-        <Button type="button" variant={"ghost"} onClick={() => {}}>
+        <Button type="button" variant={"ghost"} onClick={closeModal}>
           Cancelar
         </Button>
 

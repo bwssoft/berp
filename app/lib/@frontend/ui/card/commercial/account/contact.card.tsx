@@ -1,20 +1,14 @@
 "use client";
 
 import { IContact } from "@/app/lib/@backend/domain";
-import { Phone, Mail, Edit, Star, Trash2, Trash } from "lucide-react";
+import { Phone, Mail, Edit, Star, Trash } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
   Badge,
   Button,
-  Dialog,
 } from "../../../component";
-import { UpdateContactModal, useUpdateContactModal } from "../../../modal";
-import { useState } from "react";
-import { deleteOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import { toast } from "@/app/lib/@frontend/hook";
-import { useQueryClient } from "@tanstack/react-query";
 import { Separator } from "@radix-ui/react-select";
 import {
   Tooltip,
@@ -26,6 +20,8 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 interface ContactCardProps {
   contact: IContact;
   accountId: string;
+  onClickEditContactButton: () => void
+  onClickDeleteButton: () => void
 }
 
 const getContactIcon = (
@@ -52,7 +48,7 @@ const getContactIcon = (
 
 const formatContactValue = (
   type: IContact["contactItems"][number]["type"],
-  value: string
+  value: string,
 ) => {
   if (
     type === "Celular" ||
@@ -64,29 +60,12 @@ const formatContactValue = (
   return value;
 };
 
-export default function ContactCard({ contact, accountId }: ContactCardProps) {
-  const [openModalDelete, setOpenModalDelete] = useState(false);
-  const { closeModal, open, openModal } = useUpdateContactModal();
-  const queryClient = useQueryClient();
-
-  const deleteContact = async (id: string) => {
-    try {
-      await deleteOneContact({ id });
-      setOpenModalDelete(false);
-      toast({
-        title: "Sucesso",
-        description: "Contato deletado com sucesso",
-        variant: "success",
-      });
-    } catch (err) {
-      console.log(err);
-      toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao deletar contato",
-        variant: "error",
-      });
-    }
-  };
+export default function ContactCard({ 
+  contact, 
+  accountId, 
+  onClickEditContactButton, 
+  onClickDeleteButton 
+}: ContactCardProps) {
 
   return (
     <>
@@ -123,7 +102,7 @@ export default function ContactCard({ contact, accountId }: ContactCardProps) {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                      onClick={() => openModal()}
+                      onClick={onClickEditContactButton}
                       aria-label="Editar Contato"
                     >
                       <Edit className="h-4 w-4" />
@@ -140,7 +119,7 @@ export default function ContactCard({ contact, accountId }: ContactCardProps) {
                       variant="ghost"
                       size="icon"
                       className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                      onClick={() => setOpenModalDelete(true)}
+                      onClick={onClickDeleteButton}
                       aria-label="Excluir Contato"
                     >
                       <Trash className="h-4 w-4" />
@@ -195,32 +174,6 @@ export default function ContactCard({ contact, accountId }: ContactCardProps) {
       </div>
 
       <Separator className="my-4" />
-      <Dialog open={openModalDelete} setOpen={setOpenModalDelete}>
-        <div className="p-4">
-          <h2 className="text-lg font-semibold">Excluir contato</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Tem certeza que deseja excluir esse contato?
-          </p>
-
-          <div className="mt-6 flex justify-end gap-2">
-            <Button
-              variant="secondary"
-              onClick={() => setOpenModalDelete(false)}
-            >
-              Cancelar
-            </Button>
-            <Button variant="default" onClick={() => deleteContact(contact.id)}>
-              Confirmar
-            </Button>
-          </div>
-        </div>
-      </Dialog>
-
-      <UpdateContactModal
-        contact={contact}
-        open={open}
-        closeModal={closeModal}
-      />
     </>
   );
 }
