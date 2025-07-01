@@ -38,6 +38,8 @@ import { AddressUpdateModal } from "../../../../modal/comercial/address/update";
 import { CreatedAddressModal } from "../../../../modal/comercial/address";
 import { AddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/delete.address";
 import { useAddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/use-delete.address";
+import { DeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/delete.contact.dialog";
+import { useDeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/use-delete.contact.dialog";
 
 interface Props {
     account: IAccount;
@@ -61,24 +63,6 @@ export function AccountDataPage(props: Props) {
     const [selectedContact, setSelectedContact] = useState<IContact>();
     const [selectedAddress, setSelectedAddress] = useState<IAddress>();
     const isCompany = account.document.type === "cnpj";
-
-    const deleteContact = async (id: string) => {
-        try {
-            await deleteOneContact({ id });
-            toast({
-                title: "Sucesso",
-                description: "Contato deletado com sucesso",
-                variant: "success",
-            });
-        } catch (err) {
-            console.log(err);
-            toast({
-                title: "Erro",
-                description: "Ocorreu um erro ao deletar contato",
-                variant: "error",
-            });
-        }
-    };
 
     /**
      * MODAL ATUALIZAÇÃO - GRUPO ECONOMICO
@@ -104,6 +88,17 @@ export function AccountDataPage(props: Props) {
         openModal: openUpdateModalContact,
         closeModal: closeUpdateModalContact,
     } = useUpdateContactModal();
+
+    /**
+     * MODAL DELEÇÃO - CONTATO
+     */
+    const {
+        open: openDeleteContact,
+        openDialog: openDeleteContactModal,
+        setOpen: setOpenDeleteContactModal,
+        confirm: deleteContact,
+        isLoading: isLoadingDeleteContact,
+    } = useDeleteContactDialog();
 
     /**
      * MODAL CRIAÇÃO - ADDRESS
@@ -185,6 +180,7 @@ export function AccountDataPage(props: Props) {
                                 }}
                                 onClickDeleteButton={() => {
                                     setSelectedContact(contact);
+                                    openDeleteContactModal();
                                 }}
                             />
                         ))}
@@ -268,6 +264,20 @@ export function AccountDataPage(props: Props) {
                 contact={selectedContact!}
                 open={openUpdateContact}
                 closeModal={closeUpdateModalContact}
+            />
+
+            <AddressUpdateModal
+                address={selectedAddress!}
+                closeUpdateModal={closeUpdateModalAddress}
+                openUpdateModal={openUpdateAddress}
+            />
+            <DeleteContactDialog
+                open={openDeleteContact}
+                setOpen={setOpenDeleteContactModal}
+                confirm={() =>
+                    selectedContact && deleteContact(selectedContact.id)
+                }
+                isLoading={isLoadingDeleteContact}
             />
 
             <AddressUpdateModal
