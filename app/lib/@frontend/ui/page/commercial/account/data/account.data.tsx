@@ -22,20 +22,11 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import { IAccount, IAddress, IContact } from "@/app/lib/@backend/domain";
-import {
-  CreateContactModal,
-  UpdateContactModal,
-  useCreateContactModal,
-  useUpdateContactModal,
-} from "../../../../modal";
-import { useState } from "react";
-import { deleteOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import { toast } from "@/app/lib/@frontend/hook";
-import { useAddressUpdateModal } from "../../../../modal/comercial/address/update/use-address.update.modal";
+import { IAccount, IAddress } from "@/app/lib/@backend/domain";
+import { CreateAddressModal } from "@/app/commercial/account/form/create/tab/address/create-address";
+import { CreateContactModal, useCreateContactModal } from "../../../../modal";
 import { useAddressModal } from "../../../../modal/comercial/address/use-address.modal";
-import { AddressUpdateModal } from "../../../../modal/comercial/address/update";
-import { CreatedAddressModal } from "../../../../modal/comercial/address";
+import { useAddressUpdateModal } from "../../../../modal/comercial/address/update/use-address.update.modal";
 
 interface Props {
   account: IAccount;
@@ -56,27 +47,7 @@ export function AccountDataPage(props: Props) {
       hasPermissionEconomicGroup,
     },
   } = props;
-  const [selectedContact, setSelectedContact] = useState<IContact>();
-  const [selectedAddress, setSelectedAddress] = useState<IAddress>();
   const isCompany = account.document.type === "cnpj";
-
-  const deleteContact = async (id: string) => {
-    try {
-      await deleteOneContact({ id });
-      toast({
-        title: "Sucesso",
-        description: "Contato deletado com sucesso",
-        variant: "success",
-      });
-    } catch (err) {
-      console.log(err);
-      toast({
-        title: "Erro",
-        description: "Ocorreu um erro ao deletar contato",
-        variant: "error",
-      });
-    }
-  };
 
   /**
    * MODAL ATUALIZAÇÃO - GRUPO ECONOMICO
@@ -97,11 +68,8 @@ export function AccountDataPage(props: Props) {
   /**
    * MODAL ATUALIZAÇÃO - CONTATO
    */
-  const {
-    open: openUpdateContact,
-    openModal: openUpdateModalContact,
-    closeModal: closeUpdateModalContact,
-  } = useUpdateContactModal();
+
+  const modalUpdateContact = {};
 
   /**
    * MODAL CRIAÇÃO - ADDRESS
