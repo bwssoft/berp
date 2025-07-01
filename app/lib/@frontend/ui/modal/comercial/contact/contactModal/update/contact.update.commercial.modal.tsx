@@ -25,7 +25,7 @@ export function UpdateContactModal({ open, closeModal, contact }: Props) {
       position="center"
     >
       <ModalContent>
-        <ModalBody className="overflow-y-scroll max-h-[70vh]">
+        <ModalBody className="max-h-[80vh]">
           <UpdateContactAccountForm contact={contact} closeModal={closeModal} />
         </ModalBody>
       </ModalContent>

@@ -38,7 +38,7 @@ export function SearchContactAccountForm({
   if (isLoading) return <div>Carregando...</div>;
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full gap-4">
       <div className="flex-1 overflow-auto flex flex-col gap-4">
         {(contactData ?? []).map((company) => (
           <Disclosure key={company.documentValue}>

@@ -23,7 +23,7 @@ export function CreateContactModal({ open, closeModal }: Props) {
       position="center"
     >
       <ModalContent>
-        <ModalBody className="overflow-y-scroll max-h-[70vh]">
+        <ModalBody className=" max-h-[80vh]">
           <CreateContactAccountForm closeModal={closeModal} />
         </ModalBody>
       </ModalContent>
