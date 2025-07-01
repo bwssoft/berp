@@ -139,13 +139,15 @@ export function AccountDataPage(props: Props) {
                   {account.contacts?.length}
                 </Badge>
               </CardTitle>
-              <Button
-                variant={"ghost"}
-                className="border px-3 py-3"
-                onClick={openModalContact}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
+              {hasPermissionContacts && (
+                <Button
+                  variant={"ghost"}
+                  className="border px-3 py-3"
+                  onClick={openModalContact}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              )}
               <CreateContactModal open={openCreateContact} closeModal={closeModalContact} />
             </div>
           </CardHeader>
