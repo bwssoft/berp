@@ -91,7 +91,6 @@ export function AccountDataPage(props: Props) {
    * MODAL ATUALIZAÇÃO - CONTATO
   */
   const { 
-    closeModal, 
     open: openUpdateContact, 
     openModal: openUpdateModalContact, 
     closeModal: closeUpdateModalContact 
