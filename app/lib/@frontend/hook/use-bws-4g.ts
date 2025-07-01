@@ -33,10 +33,17 @@ namespace Namespace {
     | keyof NonNullable<Profile["specific"]>;
 }
 
-const readResponse = async (
+type LineMatcher =
+  | string // trecho que deve aparecer na linha
+  | RegExp // regex que deve dar match
+  | ((line: string) => boolean) // função que decide se a linha serve
+  | null
+  | undefined; // nenhum critério → devolve a primeira linha
+
+export const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
-  command: string,
-  timeout: number = 3000
+  matcher?: LineMatcher,
+  timeout = 3000
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
@@ -50,16 +57,27 @@ const readResponse = async (
       const { value, done } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value);
-      buffer += chunk;
+      buffer += decoder.decode(value);
+
+      console.log("[RAW DATA]", buffer);
 
       const lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
 
       for (const line of lines) {
-        if (line.length > 0 && line.includes(command)) {
-          return line;
-        }
+        if (!line.length) continue;
+
+        // ── Sem critério: retorna a primeira linha ───────────────────────────────
+        if (!matcher) return line;
+
+        // ── String: includes ────────────────────────────────────────────────────
+        if (typeof matcher === "string" && line.includes(matcher)) return line;
+
+        // ── RegExp: test() ──────────────────────────────────────────────────────
+        if (matcher instanceof RegExp && matcher.test(line)) return line;
+
+        // ── Função-predicado ────────────────────────────────────────────────────
+        if (typeof matcher === "function" && matcher(line)) return line;
       }
     }
     return undefined;
@@ -97,20 +115,16 @@ export const useBWS4G = () => {
     closeTransport: closePort,
     sendMessage: async (
       port,
-      msg: Message<string, { check?: string; delay_before?: number }>
+      msg: Message<string, { matcher?: LineMatcher; delay_before?: number }>
     ) => {
       const reader = await getReader(port);
-      const { command, timeout, delay_before, check } = msg;
+      const { command, timeout, delay_before, matcher } = msg;
       if (delay_before) await sleep(delay_before);
       console.log("-------------------------");
-      console.log("command", command);
+      console.log("[MESSAGE SENT]", command);
       await writeToPort(port, command);
-      const response = await readResponse(
-        reader,
-        check ?? command.replace("\r\n", ""),
-        timeout
-      );
-      console.log("response", response);
+      const response = await readResponse(reader, matcher, timeout);
+      console.log("[RESPONSE MATCHED]", response);
       await reader.cancel();
       reader.releaseLock();
       return response;
@@ -126,11 +140,16 @@ export const useBWS4G = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { command: "DF", key: "debug_off", check: "Debug OFF" },
-        { command: "IMEI", key: "imei", transform: Bws4gParser.imei },
+        { command: "DF", key: "debug_off", matcher: "Debug OFF" },
+        {
+          command: "IMEI",
+          key: "imei",
+          transform: Bws4gParser.imei,
+          delay_before: 1000,
+        },
         { command: "ICCID", key: "iccid", transform: Bws4gParser.iccid },
         { command: "ET", key: "firmware", transform: Bws4gParser.firmware },
-        { command: "DN", key: "debug_on", check: "Debug ON" },
+        { command: "DN", key: "debug_on", matcher: "Debug ON" },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
