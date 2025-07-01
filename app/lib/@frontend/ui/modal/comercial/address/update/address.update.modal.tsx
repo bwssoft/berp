@@ -24,7 +24,7 @@ export function AddressUpdateModal({
             position="center"
         >
             <ModalContent>
-                <ModalBody>
+                <ModalBody className="max-w-[80vw] max-h-[70vh]">
                     <AddressUpdateForm
                         address={address}
                         closeModal={closeUpdateModal}
