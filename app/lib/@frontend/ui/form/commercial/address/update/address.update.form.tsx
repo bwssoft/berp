@@ -25,7 +25,7 @@ export function AddressUpdateForm({ address, closeModal }: Props) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="flex flex-col items-start  gap-4"
+            className="flex flex-col items-start gap-4"
         >
             <Input
                 label="Buscar pelo CEP"
