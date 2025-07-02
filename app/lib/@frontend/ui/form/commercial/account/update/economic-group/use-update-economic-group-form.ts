@@ -64,8 +64,6 @@ export function useUpdateEconomicGroupForm(
     resolver: zodResolver(schema),
   });
 
-  console.log("🚀 ~ error:", errors);
-
   useEffect(() => {
     const fetchData = async () => {
       if (!isModalOpen) return;
@@ -100,13 +98,10 @@ export function useUpdateEconomicGroupForm(
     let data;
 
     if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
-      // É um CNPJ válido
       data = await fetchCnpjData(cleanedValue);
     } else {
-      // Se não for CNPJ, trata como nome e usa outra função
       data = await fetchNameData(value);
 
-      // Make sure data is valid before processing
       const normalized = Array.isArray(data)
         ? data
             .filter(
@@ -145,9 +140,7 @@ export function useUpdateEconomicGroupForm(
 
   const onSubmit = handleSubmit(async (formData) => {
     const holding = formData.cnpj.economic_group_holding;
-    console.log("🚀 ~ onSubmit ~ holding:", holding);
     const controlled = formData.cnpj.economic_group_controlled || [];
-    console.log("🚀 ~ onSubmit ~ controlled:", controlled);
 
     if (!holding) {
       toast({

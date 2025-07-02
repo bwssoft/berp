@@ -36,7 +36,7 @@ export function EconomicGroupAccountForm({
         name="cnpj.economic_group_holding"
         render={({ field }) => (
           <Combobox
-            data={dataHolding.filter((item) => item && item.taxId && item.name)}
+            data={dataHolding}
             label="Grupo Econômico (Holding)"
             behavior="search"
             onSearchChange={(text: string) => {
@@ -65,9 +65,7 @@ export function EconomicGroupAccountForm({
         render={({ field }) => (
           <Combobox
             type="multiple"
-            data={dataControlled.filter(
-              (item) => item && item.taxId && item.name
-            )}
+            data={dataControlled}
             label="Grupo Econômico (Controladas)"
             behavior="search"
             placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
@@ -84,7 +82,7 @@ export function EconomicGroupAccountForm({
         )}
       />
       <div className="flex gap-4 justify-end mt-6">
-        <Button type="button" variant="ghost">
+        <Button onClick={closeModal} type="button" variant="ghost">
           Cancelar
         </Button>
         <Button type="submit">Salvar</Button>
