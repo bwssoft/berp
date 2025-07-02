@@ -38,7 +38,7 @@ export function AddressUpdateForm({ address, closeModal }: Props) {
                 {...register("street")}
                 error={errors.street?.message}
             />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 w-full">
                 <Input
                     label="Número"
                     {...register("number")}
@@ -108,7 +108,7 @@ export function AddressUpdateForm({ address, closeModal }: Props) {
                     </p>
                 )}
             </div>
-            <div className="mt-4 flex justify-end gap-3">
+            <div className="mt-4 flex justify-end gap-3 w-full">
                 <Button
                     title="Cancelar"
                     type="button"

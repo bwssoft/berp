@@ -59,7 +59,7 @@ export function AddressCreateForm({
                 {...register("street")}
                 error={errors.street?.message}
             />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4  w-full">
                 <Input
                     label="Número"
                     placeholder="Digite o número"
@@ -136,7 +136,7 @@ export function AddressCreateForm({
                 )}
             </div>
 
-            <div className="mt-4 flex justify-end gap-3">
+            <div className="mt-4 flex justify-end gap-3  w-full">
                 <Button
                     title="Cancelar"
                     type="button"

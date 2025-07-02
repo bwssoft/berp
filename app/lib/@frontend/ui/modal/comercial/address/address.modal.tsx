@@ -24,7 +24,7 @@ export function CreatedAddressModal({
             position="center"
         >
             <ModalContent>
-                <ModalBody className="max-h-[80vh]">
+                <ModalBody className="min-h-[50vh] max-h-[70vh] w-[70vh]">
                     <AddressCreateForm
                         closeModal={closeModal}
                         accountId={accountId}
