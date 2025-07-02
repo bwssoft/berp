@@ -1,21 +1,26 @@
 import { Users } from "lucide-react";
 import {
   Badge,
+  Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../../component";
 import { IAccount } from "@/app/lib/@backend/domain";
-import { UpdateEconomicGroupAccountModal } from "../../../modal";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
+
+interface EconomicGroupCardProps {
+  account: IAccount;
+  hasPermissionEconomicGroup: boolean;
+  openModal: () => void;
+}
 
 export function EconomicGroupCard({
   account,
   hasPermissionEconomicGroup,
-}: {
-  account: IAccount;
-  hasPermissionEconomicGroup: boolean;
-}) {
+  openModal,
+}: EconomicGroupCardProps) {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="pb-4 flex-shrink-0">
@@ -24,9 +29,10 @@ export function EconomicGroupCard({
             <Users className="h-5 w-5 text-primary" />
             Grupo Econômico
           </div>
-          {/* Botão de editar movido para o header */}
           {hasPermissionEconomicGroup && account.id && (
-            <UpdateEconomicGroupAccountModal accountId={account.id} />
+            <Button onClick={openModal}>
+              <PencilSquareIcon className="w-5 h-5 cursor-pointer" />
+            </Button>
           )}
         </CardTitle>
       </CardHeader>
