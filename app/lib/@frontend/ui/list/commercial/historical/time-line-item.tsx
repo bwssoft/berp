@@ -56,7 +56,7 @@ export function TimelineItem({
     };
 
     return (
-        <div className="relative">
+        <div className="relative w-full">
             <ul role="list" className="space-y-6">
                 {historical.map((entry, idx) => {
                     const isLast = idx === historical.length - 1;
