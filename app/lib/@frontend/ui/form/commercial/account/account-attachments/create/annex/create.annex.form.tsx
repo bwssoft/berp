@@ -7,9 +7,10 @@ import { useRef } from "react";
 
 interface CreateAnnexFormProps {
   closeModal: () => void;
+  accountId: string
 }
 
-export function CreateAnnexForm({ closeModal }: CreateAnnexFormProps) {
+export function CreateAnnexForm({ closeModal, accountId }: CreateAnnexFormProps) {
   const {
     register,
     onSubmit,
@@ -17,7 +18,7 @@ export function CreateAnnexForm({ closeModal }: CreateAnnexFormProps) {
     handleFileChange,
     selectedFile,
     isUploading,
-  } = useCreateAnnexForm({ closeModal });
+  } = useCreateAnnexForm({ closeModal, accountId });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = () => {
