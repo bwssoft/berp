@@ -1,5 +1,5 @@
 import { findManyHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { AccountHistoricalDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/account-management.data";
+import { HistoricalDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/historical.data";
 
 interface Props {
   searchParams: {
@@ -12,7 +12,7 @@ export default async function Page({ searchParams }: Props) {
   const historicalData = await findManyHistorical({accountId: accountId})
 
   return (
-    <AccountHistoricalDataPage 
+    <HistoricalDataPage 
       accountId={accountId}
       historical={historicalData.docs}
     />

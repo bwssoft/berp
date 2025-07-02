@@ -6,7 +6,7 @@ interface Props {
     accountId: string
 }
 
-export function AccountManagementDataPage({ historical, accountId }:Props) {
+export function HistoricalDataPage({ historical, accountId }:Props) {
     return (
     <div className="flex flex-col items-center">
       <CreateHistoricalForm
