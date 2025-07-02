@@ -242,7 +242,7 @@ export const useBWS4G = () => {
             command,
           })
         ),
-        { command: "CHECK", key: "check", delay_before: 1000 },
+        { command: "CHECK", key: "check", delay_before: 1010 },
         { command: "CXIP", key: "cxip" },
         { command: "STATUS", key: "status" },
       ] as const;
