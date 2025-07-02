@@ -13,15 +13,8 @@ export function AccountCreateForm() {
     onSubmit,
     type,
     handleCpfCnpj,
-    dataHolding,
     buttonsState,
     toggleButtonText,
-    dataControlled,
-    setSelectedControlled,
-    selectedControlled,
-    debouncedValidationHolding,
-    debouncedValidationControlled,
-    disabledFields,
     form,
   } = useCreateAccountForm();
 
@@ -42,17 +35,7 @@ export function AccountCreateForm() {
           />
 
           {hasValidated && type === "cpf" && <CpfAccountForm />}
-          {hasValidated && type === "cnpj" && (
-            <CNPJAccountForm
-              dataHolding={dataHolding || []}
-              setSelectedControlled={setSelectedControlled}
-              selectedControlled={selectedControlled}
-              dataControlled={dataControlled || []}
-              debouncedValidationHolding={debouncedValidationHolding}
-              debouncedValidationControlled={debouncedValidationControlled}
-              disabledFields={disabledFields}
-            />
-          )}
+          {hasValidated && type === "cnpj" && <CNPJAccountForm />}
 
           {hasValidated && (
             <div className="flex gap-4">

@@ -13,9 +13,10 @@ import { useCreateAnnexModal } from "./use-annex.create.commercial.modal";
 interface Props {
   open: boolean;
   closeModal: () => void;
+  accountId: string
 }
 
-export function CreateAnnexModal({ open, closeModal }: Props) {
+export function CreateAnnexModal({ open, closeModal, accountId }: Props) {
   return (
     <Modal
       open={open}
@@ -26,7 +27,7 @@ export function CreateAnnexModal({ open, closeModal }: Props) {
     >
       <ModalContent>
         <ModalBody>
-          <CreateAnnexForm closeModal={closeModal} />
+          <CreateAnnexForm closeModal={closeModal} accountId={accountId} />
         </ModalBody>
       </ModalContent>
     </Modal>
