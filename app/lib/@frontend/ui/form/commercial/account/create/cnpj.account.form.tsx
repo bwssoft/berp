@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
   SelectContent,
+  SelectItem,
 } from "../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import {
@@ -20,7 +21,6 @@ import { ICnpjaResponse } from "@/app/lib/@backend/domain";
 import { DebouncedFunc } from "lodash";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { useEffect, useState } from "react";
-import { SelectItem } from "@radix-ui/react-select";
 import {
   FormControl,
   FormField,
@@ -99,7 +99,6 @@ export function CNPJAccountForm({
         placeholder="Digite o nome fantasia"
         {...register("cnpj.fantasy_name")}
         error={errors.cnpj?.fantasy_name?.message}
-        disabled={disabledFields.fantasy_name}
       />
       <Input
         label="Inscrição Estadual"

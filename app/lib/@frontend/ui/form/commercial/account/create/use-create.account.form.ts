@@ -236,7 +236,7 @@ export function useCreateAccountForm() {
         setDataCnpj(data);
 
         // Set the values from API
-        methods.setValue("cnpj.fantasy_name", data.alias);
+        methods.setValue("cnpj.fantasy_name", data.alias ?? "");
         methods.setValue("cnpj.social_name", data.company.name);
         methods.setValue("cnpj.status", [
           { id: data.status.text, name: data.status.text },
@@ -244,7 +244,7 @@ export function useCreateAccountForm() {
 
         setDisabledFields({
           social_name: true,
-          fantasy_name: true,
+          fantasy_name: Boolean(data?.alias?.length),
           status: true,
           state_registration: false,
           municipal_registration: false,

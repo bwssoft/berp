@@ -1,9 +1,9 @@
 "use client";
 
-import { Form, FormProvider } from "react-hook-form";
+import { FormProvider } from "react-hook-form";
 import { useCreateAccountForm } from "./use-create.account.form";
 import { DocumentAccountForm } from "./document.account.form";
-import { Button } from "../../../../component";
+import { Button, Form } from "../../../../component";
 import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
 

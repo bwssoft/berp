@@ -18,7 +18,7 @@ export function Root(props: Props) {
   const { children, session } = props;
 
   return (
-    <html lang="en" className="h-full bg-gray-50">
+    <html lang="en" className="h-full">
       <ReactQueryClientProvider>
         <SessionProvider>
           <AuthProvider session={session}>
