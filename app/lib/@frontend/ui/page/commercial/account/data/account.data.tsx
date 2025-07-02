@@ -1,12 +1,12 @@
 "use client";
 
 import {
-    Badge,
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
 } from "@/app/lib/@frontend/ui/component";
 
 import {
@@ -256,20 +256,18 @@ export function AccountDataPage(props: Props) {
         closeModal={closeUpdateModalContact}
       />
 
-            <AddressUpdateModal
-                address={selectedAddress!}
-                closeUpdateModal={closeUpdateModalAddress}
-                openUpdateModal={openUpdateAddress}
-            />
+      <AddressUpdateModal
+        address={selectedAddress!}
+        closeUpdateModal={closeUpdateModalAddress}
+        openUpdateModal={openUpdateAddress}
+      />
 
-            <DeleteContactDialog
-                open={openDeleteContact}
-                setOpen={setOpenDeleteContactModal}
-                confirm={() =>
-                    selectedContact && deleteContact(selectedContact.id)
-                }
-                isLoading={isLoadingDeleteContact}
-            />
+      <DeleteContactDialog
+        open={openDeleteContact}
+        setOpen={setOpenDeleteContactModal}
+        confirm={() => selectedContact && deleteContact(selectedContact.id)}
+        isLoading={isLoadingDeleteContact}
+      />
 
       <AddressUpdateModal
         address={selectedAddress!}
