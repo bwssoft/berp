@@ -1,3 +1,4 @@
+"use client"
 import { IHistorical } from "@/app/lib/@backend/domain";
 import { CreateHistoricalForm } from "../../../../form/commercial/account/historical/create/create.historical.form";
 
