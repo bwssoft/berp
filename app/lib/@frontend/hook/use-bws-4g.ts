@@ -140,7 +140,7 @@ export const useBWS4G = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { command: "DF", key: "debug_off", matcher: "Debug OFF" },
+        { command: "DF\r\n", key: "debug_off", matcher: "Debug OFF" },
         {
           command: "IMEI",
           key: "imei",
@@ -149,7 +149,7 @@ export const useBWS4G = () => {
         },
         { command: "ICCID", key: "iccid", transform: Bws4gParser.iccid },
         { command: "ET", key: "firmware", transform: Bws4gParser.firmware },
-        { command: "DN", key: "debug_on", matcher: "Debug ON" },
+        { command: "DN\r\n", key: "debug_on", matcher: "Debug ON" },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -344,7 +344,7 @@ export const useBWS4G = () => {
             const startResponse = await sendMultipleMessages({
               transport: port,
               messages: [
-                { key: "debug_off", command: "DF" },
+                { key: "debug_off", command: "DF\r\n" },
                 { key: "start", command: "START" },
               ] as const,
             });
@@ -432,7 +432,7 @@ export const useBWS4G = () => {
             await sendMultipleMessages({
               transport: port,
               messages: [
-                { key: "debug_on", command: "DN", matcher: "Debug ON" },
+                { key: "debug_on", command: "DN\r\n", matcher: "Debug ON" },
               ] as const,
             });
 
