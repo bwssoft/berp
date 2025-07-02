@@ -326,7 +326,7 @@ export const useBWS4G = () => {
             port,
             response: {} as Record<string, Bws4g.AutoTest | string | undefined>,
             messages: [
-              { key: "start", command: "START" },
+              { key: "start", command: "START\r\n" },
               { key: "autotest_1", command: "AUTOTEST" },
               { key: "autotest_2", command: "AUTOTEST" },
               { key: "autotest_3", command: "AUTOTEST" },
@@ -345,7 +345,12 @@ export const useBWS4G = () => {
               transport: port,
               messages: [
                 { command: "DF\r\n", key: "debug_off", matcher: "Debug OFF" },
-                { key: "start", command: "START", delay_before: 1000 },
+                {
+                  command: "START\r\n",
+                  key: "start",
+                  matcher: "START",
+                  delay_before: 1000,
+                },
               ] as const,
             });
             resultTemplate.response["start"] = startResponse.start;

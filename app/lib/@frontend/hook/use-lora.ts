@@ -13,6 +13,7 @@ import {
   BwsLoraConfig,
 } from "../../@backend/domain";
 import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
+import { genKeyLorawan } from "../../util/generate-key-lora-wan";
 
 namespace Namespace {
   interface Equipment {
@@ -48,8 +49,9 @@ const readResponse = async (
       const { value, done } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value);
-      buffer += chunk;
+      buffer += decoder.decode(value);
+
+      console.log("[RAW DATA]", buffer);
 
       let lines = buffer.split("\r");
       buffer = lines.pop() || "";
@@ -99,10 +101,10 @@ export const useLora = () => {
       const { command, timeout, delay_before } = msg;
       if (delay_before) await sleep(delay_before);
       console.log("-------------------------");
-      console.log("command", command);
+      console.log("[MESSAGE SENT]", command);
       await writeToPort(port, command);
       const response = await readResponse(reader, command, timeout);
-      console.log("response", response);
+      console.log("[RESPONSE MATCHED]", response);
       await reader.cancel();
       reader.releaseLock();
       return response;
@@ -825,6 +827,8 @@ export const useLora = () => {
         .toString(16)
         .toUpperCase();
 
+      const lora_keys = genKeyLorawan(`0x${serial}`, `0x${timestamp}`);
+
       const writeMessages = [
         {
           key: "serial",
@@ -878,6 +882,7 @@ export const useLora = () => {
           transform: BwsLoraParser.network_session_key,
         },
       ] as const;
+
       try {
         const init_time = Date.now();
         const writeResponse = await sendMultipleMessages({
@@ -889,6 +894,28 @@ export const useLora = () => {
           transport: port,
           messages: readMessages,
         });
+
+        console.log(
+          "device_address",
+          readResponse.device_address === lora_keys.devAddr
+        );
+        console.log("device_eui", readResponse.device_eui === lora_keys.devEUI);
+        console.log(
+          "application_eui",
+          readResponse.application_eui === lora_keys.appEUI
+        );
+        console.log(
+          "application_key",
+          readResponse.application_key === lora_keys.appKey
+        );
+        console.log(
+          "application_session_key",
+          readResponse.application_session_key === lora_keys.appSKey
+        );
+        console.log(
+          "network_session_key",
+          readResponse.network_session_key === lora_keys.nwkSKey
+        );
 
         if (
           !readResponse.serial ||
