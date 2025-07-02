@@ -1,7 +1,10 @@
 "use client";
 
 import { Controller, useFormContext } from "react-hook-form";
-import { CreateAccountFormSchema } from "./use-create.account.form";
+import {
+  CreateAccountFormSchema,
+  useCreateAccountForm,
+} from "./use-create.account.form";
 import {
   Input,
   Combobox,
@@ -47,21 +50,19 @@ interface CNPJAccountFormProps {
   };
 }
 
-export function CNPJAccountForm({
-  dataHolding,
-  dataControlled,
-  selectedControlled,
-  setSelectedControlled,
-  debouncedValidationControlled,
-  debouncedValidationHolding,
-  disabledFields = {
-    social_name: false,
-    fantasy_name: false,
-    status: false,
-    state_registration: false,
-    municipal_registration: false,
-  },
-}: CNPJAccountFormProps) {
+export function CNPJAccountForm() {
+  const {
+    dataHolding,
+    dataControlled,
+    setSelectedControlled,
+    selectedControlled,
+    debouncedValidationHolding,
+    debouncedValidationControlled,
+    disabledFields,
+    selectedHolding,
+    setSelectedHolding,
+  } = useCreateAccountForm();
+
   const sectorModal = useSectorModal();
   const {
     register,
@@ -219,12 +220,16 @@ export function CNPJAccountForm({
               onSearchChange={(text: string) => {
                 debouncedValidationHolding(text);
               }}
-              value={dataHolding.filter(
-                (item) => item.taxId === field.value?.taxId
-              )}
-              onOptionChange={([item]) =>
-                field.onChange({ name: item.company.name, taxId: item.taxId })
-              }
+              value={selectedHolding}
+              onOptionChange={([item]) => {
+                if (item) {
+                  setSelectedHolding([item]);
+                  field.onChange(item);
+                } else {
+                  setSelectedHolding([]);
+                  field.onChange(undefined);
+                }
+              }}
               keyExtractor={(item) => item.taxId}
               displayValueGetter={(item) => item.company.name}
               placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."

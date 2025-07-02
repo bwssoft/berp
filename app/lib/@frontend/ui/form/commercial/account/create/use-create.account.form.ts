@@ -137,14 +137,15 @@ export function useCreateAccountForm() {
   const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
 
   // Estado para guardar os dados retornados para holding e controlled
-  const [dataHolding, setDataHolding] = useState<ICnpjaResponse[] | null>(null);
-  const [dataControlled, setDataControlled] = useState<ICnpjaResponse[] | null>(
-    null
-  );
+  const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
+
+  const [dataControlled, setDataControlled] = useState<ICnpjaResponse[]>([]);
   const [dataCnpj, setDataCnpj] = useState<ICnpjaResponse | null>(null);
   const [selectedControlled, setSelectedControlled] = useState<
-    ICnpjaResponse[] | null
-  >(null);
+    ICnpjaResponse[]
+  >([]);
+
+  const [selectedHolding, setSelectedHolding] = useState<ICnpjaResponse[]>([]);
 
   const [disabledFields, setDisabledFields] = useState<{
     social_name: boolean;
@@ -277,27 +278,21 @@ export function useCreateAccountForm() {
       // Se não for CNPJ, trata como nome e usa outra função
       data = await fetchNameData(value);
       if (groupType === "controlled") {
-        setDataControlled(data);
+        setDataControlled(data as ICnpjaResponse[]);
         return;
       }
-      setDataHolding(data);
+      setDataHolding(data as ICnpjaResponse[]);
     }
     return data;
   };
 
-  const debouncedValidationHolding = useCallback(
-    debounce(async (value: string) => {
-      await handleCnpjOrName(value, "holding");
-    }, 500),
-    [handleCnpjOrName]
-  );
+  const debouncedValidationHolding = debounce(async (value: string) => {
+    await handleCnpjOrName(value, "holding");
+  }, 500);
 
-  const debouncedValidationControlled = useCallback(
-    debounce(async (value: string) => {
-      await handleCnpjOrName(value, "controlled");
-    }, 500),
-    [handleCnpjOrName]
-  );
+  const debouncedValidationControlled = debounce(async (value: string) => {
+    await handleCnpjOrName(value, "controlled");
+  }, 500);
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
     const address = dataCnpj?.address;
@@ -415,6 +410,8 @@ export function useCreateAccountForm() {
     toggleButtonText,
     setSelectedControlled,
     selectedControlled,
+    selectedHolding,
+    setSelectedHolding,
     debouncedValidationHolding,
     debouncedValidationControlled,
     disabledFields,
