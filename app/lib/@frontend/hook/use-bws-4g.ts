@@ -43,7 +43,7 @@ type LineMatcher =
 export const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
   matcher?: LineMatcher,
-  timeout = 3000
+  timeout = 4500
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
