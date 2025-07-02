@@ -36,6 +36,7 @@ export function EconomicGroupAccountForm({
         name="cnpj.economic_group_holding"
         render={({ field }) => (
           <Combobox
+            modal={true}
             data={dataHolding}
             label="Grupo Econômico (Holding)"
             behavior="search"
@@ -64,6 +65,7 @@ export function EconomicGroupAccountForm({
         name="cnpj.economic_group_controlled"
         render={({ field }) => (
           <Combobox
+            modal={true}
             type="multiple"
             data={dataControlled}
             label="Grupo Econômico (Controladas)"
