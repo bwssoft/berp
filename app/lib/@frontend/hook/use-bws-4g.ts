@@ -344,8 +344,8 @@ export const useBWS4G = () => {
             const startResponse = await sendMultipleMessages({
               transport: port,
               messages: [
-                { key: "debug_off", command: "DF\r\n" },
-                { key: "start", command: "START" },
+                { command: "DF\r\n", key: "debug_off", matcher: "Debug OFF" },
+                { key: "start", command: "START", delay_before: 1000 },
               ] as const,
             });
             resultTemplate.response["start"] = startResponse.start;
