@@ -49,6 +49,7 @@ interface Props {
     hasPermissionEconomicGroup: boolean;
   };
 }
+
 export function AccountDataPage(props: Props) {
   const {
     account,
@@ -260,6 +261,7 @@ export function AccountDataPage(props: Props) {
         closeUpdateModal={closeUpdateModalAddress}
         openUpdateModal={openUpdateAddress}
       />
+
       <DeleteContactDialog
         open={openDeleteContact}
         setOpen={setOpenDeleteContactModal}
