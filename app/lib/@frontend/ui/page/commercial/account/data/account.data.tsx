@@ -7,7 +7,6 @@ import {
     CardContent,
     CardHeader,
     CardTitle,
-    Dialog,
 } from "@/app/lib/@frontend/ui/component";
 
 import {
@@ -30,8 +29,6 @@ import {
     useUpdateContactModal,
 } from "../../../../modal";
 import { useState } from "react";
-import { deleteOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import { toast } from "@/app/lib/@frontend/hook";
 import { useAddressUpdateModal } from "../../../../modal/comercial/address/update/use-address.update.modal";
 import { useAddressModal } from "../../../../modal/comercial/address/use-address.modal";
 import { AddressUpdateModal } from "../../../../modal/comercial/address/update";
@@ -50,6 +47,7 @@ interface Props {
         hasPermissionEconomicGroup: boolean;
     };
 }
+
 export function AccountDataPage(props: Props) {
     const {
         account,
@@ -271,6 +269,7 @@ export function AccountDataPage(props: Props) {
                 closeUpdateModal={closeUpdateModalAddress}
                 openUpdateModal={openUpdateAddress}
             />
+
             <DeleteContactDialog
                 open={openDeleteContact}
                 setOpen={setOpenDeleteContactModal}
