@@ -6,24 +6,31 @@ import { Modal, ModalBody, ModalContent } from "../../../component";
 import { AddressCreateForm } from "../../../form/commercial/address/create/address.create.form";
 
 interface AddressProps {
-  open: any;
-  closeModal: () => void;
-  accountId: string;
+    open: any;
+    closeModal: () => void;
+    accountId: string;
 }
-export function AddressModal({ open, closeModal, accountId }: AddressProps) {
-  return (
-    <Modal
-      open={open}
-      onClose={closeModal}
-      title="Novo endereço"
-      className="bg-white"
-      position="center"
-    >
-      <ModalContent>
-        <ModalBody className="overflow-y-scroll max-h-[70vh] w-full">
-          <AddressCreateForm closeModal={closeModal} accountId={accountId} />
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  );
+export function CreatedAddressModal({
+    open,
+    closeModal,
+    accountId,
+}: AddressProps) {
+    return (
+        <Modal
+            open={open}
+            onClose={closeModal}
+            title="Novo endereço"
+            className="bg-white"
+            position="center"
+        >
+            <ModalContent>
+                <ModalBody className="min-h-[50vh] max-h-[70vh] w-[70vh]">
+                    <AddressCreateForm
+                        closeModal={closeModal}
+                        accountId={accountId}
+                    />
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+    );
 }

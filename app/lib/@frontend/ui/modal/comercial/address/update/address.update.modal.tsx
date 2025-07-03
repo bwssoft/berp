@@ -6,28 +6,28 @@ import { Modal, ModalBody, ModalContent } from "../../../../component";
 import { IAddress } from "@/app/lib/@backend/domain";
 
 interface AddressProps {
-    open: any;
-    closeModal: () => void;
+    openUpdateModal: any;
+    closeUpdateModal: () => void;
     address: IAddress;
 }
 export function AddressUpdateModal({
-    open,
-    closeModal,
+    openUpdateModal,
+    closeUpdateModal,
     address,
 }: AddressProps) {
     return (
         <Modal
-            open={open}
-            onClose={closeModal}
+            open={openUpdateModal}
+            onClose={closeUpdateModal}
             title="Editar endereço"
             className="bg-white"
             position="center"
         >
             <ModalContent>
-                <ModalBody>
+                <ModalBody className="min-h-[50vh] max-h-[70vh] w-[70vh]">
                     <AddressUpdateForm
                         address={address}
-                        closeModal={closeModal}
+                        closeModal={closeUpdateModal}
                     />
                 </ModalBody>
             </ModalContent>

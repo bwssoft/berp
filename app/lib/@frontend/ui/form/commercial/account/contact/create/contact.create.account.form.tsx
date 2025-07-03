@@ -32,7 +32,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
   return (
     <form
       action={() => onSubmit()}
-      className="flex flex-col items-start  gap-4"
+      className="flex flex-col items-start gap-4"
     >
       <Controller
         name="contractEnabled"

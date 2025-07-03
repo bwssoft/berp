@@ -39,6 +39,7 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [loadingCep, setLoadingCep] = useState(false);
+  const [cepEdited, setCepEdited] = useState(false);
 
   const {
     register,
@@ -87,7 +88,7 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
   }
 
   useEffect(() => {
-    if (isValidCEP(zip)) fetchViaCep(zip);
+    if (cepEdited && isValidCEP(zip)) fetchViaCep(zip);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [zip]);
 
@@ -115,8 +116,20 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
     () => {}
   );
 
+  const registerCep = () => {
+    const registration = register("zip_code");
+    return {
+      ...registration,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        registration.onChange(e);
+        setCepEdited(true);
+      },
+    };
+  };
+
   return {
     register,
+    registerCep,
     control,
     handleSubmit,
     errors,

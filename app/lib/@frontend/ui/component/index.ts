@@ -37,4 +37,4 @@ export * from "./label";
 export * from "./card";
 export * from "./sortable-item";
 export * from "./badge";
-export * from "./time-line-item";
+export * from "../list/commercial/historical/time-line-item";

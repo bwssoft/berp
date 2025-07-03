@@ -1,7 +1,7 @@
 export interface ICnpjaResponse {
   updated: string;
   taxId: string;
-  alias: string;
+  alias?: string;
   founded: string;
   head: boolean;
   company: Company;

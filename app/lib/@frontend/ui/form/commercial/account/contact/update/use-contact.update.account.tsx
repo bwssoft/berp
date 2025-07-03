@@ -8,9 +8,18 @@ import { toast } from "@/app/lib/@frontend/hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ContactItem } from "../create";
-import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { ContactItem, ContactType } from "../create";
+import {
+  findManyAccount,
+  findOneAccount,
+  updateOneAccount,
+} from "@/app/lib/@backend/action/commercial/account.action";
 import { updateOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import { useState } from "react";
+
+const validatePhoneNumber = (value: string) => {
+  return /^\d{0,11}$/.test(value);
+};
 
 const schema = z
   .object({
@@ -61,12 +70,59 @@ const schema = z
         });
       }
     }
+
+    if (data.contactItems && data.contactItems.length > 0) {
+      data.contactItems.forEach((item, index) => {
+        const contactType = item.type?.[0];
+
+        if (
+          ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(
+            contactType
+          )
+        ) {
+          if (!validatePhoneNumber(item.contact)) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["contactItems", index, "contact"],
+              message:
+                "Telefone deve conter apenas números e no máximo 11 dígitos",
+            });
+          }
+        }
+
+        if (contactType === "Email") {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(item.contact)) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["contactItems", index, "contact"],
+              message: "Email inválido",
+            });
+          }
+        }
+      });
+    }
   });
 
 export function useUpdateContactAccount(
   closeModal: () => void,
   contact: IContact
 ) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [tempContact, setTempContact] = useState<{
+    type: ContactType | "";
+    contact: string;
+    preferredContact: {
+      phone?: boolean;
+      whatsapp?: boolean;
+      email?: boolean;
+    };
+  }>({
+    type: "",
+    contact: "",
+    preferredContact: {},
+  });
+
   const methods = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -109,16 +165,7 @@ export function useUpdateContactAccount(
   const router = useRouter();
 
   const handleNewContact = () => {
-    const rawType = watch("contactItems.0.type");
-    const type =
-      Array.isArray(rawType) && rawType.length > 0
-        ? rawType[0]
-        : typeof rawType === "string"
-          ? rawType
-          : "Celular";
-
-    const contact = watch("contactItems.0.contact")?.trim();
-    if (!type || !contact) {
+    if (!tempContact.type || !tempContact.contact) {
       toast({
         title: "Atenção",
         description: "Preencha o tipo e o contato antes de adicionar.",
@@ -127,10 +174,48 @@ export function useUpdateContactAccount(
       return;
     }
 
+    // Validate phone numbers
+    if (
+      ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(
+        tempContact.type
+      )
+    ) {
+      if (!validatePhoneNumber(tempContact.contact)) {
+        toast({
+          title: "Formato inválido",
+          description:
+            "Telefone deve conter apenas números e no máximo 11 dígitos",
+          variant: "error",
+        });
+        return;
+      }
+    }
+
+    // Validate email
+    if (tempContact.type === "Email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(tempContact.contact)) {
+        toast({
+          title: "Formato inválido",
+          description: "Formato de email inválido",
+          variant: "error",
+        });
+        return;
+      }
+    }
+
     append({
       id: crypto.randomUUID(),
-      type: [type],
-      contact,
+      type: Array.isArray(tempContact.type)
+        ? tempContact.type
+        : [tempContact.type],
+      contact: tempContact.contact,
+      preferredContact: tempContact.preferredContact,
+    });
+
+    setTempContact({
+      type: "",
+      contact: "",
       preferredContact: {},
     });
   };
@@ -167,7 +252,9 @@ export function useUpdateContactAccount(
 
   const queryClient = useQueryClient();
   const onSubmit = handleSubmit(async (data) => {
-    const { success, error } = await updateOneContact(
+    setIsLoading(true);
+    try {
+      const { success, error } = await updateOneContact(
       { id: contact.id },
       {
         ...data,
@@ -180,8 +267,41 @@ export function useUpdateContactAccount(
       }
     );
     if (success) {
+      if (accountId) {
+        const freshAccount = await findOneAccount({ id: accountId });
+        const currentContacts: IContact[] = freshAccount?.contacts ?? [];
+
+        const updatedContact = { ...success, id: contact.id };
+
+        const uniqueContacts = new Map<string, IContact>();
+        currentContacts.forEach((c) => {
+          if (c?.id) {
+            if (c.id === contact.id) {
+              uniqueContacts.set(c.id, updatedContact);
+            } else {
+              uniqueContacts.set(c.id, c);
+            }
+          }
+        });
+
+        if (!uniqueContacts.has(contact.id)) {
+          uniqueContacts.set(contact.id, updatedContact);
+        }
+
+        const updatedContacts = Array.from(uniqueContacts.values());
+
+        await updateOneAccount(
+          { id: accountId },
+          { contacts: updatedContacts }
+        );
+      }
+
       await queryClient.invalidateQueries({
         queryKey: ["findOneAccount", accountId],
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ["findManyAccount", accountId],
       });
 
       toast({
@@ -202,6 +322,16 @@ export function useUpdateContactAccount(
         toast({ title: "Erro!", description: error.global, variant: "error" });
       }
     }
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o contato.",
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   });
 
   return {
@@ -211,5 +341,7 @@ export function useUpdateContactAccount(
     handlePreferredContact,
     handleRemove,
     onSubmit,
+    setTempContact,
+    isLoading,
   };
 }

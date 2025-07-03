@@ -23,15 +23,15 @@ export function useAddressModal() {
       await deleteOneAddress({ id });
       setOpenModalDelete(false);
       toast({
-        title: "Sucesso",
-        description: "Contato deletado com sucesso",
+        title: "Sucesso!",
+        description: "Endereço excluído com sucesso",
         variant: "success",
       });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast({
         title: "Erro",
-        description: "Ocorreu um erro ao deletar contato",
+        description: "Não foi possível excluir o endereço.",
         variant: "error",
       });
     }

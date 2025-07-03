@@ -23,8 +23,8 @@ export async function createAccountAttachment(
     // Generate a unique ID if one wasn't provided
     const id = metadata.id || crypto.randomUUID();
 
-    // Use the current user's name or email as the userId if available
-    const userId = currentUser.name || currentUser.email || "System User";
+    // Use the current user's id
+    const userId = currentUser.id || "";
 
     // Convert array back to Buffer
     const buffer = Buffer.from(fileData.buffer);
