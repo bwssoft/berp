@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function useAddressModal() {
+export function useAddressUpdateModal() {
     const [open, setOpen] = useState(false);
 
     function openModal() {

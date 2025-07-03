@@ -520,9 +520,9 @@ export class Bws4gParser {
 
   static auto_test(input: string): Bws4g.AutoTest | undefined {
     if (typeof input !== "string") return undefined;
-
-    if (!input.startsWith("SN:")) return undefined;
-    const splited = input.split(",");
+    const parts = input.split("AUTOTEST=");
+    if (parts.length < 2) return undefined;
+    const splited = parts[1].split(",");
     return splited.reduce((acc, cur) => {
       const [key, value] = cur.split(":");
       acc[key as keyof Bws4g.AutoTest] = value;

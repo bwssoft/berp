@@ -1,31 +1,15 @@
-"use client";
 import { findManyHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { CreateHistoricalForm } from "@/app/lib/@frontend/ui/component";
-import { useQuery } from "@tanstack/react-query";
+import { HistoricalDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/historical.data";
 
 interface Props {
-  searchParams: {
-    id: string;
-  };
+    searchParams: {
+        id: string;
+    };
 }
 
-export default function Page({ searchParams }: Props) {
-  const { id: accountId } = searchParams;
+export default async function Page({ searchParams }: Props) {
+    const { id: accountId } = searchParams;
+    const historicalData = await findManyHistorical({ accountId: accountId });
 
-  const { data: historicalData, isLoading: accountLoading } = useQuery({
-    queryKey: ["findManyHistorical", accountId],
-    queryFn: async () => await findManyHistorical({ accountId: accountId }),
-    enabled: !!accountId,
-  });
-
-  console.log({ historicalData });
-
-  return (
-    <div className="flex flex-col items-center">
-      <CreateHistoricalForm
-        historical={historicalData?.docs ?? []}
-        accountId={accountId}
-      />
-    </div>
-  );
+    return <HistoricalDataPage historical={historicalData.docs} accountId={accountId} />;
 }
