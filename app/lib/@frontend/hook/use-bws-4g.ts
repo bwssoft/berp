@@ -59,7 +59,7 @@ export const readResponse = async (
 
       buffer += decoder.decode(value);
 
-      console.log("[RAW DATA]", buffer);
+      console.info("[RAW DATA]", buffer);
 
       const lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
@@ -120,11 +120,11 @@ export const useBWS4G = () => {
       const reader = await getReader(port);
       const { command, timeout, delay_before, matcher } = msg;
       if (delay_before) await sleep(delay_before);
-      console.log("-------------------------");
-      console.log("[MESSAGE SENT]", command);
+      console.info("-------------------------");
+      console.info("[MESSAGE SENT]", command);
       await writeToPort(port, command);
       const response = await readResponse(reader, matcher, timeout);
-      console.log("[RESPONSE MATCHED]", response);
+      console.info("[RESPONSE MATCHED]", response);
       await reader.cancel();
       reader.releaseLock();
       return response;
