@@ -28,6 +28,7 @@ export function useCreateHistoricalForm({ accountId, closeModalAnnex, file }:Pro
   const {handleSubmit, register, formState: errors} = useForm<CreateHistoricalFormSchema>({
     resolver: zodResolver(schema)
   })
+  const [isLoading, setIsLoading] = useState(false)
   const [selectContact, setSelectContact] = useState<ContactSelection>();
 
   const {user} = useAuth()
@@ -35,6 +36,8 @@ export function useCreateHistoricalForm({ accountId, closeModalAnnex, file }:Pro
   const queryClient = useQueryClient()
 
   const onSubmit = handleSubmit(async (data) => {
+    setIsLoading(true)
+     try {
     await createOneHistorical({
       ...data,
       accountId: accountId,
@@ -48,9 +51,10 @@ export function useCreateHistoricalForm({ accountId, closeModalAnnex, file }:Pro
       file: file,
       contacts: selectContact
     })
-
-      closeModalAnnex?.()
-    
+    } finally {
+        setIsLoading(false);
+        closeModalAnnex?.()
+    }
   })
 
   const handleDownload = async (id: string, name: string) => {
@@ -110,6 +114,7 @@ export function useCreateHistoricalForm({ accountId, closeModalAnnex, file }:Pro
     setSelectContact,
     selectContact,
     errors,
-    handleDownload
+    handleDownload,
+    isLoading
   }
 }
