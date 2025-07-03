@@ -108,6 +108,7 @@ export function useUpdateContactAccount(
   closeModal: () => void,
   contact: IContact
 ) {
+  const [isLoading, setIsLoading] = useState(false);
   const [tempContact, setTempContact] = useState<{
     type: ContactType | "";
     contact: string;
@@ -251,7 +252,9 @@ export function useUpdateContactAccount(
 
   const queryClient = useQueryClient();
   const onSubmit = handleSubmit(async (data) => {
-    const { success, error } = await updateOneContact(
+    setIsLoading(true);
+    try {
+      const { success, error } = await updateOneContact(
       { id: contact.id },
       {
         ...data,
@@ -319,6 +322,16 @@ export function useUpdateContactAccount(
         toast({ title: "Erro!", description: error.global, variant: "error" });
       }
     }
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o contato.",
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   });
 
   return {
@@ -329,5 +342,6 @@ export function useUpdateContactAccount(
     handleRemove,
     onSubmit,
     setTempContact,
+    isLoading,
   };
 }

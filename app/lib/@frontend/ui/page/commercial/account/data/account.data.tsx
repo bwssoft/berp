@@ -124,7 +124,7 @@ export function AccountDataPage(props: Props) {
     openModal: openUpdateModalAddress,
   } = useAddressUpdateModal();
 
-  const { openModalDelete, setOpenModalDelete, deleteAdress } =
+  const { open: openModalDelete, setOpen: setOpenModalDelete, confirm: deleteAddress, isLoading: isLoadingAddressDelete } =
     useAddressDeleteDialog();
 
   return (
@@ -285,7 +285,8 @@ export function AccountDataPage(props: Props) {
         address={selectedAddress}
         open={openModalDelete}
         onClose={() => setOpenModalDelete(false)}
-        onDelete={(id) => deleteAdress(id)}
+        onDelete={(id) => deleteAddress(id)}
+        isLoading={isLoadingAddressDelete}
       />
 
       <UpdateEconomicGroupAccountModal

@@ -28,6 +28,7 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
     handlePreferredContact,
     handleRemove,
     setTempContact,
+    isLoading,
     formState: { errors },
   } = useUpdateContactAccount(closeModal, contact);
 
@@ -215,11 +216,13 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
       </div>
 
       <div className="flex justify-end gap-4 w-full">
-        <Button type="button" variant={"ghost"} onClick={closeModal}>
+        <Button type="button" variant={"ghost"} onClick={closeModal} disabled={isLoading}>
           Cancelar
         </Button>
 
-        <Button type="submit">Salvar</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Salvando..." : "Salvar"}
+        </Button>
       </div>
     </form>
   );

@@ -1,34 +1,75 @@
-import { useState } from "react";
-import { deleteOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
+"use client";
+
+import * as React from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/lib/@frontend/hook";
+import { deleteOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
+import {
+  findOneAccount,
+  updateOneAccount,
+} from "@/app/lib/@backend/action/commercial/account.action";
+import { useSearchParams } from "next/navigation";
+
 export function useAddressDeleteDialog() {
-    const [openModalDelete, setOpenModalDelete] = useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const qc = useQueryClient();
+    const searchParams = useSearchParams();
+    const accountId = searchParams.get("id");
 
-    function openModalDeleteCard() {
-        setOpenModalDelete(true);
-    }
+    const confirm = async (id: string) => {
+        setIsLoading(true);
 
-    const deleteAdress = async (id: any) => {
         try {
-            await deleteOneAddress({ id });
-            setOpenModalDelete(false);
+            if (accountId) {
+                try {
+                    await deleteOneAddress({ id });
+                    const freshAccount = await findOneAccount({ id: accountId });
+                    if (freshAccount) {
+                        const updatedAddresses = freshAccount.address?.filter(
+                            (addr: any) => addr && addr.id !== id
+                        ) || [];
+
+                        await updateOneAccount(
+                            { id: accountId },
+                            { address: updatedAddresses }
+                        );
+                    }
+                } catch (error) {
+                    console.error(
+                        "Error updating account after address deletion:",
+                        error
+                    );
+                }
+            }
+
+            await qc.invalidateQueries({ queryKey: ["findOneAccount"] });
+            await qc.invalidateQueries({ queryKey: ["findManyAccount"] });
+
             toast({
-                title: "Sucesso",
-                description: "Contato deletado com sucesso",
+                title: "Sucesso!",
+                description: "Endereço excluído com sucesso!",
                 variant: "success",
             });
+
+            setOpen(false);
         } catch (err) {
-            console.log(err);
+            console.error(err);
             toast({
                 title: "Erro",
-                description: "Ocorreu um erro ao deletar contato",
+                description: "Não foi possível excluir o endereço.",
                 variant: "error",
             });
+        } finally {
+            setIsLoading(false);
         }
     };
+    
     return {
-        openModalDelete,
-        setOpenModalDelete,
-        deleteAdress,
+        open,
+        setOpen,
+        openDialog: () => setOpen(true),
+        confirm,
+        isLoading,
     };
 }

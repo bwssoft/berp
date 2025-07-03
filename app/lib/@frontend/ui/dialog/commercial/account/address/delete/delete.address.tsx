@@ -8,6 +8,7 @@ interface AddressDeleteDialogProps {
     open: boolean;
     onClose: () => void;
     onDelete: (id: string) => void;
+    isLoading?: boolean;
 }
 
 export function AddressDeleteDialog({
@@ -15,6 +16,7 @@ export function AddressDeleteDialog({
     open,
     onClose,
     onDelete,
+    isLoading = false,
 }: AddressDeleteDialogProps) {
     return (
         <Dialog open={open} setOpen={onClose}>
@@ -31,13 +33,14 @@ export function AddressDeleteDialog({
                     </Button>
                     <Button
                         variant="default"
+                        disabled={isLoading}
                         onClick={() => {
                             if (address?.id) {
                                 onDelete(address.id);
                             }
                         }}
                     >
-                        Confirmar
+                        {isLoading ? "Excluindo..." : "Confirmar"}
                     </Button>
                 </div>
             </div>
