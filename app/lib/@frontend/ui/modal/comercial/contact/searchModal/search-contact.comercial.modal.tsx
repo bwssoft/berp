@@ -24,18 +24,24 @@ export function SearchContactModal({ accountId }: ContactModalProps) {
   return (
     <>
       {contactsByCompany.length > 0 && (
-        <Button onClick={openModal}>Buscar contato</Button>
+        <Button 
+          variant={"ghost"} 
+          className="border px-3 py-3"
+          onClick={openModal}
+        >
+          Buscar contato
+        </Button>
       )}
 
       <Modal
         open={open}
         onClose={closeModal}
         title="Busca de Contatos"
-        className="bg-white h-full max-h-[70vh]"
+        className="bg-white"
         position="center"
       >
         <ModalContent>
-          <ModalBody>
+          <ModalBody className="max-h-[80vh]">
             <SearchContactAccountForm
               isLoading={isLoading}
               closeModal={closeModal}

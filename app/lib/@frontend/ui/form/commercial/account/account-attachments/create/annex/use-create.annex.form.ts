@@ -20,9 +20,10 @@ export type CreateAnnexFormSchema = z.infer<typeof schema>;
 
 interface CreateAnnexFormProps {
   closeModal: () => void;
+  accountId: string
 }
 
-export function useCreateAnnexForm({ closeModal }: CreateAnnexFormProps) {
+export function useCreateAnnexForm({ closeModal, accountId }: CreateAnnexFormProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { data: session } = useSession();
 
@@ -61,7 +62,7 @@ export function useCreateAnnexForm({ closeModal }: CreateAnnexFormProps) {
       const result = await createAccountAttachment(fileData, {
         id: crypto.randomUUID(),
         name: data.name,
-        accountId: ""
+        accountId: accountId
       });
 
       if (result.success) {

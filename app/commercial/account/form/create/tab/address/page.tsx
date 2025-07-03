@@ -1,38 +1,42 @@
-"use client";
-
-import { AddressCardList } from "@/app/lib/@frontend/ui/list/comercial/address/address.list";
+import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
+import { AddressDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/tab/address/address.data";
 import { PageFooterButtons } from "./page-footer-buttons";
-import { CreateAddressModal } from "./create-address";
-import { useAddresses } from "@/app/lib/@frontend/ui/form/commercial/address/get/useaddress";
-import { useAccount } from "@/app/lib/@frontend/ui/form/commercial/address/get/useaccount";
-import { useRouter } from "next/navigation";
 
 interface Props {
-  searchParams: { id: string };
+    searchParams: {
+        id: string;
+    };
 }
 
-export default function Page({ searchParams }: Props) {
-  const { id } = searchParams;
-  const router = useRouter();
+export default async function Page({ searchParams }: Props) {
+    const { id: accountId } = searchParams;
 
-  const { addresses, loading: loadingAddresses } = useAddresses(id);
-  const { account, loading: loadingAccount } = useAccount(id);
+    const account = await findOneAccount({ id: accountId });
+    if (!account) return <>Conta não encontrada</>;
 
-  if (loadingAddresses || loadingAccount) return <p>Carregando...</p>;
+    const address = await findManyAddress({ accountId });
+    const hasPermissionAddresses = await restrictFeatureByProfile(
+        "commercial:accounts:access:tab:data:addresses"
+    );
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-1">
-        <CreateAddressModal id={id} />
-        <AddressCardList items={addresses} />
-      </div>
-      <footer>
-        <PageFooterButtons
-          accounts={!!account?.document?.type}
-          addresses={addresses.length > 0}
-          id={id}
-        />
-      </footer>
-    </div>
-  );
+    return (
+        <div>
+            <AddressDataPage
+                account={account}
+                address={address}
+                permissions={{
+                    hasPermissionContacts: false,
+                    hasPermissionAddresses,
+                    hasPermissionEconomicGroup: false,
+                }}
+            />
+            <PageFooterButtons
+                accounts={!!account?.document?.type}
+                addresses={address.length > 0}
+                id={accountId}
+            />
+        </div>
+    );
 }
