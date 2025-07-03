@@ -27,13 +27,12 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
     handleNewContact,
     handlePreferredContact,
     handleRemove,
+    setTempContact,
+    formState: { errors },
   } = useUpdateContactAccount(closeModal, contact);
 
   return (
-    <form
-      action={() => onSubmit()}
-      className="flex flex-col items-start gap-4"
-    >
+    <form action={() => onSubmit()} className="flex flex-col items-start gap-4">
       <Controller
         name="contractEnabled"
         control={control}
@@ -48,43 +47,77 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
         )}
       />
 
-      <Input label={"Nome"} {...register("name")} />
+      <Input
+        placeholder="Digite o nome do contato"
+        label={"Nome"}
+        {...register("name")}
+        error={errors.name?.message}
+      />
 
-      <Input label={"Cargo/Relação"} {...register("positionOrRelation")} />
+      <Input
+        placeholder="Digite o cargo ou relação"
+        label={"Cargo/Relação"}
+        {...register("positionOrRelation")}
+        error={errors.positionOrRelation?.message}
+      />
 
-      <Input label={"Área"} {...register("department")} />
+      <Input
+        placeholder="Digite departamento"
+        label={"Área"}
+        {...register("department")}
+        error={errors.department?.message}
+      />
 
       {watch("contractEnabled") && (
         <>
-          <Input label={"CPF"} {...register("cpf")} />
-          <Input label={"RG"} {...register("rg")} />
+          <Input
+            placeholder="Digite o CPF do contato"
+            label={"CPF"}
+            {...register("cpf")}
+            error={errors.cpf?.message}
+          />
+          <Input
+            placeholder="Digite o RG do contato"
+            label={"RG"}
+            {...register("rg")}
+            error={errors.rg?.message}
+          />
         </>
       )}
 
       <div className="flex gap-4 justify-between w-full items-end">
-        <Controller
-          name="contactItems.0.type"
-          control={control}
-          render={({ field }) => (
-            <Combobox
-              data={[
-                "Celular",
-                "Email",
-                "Telefone Residencial",
-                "Telefone Comercial",
-              ]}
-              value={field.value}
-              onChange={field.onChange}
-              label="Tipo"
-              type="single"
-              placeholder="Selecione o tipo"
-              keyExtractor={(item) => item}
-              displayValueGetter={(item) => item}
-            />
-          )}
+        <Combobox
+          data={[
+            "Celular",
+            "Email",
+            "Telefone Residencial",
+            "Telefone Comercial",
+          ]}
+          onChange={([value]) => {
+            setTempContact((prev) => ({
+              ...prev,
+              type: value as typeof prev.type,
+            }));
+          }}
+          label="Tipo"
+          type="single"
+          placeholder="Selecione o tipo"
+          keyExtractor={(item) => item}
+          displayValueGetter={(item) => item}
         />
 
-        <Input label="Contato" {...register(`contactItems.0.contact`)} />
+        <Input
+          label="Contato"
+          onChange={(e) =>
+            setTempContact((prev) => ({
+              ...prev,
+              contact: e.target.value,
+            }))
+          }
+          placeholder="Adicione o contato"
+          error={errors.contactItems?.message}
+        />
+
         <div
           className="bg-black text-white rounded-full p-1 mb-1.5 cursor-pointer"
           onClick={handleNewContact}
@@ -171,6 +204,14 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
             />
           )}
         />
+      </div>
+
+      <div>
+        {errors.contactFor && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.contactFor.message}
+          </p>
+        )}
       </div>
 
       <div className="flex justify-end gap-4 w-full">
