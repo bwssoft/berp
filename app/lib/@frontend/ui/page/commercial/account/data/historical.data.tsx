@@ -7,38 +7,54 @@ import { TimelineItem } from "../../../../list/commercial/historical/time-line-i
 import { CreateAnnexHistoricalModal } from "../../../../modal/comercial/account-attachments/create/annex-historical/annex-historical.create.commercial.modal";
 import { useCreateHistoricalForm } from "../../../../form/commercial/account/historical/create/use-create.historical.form";
 import { useCreateAnnexHistoricalModal } from "../../../../modal/comercial/account-attachments/create/annex-historical/use-annex-historical.create.commercial.modal";
+import { useState } from "react";
+import { IHistorical } from "@/app/lib/@backend/domain";
 
 interface Props {
     accountId: string;
+    historical: IHistorical[]
 }
 
-export function HistoricalDataPage({ accountId }: Props) {
-    const { data: historicalData } = useQuery({
-        queryKey: ["findManyHistorical", accountId],
-        queryFn: () => findManyHistorical({ accountId }),
-    });
+export function HistoricalDataPage({ historical, accountId }:Props) {
+    const [file, setFile] = useState<{ name: string; url: string; id: string }>();
+    
+    const {
+      handleDownload,
+    } = useCreateHistoricalForm({accountId})
 
-    const { handleDownload, handleFileChange, open } = useCreateHistoricalForm({
-        accountId,
-    });
+    const { 
+      open, 
+      closeModal, 
+      openModal
+    } = useCreateAnnexHistoricalModal()
 
-    const { closeModal } = useCreateAnnexHistoricalModal();
 
     return (
-        <div className="flex flex-col items-center">
-            <CreateHistoricalForm accountId={accountId} />
-            <TimelineItem
-                onClickButtonDownload={(id: string, name: string) =>
-                    handleDownload(id, name)
-                }
-                historical={historicalData?.docs ?? []}
-            />
-            <CreateAnnexHistoricalModal
-                closeModal={closeModal}
-                onFileUploadSuccess={handleFileChange}
-                open={open}
-                accountId={accountId}
-            />
-        </div>
-    );
+    <div className="w-full max-w-[1400px] mx-auto space-y-6">
+      <CreateHistoricalForm
+        historical={historical ?? []}
+        accountId={accountId}
+        openModalAnnex={openModal}
+        closeModalAnnex={closeModal}
+        file={file}
+      />
+
+      <TimelineItem
+        onClickButtonDownload={(id: string, name: string) =>
+            handleDownload(id, name)
+        }
+        historical={historical}
+      />
+
+      <CreateAnnexHistoricalModal
+          closeModal={closeModal}
+          onFileUploadSuccess={(name, url, id) => {
+            setFile({ name, url, id });
+            closeModal();
+          }}
+          open={open}
+          accountId={accountId}
+      />
+    </div>
+    )
 }
