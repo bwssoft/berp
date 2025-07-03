@@ -23,6 +23,7 @@ export function CreateHistoricalForm({ accountId, openModalAnnex, closeModalAnne
         setSelectContact,
         selectContact,
         errors,
+        isLoading
     } = useCreateHistoricalForm({ accountId, closeModalAnnex, file });
 
     return (
@@ -67,8 +68,12 @@ export function CreateHistoricalForm({ accountId, openModalAnnex, closeModalAnne
                             <PaperClipIcon className="h-5 w-5" />
                         </Button>
                     </div>
-                    <Button variant={"outline"} type="submit">
-                        Salvar
+                    <Button
+                        variant={"outline"}
+                        type="submit"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Salvando..." : "Salvar"}
                     </Button>
                 </div>
             </div>

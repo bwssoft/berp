@@ -49,12 +49,9 @@ export function useCreateHistoricalForm({ accountId, closeModalAnnex, file }:Pro
       contacts: selectContact
     })
 
-    await queryClient.invalidateQueries({
-      queryKey: ["findManyHistorical", accountId],
-    });
+      closeModalAnnex?.()
     
   })
-
 
   const handleDownload = async (id: string, name: string) => {
     try {
