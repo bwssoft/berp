@@ -12,10 +12,9 @@ import { IHistorical } from "@/app/lib/@backend/domain";
 
 type Props = {
     accountId: string;
-    historical: IHistorical[];
 };
 
-export function CreateHistoricalForm({ accountId, historical }: Props) {
+export function CreateHistoricalForm({ accountId }: Props) {
     const {
         register,
         onSubmit,
@@ -23,6 +22,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
         setSelectContact,
         selectContact,
         errors,
+        isLoading,
     } = useCreateHistoricalForm({ accountId });
 
     return (
@@ -67,8 +67,12 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
                             <PaperClipIcon className="h-5 w-5" />
                         </Button>
                     </div>
-                    <Button variant={"outline"} type="submit">
-                        Salvar
+                    <Button
+                        variant={"outline"}
+                        type="submit"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Salvando..." : "Salvar"}
                     </Button>
                 </div>
             </div>
