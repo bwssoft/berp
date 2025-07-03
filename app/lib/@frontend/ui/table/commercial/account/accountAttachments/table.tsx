@@ -16,27 +16,27 @@ export function AccountAttachmentsTable(props: Props) {
   const [canDeleteAttachments, setCanDeleteAttachments] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const hasPermission = await restrictFeatureByProfile(
-          "commercial:accounts:access:tab:attachments:delete"
-        );
-        setCanDeleteAttachments(hasPermission);
-      } catch (error) {
-        console.error("Error checking delete permission:", error);
-      }
-    })();
-  }, []);
+      (async () => {
+        try {
+          const hasPermission = await restrictFeatureByProfile(
+            "commercial:accounts:access:tab:attachments:delete"
+          );
+          setCanDeleteAttachments(hasPermission);
+        } catch (error) {
+          console.error("Error checking delete permission:", error);
+        }
+      })();
+    }, []);
 
-  const tableColumns = createColumns(onDelete, canDeleteAttachments);
+    const tableColumns = createColumns(onDelete, canDeleteAttachments);
 
-  return (
-    <DataTable
-      columns={tableColumns}
-      data={data}
-      mobileDisplayValue={(data) => data.name}
-      mobileKeyExtractor={(data) => data.createdAt.toString()}
-      className="w-full mt-10"
-    />
-  );
+    return (
+      <DataTable
+        columns={tableColumns}
+        data={data}
+        mobileDisplayValue={(data) => data.name}
+        mobileKeyExtractor={(data) => data.createdAt.toString()}
+        className="w-full mt-10"
+      />
+    );
 }
