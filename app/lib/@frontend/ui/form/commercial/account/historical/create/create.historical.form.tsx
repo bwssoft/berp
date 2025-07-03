@@ -1,11 +1,9 @@
 "use client";
 
 import { Button } from "@/app/lib/@frontend/ui/component";
-import { TimelineItem } from "@/app/lib/@frontend/ui/list/commercial/historical/time-line-item";
 import { useCreateHistoricalForm } from "./use-create.historical.form";
 import { FaceSmileIcon, PaperClipIcon } from "@heroicons/react/24/outline";
 import {
-    CreateAnnexHistoricalModal,
     SearchContactHistoricalModal,
 } from "@/app/lib/@frontend/ui/modal";
 import { IHistorical } from "@/app/lib/@backend/domain";
@@ -13,20 +11,22 @@ import { IHistorical } from "@/app/lib/@backend/domain";
 type Props = {
     accountId: string;
     historical: IHistorical[];
+    openModalAnnex?: () => void
+    closeModalAnnex?: () => void
+    file?: { name: string; url: string; id: string };
 };
 
-export function CreateHistoricalForm({ accountId, historical }: Props) {
+export function CreateHistoricalForm({ accountId, openModalAnnex, closeModalAnnex, file }: Props) {
     const {
         register,
         onSubmit,
-        openModal,
         setSelectContact,
         selectContact,
         errors,
-    } = useCreateHistoricalForm({ accountId });
+    } = useCreateHistoricalForm({ accountId, closeModalAnnex, file });
 
     return (
-        <form className="w-[70%]" onSubmit={onSubmit}>
+        <form onSubmit={onSubmit}>
             <div></div>
             <div className="border rounded-md p-4 mb-4 bg-white ">
                 <textarea
@@ -61,7 +61,7 @@ export function CreateHistoricalForm({ accountId, historical }: Props) {
                             title="Anexar"
                             variant={"ghost"}
                             type="button"
-                            onClick={openModal}
+                            onClick={openModalAnnex}
                             className="p-1"
                         >
                             <PaperClipIcon className="h-5 w-5" />

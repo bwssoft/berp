@@ -1,10 +1,10 @@
 "use client"
+
 import { downloadAccountAttachmentHistorical } from "@/app/lib/@backend/action/commercial/account-attachment-historical.download.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { ContactSelection } from "@/app/lib/@backend/domain";
 import { useAuth } from "@/app/lib/@frontend/context";
 import { toast } from "@/app/lib/@frontend/hook";
-import { useCreateAnnexHistoricalModal } from "@/app/lib/@frontend/ui/modal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -19,18 +19,21 @@ type CreateHistoricalFormSchema = z.infer<typeof schema>;
 
 type Props = {
   accountId: string
+  closeModalAnnex?: () => void
+  file?: { name: string; url: string; id: string };
 }
 
-export function useCreateHistoricalForm({accountId}:Props) {
+export function useCreateHistoricalForm({ accountId, closeModalAnnex, file }:Props) {
 
   const {handleSubmit, register, formState: errors} = useForm<CreateHistoricalFormSchema>({
     resolver: zodResolver(schema)
   })
-  const { openModal, open, closeModal } = useCreateAnnexHistoricalModal()
-  const {user} = useAuth()
-  const [file, setFile] = useState<{name: string, url: string, id: string} | undefined>()
   const [selectContact, setSelectContact] = useState<ContactSelection>();
-const queryClient = useQueryClient()
+
+  const {user} = useAuth()
+
+  const queryClient = useQueryClient()
+
   const onSubmit = handleSubmit(async (data) => {
     await createOneHistorical({
       ...data,
@@ -52,14 +55,6 @@ const queryClient = useQueryClient()
     
   })
 
-  const handleFileChange = (name: string, url: string, id: string) => {
-    setFile({
-      name,
-      url,
-      id
-    })
-    closeModal()
-  }
 
   const handleDownload = async (id: string, name: string) => {
     try {
@@ -79,7 +74,6 @@ const queryClient = useQueryClient()
       });
 
       const result = await downloadAccountAttachmentHistorical(id);
-      console.log(result);
 
       if (result.success && result.data) {
         const uint8Array = new Uint8Array(result.data);
@@ -115,13 +109,9 @@ const queryClient = useQueryClient()
   return {
     onSubmit,
     register,
-    handleFileChange, 
     file,
-    openModal,
-    open,
     setSelectContact,
     selectContact,
-    closeModal,
     errors,
     handleDownload
   }
