@@ -11,5 +11,5 @@ export default async function Page({ searchParams }: Props) {
     const { id: accountId } = searchParams;
     const historicalData = await findManyHistorical({ accountId: accountId });
 
-    return <HistoricalDataPage accountId={accountId} />;
+    return <HistoricalDataPage historical={historicalData.docs} accountId={accountId} />;
 }
