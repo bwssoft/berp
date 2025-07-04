@@ -297,6 +297,8 @@ export function AccountDataPage(props: Props) {
         accountId={account.id!}
         onClose={closeUpdateEconomicGroup}
         open={updateEconomicGroup}
+        economicGroupHolding={account.economic_group_holding}
+        economicGroupControlled={account.economic_group_controlled}
       />
     </div>
   );
