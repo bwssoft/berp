@@ -30,6 +30,7 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
     setTempContact,
     isLoading,
     formState: { errors },
+    tempContact,
     handleCheckboxChange
   } = useUpdateContactAccount(closeModal, contact);
 
@@ -102,6 +103,7 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
             }));
           }}
           label="Tipo"
+          value={tempContact.type ? [tempContact.type] : []}
           type="single"
           placeholder="Selecione o tipo"
           keyExtractor={(item) => item}
@@ -116,6 +118,7 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
               contact: e.target.value,
             }))
           }
+          value={tempContact.contact}
           placeholder="Adicione o contato"
           error={errors.contactItems?.message}
         />

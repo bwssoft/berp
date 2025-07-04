@@ -149,8 +149,6 @@ export function useUpdateContactAccount(
 
   const {
     control,
-    register,
-    watch,
     setError,
     reset,
     handleSubmit,
@@ -212,6 +210,7 @@ export function useUpdateContactAccount(
       contact: tempContact.contact,
       preferredContact: tempContact.preferredContact,
     });
+
 
     setTempContact({
       type: "",
@@ -352,6 +351,7 @@ export function useUpdateContactAccount(
     onSubmit,
     setTempContact,
     isLoading,
-    handleCheckboxChange
+    handleCheckboxChange,
+    tempContact
   };
 }
