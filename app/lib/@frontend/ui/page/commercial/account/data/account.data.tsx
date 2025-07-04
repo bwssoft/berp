@@ -124,8 +124,12 @@ export function AccountDataPage(props: Props) {
     openModal: openUpdateModalAddress,
   } = useAddressUpdateModal();
 
-  const { open: openModalDelete, setOpen: setOpenModalDelete, confirm: deleteAddress, isLoading: isLoadingAddressDelete } =
-    useAddressDeleteDialog();
+  const {
+    open: openModalDelete,
+    setOpen: setOpenModalDelete,
+    confirm: deleteAddress,
+    isLoading: isLoadingAddressDelete,
+  } = useAddressDeleteDialog();
 
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
