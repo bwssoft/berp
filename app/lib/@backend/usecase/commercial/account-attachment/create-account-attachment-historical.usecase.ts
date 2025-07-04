@@ -1,4 +1,8 @@
-import { AuditDomain, IAccountAttachment } from "@/app/lib/@backend/domain";
+import {
+  AuditDomain,
+  IAccountAttachment,
+  IUser,
+} from "@/app/lib/@backend/domain";
 import {
   IAccountAttachmentRepository,
   IAccountAttachmentObjectRepository,
@@ -12,6 +16,7 @@ interface CreateAccountAttachmentHistoricalUseCaseProps {
   accountAttachmentObjectRepository: IAccountAttachmentObjectRepository;
 }
 import { accountAttachmentRepository } from "@/app/lib/@backend/infra/repository/mongodb/commercial/account-attachment.repository";
+import { getCurrentUser } from "@/app/lib/util/get-current-user";
 
 export class CreateAccountAttachmentHistoricalUseCase {
   private accountAttachmentObjectRepository: IAccountAttachmentObjectRepository;
@@ -27,8 +32,13 @@ export class CreateAccountAttachmentHistoricalUseCase {
     file: Buffer;
     metadata: Omit<IAccountAttachment, "file" | "createdAt">;
     fileName: string;
-  }): Promise<string> {
+    user: Pick<IUser, "id" | "name">;
+  }): Promise<string | undefined> {
     try {
+      const currentUser = await getCurrentUser();
+
+      if (!currentUser) return;
+
       const { file: buffer, metadata, fileName } = params;
 
       // Extract file extension from original filename
@@ -68,7 +78,7 @@ export class CreateAccountAttachmentHistoricalUseCase {
       const attachment: IAccountAttachment = {
         id: metadata.id,
         name: metadata.name, // Name now includes proper file extension
-        userId: metadata.userId || "System",
+        user: currentUser,
         createdAt: new Date(),
         accountId: metadata.accountId,
       };
