@@ -16,7 +16,10 @@ export default async function Page({
   searchParams: { id, name, page }
 }: Props) {
   const _page = page?.length && Number(page);
-  const accountAttachmentsData = await findManyAccountAttachments(query({name}), _page);
+  const accountAttachmentsData = await findManyAccountAttachments(
+    query({ id, name }),
+    _page
+  );
 
   const hasPermissionContacts = await restrictFeatureByProfile(
     "commercial:accounts:access:tab:attachments:delete"
@@ -24,22 +27,24 @@ export default async function Page({
 
   return (
     <AttachmentsDataPage
-      attachments={accountAttachmentsData.docs}
+      attachments={accountAttachmentsData}
       accountId={id}
       hasPermission={hasPermissionContacts}
     />
   );
 }
 
-function query(props: { name?: string }): Filter<IAccountAttachment> {
+function query(props: { id: string; name?: string }): Filter<IAccountAttachment> {
+  const filter: Filter<IAccountAttachment> = {
+    accountId: props.id,
+  };
+
   if (props.name) {
-    return {
-      name: {
-        $regex: props.name,
-        $options: "i",
-      },
+    filter.name = {
+      $regex: props.name,
+      $options: "i",
     };
   }
 
-  return {};
+  return filter;
 }

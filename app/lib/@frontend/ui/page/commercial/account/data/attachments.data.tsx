@@ -4,9 +4,10 @@ import { AccountAttachmentsTable } from "../../../../table/commercial/account/ac
 import { IAccountAttachment } from "@/app/lib/@backend/domain/commercial/entity/account-attachment.definition";
 import { useCreateAnnexModal } from "../../../../modal/comercial/account-attachments/create/annex/use-annex.create.commercial.modal";
 import { SearchAttachmentsForm } from "../../../../form/commercial/account/account-attachments/search/search-attachments.annex.form";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 interface Props {
-  attachments: IAccountAttachment[];
+  attachments: PaginationResult<IAccountAttachment>;
   accountId: string
   hasPermission: boolean
 }
