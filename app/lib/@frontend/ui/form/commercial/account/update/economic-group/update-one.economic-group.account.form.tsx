@@ -4,17 +4,22 @@ import { Controller } from "react-hook-form";
 import { useUpdateEconomicGroupForm } from "./use-update-economic-group-form";
 import { Combobox } from "@/app/lib/@frontend/ui/component";
 import { Button } from "@/app/lib/@frontend/ui/component";
+import { EconomicGroup } from "@/app/lib/@backend/domain";
 
 interface Props {
   accountId: string;
   closeModal?: () => void;
   isModalOpen: boolean;
+  economicGroupHolding?: EconomicGroup;
+  economicGroupControlled?: EconomicGroup[];
 }
 
 export function EconomicGroupAccountForm({
   accountId,
   closeModal,
   isModalOpen,
+  economicGroupHolding,
+  economicGroupControlled,
 }: Props) {
   const {
     control,
@@ -27,7 +32,13 @@ export function EconomicGroupAccountForm({
     dataControlled,
     debouncedValidationHolding,
     debouncedValidationControlled,
-  } = useUpdateEconomicGroupForm(accountId, isModalOpen, closeModal);
+  } = useUpdateEconomicGroupForm(
+    accountId,
+    isModalOpen,
+    closeModal,
+    economicGroupHolding,
+    economicGroupControlled
+  );
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4 w-full h-fit">
