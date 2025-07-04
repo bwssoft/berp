@@ -69,6 +69,26 @@ const AvatarFallback = React.forwardRef<
     return tailwindColors[randomColor]["600"];
   }
 
+  const backgroundColor = React.useMemo(() => {
+    if (typeof children === "string") {
+      const stringHash = Array.from(children).reduce(
+        (acc, char) => acc + char.charCodeAt(0),
+        0
+      );
+
+      const tailwindColorKeys = Object.keys(tailwindColors) as Array<
+        keyof typeof tailwindColors
+      >;
+
+      const colorIndex = stringHash % tailwindColorKeys.length;
+      const color = tailwindColorKeys[colorIndex];
+
+      return tailwindColors[color]["600"];
+    }
+
+    return getRandomColor();
+  }, [children]);
+
   return (
     <AvatarPrimitive.Fallback
       ref={ref}
@@ -79,7 +99,7 @@ const AvatarFallback = React.forwardRef<
       {...props}
       style={{
         ...props.style,
-        backgroundColor: getRandomColor(),
+        backgroundColor,
       }}
     >
       {getInitials()}
