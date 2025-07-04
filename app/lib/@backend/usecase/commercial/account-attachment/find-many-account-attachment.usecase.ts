@@ -1,4 +1,7 @@
-import { IAccountAttachment, IAccountAttachmentRepository } from "@/app/lib/@backend/domain";
+import {
+  IAccountAttachment,
+  IAccountAttachmentRepository,
+} from "@/app/lib/@backend/domain";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { accountAttachmentRepository } from "@/app/lib/@backend/infra";
@@ -28,9 +31,11 @@ class FindManyAccountAttachmentUsecase {
       arg.filter ?? {},
       arg.limit,
       arg.page,
-      arg.sort ?? { name: 1 }
+      arg.sort ?? { created_at: -1 }
     );
   }
 }
 
-export const findManyAccountAttachmentUsecase = singleton(FindManyAccountAttachmentUsecase);
+export const findManyAccountAttachmentUsecase = singleton(
+  FindManyAccountAttachmentUsecase
+);

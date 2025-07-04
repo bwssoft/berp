@@ -1,6 +1,10 @@
 "use server";
 
-import { accountAttachmentHistoricalObjectRepository, accountAttachmentObjectRepository, accountAttachmentRepository } from "../../infra";
+import {
+  accountAttachmentHistoricalObjectRepository,
+  accountAttachmentObjectRepository,
+  accountAttachmentRepository,
+} from "../../infra";
 
 export async function downloadAccountAttachmentHistorical(id: string) {
   try {
@@ -16,12 +20,9 @@ export async function downloadAccountAttachmentHistorical(id: string) {
     // Need to include the original filename in the key
     const originalFileName = attachment.name;
     const key = `${id}-${originalFileName.replace(/\s+/g, "_")}`;
-    console.log("Attempting to download with key:", key);
-    console.log("Attachment metadata:", attachment);
 
     // Download the file from S3
     const result = await accountAttachmentObjectRepository.findOne(key);
-    console.log("S3 result:", result);
 
     if (!result) {
       return {

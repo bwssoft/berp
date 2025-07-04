@@ -1,4 +1,8 @@
-import { AuditDomain, IAccountAttachment } from "@/app/lib/@backend/domain";
+import {
+  AuditDomain,
+  IAccountAttachment,
+  IUser,
+} from "@/app/lib/@backend/domain";
 import { IAccountAttachmentObjectRepository } from "@/app/lib/@backend/domain/commercial/repository";
 import { getContentTypeFromFileName } from "@/app/lib/util/get-content-type-from-filename";
 import { singleton } from "@/app/lib/util/singleton";
@@ -24,11 +28,12 @@ export class CreateAccountAttachmentUseCase {
 
   async execute(params: {
     file: Buffer;
-    metadata: Omit<IAccountAttachment, "file" | "createdAt">;
+    metadata: Omit<IAccountAttachment, "file" | "createdAt" | "user">;
     fileName: string;
+    user: Pick<IUser, "id" | "name">;
   }): Promise<string> {
     try {
-      const { file: buffer, metadata, fileName } = params;
+      const { file: buffer, metadata, fileName, user } = params;
 
       // Extract file extension from original filename
       const fileExtension = fileName.split(".").pop()?.toLowerCase() || "";
@@ -67,7 +72,7 @@ export class CreateAccountAttachmentUseCase {
       const attachment: IAccountAttachment = {
         id: metadata.id,
         name: metadata.name, // Name now includes proper file extension
-        userId: metadata.userId || "System",
+        user,
         createdAt: new Date(),
         accountId: metadata.accountId,
       };
