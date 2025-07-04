@@ -9,26 +9,13 @@ import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restric
 interface Props {
   data: IAccountAttachment[];
   onDelete?: (id: string) => Promise<void>;
+  hasPermission?: boolean
 }
 
 export function AccountAttachmentsTable(props: Props) {
-  const { data, onDelete } = props;
-  const [canDeleteAttachments, setCanDeleteAttachments] = useState(false);
+  const { data, onDelete, hasPermission } = props;
 
-  useEffect(() => {
-      (async () => {
-        try {
-          const hasPermission = await restrictFeatureByProfile(
-            "commercial:accounts:access:tab:attachments:delete"
-          );
-          setCanDeleteAttachments(hasPermission);
-        } catch (error) {
-          console.error("Error checking delete permission:", error);
-        }
-      })();
-    }, []);
-
-    const tableColumns = createColumns(onDelete, canDeleteAttachments);
+    const tableColumns = createColumns(onDelete, hasPermission);
 
     return (
       <DataTable

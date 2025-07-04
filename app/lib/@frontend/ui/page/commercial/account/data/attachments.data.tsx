@@ -8,9 +8,10 @@ import { SearchAttachmentsForm } from "../../../../form/commercial/account/accou
 interface Props {
   attachments: IAccountAttachment[];
   accountId: string
+  hasPermission: boolean
 }
 
-export function AttachmentsDataPage({ attachments, accountId}: Props) {
+export function AttachmentsDataPage({ attachments, accountId, hasPermission }: Props) {
   const {
     open,
     closeModal,
@@ -25,6 +26,7 @@ export function AttachmentsDataPage({ attachments, accountId}: Props) {
       <div className="col-span-2">
         <AccountAttachmentsTable
           data={attachments}
+          hasPermission={hasPermission}
         />
       </div>
       <CreateAnnexModal
