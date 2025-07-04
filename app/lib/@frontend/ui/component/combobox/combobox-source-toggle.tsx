@@ -32,6 +32,7 @@ export const ComboboxViewToggle = React.forwardRef<
       {...rest}
     >
       <button
+        type="button"
         className="h-9 w-full rounded-md bg-background text-sm shadow-sm transition-colors hover:bg-accent active:cursor-pointer disabled:bg-muted disabled:text-muted-foreground disabled:hover:bg-muted"
         onClick={handleButtonClick}
       >
