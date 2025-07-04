@@ -21,6 +21,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/app/lib/@frontend/ui/component/form";
+import { maskCpfCnpj } from "@/app/lib/util/format-mask-cpf-cnpj";
+import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";
 
 type FilterFormData = {
   client?: string;
@@ -42,7 +44,7 @@ export function AccountFilterForm() {
 
     data.client ? params.set("client", data.client) : params.delete("client");
     data.document
-      ? params.set("document", data.document)
+      ? params.set("document", removeSpecialCharacters(data.document))
       : params.delete("document");
     data.sector ? params.set("sector", data.sector) : params.delete("sector");
     data.status && data.status !== "Todos"
@@ -102,7 +104,14 @@ export function AccountFilterForm() {
               <FormItem>
                 <FormLabel>CPF/CNPJ</FormLabel>
                 <FormControl>
-                  <Input placeholder="Digite o CPF ou CNPJ" {...field} />
+                  <Input
+                    {...field}
+                    onChange={(e) => {
+                      const masked = maskCpfCnpj(e.target.value);
+                      field.onChange(masked);
+                    }}
+                    placeholder="Digite o CPF ou CNPJ"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -139,7 +148,7 @@ export function AccountFilterForm() {
           />
 
           {/* Status Faturamento */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="status"
             render={({ field }) => (
@@ -162,10 +171,10 @@ export function AccountFilterForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* Situação Faturamento */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="billingSituation"
             render={({ field }) => (
@@ -191,7 +200,7 @@ export function AccountFilterForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
 
         <div className="flex justify-end gap-3 pt-2">

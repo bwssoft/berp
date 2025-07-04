@@ -17,6 +17,7 @@ export function AddressCreateForm({
         control,
         handleSubmit,
         errors,
+        formatCep,
         loadingCep,
         loadingSearch,
         suggestions,
@@ -44,14 +45,20 @@ export function AddressCreateForm({
             onSubmit={handleSubmit}
             className="flex flex-col items-start  gap-4"
         >
-            <Input
-                label="Buscar pelo CEP"
-                placeholder="00000-000"
-                onLoad={() => {
-                    loadingCep;
-                }}
-                {...register("zip_code")}
-                error={errors.zip_code?.message}
+            <Controller
+                name="zip_code"
+                control={control}
+                render={({ field }) => (
+                    <Input
+                        label="Buscar pelo CEP"
+                        placeholder="00000-000"
+                        value={formatCep(field.value)}
+                        onChange={(e) =>
+                            field.onChange(formatCep(e.target.value))
+                        }
+                        error={errors.zip_code?.message}
+                    />
+                )}
             />
             <Input
                 label="Logradouro"

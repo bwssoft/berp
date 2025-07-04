@@ -1,7 +1,7 @@
 "use server";
 
 import { createAccountAttachmentUsecase } from "@/app/lib/@backend/usecase/commercial/account-attachment/create-account-attachment.usecase";
-import { IAccountAttachment } from "@/app/lib/@backend/domain";
+import { IAccountAttachment, IUser } from "@/app/lib/@backend/domain";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/app/lib/util/get-current-user";
 
@@ -14,17 +14,16 @@ interface FileData {
 
 export async function createAccountAttachmentHistorical(
   fileData: FileData,
-  metadata: Omit<IAccountAttachment, "file" | "createdAt" | "userId">
+  metadata: Omit<IAccountAttachment, "file" | "createdAt" | "user">
 ) {
   try {
     // Get current user information
     const currentUser = await getCurrentUser();
 
+    if (!currentUser) return { success: false };
+
     // Generate a unique ID if one wasn't provided
     const id = metadata.id || crypto.randomUUID();
-
-    // Use the current user's name or email as the userId if available
-    const userId = currentUser.name || currentUser.email || "System User";
 
     // Convert array back to Buffer
     const buffer = Buffer.from(fileData.buffer);
@@ -34,12 +33,12 @@ export async function createAccountAttachmentHistorical(
       metadata: {
         ...metadata,
         id,
-        userId,
       },
       fileName: fileData.name,
+      user: currentUser,
     });
 
-    const name = fileData.name
+    const name = fileData.name;
 
     // Revalidate the account attachments page to show the new attachment
     revalidatePath("/commercial/account/management/account-attachments");
