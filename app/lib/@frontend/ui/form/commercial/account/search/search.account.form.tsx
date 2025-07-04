@@ -148,7 +148,7 @@ export function AccountFilterForm() {
           />
 
           {/* Status Faturamento */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="status"
             render={({ field }) => (
@@ -171,10 +171,10 @@ export function AccountFilterForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* Situação Faturamento */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="billingSituation"
             render={({ field }) => (
@@ -200,7 +200,7 @@ export function AccountFilterForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
 
         <div className="flex justify-end gap-3 pt-2">
