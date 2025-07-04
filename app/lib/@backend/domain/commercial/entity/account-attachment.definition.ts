@@ -1,7 +1,9 @@
+import { IUser } from "../../admin";
+
 export interface IAccountAttachment {
   id: string;
   name: string;
-  userId?: string;
+  user: Pick<IUser, "id" | "name">;
   createdAt: Date;
   file?: File;
   accountId: string;
