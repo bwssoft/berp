@@ -26,10 +26,10 @@ export async function deleteAccountAttachment(id: string) {
 
     // Create a copy of the attachment for audit before deletion
     const attachmentCopy = { ...attachment };
-    
+
     // Delete metadata from MongoDB
     await accountAttachmentRepository.deleteOne({ id });
-    
+
     // Add audit log
     const session = await auth();
     if (session?.user) {
@@ -39,11 +39,13 @@ export async function deleteAccountAttachment(id: string) {
         after: {},
         domain: AuditDomain.accountAttachments,
         user: { email, name, id: user_id },
-        action: `Anexo '${attachmentCopy.name}' excluído${attachmentCopy.accountId ? ` da conta ${attachmentCopy.accountId}` : ''}`,
+        action: `Anexo '${attachmentCopy.name}' excluído${attachmentCopy.accountId ? ` da conta ${attachmentCopy.accountId}` : ""}`,
       });
     }
 
-    // Return deleted ID to help the UI update
+    revalidatePath(
+      `/commercial/account/management/account-attachments?id=${id}`
+    );
     return { success: true, deletedId: id };
   } catch (error) {
     console.error("Error deleting account attachment:", error);
