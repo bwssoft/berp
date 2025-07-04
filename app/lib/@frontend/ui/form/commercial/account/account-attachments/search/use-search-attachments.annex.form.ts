@@ -1,45 +1,35 @@
-import { IAccountAttachment } from "@/app/lib/@backend/domain/commercial/entity/account-attachment.definition";
-import { useEffect, useState } from "react";
+"use client"
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import z from "zod";
 
-interface Props {
-    attachments: IAccountAttachment[]
-}
+const schema = z.object({
+    name: z.string()
+})
 
-export function useSearchAttachmentsAnnexForm({attachments}: Props) {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredAttachments, setFilteredAttachments] = useState<IAccountAttachment[]>(attachments);
-    
-    useEffect(() => {
-        setFilteredAttachments(attachments);
-    }, [attachments]);
+export type SearchAttachmentsAnnexFormSchema = z.infer<typeof schema>;
 
-    const handleDelete = async (id: string) => {
-        const newAttachments = filteredAttachments.filter((a) => a.id !== id);
-        setFilteredAttachments(newAttachments);
-    };
+export function useSearchAttachmentsAnnexForm() {
 
+    const {
+        register,
+        handleSubmit
+    } = useForm<SearchAttachmentsAnnexFormSchema>({
+        resolver: zodResolver(schema)
+    })
 
-    const handleSearch = () => {
-        if (!searchTerm.trim()) {
-        setFilteredAttachments(attachments);
-        return;
+    const { handleParamsChange } = useHandleParamsChange();
+
+    const onSubmit = handleSubmit((data) => {
+        const params = {
+            name: data.name
         }
-
-        const filtered = attachments.filter((attachment) =>
-            attachment.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredAttachments(filtered);
-    };
-
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
-    };
+        handleParamsChange({ ...params });
+    });
     
     return {
-        handleSearch,
-        handleSearchChange,
-        handleDelete,
-        searchTerm,
-        filteredAttachments
+        register,
+        onSubmit
     }
 }
