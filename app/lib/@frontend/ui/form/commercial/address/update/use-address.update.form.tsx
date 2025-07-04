@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { IAddress } from "@/app/lib/@backend/domain";
 import { useQueryClient } from "@tanstack/react-query";
 import { updateOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
+import { viaCepGateway } from "@/app/lib/@backend/infra/gateway/viacep/viacep.gateway";
+import { formatCep } from "@/app/lib/util/format-cep";
 
 const AddressFormSchema = z.object({
     zip_code: z.string().min(8, "CEP obrigatório").refine(isValidCEP, {
@@ -40,11 +42,7 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
     const queryClient = useQueryClient();
     const [loadingCep, setLoadingCep] = useState(false);
     const [cepEdited, setCepEdited] = useState(false);
-    const formatCep = (v: string) =>
-        v
-            .replace(/\D/g, "")
-            .replace(/(\d{5})(\d)/, "$1-$2")
-            .slice(0, 9);
+
     const {
         register,
         control,
@@ -76,9 +74,7 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
     async function fetchViaCep(cep: string) {
         setLoadingCep(true);
         try {
-            const res = await fetch(`/api/viacep?cep=${cep}`);
-            if (!res.ok) throw new Error("CEP não encontrado");
-            const data = await res.json();
+            const data = await viaCepGateway.findByCep(cep);
             setValue("street", data.street, { shouldValidate: true });
             setValue("district", data.district, { shouldValidate: true });
             setValue("city", data.city, { shouldValidate: true });

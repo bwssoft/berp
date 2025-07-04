@@ -13,6 +13,8 @@ import { addressesQueryKey } from "../get/useaddress";
 import type { INominatimInterface } from "@/app/lib/@backend/domain/@shared/gateway/nominatim.gateway.interface";
 import { nominatimGateway } from "@/app/lib/@backend/infra/gateway/nominatim/nominatim.gateway";
 import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
+import { viaCepGateway } from "@/app/lib/@backend/infra/gateway/viacep/viacep.gateway";
+import { formatCep } from "@/app/lib/util/format-cep";
 
 const AddressFormSchema = z.object({
     address_search: z.string().optional(),
@@ -73,12 +75,6 @@ export function useAddressForm({
     const [suggestions, setSuggestions] = useState<INominatimInterface[]>([]);
     const [search, setSearch] = useState("");
 
-    const formatCep = (v: string) =>
-        v
-            .replace(/\D/g, "")
-            .replace(/(\d{5})(\d)/, "$1-$2")
-            .slice(0, 9);
-
     useEffect(() => {
         if (search.length < 4) {
             setSuggestions([]);
@@ -101,9 +97,7 @@ export function useAddressForm({
     async function fetchViaCep(cep: string) {
         setLoadingCep(true);
         try {
-            const res = await fetch(`/api/viacep?cep=${cep}`);
-            if (!res.ok) throw new Error("CEP não encontrado");
-            const data = await res.json();
+            const data = await viaCepGateway.findByCep(cep);
             setValue("street", data.street, { shouldValidate: true });
             setValue("district", data.district, { shouldValidate: true });
             setValue("city", data.city, { shouldValidate: true });
