@@ -8,10 +8,6 @@ import { auth } from "@/auth";
  */
 export async function getCurrentUser() {
   const session = await auth();
-
-  return {
-    id: session?.user?.id || null,
-    name: session?.user?.name || null,
-    email: session?.user?.email || null,
-  };
+  if (!session?.user) return undefined;
+  return session?.user;
 }
