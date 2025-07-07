@@ -12,7 +12,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { IContact } from "@/app/lib/@backend/domain";
 import { ContactTable } from "@/app/lib/@frontend/ui/table/commercial/contact/table";
 import { maskPhoneNumber } from "@/app/lib/util/mask-phone-number";
-import { formatCpf, formatRg } from "@/app/lib/util/format-rg-cpf";
+import { formatCpf, formatRgOrCpf } from "@/app/lib/util/format-rg-cpf";
 
 type Props = {
   closeModal: () => void;
@@ -86,11 +86,11 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
             error={errors.cpf?.message}
           />
           <Input
-            placeholder="Digite o RG do contato"
-            label={"RG"}
+            placeholder="Digite o RG do contato "
+            label={"RG / CIN"}
             {...register("rg", {
               onChange: (e) => {
-                e.target.value = formatRg(e.target.value);
+                e.target.value = formatRgOrCpf(e.target.value);
               },
             })}
             error={errors.rg?.message}

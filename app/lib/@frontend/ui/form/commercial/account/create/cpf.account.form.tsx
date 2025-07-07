@@ -1,15 +1,10 @@
 import { useFormContext, Controller } from "react-hook-form";
 import { CreateAccountFormSchema } from "./use-create.account.form";
 import { Input } from "../../../../component";
-import {
-  formatDocument,
-  identifyDocumentType,
-} from "@/app/lib/util/format-document";
-import { useState } from "react";
+import { formatRgOrCpf } from "@/app/lib/util/format-rg-cpf";
 
 export function CpfAccountForm() {
   const methods = useFormContext<CreateAccountFormSchema>();
-  const [docType, setDocType] = useState<"cpf" | "rg" | "unknown">("unknown");
 
   return (
     <div className="flex flex-col gap-2">
@@ -24,18 +19,12 @@ export function CpfAccountForm() {
         name="cpf.rg"
         render={({ field }) => (
           <Input
-            label="RG/CIN"
-            placeholder={"Digite o RG/CIN"}
+            label="RG/CPF"
+            placeholder={"Digite o RG ou CPF"}
             value={field.value || ""}
             onChange={(e) => {
-              const newDocType = identifyDocumentType(e.target.value);
-
-              const formattedValue = formatDocument(e.target.value);
+              const formattedValue = formatRgOrCpf(e.target.value);
               field.onChange(formattedValue);
-
-              if (newDocType !== docType) {
-                setDocType(newDocType);
-              }
             }}
             error={methods.formState.errors.cpf?.rg?.message}
           />
