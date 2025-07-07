@@ -11,6 +11,7 @@ import {
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { IContact } from "@/app/lib/@backend/domain";
 import { ContactTable } from "@/app/lib/@frontend/ui/table/commercial/contact/table";
+import { maskPhoneNumber } from "@/app/lib/util/mask-phone-number";
 
 type Props = {
   closeModal: () => void;
@@ -112,14 +113,25 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
 
         <Input
           label="Contato"
-          onChange={(e) =>
+          onChange={(e) => {
+            const value = e.target.value;
+            const formattedValue = ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(tempContact.type as string)
+              ? maskPhoneNumber(value, tempContact.type as string)
+              : value;
+            
             setTempContact((prev) => ({
               ...prev,
-              contact: e.target.value,
+              contact: formattedValue,
             }))
-          }
+          }}
           value={tempContact.contact}
-          placeholder="Adicione o contato"
+          placeholder={
+            tempContact.type === "Celular" 
+              ? "(00) 00000-0000" 
+              : tempContact.type === "Telefone Residencial" || tempContact.type === "Telefone Comercial"
+              ? "(00) 0000-0000"
+              : "Adicione o contato"
+          }
           error={errors.contactItems?.message}
         />
 

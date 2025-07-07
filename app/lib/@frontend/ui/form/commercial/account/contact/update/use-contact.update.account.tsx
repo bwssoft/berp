@@ -7,18 +7,43 @@ import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
+import { maskPhoneNumber, unmaskPhoneNumber } from "@/app/lib/util/mask-phone-number";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ContactItem, ContactType } from "../create";
 import {
   findManyAccount,
   findOneAccount,
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { updateOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import { useState } from "react";
+
+// Define the preferred contact interface
+export interface PreferredContact {
+  phone?: boolean;
+  whatsapp?: boolean;
+  email?: boolean;
+}
+
+// Define the contact type union
+export type ContactType =
+  | "Celular"
+  | "Telefone Residencial"
+  | "Telefone Comercial"
+  | "Email";
+
+// Define the contact item interface
+export interface ContactItem {
+  id?: string;
+  type: ContactType[];
+  contact: string;
+  preferredContact: PreferredContact;
+}
 
 const validatePhoneNumber = (value: string) => {
-  return /^\d{0,11}$/.test(value);
+  const numericValue = unmaskPhoneNumber(value);
+  const isCellphone = numericValue.length === 11;
+  const isLandline = numericValue.length === 10;
+  return isCellphone || isLandline;
 };
 
 const schema = z
@@ -80,12 +105,17 @@ const schema = z
             contactType
           )
         ) {
-          if (!validatePhoneNumber(item.contact)) {
+          const numericValue = unmaskPhoneNumber(item.contact);
+          const isCellphone = contactType === "Celular" && numericValue.length !== 11;
+          const isLandline = (contactType === "Telefone Residencial" || contactType === "Telefone Comercial") && numericValue.length !== 10;
+          
+          if (isCellphone || isLandline) {
             ctx.addIssue({
               code: "custom",
               path: ["contactItems", index, "contact"],
-              message:
-                "Telefone deve conter apenas números e no máximo 11 dígitos",
+              message: contactType === "Celular" 
+                ? "Celular deve ter 11 dígitos (incluindo DDD)" 
+                : "Telefone deve ter 10 dígitos (incluindo DDD)",
             });
           }
         }
@@ -178,11 +208,16 @@ export function useUpdateContactAccount(
         tempContact.type
       )
     ) {
-      if (!validatePhoneNumber(tempContact.contact)) {
+      const numericValue = unmaskPhoneNumber(tempContact.contact);
+      const isCellphone = tempContact.type === "Celular" && numericValue.length !== 11;
+      const isLandline = (tempContact.type === "Telefone Residencial" || tempContact.type === "Telefone Comercial") && numericValue.length !== 10;
+      
+      if (isCellphone || isLandline) {
         toast({
           title: "Formato inválido",
-          description:
-            "Telefone deve conter apenas números e no máximo 11 dígitos",
+          description: tempContact.type === "Celular"
+            ? "Celular deve ter 11 dígitos (incluindo DDD)"
+            : "Telefone deve ter 10 dígitos (incluindo DDD)",
           variant: "error",
         });
         return;
@@ -202,12 +237,17 @@ export function useUpdateContactAccount(
       }
     }
 
+    // Store contact with mask applied if it's a phone
+    const formattedContact = ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(tempContact.type as string)
+      ? maskPhoneNumber(tempContact.contact, tempContact.type as string)
+      : tempContact.contact;
+
     append({
       id: crypto.randomUUID(),
       type: Array.isArray(tempContact.type)
         ? tempContact.type
         : [tempContact.type],
-      contact: tempContact.contact,
+      contact: formattedContact,
       preferredContact: tempContact.preferredContact,
     });
 
@@ -258,11 +298,19 @@ export function useUpdateContactAccount(
       {
         ...data,
         accountId: accountId ?? undefined,
-        contactItems: data.contactItems.map((item) => ({
-          ...item,
-          id: item.id ?? crypto.randomUUID(),
-          type: item.type[0],
-        })),
+        contactItems: data.contactItems.map((item) => {
+          const contactType = item.type[0];
+          const formattedContact = ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(contactType)
+            ? maskPhoneNumber(item.contact, contactType)
+            : item.contact;
+            
+          return {
+            ...item,
+            id: item.id ?? crypto.randomUUID(),
+            type: contactType,
+            contact: formattedContact
+          };
+        }),
       }
     );
     if (success) {

@@ -10,6 +10,7 @@ import {
 } from "../../../../../component";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { ContactTable } from "@/app/lib/@frontend/ui/table/commercial/contact/table";
+import { maskPhoneNumber } from "@/app/lib/util/mask-phone-number";
 
 type Props = {
   closeModal?: () => void;
@@ -26,6 +27,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
     handlePreferredContact,
     handleRemove,
     setTempContact,
+    tempContact,
     formState: { errors },
   } = useCreateContactAccount(closeModal ?? (() => {}));
 
@@ -109,13 +111,25 @@ export function CreateContactAccountForm({ closeModal }: Props) {
 
         <Input
           label="Contato"
-          onChange={(e) =>
+          onChange={(e) => {
+            const value = e.target.value;
+            const formattedValue = ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(tempContact.type as string)
+              ? maskPhoneNumber(value, tempContact.type as string)
+              : value;
+            
             setTempContact((prev) => ({
               ...prev,
-              contact: e.target.value,
+              contact: formattedValue,
             }))
+          }}
+          value={tempContact.contact}
+          placeholder={
+            tempContact.type === "Celular" 
+              ? "(00) 00000-0000" 
+              : tempContact.type === "Telefone Residencial" || tempContact.type === "Telefone Comercial"
+              ? "(00) 0000-0000"
+              : "Adicione o contato"
           }
-          placeholder="Adicione o contato"
           error={errors.contactItems?.message}
         />
 
