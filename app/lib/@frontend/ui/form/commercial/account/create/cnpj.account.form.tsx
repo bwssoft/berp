@@ -231,7 +231,12 @@ export function CNPJAccountForm() {
                             onOptionChange={([item]) => {
                                 if (item) {
                                     setSelectedHolding([item]);
-                                    field.onChange(item);
+                                    field.onChange(
+                                        {
+                                            name: item.company.name,
+                                            taxId: item.taxId,
+                                        }
+                                );
                                 } else {
                                     setSelectedHolding([]);
                                     field.onChange(undefined);
