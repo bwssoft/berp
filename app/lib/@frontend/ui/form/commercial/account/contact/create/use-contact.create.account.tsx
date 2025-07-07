@@ -133,6 +133,7 @@ const schema = z
   });
 
 export function useCreateContactAccount(closeModal: () => void) {
+  const [isLoading, setIsLoading] = useState(false);
   const [tempContact, setTempContact] = useState<{
     type: ContactType | "";
     contact: string;
@@ -262,20 +263,22 @@ export function useCreateContactAccount(closeModal: () => void) {
   const queryClient = useQueryClient();
 
   const onSubmit = handleSubmit(async (data) => {
-    const { success, error } = await createOneContact({
-      ...data,
-      accountId: accountId ?? undefined,
-      contractEnabled: data.contractEnabled ? true : false,
-      contactItems:
-        data.contactItems?.map((item) => ({
-          ...item,
-          contact: item.contact,
-          type: Array.isArray(item.type) ? item.type[0] : item.type,
-          id: item.id ?? crypto.randomUUID(),
-        })) || [],
-    });
+    setIsLoading(true);
+    try {
+      const { success, error } = await createOneContact({
+        ...data,
+        accountId: accountId ?? undefined,
+        contractEnabled: data.contractEnabled ? true : false,
+        contactItems:
+          data.contactItems?.map((item) => ({
+            ...item,
+            contact: item.contact,
+            type: Array.isArray(item.type) ? item.type[0] : item.type,
+            id: item.id ?? crypto.randomUUID(),
+          })) || [],
+      });
 
-    if (success && accountId) {
+      if (success && accountId) {
       const freshAccount = await findOneAccount({ id: accountId });
       const currentContacts: IContact[] = freshAccount?.contacts ?? [];
 
@@ -326,6 +329,16 @@ export function useCreateContactAccount(closeModal: () => void) {
         toast({ title: "Erro!", description: error.global, variant: "error" });
       }
     }
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Erro",
+        description: "Não foi possível criar o contato.",
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   });
 
   const handleCheckboxChange = (fieldValue: string[] = [], label: string, checked: boolean) => {
@@ -344,6 +357,7 @@ export function useCreateContactAccount(closeModal: () => void) {
     handleRemove,
     onSubmit,
     setTempContact,
-    handleCheckboxChange
+    handleCheckboxChange,
+    isLoading
   };
 }
