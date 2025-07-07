@@ -302,12 +302,17 @@ export function useCreateContactAccount(closeModal: () => void) {
     try {
       const { success, error } = await createOneContact({
         ...data,
+        cpf: data.cpf ? data.cpf.replace(/[^a-zA-Z0-9]/g, "") : undefined,
+        rg: data.rg ? data.rg.replace(/[^a-zA-Z0-9]/g, "") : undefined,
         accountId: accountId ?? undefined,
         contractEnabled: data.contractEnabled ? true : false,
         contactItems:
           data.contactItems?.map((item) => ({
             ...item,
-            contact: item.contact,
+            contact:
+              item.type[0] === "Email"
+                ? item.contact
+                : item.contact.replace(/[^0-9]/g, ""),
             type: Array.isArray(item.type) ? item.type[0] : item.type,
             id: item.id ?? crypto.randomUUID(),
           })) || [],
