@@ -65,7 +65,7 @@ export function AccountCard({ account }: { account: IAccount }) {
             <>
               <InfoField label="Nome" value={account.name} />
               <InfoField label="CPF" value={account.document.value} />
-              <InfoField label="RG" value={account.rg} />
+              <InfoField label="RG/CIN" value={account.rg} />
               {account.status && (
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">

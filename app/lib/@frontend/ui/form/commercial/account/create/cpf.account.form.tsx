@@ -1,6 +1,7 @@
-import { useFormContext } from "react-hook-form";
+import { useFormContext, Controller } from "react-hook-form";
 import { CreateAccountFormSchema } from "./use-create.account.form";
 import { Input } from "../../../../component";
+import { formatRgOrCpf } from "@/app/lib/util/format-rg-cpf";
 
 export function CpfAccountForm() {
   const methods = useFormContext<CreateAccountFormSchema>();
@@ -13,11 +14,21 @@ export function CpfAccountForm() {
         {...methods.register("cpf.name")}
         error={methods.formState.errors.cpf?.name?.message}
       />
-      <Input
-        label="RG"
-        placeholder="Digite o RG"
-        {...methods.register("cpf.rg")}
-        error={methods.formState.errors.cpf?.rg?.message}
+      <Controller
+        control={methods.control}
+        name="cpf.rg"
+        render={({ field }) => (
+          <Input
+            label="RG/CPF"
+            placeholder={"Digite o RG ou CPF"}
+            value={field.value || ""}
+            onChange={(e) => {
+              const formattedValue = formatRgOrCpf(e.target.value);
+              field.onChange(formattedValue);
+            }}
+            error={methods.formState.errors.cpf?.rg?.message}
+          />
+        )}
       />
     </div>
   );
