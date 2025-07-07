@@ -26,6 +26,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
     handleNewContact,
     handlePreferredContact,
     handleRemove,
+    handleCheckboxChange,
     setTempContact,
     tempContact,
     formState: { errors },
@@ -157,64 +158,51 @@ export function CreateContactAccountForm({ closeModal }: Props) {
           render={({ field }) => (
             <Checkbox
               checked={field.value?.includes("Comercial")}
-              onChange={(checked) => {
-                const newValue = checked
-                  ? [...(field.value || []), "Comercial"]
-                  : field.value?.filter((item: string) => item !== "Comercial");
-                field.onChange(newValue);
-              }}
+              onChange={(e) =>
+                field.onChange(handleCheckboxChange(field.value, "Comercial", e.target.checked))
+              }
               label="Comercial"
             />
           )}
         />
+
         <Controller
           name={`contactFor`}
           control={control}
           render={({ field }) => (
             <Checkbox
               checked={field.value?.includes("Suporte")}
-              onChange={(checked) => {
-                const newValue = checked
-                  ? [...(field.value || []), "Suporte"]
-                  : field.value?.filter((item) => item !== "Suporte");
-                field.onChange(newValue);
-              }}
+              onChange={(e) =>
+                field.onChange(handleCheckboxChange(field.value, "Suporte", e.target.checked))
+              }
               label="Suporte"
             />
           )}
         />
+
         <Controller
           name={`contactFor`}
           control={control}
           render={({ field }) => (
             <Checkbox
               checked={field.value?.includes("Faturamento")}
-              onChange={(checked) => {
-                const newValue = checked
-                  ? [...(field.value || []), "Faturamento"]
-                  : field.value?.filter(
-                      (item: string) => item !== "Faturamento"
-                    );
-                field.onChange(newValue);
-              }}
+              onChange={(e) =>
+                field.onChange(handleCheckboxChange(field.value, "Faturamento", e.target.checked))
+              }
               label="Faturamento"
             />
           )}
         />
+
         <Controller
           name={`contactFor`}
           control={control}
           render={({ field }) => (
             <Checkbox
-              checked={
-                Array.isArray(field.value) && field.value.includes("Marketing")
+              checked={field.value?.includes("Marketing")}
+              onChange={(e) =>
+                field.onChange(handleCheckboxChange(field.value, "Marketing", e.target.checked))
               }
-              onChange={(checked) => {
-                const newValue = checked
-                  ? [...(field.value || []), "Marketing"]
-                  : field.value?.filter((item) => item !== "Marketing");
-                field.onChange(newValue);
-              }}
               label="Marketing"
             />
           )}

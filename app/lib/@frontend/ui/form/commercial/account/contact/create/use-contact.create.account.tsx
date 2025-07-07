@@ -353,6 +353,14 @@ export function useCreateContactAccount(closeModal: () => void) {
     }
   });
 
+  const handleCheckboxChange = (fieldValue: string[] = [], label: string, checked: boolean) => {
+    if (checked) {
+      return fieldValue.includes(label) ? fieldValue : [...fieldValue, label];
+    } else {
+      return fieldValue.filter((item) => item !== label);
+    }
+  };
+
   return {
     ...methods,
     fields,
@@ -362,5 +370,6 @@ export function useCreateContactAccount(closeModal: () => void) {
     onSubmit,
     setTempContact,
     tempContact,
+    handleCheckboxChange
   };
 }
