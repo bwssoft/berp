@@ -62,7 +62,7 @@ export function useCreateHistoricalForm({
         } finally {
             setIsLoading(false);
             closeModalAnnex?.();
-            reset;
+            reset();
         }
     });
 
