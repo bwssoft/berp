@@ -26,6 +26,6 @@ export async function findManyHistorical(
         filter,
         page,
         limit,
-        sort,
+        sort: sort ?? { created_at: -1 }
     });
 }

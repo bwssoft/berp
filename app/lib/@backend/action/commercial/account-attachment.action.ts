@@ -14,17 +14,16 @@ interface FileData {
 
 export async function createAccountAttachment(
   fileData: FileData,
-  metadata: Omit<IAccountAttachment, "file" | "createdAt" | "userId">
+  metadata: Omit<IAccountAttachment, "file" | "createdAt" | "user">
 ) {
   try {
     // Get current user information
     const currentUser = await getCurrentUser();
 
+    if (!currentUser) return { success: false };
+
     // Generate a unique ID if one wasn't provided
     const id = metadata.id || crypto.randomUUID();
-
-    // Use the current user's id
-    const userId = currentUser.id || "";
 
     // Convert array back to Buffer
     const buffer = Buffer.from(fileData.buffer);
@@ -34,8 +33,8 @@ export async function createAccountAttachment(
       metadata: {
         ...metadata,
         id,
-        userId,
       },
+      user: currentUser,
       fileName: fileData.name,
     });
 
