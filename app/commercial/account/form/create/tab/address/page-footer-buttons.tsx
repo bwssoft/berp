@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/app/lib/@frontend/ui/component";
+import { FakeLoadingButton } from "@/app/lib/@frontend/ui/component/fake-load-button";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -19,16 +20,18 @@ export function PageFooterButtons({ id, addresses, accounts }: Props) {
                 Cancelar
             </Button>
             {accounts && addresses && (
-                <Button
+                <FakeLoadingButton
+                    controlledLoading={false}
                     type="submit"
-                    onClick={() =>
+                    onClick={async () => {
+                        await new Promise((resolve) => setTimeout(resolve, 50));
                         router.push(
                             `/commercial/account/form/create/tab/contact?id=${id}`
-                        )
-                    }
+                        );
+                    }}
                 >
                     Salvar e próximo
-                </Button>
+                </FakeLoadingButton>
             )}
         </div>
     );
