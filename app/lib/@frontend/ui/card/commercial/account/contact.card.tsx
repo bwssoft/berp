@@ -8,6 +8,7 @@ import {
   AvatarImage,
   Badge,
   Button,
+  Card,
 } from "../../../component";
 import { Separator } from "@radix-ui/react-select";
 import {
@@ -16,10 +17,12 @@ import {
   TooltipTrigger,
 } from "../../../component/tooltip";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { cn } from "@/app/lib/util/cn";
 
 interface ContactCardProps {
   contact: IContact;
   accountId: string;
+  classname?: string;
   onClickEditContactButton: () => void
   onClickDeleteButton: () => void
 }
@@ -63,16 +66,17 @@ const formatContactValue = (
 export default function ContactCard({ 
   contact, 
   accountId, 
+  classname,
   onClickEditContactButton, 
   onClickDeleteButton 
 }: ContactCardProps) {
 
   return (
     <>
-      <div className="flex items-start gap-4 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+      <Card className={cn("w-full max-w-sm flex mx-0 gap-4 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors", classname)}>
         <Avatar className="h-12 w-12 border">
           <AvatarImage src="/placeholder.svg" alt={`Foto de ${contact.name}`} />
-          <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+          <AvatarFallback title={contact.name} className="bg-primary/10 text-primary font-semibold">
             {contact.name
               .split(" ")
               .map((n) => n[0])
@@ -84,7 +88,7 @@ export default function ContactCard({
         <div className="flex-1 min-w-0 space-y-2">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-foreground truncate">
+              <h3 title={contact.name} className="font-semibold text-foreground truncate">
                 {contact.name}
               </h3>
               {contact.positionOrRelation && (
@@ -94,7 +98,7 @@ export default function ContactCard({
               )}
             </div>
 
-            <div className="ml-auto flex gap-2">
+            <div className=" flex gap-2">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -171,7 +175,7 @@ export default function ContactCard({
             })}
           </div>
         </div>
-      </div>
+      </Card>
 
       <Separator className="my-4" />
     </>

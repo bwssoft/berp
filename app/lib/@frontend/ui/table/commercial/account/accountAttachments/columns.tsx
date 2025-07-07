@@ -24,7 +24,7 @@ export const createColumns = (
     accessorKey: "userId",
     cell: ({ row }) => {
       const attachment = row.original;
-      return attachment.userId;
+      return attachment.user.name;
     },
   },
   {

@@ -124,8 +124,12 @@ export function AccountDataPage(props: Props) {
     openModal: openUpdateModalAddress,
   } = useAddressUpdateModal();
 
-  const { open: openModalDelete, setOpen: setOpenModalDelete, confirm: deleteAddress, isLoading: isLoadingAddressDelete } =
-    useAddressDeleteDialog();
+  const {
+    open: openModalDelete,
+    setOpen: setOpenModalDelete,
+    confirm: deleteAddress,
+    isLoading: isLoadingAddressDelete,
+  } = useAddressDeleteDialog();
 
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
@@ -167,23 +171,28 @@ export function AccountDataPage(props: Props) {
               )}
             </div>
           </CardHeader>
-          <CardContent className="flex gap-2">
-            {(account.contacts ?? [])?.map((contact, idx) => (
-              <ContactCard
-                key={contact.id ?? idx}
-                contact={contact}
-                accountId={account.id!}
-                onClickEditContactButton={() => {
-                  setSelectedContact(contact);
-                  openUpdateModalContact();
-                }}
-                onClickDeleteButton={() => {
-                  setSelectedContact(contact);
-                  openDeleteContactModal();
-                }}
-              />
-            ))}
+          <CardContent className="flex-1 flex flex-col">
+            <div className="lg:col-span-2 h-full">
+              <div className="flex flex-wrap gap-x-1.5 gap-y-3">
+                  {(account.contacts ?? [])?.map((contact, idx) => (
+                    <ContactCard
+                      key={contact.id ?? idx}
+                      contact={contact}
+                      accountId={account.id!}
+                      onClickEditContactButton={() => {
+                        setSelectedContact(contact);
+                        openUpdateModalContact();
+                      }}
+                      onClickDeleteButton={() => {
+                        setSelectedContact(contact);
+                        openDeleteContactModal();
+                      }}
+                    />
+                  ))}
+                </div>
+            </div>
           </CardContent>
+
         </Card>
 
         <Card className="w-full">
@@ -293,6 +302,8 @@ export function AccountDataPage(props: Props) {
         accountId={account.id!}
         onClose={closeUpdateEconomicGroup}
         open={updateEconomicGroup}
+        economicGroupHolding={account.economic_group_holding}
+        economicGroupControlled={account.economic_group_controlled}
       />
     </div>
   );
