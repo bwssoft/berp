@@ -13,8 +13,15 @@ interface Props {
 }
 
 export function AddressUpdateForm({ address, closeModal }: Props) {
-  const { register, registerCep, handleSubmit, loadingCep, errors, control } =
-    useAddressUpdateForm({ address, closeModal });
+  const {
+    register,
+    registerCep,
+    handleSubmit,
+    loadingCep,
+    errors,
+    control,
+    isSubmitting,
+  } = useAddressUpdateForm({ address, closeModal });
 
   const checkboxOptions = [
     { label: "Comercial", value: "Comercial" },
@@ -124,8 +131,19 @@ export function AddressUpdateForm({ address, closeModal }: Props) {
         >
           Cancelar
         </Button>
-        <Button title="Salvar" type="submit" disabled={loadingCep}>
-          Salvar
+        <Button
+          title="Salvar"
+          type="submit"
+          disabled={loadingCep || isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Salvando...
+            </>
+          ) : (
+            "Salvar"
+          )}
         </Button>
       </div>
     </form>

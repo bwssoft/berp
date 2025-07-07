@@ -12,14 +12,21 @@ export function AddressCreateForm({
   accountId: string;
 }) {
   const router = useRouter();
-  const { register, control, handleSubmit, errors, formatCep, loadingCep } =
-    useAddressForm({
-      closeModal: () => {
-        closeModal();
-        router.refresh();
-      },
-      accountId,
-    });
+  const {
+    register,
+    control,
+    handleSubmit,
+    errors,
+    formatCep,
+    loadingCep,
+    isSubmitting,
+  } = useAddressForm({
+    closeModal: () => {
+      closeModal();
+      router.refresh();
+    },
+    accountId,
+  });
 
   const checkboxOptions = [
     { label: "Comercial", value: "Comercial" },
@@ -145,8 +152,19 @@ export function AddressCreateForm({
         >
           Cancelar
         </Button>
-        <Button title="Salvar" type="submit" disabled={loadingCep}>
-          Salvar
+        <Button
+          title="Salvar"
+          type="submit"
+          disabled={loadingCep || isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Salvando...
+            </>
+          ) : (
+            "Salvar"
+          )}
         </Button>
       </div>
     </form>

@@ -66,6 +66,7 @@ export function useAddressForm({
 
   const zip = useWatch({ control, name: "zip_code" });
   const [loadingCep, setLoadingCep] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function fetchViaCep(cep: string) {
     setLoadingCep(true);
@@ -91,6 +92,7 @@ export function useAddressForm({
 
   const handleSubmit = hookFormSubmit(
     async (data) => {
+      setIsSubmitting(true);
       try {
         await createOneAddress({
           ...data,
@@ -113,6 +115,8 @@ export function useAddressForm({
           description: "Falha ao registrar o endereço!",
           variant: "error",
         });
+      } finally {
+        setIsSubmitting(false);
       }
     },
     () => {}
@@ -125,5 +129,6 @@ export function useAddressForm({
     errors,
     loadingCep,
     formatCep,
+    isSubmitting,
   };
 }

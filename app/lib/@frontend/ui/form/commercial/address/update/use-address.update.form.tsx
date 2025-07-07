@@ -41,6 +41,7 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
   const queryClient = useQueryClient();
   const [loadingCep, setLoadingCep] = useState(false);
   const [cepEdited, setCepEdited] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
@@ -96,6 +97,7 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
 
   const handleSubmit = hookFormSubmit(
     async (data) => {
+      setIsSubmitting(true);
       const cleanedData = {
         ...data,
         zip_code: data.zip_code.replace(/\D/g, ""),
@@ -117,6 +119,8 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
           description: "Falha ao atualizar o endereço!",
           variant: "error",
         });
+      } finally {
+        setIsSubmitting(false);
       }
     },
     () => {}
@@ -142,5 +146,6 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
     handleSubmit,
     errors,
     loadingCep,
+    isSubmitting,
   };
 }
