@@ -4,7 +4,10 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { maskPhoneNumber, unmaskPhoneNumber } from "@/app/lib/util/mask-phone-number";
+import {
+  maskPhoneNumber,
+  unmaskPhoneNumber,
+} from "@/app/lib/util/mask-phone-number";
 
 import { toast } from "@/app/lib/@frontend/hook";
 import { useSearchParams } from "next/navigation";
@@ -111,16 +114,21 @@ const schema = z
           )
         ) {
           const numericValue = unmaskPhoneNumber(item.contact);
-          const isCellphone = contactType === "Celular" && numericValue.length !== 11;
-          const isLandline = (contactType === "Telefone Residencial" || contactType === "Telefone Comercial") && numericValue.length !== 10;
-          
+          const isCellphone =
+            contactType === "Celular" && numericValue.length !== 11;
+          const isLandline =
+            (contactType === "Telefone Residencial" ||
+              contactType === "Telefone Comercial") &&
+            numericValue.length !== 10;
+
           if (isCellphone || isLandline) {
             ctx.addIssue({
               code: "custom",
               path: ["contactItems", index, "contact"],
-              message: contactType === "Celular" 
-                ? "Celular deve ter 11 dígitos (incluindo DDD)" 
-                : "Telefone deve ter 10 dígitos (incluindo DDD)",
+              message:
+                contactType === "Celular"
+                  ? "Celular deve ter 11 dígitos (incluindo DDD)"
+                  : "Telefone deve ter 10 dígitos (incluindo DDD)",
             });
           }
         }
@@ -141,6 +149,7 @@ const schema = z
   });
 
 export function useCreateContactAccount(closeModal: () => void) {
+  const [isLoading, setIsLoading] = useState(false);
   const [tempContact, setTempContact] = useState<{
     type: ContactType | "";
     contact: string;
@@ -197,15 +206,20 @@ export function useCreateContactAccount(closeModal: () => void) {
       )
     ) {
       const numericValue = unmaskPhoneNumber(tempContact.contact);
-      const isCellphone = tempContact.type === "Celular" && numericValue.length !== 11;
-      const isLandline = (tempContact.type === "Telefone Residencial" || tempContact.type === "Telefone Comercial") && numericValue.length !== 10;
-      
+      const isCellphone =
+        tempContact.type === "Celular" && numericValue.length !== 11;
+      const isLandline =
+        (tempContact.type === "Telefone Residencial" ||
+          tempContact.type === "Telefone Comercial") &&
+        numericValue.length !== 10;
+
       if (isCellphone || isLandline) {
         toast({
           title: "Formato inválido",
-          description: tempContact.type === "Celular"
-            ? "Celular deve ter 11 dígitos (incluindo DDD)"
-            : "Telefone deve ter 10 dígitos (incluindo DDD)",
+          description:
+            tempContact.type === "Celular"
+              ? "Celular deve ter 11 dígitos (incluindo DDD)"
+              : "Telefone deve ter 10 dígitos (incluindo DDD)",
           variant: "error",
         });
         return;
@@ -224,9 +238,13 @@ export function useCreateContactAccount(closeModal: () => void) {
         return;
       }
     }
-    
+
     // Store contact with mask applied if it's a phone
-    const formattedContact = ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(tempContact.type as string)
+    const formattedContact = [
+      "Celular",
+      "Telefone Residencial",
+      "Telefone Comercial",
+    ].includes(tempContact.type as string)
       ? maskPhoneNumber(tempContact.contact, tempContact.type as string)
       : tempContact.contact;
 
@@ -280,80 +298,94 @@ export function useCreateContactAccount(closeModal: () => void) {
   const queryClient = useQueryClient();
 
   const onSubmit = handleSubmit(async (data) => {
-    const { success, error } = await createOneContact({
-      ...data,
-      accountId: accountId ?? undefined,
-      contractEnabled: data.contractEnabled ? true : false,
-      contactItems:
-        data.contactItems?.map((item) => {
-          const contactType = Array.isArray(item.type) ? item.type[0] : item.type;
-          const formattedContact = ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(contactType)
-            ? maskPhoneNumber(item.contact, contactType)
-            : item.contact;
-            
-          return {
+    setIsLoading(true);
+    try {
+      const { success, error } = await createOneContact({
+        ...data,
+        accountId: accountId ?? undefined,
+        contractEnabled: data.contractEnabled ? true : false,
+        contactItems:
+          data.contactItems?.map((item) => ({
             ...item,
-            contact: formattedContact,
-            type: contactType,
+            contact: item.contact,
+            type: Array.isArray(item.type) ? item.type[0] : item.type,
             id: item.id ?? crypto.randomUUID(),
-          };
-        }) || [],
-    });
-
-    if (success && accountId) {
-      const freshAccount = await findOneAccount({ id: accountId });
-      const currentContacts: IContact[] = freshAccount?.contacts ?? [];
-
-      const uniqueContacts = new Map<string, IContact>();
-      [...currentContacts, success].forEach((c) => {
-        if (c?.id) uniqueContacts.set(c.id, c);
+          })) || [],
       });
 
-      const updatedContacts = Array.from(uniqueContacts.values());
+      if (success && accountId) {
+        const freshAccount = await findOneAccount({ id: accountId });
+        const currentContacts: IContact[] = freshAccount?.contacts ?? [];
 
-      try {
-        await updateOneAccount(
-          { id: accountId },
-          { contacts: updatedContacts }
-        );
-
-        await queryClient.invalidateQueries({
-          queryKey: ["findOneAccount", accountId],
+        const uniqueContacts = new Map<string, IContact>();
+        [...currentContacts, success].forEach((c) => {
+          if (c?.id) uniqueContacts.set(c.id, c);
         });
 
-        await queryClient.invalidateQueries({
-          queryKey: ["findManyAccount", accountId],
-        });
+        const updatedContacts = Array.from(uniqueContacts.values());
 
-        toast({
-          title: "Sucesso!",
-          description: "Contato criado e conta atualizada com sucesso!",
-          variant: "success",
-        });
+        try {
+          await updateOneAccount(
+            { id: accountId },
+            { contacts: updatedContacts }
+          );
 
-        reset();
-        closeModal();
-      } catch (err) {
-        console.error(err);
-        toast({
-          title: "Erro ao atualizar conta!",
-          description: "O contato foi criado, mas a conta não foi atualizada.",
-          variant: "error",
-        });
-      }
-    } else if (error) {
-      Object.entries(error).forEach(([key, msg]) => {
-        if (key !== "global" && msg) {
-          setError(key as any, { type: "manual", message: msg as string });
+          await queryClient.invalidateQueries({
+            queryKey: ["findOneAccount", accountId],
+          });
+
+          await queryClient.invalidateQueries({
+            queryKey: ["findManyAccount", accountId],
+          });
+
+          toast({
+            title: "Sucesso!",
+            description: "Contato criado e conta atualizada com sucesso!",
+            variant: "success",
+          });
+
+          reset();
+          closeModal();
+        } catch (err) {
+          console.error(err);
+          toast({
+            title: "Erro ao atualizar conta!",
+            description:
+              "O contato foi criado, mas a conta não foi atualizada.",
+            variant: "error",
+          });
         }
-      });
-      if (error.global) {
-        toast({ title: "Erro!", description: error.global, variant: "error" });
+      } else if (error) {
+        Object.entries(error).forEach(([key, msg]) => {
+          if (key !== "global" && msg) {
+            setError(key as any, { type: "manual", message: msg as string });
+          }
+        });
+        if (error.global) {
+          toast({
+            title: "Erro!",
+            description: error.global,
+            variant: "error",
+          });
+        }
       }
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Erro",
+        description: "Não foi possível criar o contato.",
+        variant: "error",
+      });
+    } finally {
+      setIsLoading(false);
     }
   });
 
-  const handleCheckboxChange = (fieldValue: string[] = [], label: string, checked: boolean) => {
+  const handleCheckboxChange = (
+    fieldValue: string[] = [],
+    label: string,
+    checked: boolean
+  ) => {
     if (checked) {
       return fieldValue.includes(label) ? fieldValue : [...fieldValue, label];
     } else {
@@ -370,6 +402,7 @@ export function useCreateContactAccount(closeModal: () => void) {
     onSubmit,
     setTempContact,
     tempContact,
-    handleCheckboxChange
+    handleCheckboxChange,
+    isLoading,
   };
 }

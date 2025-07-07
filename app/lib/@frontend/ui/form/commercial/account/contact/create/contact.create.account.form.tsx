@@ -30,6 +30,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
     handleCheckboxChange,
     setTempContact,
     tempContact,
+    isLoading,
     formState: { errors },
   } = useCreateContactAccount(closeModal ?? (() => {}));
 
@@ -249,11 +250,18 @@ export function CreateContactAccountForm({ closeModal }: Props) {
       </div>
 
       <div className="flex justify-end gap-4 w-full">
-        <Button type="button" variant={"ghost"} onClick={() => {}}>
+        <Button 
+          type="button" 
+          variant={"ghost"} 
+          onClick={closeModal} 
+          disabled={isLoading}
+        >
           Cancelar
         </Button>
 
-        <Button type="submit">Salvar</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Salvando..." : "Salvar"}
+        </Button>
       </div>
     </form>
   );
