@@ -50,14 +50,14 @@ export function CreateHistoricalForm({ accountId, openModalAnnex, closeModalAnne
                                 setSelectContact(value)
                             }
                         />
-                        <Button
+                        {/* <Button
                             title="Emoji"
                             variant={"ghost"}
                             className="p-1"
                             type="button"
                         >
                             <FaceSmileIcon className="h-5 w-5" />
-                        </Button>
+                        </Button> */}
                         <Button
                             title="Anexar"
                             variant={"ghost"}
