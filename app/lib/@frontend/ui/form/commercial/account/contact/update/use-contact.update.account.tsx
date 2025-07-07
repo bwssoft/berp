@@ -16,28 +16,7 @@ import {
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { updateOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
-
-// Define the preferred contact interface
-export interface PreferredContact {
-  phone?: boolean;
-  whatsapp?: boolean;
-  email?: boolean;
-}
-
-// Define the contact type union
-export type ContactType =
-  | "Celular"
-  | "Telefone Residencial"
-  | "Telefone Comercial"
-  | "Email";
-
-// Define the contact item interface
-export interface ContactItem {
-  id?: string;
-  type: ContactType[];
-  contact: string;
-  preferredContact: PreferredContact;
-}
+import { ContactItem, ContactType } from "../create";
 
 const schema = z
   .object({
