@@ -11,6 +11,7 @@ import {
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { ContactTable } from "@/app/lib/@frontend/ui/table/commercial/contact/table";
 import { maskPhoneNumber } from "@/app/lib/util/mask-phone-number";
+import { formatCpf, formatRg } from "@/app/lib/util/format-rg-cpf";
 
 type Props = {
   closeModal?: () => void;
@@ -33,10 +34,7 @@ export function CreateContactAccountForm({ closeModal }: Props) {
   } = useCreateContactAccount(closeModal ?? (() => {}));
 
   return (
-    <form
-      action={() => onSubmit()}
-      className="flex flex-col items-start gap-4"
-    >
+    <form action={() => onSubmit()} className="flex flex-col items-start gap-4">
       <Controller
         name="contractEnabled"
         control={control}
@@ -77,13 +75,21 @@ export function CreateContactAccountForm({ closeModal }: Props) {
           <Input
             placeholder="Digite o CPF do contato"
             label={"CPF"}
-            {...register("cpf")}
+            {...register("cpf", {
+              onChange: (e) => {
+                e.target.value = formatCpf(e.target.value);
+              },
+            })}
             error={errors.cpf?.message}
           />
           <Input
             placeholder="Digite o RG do contato"
             label={"RG"}
-            {...register("rg")}
+            {...register("rg", {
+              onChange: (e) => {
+                e.target.value = formatRg(e.target.value);
+              },
+            })}
             error={errors.rg?.message}
           />
         </>
@@ -114,22 +120,27 @@ export function CreateContactAccountForm({ closeModal }: Props) {
           label="Contato"
           onChange={(e) => {
             const value = e.target.value;
-            const formattedValue = ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(tempContact.type as string)
+            const formattedValue = [
+              "Celular",
+              "Telefone Residencial",
+              "Telefone Comercial",
+            ].includes(tempContact.type as string)
               ? maskPhoneNumber(value, tempContact.type as string)
               : value;
-            
+
             setTempContact((prev) => ({
               ...prev,
               contact: formattedValue,
-            }))
+            }));
           }}
           value={tempContact.contact}
           placeholder={
-            tempContact.type === "Celular" 
-              ? "(00) 00000-0000" 
-              : tempContact.type === "Telefone Residencial" || tempContact.type === "Telefone Comercial"
-              ? "(00) 0000-0000"
-              : "Adicione o contato"
+            tempContact.type === "Celular"
+              ? "(00) 00000-0000"
+              : tempContact.type === "Telefone Residencial" ||
+                  tempContact.type === "Telefone Comercial"
+                ? "(00) 0000-0000"
+                : "Adicione o contato"
           }
           error={errors.contactItems?.message}
         />
@@ -159,7 +170,13 @@ export function CreateContactAccountForm({ closeModal }: Props) {
             <Checkbox
               checked={field.value?.includes("Comercial")}
               onChange={(e) =>
-                field.onChange(handleCheckboxChange(field.value, "Comercial", e.target.checked))
+                field.onChange(
+                  handleCheckboxChange(
+                    field.value,
+                    "Comercial",
+                    e.target.checked
+                  )
+                )
               }
               label="Comercial"
             />
@@ -173,7 +190,9 @@ export function CreateContactAccountForm({ closeModal }: Props) {
             <Checkbox
               checked={field.value?.includes("Suporte")}
               onChange={(e) =>
-                field.onChange(handleCheckboxChange(field.value, "Suporte", e.target.checked))
+                field.onChange(
+                  handleCheckboxChange(field.value, "Suporte", e.target.checked)
+                )
               }
               label="Suporte"
             />
@@ -187,7 +206,13 @@ export function CreateContactAccountForm({ closeModal }: Props) {
             <Checkbox
               checked={field.value?.includes("Faturamento")}
               onChange={(e) =>
-                field.onChange(handleCheckboxChange(field.value, "Faturamento", e.target.checked))
+                field.onChange(
+                  handleCheckboxChange(
+                    field.value,
+                    "Faturamento",
+                    e.target.checked
+                  )
+                )
               }
               label="Faturamento"
             />
@@ -201,7 +226,13 @@ export function CreateContactAccountForm({ closeModal }: Props) {
             <Checkbox
               checked={field.value?.includes("Marketing")}
               onChange={(e) =>
-                field.onChange(handleCheckboxChange(field.value, "Marketing", e.target.checked))
+                field.onChange(
+                  handleCheckboxChange(
+                    field.value,
+                    "Marketing",
+                    e.target.checked
+                  )
+                )
               }
               label="Marketing"
             />
