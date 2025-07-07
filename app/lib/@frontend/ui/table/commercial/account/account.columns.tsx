@@ -17,9 +17,14 @@ interface IAccountWithPermissions extends IAccount {
 
 export const columns = (): ColumnDef<IAccountWithPermissions>[] => [
     {
-        header: "Cliente",
+        header: "Nome fantasia",
         accessorKey: "name",
-        cell: ({ row }) => row.original.fantasy_name ?? "-",
+        cell: ({ row }) => row.original.fantasy_name?.length ? row.original.fantasy_name : "---",
+    },
+    {
+        header: "Razão Social",
+        accessorKey: "social_name",
+        cell: ({ row }) => row.original.social_name?.length ? row.original.social_name : "---",
     },
     {
         header: "CPF/CNPJ",
