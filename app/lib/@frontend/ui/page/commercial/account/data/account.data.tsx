@@ -174,25 +174,24 @@ export function AccountDataPage(props: Props) {
           <CardContent className="flex-1 flex flex-col">
             <div className="lg:col-span-2 h-full">
               <div className="flex flex-wrap gap-x-1.5 gap-y-3">
-                  {(account.contacts ?? [])?.map((contact, idx) => (
-                    <ContactCard
-                      key={contact.id ?? idx}
-                      contact={contact}
-                      accountId={account.id!}
-                      onClickEditContactButton={() => {
-                        setSelectedContact(contact);
-                        openUpdateModalContact();
-                      }}
-                      onClickDeleteButton={() => {
-                        setSelectedContact(contact);
-                        openDeleteContactModal();
-                      }}
-                    />
-                  ))}
-                </div>
+                {(account.contacts ?? [])?.map((contact, idx) => (
+                  <ContactCard
+                    key={contact.id ?? idx}
+                    contact={contact}
+                    accountId={account.id!}
+                    onClickEditContactButton={() => {
+                      setSelectedContact(contact);
+                      openUpdateModalContact();
+                    }}
+                    onClickDeleteButton={() => {
+                      setSelectedContact(contact);
+                      openDeleteContactModal();
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </CardContent>
-
         </Card>
 
         <Card className="w-full">
@@ -201,11 +200,9 @@ export function AccountDataPage(props: Props) {
               <CardTitle className="flex items-center gap-2 text-lg">
                 <MapPin className="h-5 w-5 text-primary" />
                 Endereços
-                {address?.length && (
-                  <Badge variant="secondary" className="text-xs">
-                    {address.length}
-                  </Badge>
-                )}
+                <Badge variant="secondary" className="text-xs">
+                  {address.length}
+                </Badge>
               </CardTitle>
               {hasPermissionAddresses && (
                 <Button
