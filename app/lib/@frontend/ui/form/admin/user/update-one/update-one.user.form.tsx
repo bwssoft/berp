@@ -41,7 +41,7 @@ export function UpdateOneUserForm({ user }: Props) {
         willActivate: !userData.active,
     });
 
-    const blockActivateButton = restrictFeatureByProfile("admin:user:update");
+    const canUpdate = restrictFeatureByProfile("admin:user:update");
 
     const resetPasswordDialog = useResetPasswordUserDialog({
         userId: userData.id,
@@ -58,7 +58,7 @@ export function UpdateOneUserForm({ user }: Props) {
             >
                 <div className="border-b border-gray-900/10 pb-6">
                     <div className="mt-10 flex gap-2 justify-end">
-                        {!blockActivateButton && (
+                        {!canUpdate && (
                             <>
                                 <Button
                                     variant="secondary"

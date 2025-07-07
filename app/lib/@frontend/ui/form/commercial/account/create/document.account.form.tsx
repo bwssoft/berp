@@ -4,6 +4,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { CreateAccountFormSchema } from "./use-create.account.form";
 import { Button, Input } from "../../../../component";
 import { useState } from "react";
+import { maskCpfCnpj } from "@/app/lib/util/format-mask-cpf-cnpj";
 
 interface Props {
   onValidate: (
@@ -33,13 +34,24 @@ export function DocumentAccountForm({
   return (
     <div>
       <div className="flex items-end gap-4">
-        <Input
-          {...methods.register("document.value")}
-          label="CPF/CNPJ *"
-          className="w-80"
-          disabled={textButton.contact !== "Validar" || isValidating}
-          placeholder="Insira um documento para ser validado"
-          error={methods.formState.errors.document?.value?.message}
+        <Controller
+          name="document.value"
+          control={methods.control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              value={field.value || ""}
+              onChange={(e) => {
+                const maskedValue = maskCpfCnpj(e.target.value);
+                field.onChange(maskedValue);
+              }}
+              label="CPF/CNPJ *"
+              className="w-80"
+              disabled={textButton.contact !== "Validar" || isValidating}
+              placeholder="Insira um documento para ser validado"
+              error={methods.formState.errors.document?.value?.message}
+            />
+          )}
         />
         <Button
           type="button"

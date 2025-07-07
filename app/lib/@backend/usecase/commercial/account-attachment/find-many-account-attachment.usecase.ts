@@ -31,7 +31,7 @@ class FindManyAccountAttachmentUsecase {
       arg.filter ?? {},
       arg.limit,
       arg.page,
-      arg.sort ?? { created_at: -1 }
+      arg.sort ?? { createdAt: -1 }
     );
   }
 }
