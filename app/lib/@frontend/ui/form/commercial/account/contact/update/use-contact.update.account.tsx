@@ -7,19 +7,37 @@ import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
+import { maskPhoneNumber } from "@/app/lib/util/mask-phone-number";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ContactItem, ContactType } from "../create";
 import {
   findManyAccount,
   findOneAccount,
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { updateOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import { useState } from "react";
 
-const validatePhoneNumber = (value: string) => {
-  return /^\d{0,11}$/.test(value);
-};
+// Define the preferred contact interface
+export interface PreferredContact {
+  phone?: boolean;
+  whatsapp?: boolean;
+  email?: boolean;
+}
+
+// Define the contact type union
+export type ContactType =
+  | "Celular"
+  | "Telefone Residencial"
+  | "Telefone Comercial"
+  | "Email";
+
+// Define the contact item interface
+export interface ContactItem {
+  id?: string;
+  type: ContactType[];
+  contact: string;
+  preferredContact: PreferredContact;
+}
 
 const schema = z
   .object({
@@ -80,12 +98,22 @@ const schema = z
             contactType
           )
         ) {
-          if (!validatePhoneNumber(item.contact)) {
+          const numericValue = item.contact.replace(/[^0-9]/g, "");
+          const isCellphone =
+            contactType === "Celular" && numericValue.length !== 11;
+          const isLandline =
+            (contactType === "Telefone Residencial" ||
+              contactType === "Telefone Comercial") &&
+            numericValue.length !== 10;
+
+          if (isCellphone || isLandline) {
             ctx.addIssue({
               code: "custom",
               path: ["contactItems", index, "contact"],
               message:
-                "Telefone deve conter apenas números e no máximo 11 dígitos",
+                contactType === "Celular"
+                  ? "Celular deve ter 11 dígitos (incluindo DDD)"
+                  : "Telefone deve ter 10 dígitos (incluindo DDD)",
             });
           }
         }
@@ -178,11 +206,21 @@ export function useUpdateContactAccount(
         tempContact.type
       )
     ) {
-      if (!validatePhoneNumber(tempContact.contact)) {
+      const numericValue = tempContact.contact.replace(/[^0-9]/g, "");
+      const isCellphone =
+        tempContact.type === "Celular" && numericValue.length !== 11;
+      const isLandline =
+        (tempContact.type === "Telefone Residencial" ||
+          tempContact.type === "Telefone Comercial") &&
+        numericValue.length !== 10;
+
+      if (isCellphone || isLandline) {
         toast({
           title: "Formato inválido",
           description:
-            "Telefone deve conter apenas números e no máximo 11 dígitos",
+            tempContact.type === "Celular"
+              ? "Celular deve ter 11 dígitos (incluindo DDD)"
+              : "Telefone deve ter 10 dígitos (incluindo DDD)",
           variant: "error",
         });
         return;
@@ -202,15 +240,23 @@ export function useUpdateContactAccount(
       }
     }
 
+    // Store contact with mask applied if it's a phone
+    const formattedContact = [
+      "Celular",
+      "Telefone Residencial",
+      "Telefone Comercial",
+    ].includes(tempContact.type as string)
+      ? maskPhoneNumber(tempContact.contact, tempContact.type as string)
+      : tempContact.contact;
+
     append({
       id: crypto.randomUUID(),
       type: Array.isArray(tempContact.type)
         ? tempContact.type
         : [tempContact.type],
-      contact: tempContact.contact,
+      contact: formattedContact,
       preferredContact: tempContact.preferredContact,
     });
-
 
     setTempContact({
       type: "",
@@ -254,73 +300,87 @@ export function useUpdateContactAccount(
     setIsLoading(true);
     try {
       const { success, error } = await updateOneContact(
-      { id: contact.id },
-      {
-        ...data,
-        accountId: accountId ?? undefined,
-        contactItems: data.contactItems.map((item) => ({
-          ...item,
-          id: item.id ?? crypto.randomUUID(),
-          type: item.type[0],
-        })),
-      }
-    );
-    if (success) {
-      if (accountId) {
-        const freshAccount = await findOneAccount({ id: accountId });
-        const currentContacts: IContact[] = freshAccount?.contacts ?? [];
+        { id: contact.id },
+        {
+          ...data,
+          cpf: data.cpf ? data.cpf.replace(/[^a-zA-Z0-9]/g, "") : undefined,
+          rg: data.rg ? data.rg.replace(/[^a-zA-Z0-9]/g, "") : undefined,
+          accountId: accountId ?? undefined,
+          contactItems: data.contactItems.map((item) => {
+            const contactType = item.type[0];
 
-        const updatedContact = { ...success, id: contact.id };
+            return {
+              ...item,
+              id: item.id ?? crypto.randomUUID(),
+              contact:
+                contactType === "Email"
+                  ? item.contact
+                  : item.contact.replace(/[^0-9]/g, ""),
+              type: contactType,
+            };
+          }),
+        }
+      );
+      if (success) {
+        if (accountId) {
+          const freshAccount = await findOneAccount({ id: accountId });
+          const currentContacts: IContact[] = freshAccount?.contacts ?? [];
 
-        const uniqueContacts = new Map<string, IContact>();
-        currentContacts.forEach((c) => {
-          if (c?.id) {
-            if (c.id === contact.id) {
-              uniqueContacts.set(c.id, updatedContact);
-            } else {
-              uniqueContacts.set(c.id, c);
+          const updatedContact = { ...success, id: contact.id };
+
+          const uniqueContacts = new Map<string, IContact>();
+          currentContacts.forEach((c) => {
+            if (c?.id) {
+              if (c.id === contact.id) {
+                uniqueContacts.set(c.id, updatedContact);
+              } else {
+                uniqueContacts.set(c.id, c);
+              }
             }
+          });
+
+          if (!uniqueContacts.has(contact.id)) {
+            uniqueContacts.set(contact.id, updatedContact);
           }
+
+          const updatedContacts = Array.from(uniqueContacts.values());
+
+          await updateOneAccount(
+            { id: accountId },
+            { contacts: updatedContacts }
+          );
+        }
+
+        await queryClient.invalidateQueries({
+          queryKey: ["findOneAccount", accountId],
         });
 
-        if (!uniqueContacts.has(contact.id)) {
-          uniqueContacts.set(contact.id, updatedContact);
+        await queryClient.invalidateQueries({
+          queryKey: ["findManyAccount", accountId],
+        });
+
+        toast({
+          title: "Sucesso!",
+          description: "Contato atualizado com sucesso!",
+          variant: "success",
+        });
+
+        reset();
+        closeModal();
+      } else if (error) {
+        Object.entries(error).forEach(([key, msg]) => {
+          if (key !== "global" && msg) {
+            setError(key as any, { type: "manual", message: msg as string });
+          }
+        });
+        if (error.global) {
+          toast({
+            title: "Erro!",
+            description: error.global,
+            variant: "error",
+          });
         }
-
-        const updatedContacts = Array.from(uniqueContacts.values());
-
-        await updateOneAccount(
-          { id: accountId },
-          { contacts: updatedContacts }
-        );
       }
-
-      await queryClient.invalidateQueries({
-        queryKey: ["findOneAccount", accountId],
-      });
-
-      await queryClient.invalidateQueries({
-        queryKey: ["findManyAccount", accountId],
-      });
-
-      toast({
-        title: "Sucesso!",
-        description: "Contato atualizado com sucesso!",
-        variant: "success",
-      });
-
-      reset();
-      closeModal();
-    } else if (error) {
-      Object.entries(error).forEach(([key, msg]) => {
-        if (key !== "global" && msg) {
-          setError(key as any, { type: "manual", message: msg as string });
-        }
-      });
-      if (error.global) {
-        toast({ title: "Erro!", description: error.global, variant: "error" });
-      }
-    }
     } catch (err) {
       console.error(err);
       toast({
@@ -333,14 +393,17 @@ export function useUpdateContactAccount(
     }
   });
 
-  const handleCheckboxChange = (fieldValue: string[] = [], label: string, checked: boolean) => {
+  const handleCheckboxChange = (
+    fieldValue: string[] = [],
+    label: string,
+    checked: boolean
+  ) => {
     if (checked) {
       return fieldValue.includes(label) ? fieldValue : [...fieldValue, label];
     } else {
       return fieldValue.filter((item) => item !== label);
     }
   };
-
 
   return {
     ...methods,
@@ -352,6 +415,6 @@ export function useUpdateContactAccount(
     setTempContact,
     isLoading,
     handleCheckboxChange,
-    tempContact
+    tempContact,
   };
 }

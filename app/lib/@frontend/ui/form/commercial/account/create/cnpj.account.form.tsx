@@ -131,6 +131,7 @@ export function CNPJAccountForm() {
                         placeholder="Selecione o status"
                         displayValueGetter={(item) => item.name}
                         disabled={disabledFields.status}
+                        modal={false}
                     />
                 )}
             />
@@ -141,29 +142,14 @@ export function CNPJAccountForm() {
                 error={errors.cnpj?.municipal_registration?.message}
                 disabled={disabledFields.municipal_registration}
             />
-            <div className="flex items-end gap-2">
-                {/* <Controller
-          control={control}
-          name="cnpj.sector"
-          render={({ field }) => (
-            <Select
-              name="sector"
-              data={sectorModal.enabledSectors}
-              keyExtractor={(d) => d.id!}
-              valueExtractor={(d) => d.name}
-              label="Setor"
-              value={sectorModal.sectors.find((d) => d.name === field.name)}
-              onChange={(d) => field.onChange(d.name)}
-              error={errors.cnpj?.sector?.message}
-            />
-          )}
-        /> */}
+            <div className="flex items-end gap-2 w-full">
+
 
                 <FormField
                     control={control}
                     name="cnpj.sector"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="w-full">
                             <FormLabel>Setor</FormLabel>
                             <FormControl>
                                 <Select
