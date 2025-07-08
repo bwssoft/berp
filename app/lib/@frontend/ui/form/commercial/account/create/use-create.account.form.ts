@@ -311,11 +311,14 @@ export function useCreateAccountForm() {
     const contact = dataCnpj?.phones[0];
 
     const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
-      document: data.document,
+      document: {
+        ...data.document,
+        value: data.document.value.replace(/\D/g, "")
+      },
       ...(type === "cpf"
         ? {
             name: data.cpf?.name,
-            rg: data.cpf?.rg,
+            rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
           }
         : {
             social_name: data.cnpj?.social_name,
