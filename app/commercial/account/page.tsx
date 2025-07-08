@@ -1,6 +1,15 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { IAccount } from "@/app/lib/@backend/domain";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/lib/@frontend/ui/component";
+import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { AccountFilterForm } from "@/app/lib/@frontend/ui/form/commercial/account/search/search.account.form";
 import { AccountTable } from "@/app/lib/@frontend/ui/table/commercial/account/account.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
@@ -50,55 +59,53 @@ export default async function Page(props: Props) {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center gap-6 px-4 sm:px-6 lg:px-8">
+    <div className="space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Contas
-          </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Uma lista de todas as contas cadastradas na plataforma.
+          <h1 className="text-2xl font-semibold">Contas</h1>
+          <p className="text-muted-foreground">
+            Visualize e gerencie todas as contas cadastradas
           </p>
         </div>
-
         {canCreate && (
-          <Link
-            href="/commercial/account/form/create"
-            className="ml-10 flex items-center gap-x-1 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-          >
-            <PlusIcon className="-ml-1.5 h-5 w-5" aria-hidden="true" />
-            Nova Conta
+          <Link href="/commercial/account/form/create">
+            <Button>
+              <PlusIcon className="mr-2 h-4 w-4" />
+              Nova Conta
+            </Button>
           </Link>
         )}
       </div>
 
-      <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <AccountFilterForm />
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Filtros de busca</CardTitle>
+          <CardDescription>
+            Preencha os filtros abaixo e clique em &quot;Pesquisar&quot;
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AccountFilterForm />
+        </CardContent>
+      </Card>
 
-      <div className="mt-10 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <AccountTable currentPage={_page} data={accountsWithPermissions} />
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Resultado</CardTitle>
+          <CardDescription>
+            Veja abaixo a lista de contas encontradas com base nos filtros
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AccountTable currentPage={_page} data={accountsWithPermissions} />
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
 function query(params: Props["searchParams"]): Filter<IAccount> {
   const conditions: Filter<IAccount>[] = [];
-
-  const clean = (text: string) => text.replace(/[^\w]/g, "").toLowerCase();
-
-  //   if (params.quick) {
-  //     const regex = { $regex: params.quick, $options: "i" };
-  //     conditions.push({
-  //       $or: [
-  //         { name: regex },
-  //         { document: { value: { regex } } },
-  //         { social_name: regex },
-  //         { fantasy_name: regex },
-  //       ],
-  //     });
-  //   }
 
   if (params.client) {
     const regex = { $regex: params.client, $options: "i" };

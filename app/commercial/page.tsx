@@ -12,14 +12,14 @@ import { Package } from "lucide-react";
 
 const actions = [
   {
-    title: "Clientes",
-    href: "/commercial/client",
-    code: "commercial:client",
-    icon: BriefcaseIcon, // representa claramente clientes/relacionamentos
-    iconForeground: "text-sky-700",
-    iconBackground: "bg-sky-50",
+    title: "Contas",
+    href: "/commercial/account",
+    code: "commercial:accounts",
+    icon: UserGroupIcon, // representa gestão de contas comerciais
+    iconForeground: "text-purple-700",
+    iconBackground: "bg-purple-50",
     description:
-      "Gerencie os dados dos seus clientes e mantenha o histórico de interações comerciais.",
+      "Gerencie contas comerciais e seus anexos de forma centralizada.",
   },
   {
     title: "Propostas",
@@ -40,22 +40,11 @@ const actions = [
     iconBackground: "bg-blue-50",
     description: "Crie, edite e acompanhe produtos.",
   },
-  {
-    title: "Contas",
-    href: "/commercial/account",
-    code: "commercial:accounts",
-    icon: UserGroupIcon, // representa gestão de contas comerciais
-    iconForeground: "text-purple-700",
-    iconBackground: "bg-purple-50",
-    description:
-      "Gerencie contas comerciais e seus anexos de forma centralizada.",
-  },
 ];
 
 export default function Page() {
   const { navigationByProfile } = useAuth();
   const options = navigationByProfile(actions);
-  console.log("🚀 ~ Page ~ options:", options);
   return (
     <div>
       <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">

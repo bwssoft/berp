@@ -8,7 +8,7 @@ import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
 import { FakeLoadingButton } from "../../../../component/fake-load-button";
 
-export function AccountCreateForm() {
+export function CreateOneAccountForm() {
     const {
         methods,
         onSubmit,
@@ -25,7 +25,7 @@ export function AccountCreateForm() {
         <FormProvider {...methods}>
             <Form {...form}>
                 <form
-                    className="flex flex-col gap-4"
+                    className="flex flex-col gap-2"
                     onSubmit={methods.handleSubmit(onSubmit)}
                 >
                     <DocumentAccountForm
