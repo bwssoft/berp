@@ -17,10 +17,6 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
               error={errors.password?.message}
             />
           </div>
-          <InformationCircleIcon
-            className="w-5 h-9 text-gray-500 cursor-pointer"
-            title="A senha deve conter: 8-32 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 símbolo."
-          />
         </div>
         <div className="space-y-1 text-sm">
           {rules.map((rule, index) => (
