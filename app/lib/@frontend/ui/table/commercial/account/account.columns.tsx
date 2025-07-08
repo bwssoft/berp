@@ -5,7 +5,6 @@ import { IAccount } from "@/app/lib/@backend/domain";
 import { Button } from "../../../component";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { Badge } from "@bwsoft/badge";
 
 // Extended interface for IAccount with LGPD permissions
 interface IAccountWithPermissions extends IAccount {
@@ -15,7 +14,7 @@ interface IAccountWithPermissions extends IAccount {
     };
 }
 
-export const columns = (): ColumnDef<IAccountWithPermissions>[] => [
+export const columns: ColumnDef<IAccountWithPermissions>[] = [
     {
         header: "Nome fantasia",
         accessorKey: "name",

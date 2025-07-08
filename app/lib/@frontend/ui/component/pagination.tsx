@@ -69,7 +69,7 @@ export function Pagination({
       </div>
 
       {/* Desktop */}
-      <div className="hidden sm:flex sm:w-full sm:justify-between">
+      <div className="hidden sm:flex sm:w-full sm:justify-between sm:items-center">
         <div className="hidden sm:block text-gray-600 text-sm font-medium">
           Exibindo <span className="font-semibold">{firstItem}</span> a{" "}
           <span className="font-semibold">{lastItem}</span> de{" "}

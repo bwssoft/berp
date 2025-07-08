@@ -32,7 +32,7 @@ export function DocumentAccountForm({
   const [isValidating, setIsValidating] = useState(false);
 
   return (
-    <div>
+    <div className="space-y-2">
       <div className="flex items-end gap-4">
         <Controller
           name="document.value"
@@ -46,7 +46,6 @@ export function DocumentAccountForm({
                 field.onChange(maskedValue);
               }}
               label="CPF/CNPJ *"
-              className="w-80"
               disabled={textButton.contact !== "Validar" || isValidating}
               placeholder="Insira um documento para ser validado"
               error={methods.formState.errors.document?.value?.message}
