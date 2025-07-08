@@ -24,22 +24,16 @@ export default function ComercialLayout({
 
 const navigation = [
   {
-    name: "Clientes",
-    pathname: "/commercial/client",
-    code: "commercial:client",
-    icon: BriefcaseIcon,
+    name: "Contas",
+    pathname: "/commercial/account",
+    code: "commercial:accounts",
+    icon: UserGroupIcon, // representa gestão de contas comerciais
   },
   {
     name: "Propostas",
     pathname: "/commercial/proposal",
     code: "commercial:proposal",
     icon: DocumentTextIcon, // remete a contratos, propostas e documentos
-  },
-  {
-    name: "Contas",
-    pathname: "/commercial/account",
-    code: "commercial:accounts",
-    icon: UserGroupIcon, // representa gestão de contas comerciais
   },
   {
     name: "Produtos",
