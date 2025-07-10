@@ -17,7 +17,7 @@ const actions = [
     iconForeground: "text-sky-700",
     iconBackground: "bg-sky-50",
     description:
-      "Doloribus dolores nostrum quia qui natus officia quod et dolorem. Sit repellendus qui ut at blanditiis et quo et molestiae.",
+        "Gerencie o cadastro, edição e exclusão de usuários do sistema, além de visualizar seus detalhes e status de acesso.",
   },
   {
     title: "Perfil",
@@ -27,7 +27,7 @@ const actions = [
     iconForeground: "text-teal-700",
     iconBackground: "bg-teal-50",
     description:
-      "Doloribus dolores nostrum quia qui natus officia quod et dolorem. Sit repellendus qui ut at blanditiis et quo et molestiae.",
+       "Configure perfis de acesso, definindo permissões e regras específicas para diferentes grupos de usuários.",
   },
   {
     title: "Controle de acesso",
@@ -37,7 +37,7 @@ const actions = [
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
     description:
-      "Doloribus dolores nostrum quia qui natus officia quod et dolorem. Sit repellendus qui ut at blanditiis et quo et molestiae.",
+       "Administre as regras de autorização do sistema, vinculando usuários e perfis às funcionalidades disponíveis.",
   },
 ];
 
