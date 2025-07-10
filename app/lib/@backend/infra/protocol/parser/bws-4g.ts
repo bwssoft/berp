@@ -275,6 +275,19 @@ export class Bws4gParser {
     return obj;
   }
 
+  static serial(input: string): string | undefined {
+    if (typeof input !== "string") return undefined;
+    const parts = input.split("RINS=");
+
+    if (parts.length < 2) return undefined;
+
+    const serialValue = parts[1].trim();
+
+    const value = serialValue.replace(/\s+/g, "");
+
+    return value.length ? value.padStart(8, "0") : undefined;
+  }
+
   static imei(input: string) {
     if (typeof input !== "string") return undefined;
     if (!input.includes("IMEI=")) return undefined;

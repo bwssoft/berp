@@ -24,19 +24,19 @@ function hexlify(bytes: Uint8Array): string {
 const COMPANY_ID = 0x01;
 
 interface LorawanCredentials {
-  devEUI: string;
-  appEUI: string;
-  devAddr: string;
-  nwkSKey: string;
-  appSKey: string;
-  appKey: string;
+  device_eui: string;
+  application_eui: string;
+  device_address: string;
+  network_session_key: string;
+  application_session_key: string;
+  application_key: string;
 }
 
 /**
  * Gera as credenciais LoRaWAN a partir de serial e timestamp
  * @param dwNSstr Numero de serie (decimal ou hex)
  * @param dwTSstr Timestamp (decimal ou hex)
- * @returns Objeto com devEUI, appEUI, devAddr (hex), nwkSKey, appSKey e appKey (todos hex string)
+ * @returns Objeto com device_eui, application_eui, device_address (hex), network_session_key, application_session_key e application_key (todos hex string)
  * @throws Error se dwNS ou dwTS for invalido ou igual a 0xFFFFFFFF
  */
 export function genKeyLorawan(
@@ -86,11 +86,11 @@ export function genKeyLorawan(
   byDevEUI[i++] = (dwNS >>> 8) & 0xff;
   byDevEUI[i++] = dwNS & 0xff;
 
-  // APP EUI (primeiros 8 bytes de devEUI)
+  // APP EUI (primeiros 8 bytes de device_eui)
   byAppEUI.set(byDevEUI.subarray(0, 8));
 
   // DEV ADDR
-  const devAddrNum = dwNS;
+  const device_addressNum = dwNS;
 
   // NWK SKEY
   FixNwk[2] = (dwNS >>> 24) & 0xff;
@@ -132,11 +132,14 @@ export function genKeyLorawan(
   }
 
   return {
-    devEUI: hexlify(byDevEUI),
-    appEUI: hexlify(byAppEUI),
-    devAddr: devAddrNum.toString(16).padStart(8, "0").toUpperCase(),
-    nwkSKey: hexlify(byNwkSKey),
-    appSKey: hexlify(byAppSKey),
-    appKey: hexlify(byAppKey),
+    device_eui: hexlify(byDevEUI),
+    application_eui: hexlify(byAppEUI),
+    device_address: device_addressNum
+      .toString(16)
+      .padStart(8, "0")
+      .toUpperCase(),
+    network_session_key: hexlify(byNwkSKey),
+    application_session_key: hexlify(byAppSKey),
+    application_key: hexlify(byAppKey),
   };
 }
