@@ -4,7 +4,7 @@ import { Button, Input, PasswordInput } from "../../../../component";
 import { useSetNewPasswordUserForm } from "./use-set-new-password.user.form";
 
 export function SetNewPasswordUserForm({ userId }: { userId: string }) {
-  const { register, handleSubmit, errors, rules } = useSetNewPasswordUserForm(userId);
+  const { register, handleSubmit, rules } = useSetNewPasswordUserForm(userId);
 
   return (
     <form action={() => handleSubmit()}>
@@ -14,7 +14,6 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
             <PasswordInput
               label="Senha"
               {...register("password")}
-              error={errors.password?.message}
             />
           </div>
           <InformationCircleIcon
@@ -43,7 +42,6 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
         <PasswordInput
           label="Confirme sua senha"
           {...register("confirmPassword")}
-          error={errors.confirmPassword?.message}
         />
       </div>
 
