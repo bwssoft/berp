@@ -26,8 +26,8 @@ export function UpdateOneUserForm({ user }: Props) {
         profiles,
         userData,
         handleSubmit,
-        handleCancelEdit,
         handleBackPage,
+        setSearchTerm
     } = useUpdateOneUserForm(user);
     const { restrictFeatureByProfile } = useAuth()
 
@@ -116,6 +116,8 @@ export function UpdateOneUserForm({ user }: Props) {
                                     placeholder="Selecione os perfis desse usuário"
                                     className="mt-1 text-left"
                                     data={profiles ?? []}
+                                    behavior="search"
+                                    onSearchChange={setSearchTerm}
                                     error={errors.profile?.message}
                                     onOptionChange={field.onChange}
                                     value={field.value}
