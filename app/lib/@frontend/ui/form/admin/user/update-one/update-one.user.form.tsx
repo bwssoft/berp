@@ -58,7 +58,7 @@ export function UpdateOneUserForm({ user }: Props) {
             >
                 <div className="border-b border-gray-900/10 pb-6">
                     <div className="mt-10 flex gap-2 justify-end">
-                        {!canUpdate && (
+                        {canUpdate && (
                             <>
                                 <Button
                                     variant="secondary"
