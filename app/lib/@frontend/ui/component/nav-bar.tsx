@@ -9,6 +9,8 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { useAuth } from "../../context";
+import { userObjectRepository } from "../../../@backend/infra";
 
 interface Props {
   menuListItem: {
@@ -19,6 +21,12 @@ interface Props {
 }
 
 export default function NavBar({ menuListItem }: Props) {
+  const { user } = useAuth();
+  
+  const userImageUrl = user?.image?.key 
+    ? userObjectRepository.generateUrl(user.image.key)
+    : "/avatar.webp";
+
   return (
     <Disclosure as="nav" className="bg-white shadow-sm">
       <div className="mx-auto px-4 sm:px-16">
@@ -30,10 +38,9 @@ export default function NavBar({ menuListItem }: Props) {
               <div>
                 <MenuButton className="relative flex rounded-full bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-hidden">
                   <span className="absolute -inset-1.5" />
-                  <span className="sr-only">Open user menu</span>
                   <img
                     alt=""
-                    src="/avatar.webp"
+                    src={userImageUrl}
                     className="size-8 rounded-full"
                   />
                 </MenuButton>
