@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@/app/lib/@frontend/hook";
-import { Copy, RotateCcw, Edit, Archive, Trash } from "lucide-react";
+import { Copy, RotateCcw, Edit, Trash } from "lucide-react";
 import {
     Button,
     Card,
@@ -16,21 +16,7 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "../../../component/tooltip";
-import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "../../../component/alert-dialog";
-import {
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogDescription,
-} from "@radix-ui/react-alert-dialog";
 import { Separator } from "../../../component/separator";
-import { AddressUpdateModal } from "../../../modal/comercial/address/update";
 
 interface IAddress {
     id?: string | undefined;
@@ -44,6 +30,7 @@ interface IAddress {
     complement?: string | undefined;
     reference_point?: string | undefined;
     type?: ("Comercial" | "Entrega" | "Faturamento" | "Residencial")[];
+    default_address?: boolean;
     created_at?: Date;
     updated_at?: Date;
 }
@@ -165,22 +152,22 @@ export function AddressCard({
                         </div>
 
                         <div className="flex gap-1">
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                        onClick={onRefresh}
-                                        aria-label="Atualizar endereço"
-                                    >
-                                        <RotateCcw className="h-4 w-4" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                    <p>Atualizar</p>
-                                </TooltipContent>
-                            </Tooltip>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                            onClick={onRefresh}
+                                            aria-label="Atualizar endereço"
+                                        >
+                                            <RotateCcw className="h-4 w-4" />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top">
+                                        <p>Atualizar</p>
+                                    </TooltipContent>
+                                </Tooltip>
 
                             <Tooltip>
                                 <TooltipTrigger asChild>
@@ -199,39 +186,43 @@ export function AddressCard({
                                 </TooltipContent>
                             </Tooltip>
 
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                        onClick={handleEdit}
-                                        aria-label="Editar endereço"
-                                    >
-                                        <Edit className="h-4 w-4" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                    <p>Editar endereço</p>
-                                </TooltipContent>
-                            </Tooltip>
+                            {!address.default_address && onEdit && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                            onClick={handleEdit}
+                                            aria-label="Editar endereço"
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top">
+                                        <p>Editar endereço</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            )}
 
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                                        onClick={handleDelete}
-                                        aria-label="Excluir Endereço"
-                                    >
-                                        <Trash className="h-4 w-4" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                    <p>Excluir Endereço</p>
-                                </TooltipContent>
-                            </Tooltip>
+                            {!address.default_address && onDelete && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                            onClick={handleDelete}
+                                            aria-label="Excluir Endereço"
+                                        >
+                                            <Trash className="h-4 w-4" />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top">
+                                        <p>Excluir Endereço</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            )}
                         </div>
                     </div>
                 </CardHeader>
