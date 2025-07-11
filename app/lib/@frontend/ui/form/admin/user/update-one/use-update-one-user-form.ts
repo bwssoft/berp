@@ -9,7 +9,7 @@ import { IUser } from "@/app/lib/@backend/domain";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useRouter } from "next/navigation";
 import { userConstants } from "@/app/lib/constant";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { updateOneUser } from "@/app/lib/@backend/action/admin/user.action";
 
@@ -49,15 +49,36 @@ const updateSchema = z
 export type UpdateUserSchema = z.infer<typeof updateSchema>;
 
 export function useUpdateOneUserForm(user: IUser) {
-    const { data: allProfiles } = useQuery({
-        queryKey: ["findManyProfiles"],
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const initialProfiles = useQuery({
+        queryKey: ["findManyProfiles", "initial"],
         queryFn: async () => {
-            const { docs } = await findManyProfile({})
-            return docs
-        },
+        const { docs } = await findManyProfile({});
+        return docs;
+        }
     });
-    const profiles = allProfiles?.filter((p) => p.active) ?? [];
+
+    const searchedProfiles = useQuery({
+        queryKey: ["findManyProfiles", searchTerm],
+        queryFn: async () => {
+        const filter: Record<string, any> = {};
+
+        if (searchTerm.trim() !== "") {
+            filter["name"] = { $regex: searchTerm, $options: "i" };
+        }
+        const { docs } = await findManyProfile(filter);
+            return docs;
+        },
+        enabled: searchTerm.length > 0
+    });
+
+    const profiles = searchTerm.length > 0 
+        ? searchedProfiles.data ?? [] 
+        : initialProfiles.data?.filter(p => p.active) ?? [];
+
     const router = useRouter();
+
     const {
         register,
         handleSubmit: hookSubmit,
@@ -65,7 +86,6 @@ export function useUpdateOneUserForm(user: IUser) {
         formState: { errors, isDirty },
         reset,
         setError,
-        watch
     } = useForm<UpdateUserSchema>({
         resolver: zodResolver(updateSchema),
         defaultValues: user,
@@ -134,5 +154,6 @@ export function useUpdateOneUserForm(user: IUser) {
         handleSubmit,
         handleCancelEdit,
         handleBackPage,
+        setSearchTerm
     };
 }
