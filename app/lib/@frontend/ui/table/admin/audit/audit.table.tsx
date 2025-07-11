@@ -20,14 +20,15 @@ export function AuditTable({
   handlePageChange,
 }: AuditTableProps) {
   return (
-    <div>
+    <div className="flex flex-col w-full">
       <DataTable
         columns={columns}
         data={data.docs}
         mobileDisplayValue={(audit) => `${audit.action} - ${audit.user.name}`}
         mobileKeyExtractor={(audit) => audit.created_at?.toISOString()}
-        className="w-full"
+        className="h-96"
       />
+
       <Pagination
         currentPage={currentPage}
         totalPages={data.pages || 1}

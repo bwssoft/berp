@@ -4,7 +4,7 @@ import { Button, Input, PasswordInput } from "../../../../component";
 import { useSetNewPasswordUserForm } from "./use-set-new-password.user.form";
 
 export function SetNewPasswordUserForm({ userId }: { userId: string }) {
-  const { register, handleSubmit, errors, rules } = useSetNewPasswordUserForm(userId);
+  const { register, handleSubmit, rules } = useSetNewPasswordUserForm(userId);
 
   return (
     <form action={() => handleSubmit()}>
@@ -14,13 +14,8 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
             <PasswordInput
               label="Senha"
               {...register("password")}
-              error={errors.password?.message}
             />
           </div>
-          <InformationCircleIcon
-            className="w-5 h-9 text-gray-500 cursor-pointer"
-            title="A senha deve conter: 8-32 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 símbolo."
-          />
         </div>
         <div className="space-y-1 text-sm">
           {rules.map((rule, index) => (
@@ -43,7 +38,6 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
         <PasswordInput
           label="Confirme sua senha"
           {...register("confirmPassword")}
-          error={errors.confirmPassword?.message}
         />
       </div>
 
