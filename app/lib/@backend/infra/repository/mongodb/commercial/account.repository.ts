@@ -5,7 +5,7 @@ import { singleton } from "@/app/lib/util/singleton";
 class AccountRepository extends BaseRepository<IAccount> {
   constructor() {
     super({
-      collection: "commercial-account",
+      collection: "commercial.account",
       db: "berp",
     });
   }

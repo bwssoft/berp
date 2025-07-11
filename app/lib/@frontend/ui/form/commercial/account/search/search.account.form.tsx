@@ -71,13 +71,9 @@ export function AccountFilterForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full border p-4 rounded shadow-sm space-y-4"
+        className="flex items-end justify-between"
       >
-        <div className="flex justify-between">
-          <h2 className="text-xl font-semibold">Conta</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Cliente */}
           <FormField
             control={form.control}

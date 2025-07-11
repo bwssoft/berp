@@ -4,7 +4,7 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
 import {
   createOneAccount,
@@ -22,6 +22,7 @@ import {
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
+import { isValidRG } from "@/app/lib/util/is-valid-rg";
 
 const schema = z
   .object({
@@ -40,10 +41,21 @@ const schema = z
         rg: z
           .string()
           .min(7)
-          .max(12)
-          .regex(
-            /^(\d{1,2}\.?\d{3}\.?\d{3}-?\d{1}|^\d{7,9})$/,
-            "RG inválido: deve conter entre 7 e 9 dígitos, com ou sem pontuação"
+          .refine(
+            (val) => {
+              if (!val) return true;
+
+              const cleaned = val.replace(/[^\w]/g, "");
+
+              if (cleaned.length === 11) {
+                return isValidCPF(cleaned);
+              }
+
+              return isValidRG(cleaned);
+            },
+            {
+              message: "Documento inválido: informe um CPF ou RG válido",
+            }
           )
           .optional(),
       })
@@ -299,11 +311,14 @@ export function useCreateAccountForm() {
     const contact = dataCnpj?.phones[0];
 
     const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
-      document: data.document,
+      document: {
+        ...data.document,
+        value: data.document.value.replace(/\D/g, "")
+      },
       ...(type === "cpf"
         ? {
             name: data.cpf?.name,
-            rg: data.cpf?.rg,
+            rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
           }
         : {
             social_name: data.cnpj?.social_name,

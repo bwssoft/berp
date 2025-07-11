@@ -72,11 +72,9 @@ export function AddressDataPage(props: Props) {
               <CardTitle className="flex items-center gap-2 text-lg">
                 <MapPin className="h-5 w-5 text-primary" />
                 Endereços
-                {address?.length && (
-                  <Badge variant="secondary" className="text-xs">
-                    {address.length}
-                  </Badge>
-                )}
+                <Badge variant="secondary" className="text-xs">
+                  {address.length}
+                </Badge>
               </CardTitle>
               {hasPermissionAddresses && (
                 <Button

@@ -5,7 +5,6 @@ import { IAccount } from "@/app/lib/@backend/domain";
 import { Button } from "../../../component";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { Badge } from "@bwsoft/badge";
 
 // Extended interface for IAccount with LGPD permissions
 interface IAccountWithPermissions extends IAccount {
@@ -15,11 +14,16 @@ interface IAccountWithPermissions extends IAccount {
     };
 }
 
-export const columns = (): ColumnDef<IAccountWithPermissions>[] => [
+export const columns: ColumnDef<IAccountWithPermissions>[] = [
     {
-        header: "Cliente",
+        header: "Nome fantasia",
         accessorKey: "name",
-        cell: ({ row }) => row.original.fantasy_name ?? "-",
+        cell: ({ row }) => row.original.fantasy_name?.length ? row.original.fantasy_name : "---",
+    },
+    {
+        header: "Razão Social",
+        accessorKey: "social_name",
+        cell: ({ row }) => row.original.social_name?.length ? row.original.social_name : "---",
     },
     {
         header: "CPF/CNPJ",
