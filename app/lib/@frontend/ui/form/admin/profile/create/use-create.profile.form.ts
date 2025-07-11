@@ -1,6 +1,7 @@
 import { createOneProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,6 +29,8 @@ export function useCreateProfileForm() {
     resolver: zodResolver(schema),
   });
 
+  const queryClient = useQueryClient();
+
   const handleSubmit = hookFormSubmit(async (data) => {
     try {
       const { success, error } = await createOneProfile(data);
@@ -38,6 +41,7 @@ export function useCreateProfileForm() {
           description: "Perfil registrado com sucesso!",
           variant: "success",
         });
+        queryClient.invalidateQueries({ queryKey: ["findManyProfiles"] }); 
         router.push("/admin/profile");
         return;
       }
