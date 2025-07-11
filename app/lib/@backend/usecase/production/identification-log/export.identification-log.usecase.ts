@@ -53,10 +53,10 @@ class ExportIdentificationLogUsecase {
       .addRow([
         "Status",
         "Tecnologia",
-        "Serial",
-        "IMEI",
-        "ICCID",
-        "Firmware",
+        "Serial Antes",
+        "IMEI Antes",
+        "Serial Depois",
+        "IMEI Depois",
         "Usuário",
         "Data de Criação",
       ])
@@ -71,10 +71,10 @@ class ExportIdentificationLogUsecase {
         .addRow([
           doc.status ? "Sucesso" : "Falha",
           doc.technology.system_name,
-          doc.equipment.serial,
-          doc.equipment.imei,
-          doc.equipment.iccid ?? "--",
-          doc.equipment.firmware,
+          doc.equipment_before.serial,
+          doc.equipment_before.imei,
+          doc.equipment_after.serial,
+          doc.equipment_after.imei,
           doc.user.name,
           doc.created_at.toLocaleString(),
         ])
