@@ -12,7 +12,7 @@ import { randomUUID } from "crypto";
 
 namespace Dto {
     export type Input<Before = object, After = object> = {
-        action: string
+        action: string;
         before: Before;
         after: After;
         domain: AuditDomain;
@@ -37,12 +37,17 @@ class CreateOneAuditUsecase {
         input: Dto.Input<Before, After>
     ): Promise<Dto.Output> {
         const { before, after, domain, user, action } = input;
-
         const metadata: AuditMetadata[] = [];
 
-        for (const key of Object.keys(after)) {
-            const beforeValue = (before as any)[key];
-            const afterValue = (after as any)[key];
+        const allKeys = new Set([
+            ...Object.keys(before || {}),
+            ...Object.keys(after || {}),
+        ]);
+
+        for (const key of Array.from(allKeys)) {
+            const beforeValue = (before as any)?.[key];
+            const afterValue = (after as any)?.[key];
+
             if (!isEqual(beforeValue, afterValue)) {
                 metadata.push({
                     field: key,
@@ -51,12 +56,14 @@ class CreateOneAuditUsecase {
                 });
             }
         }
-
         const audit: IAudit = {
             id: randomUUID(),
             affected_entity_id: (after as any).id,
             domain,
-            type: Object.keys(before).length === 0 ? AuditType.create : AuditType.update,
+            type:
+                Object.keys(before).length === 0
+                    ? AuditType.create
+                    : AuditType.update,
             action: action,
             metadata,
             created_at: new Date(),
