@@ -21,50 +21,42 @@ namespace Namespace {
   }
 
   interface Equipment {
+    firmware: string;
+    serial: string;
     imei?: string | undefined;
     iccid?: string | undefined;
-    firmware?: string | undefined;
-    serial?: string | undefined;
     lora_keys?: Partial<Device.Equipment["lora_keys"]>;
   }
 
   export interface Identification extends IIdentificationLog {}
 
-  export interface IdentificationError {
-    ok: false;
-    port: ISerialPort;
-    error: string;
-  }
-
-  export interface IdentificationSuccess {
+  export interface IdentificationResult {
     ok: true;
     port: ISerialPort;
-    response: Record<string, any>;
     messages: any[];
     init_time: number;
     end_time: number;
     status: boolean;
-    equipment: {
+    equipment_before: {
       serial: string;
-      imei?: string;
-      lora_keys?: Device.Equipment["lora_keys"];
+      imei: string;
+      lora_keys: Device.Equipment["lora_keys"];
+    };
+    equipment_after: {
+      serial: string;
+      imei: string;
+      lora_keys: Device.Equipment["lora_keys"];
     };
   }
-
-  export type IdentificationResult =
-    | IdentificationError
-    | IdentificationSuccess;
 }
 
 export const useIdentification = (props: Namespace.useIdentificationProps) => {
   const { technology } = props;
-  const [identified, setIdentified] = useState<Namespace.Detected[]>([]);
-  const isIdentifying = useRef(false);
+  const [detected, setDetected] = useState<Namespace.Detected[]>([]);
+  const [isDetecting, setIsDetecting] = useState(false);
 
-  const [process, setProcess] = useState<Namespace.Identification[]>([]);
-  const isWriting = useRef(false);
-
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [identified, setIdentified] = useState<Namespace.Identification[]>([]);
+  const [isIdentifying, setIsIdentifying] = useState(false);
 
   // hook that handle interactions with devices
   const {
@@ -78,138 +70,135 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
   // function that handle the identification process, check if the process was successful and save result on database
   const identify = useCallback(
     async (id: string) => {
-      setIsProcessing(true);
-      isWriting.current = true;
+      try {
+        setIsIdentifying(true);
+        const [current] = detected;
 
-      const [current] = identified;
+        if (
+          !current.equipment ||
+          !current.equipment.firmware ||
+          !current.equipment.serial ||
+          !technology
+        ) {
+          toast({
+            variant: "error",
+            description: "Nenhum equipamento está apto para ser identificado.",
+            title: "Erro",
+          });
+          return;
+        }
 
-      if (
-        !current.equipment ||
-        !current.equipment.firmware ||
-        !current.equipment.serial ||
-        !technology
-      )
-        return;
+        // run the process
+        const result = (await handleIdentification(
+          current,
+          id
+        )) as Namespace.IdentificationResult;
 
-      // run identification
-      const identification = (await handleIdentification(
-        current.port,
-        id
-      )) as Namespace.IdentificationResult;
+        const log: Omit<IIdentificationLog, "id" | "created_at" | "user"> = {
+          equipment_before: result.equipment_before,
+          equipment_after: result.equipment_after,
+          messages: result.messages,
+          status: result.status,
+          end_time: result.end_time,
+          init_time: result.init_time,
+          technology: {
+            id: technology.id,
+            system_name: technology.name.system,
+          },
+        };
 
-      // check if each message sent has response
-      if (!identification.ok) {
-        toast({
-          title: "Erro ao identificar dispositivo",
-          variant: "error",
-          description: identification.error,
-        });
-        isWriting.current = false;
-        setIsProcessing(false);
-        return undefined;
-      }
-
-      const { response, messages, end_time, init_time, status, equipment } =
-        identification;
-
-      const log: Omit<IIdentificationLog, "id" | "created_at" | "user"> = {
-        equipment: {
-          serial: current.equipment.serial!,
-          firmware: current.equipment.firmware!,
-          imei: current.equipment?.imei,
-          lora_keys: current.equipment?.lora_keys,
-          iccid: current.equipment?.iccid,
-        },
-        identification: {
-          serial: equipment.serial,
-          imei: equipment?.imei,
-          lora_keys: equipment?.lora_keys,
-        },
-        status,
-        // metadata: {
-        //   messages: messages.map(({ key, command }) => ({
-        //     request: command,
-        //     response: response[key as keyof typeof response],
-        //   })),
-        //   end_time,
-        //   init_time,
-        // },
-        technology: {
-          id: technology.id,
-          system_name: technology.name.system,
-        },
-      };
-
-      const promises: Promise<any>[] = [createOneIdentificationLog(log)];
-      if (status) {
-        promises.push(
-          upsertOneDevice(
-            {
-              "equipment.serial": equipment.serial,
-            },
-            {
-              equipment: {
-                ...equipment,
-                firmware: current.equipment.firmware,
+        const promises: Promise<any>[] = [createOneIdentificationLog(log)];
+        if (result.status) {
+          promises.push(
+            upsertOneDevice(
+              {
+                "equipment.serial": result.equipment_after.serial,
               },
-              simcard: current.equipment?.iccid
-                ? { iccid: current.equipment?.iccid }
-                : undefined,
-              model:
-                Device.Model[
-                  technology.name.system as keyof typeof Device.Model
-                ],
-              identified_at: new Date(),
-            }
-          )
-        );
+              {
+                equipment: {
+                  ...current.equipment,
+                  ...result.equipment_after,
+                },
+                simcard: current.equipment?.iccid
+                  ? { iccid: current.equipment?.iccid }
+                  : undefined,
+                model:
+                  Device.Model[
+                    technology.name.system as keyof typeof Device.Model
+                  ],
+                identified_at: new Date(),
+              }
+            )
+          );
+        }
+
+        // save result on database
+        const [dataSavedOnDb] = await Promise.all(promises);
+
+        // update react state with the result
+        setIdentified((prev) => prev.concat(dataSavedOnDb));
+      } catch (e) {
+        toast({
+          variant: "error",
+          title: "error",
+          description:
+            "Ocorreu algum erro durante a o processo de identificação.",
+        });
+      } finally {
+        // indicate that the process end
+        setIsIdentifying(false);
       }
-
-      // save result on database
-      const [dataSavedOnDb] = await Promise.all(promises);
-
-      // update state with process result
-      setProcess((prev) => prev.concat(dataSavedOnDb));
-
-      isWriting.current = false;
-      setIsProcessing(false);
     },
-    [handleIdentification, identified, technology]
+    [detected, handleIdentification, technology]
   );
 
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     const interval = setInterval(async () => {
-      setIsProcessing(true);
-      if (isWriting.current) return;
-      if (!isIdentifying.current && ports.length) {
-        isIdentifying.current = true;
+      setIsDetecting(true);
+      if (isIdentifying) return;
+      if (!isIdentifying && ports.length) {
+        setIsIdentifying(true);
         const identified = await handleDetection(ports);
-        setIdentified(
+        setDetected(
           identified
             .filter((el) => el.response !== undefined)
+            .filter(
+              (el) =>
+                typeof el.response.serial === "string" &&
+                typeof el.response.firmware === "string"
+            )
             .map(({ port, response }) => ({
               port,
-              equipment: response!,
-              status: isIdentified(response!),
+              equipment: {
+                ...response!,
+                serial: response!.serial as string,
+                firmware: response!.firmware as string,
+              },
+              status: isIdentified({
+                ...response!,
+                serial: response!.serial as string,
+                firmware: response!.firmware as string,
+              }),
             }))
         );
-        isIdentifying.current = false;
-      } else if (!isIdentifying.current && !ports.length) {
-        setIdentified([]);
+        setIsIdentifying(false);
+      } else if (!isIdentifying && !ports.length) {
+        setDetected([]);
       }
-      setIsProcessing(false);
+      setIsDetecting(false);
     }, 5000); // 5000 ms = 5 segundos
 
     // Limpeza: limpa o intervalo quando o componente é desmontado ou quando as dependências mudarem
     return () => clearInterval(interval);
-  }, [ports, handleDetection]);
+  }, [ports, handleDetection, isIdentifying, isIdentified]);
 
   return {
-    process,
+    detected,
     identified,
     identify,
     requestPort,
-    isProcessing,
+    isIdentifying,
+    isDetecting,
   };
 };

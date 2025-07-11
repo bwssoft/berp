@@ -32,6 +32,7 @@ export function ChooseProfileForm(props: Props) {
               onSearchChange={handleSearchProfile}
               defaultValue={profile ? [profile] : []}
               placeholder="Escolha uma opção"
+              modal={false}
             />
           </div>
         </div>

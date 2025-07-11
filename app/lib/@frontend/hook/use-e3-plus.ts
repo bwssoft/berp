@@ -309,32 +309,53 @@ export const useE3Plus = () => {
   );
 
   const handleIdentification = useCallback(
-    async (port: ISerialPort, identifier: string) => {
-      const messages = [
-        {
-          key: "imei",
-          command: `13041SETSN,${identifier}`,
-        },
-      ] as const;
+    async (detected: Namespace.Detected, id: string) => {
+      const { port, equipment } = detected;
+
       try {
+        const messages = [
+          {
+            key: "write_imei",
+            command: `13041SETSN,${id}`,
+          },
+          {
+            key: "read_imei",
+            command: `IMEI`,
+            delay_before: 2000,
+          },
+        ] as const;
+
         const init_time = Date.now();
         const response = await sendMultipleMessages({
           transport: port,
           messages,
         });
+
+        const imei = E3Parser.imei(response.read_imei);
+
+        const status = id === imei;
+
         const end_time = Date.now();
         return {
           port,
-          response,
-          messages,
           init_time,
           end_time,
-          status: true,
+          status,
+          messages: messages.map(({ key, command }) => ({
+            key,
+            request: command,
+            response: response[key],
+          })),
+          equipment_before: {
+            serial: equipment.serial,
+            imei: equipment.imei,
+          },
+          equipment_after: {
+            serial: imei,
+            imei,
+          },
         };
-      } catch (error) {
-        console.error("[ERROR] handleIdentification", error);
-        return { port };
-      }
+      } catch (error) {}
     },
     [sendMultipleMessages]
   );
