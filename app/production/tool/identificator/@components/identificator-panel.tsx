@@ -1,12 +1,11 @@
 "use client";
 
 import { Device, ITechnology } from "@/app/lib/@backend/domain";
-import { Button, Input } from "@/app/lib/@frontend/ui/component";
+import { Button } from "@/app/lib/@frontend/ui/component";
 import {
   IdentificationForm,
   TechnologySearchForm,
 } from "@/app/lib/@frontend/ui/form";
-
 import { useIdentification } from "@/app/lib/@frontend/hook";
 import { DevicesDetectedTable } from "@/app/lib/@frontend/ui/table/production/devices-detected/table";
 import { DevicesIdentifiedTable } from "@/app/lib/@frontend/ui/table/production/devices-identified/table";
@@ -17,7 +16,7 @@ interface Props {
 export function IdentificationPanel(props: Props) {
   const { technology } = props;
 
-  const { identified, process, identify, requestPort, isProcessing } =
+  const { identified, detected, identify, requestPort, isIdentifying } =
     useIdentification({
       technology,
     });
@@ -51,13 +50,13 @@ export function IdentificationPanel(props: Props) {
           {technology && (
             <div className="flow-root w-full">
               <DevicesDetectedTable
-                data={identified}
+                data={detected}
                 model={Device.Model[technology.name.system as Device.Model]}
               />
             </div>
           )}
           <div className="flex justify-between gap-2">
-            <IdentificationForm onSubmit={identify} disabled={isProcessing} />
+            <IdentificationForm onSubmit={identify} disabled={isIdentifying} />
             <Button
               variant="outline"
               className="h-fit whitespace-nowrap "
@@ -77,7 +76,7 @@ export function IdentificationPanel(props: Props) {
             Uma lista de todos os equipamentos identificados.
           </p>
         </div>
-        <DevicesIdentifiedTable data={process} />
+        <DevicesIdentifiedTable data={identified} />
       </div>
     </>
   );

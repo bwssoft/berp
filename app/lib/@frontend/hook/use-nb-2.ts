@@ -701,82 +701,73 @@ export const useNB2 = () => {
     [sendMultipleMessages]
   );
   const handleIdentification = useCallback(
-    async (port: ISerialPort, serial: string) => {
-      const identification = await findOneSerial({ serial });
-      if (!identification) {
-        return { ok: false, port, error: "Serial não encontrado na base" };
-      }
-
-      const writeMessages = [
-        {
-          key: "serial",
-          command: `WINS=${serial}\r\n`,
-        },
-        {
-          key: "imei",
-          command: `WIMEI=${identification.imei}\r\n`,
-        },
-      ] as const;
-
-      const readMessages = [
-        {
-          key: "serial",
-          command: `RINS\r\n`,
-          transform: BwsNb2Parser.serial,
-        },
-        {
-          key: "imei",
-          command: `RIMEI\r\n`,
-          transform: BwsNb2Parser.imei,
-        },
-      ] as const;
+    async (detected: Namespace.Detected, id: string) => {
+      const { port, equipment } = detected;
 
       try {
-        const init_time = Date.now();
-        const writeResponse = await sendMultipleMessages({
-          transport: port,
-          messages: writeMessages,
-        });
-        await sleep(2000);
-        const readResponse = await sendMultipleMessages({
-          transport: port,
-          messages: readMessages,
-        });
-
-        if (
-          !readResponse.imei ||
-          !isImei(readResponse.imei) ||
-          !readResponse.serial
-        ) {
-          return { ok: false, port, error: "IMEI ou Serial inválido" };
+        const identification = await findOneSerial({ serial: id });
+        if (!identification) {
+          throw new Error("Serial não encontrado na base");
         }
 
+        const messages = [
+          {
+            key: "write_serial",
+            command: `WINS=${id}\r\n`,
+          },
+          {
+            key: "write_imei",
+            command: `WIMEI=${identification.imei}\r\n`,
+          },
+          {
+            key: "read_serial",
+            command: `RINS\r\n`,
+            delay_before: 2000,
+          },
+          {
+            key: "read_imei",
+            command: `RIMEI\r\n`,
+          },
+        ] as const;
+
+        const init_time = Date.now();
+        const response = await sendMultipleMessages({
+          transport: port,
+          messages,
+        });
+
+        const [imei, serial] = [
+          BwsNb2Parser.imei(response.read_imei),
+          BwsNb2Parser.serial(response.read_serial),
+        ];
+
         const status =
-          identification.serial === readResponse.serial &&
-          identification.imei === readResponse.imei;
+          identification.serial === serial && identification.imei === imei;
 
         const end_time = Date.now();
-
         return {
           port,
-          response: writeResponse,
-          messages: writeMessages,
           init_time,
           end_time,
           status,
-          ok: true,
-          equipment: {
-            serial: readResponse.serial,
-            imei: readResponse.imei,
+          messages: messages.map(({ key, command }) => ({
+            key,
+            request: command,
+            response: response[key],
+          })),
+          equipment_before: {
+            serial: equipment.serial,
+            imei: equipment.imei,
+          },
+          equipment_after: {
+            serial,
+            imei,
           },
         };
       } catch (error) {
-        console.error("[ERROR] handleIdentification", error);
-        return {
-          ok: false,
-          port,
-          error: error instanceof Error ? error.message : "Erro desconhecido",
-        };
+        const message = `[(${new Date().toLocaleString()}) ERROR IN NB2 IDENTIFICATION]`;
+        console.error(message, error);
+        throw new Error(message);
       }
     },
     [sendMultipleMessages]

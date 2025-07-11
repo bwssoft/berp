@@ -276,7 +276,7 @@ export function SpecificE3Plus4GConfigurationProfileForm() {
                 name="config.specific.horimeter"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Horímetro (ms)</FormLabel>
+                    <FormLabel>Horímetro (minutos)</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="3600"

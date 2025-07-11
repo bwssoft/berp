@@ -21,12 +21,12 @@ const text = {
 };
 export const columns: ColumnDef<{
   id: string;
-  equipment: {
+  equipment_before: {
     serial: string;
-    firmware: string;
-    iccid?: string;
+    imei?: string;
   };
-  identification?: {
+  equipment_after?: {
+    imei?: string;
     serial?: string;
   };
   status: boolean;
@@ -60,8 +60,8 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const { original } = row;
       return (
-        <p title={original.equipment.serial}>
-          {original.equipment.serial ?? "--"}
+        <p title={original.equipment_before.serial}>
+          {original.equipment_before.serial ?? "--"}
         </p>
       );
     },
@@ -72,8 +72,8 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const { original } = row;
       return (
-        <p title={original?.identification?.serial}>
-          {original?.identification?.serial ?? "--"}
+        <p title={original?.equipment_after?.serial}>
+          {original?.equipment_after?.serial ?? "--"}
         </p>
       );
     },
@@ -84,14 +84,6 @@ export const columns: ColumnDef<{
     cell: ({ row }) => {
       const { original } = row;
       return deviceConstants.model[original.technology.system_name] ?? "--";
-    },
-  },
-  {
-    header: "Firmware",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const { original } = row;
-      return original.equipment.firmware;
     },
   },
   {

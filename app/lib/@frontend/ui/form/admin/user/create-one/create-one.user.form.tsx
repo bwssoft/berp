@@ -18,6 +18,7 @@ export function CreateOneUserForm() {
     profiles,
     errors,
     handleCancelEdit,
+    setSearchTerm
   } = useCreateOneUserForm();
 
   return (
@@ -51,7 +52,9 @@ export function CreateOneUserForm() {
                   type="multiple"
                   placeholder="Selecione os perfis para esse usuário"
                   className="mt-1 text-left"
-                  data={profiles ?? []}
+                  data={profiles}
+                  behavior="search"
+                  onSearchChange={setSearchTerm}
                   error={errors.profile?.message}
                   onOptionChange={field.onChange}
                   value={field.value}

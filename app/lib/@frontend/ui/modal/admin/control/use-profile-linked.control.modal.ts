@@ -18,7 +18,15 @@ export function useProfileLinkedControlModal() {
 
   const {data: profiles, isLoading} = useQuery({
     queryKey: ['findManyProfiles', control],
-    queryFn: () => findManyProfile({"locked_control_code": {$nin: [control?.code!]}}),
+    queryFn: async () => {
+      const filter: Record<string, any> = {};
+
+      if (control?.code.trim() !== "") {
+        filter["locked_control_code"] = { $regex: control?.code, $options: "i" };
+      }
+      const result = await findManyProfile(filter)
+      return result
+    },
   })
 
   return {
