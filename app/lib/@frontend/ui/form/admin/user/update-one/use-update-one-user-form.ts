@@ -12,6 +12,7 @@ import { userConstants } from "@/app/lib/constant";
 import { useEffect, useState } from "react";
 import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { updateOneUser } from "@/app/lib/@backend/action/admin/user.action";
+import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";
 
 const updateSchema = z
     .object({
@@ -102,6 +103,7 @@ export function useUpdateOneUserForm(user: IUser) {
         const {success, error } = await updateOneUser(data.id, {
             ...data,
             image: undefined,
+            cpf: removeSpecialCharacters(data.cpf),
         }, formData);
 
         if(success){
