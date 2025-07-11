@@ -12,6 +12,7 @@ import {
   Device,
   IConfigurationProfile,
 } from "../../@backend/domain";
+import { findOneSerial } from "../../@backend/action/engineer/serial.action";
 
 namespace Namespace {
   interface Equipment {
@@ -454,31 +455,73 @@ export const useBWS4G = () => {
     [sendMultipleMessages]
   );
   const handleIdentification = useCallback(
-    async (port: ISerialPort, identifier: string) => {
-      const messages = [
-        {
-          key: "imei",
-          command: `13041SETSN,${identifier}`,
-        },
-      ] as const;
+    async (detected: Namespace.Detected, id: string) => {
+      const { port, equipment } = detected;
+
       try {
+        const identification = await findOneSerial({ serial: id });
+        if (!identification) {
+          throw new Error("Serial não encontrado na base");
+        }
+
+        const messages = [
+          {
+            key: "write_serial",
+            command: `WINS=${id}`,
+          },
+          {
+            key: "write_imei",
+            command: `13041SETSN,${identification.imei}`,
+          },
+          {
+            key: "read_serial",
+            command: `RINS`,
+            delay_before: 2000,
+          },
+          {
+            key: "read_imei",
+            command: `IMEI`,
+          },
+        ] as const;
+
         const init_time = Date.now();
         const response = await sendMultipleMessages({
           transport: port,
           messages,
         });
+
+        const [imei, serial] = [
+          Bws4gParser.imei(response.read_imei),
+          Bws4gParser.serial(response.read_serial),
+        ];
+
+        const status =
+          identification.serial === serial && identification.imei === imei;
+
         const end_time = Date.now();
         return {
           port,
-          response,
-          messages,
           init_time,
           end_time,
-          status: true,
+          status,
+          messages: messages.map(({ key, command }) => ({
+            key,
+            request: command,
+            response: response[key],
+          })),
+          equipment_before: {
+            serial: equipment.serial,
+            imei: equipment.imei,
+          },
+          equipment_after: {
+            serial,
+            imei,
+          },
         };
       } catch (error) {
-        console.error("[ERROR] handleIdentification e3-plus-4g", error);
-        return { port };
+        const message = `[(${new Date().toLocaleString()}) ERROR IN BWS4G IDENTIFICATION]`;
+        console.error(message, error);
+        throw new Error(message);
       }
     },
     [sendMultipleMessages]

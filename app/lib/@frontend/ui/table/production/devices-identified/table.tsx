@@ -6,11 +6,11 @@ import { Device } from "@/app/lib/@backend/domain";
 
 interface Props {
   data: {
-    equipment: {
+    equipment_before: {
       serial: string;
-      firmware: string;
+      imei?: string;
     };
-    identification?: {
+    equipment_after?: {
       imei?: string;
       serial?: string;
     };
@@ -28,7 +28,7 @@ export function DevicesIdentifiedTable(props: Props) {
     <DataTable
       columns={columns}
       data={data}
-      mobileDisplayValue={(data) => data.equipment.serial}
+      mobileDisplayValue={(data) => data.equipment_before.serial}
       mobileKeyExtractor={() => Math.random().toString()}
       className="w-full"
     />

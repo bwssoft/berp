@@ -822,148 +822,129 @@ export const useLora = () => {
     [sendMultipleMessages]
   );
   const handleIdentification = useCallback(
-    async (port: ISerialPort, serial: string) => {
-      const timestamp = (getDayZeroTimestamp() / 1000)
+    async (detected: Namespace.Detected, id: string) => {
+      const { port, equipment } = detected;
+
+      const timestamp_to_send = (getDayZeroTimestamp() / 1000)
         .toString(16)
         .toUpperCase();
 
-      const lora_keys = genKeyLorawan(`0x${serial}`, `0x${timestamp}`);
+      const lora_keys = genKeyLorawan(`0x${id}`, `0x${timestamp_to_send}`);
 
-      const writeMessages = [
+      const messages = [
         {
-          key: "serial",
-          command: `WINS=${serial}\r`,
+          key: "write_serial",
+          command: `WINS=${id}\r`,
         },
         {
-          key: "timestamp",
-          command: `WTK=${timestamp}\r`,
+          key: "write_timestamp",
+          command: `WTK=${timestamp_to_send}\r`,
         },
-      ] as const;
-
-      const readMessages = [
         {
-          key: "serial",
+          key: "read_serial",
           command: `RINS\r`,
-          transform: BwsLoraParser.serial,
+          delay_before: 2000,
         },
         {
-          key: "timestamp",
+          key: "read_timestamp",
           command: `RTK\r`,
-          transform: BwsLoraParser.timestamp,
         },
         {
-          key: "device_address",
+          key: "read_device_address",
           command: `RDA\r`,
-          transform: BwsLoraParser.device_address,
         },
         {
-          key: "device_eui",
+          key: "read_device_eui",
           command: `RDE\r`,
-          transform: BwsLoraParser.device_eui,
         },
         {
-          key: "application_eui",
+          key: "read_application_eui",
           command: `RAP\r`,
-          transform: BwsLoraParser.application_eui,
         },
         {
-          key: "application_key",
+          key: "read_application_key",
           command: `RAK\r`,
-          transform: BwsLoraParser.application_key,
         },
         {
-          key: "application_session_key",
+          key: "read_application_session_key",
           command: `RASK\r`,
-          transform: BwsLoraParser.application_session_key,
         },
         {
-          key: "network_session_key",
+          key: "read_network_session_key",
           command: `RNK\r`,
-          transform: BwsLoraParser.network_session_key,
         },
       ] as const;
 
       try {
         const init_time = Date.now();
-        const writeResponse = await sendMultipleMessages({
+        const response = await sendMultipleMessages({
           transport: port,
-          messages: writeMessages,
-        });
-        await sleep(2000);
-        const readResponse = await sendMultipleMessages({
-          transport: port,
-          messages: readMessages,
+          messages,
         });
 
-        console.log(
-          "device_address",
-          readResponse.device_address === lora_keys.devAddr
+        const serial = BwsLoraParser.serial(response.read_serial);
+        const timestamp = BwsLoraParser.timestamp(response.read_timestamp);
+        const device_address = BwsLoraParser.device_address(
+          response.read_device_address
         );
-        console.log("device_eui", readResponse.device_eui === lora_keys.devEUI);
-        console.log(
-          "application_eui",
-          readResponse.application_eui === lora_keys.appEUI
+        const device_eui = BwsLoraParser.device_eui(response.read_device_eui);
+        const application_eui = BwsLoraParser.application_eui(
+          response.read_application_eui
         );
-        console.log(
-          "application_key",
-          readResponse.application_key === lora_keys.appKey
+        const application_key = BwsLoraParser.application_key(
+          response.read_application_key
         );
-        console.log(
-          "application_session_key",
-          readResponse.application_session_key === lora_keys.appSKey
+        const application_session_key = BwsLoraParser.application_session_key(
+          response.read_application_session_key
         );
-        console.log(
-          "network_session_key",
-          readResponse.network_session_key === lora_keys.nwkSKey
+        const network_session_key = BwsLoraParser.network_session_key(
+          response.read_network_session_key
         );
 
-        if (
-          !readResponse.serial ||
-          !readResponse.timestamp ||
-          !readResponse.device_address ||
-          !readResponse.device_eui ||
-          !readResponse.application_eui ||
-          !readResponse.application_key ||
-          !readResponse.application_session_key ||
-          !readResponse.network_session_key
-        ) {
-          return { ok: false, port, error: "Serial inválido" };
-        }
+        const matchKeys =
+          device_address === lora_keys.device_address &&
+          device_eui === lora_keys.device_eui &&
+          application_eui === lora_keys.application_eui &&
+          application_key === lora_keys.application_key &&
+          application_session_key === lora_keys.application_session_key &&
+          network_session_key === lora_keys.network_session_key;
 
         const status =
-          serial === readResponse.serial &&
-          timestamp === readResponse.timestamp;
+          id === serial && timestamp_to_send === timestamp && matchKeys;
 
         const end_time = Date.now();
 
         return {
-          ok: true,
           port,
-          response: writeResponse,
-          messages: writeMessages,
           init_time,
           end_time,
           status,
-          equipment: {
-            serial: readResponse.serial,
+          messages: messages.map(({ key, command }) => ({
+            key,
+            request: command,
+            response: response[key],
+          })),
+          equipment_before: {
+            serial: equipment.serial,
+            lora_keys: equipment.lora_keys,
+          },
+          equipment_after: {
+            serial,
             lora_keys: {
-              timestamp: readResponse.timestamp,
-              device_address: readResponse.device_address,
-              device_eui: readResponse.device_eui,
-              application_eui: readResponse.application_eui,
-              application_key: readResponse.application_key,
-              application_session_key: readResponse.application_session_key,
-              network_session_key: readResponse.network_session_key,
+              timestamp,
+              device_address,
+              device_eui,
+              application_eui,
+              application_key,
+              application_session_key,
+              network_session_key,
             },
           },
         };
       } catch (error) {
-        console.error("[ERROR] handleIdentification", error);
-        return {
-          ok: false,
-          port,
-          error: error instanceof Error ? error.message : "Erro desconhecido",
-        };
+        const message = `[(${new Date().toLocaleString()}) ERROR IN LORA IDENTIFICATION]`;
+        console.error(message, error);
+        throw new Error(message);
       }
     },
     [sendMultipleMessages]
