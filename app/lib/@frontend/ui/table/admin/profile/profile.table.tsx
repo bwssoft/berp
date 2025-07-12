@@ -6,7 +6,7 @@ import { ActiveProfileDialog, useActiveProfileDialog } from "../../../dialog";
 import { UserLinkedProfileModal, useUserLinkedProfileModal } from "../../../modal";
 import { AuditProfileModal, useAuditProfileModal } from "../../../modal/admin/profile/audit-profile";
 import { useSearchParams } from "next/navigation";
-import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
 import { useAuth } from "@/app/lib/@frontend/context";

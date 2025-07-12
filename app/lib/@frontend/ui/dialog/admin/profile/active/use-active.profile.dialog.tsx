@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useCallback, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { activeProfile } from "@/app/lib/@backend/action/admin/profile.action";
