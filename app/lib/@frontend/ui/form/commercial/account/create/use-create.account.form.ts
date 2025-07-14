@@ -38,26 +38,11 @@ const schema = z
           .refine((val) => val.trim().split(/\s+/).length >= 2, {
             message: "Informe o nome completo",
           }),
-        rg: z
-          .string()
-          .min(7)
-          .refine(
-            (val) => {
-              if (!val) return true;
-
-              const cleaned = val.replace(/[^\w]/g, "");
-
-              if (cleaned.length === 11) {
-                return isValidCPF(cleaned);
-              }
-
-              return isValidRG(cleaned);
-            },
-            {
-              message: "Documento inválido: informe um CPF ou RG válido",
-            }
-          )
-          .optional(),
+          rg: z
+            .string()
+            .regex(/^[0-9.\-\/]+$/, "RG deve conter apenas números, pontos, barras e hífen")
+            .min(5, "RG muito curto")
+            .optional(),
       })
       .optional(),
     cnpj: z
