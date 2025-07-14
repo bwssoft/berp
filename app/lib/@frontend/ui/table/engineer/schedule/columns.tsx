@@ -5,7 +5,7 @@ import {
   ISchedule,
 } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { deleteOneScheduleById } from "@/app/lib/@backend/action/engineer/command/schedule.action";
 
 export const columns: ColumnDef<
