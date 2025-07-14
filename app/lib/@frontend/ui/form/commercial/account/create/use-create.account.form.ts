@@ -229,6 +229,7 @@ export function useCreateAccountForm() {
         });
         return "invalid";
       }
+      methods.clearErrors("document.value");  
       methods.setValue("document.type", "cpf");
       setType("cpf");
       return "cpf";
@@ -268,6 +269,8 @@ export function useCreateAccountForm() {
 
       methods.setValue("document.type", "cnpj");
       setType("cnpj");
+      methods.clearErrors("document.value");
+
       return "cnpj";
     }
 
@@ -286,6 +289,7 @@ export function useCreateAccountForm() {
     let data;
 
     if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
+      methods.clearErrors("document.value");
       // É um CNPJ válido
       data = await fetchCnpjData(cleanedValue);
     } else {
