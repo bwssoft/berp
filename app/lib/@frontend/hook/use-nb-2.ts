@@ -55,8 +55,9 @@ const readResponse = async (
       const { value, done } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value);
-      buffer += chunk;
+      buffer += decoder.decode(value);
+
+      console.info("[RAW DATA]", buffer);
 
       const lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
@@ -112,11 +113,11 @@ export const useNB2 = () => {
       if (!reader) throw new Error("Reader não disponível");
       const { command, timeout, delay_before } = msg;
       if (delay_before) await sleep(delay_before);
-      console.log("-------------------------");
-      console.log("command", command);
+      console.info("-------------------------");
+      console.info("[MESSAGE SENT]", command);
       await writeToPort(port, command);
       const response = await readResponse(reader, command, timeout);
-      console.log("response", response);
+      console.info("[RESPONSE MATCHED]", response);
 
       await reader.cancel();
       reader.releaseLock();
@@ -722,7 +723,7 @@ export const useNB2 = () => {
           {
             key: "read_serial",
             command: `RINS\r\n`,
-            delay_before: 2000,
+            delay_before: 3000,
           },
           {
             key: "read_imei",

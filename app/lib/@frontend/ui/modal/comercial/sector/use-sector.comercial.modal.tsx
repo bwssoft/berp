@@ -10,7 +10,7 @@ import {
   findManySector,
   updateOneSector,
 } from "@/app/lib/@backend/action/commercial/sector.action";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 
 const SectorSchema = z.object({ name: z.string().trim().min(1) });
 type SectorForm = z.infer<typeof SectorSchema>;

@@ -3,7 +3,7 @@ import {
   ChevronDownIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { useDebounce } from "@/app/lib/@frontend/hook";
+import { useDebounce } from "@/app/lib/@frontend/hook/use-debounce";
 import { cn } from "@/app/lib/util";
 import React from "react";
 
