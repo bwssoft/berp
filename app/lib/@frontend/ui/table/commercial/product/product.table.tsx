@@ -5,7 +5,7 @@ import { IProduct } from "@/app/lib/@backend/domain";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./product.columns";
 import { Pagination } from "../../../component/pagination";
-import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { useAuth } from "@/app/lib/@frontend/context";
 
 const PAGE_SIZE = 10;

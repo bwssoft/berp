@@ -1,7 +1,7 @@
 import { ICommand } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { deleteOneCommandById } from "@/app/lib/@backend/action/engineer/command/command.action";
 
 export const columns: ColumnDef<ICommand>[] = [

@@ -5,6 +5,7 @@ import { IIdentificationLog } from "@/app/lib/@backend/domain";
 import { Filter } from "mongodb";
 import { findManyIdentificationLog } from "@/app/lib/@backend/action/production/identification-log.action";
 import { DevicesIdentifiedTable } from "@/app/lib/@frontend/ui/table/production/devices-identified/table";
+import { IdentificationLogTable } from "@/app/lib/@frontend/ui/table/production/identification-log/table";
 
 interface Props {
   searchParams: {
@@ -46,7 +47,7 @@ export default async function Example({ searchParams }: Props) {
         <IdentificationLogSearchForm filter={filter} />
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 space-y-12">
-        <DevicesIdentifiedTable data={identificationLog} />
+        <IdentificationLogTable data={identificationLog} />
       </div>
     </div>
   );

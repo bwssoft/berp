@@ -1,7 +1,7 @@
 "use client";
 import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { createOneUser } from "@/app/lib/@backend/action/admin/user.action";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { userConstants } from "@/app/lib/constant";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";

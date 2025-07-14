@@ -1,6 +1,6 @@
 import { IControl, IProfile } from "@/app/lib/@backend/domain";
 import { useAuth } from "@/app/lib/@frontend/context";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import { setLockedControl } from "@/app/lib/@backend/action/admin/profile.action";

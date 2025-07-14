@@ -1,5 +1,5 @@
 import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
-import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
 
