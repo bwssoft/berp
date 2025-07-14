@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { setUserActive } from "@/app/lib/@backend/action/admin/user.action";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 
 interface Params {
   userId: string;
@@ -11,7 +11,11 @@ interface Params {
   onSuccess?: () => void;
 }
 
-export function useActiveUserDialog({ userId, willActivate, onSuccess }: Params) {
+export function useActiveUserDialog({
+  userId,
+  willActivate,
+  onSuccess,
+}: Params) {
   const [open, setOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const qc = useQueryClient();

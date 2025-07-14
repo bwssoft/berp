@@ -8,23 +8,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/lib/@frontend/ui/component/table";
-import { getColumns, Row } from "./columns";
+import { columns, Row } from "./columns";
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import { Device } from "@/app/lib/@backend/domain";
 
 interface Props {
   data: Row[];
-  model: Device.Model;
 }
 
-export function DevicesIdentifiedTable({ data, model }: Props) {
+export function IdentificationLogTable({ data }: Props) {
   const table = useReactTable({
     data,
-    columns: getColumns(model),
+    columns,
     getCoreRowModel: getCoreRowModel(),
   });
 
