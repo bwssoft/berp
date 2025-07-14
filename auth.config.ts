@@ -1,5 +1,6 @@
 import type { NextAuthConfig } from "next-auth";
 import { IProfile } from "./app/lib/@backend/domain";
+import { NextResponse } from "next/server";
 
 // Definição das rotas protegidas e não protegidas
 const protectedRoutes = ["/home", "/admin", "/engineer", "/commercial"];
@@ -11,24 +12,37 @@ export const authConfig: NextAuthConfig = {
   },
   callbacks: {
     // Callback para autorização: determina se o usuário pode acessar uma rota específica
-    authorized({ auth, request: { nextUrl } }) {
-      const isAuthenticated = !!auth?.user;
-      const path = nextUrl.pathname;
+authorized({ auth, request: { nextUrl } }) {
+  const isAuthenticated = !!auth?.user;
+  const path = nextUrl.pathname;
+  
+  const isOnProtectedRoute =
+    protectedRoutes.some((route) => path.startsWith(route)) || path === "/";
+    const isOnUnprotectedRoute = unprotectedRoutes.some((route) =>
+    path.startsWith(route)
+  );
 
-      const isOnProtectedRoute =
-        protectedRoutes.some((route) => path.startsWith(route)) || path === "/";
-      const isOnUnprotectedRoute = unprotectedRoutes.some((route) =>
-        path.startsWith(route)
+  if (auth?.user?.temporary_password) {
+    const isOnSetPassword = path.startsWith("/set-password");
+
+    // Se não está no /set-password, redireciona
+    if (!isOnSetPassword) {
+      return NextResponse.redirect(
+        new URL("/set-password", nextUrl.origin)
       );
+    }
 
-      // Permite acesso livre em rotas não protegidas
-      if (isOnUnprotectedRoute) return true;
+    return true;
+  }
+
+  // Permite acesso livre em rotas não protegidas
+  if (isOnUnprotectedRoute) return true;
       // Em rotas protegidas, só permite acesso se o usuário estiver autenticado
-      if (isOnProtectedRoute) return isAuthenticated;
+  if (isOnProtectedRoute) return isAuthenticated;
 
-      // Permite acesso por padrão se não se encaixar nos casos acima
-      return true;
-    },
+    // Permite acesso por padrão se não se encaixar nos casos acima
+    return true;
+},
     // Callback para manipulação do token JWT
     jwt({ user, token, trigger, session }) {
       // Caso a autenticação inicial tenha ocorrido, atualiza o token com os dados do usuário

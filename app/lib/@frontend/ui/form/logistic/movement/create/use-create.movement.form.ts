@@ -4,7 +4,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Base, IMovement, Item, Movement } from "@/app/lib/@backend/domain";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { createManyMovement } from "@/app/lib/@backend/action/logistic/movement.action";
 
 const movementSchema = z.object({

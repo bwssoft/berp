@@ -3,7 +3,7 @@
 import { Device, ITechnology } from "@/app/lib/@backend/domain";
 import { Button, Spinner } from "@/app/lib/@frontend/ui/component";
 
-import { useAutoTest } from "@/app/lib/@frontend/hook";
+import { useAutoTest } from "@/app/lib/@frontend/hook/use-auto-test";
 import { TechnologySearchForm } from "@/app/lib/@frontend/ui/form/production/technology-search";
 import { DevicesDetectedTable } from "@/app/lib/@frontend/ui/table/production/devices-detected/table";
 import { DevicesAutoTestedTable } from "@/app/lib/@frontend/ui/table/production/devices-auto-tested/table";

@@ -2,7 +2,7 @@
 
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
-import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { columns } from "./account.columns";
 import {
   flexRender,

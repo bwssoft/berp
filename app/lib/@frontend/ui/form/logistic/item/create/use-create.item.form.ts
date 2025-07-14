@@ -12,7 +12,7 @@ import {
   type IComponent,
   type IInput,
 } from "@/app/lib/@backend/domain";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { findManyInput } from "@/app/lib/@backend/action/engineer/input/input.action";
 import { createOneItem } from "@/app/lib/@backend/action/logistic/item.action";
 import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";

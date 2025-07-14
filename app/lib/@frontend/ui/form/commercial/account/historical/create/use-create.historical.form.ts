@@ -4,7 +4,7 @@ import { downloadAccountAttachmentHistorical } from "@/app/lib/@backend/action/c
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { ContactSelection } from "@/app/lib/@backend/domain";
 import { useAuth } from "@/app/lib/@frontend/context";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";

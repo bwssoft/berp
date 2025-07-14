@@ -14,7 +14,7 @@ import { ComboboxTrigger } from "./combobox-trigger";
 import { cn } from "@/app/lib/util";
 import { commandScore } from "@/app/lib/util/command-score";
 import { Popover, PopoverContent } from "../popover";
-import { useClickOutside } from "../../../hook";
+import { useClickOutside } from "../../../hook/use-click-outside";
 
 export type ComboboxType = "single" | "multiple";
 export type ComboboxOptionSource = "all" | "searched" | "selected";
