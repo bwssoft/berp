@@ -1,16 +1,14 @@
+"use client";
+
 import {
   Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
   Menu,
   MenuButton,
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useAuth } from "../../context";
-import { userObjectRepository } from "../../../@backend/infra";
+import { useAuth } from "../../context/auth.context";
 
 interface Props {
   menuListItem: {
@@ -21,11 +19,7 @@ interface Props {
 }
 
 export default function NavBar({ menuListItem }: Props) {
-  const { user } = useAuth();
-  
-  const userImageUrl = user?.image?.key 
-    ? userObjectRepository.generateUrl(user.image.key)
-    : "/avatar.webp";
+  const { avatarUrl } = useAuth();
 
   return (
     <Disclosure as="nav" className="bg-white shadow-sm">
@@ -39,9 +33,9 @@ export default function NavBar({ menuListItem }: Props) {
                 <MenuButton className="relative flex rounded-full bg-white text-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-hidden">
                   <span className="absolute -inset-1.5" />
                   <img
-                    alt=""
-                    src={userImageUrl}
-                    className="size-8 rounded-full"
+                    alt="User avatar"
+                    src={avatarUrl}
+                    className="size-8 rounded-full object-cover"
                   />
                 </MenuButton>
               </div>

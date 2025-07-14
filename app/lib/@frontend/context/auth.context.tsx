@@ -2,18 +2,32 @@
 
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
-import React, { createContext, useCallback, useContext, useMemo } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import { IProfile, IUser } from "../../@backend/domain";
 import { logout } from "../../@backend/action/auth/login.action";
 
-type AuthUser = Partial<IUser> & { current_profile: IProfile };
+// Extended types to include avatarUrl
+type AuthUser = Partial<IUser> & {
+  current_profile: IProfile;
+  avatarUrl?: string;
+};
+
 type RedirectOption<T> = T & { code: string };
 
 interface AuthContextType {
   user: AuthUser | undefined;
   profile: IProfile | undefined;
+  avatarUrl: string;
   changeProfile: (input: IProfile) => void;
   refreshCurrentProfile: () => Promise<boolean>;
+  refreshAvatarUrl: () => Promise<void>; // Added method to refresh avatar URL
   navBarItems: {
     name: string;
     onClick?: () => void;
@@ -32,7 +46,17 @@ export const AuthProvider = ({
   session: Session | null;
   children: React.ReactNode;
 }) => {
-  const { data, update, status } = useSession();
+  const { data, update } = useSession();
+
+  const [avatarUrl, setAvatarUrl] = useState(
+    data?.user?.avatarUrl || session?.user?.avatarUrl || "/avatar.webp"
+  );
+
+  useEffect(() => {
+    setAvatarUrl(
+      data?.user?.avatarUrl || session?.user?.avatarUrl || "/avatar.webp"
+    );
+  }, [data?.user?.avatarUrl, session?.user?.avatarUrl]);
 
   const changeProfile = async (input: IProfile) => {
     await update({
@@ -122,13 +146,34 @@ export const AuthProvider = ({
     [data]
   );
 
+  const refreshAvatarUrl = async () => {
+    try {
+      const response = await fetch("/api/auth/refresh-avatar");
+      if (!response.ok) throw new Error("Failed to refresh avatar");
+
+      const data = await response.json();
+
+      setAvatarUrl(data.avatarUrl);
+
+      await update({
+        user: {
+          avatarUrl: data.avatarUrl,
+        },
+      });
+    } catch (error) {
+      console.error("Error refreshing avatar:", error);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user: data?.user ?? session?.user,
         profile: data?.user?.current_profile ?? session?.user?.current_profile,
+        avatarUrl,
         changeProfile,
         refreshCurrentProfile,
+        refreshAvatarUrl,
         navBarItems,
         navigationByProfile,
         restrictFeatureByProfile,

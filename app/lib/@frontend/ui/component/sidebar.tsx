@@ -28,7 +28,6 @@ import {
 import { useIsOnPathname } from "../../hook/is-on-pathname";
 import { useAuth } from "../../context";
 import { ShowVersion } from "./show-version";
-import { userObjectRepository } from "../../../@backend/infra";
 
 export type NavItem = {
   name: string;
@@ -142,11 +141,7 @@ export function SideBar(props: Props) {
   const { navigation, menuListItem } = props;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isOnPathname = useIsOnPathname();
-  const { user } = useAuth();
-  
-  const userImageUrl = user?.image?.key 
-    ? userObjectRepository.generateUrl(user.image.key)
-    : "/avatar.webp";
+  const { avatarUrl } = useAuth();
 
   return (
     <>
@@ -273,9 +268,9 @@ export function SideBar(props: Props) {
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
                   <img
-                    alt=""
-                    src={userImageUrl}
-                    className="size-8 rounded-full"
+                    alt="User avatar"
+                    src={avatarUrl}
+                    className="size-8 rounded-full object-cover"
                   />
                 </MenuButton>
               </div>
@@ -318,8 +313,8 @@ export function SideBar(props: Props) {
             <span className="sr-only ">Your profile</span>
             <img
               className="h-8 w-8 rounded-full bg-gray-50 hidden lg:block"
-              src={userImageUrl}
-              alt=""
+              src={avatarUrl}
+              alt="User avatar"
             />
           </a>
         </div>
