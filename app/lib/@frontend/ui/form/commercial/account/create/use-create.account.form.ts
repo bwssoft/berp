@@ -352,7 +352,7 @@ export function useCreateAccountForm() {
           district: address.district,
           number: address.number,
           zip_code: address.zip,
-          complement: "",
+          complement: address.details ?? "",
           type: ["Comercial"],
         });
       }
