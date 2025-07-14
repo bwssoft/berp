@@ -1,5 +1,5 @@
 import { EType } from "@/app/lib/@backend/domain";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { z } from "zod";
 
