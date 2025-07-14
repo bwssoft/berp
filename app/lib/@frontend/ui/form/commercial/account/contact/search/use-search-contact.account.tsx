@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState, useEffect } from "react";
 import { IAccount, IContact } from "@/app/lib/@backend/domain";
 import { useQueryClient } from "@tanstack/react-query";

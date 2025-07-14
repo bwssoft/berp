@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { IUser } from "@/app/lib/@backend/domain";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ import { userConstants } from "@/app/lib/constant";
 import { useEffect, useState } from "react";
 import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { updateOneUser } from "@/app/lib/@backend/action/admin/user.action";
+import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";
 
 const updateSchema = z
     .object({
@@ -102,6 +103,7 @@ export function useUpdateOneUserForm(user: IUser) {
         const {success, error } = await updateOneUser(data.id, {
             ...data,
             image: undefined,
+            cpf: removeSpecialCharacters(data.cpf),
         }, formData);
 
         if(success){

@@ -7,11 +7,11 @@ import {
   IConfigurationLog,
   IConfigurationProfile,
   ITechnology,
-} from "../../@backend/domain";
-import { ISerialPort } from "./use-serial-port";
-import { useTechnology } from "./use-technology";
+} from "../../../../../../@backend/domain";
+import { ISerialPort } from "../../../../../hook/use-serial-port";
+import { useTechnology } from "../../../../../hook/use-technology";
 import { useRouter } from "next/navigation";
-import { createManyConfigurationLog } from "../../@backend/action/production/configuration-log.action";
+import { createManyConfigurationLog } from "../../../../../../@backend/action/production/configuration-log.action";
 
 namespace Namespace {
   export interface UseConfigurationProps {

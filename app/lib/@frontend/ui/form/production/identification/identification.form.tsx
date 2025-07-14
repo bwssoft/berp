@@ -1,13 +1,15 @@
 "use client";
 
+import { Loader2, Settings } from "lucide-react";
 import { Button, Input } from "../../../component";
 import { useIdentificationForm } from "./use-identification.form";
 
 export function IdentificationForm(props: {
   onSubmit: (id: string) => Promise<void>;
-  disabled: boolean;
+  isIdentifying: boolean;
+  isDetecting: boolean;
 }) {
-  const { onSubmit, disabled } = props;
+  const { onSubmit, isIdentifying, isDetecting } = props;
   const {
     handleSubmit,
     errors,
@@ -34,12 +36,26 @@ export function IdentificationForm(props: {
         onChange={handleChangeInput}
       />
       <Button
-        disabled={disabled}
+        disabled={isDetecting || isIdentifying}
         variant="default"
-        className="h-fit whitespace-nowrap bg-blue-600 hover:bg-blue-500"
         type="submit"
       >
-        Send
+        {isDetecting ? (
+          <>
+            <Loader2 className="animate-spin mr-2 h-4 w-4" />
+            Detectando
+          </>
+        ) : isIdentifying ? (
+          <>
+            <Loader2 className="animate-spin mr-2 h-4 w-4" />
+            Gravando
+          </>
+        ) : (
+          <>
+            <Settings className="mr-2 h-4 w-4" />
+            Gravar
+          </>
+        )}
       </Button>
     </form>
   );
