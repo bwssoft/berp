@@ -1,111 +1,310 @@
+// columns.tsx
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
-import Link from "next/link";
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
-import { Button } from "../../../component";
-import { deviceConstants } from "@/app/lib/constant";
 import { Device } from "@/app/lib/@backend/domain";
+import Link from "next/link";
+import { Button } from "../../../component";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
-const statuses = {
-  progress: "text-gray-500 bg-gray-800/20",
-  success: "text-green-500 bg-green-800/20",
-  error: "text-rose-500 bg-rose-800/20",
-};
-
-const text = {
-  progress: "text-gray-800",
-  success: "text-green-800",
-  error: "text-rose-800",
-};
-export const columns: ColumnDef<{
-  id: string;
+export interface Row {
   equipment_before: {
     serial: string;
     imei?: string;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
   };
-  equipment_after?: {
-    imei?: string;
+  equipment_after: {
     serial?: string;
+    imei?: string;
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
   };
   status: boolean;
+  id: string;
   created_at: Date;
   technology: {
     system_name: Device.Model;
   };
-}>[] = [
+}
+
+/** Estilos para o badge de status */
+const statuses = {
+  true: "text-green-500 bg-green-800/20",
+  false: "text-rose-500 bg-rose-800/20",
+};
+const textColor = {
+  true: "text-green-800",
+  false: "text-rose-800",
+};
+const info = {
+  true: "Sucesso",
+  false: "Falha",
+};
+
+/** Colunas comuns a todas as tecnologias */
+const commonColumns: ColumnDef<Row>[] = [
   {
     header: "Status",
     accessorKey: "status",
     cell: ({ row }) => {
-      const { original } = row;
-      const status = original.status ? "success" : "error";
-      const label = original.status ? "Sucesso" : "Falha";
+      const s = String(row.original.status) as keyof typeof statuses;
       return (
         <div className="flex items-center gap-1">
-          <div className={cn(statuses[status], "flex-none rounded-full p-1")}>
+          <div className={cn(statuses[s], "flex-none rounded-full p-1 w-fit")}>
             <div className="h-1.5 w-1.5 rounded-full bg-current" />
           </div>
-          <div className={cn("hidden font-semibold sm:block", text[status])}>
-            {label}
+          <div className={cn("hidden font-semibold sm:block", textColor[s])}>
+            {info[s]}
           </div>
         </div>
       );
     },
   },
   {
-    header: "Antes",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const { original } = row;
-      return (
-        <p title={original.equipment_before.serial}>
-          {original.equipment_before.serial ?? "--"}
-        </p>
-      );
-    },
-  },
-  {
-    header: "Depois",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const { original } = row;
-      return (
-        <p title={original?.equipment_after?.serial}>
-          {original?.equipment_after?.serial ?? "--"}
-        </p>
-      );
-    },
-  },
-  {
-    header: "Tecnologia",
-    accessorKey: "technology",
-    cell: ({ row }) => {
-      const { original } = row;
-      return deviceConstants.model[original.technology.system_name] ?? "--";
-    },
-  },
-  {
-    header: "Data de criação",
+    header: "Data",
     accessorKey: "created_at",
-    cell: ({ row }) => {
-      const iput = row.original;
-      return iput.created_at.toLocaleString();
-    },
-  },
-  {
-    header: "Ação",
-    accessorKey: "equipment",
-    cell: ({ row }) => {
-      const { original } = row;
-      return (
-        <Link href={`/production/log/identificator/${original.id}`}>
-          <Button variant="ghost">
-            <ArrowTopRightOnSquareIcon aria-hidden="true" className="size-5" />
-          </Button>
-        </Link>
-      );
-    },
+    cell: ({ row }) => <p>{row.original.created_at.toLocaleString()}</p>,
   },
 ];
+
+/** Colunas específicas por tipo de dispositivo */
+const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
+  DM_E3_PLUS_4G: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => {
+        const before = row.original.equipment_before.serial ?? "--";
+        const after = row.original.equipment_after.serial ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: "IMEI",
+      accessorKey: "equipment.imei",
+      cell: ({ row }) => {
+        const before = row.original.equipment_before.imei ?? "--";
+        const after = row.original.equipment_after.imei ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+  ],
+  DM_BWS_NB2: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => {
+        const before = row.original.equipment_before.serial ?? "--";
+        const after = row.original.equipment_after.serial ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: "IMEI",
+      accessorKey: "equipment.imei",
+      cell: ({ row }) => {
+        const before = row.original.equipment_before.imei ?? "--";
+        const after = row.original.equipment_after.imei ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+  ],
+  DM_BWS_LORA: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => {
+        const before = row.original.equipment_before.serial ?? "--";
+        const after = row.original.equipment_after.serial ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: "Timestamp",
+      accessorKey: "equipment.lora_keys.timestamp",
+      cell: ({ row }) => {
+        const before =
+          row.original.equipment_before.lora_keys?.timestamp ?? "--";
+        const after = row.original.equipment_after.lora_keys?.timestamp ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+  ],
+  DM_BWS_NB2_LORA: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => {
+        const before = row.original.equipment_before.serial ?? "--";
+        const after = row.original.equipment_after.serial ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: "IMEI",
+      accessorKey: "equipment.imei",
+      cell: ({ row }) => {
+        const before = row.original.equipment_before.imei ?? "--";
+        const after = row.original.equipment_after.imei ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: "Timestamp",
+      accessorKey: "equipment.lora_keys.timestamp",
+      cell: ({ row }) => {
+        const before =
+          row.original.equipment_before.lora_keys?.timestamp ?? "--";
+        const after = row.original.equipment_after.lora_keys?.timestamp ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+  ],
+};
+
+/**
+ * Retorna o conjunto de colunas para o tipo de Device.Model informado.
+ */
+export function getColumns(type: Device.Model): ColumnDef<Row>[] {
+  return [
+    ...commonColumns,
+    ...(columnMap[type] || []),
+    {
+      header: "Ação",
+      accessorKey: "equipment",
+      cell: ({ row }) => {
+        const { original } = row;
+        return (
+          <Link
+            href={`/production/log/identificator/${original.id}`}
+            target="_blank"
+          >
+            <Button variant="ghost">
+              <ArrowTopRightOnSquareIcon
+                aria-hidden="true"
+                className="size-5"
+              />
+            </Button>
+          </Link>
+        );
+      },
+    },
+  ];
+}

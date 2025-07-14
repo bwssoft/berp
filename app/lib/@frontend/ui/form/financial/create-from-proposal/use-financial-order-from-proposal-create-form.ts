@@ -1,6 +1,6 @@
 import { updateOneFinancialOrderFromProposal } from "@/app/lib/@backend/action/financial/financial-order.action";
 import { IFinancialOrder } from "@/app/lib/@backend/domain";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { error } from "console";
 import { useEffect } from "react";

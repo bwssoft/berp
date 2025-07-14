@@ -13,7 +13,7 @@ import {
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useRouter } from "next/navigation";
 import { debounce } from "lodash";
 import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
@@ -313,7 +313,7 @@ export function useCreateAccountForm() {
     const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
       document: {
         ...data.document,
-        value: data.document.value.replace(/\D/g, "")
+        value: data.document.value.replace(/\D/g, ""),
       },
       ...(type === "cpf"
         ? {

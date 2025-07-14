@@ -1,6 +1,6 @@
 import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
-import { ConfiguratorPanel } from "./@components/configurator-panel";
 import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { ConfiguratorPage } from "@/app/lib/@frontend/ui/page/production/tool/configurator/configurator.page";
 
 interface Props {
   searchParams: {
@@ -26,26 +26,9 @@ export default async function Page(props: Props) {
   ]);
 
   return (
-    <div>
-      <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8 ">
-        <div>
-          <h1 className="text-base font-semibold leading-7 text-gray-900">
-            Configurador
-          </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Ferramenta para configurar{" "}
-            <span className="text-gray-900">dispositivos IoT.</span> Data de
-            hoje:{" "}
-            <time dateTime={date.toLocaleDateString()}>
-              {date.toLocaleDateString()}
-            </time>
-          </p>
-        </div>
-      </div>
-      <ConfiguratorPanel
-        configurationProfile={configurationProfile}
-        technology={technology}
-      />
-    </div>
+    <ConfiguratorPage
+      configurationProfile={configurationProfile}
+      technology={technology}
+    />
   );
 }

@@ -9,7 +9,7 @@ import {
     useAuditUserModal,
 } from "@/app/lib/@frontend/ui/modal";
 import { Pagination } from "../../../component/pagination";
-import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { useAuth } from "@/app/lib/@frontend/context";
 
 const PAGE_SIZE = 10;
