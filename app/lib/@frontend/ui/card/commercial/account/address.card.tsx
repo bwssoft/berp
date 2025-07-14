@@ -1,6 +1,6 @@
 "use client";
 
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { Copy, RotateCcw, Edit, Archive, Trash } from "lucide-react";
 import {
     Button,

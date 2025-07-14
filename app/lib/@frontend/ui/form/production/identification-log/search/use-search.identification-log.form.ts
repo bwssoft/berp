@@ -1,6 +1,7 @@
 import { exportIdentificationLog } from "@/app/lib/@backend/action/production/identification-log.action";
 import { IIdentificationLog } from "@/app/lib/@backend/domain";
-import { useDebounce, useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { useDebounce } from "@/app/lib/@frontend/hook/use-debounce";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { Filter } from "mongodb";
 import { ChangeEvent } from "react";
 

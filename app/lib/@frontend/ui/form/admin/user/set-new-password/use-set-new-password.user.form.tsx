@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { updateUserPassword } from "@/app/lib/@backend/action/admin/user.action";
 import { logout } from "@/app/lib/@backend/action/auth/login.action";
 
