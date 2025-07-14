@@ -209,7 +209,7 @@ export function ConfigurationProfileUpsertForm(props: Props) {
 
           {/* Seção Configurações Gerais */}
           {technology?.name.system !== "DM_BWS_LORA" ? (
-            <GeneralConfigurationProfileForm />
+            <GeneralConfigurationProfileForm technology={technology} />
           ) : (
             <></>
           )}
