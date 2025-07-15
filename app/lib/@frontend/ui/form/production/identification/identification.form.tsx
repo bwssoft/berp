@@ -3,23 +3,20 @@
 import { Loader2, Settings } from "lucide-react";
 import { Button, Input } from "../../../component";
 import { useIdentificationForm } from "./use-identification.form";
+import { ITechnology } from "@/app/lib/@backend/domain";
 
 export function IdentificationForm(props: {
   onSubmit: (id: string) => Promise<void>;
   isIdentifying: boolean;
   isDetecting: boolean;
+  technology: ITechnology;
 }) {
-  const { onSubmit, isIdentifying, isDetecting } = props;
-  const {
-    handleSubmit,
-    errors,
-    inputIdRef,
-    register,
-    handleChangeInput,
-    serial,
-  } = useIdentificationForm({
-    onSubmit,
-  });
+  const { onSubmit, isIdentifying, isDetecting, technology } = props;
+  const { handleSubmit, errors, register, handleChangeInput } =
+    useIdentificationForm({
+      onSubmit,
+      technology,
+    });
   return (
     <form
       autoComplete="off"
@@ -28,10 +25,12 @@ export function IdentificationForm(props: {
     >
       <Input
         {...register("serial")}
-        value={serial}
+        // ref={(el) => {
+        //   register("serial").ref(el);
+        //   inputIdRef.current = el;
+        // }}
         label="Enter serial to writing"
         placeholder="Field to insert serial"
-        ref={inputIdRef}
         error={errors["serial"]?.message ?? ""}
         onChange={handleChangeInput}
       />
