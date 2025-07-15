@@ -365,7 +365,9 @@ export function useCreateAccountForm() {
           name: dataCnpj?.company.name || dataCnpj?.alias || "",
           contractEnabled: false,
           positionOrRelation: "",
-          contactFor: ["Comercial"],
+          originType: "api",
+          taxId: dataCnpj.taxId, // pra buscar o contato atualizado pelo taxId no card de contato
+          contactFor: ["Fiscal"],
           contactItems: [
             {
               id: crypto.randomUUID(),
@@ -374,7 +376,7 @@ export function useCreateAccountForm() {
                 dataCnpj?.phones[0].type === "LANDLINE"
                   ? "Telefone Comercial"
                   : "Celular",
-              preferredContact: { phone: true },
+              preferredContact: {},
             },
           ],
         });
