@@ -31,13 +31,16 @@ export function useSearchContactModal(accountId?: string) {
 
       let groupCompanies: IAccount[] = [];
 
-      if (!account?.economic_group_holding?.taxId) {
-        const controladas = await findManyAccount(
+      if (
+        !account?.economic_group_holding?.taxId ||
+        account.economic_group_holding.taxId === account.document?.value
+      ) {
+        const controlleds  = await findManyAccount(
           { "economic_group_holding.taxId": account.document?.value },
           currentPage,
           PAGE_SIZE
         );
-        groupCompanies = controladas.docs;
+        groupCompanies = controlleds.docs;
       } else {
         const holding = await findManyAccount(
           { "document.value": account.economic_group_holding.taxId },
