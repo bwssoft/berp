@@ -14,7 +14,7 @@ import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { debounce } from "lodash";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -69,7 +69,7 @@ export function useUpdateEconomicGroupForm(
   useEffect(() => {
     if (!isModalOpen) return;
 
-    if (initialHolding) {
+    if (initialHolding && Object.keys(initialHolding).length > 0) {
       setSelectedHolding([initialHolding]);
       setValue("cnpj.economic_group_holding", initialHolding);
     }
