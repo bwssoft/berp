@@ -186,6 +186,7 @@ export function CNPJAccountForm() {
               data={dataHolding}
               label="Grupo Econômico (Holding)"
               behavior="search"
+              disableLocalFilter={true}
               onSearchChange={(text: string) => {
                 debouncedValidationHolding(text);
               }}
@@ -220,6 +221,7 @@ export function CNPJAccountForm() {
               data={dataControlled}
               label="Grupo Econômico (Controladas)"
               behavior="search"
+              disableLocalFilter={true}
               placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
               value={selectedControlled || []}
               onChange={(selectedItems) => {

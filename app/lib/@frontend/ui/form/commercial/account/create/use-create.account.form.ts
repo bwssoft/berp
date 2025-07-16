@@ -154,7 +154,6 @@ export function useCreateAccountForm() {
 
   // Estado para guardar os dados retornados para holding e controlled
   const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
-
   const [dataControlled, setDataControlled] = useState<ICnpjaResponse[]>([]);
   const [dataCnpj, setDataCnpj] = useState<ICnpjaResponse | null>(null);
   const [selectedControlled, setSelectedControlled] = useState<
