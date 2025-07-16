@@ -49,6 +49,7 @@ export function EconomicGroupAccountForm({
           <Combobox
             modal={true}
             data={dataHolding}
+            disableLocalFilter={true}
             label="Grupo Econômico (Holding)"
             behavior="search"
             onSearchChange={(text: string) => {
@@ -79,6 +80,7 @@ export function EconomicGroupAccountForm({
             modal={true}
             type="multiple"
             data={dataControlled}
+            disableLocalFilter={true}
             label="Grupo Econômico (Controladas)"
             behavior="search"
             placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
