@@ -14,6 +14,7 @@ interface Props {
     key: "contact" | "controlled" | "holding",
     type: "Validar" | "Editar"
   ) => void;
+  resetType: () => void;
   type: "cpf" | "cnpj" | undefined;
   textButton: {
     holding: string;
@@ -27,6 +28,7 @@ export function DocumentAccountForm({
   type,
   textButton,
   toggleButtonText,
+  resetType,
 }: Props) {
   const methods = useFormContext<CreateAccountFormSchema>();
   const [isValidating, setIsValidating] = useState(false);
@@ -44,6 +46,12 @@ export function DocumentAccountForm({
               onChange={(e) => {
                 const maskedValue = maskCpfCnpj(e.target.value);
                 field.onChange(maskedValue);
+
+                methods.clearErrors("document.value");
+
+                if (textButton.contact === "Editar") {
+                  resetType();
+                }
               }}
               label="CPF/CNPJ *"
               disabled={textButton.contact !== "Validar" || isValidating}
@@ -62,14 +70,18 @@ export function DocumentAccountForm({
                 const result = await onValidate(
                   methods.getValues("document.value")
                 );
-                if (type !== undefined && result !== "invalid") {
+                if (result !== "invalid") {
                   toggleButtonText("contact", "Editar");
+                } else {
+                  resetType();
                 }
               } finally {
                 setIsValidating(false);
               }
             } else {
               toggleButtonText("contact", "Validar");
+              resetType();
+              methods.clearErrors("document.value");
             }
           }}
         >
