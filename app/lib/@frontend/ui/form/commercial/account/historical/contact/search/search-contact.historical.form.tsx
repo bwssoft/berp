@@ -16,6 +16,7 @@ import {
 } from "@/app/lib/@frontend/ui/component";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
 import { WhatsappIcon } from "@/app/lib/@frontend/svg/whatsapp-icon";
+import { Controller } from "react-hook-form";
 
 type ContactAccountFormProps = {
   contacts: {
@@ -41,11 +42,21 @@ export function SearchContactHistoricalAccountForm({
   setSelectContact,
 }: ContactAccountFormProps) {  
   
-  const { toggleSelection, isSelected, handleAddOtherContact, otherContactInfo, setOtherContactInfo, contactData} = useSearchContactHistoricalAccount({
+  const { 
+    toggleSelection, 
+    isSelected, 
+    handleAddOtherContact, 
+    otherContactInfo, 
+    setOtherContactInfo, 
+    contactData, 
+    control,
+    errors
+  } = useSearchContactHistoricalAccount({
     contacts,
     selectContact,
     setSelectContact
   });
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-auto flex flex-col gap-4">
@@ -117,46 +128,73 @@ export function SearchContactHistoricalAccountForm({
                 />
               </DisclosureButton>
               <DisclosurePanel className="px-4 pb-2 flex flex-col gap-2">
-                <Input
-                  label="Nome"
-                  value={otherContactInfo.name}
-                  onChange={(e) =>
-                    setOtherContactInfo((prev) => ({
-                      ...prev,
-                      name: e.target.value,
-                    }))
-                  }
+                <Controller 
+                  name="name"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      label="Nome"
+                      value={otherContactInfo.name}
+                      error={errors.errors.name?.message}
+                      onChange={(e) => {
+                        setOtherContactInfo((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                        field.onChange(e)
+                      }
+                    }
+                    />
+                  )}
                 />
                 <div className="grid grid-cols-2 gap-2">
-                  <Combobox
-                    data={[
-                      "Celular",
-                      "Email",
-                      "Telefone Residencial",
-                      "Telefone Comercial",
-                    ]}
-                    value={otherContactInfo.type ? [otherContactInfo.type] : []}
-                    onChange={(value) =>
-                      setOtherContactInfo((prev) => ({
-                        ...prev,
-                        type: Array.isArray(value) ? (value[0] ?? "") : value,
-                      }))
-                    }
-                    label="Tipo"
-                    type="single"
-                    placeholder="Selecione o tipo"
-                    keyExtractor={(item) => item}
-                    displayValueGetter={(item) => item}
+                  <Controller 
+                    name={"type"}   
+                    control={control}               
+                    render={({ field }) => (
+                      <Combobox
+                        data={[
+                          "Celular",
+                          "Email",
+                          "Telefone Residencial",
+                          "Telefone Comercial",
+                        ]}
+                        error={errors.errors.type?.message}
+                        value={otherContactInfo.type ? [otherContactInfo.type] : []}
+                        onChange={(value) =>{
+                          setOtherContactInfo((prev) => ({
+                            ...prev,
+                            type: Array.isArray(value) ? (value[0] ?? "") : value,
+                          }))
+                          field.onChange(value)
+                          }
+                        }
+                        label="Tipo"
+                        type="single"
+                        placeholder="Selecione o tipo"
+                        keyExtractor={(item) => item}
+                        displayValueGetter={(item) => item}
+                      />
+                    )} 
                   />
-                  <Input
-                    label="Contato"
-                    value={otherContactInfo.contact}
-                    onChange={(e) =>
-                      setOtherContactInfo((prev) => ({
-                        ...prev,
-                        contact: e.target.value,
-                      }))
-                    }
+                  <Controller 
+                    name="contact"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        label="Contato"
+                        value={otherContactInfo.contact}
+                        error={errors.errors.contact?.message}
+                        onChange={(e) => {
+                            setOtherContactInfo((prev) => ({
+                              ...prev,
+                              contact: e.target.value,
+                            }))
+                            field.onChange(e)
+                          }
+                        }
+                      />
+                    )}
                   />
                 </div>
                 <Button type="button" onClick={handleAddOtherContact}>
