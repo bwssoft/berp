@@ -1,7 +1,9 @@
 "use client";
 
-import { IContact } from "@/app/lib/@backend/domain";
+import { IAddress, IContact } from "@/app/lib/@backend/domain";
 import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.card";
+import StepNavigation from "@/app/lib/@frontend/ui/card/commercial/tab/account-tab";
+import { useAccountStepProgress } from "@/app/lib/@frontend/ui/card/commercial/tab/use-account-step-progress";
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
@@ -24,12 +26,13 @@ import { useState } from "react";
 
 interface Props {
     contacts: IContact[];
+    addresses: IAddress[];
     hasPermissionContacts: boolean;
     accountId: string;
 }
 
 export function ContactDataPage(props: Props) {
-    const { contacts, hasPermissionContacts, accountId } = props;
+    const { contacts, hasPermissionContacts, accountId, addresses } = props;
 
     const [selectedContact, setSelectedContact] = useState<IContact>();
     const router = useRouter();
@@ -64,9 +67,16 @@ export function ContactDataPage(props: Props) {
         isLoading: isLoadingDeleteContact,
     } = useDeleteContactDialog();
 
+    const steps = useAccountStepProgress({
+        accountId,
+        addresses,
+        contacts,
+    });
+
     return (
         <div>
             <div className="flex gap-4 w-full justify-end"></div>
+            <StepNavigation steps={steps} />
             <div>
                 <Card className="w-full">
                     <CardHeader className="pb-3 flex-shrink-0">
