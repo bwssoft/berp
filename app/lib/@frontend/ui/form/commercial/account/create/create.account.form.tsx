@@ -7,6 +7,7 @@ import { Button, Form } from "../../../../component";
 import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
 import { FakeLoadingButton } from "../../../../component/fake-load-button";
+import { useRouter } from "next/navigation";
 
 export function CreateOneAccountForm() {
   const {
@@ -19,6 +20,8 @@ export function CreateOneAccountForm() {
     setType,
     form,
   } = useCreateAccountForm();
+
+  const router = useRouter();
 
   const hasValidated = type && methods.getValues("document.type") === type;
 
@@ -42,7 +45,13 @@ export function CreateOneAccountForm() {
 
           {hasValidated && (
             <div className="flex gap-4">
-              <Button type="button" variant="ghost">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  router.push("/commercial/account");
+                }}
+              >
                 Cancelar
               </Button>
               <FakeLoadingButton
