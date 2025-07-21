@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { deleteManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { deleteManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
@@ -21,6 +22,7 @@ export function PageFooterButtons({ id, addresses, accounts }: Props) {
     try {
       await deleteManyAddress({ accountId: id });
       await deleteManyContact({ accountId: id });
+      await deleteOneAccount({ id });
 
       toast({
         title: "Cancelado!",
