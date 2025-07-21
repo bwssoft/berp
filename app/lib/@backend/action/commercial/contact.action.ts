@@ -11,6 +11,7 @@ import {
   deleteOneContactUsecase,
   updateOneContactUsecase,
 } from "../../usecase/commercial/contact";
+import { deleteManyContactUsecase } from "../../usecase/commercial/contact/delete-many-contact.usecase";
 
 export async function createOneContact(
   contact: Omit<IContact, "id" | "created_at">
@@ -40,4 +41,9 @@ export const findOneContact = async (filter: Filter<IContact>) => {
 
 export const deleteOneContact = async (query: { id: string }) => {
   return await deleteOneContactUsecase.execute(query);
+};
+
+export const deleteManyContact = async (filter: Partial<IContact>) => {
+  const result = await deleteManyContactUsecase.execute(filter);
+  return result;
 };
