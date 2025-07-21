@@ -5,7 +5,7 @@ import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ColumnDef } from "@tanstack/react-table";
 import { downloadAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.download.action";
 import { deleteAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.delete.action";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 
 export const createColumns = (
   onDelete?: (id: string) => Promise<void>,

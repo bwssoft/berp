@@ -1,23 +1,22 @@
 "use client";
 
+import { Loader2, Settings } from "lucide-react";
 import { Button, Input } from "../../../component";
 import { useIdentificationForm } from "./use-identification.form";
+import { ITechnology } from "@/app/lib/@backend/domain";
 
 export function IdentificationForm(props: {
   onSubmit: (id: string) => Promise<void>;
-  disabled: boolean;
+  isIdentifying: boolean;
+  isDetecting: boolean;
+  technology: ITechnology;
 }) {
-  const { onSubmit, disabled } = props;
-  const {
-    handleSubmit,
-    errors,
-    inputIdRef,
-    register,
-    handleChangeInput,
-    serial,
-  } = useIdentificationForm({
-    onSubmit,
-  });
+  const { onSubmit, isIdentifying, isDetecting, technology } = props;
+  const { handleSubmit, errors, register, handleChangeInput } =
+    useIdentificationForm({
+      onSubmit,
+      technology,
+    });
   return (
     <form
       autoComplete="off"
@@ -26,20 +25,36 @@ export function IdentificationForm(props: {
     >
       <Input
         {...register("serial")}
-        value={serial}
+        // ref={(el) => {
+        //   register("serial").ref(el);
+        //   inputIdRef.current = el;
+        // }}
         label="Enter serial to writing"
         placeholder="Field to insert serial"
-        ref={inputIdRef}
         error={errors["serial"]?.message ?? ""}
         onChange={handleChangeInput}
       />
       <Button
-        disabled={disabled}
+        disabled={isDetecting || isIdentifying}
         variant="default"
-        className="h-fit whitespace-nowrap bg-blue-600 hover:bg-blue-500"
         type="submit"
       >
-        Send
+        {isDetecting ? (
+          <>
+            <Loader2 className="animate-spin mr-2 h-4 w-4" />
+            Detectando
+          </>
+        ) : isIdentifying ? (
+          <>
+            <Loader2 className="animate-spin mr-2 h-4 w-4" />
+            Gravando
+          </>
+        ) : (
+          <>
+            <Settings className="mr-2 h-4 w-4" />
+            Gravar
+          </>
+        )}
       </Button>
     </form>
   );

@@ -2,7 +2,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/app/lib/util";
 import React, { ComponentProps } from "react";
 import { useCombobox } from ".";
-import { useDebounce } from "../../../hook";
+import { useDebounce } from "../../../hook/use-debounce";
 
 interface ComboboxMultipleSearchProps extends ComponentProps<"input"> {}
 

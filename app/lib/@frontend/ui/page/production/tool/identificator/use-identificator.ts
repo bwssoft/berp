@@ -1,13 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Device, IIdentificationLog, ITechnology } from "../../@backend/domain";
-import { ISerialPort } from "./use-serial-port";
-import { useTechnology } from "./use-technology";
+import {
+  Device,
+  IIdentificationLog,
+  ITechnology,
+} from "../../../../../../@backend/domain";
+import { ISerialPort } from "../../../../../hook/use-serial-port";
+import { useTechnology } from "../../../../../hook/use-technology";
 
-import { toast } from "./use-toast";
-import { createOneIdentificationLog } from "../../@backend/action/production/identification-log.action";
-import { upsertOneDevice } from "../../@backend/action/engineer/device.action";
+import { toast } from "../../../../../hook/use-toast";
+import { createOneIdentificationLog } from "../../../../../../@backend/action/production/identification-log.action";
+import { upsertOneDevice } from "../../../../../../@backend/action/engineer/device.action";
 
 namespace Namespace {
   export interface useIdentificationProps {

@@ -5,7 +5,7 @@ import {
   IConfigurationProfile,
   ITechnology,
 } from "@/app/lib/@backend/domain";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,14 +19,12 @@ import {
 const twoBytesSchema = z.coerce
   .number()
   .int()
-  .positive({ message: "O valor deve ser positivo" })
   .min(0, { message: "O valor deve ser no mínimo 0" })
   .max(65535, { message: "O valor deve ser no máximo 65535" });
 
 const oneBytesSchema = z.coerce
   .number()
   .int()
-  .positive({ message: "O valor deve ser positivo" })
   .min(0, { message: "O valor deve ser no mínimo 0" })
   .max(255, { message: "O valor deve ser no máximo 255" });
 
@@ -60,7 +58,6 @@ const keepAliveSchema = z.coerce
 
 const odometer = z.coerce
   .number()
-  .positive({ message: "O valor deve ser positivo" })
   .min(0, { message: "O valor deve ser no mínimo 0" })
   .optional();
 
@@ -350,7 +347,9 @@ export function useConfigurationProfileUpsertForm(props: Props) {
         },
       },
     },
+    shouldUnregister: true,
   });
+
   const handleSubmit = form.handleSubmit(
     async (data) => {
       const { id } = data;

@@ -13,7 +13,7 @@ import {
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useRouter } from "next/navigation";
 import { debounce } from "lodash";
 import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
@@ -74,7 +74,11 @@ const schema = z
             })
           )
           .optional(),
-        sector: z.string().min(1, "Setor obrigatório"),
+        sector: z
+          .string({
+            required_error: "Setor obrigatório",
+          })
+          .min(1, "Setor obrigatório"),
         economic_group_holding: z
           .object({
             taxId: z.string().optional(),
@@ -313,7 +317,7 @@ export function useCreateAccountForm() {
     const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
       document: {
         ...data.document,
-        value: data.document.value.replace(/\D/g, "")
+        value: data.document.value.replace(/\D/g, ""),
       },
       ...(type === "cpf"
         ? {
@@ -352,7 +356,7 @@ export function useCreateAccountForm() {
           district: address.district,
           number: address.number,
           zip_code: address.zip,
-          complement: "",
+          complement: address.details ?? "",
           type: ["Faturamento"],
           default_address: true,
         });

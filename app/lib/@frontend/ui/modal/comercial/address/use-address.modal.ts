@@ -1,7 +1,7 @@
 "use client";
 
 import { deleteOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState } from "react";
 
 export function useAddressModal() {
