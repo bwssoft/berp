@@ -88,12 +88,18 @@ export const useFirmwareUpdate = (props: Namespace.UseFirmwareUpdateProps) => {
         .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
       // save result on database
-      const dataSavedOnDb = await createManyFirmwareUpdateLog(result);
+      const res = await fetch("/api/production/firmware-update-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result),
+      });
+      if (!res.ok) throw new Error("Erro ao salvar log de firmware");
+      const dataSavedOnDb = await res.json();
 
       // update state with configuration process result
       setUpdated((prev) => prev.concat(dataSavedOnDb));
     } catch (error) {
-      console.error("[ERROR] configure use-configuration", error);
+      console.error("[ERROR] update use-firmware-update", error);
     } finally {
       setIsUpdating(false);
     }
@@ -109,18 +115,17 @@ export const useFirmwareUpdate = (props: Namespace.UseFirmwareUpdateProps) => {
         const detected = await handleDetection(ports);
 
         setDetected((prev) => {
-          const newOnes = detected.filter(
-            (id) =>
-              !prev.some((el) => el.equipment.serial === id.response?.serial)
-          );
+          const map = new Map(prev.map((d) => [d.port, d]));
 
-          const mappedNew = newOnes.map(({ port, response }) => ({
-            port,
-            equipment: response!,
-            status: isIdentified(response),
-          }));
+          for (const { port, response } of detected) {
+            map.set(port, {
+              port,
+              equipment: response!,
+              status: isIdentified(response!),
+            });
+          }
 
-          return prev.concat(mappedNew);
+          return Array.from(map.values());
         });
 
         setIsDetecting(false);
