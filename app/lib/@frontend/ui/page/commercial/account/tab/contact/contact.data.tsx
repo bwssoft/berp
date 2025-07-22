@@ -46,6 +46,7 @@ export function ContactDataPage(props: Props) {
     open: openCreateContact,
     openModal: openModalContact,
     closeModal: closeModalContact,
+    createContactLocally,
   } = useCreateContactModal();
 
   /**
@@ -55,6 +56,7 @@ export function ContactDataPage(props: Props) {
     open: openUpdateContact,
     openModal: openUpdateModalContact,
     closeModal: closeUpdateModalContact,
+    updateContactLocally,
   } = useUpdateContactModal();
 
   /**
@@ -64,8 +66,8 @@ export function ContactDataPage(props: Props) {
     open: openDeleteContact,
     openDialog: openDeleteContactModal,
     setOpen: setOpenDeleteContactModal,
-    confirm: deleteContact,
     isLoading: isLoadingDeleteContact,
+    deleteContactLocally,
   } = useDeleteContactDialog();
 
   async function handleCancel() {
@@ -162,6 +164,7 @@ export function ContactDataPage(props: Props) {
       <CreateContactModal
         closeModal={closeModalContact}
         open={openCreateContact}
+        createContact={createContactLocally}
       />
 
       <UpdateContactModal
@@ -173,7 +176,9 @@ export function ContactDataPage(props: Props) {
       <DeleteContactDialog
         open={openDeleteContact}
         setOpen={setOpenDeleteContactModal}
-        confirm={() => selectedContact && deleteContact(selectedContact.id)}
+        confirm={() =>
+          selectedContact && deleteContactLocally(selectedContact.id)
+        }
         isLoading={isLoadingDeleteContact}
       />
     </div>

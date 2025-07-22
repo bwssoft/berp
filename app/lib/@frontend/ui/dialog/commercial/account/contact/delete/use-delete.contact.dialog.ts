@@ -65,7 +65,7 @@ export function useDeleteContactDialog() {
     }
   }
 
-  function deleteContactLocally() {
+  async function deleteContactLocally(id: string) {
     // Logic for deleting a contact locally can be added here
     // This function can be used to handle the local deletion action
   }

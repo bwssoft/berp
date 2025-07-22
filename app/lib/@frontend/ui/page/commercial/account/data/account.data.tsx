@@ -258,6 +258,7 @@ export function AccountDataPage(props: Props) {
       <CreateContactModal
         open={openCreateContact}
         closeModal={closeModalContact}
+        createContact={createContact}
       />
 
       <UpdateContactModal

@@ -5,6 +5,7 @@ import {
   Button,
   Checkbox,
   Combobox,
+  ContactFormSchema,
   Input,
   useCreateContactAccount,
 } from "../../../../../component";
@@ -15,15 +16,16 @@ import { formatCpf, formatRgOrCpf } from "@/app/lib/util/format-rg-cpf";
 
 type Props = {
   closeModal?: () => void;
+  onSubmit: (data: ContactFormSchema, accountId?: string) => Promise<void>;
 };
 
-export function CreateContactAccountForm({ closeModal }: Props) {
+export function CreateContactAccountForm({ closeModal, onSubmit }: Props) {
   const {
     control,
     register,
     watch,
     fields,
-    onSubmit,
+    handleSubmit,
     handleNewContact,
     handlePreferredContact,
     handleRemove,
@@ -32,10 +34,13 @@ export function CreateContactAccountForm({ closeModal }: Props) {
     tempContact,
     isLoading,
     formState: { errors },
-  } = useCreateContactAccount(closeModal ?? (() => {}));
+  } = useCreateContactAccount(closeModal ?? (() => {}), onSubmit);
 
   return (
-    <form action={() => onSubmit()} className="flex flex-col items-start gap-4">
+    <form
+      action={() => handleSubmit()}
+      className="flex flex-col items-start gap-4"
+    >
       <Controller
         name="contractEnabled"
         control={control}

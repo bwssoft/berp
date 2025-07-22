@@ -17,7 +17,7 @@ export function useUpdateContactModal() {
     // Logic for updating a contact can be added here
   }
 
-  function updateContactLocally() {
+  async function updateContactLocally() {
     // Logic for updating a contact can be added here
   }
 
