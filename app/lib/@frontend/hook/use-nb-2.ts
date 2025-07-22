@@ -716,10 +716,12 @@ export const useNB2 = () => {
           {
             key: "write_serial",
             command: `WINS=${id}\r\n`,
+            check: "WINS=",
           },
           {
             key: "write_imei",
             command: `WIMEI=${identification.imei}\r\n`,
+            check: "WIMEI=",
           },
           {
             key: "read_serial",
