@@ -111,7 +111,14 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
           },
         };
 
-        const promises: Promise<any>[] = [createOneIdentificationLog(log)];
+        // save result on database
+        const promises: Promise<any>[] = [
+          fetch("/api/production/identification-log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(log),
+          }),
+        ];
         if (result.status) {
           promises.push(
             upsertOneDevice(
@@ -137,7 +144,9 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
         }
 
         // save result on database
-        const [dataSavedOnDb] = await Promise.all(promises);
+        const [res] = await Promise.all(promises);
+        if (!res.ok) throw new Error("Erro ao salvar log de identificação");
+        const dataSavedOnDb = await res.json();
 
         // update react state with the result
         setIdentified((prev) => prev.concat(dataSavedOnDb));
