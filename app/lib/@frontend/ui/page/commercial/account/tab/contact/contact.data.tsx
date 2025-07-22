@@ -171,6 +171,7 @@ export function ContactDataPage(props: Props) {
         contact={selectedContact!}
         open={openUpdateContact}
         closeModal={closeUpdateModalContact}
+        updateContact={updateContactLocally}
       />
 
       <DeleteContactDialog
