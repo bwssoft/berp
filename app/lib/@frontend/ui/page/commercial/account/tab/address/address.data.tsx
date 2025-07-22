@@ -42,6 +42,7 @@ export function AddressDataPage(props: Props) {
     open: openModalAddress,
     closeModal: closeCreateModalAddress,
     openModal: openCreateModalAddress,
+    createAddressLocally: createAddress,
   } = useAddressModal();
 
   /**
@@ -52,6 +53,7 @@ export function AddressDataPage(props: Props) {
     open: openUpdateAddress,
     closeModal: closeUpdateModalAddress,
     openModal: openUpdateModalAddress,
+    updateAddressLocally: updateAddress,
   } = useAddressUpdateModal();
 
   /**
@@ -60,9 +62,10 @@ export function AddressDataPage(props: Props) {
   const {
     open: openModalDelete,
     setOpen: setOpenModalDelete,
-    confirm: deleteAddress,
+    deleteAddressLocally: deleteAddress,
     isLoading,
   } = useAddressDeleteDialog();
+
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
       <div className="grid grid-cols-1 gap-6 items-stretch">
@@ -127,18 +130,14 @@ export function AddressDataPage(props: Props) {
         address={selectedAddress!}
         closeUpdateModal={closeUpdateModalAddress}
         openUpdateModal={openUpdateAddress}
-      />
-
-      <AddressUpdateModal
-        address={selectedAddress!}
-        closeUpdateModal={closeUpdateModalAddress}
-        openUpdateModal={openUpdateAddress}
+        updateAddress={updateAddress}
       />
 
       <CreatedAddressModal
         accountId={account.id!}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}
+        createAddress={createAddress}
       />
 
       <AddressDeleteDialog

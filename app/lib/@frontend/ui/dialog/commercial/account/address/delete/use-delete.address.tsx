@@ -66,7 +66,7 @@ export function useAddressDeleteDialog() {
     }
   }
 
-  function deleteAddressLocally() {
+  function deleteAddressLocally(id: string) {
     // Logic for deleting the address locally can be added here
     // This function can be used to handle the delete action
   }

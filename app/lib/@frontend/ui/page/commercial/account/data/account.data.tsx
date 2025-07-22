@@ -82,6 +82,7 @@ export function AccountDataPage(props: Props) {
     open: openCreateContact,
     openModal: openModalContact,
     closeModal: closeModalContact,
+    createContact,
   } = useCreateContactModal();
 
   /**
@@ -91,6 +92,7 @@ export function AccountDataPage(props: Props) {
     open: openUpdateContact,
     openModal: openUpdateModalContact,
     closeModal: closeUpdateModalContact,
+    updateContact,
   } = useUpdateContactModal();
 
   /**
@@ -100,8 +102,8 @@ export function AccountDataPage(props: Props) {
     open: openDeleteContact,
     openDialog: openDeleteContactModal,
     setOpen: setOpenDeleteContactModal,
-    confirm: deleteContact,
     isLoading: isLoadingDeleteContact,
+    deleteContact,
   } = useDeleteContactDialog();
 
   /**
@@ -112,6 +114,7 @@ export function AccountDataPage(props: Props) {
     open: openModalAddress,
     closeModal: closeCreateModalAddress,
     openModal: openCreateModalAddress,
+    createAddress,
   } = useAddressModal();
 
   /**
@@ -122,13 +125,14 @@ export function AccountDataPage(props: Props) {
     open: openUpdateAddress,
     closeModal: closeUpdateModalAddress,
     openModal: openUpdateModalAddress,
+    updateAddress,
   } = useAddressUpdateModal();
 
   const {
     open: openModalDelete,
     setOpen: setOpenModalDelete,
-    confirm: deleteAddress,
     isLoading: isLoadingAddressDelete,
+    deleteAddress,
   } = useAddressDeleteDialog();
 
   return (
@@ -266,6 +270,7 @@ export function AccountDataPage(props: Props) {
         address={selectedAddress!}
         closeUpdateModal={closeUpdateModalAddress}
         openUpdateModal={openUpdateAddress}
+        updateAddress={updateAddress}
       />
 
       <DeleteContactDialog
@@ -275,16 +280,11 @@ export function AccountDataPage(props: Props) {
         isLoading={isLoadingDeleteContact}
       />
 
-      <AddressUpdateModal
-        address={selectedAddress!}
-        closeUpdateModal={closeUpdateModalAddress}
-        openUpdateModal={openUpdateAddress}
-      />
-
       <CreatedAddressModal
         accountId={account.id!}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}
+        createAddress={createAddress}
       />
 
       <AddressDeleteDialog

@@ -1,15 +1,17 @@
 import { Controller } from "react-hook-form";
 import { Button, Checkbox, Input } from "../../../../component";
-import { useAddressForm } from "./use-address.create.form";
+import { AddressFormSchema, useAddressForm } from "./use-address.create.form";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 export function AddressCreateForm({
   closeModal,
   accountId,
+  onSubmit,
 }: {
   closeModal: () => void;
   accountId: string;
+  onSubmit: (data: AddressFormSchema, accountId: string) => Promise<void>;
 }) {
   const router = useRouter();
   const {
@@ -26,6 +28,7 @@ export function AddressCreateForm({
       router.refresh();
     },
     accountId,
+    onSubmit,
   });
 
   const checkboxOptions = [

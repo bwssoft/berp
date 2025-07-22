@@ -10,9 +10,10 @@ import { Loader2 } from "lucide-react";
 interface Props {
   address: IAddress;
   closeModal: () => void;
+  onSubmit: (addressId: string, data: IAddress) => Promise<void>;
 }
 
-export function AddressUpdateForm({ address, closeModal }: Props) {
+export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
   const {
     register,
     registerCep,
@@ -21,7 +22,7 @@ export function AddressUpdateForm({ address, closeModal }: Props) {
     errors,
     control,
     isSubmitting,
-  } = useAddressUpdateForm({ address, closeModal });
+  } = useAddressUpdateForm({ address, closeModal, onSubmit });
 
   const checkboxOptions = [
     { label: "Comercial", value: "Comercial" },

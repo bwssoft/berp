@@ -36,11 +36,12 @@ export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
 export function useAddressForm({
   closeModal,
   accountId,
+  onSubmit,
 }: {
   closeModal: () => void;
   accountId: string;
+  onSubmit: (data: AddressFormSchema, accountId: string) => Promise<void>;
 }) {
-  const queryClient = useQueryClient();
   const {
     register,
     control,
@@ -93,31 +94,10 @@ export function useAddressForm({
   const handleSubmit = hookFormSubmit(
     async (data) => {
       setIsSubmitting(true);
-      try {
-        await createOneAddress({
-          ...data,
-          accountId,
-          zip_code: data.zip_code.replace(/\D/g, ""),
-        });
-        toast({
-          title: "Sucesso!",
-          description: "Endereço criado com sucesso!",
-          variant: "success",
-        });
-        // Invalidate and refetch addresses query
-        await queryClient.invalidateQueries({
-          queryKey: addressesQueryKey(accountId),
-        });
-        closeModal();
-      } catch {
-        toast({
-          title: "Erro!",
-          description: "Falha ao registrar o endereço!",
-          variant: "error",
-        });
-      } finally {
-        setIsSubmitting(false);
-      }
+
+      await onSubmit(data, accountId);
+
+      setIsSubmitting(false);
     },
     () => {}
   );
