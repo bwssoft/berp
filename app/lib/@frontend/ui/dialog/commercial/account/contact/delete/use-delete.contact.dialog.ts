@@ -74,7 +74,6 @@ export function useDeleteContactDialog() {
     open,
     setOpen,
     openDialog: () => setOpen(true),
-    confirm,
     isLoading,
     deleteContact,
     deleteContactLocally,

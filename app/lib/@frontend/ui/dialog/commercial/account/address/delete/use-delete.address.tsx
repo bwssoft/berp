@@ -75,7 +75,6 @@ export function useAddressDeleteDialog() {
     open,
     setOpen,
     openDialog: () => setOpen(true),
-    confirm,
     isLoading,
     deleteAddressLocally,
     deleteAddress,
