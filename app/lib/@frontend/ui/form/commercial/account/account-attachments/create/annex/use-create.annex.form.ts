@@ -6,6 +6,8 @@ import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { createAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.action";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
+import { useAuth } from "@/app/lib/@frontend/context";
 
 const schema = z.object({
   name: z.string().min(1, "Nome do anexo é obrigatório"),
@@ -28,6 +30,7 @@ export function useCreateAnnexForm({
   accountId,
 }: CreateAnnexFormProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const { user } = useAuth();
   const { data: session } = useSession();
 
   const {
@@ -73,6 +76,18 @@ export function useCreateAnnexForm({
           title: "Sucesso",
           description: "Anexo enviado com sucesso!",
           variant: "success",
+        });
+        await createOneHistorical({
+            ...data,
+            accountId: accountId,
+            title: "Rotina de criação de um anexo.",
+            type: "sistema",
+            description: `Criação do anexo ${data.name}`,
+            author: {
+                name: user?.name ?? "",
+                avatarUrl: "",
+            },
+            file: fileData,
         });
         closeModal();
       } else {

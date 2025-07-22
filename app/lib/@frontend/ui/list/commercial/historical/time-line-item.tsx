@@ -84,11 +84,11 @@ export function TimelineItem({
                                     <div className="flex justify-between items-start mb-2">
                                         <div className="text-sm flex gap-1 font-medium text-gray-900">
                                             {entry.type === "sistema"
-                                                ? "Sistema"
-                                                : entry.author?.name ||
-                                                  "Usuário"}
+                                                ? <p className="font-bold">Sistema</p>
+                                                : <p className="font-bold">{entry.author?.name ||
+                                                  "Usuário"}</p> }
                                             {entry.title && (
-                                                <p className="font-semibold">
+                                                <p className="font-medium text-gray-600">
                                                     {entry.title}
                                                 </p>
                                             )}

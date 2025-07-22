@@ -39,6 +39,8 @@ import { useAddressDeleteDialog } from "../../../../dialog/commercial/account/ad
 import { DeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/delete.contact.dialog";
 import { useDeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/use-delete.contact.dialog";
 import { useEconomicGroupUpdateModal } from "../../../../modal/comercial/economic-group/update/use-economic-group.update.modal";
+import { useAccountDataUpdateModal } from "../../../../modal/comercial/account/update/use-account-data.update.modal";
+import { AccountDataUpdateModal } from "../../../../modal/comercial/account/update/account-data.update.modal";
 
 interface Props {
   account: IAccount;
@@ -131,10 +133,24 @@ export function AccountDataPage(props: Props) {
     isLoading: isLoadingAddressDelete,
   } = useAddressDeleteDialog();
 
+    /**
+   * MODAL ATUALIZAÇÃO - DADOS DA CONTA
+   */
+  const {
+    openModal: openUpdateModalAccountData,
+    open: openUpdateAccountData,
+    closeModal: closeUpdateAccountData
+  } = useAccountDataUpdateModal()
+
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
-        <AccountCard account={account} />
+        <AccountCard 
+          account={account} 
+          onClickButtonEdit={() => {
+            openUpdateModalAccountData()
+          }}
+        />
 
         {isCompany &&
           (account.economic_group_holding ||
@@ -301,6 +317,12 @@ export function AccountDataPage(props: Props) {
         open={updateEconomicGroup}
         economicGroupHolding={account.economic_group_holding}
         economicGroupControlled={account.economic_group_controlled}
+      />
+
+      <AccountDataUpdateModal 
+        openUpdateModal={openUpdateAccountData}
+        closeUpdateModal={closeUpdateAccountData}
+        accountData={account}
       />
     </div>
   );

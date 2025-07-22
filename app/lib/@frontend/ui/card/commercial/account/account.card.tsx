@@ -1,8 +1,9 @@
 "use client";
 
-import { Building2, DollarSign, Tag, User } from "lucide-react";
+import { Building2, DollarSign, Edit, Tag, User } from "lucide-react";
 import {
   Badge,
+  Button,
   Card,
   CardContent,
   CardHeader,
@@ -13,24 +14,35 @@ import { Separator } from "../../../component/separator";
 import { IAccount } from "@/app/lib/@backend/domain";
 import { StatusBadge } from "../../../page/commercial/account/data/account.data";
 
-export function AccountCard({ account }: { account: IAccount }) {
+export function AccountCard({ account, onClickButtonEdit }: { account: IAccount, onClickButtonEdit?: () => void }) {
   const isCompany = account.document.type === "cnpj";
 
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="pb-4 flex-shrink-0">
         <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {isCompany ? (
-              <Building2 className="h-5 w-5 text-primary" />
-            ) : (
-              <User className="h-5 w-5 text-primary" />
-            )}
-            {isCompany ? "Dados da Empresa" : "Dados Pessoais"}
+          <div className="flex gap-1">
+            <div className="flex items-center gap-2">
+              {isCompany ? (
+                <Building2 className="h-5 w-5 text-primary" />
+              ) : (
+                <User className="h-5 w-5 text-primary" />
+              )}
+              {isCompany ? "Dados da Empresa" : "Dados Pessoais"}
+            </div>
+            <Badge variant="outline" className="text-xs h-fit">
+              {account.document.type.toUpperCase()}
+            </Badge>
           </div>
-          <Badge variant="outline" className="text-xs">
-            {account.document.type.toUpperCase()}
-          </Badge>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            onClick={onClickButtonEdit}
+            aria-label="Editar dados da empresa"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col">

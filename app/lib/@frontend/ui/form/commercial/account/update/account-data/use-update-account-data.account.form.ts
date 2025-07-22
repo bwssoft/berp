@@ -1,27 +1,17 @@
 "use client";
 
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
-import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
 import {
   createOneAccount,
-  accountExists,
-  updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useRouter } from "next/navigation";
-import { debounce } from "lodash";
-import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import {
-  fetchCnpjData,
-  fetchNameData,
-} from "@/app/lib/@backend/action/cnpja/cnpja.action";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { useAuth } from "@/app/lib/@frontend/context";
@@ -148,15 +138,12 @@ const schema = z
 
 export type CreateAccountFormSchema = z.infer<typeof schema>;
 
-export function useCreateAccountForm() {
+export function useUpdateAccountForm() {
   // Estado para definir se o documento é CPF ou CNPJ:
   const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
 
   // Estado para guardar os dados retornados para holding e controlled
-  const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
 
-  const [dataControlled, setDataControlled] = useState<ICnpjaResponse[]>([]);
-  const [dataCnpj, setDataCnpj] = useState<ICnpjaResponse | null>(null);
   const [selectedControlled, setSelectedControlled] = useState<
     ICnpjaResponse[]
   >([]);
@@ -201,120 +188,7 @@ export function useCreateAccountForm() {
     resolver: zodResolver(schema),
   });
 
-  const handleCpfCnpj = async (
-    value: string
-  ): Promise<"cpf" | "cnpj" | "invalid"> => {
-    const cleanedValue = value.replace(/\D/g, "");
-
-    if (!cleanedValue) {
-      methods.setError("document.value", {
-        type: "manual",
-        message: "Documento não informado",
-      });
-      return "invalid";
-    }
-
-    const exists = await accountExists(cleanedValue);
-    if (exists) {
-      methods.setError("document.value", {
-        type: "manual",
-        message: "Documento já cadastrado!",
-      });
-      return "invalid";
-    }
-
-    if (cleanedValue.length === 11) {
-      const isValid = isValidCPF(cleanedValue);
-      if (!isValid) {
-        methods.setError("document.value", {
-          type: "manual",
-          message: "Documento inválido!",
-        });
-        return "invalid";
-      }
-      methods.setValue("document.type", "cpf");
-      setType("cpf");
-      return "cpf";
-    }
-
-    if (cleanedValue.length === 14) {
-      const isValid = isValidCNPJ(cleanedValue);
-      if (!isValid) {
-        methods.setError("document.value", {
-          type: "manual",
-          message: "Documento inválido!",
-        });
-        return "invalid";
-      }
-
-      const data = await fetchCnpjData(cleanedValue);
-
-      if (data) {
-        console.log("CNPJ Data:", data);
-        setDataCnpj(data);
-
-        // Set the values from API
-        methods.setValue("cnpj.fantasy_name", data.alias ?? "");
-        methods.setValue("cnpj.social_name", data.company.name);
-        methods.setValue("cnpj.status", [
-          { id: data.status.text, name: data.status.text },
-        ]);
-
-        setDisabledFields({
-          social_name: true,
-          fantasy_name: Boolean(data?.alias?.length),
-          status: true,
-          state_registration: false,
-          municipal_registration: false,
-        });
-      }
-
-      methods.setValue("document.type", "cnpj");
-      setType("cnpj");
-      return "cnpj";
-    }
-
-    methods.setError("document.value", {
-      type: "manual",
-      message: "Documento inválido!",
-    });
-    return "invalid";
-  };
-
-  const handleCnpjOrName = async (
-    value: string,
-    groupType: "controlled" | "holding"
-  ) => {
-    const cleanedValue = value.replace(/\D/g, "");
-    let data;
-
-    if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
-      // É um CNPJ válido
-      data = await fetchCnpjData(cleanedValue);
-    } else {
-      // Se não for CNPJ, trata como nome e usa outra função
-      data = await fetchNameData(value);
-      if (groupType === "controlled") {
-        setDataControlled(data as ICnpjaResponse[]);
-        return;
-      }
-      setDataHolding(data as ICnpjaResponse[]);
-    }
-    return data;
-  };
-
-  const debouncedValidationHolding = debounce(async (value: string) => {
-    await handleCnpjOrName(value, "holding");
-  }, 500);
-
-  const debouncedValidationControlled = debounce(async (value: string) => {
-    await handleCnpjOrName(value, "controlled");
-  }, 500);
-
   const onSubmit = async (data: CreateAccountFormSchema) => {
-    const address = dataCnpj?.address;
-    const contact = dataCnpj?.phones[0];
-
     const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
       document: {
         ...data.document,
@@ -331,72 +205,25 @@ export function useCreateAccountForm() {
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
             status: data.cnpj?.status?.[0]?.name,
-            economic_group_holding: {
-              name: data.cnpj?.economic_group_holding?.name! as string,
-              taxId: data.cnpj?.economic_group_holding?.taxId! as string,
-            },
-            economic_group_controlled:
-              data.cnpj?.economic_group_controlled?.map((item) => ({
-                name: item.name! as string,
-                taxId: item.taxId! as string,
-              })),
             setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
           }),
     };
 
     const { error, success, id } = await createOneAccount(base);
 
-    await createOneHistorical({
-        ...data,
-        accountId: String(id),
-        title: "Cadastro da conta.",
-        type: "manual",
-        author: {
-            name: user?.name ?? "",
-            avatarUrl: "",
-        },
-    });
-
+    
     if (success && id) {
-      // Criar endereço
-      if (address) {
-        await createOneAddress({
-          accountId: id,
-          city: address.city,
-          state: address.state,
-          street: address.street,
-          district: address.district,
-          number: address.number,
-          zip_code: address.zip,
-          complement: address.details ?? "",
-          type: ["Comercial"],
-        });
-      }
-
-      if (contact) {
-        const contactCnpj = await createOneContact({
-          accountId: id,
-          name: dataCnpj?.company.name || dataCnpj?.alias || "",
-          contractEnabled: false,
-          positionOrRelation: "",
-          contactFor: ["Comercial"],
-          contactItems: [
-            {
-              id: crypto.randomUUID(),
-              contact: `${contact.area}${contact.number}`,
-              type:
-                dataCnpj?.phones[0].type === "LANDLINE"
-                  ? "Telefone Comercial"
-                  : "Celular",
-              preferredContact: { phone: true },
+        // Criar histórico
+        await createOneHistorical({
+            ...data,
+            accountId: String(id),
+            title: `Atualização de conta`,
+            type: "manual",
+            author: {
+                name: user?.name ?? "",
+                avatarUrl: "",
             },
-          ],
         });
-
-        contactCnpj.success &&
-          (await updateOneAccount({ id }, { contacts: [contactCnpj.success] }));
-      }
-
 
       router.push(`/commercial/account/form/create/tab/address?id=${id}`);
     }
@@ -431,22 +258,19 @@ export function useCreateAccountForm() {
 
   return {
     methods,
-    handleCpfCnpj,
     type,
     setType,
     onSubmit,
-    handleCnpjOrName,
-    dataHolding,
-    dataControlled,
     buttonsState,
     toggleButtonText,
     setSelectedControlled,
     selectedControlled,
     selectedHolding,
     setSelectedHolding,
-    debouncedValidationHolding,
-    debouncedValidationControlled,
     disabledFields,
     form: methods,
+    register: methods.register,
+    errors: methods.formState,
+    control: methods.control
   };
 }
