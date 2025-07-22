@@ -18,25 +18,6 @@ export function useAddressModal() {
     setOpen(false);
   }
 
-  const deleteAdress = async (id: any) => {
-    try {
-      await deleteOneAddress({ id });
-      setOpenModalDelete(false);
-      toast({
-        title: "Sucesso!",
-        description: "Endereço excluído com sucesso",
-        variant: "success",
-      });
-    } catch (err) {
-      console.error(err);
-      toast({
-        title: "Erro",
-        description: "Não foi possível excluir o endereço.",
-        variant: "error",
-      });
-    }
-  };
-
   async function createAddress() {
     // Logic for updating the address can be added here
     // This function can be used to handle the update action
@@ -53,7 +34,6 @@ export function useAddressModal() {
     closeModal,
     openModalDelete,
     setOpenModalDelete,
-    deleteAdress,
     openModalDeleteCard,
     createAddress,
     createAddressLocally,
