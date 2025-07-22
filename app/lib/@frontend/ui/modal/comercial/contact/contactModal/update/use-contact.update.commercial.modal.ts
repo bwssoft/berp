@@ -13,9 +13,19 @@ export function useUpdateContactModal() {
     setOpen(false);
   }
 
+  async function updateContact() {
+    // Logic for updating a contact can be added here
+  }
+
+  function updateContactLocally() {
+    // Logic for updating a contact can be added here
+  }
+
   return {
     open,
     openModal,
     closeModal,
+    updateContact,
+    updateContactLocally,
   };
 }

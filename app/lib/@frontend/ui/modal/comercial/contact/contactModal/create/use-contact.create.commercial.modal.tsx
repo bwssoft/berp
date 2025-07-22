@@ -13,9 +13,19 @@ export function useCreateContactModal() {
     setOpen(false);
   }
 
+  async function createContact() {
+    // Logic for creating a contact can be added here
+  }
+
+  function createContactLocally() {
+    // Logic for creating a contact can be added here
+  }
+
   return {
     open,
     openModal,
     closeModal,
+    createContact,
+    createContactLocally,
   };
 }

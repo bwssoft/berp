@@ -17,7 +17,7 @@ export function useDeleteContactDialog() {
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
 
-  const confirm = async (id: string) => {
+  async function deleteContact(id: string) {
     setIsLoading(true);
 
     try {
@@ -63,7 +63,12 @@ export function useDeleteContactDialog() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
+
+  function deleteContactLocally() {
+    // Logic for deleting a contact locally can be added here
+    // This function can be used to handle the local deletion action
+  }
 
   return {
     open,
@@ -71,5 +76,7 @@ export function useDeleteContactDialog() {
     openDialog: () => setOpen(true),
     confirm,
     isLoading,
+    deleteContact,
+    deleteContactLocally,
   };
 }

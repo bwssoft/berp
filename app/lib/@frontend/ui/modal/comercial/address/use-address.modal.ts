@@ -37,6 +37,16 @@ export function useAddressModal() {
     }
   };
 
+  async function createAddress() {
+    // Logic for updating the address can be added here
+    // This function can be used to handle the update action
+  }
+
+  function createAddressLocally() {
+    // Logic for updating the address can be added here
+    // This function can be used to handle the update action
+  }
+
   return {
     open,
     openModal,
@@ -45,5 +55,7 @@ export function useAddressModal() {
     setOpenModalDelete,
     deleteAdress,
     openModalDeleteCard,
+    createAddress,
+    createAddressLocally,
   };
 }

@@ -17,7 +17,7 @@ export function useAddressDeleteDialog() {
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
 
-  const confirm = async (id: string) => {
+  async function deleteAddress(id: string) {
     setIsLoading(true);
 
     try {
@@ -64,7 +64,12 @@ export function useAddressDeleteDialog() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
+
+  function deleteAddressLocally() {
+    // Logic for deleting the address locally can be added here
+    // This function can be used to handle the delete action
+  }
 
   return {
     open,
@@ -72,5 +77,7 @@ export function useAddressDeleteDialog() {
     openDialog: () => setOpen(true),
     confirm,
     isLoading,
+    deleteAddressLocally,
+    deleteAddress,
   };
 }
