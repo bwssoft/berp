@@ -43,12 +43,12 @@ namespace Namespace {
     status: boolean;
     equipment_before: {
       serial: string;
-      imei: string;
+      imei?: string;
       lora_keys: Device.Equipment["lora_keys"];
     };
     equipment_after: {
       serial: string;
-      imei: string;
+      imei?: string;
       lora_keys: Device.Equipment["lora_keys"];
     };
   }

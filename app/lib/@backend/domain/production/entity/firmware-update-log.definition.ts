@@ -1,7 +1,7 @@
 import { IUser } from "../../admin";
 import { Device } from "../../engineer";
 
-export interface IIdentificationLog {
+export interface IFirmwareUpdateLog {
   id: string;
   technology: {
     id: string;
@@ -10,15 +10,11 @@ export interface IIdentificationLog {
   user: Pick<IUser, "id" | "name">;
   status: boolean;
   created_at: Date;
-  equipment_before: {
+  equipment: {
     serial: string;
+    firmware: string;
     imei?: string;
-    lora_keys?: Device.Equipment["lora_keys"];
-  };
-  equipment_after: {
-    serial: string;
-    imei?: string;
-    lora_keys?: Device.Equipment["lora_keys"];
+    lora_keys?: Partial<Device.Equipment["lora_keys"]>;
   };
   messages: {
     key: string;
