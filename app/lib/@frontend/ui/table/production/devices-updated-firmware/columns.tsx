@@ -58,7 +58,9 @@ const commonColumns: ColumnDef<Row>[] = [
   {
     header: "Data",
     accessorKey: "created_at",
-    cell: ({ row }) => <p>{row.original.created_at.toLocaleString()}</p>,
+    cell: ({ row }) => (
+      <p>{new Date(row.original.created_at).toLocaleString()}</p>
+    ),
   },
 ];
 
