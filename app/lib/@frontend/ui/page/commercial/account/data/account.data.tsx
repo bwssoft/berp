@@ -265,6 +265,7 @@ export function AccountDataPage(props: Props) {
         contact={selectedContact!}
         open={openUpdateContact}
         closeModal={closeUpdateModalContact}
+        updateContact={updateContact}
       />
 
       <AddressUpdateModal
