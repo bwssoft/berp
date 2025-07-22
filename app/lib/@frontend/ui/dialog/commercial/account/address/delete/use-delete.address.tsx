@@ -9,6 +9,7 @@ import {
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { useSearchParams } from "next/navigation";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
 
 export function useAddressDeleteDialog() {
   const [open, setOpen] = React.useState(false);
@@ -16,6 +17,8 @@ export function useAddressDeleteDialog() {
   const qc = useQueryClient();
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
+  const { deleteAddressLocally: deleteAddressInContext } =
+    useCreateAccountFlow();
 
   async function deleteAddress(id: string) {
     setIsLoading(true);
@@ -67,8 +70,8 @@ export function useAddressDeleteDialog() {
   }
 
   function deleteAddressLocally(id: string) {
-    // Logic for deleting the address locally can be added here
-    // This function can be used to handle the delete action
+    // Delete address from context
+    deleteAddressInContext(id);
   }
 
   return {

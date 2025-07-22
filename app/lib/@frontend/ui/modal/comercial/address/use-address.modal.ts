@@ -8,11 +8,14 @@ import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState } from "react";
 import { addressesQueryKey } from "../../../form/commercial/address/get/useaddress";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
 
 export function useAddressModal() {
   const [open, setOpen] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const queryClient = useQueryClient();
+  const { createAddressLocally: createAddressInContext } =
+    useCreateAccountFlow();
 
   function openModal() {
     setOpen(true);
@@ -51,9 +54,15 @@ export function useAddressModal() {
     }
   }
 
-  async function createAddressLocally() {
-    // Logic for updating the address can be added here
-    // This function can be used to handle the update action
+  function createAddressLocally(data: any) {
+    // Create address in context with proper typing
+    const addressData = {
+      ...data,
+      id: data.id || crypto.randomUUID(),
+      zip_code: data.zip_code?.replace(/\D/g, "") || data.zip_code,
+    };
+
+    createAddressInContext(addressData);
   }
 
   return {

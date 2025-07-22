@@ -9,6 +9,7 @@ import {
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { useSearchParams } from "next/navigation";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
 
 export function useDeleteContactDialog() {
   const [open, setOpen] = React.useState(false);
@@ -16,6 +17,8 @@ export function useDeleteContactDialog() {
   const qc = useQueryClient();
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
+  const { deleteContactLocally: deleteContactInContext } =
+    useCreateAccountFlow();
 
   async function deleteContact(id: string) {
     setIsLoading(true);
@@ -65,9 +68,9 @@ export function useDeleteContactDialog() {
     }
   }
 
-  async function deleteContactLocally(id: string) {
-    // Logic for deleting a contact locally can be added here
-    // This function can be used to handle the local deletion action
+  function deleteContactLocally(id: string) {
+    // Delete contact from context
+    deleteContactInContext(id);
   }
 
   return {

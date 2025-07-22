@@ -9,10 +9,13 @@ import { IContact } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
 
 export function useUpdateContactModal() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { updateContactLocally: updateContactInContext } =
+    useCreateAccountFlow();
 
   function openModal() {
     setOpen(true);
@@ -119,7 +122,30 @@ export function useUpdateContactModal() {
     contact: IContact,
     accountId?: string
   ) {
-    // Logic for updating a contact can be added here
+    // Prepare updated contact data
+    const updatedContactData = {
+      ...data,
+      id: contact.id,
+      cpf: data.cpf ? data.cpf.replace(/[^a-zA-Z0-9]/g, "") : undefined,
+      rg: data.rg ? data.rg.replace(/[^a-zA-Z0-9]/g, "") : undefined,
+      accountId: accountId ?? undefined,
+      contactItems: data.contactItems.map((item: any) => {
+        const contactType = item.type[0];
+
+        return {
+          ...item,
+          id: item.id ?? crypto.randomUUID(),
+          contact:
+            contactType === "Email"
+              ? item.contact
+              : item.contact.replace(/[^0-9]/g, ""),
+          type: contactType,
+        };
+      }),
+    };
+
+    // Update contact in context
+    updateContactInContext(contact.id, updatedContactData);
   }
 
   return {

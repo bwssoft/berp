@@ -5,10 +5,13 @@ import { IAddress } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
 
 export function useAddressUpdateModal() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { updateAddressLocally: updateAddressInContext } =
+    useCreateAccountFlow();
 
   function openModal() {
     setOpen(true);
@@ -39,9 +42,9 @@ export function useAddressUpdateModal() {
     }
   }
 
-  async function updateAddressLocally(addressId: string, data: IAddress) {
-    // Logic for updating the address can be added here
-    // This function can be used to handle the update action
+  function updateAddressLocally(addressId: string, data: IAddress) {
+    // Update address in context
+    updateAddressInContext(addressId, data);
   }
 
   return {

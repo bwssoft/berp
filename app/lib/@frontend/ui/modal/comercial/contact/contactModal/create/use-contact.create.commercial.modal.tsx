@@ -10,10 +10,13 @@ import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { ContactFormSchema } from "@/app/lib/@frontend/ui/form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
 
 export function useCreateContactModal() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { createContactLocally: createContactInContext } =
+    useCreateAccountFlow();
 
   function openModal() {
     setOpen(true);
@@ -110,8 +113,26 @@ export function useCreateContactModal() {
     }
   }
 
-  async function createContactLocally() {
-    // Logic for creating a contact can be added here
+  function createContactLocally(data: ContactFormSchema) {
+    // Create contact in context with proper data transformation
+    const contactData = {
+      ...data,
+      cpf: data.cpf ? data.cpf.replace(/[^a-zA-Z0-9]/g, "") : undefined,
+      rg: data.rg ? data.rg.replace(/[^a-zA-Z0-9]/g, "") : undefined,
+      contractEnabled: data.contractEnabled ? true : false,
+      contactItems:
+        data.contactItems?.map((item: any) => ({
+          ...item,
+          contact:
+            item.type[0] === "Email"
+              ? item.contact
+              : item.contact.replace(/[^0-9]/g, ""),
+          type: Array.isArray(item.type) ? item.type[0] : item.type,
+          id: item.id ?? crypto.randomUUID(),
+        })) || [],
+    };
+
+    createContactInContext(contactData);
   }
 
   return {

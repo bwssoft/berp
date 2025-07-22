@@ -2,28 +2,35 @@ import {
   BackButton,
   CreateOneAccountForm,
 } from "@/app/lib/@frontend/ui/component";
+import { CreateAccountFlowProvider } from "@/app/lib/@frontend/context";
 
 export default async function Page() {
   return (
-    <div>
-      <div className="w-2/5 ring-1 ring-inset ring-gray-200 bg-white rounded-md px-6 py-8">
-        <div className="flex items-end gap-4">
-          <BackButton />
-          <div>
+    <CreateAccountFlowProvider
+      initialAccount={null}
+      initialAddresses={[]}
+      initialContacts={[]}
+    >
+      <div>
+        <div className="w-2/5 ring-1 ring-inset ring-gray-200 bg-white rounded-md px-6 py-8">
+          <div className="flex items-end gap-4">
+            <BackButton />
             <div>
-              <h1 className="text-xl font-bold text-gray-900">
-                Criar Nova Conta
-              </h1>
-              <p className="text-sm text-gray-600">
-                Preencha os dados para criar uma nova conta.
-              </p>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">
+                  Criar Nova Conta
+                </h1>
+                <p className="text-sm text-gray-600">
+                  Preencha os dados para criar uma nova conta.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="mt-8">
-          <CreateOneAccountForm />
+          <div className="mt-8">
+            <CreateOneAccountForm />
+          </div>
         </div>
       </div>
-    </div>
+    </CreateAccountFlowProvider>
   );
 }
