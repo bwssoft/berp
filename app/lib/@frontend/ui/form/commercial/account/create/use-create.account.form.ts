@@ -399,7 +399,7 @@ export function useCreateAccountForm() {
 
     // Navigate to next step with account local ID
     router.push(
-      `/commercial/account/form/create/tab/address?id=${accountLocalId}`
+      `/commercial/account/form/create/tab/address?accountId=${accountLocalId}`
     );
   };
 

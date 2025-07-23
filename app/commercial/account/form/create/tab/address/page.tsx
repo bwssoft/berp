@@ -1,31 +1,48 @@
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
+"use client";
+
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { AddressDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/tab/address/address.data";
 import { PageFooterButtons } from "./page-footer-buttons";
+import { useSearchParams } from "next/navigation";
+import { useMemo, useEffect, useState } from "react";
+import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 
-interface Props {
-  searchParams: {
-    id: string;
-  };
-}
+export default function Page() {
+  const searchParams = useSearchParams();
+  const accountId = searchParams.get("accountId");
+  
+  const { account, addresses } = useCreateAccountFlow();
+  const [hasPermissionAddresses, setHasPermissionAddresses] = useState(false);
 
-export default async function Page({ searchParams }: Props) {
-  const { id: accountId } = searchParams;
+  // Check permission on component mount
+  useEffect(() => {
+    const checkPermission = async () => {
+      const permission = await restrictFeatureByProfile(
+        "commercial:accounts:access:tab:data:addresses"
+      );
+      setHasPermissionAddresses(permission);
+    };
+    checkPermission();
+  }, []);
 
-  const account = await findOneAccount({ id: accountId });
-  if (!account) return <>Conta não encontrada</>;
+  // Verify that the account exists and matches the accountId from URL
+  const isValidAccount = useMemo(() => {
+    return account && account.idLocal === accountId;
+  }, [account, accountId]);
 
-  const address = await findManyAddress({ accountId });
-  const hasPermissionAddresses = await restrictFeatureByProfile(
-    "commercial:accounts:access:tab:data:addresses"
-  );
+  if (!accountId) {
+    return <div>ID da conta não fornecido</div>;
+  }
+
+  if (!isValidAccount) {
+    return <div>Conta não encontrada no contexto local</div>;
+  }
 
   return (
     <div>
       <AddressDataPage
-        account={account}
-        address={address}
+        account={account!}
+        address={addresses}
         permissions={{
           hasPermissionContacts: false,
           hasPermissionAddresses,
@@ -34,7 +51,7 @@ export default async function Page({ searchParams }: Props) {
       />
       <PageFooterButtons
         accounts={!!account?.document?.type}
-        addresses={address.length > 0}
+        addresses={addresses.length > 0}
         id={accountId}
       />
     </div>

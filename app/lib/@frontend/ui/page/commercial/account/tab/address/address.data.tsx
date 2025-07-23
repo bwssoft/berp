@@ -11,7 +11,7 @@ import {
 
 import { MapPin, Plus } from "lucide-react";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import { IAccount, IAddress, IContact } from "@/app/lib/@backend/domain";
+import { LocalAccount, LocalAddress } from "@/app/lib/@frontend/context/create-account-flow.context";
 
 import { useState } from "react";
 import { useAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/use-address.modal";
@@ -22,8 +22,8 @@ import { CreateAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/addre
 import { AddressDeleteDialog } from "@/app/lib/@frontend/ui/dialog/commercial/account/address/delete/delete.address";
 
 interface Props {
-  account: IAccount;
-  address: IAddress[];
+  account: LocalAccount;
+  address: LocalAddress[];
   permissions: {
     hasPermissionContacts: boolean;
     hasPermissionAddresses: boolean;
@@ -37,7 +37,7 @@ export function AddressDataPage(props: Props) {
     permissions: { hasPermissionAddresses },
   } = props;
 
-  const [selectedAddress, setSelectedAddress] = useState<IAddress>();
+  const [selectedAddress, setSelectedAddress] = useState<LocalAddress>();
   const {
     open: openModalAddress,
     closeModal: closeCreateModalAddress,
@@ -97,7 +97,7 @@ export function AddressDataPage(props: Props) {
                 <div className="flex flex-wrap gap-3">
                   {address.map((addr) => (
                     <AddressCard
-                      key={addr.id}
+                      key={addr.idLocal}
                       title="Endereço:"
                       address={addr}
                       onEdit={() => {
@@ -134,7 +134,7 @@ export function AddressDataPage(props: Props) {
       />
 
       <CreateAddressModal
-        accountId={account.id!}
+        accountId={account.idLocal}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}
         createAddress={createAddress}
@@ -144,7 +144,7 @@ export function AddressDataPage(props: Props) {
         address={selectedAddress}
         open={openModalDelete}
         onClose={() => setOpenModalDelete(false)}
-        onDelete={(id) => deleteAddress(id)}
+        onDelete={(id) => deleteAddress(selectedAddress?.idLocal || "")}
         isLoading={isLoading}
       />
     </div>
