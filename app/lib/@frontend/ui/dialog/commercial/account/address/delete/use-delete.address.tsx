@@ -69,7 +69,7 @@ export function useAddressDeleteDialog() {
     }
   }
 
-  function deleteAddressLocally(id: string) {
+  async function deleteAddressLocally(id: string) {
     // Delete address from context
     deleteAddressInContext(id);
   }

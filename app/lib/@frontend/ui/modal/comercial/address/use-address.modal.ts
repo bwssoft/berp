@@ -54,7 +54,7 @@ export function useAddressModal() {
     }
   }
 
-  function createAddressLocally(data: any) {
+  async function createAddressLocally(data: any) {
     // Create address in context with proper typing
     const addressData = {
       ...data,

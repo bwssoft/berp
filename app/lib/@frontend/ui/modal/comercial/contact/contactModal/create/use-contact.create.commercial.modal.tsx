@@ -113,7 +113,7 @@ export function useCreateContactModal() {
     }
   }
 
-  function createContactLocally(data: ContactFormSchema) {
+  async function createContactLocally(data: ContactFormSchema) {
     // Create contact in context with proper data transformation
     const contactData = {
       ...data,

@@ -42,7 +42,7 @@ export function useAddressUpdateModal() {
     }
   }
 
-  function updateAddressLocally(addressId: string, data: IAddress) {
+  async function updateAddressLocally(addressId: string, data: IAddress) {
     // Update address in context
     updateAddressInContext(addressId, data);
   }

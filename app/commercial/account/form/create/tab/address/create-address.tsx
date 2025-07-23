@@ -10,11 +10,17 @@ interface Props {
 }
 
 export function CreateAddressModal({ id }: Props) {
-  const { open, openModal, closeModal } = useAddressModal();
+  const { open, openModal, closeModal, createAddressLocally } =
+    useAddressModal();
 
   return (
     <>
-      <CreatedAddressModal open={open} closeModal={closeModal} accountId={id} />
+      <CreatedAddressModal
+        createAddress={createAddressLocally}
+        open={open}
+        closeModal={closeModal}
+        accountId={id}
+      />
       <div className="flex justify-end items-end gap-4 mt-4">
         <Button
           variant={"ghost"}
