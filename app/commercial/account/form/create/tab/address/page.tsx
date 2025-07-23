@@ -2,7 +2,6 @@ import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restric
 import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { AddressDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/tab/address/address.data";
-import { CreateAccountFlowProvider } from "@/app/lib/@frontend/context";
 import { PageFooterButtons } from "./page-footer-buttons";
 
 interface Props {
@@ -23,27 +22,21 @@ export default async function Page({ searchParams }: Props) {
   );
 
   return (
-    <CreateAccountFlowProvider
-      initialAccount={account}
-      initialAddresses={address}
-      initialContacts={account?.contacts ?? []}
-    >
-      <div>
-        <AddressDataPage
-          account={account}
-          address={address}
-          permissions={{
-            hasPermissionContacts: false,
-            hasPermissionAddresses,
-            hasPermissionEconomicGroup: false,
-          }}
-        />
-        <PageFooterButtons
-          accounts={!!account?.document?.type}
-          addresses={address.length > 0}
-          id={accountId}
-        />
-      </div>
-    </CreateAccountFlowProvider>
+    <div>
+      <AddressDataPage
+        account={account}
+        address={address}
+        permissions={{
+          hasPermissionContacts: false,
+          hasPermissionAddresses,
+          hasPermissionEconomicGroup: false,
+        }}
+      />
+      <PageFooterButtons
+        accounts={!!account?.document?.type}
+        addresses={address.length > 0}
+        id={accountId}
+      />
+    </div>
   );
 }

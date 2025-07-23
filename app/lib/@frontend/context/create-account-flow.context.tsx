@@ -34,7 +34,6 @@ interface CreateAccountFlowContextType {
 
   // Utility methods
   resetFlow: () => void;
-  loadAccountData: (accountId: string) => Promise<void>;
 }
 
 const CreateAccountFlowContext = createContext<CreateAccountFlowContextType>(
@@ -201,42 +200,6 @@ export const CreateAccountFlowProvider = ({
     });
   }, []);
 
-  const loadAccountData = useCallback(async (accountId: string) => {
-    try {
-      // Import actions dynamically to avoid circular dependencies
-      const { findOneAccount } = await import(
-        "../../@backend/action/commercial/account.action"
-      );
-
-      const accountData = await findOneAccount({ id: accountId });
-
-      if (accountData) {
-        setAccount(accountData);
-        setAddresses(accountData.address || []);
-        setContacts(accountData.contacts || []);
-
-        toast({
-          title: "Dados carregados",
-          description: "Os dados da conta foram carregados no contexto.",
-          variant: "success",
-        });
-      } else {
-        toast({
-          title: "Conta não encontrada",
-          description: "Não foi possível carregar os dados da conta.",
-          variant: "error",
-        });
-      }
-    } catch (error) {
-      console.error("Error loading account data:", error);
-      toast({
-        title: "Erro ao carregar dados",
-        description: "Ocorreu um erro ao carregar os dados da conta.",
-        variant: "error",
-      });
-    }
-  }, []);
-
   const value: CreateAccountFlowContextType = {
     // State
     account,
@@ -263,7 +226,6 @@ export const CreateAccountFlowProvider = ({
 
     // Utility methods
     resetFlow,
-    loadAccountData,
   };
 
   return (

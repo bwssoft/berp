@@ -1,7 +1,6 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { ContactDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/tab/contact/contact.data";
-import { CreateAccountFlowProvider } from "@/app/lib/@frontend/context";
 
 interface PageProps {
   searchParams: {
@@ -19,16 +18,10 @@ export default async function Page({ searchParams }: PageProps) {
   const accountId = account?.id ?? "";
 
   return (
-    <CreateAccountFlowProvider
-      initialAccount={account}
-      initialAddresses={[]}
-      initialContacts={account?.contacts ?? []}
-    >
-      <ContactDataPage
-        contacts={account?.contacts ?? []}
-        hasPermissionContacts={hasPermissionContacts}
-        accountId={accountId}
-      />
-    </CreateAccountFlowProvider>
+    <ContactDataPage
+      contacts={account?.contacts ?? []}
+      hasPermissionContacts={hasPermissionContacts}
+      accountId={accountId}
+    />
   );
 }
