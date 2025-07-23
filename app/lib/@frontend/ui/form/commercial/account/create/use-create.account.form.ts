@@ -5,24 +5,24 @@ import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
 import {
-  createOneAccount,
-  accountExists,
-  updateOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
+  IAccount,
+  ICnpjaResponse,
+  IAddress,
+  IContact,
+} from "@/app/lib/@backend/domain";
+import { accountExists } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useRouter } from "next/navigation";
 import { debounce } from "lodash";
-import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import {
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 
 const schema = z
   .object({
@@ -74,9 +74,11 @@ const schema = z
             })
           )
           .optional(),
-        sector: z.string({
-          required_error: "Setor obrigatório",
-        }).min(1, "Setor obrigatório"),
+        sector: z
+          .string({
+            required_error: "Setor obrigatório",
+          })
+          .min(1, "Setor obrigatório"),
         economic_group_holding: z
           .object({
             taxId: z.string().optional(),
@@ -147,6 +149,10 @@ const schema = z
 export type CreateAccountFormSchema = z.infer<typeof schema>;
 
 export function useCreateAccountForm() {
+  // Get the create account flow context
+  const { createAccountLocally, createAddressLocally, createContactLocally } =
+    useCreateAccountFlow();
+
   // Estado para definir se o documento é CPF ou CNPJ:
   const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
 
@@ -247,7 +253,6 @@ export function useCreateAccountForm() {
       const data = await fetchCnpjData(cleanedValue);
 
       if (data) {
-        console.log("CNPJ Data:", data);
         setDataCnpj(data);
 
         // Set the values from API
@@ -328,10 +333,12 @@ export function useCreateAccountForm() {
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
             status: data.cnpj?.status?.[0]?.name,
-            economic_group_holding: {
-              name: data.cnpj?.economic_group_holding?.name! as string,
-              taxId: data.cnpj?.economic_group_holding?.taxId! as string,
-            },
+            economic_group_holding: data.cnpj?.economic_group_holding
+              ? {
+                  name: data.cnpj?.economic_group_holding?.name! as string,
+                  taxId: data.cnpj?.economic_group_holding?.taxId! as string,
+                }
+              : undefined,
             economic_group_controlled:
               data.cnpj?.economic_group_controlled?.map((item) => ({
                 name: item.name! as string,
@@ -341,77 +348,58 @@ export function useCreateAccountForm() {
           }),
     };
 
-    const { error, success, id } = await createOneAccount(base);
+    createAccountLocally(base);
 
-    if (success && id) {
-      // Criar endereço
-      if (address) {
-        await createOneAddress({
-          accountId: id,
-          city: address.city,
-          state: address.state,
-          street: address.street,
-          district: address.district,
-          number: address.number,
-          zip_code: address.zip,
-          complement: address.details ?? "",
-          type: ["Comercial"],
-        });
-      }
-
-      if (contact) {
-        const contactCnpj = await createOneContact({
-          accountId: id,
-          name: dataCnpj?.company.name || dataCnpj?.alias || "",
-          contractEnabled: false,
-          positionOrRelation: "",
-          contactFor: ["Comercial"],
-          contactItems: [
-            {
-              id: crypto.randomUUID(),
-              contact: `${contact.area}${contact.number}`,
-              type:
-                dataCnpj?.phones[0].type === "LANDLINE"
-                  ? "Telefone Comercial"
-                  : "Celular",
-              preferredContact: { phone: true },
-            },
-          ],
-        });
-
-        contactCnpj.success &&
-          (await updateOneAccount({ id }, { contacts: [contactCnpj.success] }));
-      }
-
-      router.push(`/commercial/account/form/create/tab/address?id=${id}`);
+    // Create address locally if available
+    if (address) {
+      const newAddress: IAddress = {
+        id: crypto.randomUUID(),
+        accountId: accountId,
+        city: address.city,
+        state: address.state,
+        street: address.street,
+        district: address.district,
+        number: address.number,
+        zip_code: address.zip,
+        complement: address.details ?? "",
+        type: ["Comercial"],
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+      createAddressLocally(newAddress);
     }
 
-    // Erros
-    if (error) {
-      if (error.global) {
-        toast({
-          title: "Erro!",
-          description: error.global,
-          variant: "error",
-        });
-      }
-
-      Object.entries(error).forEach(([key, message]) => {
-        if (key === "cnpj") {
-          toast({
-            title: "Erro!",
-            description: message as string,
-            variant: "error",
-          });
-          methods.reset();
-        } else {
-          methods.setError(key as any, {
-            type: "manual",
-            message: message as string,
-          });
-        }
-      });
+    // Create contact locally if available
+    if (contact) {
+      const newContact: Omit<IContact, "id"> = {
+        name: dataCnpj?.company.name || dataCnpj?.alias || "",
+        contractEnabled: false,
+        positionOrRelation: "",
+        contactFor: ["Comercial"],
+        contactItems: [
+          {
+            id: crypto.randomUUID(),
+            contact: `${contact.area}${contact.number}`,
+            type:
+              dataCnpj?.phones[0].type === "LANDLINE"
+                ? "Telefone Comercial"
+                : "Celular",
+            preferredContact: { phone: true },
+          },
+        ],
+        created_at: new Date(),
+      };
+      createContactLocally(newContact);
     }
+
+    toast({
+      title: "Sucesso!",
+      description: "Conta criada localmente. Continue com o próximo passo.",
+      variant: "success",
+    });
+
+    // Navigate to next step
+    router.push(`/commercial/account/form/create/tab/address`);
   };
 
   return {
