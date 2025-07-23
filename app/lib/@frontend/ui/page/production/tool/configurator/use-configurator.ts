@@ -7,11 +7,11 @@ import {
   IConfigurationLog,
   IConfigurationProfile,
   ITechnology,
-} from "../../@backend/domain";
-import { ISerialPort } from "./use-serial-port";
-import { useTechnology } from "./use-technology";
+} from "../../../../../../@backend/domain";
+import { ISerialPort } from "../../../../../hook/use-serial-port";
+import { useTechnology } from "../../../../../hook/use-technology";
 import { useRouter } from "next/navigation";
-import { createManyConfigurationLog } from "../../@backend/action/production/configuration-log.action";
+import { createManyConfigurationLog } from "../../../../../../@backend/action/production/configuration-log.action";
 
 namespace Namespace {
   export interface UseConfigurationProps {
@@ -142,7 +142,13 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
         .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
       // save result on database
-      const dataSavedOnDb = await createManyConfigurationLog(result);
+      const res = await fetch("/api/production/configuration-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result),
+      });
+      if (!res.ok) throw new Error("Erro ao salvar log de configuração");
+      const dataSavedOnDb = await res.json();
 
       // update state with configuration process result
       setConfigured((prev) => prev.concat(dataSavedOnDb));
@@ -162,21 +168,20 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
       if (!isDetecting && ports.length) {
         setIsDetecting(true);
-        const identified = await handleDetection(ports);
+        const detected = await handleDetection(ports);
 
         setDetected((prev) => {
-          const newOnes = identified.filter(
-            (id) =>
-              !prev.some((el) => el.equipment.serial === id.response?.serial)
-          );
+          const map = new Map(prev.map((d) => [d.port, d]));
 
-          const mappedNew = newOnes.map(({ port, response }) => ({
-            port,
-            equipment: response!,
-            status: isIdentified(response),
-          }));
+          for (const { port, response } of detected) {
+            map.set(port, {
+              port,
+              equipment: response!,
+              status: isIdentified(response!),
+            });
+          }
 
-          return prev.concat(mappedNew);
+          return Array.from(map.values());
         });
 
         setIsDetecting(false);

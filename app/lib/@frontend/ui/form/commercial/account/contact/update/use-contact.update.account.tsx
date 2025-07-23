@@ -4,7 +4,7 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IContact } from "@/app/lib/@backend/domain";
 import { maskPhoneNumber } from "@/app/lib/util/mask-phone-number";

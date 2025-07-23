@@ -1,13 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Device, IIdentificationLog, ITechnology } from "../../@backend/domain";
-import { ISerialPort } from "./use-serial-port";
-import { useTechnology } from "./use-technology";
+import {
+  Device,
+  IIdentificationLog,
+  ITechnology,
+} from "../../../../../../@backend/domain";
+import { ISerialPort } from "../../../../../hook/use-serial-port";
+import { useTechnology } from "../../../../../hook/use-technology";
 
-import { toast } from "./use-toast";
-import { createOneIdentificationLog } from "../../@backend/action/production/identification-log.action";
-import { upsertOneDevice } from "../../@backend/action/engineer/device.action";
+import { toast } from "../../../../../hook/use-toast";
+import { createOneIdentificationLog } from "../../../../../../@backend/action/production/identification-log.action";
+import { upsertOneDevice } from "../../../../../../@backend/action/engineer/device.action";
 
 namespace Namespace {
   export interface useIdentificationProps {
@@ -39,12 +43,12 @@ namespace Namespace {
     status: boolean;
     equipment_before: {
       serial: string;
-      imei: string;
+      imei?: string;
       lora_keys: Device.Equipment["lora_keys"];
     };
     equipment_after: {
       serial: string;
-      imei: string;
+      imei?: string;
       lora_keys: Device.Equipment["lora_keys"];
     };
   }
@@ -107,7 +111,14 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
           },
         };
 
-        const promises: Promise<any>[] = [createOneIdentificationLog(log)];
+        // save result on database
+        const promises: Promise<any>[] = [
+          fetch("/api/production/identification-log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(log),
+          }),
+        ];
         if (result.status) {
           promises.push(
             upsertOneDevice(
@@ -133,7 +144,9 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
         }
 
         // save result on database
-        const [dataSavedOnDb] = await Promise.all(promises);
+        const [res] = await Promise.all(promises);
+        if (!res.ok) throw new Error("Erro ao salvar log de identificação");
+        const dataSavedOnDb = await res.json();
 
         // update react state with the result
         setIdentified((prev) => prev.concat(dataSavedOnDb));

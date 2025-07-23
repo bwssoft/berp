@@ -6,7 +6,7 @@ import { z } from "zod";
 import { Product } from "@/app/lib/@backend/domain";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { createOneProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
 
 // Schema de validação com Zod

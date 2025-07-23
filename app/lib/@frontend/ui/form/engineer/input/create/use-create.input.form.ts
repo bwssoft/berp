@@ -6,7 +6,7 @@ import { z } from "zod";
 import { Input, IInput } from "@/app/lib/@backend/domain";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "@/app/lib/@frontend/hook";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { createOneInput } from "@/app/lib/@backend/action/engineer/input/input.action";
 
 // Schema de validação com Zod

@@ -38,13 +38,14 @@ namespace Namespace {
 const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
   command: string,
-  timeout: number = 500
+  timeout: number = 500,
+  check?: string
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
 
   const base = command.replace("\r\n", "");
-  const cmp = base.includes("=") ? base : `${base}=`;
+  const cmp = check ? check : base.includes("=") ? base : `${base}=`;
 
   const timeoutPromise = new Promise<undefined>((resolve) =>
     setTimeout(() => resolve(undefined), timeout)
@@ -55,8 +56,9 @@ const readResponse = async (
       const { value, done } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value);
-      buffer += chunk;
+      buffer += decoder.decode(value);
+
+      console.info("[RAW DATA]", buffer);
 
       const lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
@@ -106,17 +108,17 @@ export const useNB2 = () => {
     closeTransport: closePort,
     sendMessage: async (
       port,
-      msg: Message<string, { delay_before?: number }>
+      msg: Message<string, { delay_before?: number; check?: string }>
     ) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
-      const { command, timeout, delay_before } = msg;
+      const { command, timeout, delay_before, check } = msg;
       if (delay_before) await sleep(delay_before);
-      console.log("-------------------------");
-      console.log("command", command);
+      console.info("-------------------------");
+      console.info("[MESSAGE SENT]", command);
       await writeToPort(port, command);
-      const response = await readResponse(reader, command, timeout);
-      console.log("response", response);
+      const response = await readResponse(reader, command, timeout, check);
+      console.info("[RESPONSE MATCHED]", response);
 
       await reader.cancel();
       reader.releaseLock();
@@ -714,15 +716,17 @@ export const useNB2 = () => {
           {
             key: "write_serial",
             command: `WINS=${id}\r\n`,
+            check: "WINS=",
           },
           {
             key: "write_imei",
             command: `WIMEI=${identification.imei}\r\n`,
+            check: "WIMEI=",
           },
           {
             key: "read_serial",
             command: `RINS\r\n`,
-            delay_before: 2000,
+            delay_before: 3000,
           },
           {
             key: "read_imei",
@@ -772,6 +776,54 @@ export const useNB2 = () => {
     },
     [sendMultipleMessages]
   );
+  const handleFirmwareUpdate = useCallback(
+    async (detected: Namespace.Detected[]) => {
+      return await Promise.all(
+        detected.map(async ({ port, equipment }) => {
+          try {
+            const messages = [
+              {
+                key: "update_firmware",
+                command: `UPFW\r\n`,
+                check: "CMD FW",
+              },
+            ] as const;
+
+            const init_time = Date.now();
+            const response = await sendMultipleMessages({
+              transport: port,
+              messages,
+            });
+            const status = Boolean(
+              response.update_firmware && response.update_firmware.length > 0
+            );
+            const end_time = Date.now();
+            return {
+              port,
+              init_time,
+              end_time,
+              status,
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
+              equipment: {
+                serial: equipment.serial,
+                imei: equipment.imei,
+                firmware: equipment.firmware,
+              },
+            };
+          } catch (error) {
+            const message = `[(${new Date().toLocaleString()}) ERROR IN NB2 FIRMWARE UPDATE]`;
+            console.error(message, error);
+            throw new Error(message);
+          }
+        })
+      );
+    },
+    [sendMultipleMessages]
+  );
 
   const isIdentified = (input?: {
     imei?: string;
@@ -800,5 +852,6 @@ export const useNB2 = () => {
     requestPort,
     handleAutoTest,
     handleDetection,
+    handleFirmwareUpdate,
   };
 };

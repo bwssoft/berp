@@ -3,13 +3,20 @@ import { IProfile } from "@/app/lib/@backend/domain";
 import { columns } from "./profile.columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { ActiveProfileDialog, useActiveProfileDialog } from "../../../dialog";
-import { UserLinkedProfileModal, useUserLinkedProfileModal } from "../../../modal";
-import { AuditProfileModal, useAuditProfileModal } from "../../../modal/admin/profile/audit-profile";
+import {
+  UserLinkedProfileModal,
+  useUserLinkedProfileModal,
+} from "../../../modal";
+import {
+  AuditProfileModal,
+  useAuditProfileModal,
+} from "../../../modal/admin/profile/audit-profile";
 import { useSearchParams } from "next/navigation";
-import { useHandleParamsChange } from "@/app/lib/@frontend/hook";
+import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
 import { useAuth } from "@/app/lib/@frontend/context";
+import { TooltipProvider } from "../../../component/tooltip";
 
 const PAGE_SIZE = 10;
 
@@ -36,55 +43,57 @@ export function ProfileTable(props: Props) {
 
   return (
     <>
-      <div className="w-full">
-        <DataTable
-          columns={columns({
-            openActiveDialog: activeDialog.handleOpen,
-            openUserModal: userModal.handleProfileSelection,
-            openAuditModal: audtiModal.handleProfileSelection,
-            restrictFeatureByProfile,
-          })}
-          data={docs}
-          mobileDisplayValue={(data) => data.name}
-          mobileKeyExtractor={(data) => data.created_at?.toISOString()}
-          className="w-full"
+      <TooltipProvider>
+        <div className="w-full">
+          <DataTable
+            columns={columns({
+              openActiveDialog: activeDialog.handleOpen,
+              openUserModal: userModal.handleProfileSelection,
+              openAuditModal: audtiModal.handleProfileSelection,
+              restrictFeatureByProfile,
+            })}
+            data={docs}
+            mobileDisplayValue={(data) => data.name}
+            mobileKeyExtractor={(data) => data.created_at?.toISOString()}
+            className="w-full"
+          />
+
+          <Pagination
+            currentPage={currentPage}
+            totalPages={pages}
+            totalItems={total}
+            limit={limit}
+            onPageChange={handlePageChange}
+          />
+        </div>
+
+        <ActiveProfileDialog
+          open={activeDialog.open}
+          setOpen={activeDialog.setOpen}
+          confirm={activeDialog.confirm}
+          isLoading={activeDialog.isLoading}
+          willActivate={activeDialog.activate}
         />
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={pages}
-          totalItems={total}
-          limit={limit}
-          onPageChange={handlePageChange}
+        <UserLinkedProfileModal
+          users={userModal.users}
+          closeModal={userModal.closeModal}
+          open={userModal.open}
+          profile={userModal.profile}
+          isLoading={userModal.isLoading}
+          handlePageChange={userModal.handlePageChange}
+          currentPage={userModal.currentPage}
         />
-      </div>
 
-      <ActiveProfileDialog
-        open={activeDialog.open}
-        setOpen={activeDialog.setOpen}
-        confirm={activeDialog.confirm}
-        isLoading={activeDialog.isLoading}
-        willActivate={activeDialog.activate}
-      />
-
-      <UserLinkedProfileModal
-        users={userModal.users}
-        closeModal={userModal.closeModal}
-        open={userModal.open}
-        profile={userModal.profile}
-        isLoading={userModal.isLoading}
-        handlePageChange={userModal.handlePageChange}
-        currentPage={userModal.currentPage}
-      />
-
-      <AuditProfileModal
-        audits={audtiModal.audits}
-        currentPage={audtiModal.currentPage}
-        handlePageChange={audtiModal.handlePageChange}
-        closeModal={audtiModal.closeModal}
-        open={audtiModal.open}
-        profile={audtiModal.profile}
-      />
+        <AuditProfileModal
+          audits={audtiModal.audits}
+          currentPage={audtiModal.currentPage}
+          handlePageChange={audtiModal.handlePageChange}
+          closeModal={audtiModal.closeModal}
+          open={audtiModal.open}
+          profile={audtiModal.profile}
+        />
+      </TooltipProvider>
     </>
   );
 }

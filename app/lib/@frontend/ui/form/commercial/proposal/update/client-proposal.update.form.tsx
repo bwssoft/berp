@@ -47,7 +47,6 @@ import {
 import { nanoid } from "nanoid";
 import { useEffect } from "react";
 
-import { toast } from "@/app/lib/@frontend/hook";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {
   cancelSignatureProcess,
