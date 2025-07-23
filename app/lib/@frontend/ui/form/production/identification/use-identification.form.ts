@@ -56,7 +56,10 @@ export function useIdentificationForm(props: {
         case Device.Model.DM_BWS_LORA:
         case Device.Model.DM_BWS_NB2_LORA:
         case Device.Model.DM_BWS_4G: {
-          const match = extractedSerial.match(/SN\s*:?\s*([a-fA-F0-9]{8})/i);
+          // const match = extractedSerial.match(/SN\s*:?\s*([a-fA-F0-9]{8})/i);
+          const match = extractedSerial.match(
+            /SN\s*[:Çç]?\s*([a-fA-F0-9]{8})/i
+          );
           if (match) {
             setValue("serial", match[1], { shouldValidate: true });
           }
