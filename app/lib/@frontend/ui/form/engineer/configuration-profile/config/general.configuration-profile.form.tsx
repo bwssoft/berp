@@ -23,9 +23,16 @@ import {
   FormLabel,
   FormMessage,
 } from "../../../../component/form";
+import { useGeneralConfigurationProfileForm } from "./use-general.configuration-profile.form";
+import { ITechnology } from "@/app/lib/@backend/domain";
 
-export function GeneralConfigurationProfileForm() {
-  const form = useFormContext<ConfigurationProfileSchema>();
+interface Props {
+  technology: ITechnology | undefined;
+}
+export function GeneralConfigurationProfileForm(props: Props) {
+  const { technology } = props;
+  const { form, handleChangeServerOption } =
+    useGeneralConfigurationProfileForm();
 
   return (
     <Card>
@@ -100,11 +107,23 @@ export function GeneralConfigurationProfileForm() {
 
           <Tabs defaultValue="ip" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="ip" className="flex items-center gap-2">
+              <TabsTrigger
+                value="ip"
+                className="flex items-center gap-2"
+                onClick={() =>
+                  technology && handleChangeServerOption("ip", technology)
+                }
+              >
                 <Server className="h-4 w-4" />
                 Servidores IP
               </TabsTrigger>
-              <TabsTrigger value="dns" className="flex items-center gap-2">
+              <TabsTrigger
+                value="dns"
+                className="flex items-center gap-2"
+                onClick={() =>
+                  technology && handleChangeServerOption("dns", technology)
+                }
+              >
                 <Network className="h-4 w-4" />
                 Servidores DNS
               </TabsTrigger>
