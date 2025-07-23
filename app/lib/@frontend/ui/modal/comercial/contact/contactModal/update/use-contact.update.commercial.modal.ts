@@ -146,6 +146,8 @@ export function useUpdateContactModal() {
 
     // Update contact in context
     updateContactInContext(contact.id, updatedContactData);
+
+    closeModal();
   }
 
   return {

@@ -71,6 +71,8 @@ export function useDeleteContactDialog() {
   async function deleteContactLocally(id: string) {
     // Delete contact from context
     deleteContactInContext(id);
+
+    setOpen(false);
   }
 
   return {

@@ -133,6 +133,8 @@ export function useCreateContactModal() {
     };
 
     createContactInContext(contactData);
+
+    closeModal();
   }
 
   return {

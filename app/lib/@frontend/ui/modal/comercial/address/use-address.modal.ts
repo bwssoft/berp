@@ -63,6 +63,8 @@ export function useAddressModal() {
     };
 
     createAddressInContext(addressData);
+
+    closeModal();
   }
 
   return {
