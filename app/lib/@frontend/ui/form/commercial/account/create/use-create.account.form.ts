@@ -22,7 +22,12 @@ import {
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
-import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
+import {
+  useCreateAccountFlow,
+  LocalAccount,
+  LocalAddress,
+  LocalContact,
+} from "@/app/lib/@frontend/context/create-account-flow.context";
 
 const schema = z
   .object({
@@ -317,7 +322,11 @@ export function useCreateAccountForm() {
     const address = dataCnpj?.address;
     const contact = dataCnpj?.phones[0];
 
-    const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
+    // Generate local ID for the account
+    const accountLocalId = crypto.randomUUID();
+
+    const base: LocalAccount = {
+      idLocal: accountLocalId,
       document: {
         ...data.document,
         value: data.document.value.replace(/\D/g, ""),
@@ -351,7 +360,8 @@ export function useCreateAccountForm() {
     createAccountLocally(base);
 
     if (address) {
-      const newAddress: Omit<IAddress, "id" | "created_at" | "updated_at"> = {
+      const newAddress: LocalAddress = {
+        idLocal: crypto.randomUUID(),
         city: address.city,
         state: address.state,
         street: address.street,
@@ -366,7 +376,8 @@ export function useCreateAccountForm() {
 
     // Create contact locally if available
     if (contact) {
-      const newContact: Omit<IContact, "id" | "created_at"> = {
+      const newContact: LocalContact = {
+        idLocal: crypto.randomUUID(),
         name: dataCnpj?.company.name || dataCnpj?.alias || "",
         contractEnabled: false,
         positionOrRelation: "",
@@ -377,8 +388,8 @@ export function useCreateAccountForm() {
             contact: `${contact.area}${contact.number}`,
             type:
               dataCnpj?.phones[0].type === "LANDLINE"
-                ? "Telefone Comercial"
-                : "Celular",
+                ? ("Telefone Comercial" as const)
+                : ("Celular" as const),
             preferredContact: { phone: true },
           },
         ],
@@ -392,8 +403,10 @@ export function useCreateAccountForm() {
       variant: "success",
     });
 
-    // Navigate to next step
-    router.push(`/commercial/account/form/create/tab/address`);
+    // Navigate to next step with account local ID
+    router.push(
+      `/commercial/account/form/create/tab/address?id=${accountLocalId}`
+    );
   };
 
   return {

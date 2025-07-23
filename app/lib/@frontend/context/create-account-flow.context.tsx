@@ -4,48 +4,46 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 import { IAccount, IAddress, IContact } from "../../@backend/domain";
 import { toast } from "../hook/use-toast";
 
+// Extended types with local IDs
+export type LocalAccount = Omit<IAccount, "id" | "created_at" | "updated_at"> & {
+  idLocal: string;
+};
+
+export type LocalAddress = Omit<IAddress, "id" | "created_at" | "updated_at"> & {
+  idLocal: string;
+};
+
+export type LocalContact = Omit<IContact, "id" | "created_at" | "updated_at"> & {
+  idLocal: string;
+};
+
 interface CreateAccountFlowContextType {
   // Account state
-  account: Omit<IAccount, "id" | "created_at" | "updated_at"> | null;
+  account: LocalAccount | null;
 
   // Address state
-  addresses: Omit<IAddress, "id" | "created_at" | "updated_at">[];
+  addresses: LocalAddress[];
 
   // Contact state
-  contacts: Omit<IContact, "id" | "created_at" | "updated_at">[];
+  contacts: LocalContact[];
 
   // Account methods
-  createAccountLocally: (
-    account: Omit<IAccount, "id" | "created_at" | "updated_at">
-  ) => void;
-  updateAccountLocally: (
-    updates: Partial<Omit<IAccount, "id" | "created_at" | "updated_at">>
-  ) => void;
+  createAccountLocally: (account: LocalAccount) => void;
+  updateAccountLocally: (updates: Partial<LocalAccount>) => void;
   deleteAccountLocally: () => void;
-  setAccount: (
-    account: Omit<IAccount, "id" | "created_at" | "updated_at"> | null
-  ) => void;
+  setAccount: (account: LocalAccount | null) => void;
 
   // Address methods
-  createAddressLocally: (
-    address: Omit<IAddress, "id" | "created_at" | "updated_at">
-  ) => void;
-  updateAddressLocally: (
-    index: number,
-    updates: Partial<Omit<IAddress, "id" | "created_at" | "updated_at">>
-  ) => void;
+  createAddressLocally: (address: LocalAddress) => void;
+  updateAddressLocally: (index: number, updates: Partial<LocalAddress>) => void;
   deleteAddressLocally: (index: number) => void;
-  setAddresses: (
-    addresses: Omit<IAddress, "id" | "created_at" | "updated_at">[]
-  ) => void;
+  setAddresses: (addresses: LocalAddress[]) => void;
 
   // Contact methods
-  createContactLocally: (
-    contact: Omit<IContact, "id" | "created_at" | "updated_at">
-  ) => void;
-  updateContactLocally: (id: number, updates: Partial<IContact>) => void;
-  deleteContactLocally: (id: number) => void;
-  setContacts: (contacts: IContact[]) => void;
+  createContactLocally: (contact: LocalContact) => void;
+  updateContactLocally: (index: number, updates: Partial<LocalContact>) => void;
+  deleteContactLocally: (index: number) => void;
+  setContacts: (contacts: LocalContact[]) => void;
 
   // Utility methods
   resetFlow: () => void;
@@ -60,37 +58,24 @@ export const CreateAccountFlowProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [account, setAccount] = useState<Omit<
-    IAccount,
-    "id" | "created_at" | "updated_at"
-  > | null>(null);
-  const [addresses, setAddresses] = useState<
-    Omit<IAddress, "id" | "created_at" | "updated_at">[]
-  >([]);
-  const [contacts, setContacts] = useState<
-    Omit<IContact, "id" | "created_at" | "updated_at">[]
-  >([]);
+  const [account, setAccount] = useState<LocalAccount | null>(null);
+  const [addresses, setAddresses] = useState<LocalAddress[]>([]);
+  const [contacts, setContacts] = useState<LocalContact[]>([]);
 
   // Account methods
-  const createAccountLocally = useCallback(
-    (newAccount: Omit<IAccount, "id" | "created_at" | "updated_at">) => {
-      setAccount(newAccount);
-    },
-    []
-  );
+  const createAccountLocally = useCallback((newAccount: LocalAccount) => {
+    setAccount(newAccount);
+  }, []);
 
-  const updateAccountLocally = useCallback(
-    (updates: Partial<Omit<IAccount, "id" | "created_at" | "updated_at">>) => {
-      setAccount((prevAccount) => {
-        if (prevAccount) {
-          const updatedAccount = { ...prevAccount, ...updates };
-          return updatedAccount;
-        }
-        return prevAccount;
-      });
-    },
-    []
-  );
+  const updateAccountLocally = useCallback((updates: Partial<LocalAccount>) => {
+    setAccount((prevAccount) => {
+      if (prevAccount) {
+        const updatedAccount = { ...prevAccount, ...updates };
+        return updatedAccount;
+      }
+      return prevAccount;
+    });
+  }, []);
 
   const deleteAccountLocally = useCallback(() => {
     setAccount(null);
@@ -100,20 +85,14 @@ export const CreateAccountFlowProvider = ({
   }, []);
 
   // Address methods
-  const createAddressLocally = useCallback(
-    (newAddress: Omit<IAddress, "id" | "created_at" | "updated_at">) => {
-      setAddresses((prevAddresses) => {
-        return [...prevAddresses, newAddress];
-      });
-    },
-    []
-  );
+  const createAddressLocally = useCallback((newAddress: LocalAddress) => {
+    setAddresses((prevAddresses) => {
+      return [...prevAddresses, newAddress];
+    });
+  }, []);
 
   const updateAddressLocally = useCallback(
-    (
-      index: number,
-      updates: Partial<Omit<IAddress, "id" | "created_at" | "updated_at">>
-    ) => {
+    (index: number, updates: Partial<LocalAddress>) => {
       setAddresses((prevAddresses) => {
         const updatedAddresses = prevAddresses.map((address, i) =>
           i === index ? { ...address, ...updates } : address
@@ -132,17 +111,14 @@ export const CreateAccountFlowProvider = ({
   }, []);
 
   // Contact methods
-  const createContactLocally = useCallback(
-    (newContact: Omit<IContact, "id" | "created_at" | "updated_at">) => {
-      setContacts((prevContacts) => {
-        return [...prevContacts, newContact];
-      });
-    },
-    []
-  );
+  const createContactLocally = useCallback((newContact: LocalContact) => {
+    setContacts((prevContacts) => {
+      return [...prevContacts, newContact];
+    });
+  }, []);
 
   const updateContactLocally = useCallback(
-    (index: number, updates: Partial<IContact>) => {
+    (index: number, updates: Partial<LocalContact>) => {
       setContacts((prevContacts) => {
         const updatedContacts = prevContacts.map((contact, i) =>
           i === index ? { ...contact, ...updates } : contact
