@@ -7,6 +7,7 @@ import {
   Cog6ToothIcon,
   IdentificationIcon,
 } from "@heroicons/react/24/outline";
+import { FolderDownIcon } from "lucide-react";
 
 const actions = [
   {
@@ -36,6 +37,16 @@ const actions = [
     iconBackground: "bg-cyan-50",
     description:
       "Acessar e verificar o resultado do processo de identificação do equipamento.",
+  },
+  {
+    title: "Gravador de Firmware",
+    href: "/production/log/firmware-update",
+    code: "production:log:firmware-update",
+    icon: FolderDownIcon,
+    iconForeground: "text-orange-700",
+    iconBackground: "bg-orange-50",
+    description:
+      "Acessar e verificar o resultado do processo de gravação de firmware.",
   },
 ];
 
