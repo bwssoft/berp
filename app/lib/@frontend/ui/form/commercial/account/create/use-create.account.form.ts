@@ -350,11 +350,8 @@ export function useCreateAccountForm() {
 
     createAccountLocally(base);
 
-    // Create address locally if available
     if (address) {
-      const newAddress: IAddress = {
-        id: crypto.randomUUID(),
-        accountId: accountId,
+      const newAddress: Omit<IAddress, "id" | "created_at" | "updated_at"> = {
         city: address.city,
         state: address.state,
         street: address.street,
@@ -363,15 +360,13 @@ export function useCreateAccountForm() {
         zip_code: address.zip,
         complement: address.details ?? "",
         type: ["Comercial"],
-        created_at: new Date(),
-        updated_at: new Date(),
       };
       createAddressLocally(newAddress);
     }
 
     // Create contact locally if available
     if (contact) {
-      const newContact: Omit<IContact, "id"> = {
+      const newContact: Omit<IContact, "id" | "created_at"> = {
         name: dataCnpj?.company.name || dataCnpj?.alias || "",
         contractEnabled: false,
         positionOrRelation: "",
@@ -387,7 +382,6 @@ export function useCreateAccountForm() {
             preferredContact: { phone: true },
           },
         ],
-        created_at: new Date(),
       };
       createContactLocally(newContact);
     }

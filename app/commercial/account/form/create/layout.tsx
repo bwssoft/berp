@@ -4,14 +4,8 @@ interface CreateAccountLayoutProps {
   children: React.ReactNode;
 }
 
-export default function CreateAccountLayout({ children }: CreateAccountLayoutProps) {
-  return (
-    <CreateAccountFlowProvider
-      initialAccount={null}
-      initialAddresses={[]}
-      initialContacts={[]}
-    >
-      {children}
-    </CreateAccountFlowProvider>
-  );
+export default function CreateAccountLayout({
+  children,
+}: CreateAccountLayoutProps) {
+  return <CreateAccountFlowProvider>{children}</CreateAccountFlowProvider>;
 }
