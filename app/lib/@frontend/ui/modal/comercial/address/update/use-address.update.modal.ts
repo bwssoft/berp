@@ -2,6 +2,7 @@
 
 import { updateOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { IAddress } from "@/app/lib/@backend/domain";
+import { LocalAddress } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -42,9 +43,12 @@ export function useAddressUpdateModal() {
     }
   }
 
-  async function updateAddressLocally(addressId: string, data: IAddress) {
-    // Update address in context
-    updateAddressInContext(addressId, data);
+  async function updateAddressLocally(
+    addressIdLocal: string,
+    data: Partial<LocalAddress>
+  ) {
+    // Update address in context using idLocal
+    updateAddressInContext(addressIdLocal, data);
 
     closeModal();
   }

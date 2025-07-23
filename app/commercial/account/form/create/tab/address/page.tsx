@@ -10,7 +10,7 @@ import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restric
 export default function Page() {
   const searchParams = useSearchParams();
   const accountId = searchParams.get("accountId");
-  
+
   const { account, addresses } = useCreateAccountFlow();
   const [hasPermissionAddresses, setHasPermissionAddresses] = useState(false);
 

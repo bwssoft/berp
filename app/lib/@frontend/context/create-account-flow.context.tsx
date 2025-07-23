@@ -44,14 +44,20 @@ interface CreateAccountFlowContextType {
 
   // Address methods
   createAddressLocally: (address: LocalAddress) => void;
-  updateAddressLocally: (index: number, updates: Partial<LocalAddress>) => void;
-  deleteAddressLocally: (index: number) => void;
+  updateAddressLocally: (
+    idLocal: string,
+    updates: Partial<LocalAddress>
+  ) => void;
+  deleteAddressLocally: (idLocal: string) => void;
   setAddresses: (addresses: LocalAddress[]) => void;
 
   // Contact methods
   createContactLocally: (contact: LocalContact) => void;
-  updateContactLocally: (index: number, updates: Partial<LocalContact>) => void;
-  deleteContactLocally: (index: number) => void;
+  updateContactLocally: (
+    idLocal: string,
+    updates: Partial<LocalContact>
+  ) => void;
+  deleteContactLocally: (idLocal: string) => void;
   setContacts: (contacts: LocalContact[]) => void;
 
   // Utility methods
@@ -101,10 +107,10 @@ export const CreateAccountFlowProvider = ({
   }, []);
 
   const updateAddressLocally = useCallback(
-    (index: number, updates: Partial<LocalAddress>) => {
+    (idLocal: string, updates: Partial<LocalAddress>) => {
       setAddresses((prevAddresses) => {
-        const updatedAddresses = prevAddresses.map((address, i) =>
-          i === index ? { ...address, ...updates } : address
+        const updatedAddresses = prevAddresses.map((address) =>
+          address.idLocal === idLocal ? { ...address, ...updates } : address
         );
         return updatedAddresses;
       });
@@ -112,9 +118,11 @@ export const CreateAccountFlowProvider = ({
     []
   );
 
-  const deleteAddressLocally = useCallback((index: number) => {
+  const deleteAddressLocally = useCallback((idLocal: string) => {
     setAddresses((prevAddresses) => {
-      const filteredAddresses = prevAddresses.filter((_, i) => i !== index);
+      const filteredAddresses = prevAddresses.filter(
+        (address) => address.idLocal !== idLocal
+      );
       return filteredAddresses;
     });
   }, []);
@@ -127,10 +135,10 @@ export const CreateAccountFlowProvider = ({
   }, []);
 
   const updateContactLocally = useCallback(
-    (index: number, updates: Partial<LocalContact>) => {
+    (idLocal: string, updates: Partial<LocalContact>) => {
       setContacts((prevContacts) => {
-        const updatedContacts = prevContacts.map((contact, i) =>
-          i === index ? { ...contact, ...updates } : contact
+        const updatedContacts = prevContacts.map((contact) =>
+          contact.idLocal === idLocal ? { ...contact, ...updates } : contact
         );
         return updatedContacts;
       });
@@ -138,9 +146,11 @@ export const CreateAccountFlowProvider = ({
     []
   );
 
-  const deleteContactLocally = useCallback((index: number) => {
+  const deleteContactLocally = useCallback((idLocal: string) => {
     setContacts((prevContacts) => {
-      const filteredContacts = prevContacts.filter((_, i) => i !== index);
+      const filteredContacts = prevContacts.filter(
+        (contact) => contact.idLocal !== idLocal
+      );
       return filteredContacts;
     });
   }, []);
