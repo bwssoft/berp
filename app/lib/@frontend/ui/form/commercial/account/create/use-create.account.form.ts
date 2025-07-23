@@ -397,12 +397,6 @@ export function useCreateAccountForm() {
       createContactLocally(newContact);
     }
 
-    toast({
-      title: "Sucesso!",
-      description: "Conta criada localmente. Continue com o próximo passo.",
-      variant: "success",
-    });
-
     // Navigate to next step with account local ID
     router.push(
       `/commercial/account/form/create/tab/address?id=${accountLocalId}`

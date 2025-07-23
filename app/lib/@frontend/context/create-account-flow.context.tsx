@@ -5,15 +5,24 @@ import { IAccount, IAddress, IContact } from "../../@backend/domain";
 import { toast } from "../hook/use-toast";
 
 // Extended types with local IDs
-export type LocalAccount = Omit<IAccount, "id" | "created_at" | "updated_at"> & {
+export type LocalAccount = Omit<
+  IAccount,
+  "id" | "created_at" | "updated_at"
+> & {
   idLocal: string;
 };
 
-export type LocalAddress = Omit<IAddress, "id" | "created_at" | "updated_at"> & {
+export type LocalAddress = Omit<
+  IAddress,
+  "id" | "created_at" | "updated_at"
+> & {
   idLocal: string;
 };
 
-export type LocalContact = Omit<IContact, "id" | "created_at" | "updated_at"> & {
+export type LocalContact = Omit<
+  IContact,
+  "id" | "created_at" | "updated_at"
+> & {
   idLocal: string;
 };
 
