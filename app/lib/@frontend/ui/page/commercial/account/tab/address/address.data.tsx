@@ -18,7 +18,7 @@ import { useAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/
 import { useAddressUpdateModal } from "@/app/lib/@frontend/ui/modal/comercial/address/update/use-address.update.modal";
 import { useAddressDeleteDialog } from "@/app/lib/@frontend/ui/dialog/commercial/account/address/delete/use-delete.address";
 import { AddressUpdateModal } from "@/app/lib/@frontend/ui/modal/comercial/address/update";
-import { CreatedAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
+import { CreateAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
 import { AddressDeleteDialog } from "@/app/lib/@frontend/ui/dialog/commercial/account/address/delete/delete.address";
 
 interface Props {
@@ -133,7 +133,7 @@ export function AddressDataPage(props: Props) {
         updateAddress={updateAddress}
       />
 
-      <CreatedAddressModal
+      <CreateAddressModal
         accountId={account.id!}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}

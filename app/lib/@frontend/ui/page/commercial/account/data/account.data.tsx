@@ -33,7 +33,7 @@ import { useState } from "react";
 import { useAddressUpdateModal } from "../../../../modal/comercial/address/update/use-address.update.modal";
 import { useAddressModal } from "../../../../modal/comercial/address/use-address.modal";
 import { AddressUpdateModal } from "../../../../modal/comercial/address/update";
-import { CreatedAddressModal } from "../../../../modal/comercial/address";
+import { CreateAddressModal } from "../../../../modal/comercial/address";
 import { AddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/delete.address";
 import { useAddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/use-delete.address";
 import { DeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/delete.contact.dialog";
@@ -282,7 +282,7 @@ export function AccountDataPage(props: Props) {
         isLoading={isLoadingDeleteContact}
       />
 
-      <CreatedAddressModal
+      <CreateAddressModal
         accountId={account.id!}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}

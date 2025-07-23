@@ -12,7 +12,7 @@ interface AddressProps {
   accountId: string;
   createAddress: (data: AddressFormSchema, accountId: string) => Promise<void>;
 }
-export function CreatedAddressModal({
+export function CreateAddressModal({
   open,
   closeModal,
   accountId,
