@@ -35,11 +35,12 @@ interface Props {
 }
 
 export function ContactDataPage(props: Props) {
-  const { account, contacts, hasPermissionContacts, accountId } = props;
+  const { contacts, hasPermissionContacts, accountId } = props;
 
   const [selectedContact, setSelectedContact] = useState<LocalContact>();
+  const [isCreatingEntities, setIsCreatingEntities] = useState(false);
   const router = useRouter();
-  const { resetFlow } = useCreateAccountFlow();
+  const { resetFlow, createEntitiesApi } = useCreateAccountFlow();
 
   /**
    * MODAL CRIAÇÃO - CONTATO
@@ -92,6 +93,36 @@ export function ContactDataPage(props: Props) {
         description: "Erro ao cancelar operação. Tente novamente.",
         variant: "error",
       });
+    }
+  }
+
+  async function handleFinalizarSalvar() {
+    setIsCreatingEntities(true);
+
+    try {
+      const result = await createEntitiesApi();
+
+      if (result.success && result.accountId) {
+        // Redirect to the management page with the created account ID
+        router.push(
+          `/commercial/account/management/account-data?id=${result.accountId}`
+        );
+      } else {
+        toast({
+          title: "Erro",
+          description: result.error || "Erro ao criar entidades",
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error in handleFinalizarSalvar:", error);
+      toast({
+        title: "Erro",
+        description: "Erro inesperado ao finalizar criação",
+        variant: "error",
+      });
+    } finally {
+      setIsCreatingEntities(false);
     }
   }
 
@@ -148,16 +179,11 @@ export function ContactDataPage(props: Props) {
             Cancelar
           </Button>
           <FakeLoadingButton
-            controlledLoading={false}
-            onClick={async () => {
-              await new Promise((resolve) => setTimeout(resolve, 50));
-
-              router.push(
-                `/commercial/account/management/account-data?id=${accountId}`
-              );
-            }}
+            controlledLoading={isCreatingEntities}
+            onClick={handleFinalizarSalvar}
+            disabled={isCreatingEntities}
           >
-            Finalizar e Salvar Conta
+            {isCreatingEntities ? "Criando..." : "Finalizar e Salvar Conta"}
           </FakeLoadingButton>
         </div>
       </footer>

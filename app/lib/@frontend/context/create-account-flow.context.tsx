@@ -3,6 +3,9 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { IAccount, IAddress, IContact } from "../../@backend/domain";
 import { toast } from "../hook/use-toast";
+import { createOneAccount } from "../../@backend/action/commercial/account.action";
+import { createOneAddress } from "../../@backend/action/commercial/address.action";
+import { createOneContact } from "../../@backend/action/commercial/contact.action";
 
 // Extended types with local IDs
 export type LocalAccount = Omit<IAccount, "created_at" | "updated_at">;
@@ -41,6 +44,13 @@ interface CreateAccountFlowContextType {
 
   // Utility methods
   resetFlow: () => void;
+
+  // API creation method
+  createEntitiesApi: () => Promise<{
+    success: boolean;
+    accountId?: string;
+    error?: string;
+  }>;
 }
 
 const CreateAccountFlowContext = createContext<CreateAccountFlowContextType>(
@@ -146,6 +156,73 @@ export const CreateAccountFlowProvider = ({
     });
   }, []);
 
+  // API creation method
+  const createEntitiesApi = useCallback(async () => {
+    try {
+      if (!account) {
+        return { success: false, error: "Nenhuma conta encontrada para criar" };
+      }
+
+      // 1. Create the account first
+      const accountResult = await createOneAccount(account);
+
+      if (!accountResult.success || !accountResult.id) {
+        return {
+          success: false,
+          error: accountResult.error?.global || "Erro ao criar conta",
+        };
+      }
+
+      const createdAccountId = accountResult.id;
+
+      // 2. Create addresses with the account ID
+      for (const address of addresses) {
+        try {
+          const addressData = {
+            ...address,
+            accountId: createdAccountId,
+          };
+          await createOneAddress(addressData);
+        } catch (error) {
+          console.warn("Failed to create address:", error);
+        }
+      }
+
+      // 3. Create contacts with the account ID
+      for (const contact of contacts) {
+        try {
+          const contactData = {
+            ...contact,
+            accountId: createdAccountId,
+          };
+          await createOneContact(contactData);
+        } catch (error) {
+          console.warn("Failed to create contact:", error);
+        }
+      }
+
+      // Clear the context after successful creation
+      resetFlow();
+
+      toast({
+        title: "Sucesso!",
+        description: "Conta e dados relacionados criados com sucesso!",
+        variant: "success",
+      });
+
+      return {
+        success: true,
+        accountId: createdAccountId,
+      };
+    } catch (error) {
+      console.error("Error creating entities:", error);
+      return {
+        success: false,
+        error: "Erro inesperado ao criar entidades",
+      };
+    }
+  }, [account, addresses, contacts, resetFlow]);
+
   const value: CreateAccountFlowContextType = {
     // State
     account,
@@ -172,6 +249,9 @@ export const CreateAccountFlowProvider = ({
 
     // Utility methods
     resetFlow,
+
+    // API creation method
+    createEntitiesApi,
   };
 
   return (
