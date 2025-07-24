@@ -119,7 +119,13 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
         .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
       // save result on database
-      const dataSavedOnDb = await createManyAutoTestLog(result);
+      const res = await fetch("/api/production/auto-test-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result),
+      });
+      if (!res.ok) throw new Error("Erro ao salvar log de auto test");
+      const dataSavedOnDb = await res.json();
 
       // update state with configuration process result
       setAutoTest((prev) => prev.concat(dataSavedOnDb));
