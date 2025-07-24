@@ -41,6 +41,8 @@ import { useDeleteContactDialog } from "../../../../dialog/commercial/account/co
 import { useEconomicGroupUpdateModal } from "../../../../modal/comercial/economic-group/update/use-economic-group.update.modal";
 import { useAccountDataUpdateModal } from "../../../../modal/comercial/account/update/use-account-data.update.modal";
 import { AccountDataUpdateModal } from "../../../../modal/comercial/account/update/account-data.update.modal";
+import { refreshOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 
 interface Props {
   account: IAccount;
@@ -142,6 +144,18 @@ export function AccountDataPage(props: Props) {
     closeModal: closeUpdateAccountData
   } = useAccountDataUpdateModal()
 
+  /**
+   * ATUALIZAÇÃO - DADOS DA CONTA
+   */
+  const onRefreshAccountData = async () => {
+    await refreshOneAccount(account.document.value)
+    toast({
+      variant: "success",
+      description: "Conta atualizada com sucesso!",
+      title: "Sucesso"
+    })
+  }
+
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
@@ -150,6 +164,7 @@ export function AccountDataPage(props: Props) {
           onClickButtonEdit={() => {
             openUpdateModalAccountData()
           }}
+          onRefresh={onRefreshAccountData}
         />
 
         {isCompany &&
