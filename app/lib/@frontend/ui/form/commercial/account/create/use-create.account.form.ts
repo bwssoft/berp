@@ -160,6 +160,7 @@ export function useCreateAccountForm() {
 
   // Estado para definir se o documento é CPF ou CNPJ:
   const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Estado para guardar os dados retornados para holding e controlled
   const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
@@ -319,88 +320,102 @@ export function useCreateAccountForm() {
   }, 500);
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
-    const address = dataCnpj?.address;
-    const contact = dataCnpj?.phones[0];
+    setIsSubmitting(true);
 
-    // Generate local ID for the account
-    const accountLocalId = crypto.randomUUID();
+    try {
+      const address = dataCnpj?.address;
+      const contact = dataCnpj?.phones[0];
 
-    const base: LocalAccount = {
-      id: accountLocalId,
-      document: {
-        ...data.document,
-        value: data.document.value.replace(/\D/g, ""),
-      },
-      ...(type === "cpf"
-        ? {
-            name: data.cpf?.name,
-            rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
-          }
-        : {
-            social_name: data.cnpj?.social_name,
-            fantasy_name: data.cnpj?.fantasy_name,
-            state_registration: data.cnpj?.state_registration,
-            municipal_registration: data.cnpj?.municipal_registration,
-            status: data.cnpj?.status?.[0]?.name,
-            economic_group_holding: data.cnpj?.economic_group_holding
-              ? {
-                  name: data.cnpj?.economic_group_holding?.name! as string,
-                  taxId: data.cnpj?.economic_group_holding?.taxId! as string,
-                }
-              : undefined,
-            economic_group_controlled:
-              data.cnpj?.economic_group_controlled?.map((item) => ({
-                name: item.name! as string,
-                taxId: item.taxId! as string,
-              })),
-            setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
-          }),
-    };
+      const accountLocalId = crypto.randomUUID();
 
-    createAccountLocally(base);
-
-    if (address) {
-      const newAddress: LocalAddress = {
-        id: crypto.randomUUID(),
-        city: address.city,
-        state: address.state,
-        street: address.street,
-        district: address.district,
-        number: address.number,
-        zip_code: address.zip,
-        complement: address.details ?? "",
-        type: ["Comercial"],
+      const base: LocalAccount = {
+        id: accountLocalId,
+        document: {
+          ...data.document,
+          value: data.document.value.replace(/\D/g, ""),
+        },
+        ...(type === "cpf"
+          ? {
+              name: data.cpf?.name,
+              rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
+            }
+          : {
+              social_name: data.cnpj?.social_name,
+              fantasy_name: data.cnpj?.fantasy_name,
+              state_registration: data.cnpj?.state_registration,
+              municipal_registration: data.cnpj?.municipal_registration,
+              status: data.cnpj?.status?.[0]?.name,
+              economic_group_holding: data.cnpj?.economic_group_holding
+                ? {
+                    name: data.cnpj?.economic_group_holding?.name! as string,
+                    taxId: data.cnpj?.economic_group_holding?.taxId! as string,
+                  }
+                : undefined,
+              economic_group_controlled:
+                data.cnpj?.economic_group_controlled?.map((item) => ({
+                  name: item.name! as string,
+                  taxId: item.taxId! as string,
+                })),
+              setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
+            }),
       };
-      createAddressLocally(newAddress);
-    }
 
-    // Create contact locally if available
-    if (contact) {
-      const newContact: LocalContact = {
-        id: crypto.randomUUID(),
-        name: dataCnpj?.company.name || dataCnpj?.alias || "",
-        contractEnabled: false,
-        positionOrRelation: "",
-        contactFor: ["Comercial"],
-        contactItems: [
-          {
-            id: crypto.randomUUID(),
-            contact: `${contact.area}${contact.number}`,
-            type:
-              dataCnpj?.phones[0].type === "LANDLINE"
-                ? ("Telefone Comercial" as const)
-                : ("Celular" as const),
-            preferredContact: { phone: true },
-          },
-        ],
-      };
-      createContactLocally(newContact);
-    }
+      createAccountLocally(base);
 
-    // Navigate to next step with account local ID
-    router.push(
-      `/commercial/account/form/create/tab/address?accountId=${accountLocalId}`
-    );
+      if (address) {
+        const newAddress: LocalAddress = {
+          id: crypto.randomUUID(),
+          city: address.city,
+          state: address.state,
+          street: address.street,
+          district: address.district,
+          number: address.number,
+          zip_code: address.zip,
+          complement: address.details ?? "",
+          type: ["Comercial"],
+        };
+        createAddressLocally(newAddress);
+      }
+
+      if (contact) {
+        const newContact: LocalContact = {
+          id: crypto.randomUUID(),
+          name: dataCnpj?.company.name || dataCnpj?.alias || "",
+          contractEnabled: false,
+          positionOrRelation: "",
+          contactFor: ["Comercial"],
+          contactItems: [
+            {
+              id: crypto.randomUUID(),
+              contact: `${contact.area}${contact.number}`,
+              type:
+                dataCnpj?.phones[0].type === "LANDLINE"
+                  ? ("Telefone Comercial" as const)
+                  : ("Celular" as const),
+              preferredContact: { phone: true },
+            },
+          ],
+        };
+        createContactLocally(newContact);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      router.push(
+        `/commercial/account/form/create/tab/address?accountId=${accountLocalId}`
+      );
+
+      return;
+    } catch (error) {
+      console.error("Error in onSubmit:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao criar conta localmente",
+        variant: "error",
+      });
+
+      setIsSubmitting(false);
+    }
   };
 
   return {
@@ -409,6 +424,7 @@ export function useCreateAccountForm() {
     type,
     setType,
     onSubmit,
+    isSubmitting,
     handleCnpjOrName,
     dataHolding,
     dataControlled,

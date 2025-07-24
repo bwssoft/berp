@@ -19,6 +19,7 @@ export function CreateOneAccountForm() {
     toggleButtonText,
     setType,
     form,
+    isSubmitting,
   } = useCreateAccountForm();
 
   const router = useRouter();
@@ -48,6 +49,7 @@ export function CreateOneAccountForm() {
               <Button
                 type="button"
                 variant="ghost"
+                disabled={isSubmitting}
                 onClick={() => {
                   router.push("/commercial/account");
                 }}
@@ -57,9 +59,10 @@ export function CreateOneAccountForm() {
               <FakeLoadingButton
                 variant="default"
                 type="submit"
-                isLoading={methods.formState.isSubmitting}
+                isLoading={isSubmitting}
+                disabled={isSubmitting}
               >
-                Salvar e próximo
+                {isSubmitting ? "Salvando..." : "Salvar e próximo"}
               </FakeLoadingButton>
             </div>
           )}
