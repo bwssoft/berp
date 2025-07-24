@@ -25,11 +25,15 @@ export function SectorTable({ data, onToggle }: SectorTableProps) {
     const { handleParamsChange } = useHandleParamsChange();
     const handlePageChange = (page: number) => handleParamsChange({ page });
 
+    const sortedDocs = [...docs].sort((a, b) =>
+        a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" })
+    );
+
     return (
         <div>
             <DataTable
                 columns={sectorColumns(onToggle)}
-                data={docs}
+                data={sortedDocs}
                 mobileDisplayValue={(s) => s.name}
                 mobileKeyExtractor={(s) => s.id}
                 className="w-full"
