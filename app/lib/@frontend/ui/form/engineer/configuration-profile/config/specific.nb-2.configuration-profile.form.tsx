@@ -94,7 +94,7 @@ export function SpecificNB2ConfigurationProfileForm() {
         <Separator />
 
         {/* Configurações de Tensão */}
-        <div className="space-y-6">
+        {/* <div className="space-y-6">
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4" />
             <h4 className="font-medium">Configurações de Tensão</h4>
@@ -167,7 +167,7 @@ export function SpecificNB2ConfigurationProfileForm() {
               />
             </div>
           </div>
-        </div>
+        </div> */}
 
         <Separator />
 
