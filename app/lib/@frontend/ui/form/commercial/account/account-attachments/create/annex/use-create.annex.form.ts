@@ -81,7 +81,7 @@ export function useCreateAnnexForm({
             ...data,
             accountId: accountId,
             title: "Rotina de criação de um anexo.",
-            type: "sistema",
+            type: "manual",
             description: `Criação do anexo ${data.name}`,
             author: {
                 name: user?.name ?? "",

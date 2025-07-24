@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "../../../component/button";
 import { WhatsappIcon } from "../../../../svg/whatsapp-icon";
+import { EditedFieldsTable } from "../../../table/commercial/historical/edited-fields/table";
 
 type TimelineProps = {
     historical: IHistorical[];
@@ -138,6 +139,12 @@ export function TimelineItem({
                                         )}
                                         {entry.description && (
                                             <p>{entry.description}</p>
+                                        )}
+
+                                        {entry.editedFields && (
+                                            <EditedFieldsTable 
+                                                data={entry.editedFields}
+                                            />
                                         )}
 
                                         {entry.file && entry.file && (

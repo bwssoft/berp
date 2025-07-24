@@ -23,10 +23,8 @@ export async function updateOneAccount(
   filter: Filter<IAccount>,
   update: Partial<IAccount>
 ) {
-  await updateOneAccountUsecase.execute(filter, update);
-  revalidatePath(
-    `/commercial/account/form/create/tab/contact?id=${filter.accountId}`
-  );
+  const result = await updateOneAccountUsecase.execute(filter, update);
+  return result
 }
 
 export const findOneAccount = async (filter: Filter<IAccount>) => {

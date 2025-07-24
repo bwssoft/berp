@@ -13,14 +13,15 @@ import {
     FormLabel,
     FormMessage,
 } from "../../../../../component/form";
+import { FormProvider } from "react-hook-form";
 
 interface Props {
     accountData?: IAccount
     closeModal: () => void
 }
 
-export function UpdateAccountDataForm({ accountData }:Props) {
-    const { methods, onSubmit, register, errors, control } = useUpdateAccountForm()
+export function UpdateAccountDataForm({ accountData, closeModal }:Props) {
+    const { methods, onSubmit, register, errors, control } = useUpdateAccountForm({ accountData, closeModal })
     const sectorModal = useSectorModal();
 
     const [canShowSectorButton, setCanShowSectorButton] =
@@ -38,49 +39,43 @@ export function UpdateAccountDataForm({ accountData }:Props) {
             }
         })();
     }, []);
+
     return (
+    <FormProvider {...methods}> 
         <form
             className="flex flex-col gap-2"
             onSubmit={methods.handleSubmit(onSubmit)}
         >
-            {accountData?.document.type && (
-                <Input
-                    value={accountData?.document.value || ""}
-                    label={accountData?.document.type == "cnpj" ? "CNPJ" : "CPF"}
-                    disabled
-                    error={methods.formState.errors.document?.value?.message}
-                />
-            )}
-
             {accountData?.document.type === "cnpj" && (
                 <div>
+                    <Input
+                        value={accountData?.document.value || ""}
+                        label={"CNPJ"}
+                        disabled
+                        error={methods.formState.errors.document?.value?.message}
+                    />
                     <Input
                         label="Razão Social"
                         placeholder="Digite a razão social"
                         {...register("cnpj.social_name")}
-                        defaultValue={accountData?.social_name}
                         disabled
                     />
                     <Input
                         label="Nome Fantasia"
                         placeholder="Digite o nome fantasia"
                         {...register("cnpj.fantasy_name")}
-                        defaultValue={accountData?.fantasy_name}
                         error={errors.errors.cnpj?.fantasy_name?.message}
-                        className=""
                     />
                     <Input
                         label="Inscrição Estadual"
                         placeholder="Digite a inscrição estadual"
                         {...register("cnpj.state_registration")}
-                        defaultValue={accountData?.state_registration}
                         error={errors.errors.cnpj?.state_registration?.message}
                     /> 
                     <Input
                         label="Inscrição Municipal"
                         placeholder="Digite a inscrição municipal"
                         {...register("cnpj.municipal_registration")}
-                        defaultValue={accountData?.municipal_registration}
                         error={errors.errors.cnpj?.municipal_registration?.message}
                     />
                     <div className="flex items-end gap-2 w-full">   
@@ -145,16 +140,20 @@ export function UpdateAccountDataForm({ accountData }:Props) {
             {accountData?.document.type === "cpf" && (
                 <div>
                     <Input
+                        label={"CPF"}
+                        {...methods.register("document.value")}
+                        error={methods.formState.errors.document?.value?.message}
+                    />
+                    <Input
                         label="Nome completo"
                         placeholder="Digite o nome completo"
                         {...methods.register("cpf.name")}
                         error={methods.formState.errors.cpf?.name?.message}
                     />
                     <Input
-                        label="RG/CPF"
-                        placeholder={"Digite o RG ou CPF"}
-                        value={accountData.document.value}
-                        disabled
+                        label="RG"
+                        placeholder={"Digite seu RG"}
+                        {...methods.register("cpf.rg")}
                         error={methods.formState.errors.cpf?.rg?.message}
                     />
                 </div>
@@ -172,5 +171,6 @@ export function UpdateAccountDataForm({ accountData }:Props) {
                 </Button>
             </div>
         </form>
+    </FormProvider>
     )
 }

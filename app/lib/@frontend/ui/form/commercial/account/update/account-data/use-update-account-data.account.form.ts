@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
 import {
-  createOneAccount,
+  updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 
@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { useAuth } from "@/app/lib/@frontend/context";
+import { useAccountDataUpdateModal } from "@/app/lib/@frontend/ui/modal/comercial/account/update/use-account-data.update.modal";
 
 const schema = z
   .object({
@@ -138,12 +139,16 @@ const schema = z
 
 export type CreateAccountFormSchema = z.infer<typeof schema>;
 
-export function useUpdateAccountForm() {
+interface Props {
+  accountData?: IAccount,
+  closeModal: () => void
+}
+
+export function useUpdateAccountForm({accountData, closeModal}:Props) {
   // Estado para definir se o documento é CPF ou CNPJ:
   const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
 
   // Estado para guardar os dados retornados para holding e controlled
-
   const [selectedControlled, setSelectedControlled] = useState<
     ICnpjaResponse[]
   >([]);
@@ -184,16 +189,63 @@ export function useUpdateAccountForm() {
     }));
   };
 
-  const methods = useForm<CreateAccountFormSchema>({
-    resolver: zodResolver(schema),
-  });
+const sectorData = accountData?.setor && accountData.setor.length > 0
+  ? accountData.setor[0]
+  : "";
+
+const methods = useForm<CreateAccountFormSchema>({
+  resolver: zodResolver(schema),
+  defaultValues: {
+    ...accountData,
+     ...(accountData?.document.type === "cnpj" ? 
+      {
+        cnpj: {
+          sector: sectorData,
+          social_name: accountData?.social_name,
+          fantasy_name: accountData?.fantasy_name,
+          municipal_registration: accountData?.municipal_registration,
+          state_registration: accountData?.state_registration,
+          economic_group_holding: {
+            name: accountData?.economic_group_holding?.name! as string,
+            taxId: accountData?.economic_group_holding?.taxId! as string,
+          },
+          economic_group_controlled:
+            accountData?.economic_group_controlled?.map((item) => ({
+              name: item.name! as string,
+              taxId: item.taxId! as string,
+            })),
+          status: [
+            {
+              id: accountData?.id,
+              name: accountData?.status
+            }
+          ]
+        }
+      } :
+      {
+        cpf: {
+          name: accountData?.name,
+          rg: accountData?.rg
+        }
+      }
+     ),
+    document: {
+      type: accountData?.document.type,
+      value: accountData?.document.value
+    },
+    address: accountData?.address,
+    contact: accountData?.contacts
+  }
+});
+
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
-    const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
+    const base = {
       document: {
         ...data.document,
         value: data.document.value.replace(/\D/g, ""),
       },
+      id: accountData?.id,
       ...(type === "cpf"
         ? {
             name: data.cpf?.name,
@@ -205,29 +257,42 @@ export function useUpdateAccountForm() {
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
             status: data.cnpj?.status?.[0]?.name,
+            economic_group_holding: {
+              name: data.cnpj?.economic_group_holding?.name! as string,
+              taxId: data.cnpj?.economic_group_holding?.taxId! as string,
+            },
+            economic_group_controlled:
+              data.cnpj?.economic_group_controlled?.map((item) => ({
+                name: item.name! as string,
+                taxId: item.taxId! as string,
+              })),
             setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
           }),
     };
 
-    const { error, success, id } = await createOneAccount(base);
-
+    const { success, error, editedFields } = await updateOneAccount({id: accountData?.id}, base);
     
-    if (success && id) {
-        // Criar histórico
-        await createOneHistorical({
-            ...data,
-            accountId: String(id),
-            title: `Atualização de conta`,
-            type: "manual",
-            author: {
-                name: user?.name ?? "",
-                avatarUrl: "",
-            },
-        });
+    if (success && editedFields) {
+      // Criar histórico
+      await createOneHistorical({
+          accountId: String(accountData?.id),
+          title: `Atualização de conta`,
+          editedFields: editedFields,
+          type: "manual",
+          author: {
+              name: user?.name ?? "",
+              avatarUrl: "",
+          },
+      });
+      toast({
+        title: "Sucesso!",
+        description: "Dados da conta atualizado com sucesso!",
+        variant: "success",
+      });
 
-      router.push(`/commercial/account/form/create/tab/address?id=${id}`);
+      closeModal()
     }
-
+      
     // Erros
     if (error) {
       if (error.global) {

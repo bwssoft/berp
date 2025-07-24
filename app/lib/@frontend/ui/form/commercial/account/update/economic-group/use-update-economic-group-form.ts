@@ -8,7 +8,9 @@ import {
   findManyAccount,
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
+import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { EconomicGroup } from "@/app/lib/@backend/domain";
+import { useAuth } from "@/app/lib/@frontend/context";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -56,6 +58,7 @@ export function useUpdateEconomicGroupForm(
   const [isLoading, setIsLoading] = useState(false);
 
   const queryClient = useQueryClient();
+  const { user } = useAuth()
 
   const {
     control,
@@ -180,7 +183,7 @@ export function useUpdateEconomicGroupForm(
     };
 
     try {
-      await updateOneAccount(
+      const {success, editedFields, error} = await updateOneAccount(
         { id: accountId },
         {
           economic_group_holding: payload.economic_group_holding,
@@ -191,6 +194,20 @@ export function useUpdateEconomicGroupForm(
       queryClient.invalidateQueries({
         queryKey: ["findManyAccount", accountId, isModalOpen],
       });
+
+      if (success && editedFields) {
+        // Criar histórico
+        await createOneHistorical({
+            accountId: String(accountId),
+            title: `Atualização de conta`,
+            editedFields: editedFields,
+            type: "manual",
+            author: {
+                name: user?.name ?? "",
+                avatarUrl: "",
+            },
+        });
+      }
 
       toast({
         title: "Sucesso!",
