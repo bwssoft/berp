@@ -117,6 +117,7 @@ export function useCreateContactModal() {
     // Create contact in context with proper data transformation
     const contactData = {
       ...data,
+      id: crypto.randomUUID(),
       cpf: data.cpf ? data.cpf.replace(/[^a-zA-Z0-9]/g, "") : undefined,
       rg: data.rg ? data.rg.replace(/[^a-zA-Z0-9]/g, "") : undefined,
       contractEnabled: data.contractEnabled ? true : false,

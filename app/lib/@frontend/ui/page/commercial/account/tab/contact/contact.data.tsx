@@ -1,6 +1,9 @@
 "use client";
 
-import { IContact } from "@/app/lib/@backend/domain";
+import {
+  LocalAccount,
+  LocalContact,
+} from "@/app/lib/@frontend/context/create-account-flow.context";
 import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.card";
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
@@ -17,26 +20,26 @@ import { CreateContactModal } from "@/app/lib/@frontend/ui/modal/comercial/conta
 import { useCreateContactModal } from "@/app/lib/@frontend/ui/modal/comercial/contact/contactModal/create/use-contact.create.commercial.modal";
 import { UpdateContactModal } from "@/app/lib/@frontend/ui/modal/comercial/contact/contactModal/update/contact.update.commercial.modal";
 import { useUpdateContactModal } from "@/app/lib/@frontend/ui/modal/comercial/contact/contactModal/update/use-contact.update.commercial.modal";
-import { SearchContactModal } from "@/app/lib/@frontend/ui/modal/comercial/contact/searchModal/search-contact.comercial.modal";
-import { deleteManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { deleteManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import { deleteOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { Phone, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
+import { SearchContactModal } from "@/app/lib/@frontend/ui/modal";
 
 interface Props {
-  contacts: IContact[];
+  account: LocalAccount;
+  contacts: LocalContact[];
   hasPermissionContacts: boolean;
   accountId: string;
 }
 
 export function ContactDataPage(props: Props) {
-  const { contacts, hasPermissionContacts, accountId } = props;
+  const { account, contacts, hasPermissionContacts, accountId } = props;
 
-  const [selectedContact, setSelectedContact] = useState<IContact>();
+  const [selectedContact, setSelectedContact] = useState<LocalContact>();
   const router = useRouter();
+  const { resetFlow } = useCreateAccountFlow();
 
   /**
    * MODAL CRIAÇÃO - CONTATO
@@ -72,20 +75,18 @@ export function ContactDataPage(props: Props) {
 
   async function handleCancel() {
     try {
-      await deleteManyAddress({ accountId });
-      await deleteManyContact({ accountId });
-      await deleteOneAccount({ id: accountId });
+      resetFlow();
 
       toast({
         title: "Operação cancelada",
         description:
-          "A conta foi excluída e você foi redirecionado para a página inicial.",
+          "O fluxo de criação foi cancelado e você foi redirecionado para a página inicial.",
         variant: "success",
       });
 
       router.push("/commercial");
     } catch (error) {
-      console.error("Error canceling and deleting account:", error);
+      console.error("Error canceling flow:", error);
       toast({
         title: "Erro",
         description: "Erro ao cancelar operação. Tente novamente.",
@@ -126,7 +127,7 @@ export function ContactDataPage(props: Props) {
             {(contacts ?? [])?.map((contact, idx) => (
               <ContactCard
                 key={contact.id ?? idx}
-                contact={contact}
+                contact={contact as any}
                 accountId={accountId!}
                 onClickEditContactButton={() => {
                   setSelectedContact(contact);
@@ -156,7 +157,7 @@ export function ContactDataPage(props: Props) {
               );
             }}
           >
-            Salvar e próximo
+            Finalizar e Salvar Conta
           </FakeLoadingButton>
         </div>
       </footer>
@@ -168,7 +169,7 @@ export function ContactDataPage(props: Props) {
       />
 
       <UpdateContactModal
-        contact={selectedContact!}
+        contact={selectedContact! as any}
         open={openUpdateContact}
         closeModal={closeUpdateModalContact}
         updateContact={updateContactLocally}

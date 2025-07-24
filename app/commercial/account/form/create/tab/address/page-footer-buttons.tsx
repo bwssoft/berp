@@ -1,12 +1,10 @@
 "use client";
 
-import { deleteOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { deleteManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { deleteManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { Button } from "@/app/lib/@frontend/ui/component";
 import { FakeLoadingButton } from "@/app/lib/@frontend/ui/component/fake-load-button";
 import { useRouter } from "next/navigation";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 
 interface Props {
   id: string;
@@ -15,25 +13,25 @@ interface Props {
 }
 
 export function PageFooterButtons({ id, addresses, accounts }: Props) {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const router = useRouter();
+  const { resetFlow } = useCreateAccountFlow();
 
   async function handleCancel() {
     try {
-      await deleteManyAddress({ accountId: id });
-      await deleteManyContact({ accountId: id });
-      await deleteOneAccount({ id });
+      resetFlow();
 
       toast({
         title: "Cancelado!",
-        description: "Todos os endereços e contatos da conta foram removidos.",
+        description: "O fluxo de criação foi cancelado.",
         variant: "success",
       });
+
+      router.push("/commercial");
     } catch (error) {
-      console.error("Error deleting addresses and contacts:", error);
+      console.error("Error canceling flow:", error);
       toast({
         title: "Erro!",
-        description: "Erro ao cancelar e remover endereços e contatos.",
+        description: "Erro ao cancelar operação.",
         variant: "error",
       });
     }
@@ -50,7 +48,9 @@ export function PageFooterButtons({ id, addresses, accounts }: Props) {
           type="submit"
           onClick={async () => {
             await new Promise((resolve) => setTimeout(resolve, 50));
-            router.push(`/commercial/account/form/create/tab/contact?id=${id}`);
+            router.push(
+              `/commercial/account/form/create/tab/contact?accountId=${id}`
+            );
           }}
         >
           Salvar e próximo
