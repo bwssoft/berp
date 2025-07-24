@@ -100,19 +100,28 @@ export function ContactDataPage(props: Props) {
     setIsCreatingEntities(true);
 
     try {
+      console.log("Starting createEntitiesApi...");
       const result = await createEntitiesApi();
+      console.log("createEntitiesApi result:", result);
 
       if (result.success && result.accountId) {
-        // Redirect to the management page with the created account ID
+        toast({
+          title: "Sucesso!",
+          description: "Conta e dados relacionados criados com sucesso!",
+          variant: "success",
+        });
+
         router.push(
           `/commercial/account/management/account-data?id=${result.accountId}`
         );
+        resetFlow();
       } else {
         toast({
           title: "Erro",
           description: result.error || "Erro ao criar entidades",
           variant: "error",
         });
+        setIsCreatingEntities(false);
       }
     } catch (error) {
       console.error("Error in handleFinalizarSalvar:", error);
@@ -121,7 +130,6 @@ export function ContactDataPage(props: Props) {
         description: "Erro inesperado ao finalizar criação",
         variant: "error",
       });
-    } finally {
       setIsCreatingEntities(false);
     }
   }

@@ -149,11 +149,6 @@ export const CreateAccountFlowProvider = ({
     setAccount(null);
     setAddresses([]);
     setContacts([]);
-    toast({
-      title: "Fluxo reiniciado",
-      description: "Todos os dados do contexto foram limpos.",
-      variant: "default",
-    });
   }, []);
 
   // API creation method
@@ -182,7 +177,7 @@ export const CreateAccountFlowProvider = ({
             ...address,
             accountId: createdAccountId,
           };
-          await createOneAddress(addressData);
+          const addressResult = await createOneAddress(addressData);
         } catch (error) {
           console.warn("Failed to create address:", error);
         }
@@ -195,20 +190,11 @@ export const CreateAccountFlowProvider = ({
             ...contact,
             accountId: createdAccountId,
           };
-          await createOneContact(contactData);
+          const contactResult = await createOneContact(contactData);
         } catch (error) {
           console.warn("Failed to create contact:", error);
         }
       }
-
-      // Clear the context after successful creation
-      resetFlow();
-
-      toast({
-        title: "Sucesso!",
-        description: "Conta e dados relacionados criados com sucesso!",
-        variant: "success",
-      });
 
       return {
         success: true,
@@ -221,7 +207,7 @@ export const CreateAccountFlowProvider = ({
         error: "Erro inesperado ao criar entidades",
       };
     }
-  }, [account, addresses, contacts, resetFlow]);
+  }, [account, addresses, contacts]);
 
   const value: CreateAccountFlowContextType = {
     // State
