@@ -1,4 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../component/tooltip";
 
 export const columns: ColumnDef<{key: string, oldValue: string, newValue: string}>[] = [
     { 
@@ -6,21 +7,53 @@ export const columns: ColumnDef<{key: string, oldValue: string, newValue: string
         accessorKey: "key",  
         cell: ({row}) => {
             const type = row.original.key
-            return accountFieldLabelsMapping[type]
+            return (
+                <div className="w-44 truncate overflow-hidden whitespace-nowrap">
+                    {accountFieldLabelsMapping[type]}
+                </div>
+            )
         }
     },
     {
         header: "Valor anterior",
         accessorKey: "oldValue",
         cell: ({ row }) => {
-            return row.original.oldValue ?? "-";
+            const value =  row.original.oldValue ?? "-";
+            return (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="w-36 truncate overflow-hidden whitespace-nowrap">
+                                {value}
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            <p>{value}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            )
         },
     },
     {
         header: "Valor atualizado",
         accessorKey: "newValue",
         cell: ({ row }) => {
-            return row.original.newValue ?? "-";
+            const value =  row.original.newValue ?? "-";
+            return (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="w-36 truncate overflow-hidden whitespace-nowrap">
+                                {value}
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            <p>{value}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            )
         },
     }
 ];

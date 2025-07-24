@@ -142,9 +142,9 @@ export function TimelineItem({
                                         )}
 
                                         {entry.editedFields && (
-                                            <EditedFieldsTable 
-                                                data={entry.editedFields}
-                                            />
+                                                <EditedFieldsTable 
+                                                    data={entry.editedFields}
+                                                />
                                         )}
 
                                         {entry.file && entry.file && (

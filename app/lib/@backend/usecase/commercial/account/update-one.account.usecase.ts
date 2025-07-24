@@ -42,10 +42,6 @@ class UpdateOneAccountUsecase {
       const oldValue = (original as any)[key];
       const newValue = (update as any)[key];
 
-      console.log(key)
-      console.log(oldValue)
-      console.log(newValue)
-
       if ((JSON.stringify(oldValue) !== JSON.stringify(newValue)) && (key === "economic_group_holding" ||  key === "economic_group_controlled" )) {
         let oldStringValue = ""
         let newStringValue = ""
@@ -57,7 +53,7 @@ class UpdateOneAccountUsecase {
         newValue.map((item:any, key:any) => {
           key == 0 ? newStringValue += `${item.name}` : newStringValue += `, ${item.name}`
         })
-        
+
         editedFields.push({
           key: key,
           newValue: newStringValue,
