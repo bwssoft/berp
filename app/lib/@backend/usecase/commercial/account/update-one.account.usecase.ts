@@ -42,7 +42,34 @@ class UpdateOneAccountUsecase {
       const oldValue = (original as any)[key];
       const newValue = (update as any)[key];
 
-      if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+      console.log(key)
+      console.log(oldValue)
+      console.log(newValue)
+
+      if ((JSON.stringify(oldValue) !== JSON.stringify(newValue)) && (key === "economic_group_holding" ||  key === "economic_group_controlled" )) {
+        let oldStringValue = ""
+        let newStringValue = ""
+        
+        oldValue.map((item: any, key:any) => {
+          key == 0 ? oldStringValue += `${item.name}` : oldStringValue += `, ${item.name}`
+        })
+
+        newValue.map((item:any, key:any) => {
+          key == 0 ? newStringValue += `${item.name}` : newStringValue += `, ${item.name}`
+        })
+        
+        editedFields.push({
+          key: key,
+          newValue: newStringValue,
+          oldValue: oldStringValue
+        });
+      } else if ((JSON.stringify(oldValue) !== JSON.stringify(newValue)) && (key === "document" )) {
+        editedFields.push({
+          key: key,
+          newValue: newValue[0].value,
+          oldValue: oldValue[0].value
+        });
+      } else if(JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
         editedFields.push({
           key: key,
           newValue: newValue,

@@ -13,25 +13,17 @@ export const columns: ColumnDef<{key: string, oldValue: string, newValue: string
         header: "Valor anterior",
         accessorKey: "oldValue",
         cell: ({ row }) => {
-            const key = row.original.key;
-            const value = getNestedValue(row.original.oldValue, key);
-            return value ?? "-";
+            return row.original.oldValue ?? "-";
         },
     },
     {
         header: "Valor atualizado",
         accessorKey: "newValue",
         cell: ({ row }) => {
-            const key = row.original.key;
-            const value = getNestedValue(row.original.newValue, key);
-            return value ?? "-";
+            return row.original.newValue ?? "-";
         },
     }
 ];
-
-function getNestedValue(obj: any, path: string): any {
-  return path.split(".").reduce((acc, part) => acc?.[part], obj);
-}
 
 export const accountFieldLabelsMapping: Record<string, string> = {
   document: "Documento",
