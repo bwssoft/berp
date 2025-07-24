@@ -77,7 +77,7 @@ export function CNPJAccountForm() {
         (async () => {
             try {
                 const hasPermission = await restrictFeatureByProfile(
-                    "commercial:accounts:access:tab:data:sector"
+                    "commercial:accounts:new:sector"
                 );
                 setCanShowSectorButton(hasPermission);
             } catch (error) {
@@ -144,14 +144,14 @@ export function CNPJAccountForm() {
                 disabled={disabledFields.municipal_registration}
             />
             <div className="flex items-end gap-2 w-full">
-
-
                 <FormField
                     control={control}
                     name="cnpj.sector"
                     render={({ field }) => (
                         <FormItem className="w-full">
-                            <FormLabel>Setor <span className="text-red-600">*</span></FormLabel>
+                            <FormLabel>
+                                Setor <span className="text-red-600">*</span>
+                            </FormLabel>
                             <FormControl>
                                 <Select
                                     onValueChange={field.onChange}
@@ -218,12 +218,10 @@ export function CNPJAccountForm() {
                             onOptionChange={([item]) => {
                                 if (item) {
                                     setSelectedHolding([item]);
-                                    field.onChange(
-                                        {
-                                            name: item.company.name,
-                                            taxId: item.taxId,
-                                        }
-                                );
+                                    field.onChange({
+                                        name: item.company.name,
+                                        taxId: item.taxId,
+                                    });
                                 } else {
                                     setSelectedHolding([]);
                                     field.onChange(undefined);
