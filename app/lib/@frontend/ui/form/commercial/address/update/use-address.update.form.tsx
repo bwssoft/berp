@@ -9,6 +9,7 @@ import { isValidCEP } from "@/app/lib/util/is-valid-cep";
 import { IAddress } from "@/app/lib/@backend/domain";
 import { viaCepGateway } from "@/app/lib/@backend/infra/gateway/viacep/viacep.gateway";
 import { formatCep } from "@/app/lib/util/format-cep";
+import { LocalAddress } from "@/app/lib/@frontend/context";
 
 const AddressFormSchema = z.object({
   zip_code: z.string().min(8, "CEP obrigatório").refine(isValidCEP, {
@@ -31,11 +32,10 @@ export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
 
 interface Props {
   address: IAddress;
-  closeModal: () => void;
   onSubmit: (addressId: string, data: IAddress) => Promise<void>;
 }
 
-export function useAddressUpdateForm({ address, closeModal, onSubmit }: Props) {
+export function useAddressUpdateForm({ address, onSubmit }: Props) {
   const [loadingCep, setLoadingCep] = useState(false);
   const [cepEdited, setCepEdited] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,12 +95,8 @@ export function useAddressUpdateForm({ address, closeModal, onSubmit }: Props) {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       setIsSubmitting(true);
-      const cleanedData = {
-        ...data,
-        zip_code: data.zip_code.replace(/\D/g, ""),
-      };
 
-      await onSubmit(address.id || "", cleanedData);
+      await onSubmit(address.id || "", data);
 
       setIsSubmitting(false);
     },

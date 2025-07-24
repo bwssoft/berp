@@ -22,7 +22,7 @@ export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
     errors,
     control,
     isSubmitting,
-  } = useAddressUpdateForm({ address, closeModal, onSubmit });
+  } = useAddressUpdateForm({ address, onSubmit });
 
   const checkboxOptions = [
     { label: "Comercial", value: "Comercial" },

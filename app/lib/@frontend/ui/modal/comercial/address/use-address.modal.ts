@@ -55,11 +55,9 @@ export function useAddressModal() {
   }
 
   async function createAddressLocally(data: any) {
-    // Create address in context with proper typing
     const addressData = {
       ...data,
-      id: data.id || crypto.randomUUID(),
-      zip_code: data.zip_code?.replace(/\D/g, "") || data.zip_code,
+      id: crypto.randomUUID(),
     };
 
     createAddressInContext(addressData);

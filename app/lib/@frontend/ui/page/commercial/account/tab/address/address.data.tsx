@@ -56,7 +56,7 @@ export function AddressDataPage(props: Props) {
     open: openUpdateAddress,
     closeModal: closeUpdateModalAddress,
     openModal: openUpdateModalAddress,
-    updateAddressLocally: updateAddress,
+    updateAddressLocally,
   } = useAddressUpdateModal();
 
   /**
@@ -100,7 +100,7 @@ export function AddressDataPage(props: Props) {
                 <div className="flex flex-wrap gap-3">
                   {address.map((addr) => (
                     <AddressCard
-                      key={addr.idLocal}
+                      key={addr.id}
                       title="Endereço:"
                       address={addr}
                       onEdit={() => {
@@ -133,11 +133,11 @@ export function AddressDataPage(props: Props) {
         address={selectedAddress!}
         closeUpdateModal={closeUpdateModalAddress}
         openUpdateModal={openUpdateAddress}
-        updateAddress={updateAddress}
+        updateAddress={updateAddressLocally}
       />
 
       <CreateAddressModal
-        accountId={account.idLocal}
+        accountId={account.id || ""}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}
         createAddress={createAddress}
@@ -147,7 +147,7 @@ export function AddressDataPage(props: Props) {
         address={selectedAddress}
         open={openModalDelete}
         onClose={() => setOpenModalDelete(false)}
-        onDelete={(id) => deleteAddress(selectedAddress?.idLocal || "")}
+        onDelete={(id) => deleteAddress(selectedAddress?.id || "")}
         isLoading={isLoading}
       />
     </div>

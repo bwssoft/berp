@@ -27,7 +27,7 @@ export default function Page() {
 
   // Verify that the account exists and matches the accountId from URL
   const isValidAccount = useMemo(() => {
-    return account && account.idLocal === accountId;
+    return account && account.id === accountId;
   }, [account, accountId]);
 
   if (!accountId) {

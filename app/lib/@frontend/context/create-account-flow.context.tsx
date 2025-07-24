@@ -5,26 +5,11 @@ import { IAccount, IAddress, IContact } from "../../@backend/domain";
 import { toast } from "../hook/use-toast";
 
 // Extended types with local IDs
-export type LocalAccount = Omit<
-  IAccount,
-  "id" | "created_at" | "updated_at"
-> & {
-  idLocal: string;
-};
+export type LocalAccount = Omit<IAccount, "created_at" | "updated_at">;
 
-export type LocalAddress = Omit<
-  IAddress,
-  "id" | "created_at" | "updated_at"
-> & {
-  idLocal: string;
-};
+export type LocalAddress = Omit<IAddress, "created_at" | "updated_at">;
 
-export type LocalContact = Omit<
-  IContact,
-  "id" | "created_at" | "updated_at"
-> & {
-  idLocal: string;
-};
+export type LocalContact = Omit<IContact, "created_at" | "updated_at">;
 
 interface CreateAccountFlowContextType {
   // Account state
@@ -44,20 +29,14 @@ interface CreateAccountFlowContextType {
 
   // Address methods
   createAddressLocally: (address: LocalAddress) => void;
-  updateAddressLocally: (
-    idLocal: string,
-    updates: Partial<LocalAddress>
-  ) => void;
-  deleteAddressLocally: (idLocal: string) => void;
+  updateAddressLocally: (id: string, updates: Partial<LocalAddress>) => void;
+  deleteAddressLocally: (id: string) => void;
   setAddresses: (addresses: LocalAddress[]) => void;
 
   // Contact methods
   createContactLocally: (contact: LocalContact) => void;
-  updateContactLocally: (
-    idLocal: string,
-    updates: Partial<LocalContact>
-  ) => void;
-  deleteContactLocally: (idLocal: string) => void;
+  updateContactLocally: (id: string, updates: Partial<LocalContact>) => void;
+  deleteContactLocally: (id: string) => void;
   setContacts: (contacts: LocalContact[]) => void;
 
   // Utility methods
@@ -107,21 +86,21 @@ export const CreateAccountFlowProvider = ({
   }, []);
 
   const updateAddressLocally = useCallback(
-    (idLocal: string, updates: Partial<LocalAddress>) => {
+    (id: string, updates: Partial<LocalAddress>) => {
       setAddresses((prevAddresses) => {
-        const updatedAddresses = prevAddresses.map((address) =>
-          address.idLocal === idLocal ? { ...address, ...updates } : address
-        );
+        const updatedAddresses = prevAddresses.map((address) => {
+          return address.id === id ? { ...address, ...updates } : address;
+        });
         return updatedAddresses;
       });
     },
     []
   );
 
-  const deleteAddressLocally = useCallback((idLocal: string) => {
+  const deleteAddressLocally = useCallback((id: string) => {
     setAddresses((prevAddresses) => {
       const filteredAddresses = prevAddresses.filter(
-        (address) => address.idLocal !== idLocal
+        (address) => address.id !== id
       );
       return filteredAddresses;
     });
@@ -135,10 +114,10 @@ export const CreateAccountFlowProvider = ({
   }, []);
 
   const updateContactLocally = useCallback(
-    (idLocal: string, updates: Partial<LocalContact>) => {
+    (id: string, updates: Partial<LocalContact>) => {
       setContacts((prevContacts) => {
         const updatedContacts = prevContacts.map((contact) =>
-          contact.idLocal === idLocal ? { ...contact, ...updates } : contact
+          contact.id === id ? { ...contact, ...updates } : contact
         );
         return updatedContacts;
       });
@@ -146,10 +125,10 @@ export const CreateAccountFlowProvider = ({
     []
   );
 
-  const deleteContactLocally = useCallback((idLocal: string) => {
+  const deleteContactLocally = useCallback((id: string) => {
     setContacts((prevContacts) => {
       const filteredContacts = prevContacts.filter(
-        (contact) => contact.idLocal !== idLocal
+        (contact) => contact.id !== id
       );
       return filteredContacts;
     });

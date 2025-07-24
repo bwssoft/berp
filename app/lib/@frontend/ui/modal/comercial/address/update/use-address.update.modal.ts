@@ -25,11 +25,6 @@ export function useAddressUpdateModal() {
   async function updateAddress(addressId: string, data: IAddress) {
     try {
       await updateOneAddress({ id: addressId }, data);
-      toast({
-        title: "Sucesso!",
-        description: "Endereço atualizado com sucesso!",
-        variant: "success",
-      });
       await queryClient.invalidateQueries({
         queryKey: ["addresses"],
       });
@@ -44,11 +39,10 @@ export function useAddressUpdateModal() {
   }
 
   async function updateAddressLocally(
-    addressIdLocal: string,
+    addressId: string,
     data: Partial<LocalAddress>
   ) {
-    // Update address in context using idLocal
-    updateAddressInContext(addressIdLocal, data);
+    updateAddressInContext(addressId, data);
 
     closeModal();
   }

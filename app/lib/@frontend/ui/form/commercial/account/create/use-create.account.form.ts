@@ -326,7 +326,7 @@ export function useCreateAccountForm() {
     const accountLocalId = crypto.randomUUID();
 
     const base: LocalAccount = {
-      idLocal: accountLocalId,
+      id: accountLocalId,
       document: {
         ...data.document,
         value: data.document.value.replace(/\D/g, ""),
@@ -361,7 +361,7 @@ export function useCreateAccountForm() {
 
     if (address) {
       const newAddress: LocalAddress = {
-        idLocal: crypto.randomUUID(),
+        id: crypto.randomUUID(),
         city: address.city,
         state: address.state,
         street: address.street,
@@ -377,7 +377,7 @@ export function useCreateAccountForm() {
     // Create contact locally if available
     if (contact) {
       const newContact: LocalContact = {
-        idLocal: crypto.randomUUID(),
+        id: crypto.randomUUID(),
         name: dataCnpj?.company.name || dataCnpj?.alias || "",
         contractEnabled: false,
         positionOrRelation: "",
