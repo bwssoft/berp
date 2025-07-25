@@ -6,6 +6,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { downloadAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.download.action";
 import { deleteAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.delete.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { Button, Dialog } from "../../../../component";
+import { useState } from "react";
 
 export const createColumns = (
   onDelete?: (id: string) => Promise<void>,
@@ -40,6 +42,7 @@ export const createColumns = (
     accessorKey: "id",
     cell: ({ row }) => {
       const attachment = row.original;
+      const [open, setOpen] = useState(false)
 
       const handleDownload = async () => {
         try {
@@ -143,9 +146,10 @@ export const createColumns = (
             <ArrowDownTrayIcon className="w-5 h-5" />
           </button>
           {canDeleteAttachments && (
-            <form onSubmit={handleDelete}>
+            <form>
               <button
-                type="submit"
+                type="button"
+                onClick={() => setOpen(true)}
                 className="text-blue-600 hover:text-blue-900 px-0 py-0"
                 title="Excluir anexo"
               >
@@ -153,6 +157,29 @@ export const createColumns = (
               </button>
             </form>
           )}
+          <Dialog open={open} setOpen={setOpen}>
+            <div className="p-4">
+              <h2 className="text-lg font-semibold">
+                Deletar Anexo
+              </h2>
+      
+              <p className="mt-2 text-sm text-gray-600">
+                Você tem certeza que deseja deletar esse anexo? Essa ação é irreversível.
+              </p>
+      
+              <div className="mt-6 flex justify-end gap-2">
+                <Button
+                  variant="secondary"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button variant="default" onClick={handleDelete}>
+                  Confirmar
+                </Button>
+              </div>
+            </div>
+          </Dialog>
         </td>
       );
     },
