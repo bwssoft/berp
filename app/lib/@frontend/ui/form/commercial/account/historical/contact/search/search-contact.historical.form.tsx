@@ -16,6 +16,7 @@ import {
 } from "@/app/lib/@frontend/ui/component";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
 import { WhatsappIcon } from "@/app/lib/@frontend/svg/whatsapp-icon";
+import { Controller } from "react-hook-form";
 
 type ContactAccountFormProps = {
   contacts: {
@@ -39,17 +40,26 @@ export function SearchContactHistoricalAccountForm({
   closeModal,
   selectContact,
   setSelectContact,
-}: ContactAccountFormProps) {  
-  
-  const { toggleSelection, isSelected, handleAddOtherContact, otherContactInfo, setOtherContactInfo, contactData} = useSearchContactHistoricalAccount({
+}: ContactAccountFormProps) {
+  const {
+    toggleSelection,
+    isSelected,
+    handleAddOtherContact,
+    otherContactInfo,
+    setOtherContactInfo,
+    contactData,
+    control,
+    errors,
+  } = useSearchContactHistoricalAccount({
     contacts,
     selectContact,
-    setSelectContact
+    setSelectContact,
   });
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-auto flex flex-col gap-4">
-       {(contactData ?? []).map((company) => (
+        {(contactData ?? []).map((company) => (
           <Disclosure key={company.documentValue}>
             {({ open }) => (
               <>
@@ -71,7 +81,13 @@ export function SearchContactHistoricalAccountForm({
                         <Checkbox
                           checked={isSelected(ci.id, ci.type)}
                           onChange={() =>
-                            toggleSelection(ci.id, company.name, ci.type, ci.contact, ci.type)
+                            toggleSelection(
+                              ci.id,
+                              company.name,
+                              ci.type,
+                              ci.contact,
+                              ci.type
+                            )
                           }
                         />
                         <div className="flex gap-2">
@@ -86,11 +102,20 @@ export function SearchContactHistoricalAccountForm({
                           )}
                         </div>
                         {ci.type === "Celular" && (
-                          <label key={ci.id} className="flex items-center gap-1">
+                          <label
+                            key={ci.id}
+                            className="flex items-center gap-1"
+                          >
                             <Checkbox
                               checked={isSelected(ci.id, "Whatsapp")}
                               onChange={() =>
-                                toggleSelection(ci.id, company.name, ci.type, ci.contact, "Whatsapp")
+                                toggleSelection(
+                                  ci.id,
+                                  company.name,
+                                  ci.type,
+                                  ci.contact,
+                                  "Whatsapp"
+                                )
                               }
                             />
                             <PhoneIcon className="w-5 h-5" />
@@ -117,46 +142,76 @@ export function SearchContactHistoricalAccountForm({
                 />
               </DisclosureButton>
               <DisclosurePanel className="px-4 pb-2 flex flex-col gap-2">
-                <Input
-                  label="Nome"
-                  value={otherContactInfo.name}
-                  onChange={(e) =>
-                    setOtherContactInfo((prev) => ({
-                      ...prev,
-                      name: e.target.value,
-                    }))
-                  }
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      label="Nome"
+                      placeholder="Digite o nome do contato"
+                      value={otherContactInfo.name}
+                      error={errors.errors.name?.message}
+                      onChange={(e) => {
+                        setOtherContactInfo((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }));
+                        field.onChange(e);
+                      }}
+                    />
+                  )}
                 />
                 <div className="grid grid-cols-2 gap-2">
-                  <Combobox
-                    data={[
-                      "Celular",
-                      "Email",
-                      "Telefone Residencial",
-                      "Telefone Comercial",
-                    ]}
-                    value={otherContactInfo.type ? [otherContactInfo.type] : []}
-                    onChange={(value) =>
-                      setOtherContactInfo((prev) => ({
-                        ...prev,
-                        type: Array.isArray(value) ? (value[0] ?? "") : value,
-                      }))
-                    }
-                    label="Tipo"
-                    type="single"
-                    placeholder="Selecione o tipo"
-                    keyExtractor={(item) => item}
-                    displayValueGetter={(item) => item}
+                  <Controller
+                    name={"type"}
+                    control={control}
+                    render={({ field }) => (
+                      <Combobox
+                        data={[
+                          "Celular",
+                          "Email",
+                          "Telefone Residencial",
+                          "Telefone Comercial",
+                        ]}
+                        error={errors.errors.type?.message}
+                        value={
+                          otherContactInfo.type ? [otherContactInfo.type] : []
+                        }
+                        onChange={(value) => {
+                          setOtherContactInfo((prev) => ({
+                            ...prev,
+                            type: Array.isArray(value)
+                              ? (value[0] ?? "")
+                              : value,
+                          }));
+                          field.onChange(value);
+                        }}
+                        label="Tipo"
+                        type="single"
+                        placeholder="Selecione o tipo"
+                        keyExtractor={(item) => item}
+                        displayValueGetter={(item) => item}
+                      />
+                    )}
                   />
-                  <Input
-                    label="Contato"
-                    value={otherContactInfo.contact}
-                    onChange={(e) =>
-                      setOtherContactInfo((prev) => ({
-                        ...prev,
-                        contact: e.target.value,
-                      }))
-                    }
+                  <Controller
+                    name="contact"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        label="Contato"
+                        placeholder="Digite o contato"
+                        value={otherContactInfo.contact}
+                        error={errors.errors.contact?.message}
+                        onChange={(e) => {
+                          setOtherContactInfo((prev) => ({
+                            ...prev,
+                            contact: e.target.value,
+                          }));
+                          field.onChange(e);
+                        }}
+                      />
+                    )}
                   />
                 </div>
                 <Button type="button" onClick={handleAddOtherContact}>
@@ -172,13 +227,15 @@ export function SearchContactHistoricalAccountForm({
         <Button
           type="button"
           variant="ghost"
-          onClick={() => setSelectContact({
-            id: "",
-            name: "",
-            type: "",
-            contact: "",
-            channel: ""
-          })}
+          onClick={() =>
+            setSelectContact({
+              id: "",
+              name: "",
+              type: "",
+              contact: "",
+              channel: "",
+            })
+          }
         >
           Cancelar
         </Button>
@@ -189,4 +246,3 @@ export function SearchContactHistoricalAccountForm({
     </div>
   );
 }
- 
