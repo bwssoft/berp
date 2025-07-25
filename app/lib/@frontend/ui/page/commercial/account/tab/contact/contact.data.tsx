@@ -130,7 +130,7 @@ export function ContactDataPage(props: Props) {
                             );
                         }}
                     >
-                        Salvar e próximo
+                        Salvar
                     </FakeLoadingButton>
                 </div>
             </footer>

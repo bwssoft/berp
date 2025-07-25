@@ -11,6 +11,7 @@ export function CpfAccountForm() {
       <Input
         label="Nome completo"
         placeholder="Digite o nome completo"
+        required
         {...methods.register("cpf.name")}
         error={methods.formState.errors.cpf?.name?.message}
       />

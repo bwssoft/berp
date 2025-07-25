@@ -8,7 +8,6 @@ import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidCEP } from "@/app/lib/util/is-valid-cep";
 import { useQueryClient } from "@tanstack/react-query";
 import { addressesQueryKey } from "../get/useaddress";
-
 import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { viaCepGateway } from "@/app/lib/@backend/infra/gateway/viacep/viacep.gateway";
 import { formatCep } from "@/app/lib/util/format-cep";
@@ -29,6 +28,7 @@ const AddressFormSchema = z.object({
     .array(z.enum(["Comercial", "Entrega", "Faturamento", "Residencial"]))
     .min(1, "Selecione pelo menos um tipo")
     .optional(),
+  default_address: z.boolean().optional(),
 });
 
 export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
@@ -36,9 +36,11 @@ export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
 export function useAddressForm({
   closeModal,
   accountId,
+  defaultValues,
 }: {
   closeModal: () => void;
   accountId: string;
+  defaultValues?: Partial<AddressFormSchema>;
 }) {
   const queryClient = useQueryClient();
   const {
@@ -61,6 +63,7 @@ export function useAddressForm({
       city: "",
       reference_point: "",
       type: [],
+      default_address: false,
     },
   });
 
@@ -104,7 +107,6 @@ export function useAddressForm({
           description: "Endereço criado com sucesso!",
           variant: "success",
         });
-        // Invalidate and refetch addresses query
         await queryClient.invalidateQueries({
           queryKey: addressesQueryKey(accountId),
         });

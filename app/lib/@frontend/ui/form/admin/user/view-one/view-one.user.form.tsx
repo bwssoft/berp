@@ -3,6 +3,7 @@
 import { IUser } from "@/app/lib/@backend/domain";
 import { Checkbox, Combobox, FileUpload, Input } from "../../../../component";
 import { useViewOneUserForm } from "./use-view-one.user.form";
+import { useAuth } from "@/app/lib/@frontend/context";
 
 type Props = {
   user: IUser;
@@ -10,6 +11,7 @@ type Props = {
 
 export function ViewOneUserForm({ user }: Props) {
   const { handleChangeProfile, profile } = useViewOneUserForm();
+  const { avatarUrl } = useAuth();
 
   return (
     <form className="w-full bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10">
@@ -41,6 +43,7 @@ export function ViewOneUserForm({ user }: Props) {
             handleFile={() => console.log}
             multiple={false}
             accept={"jpeg, jpg, png"}
+            currentImageUrl={avatarUrl}
           />
         </div>
       </div>
