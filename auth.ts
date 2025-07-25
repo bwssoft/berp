@@ -7,6 +7,18 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import { findOneUser } from "./app/lib/@backend/action/admin/user.action";
 import { findOneProfile } from "./app/lib/@backend/action/admin/profile.action";
+import { userObjectRepository } from "./app/lib/@backend/infra/repository/s3/admin/user.s3.repository";
+
+async function getAvatarUrl(imageKey: string | undefined): Promise<string> {
+  if (!imageKey) return "/avatar.webp";
+
+  try {
+    return await userObjectRepository.generateSignedUrl(imageKey);
+  } catch (error) {
+    console.error("Failed to generate avatar URL:", error);
+    return "/avatar.webp";
+  }
+}
 
 const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
@@ -31,14 +43,31 @@ const { auth, signIn, signOut, handlers } = NextAuth({
 
         const profile = await findOneProfile({ id: user.profile[0].id });
 
-        console.log("🚀 ~ authorize ~ profile:", profile);
-
         if (!profile) return null;
 
         const passwordsMatch = await bcrypt.compare(password, user.password);
 
-        if (passwordsMatch)
-          return { ...user, current_profile: profile, image: null };
+        if (passwordsMatch) {
+          const avatarUrl = user.image?.key
+            ? await getAvatarUrl(user.image.key)
+            : "/avatar.webp";
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: avatarUrl, // Use the image field for the avatar URL
+            username: user.username,
+            cpf: user.cpf,
+            temporary_password: user.temporary_password,
+            profile: user.profile,
+            lock: user.lock,
+            active: user.active,
+            external: user.external,
+            created_at: user.created_at,
+            current_profile: profile,
+          };
+        }
 
         return null;
       },
