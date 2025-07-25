@@ -2,7 +2,11 @@
 
 import { useCallback, useRef } from "react";
 
-function useDebounce<F extends (...args: any[]) => any>(fn: F, delay: number) {
+function useDebounce<F extends (...args: any[]) => any>(
+  fn: F,
+  delay: number,
+  external_dependencies?: any[]
+) {
   const fnRef = useRef<F>(fn);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -16,7 +20,7 @@ function useDebounce<F extends (...args: any[]) => any>(fn: F, delay: number) {
 
       debounceRef.current = setTimeout(() => fnRef.current(...args), delay);
     },
-    [delay]
+    [delay, external_dependencies]
   );
 
   return debouncedFn;

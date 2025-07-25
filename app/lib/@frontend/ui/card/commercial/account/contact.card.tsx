@@ -138,6 +138,11 @@ export default function ContactCard({
           </div>
 
           <div className="flex gap-2 flex-wrap">
+            { contact.contractEnabled &&  
+              <Badge variant="outline" className="text-xs">
+                Contrato
+              </Badge>
+            }
             {contact.contactFor.map((forItem, i) => (
               <Badge key={i} variant="outline" className="text-xs">
                 {forItem}
