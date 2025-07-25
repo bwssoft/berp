@@ -12,37 +12,37 @@ export const authConfig: NextAuthConfig = {
   },
   callbacks: {
     // Callback para autorização: determina se o usuário pode acessar uma rota específica
-authorized({ auth, request: { nextUrl } }) {
-  const isAuthenticated = !!auth?.user;
-  const path = nextUrl.pathname;
-  
-  const isOnProtectedRoute =
-    protectedRoutes.some((route) => path.startsWith(route)) || path === "/";
-    const isOnUnprotectedRoute = unprotectedRoutes.some((route) =>
-    path.startsWith(route)
-  );
+    authorized({ auth, request: { nextUrl } }) {
+      const isAuthenticated = !!auth?.user;
+      const path = nextUrl.pathname;
 
-  if (auth?.user?.temporary_password) {
-    const isOnSetPassword = path.startsWith("/set-password");
-
-    // Se não está no /set-password, redireciona
-    if (!isOnSetPassword) {
-      return NextResponse.redirect(
-        new URL("/set-password", nextUrl.origin)
+      const isOnProtectedRoute =
+        protectedRoutes.some((route) => path.startsWith(route)) || path === "/";
+      const isOnUnprotectedRoute = unprotectedRoutes.some((route) =>
+        path.startsWith(route)
       );
-    }
 
-    return true;
-  }
+      if (auth?.user?.temporary_password) {
+        const isOnSetPassword = path.startsWith("/set-password");
 
-  // Permite acesso livre em rotas não protegidas
-  if (isOnUnprotectedRoute) return true;
+        // Se não está no /set-password, redireciona
+        if (!isOnSetPassword) {
+          return NextResponse.redirect(
+            new URL("/set-password", nextUrl.origin)
+          );
+        }
+
+        return true;
+      }
+
+      // Permite acesso livre em rotas não protegidas
+      if (isOnUnprotectedRoute) return true;
       // Em rotas protegidas, só permite acesso se o usuário estiver autenticado
-  if (isOnProtectedRoute) return isAuthenticated;
+      if (isOnProtectedRoute) return isAuthenticated;
 
-    // Permite acesso por padrão se não se encaixar nos casos acima
-    return true;
-},
+      // Permite acesso por padrão se não se encaixar nos casos acima
+      return true;
+    },
     // Callback para manipulação do token JWT
     jwt({ user, token, trigger, session }) {
       // Caso a autenticação inicial tenha ocorrido, atualiza o token com os dados do usuário
@@ -53,6 +53,7 @@ authorized({ auth, request: { nextUrl } }) {
           current_profile: user.current_profile,
           temporary_password: user.temporary_password,
           name: user.name,
+          avatarUrl: user.image || "/avatar.webp",
         });
       }
       // Caso o token esteja sendo atualizado via trigger ("update") e haja dados de sessão,
@@ -75,6 +76,8 @@ authorized({ auth, request: { nextUrl } }) {
       session.user.temporary_password = token.temporary_password as boolean;
       session.user.name = token.name as string;
       session.user.current_profile = token.current_profile as IProfile;
+      session.user.avatarUrl = token.avatarUrl as string;
+
       return session;
     },
   },

@@ -58,12 +58,21 @@ class UpdateOneUserUsecase {
         }
       }
 
-      const before = await this.repository.findOne({ id: query.id });
-      if (!before) {
+      const oldUser = await this.repository.findOne({ id: query.id });
+      if (!oldUser) {
         return {
           success: false,
           error: { id: "Usuário não encontrado" },
         };
+      }
+
+      if(oldUser.image && oldUser.image.key) {
+        try {
+          await userObjectRepository.deleteOne(oldUser.image.key);
+          console.log("Old image deleted from S3:", oldUser.image.key);
+        } catch (error) {
+          console.error("Error deleting old image from S3:", error);
+        }
       }
 
       let payload = null;
@@ -81,7 +90,6 @@ class UpdateOneUserUsecase {
           data: Buffer.from(buffer),
           key,
         };
-        
         // envia as imagens do formData pro s3 utilizado o repository do s3
         await userObjectRepository.create(payload);
       }
@@ -113,7 +121,7 @@ class UpdateOneUserUsecase {
       const session = await auth();
       const { name, id, email } = session?.user!;
       await createOneAuditUsecase.execute<IUser, IUser>({
-        before,
+        before: oldUser,
         after,
         domain: AuditDomain.user,
         user: { name, id, email },
