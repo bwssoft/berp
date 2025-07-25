@@ -4,6 +4,7 @@ import {
   GetObjectCommand,
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Readable } from "stream";
 import { getContentType } from "@/app/lib/util/get-content-type";
 import { IBaseObjectRepository } from "@/app/lib/@backend/domain/@shared/repository/object.repository.interface";
@@ -52,6 +53,15 @@ export class BaseObjectRepository<Entity extends object>
 
   generateUrl(key: string) {
     return `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
+  }
+
+  async generateSignedUrl(key: string) {
+    const command = new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: this.getKey(key),
+    });
+    const url = await getSignedUrl(this.client, command, { expiresIn: 28800 });
+    return url;
   }
 
   async create(
