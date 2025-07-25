@@ -949,6 +949,53 @@ export const useLora = () => {
     },
     [sendMultipleMessages]
   );
+  const handleFirmwareUpdate = useCallback(
+    async (detected: Namespace.Detected[]) => {
+      return await Promise.all(
+        detected.map(async ({ port, equipment }) => {
+          try {
+            const messages = [
+              {
+                key: "update_firmware",
+                command: `UPFW\r\n`,
+              },
+            ] as const;
+
+            const init_time = Date.now();
+            const response = await sendMultipleMessages({
+              transport: port,
+              messages,
+            });
+            const status =
+              response.update_firmware && response.update_firmware.length > 0;
+
+            const end_time = Date.now();
+            return {
+              port,
+              init_time,
+              end_time,
+              status,
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
+              equipment: {
+                serial: equipment.serial,
+                firmware: equipment.firmware,
+                lora_keys: equipment.lora_keys,
+              },
+            };
+          } catch (error) {
+            const message = `[(${new Date().toLocaleString()}) ERROR IN LORA FIRMWARE UPDATE]`;
+            console.error(message, error);
+            throw new Error(message);
+          }
+        })
+      );
+    },
+    [sendMultipleMessages]
+  );
 
   const isIdentified = (input?: {
     serial?: string;
@@ -975,5 +1022,6 @@ export const useLora = () => {
     requestPort,
     handleAutoTest,
     handleDetection,
+    handleFirmwareUpdate,
   };
 };

@@ -33,6 +33,11 @@ export function IdentificationForm(props: {
         placeholder="Field to insert serial"
         error={errors["serial"]?.message ?? ""}
         onChange={handleChangeInput}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault(); // evita o submit
+          }
+        }}
       />
       <Button
         disabled={isDetecting || isIdentifying}
