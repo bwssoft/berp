@@ -2,18 +2,31 @@
 
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
-import React, { createContext, useCallback, useContext, useMemo } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import { IProfile, IUser } from "../../@backend/domain";
 import { logout } from "../../@backend/action/auth/login.action";
 
-type AuthUser = Partial<IUser> & { current_profile: IProfile };
+type AuthUser = Partial<IUser> & {
+  current_profile: IProfile;
+  avatarUrl?: string;
+};
+
 type RedirectOption<T> = T & { code: string };
 
 interface AuthContextType {
   user: AuthUser | undefined;
   profile: IProfile | undefined;
+  avatarUrl: string;
   changeProfile: (input: IProfile) => void;
   refreshCurrentProfile: () => Promise<boolean>;
+  refreshUserData: () => Promise<void>;
   navBarItems: {
     name: string;
     onClick?: () => void;
@@ -32,7 +45,17 @@ export const AuthProvider = ({
   session: Session | null;
   children: React.ReactNode;
 }) => {
-  const { data, update, status } = useSession();
+  const { data, update } = useSession();
+
+  const [avatarUrl, setAvatarUrl] = useState(
+    data?.user?.avatarUrl || session?.user?.avatarUrl || "/avatar.webp"
+  );
+
+  useEffect(() => {
+    setAvatarUrl(
+      data?.user?.avatarUrl || session?.user?.avatarUrl || "/avatar.webp"
+    );
+  }, [data?.user?.avatarUrl, session?.user?.avatarUrl]);
 
   const changeProfile = async (input: IProfile) => {
     await update({
@@ -47,14 +70,11 @@ export const AuthProvider = ({
         return false;
       }
 
-      // Import locally to avoid circular dependencies
       const { findOneProfile } = await import(
         "@/app/lib/@backend/action/admin/profile.action"
       );
 
-      // Get the latest profile data
       const profileId = data.user.current_profile.id;
-      console.log("Refreshing profile with ID:", profileId);
       const updatedProfile = await findOneProfile({ id: profileId });
 
       if (!updatedProfile) {
@@ -62,13 +82,6 @@ export const AuthProvider = ({
         return false;
       }
 
-      // Log the updated profile permissions for debugging
-      console.log(
-        "Updated profile permissions:",
-        updatedProfile.locked_control_code
-      );
-
-      // Update the session with fresh profile data
       await update({
         user: {
           ...data.user,
@@ -81,6 +94,41 @@ export const AuthProvider = ({
     } catch (error) {
       console.error("Failed to refresh profile:", error);
       return false;
+    }
+  };
+  const refreshUserData = async (): Promise<void> => {
+    try {
+      if (!data?.user?.id) {
+        console.warn("Cannot refresh user data: No user ID in session");
+        return;
+      }
+
+      const { findOneUser, getUserAvatarUrl } = await import(
+        "@/app/lib/@backend/action/admin/user.action"
+      );
+
+      const userId = data.user.id;
+
+      const updatedUser = await findOneUser({ id: userId });
+
+      if (!updatedUser) {
+        console.error("Failed to refresh user data: User not found");
+        return;
+      }
+
+      const newAvatarUrl = await getUserAvatarUrl(userId);
+
+      setAvatarUrl(newAvatarUrl);
+
+      await update({
+        user: {
+          ...data.user,
+          ...updatedUser,
+          avatarUrl: newAvatarUrl,
+        },
+      });
+    } catch (error) {
+      console.error("Error refreshing user data:", error);
     }
   };
 
@@ -107,7 +155,7 @@ export const AuthProvider = ({
       if (!data) return [];
       const { user } = data;
       return options.filter((el) =>
-        user.current_profile.locked_control_code.includes(el.code)
+        user.current_profile?.locked_control_code.includes(el.code)
       );
     },
     [data]
@@ -117,7 +165,7 @@ export const AuthProvider = ({
     (code: string) => {
       if (!data) return false;
       const { user } = data;
-      return user.current_profile.locked_control_code.includes(code);
+      return user.current_profile?.locked_control_code.includes(code);
     },
     [data]
   );
@@ -127,8 +175,10 @@ export const AuthProvider = ({
       value={{
         user: data?.user ?? session?.user,
         profile: data?.user?.current_profile ?? session?.user?.current_profile,
+        avatarUrl,
         changeProfile,
         refreshCurrentProfile,
+        refreshUserData,
         navBarItems,
         navigationByProfile,
         restrictFeatureByProfile,

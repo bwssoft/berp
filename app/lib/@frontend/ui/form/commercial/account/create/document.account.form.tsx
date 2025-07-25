@@ -45,7 +45,8 @@ export function DocumentAccountForm({
                 const maskedValue = maskCpfCnpj(e.target.value);
                 field.onChange(maskedValue);
               }}
-              label="CPF/CNPJ *"
+              required
+              label="CPF/CNPJ"
               disabled={textButton.contact !== "Validar" || isValidating}
               placeholder="Insira um documento para ser validado"
               error={methods.formState.errors.document?.value?.message}
@@ -84,6 +85,7 @@ export function DocumentAccountForm({
           render={() => (
             <Input
               disabled
+              required
               value={type === "cpf" ? "Pessoa física" : "Pessoa jurídica"}
               label="Tipo de pessoa"
             />

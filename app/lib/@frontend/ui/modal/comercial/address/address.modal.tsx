@@ -4,16 +4,19 @@ import React from "react";
 import { Modal, ModalBody, ModalContent } from "../../../component";
 
 import { AddressCreateForm } from "../../../form/commercial/address/create/address.create.form";
+import { IAddress } from "@/app/lib/@backend/domain";
 
 interface AddressProps {
     open: any;
     closeModal: () => void;
     accountId: string;
+    defaultValues?: Partial<IAddress>;
 }
 export function CreatedAddressModal({
     open,
     closeModal,
     accountId,
+    defaultValues,
 }: AddressProps) {
     return (
         <Modal
@@ -28,6 +31,7 @@ export function CreatedAddressModal({
                     <AddressCreateForm
                         closeModal={closeModal}
                         accountId={accountId}
+                        defaultValues={defaultValues}
                     />
                 </ModalBody>
             </ModalContent>
