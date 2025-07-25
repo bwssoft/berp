@@ -1,3 +1,5 @@
+import { Device, ITechnology } from "@/app/lib/@backend/domain";
+import { useDebounce } from "@/app/lib/@frontend/hook/use-debounce";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -16,8 +18,9 @@ export type Schema = z.infer<typeof schema>;
 
 export function useIdentificationForm(props: {
   onSubmit: (id: string) => Promise<void>;
+  technology: ITechnology;
 }) {
-  const { onSubmit } = props;
+  const { onSubmit, technology } = props;
 
   const {
     register,
@@ -26,55 +29,73 @@ export function useIdentificationForm(props: {
     control,
     setValue,
     reset: hookFormReset,
-    watch,
   } = useForm<Schema>({
     resolver: zodResolver(schema),
     mode: "onChange",
   });
-
-  const serial = watch("serial");
+  const [extractedSerial, setExtractedSerial] = useState<string | undefined>();
+  const lastPressRef = useRef<number>(0);
+  const inputIdRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = hookFormSubmit(async (data) => {
     const { serial } = data;
     await onSubmit(serial);
   });
 
-  // estado, função e use effect para lidar com o auto focus no input a partir de dois apertos na tecla espaço
-  const [lastPressTime, setLastPressTime] = useState<number | null>(null);
-  const inputIdRef = useRef<HTMLInputElement | null>(null);
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.code === "Space") {
-      const currentTime = new Date().getTime();
-      if (lastPressTime && currentTime - lastPressTime < 300) {
-        event.preventDefault();
-        if (inputIdRef.current) {
-          inputIdRef.current?.focus();
-          inputIdRef.current.value = "";
-          setValue("serial", "");
-        }
-      }
-      setLastPressTime(currentTime);
-    }
-  }, []);
-
-  const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let id = event.target.value;
-    if (
-      id.startsWith("E3+4GÇ") ||
-      id.startsWith("E3+4G:") ||
-      id.startsWith("E3+4Gç")
-    ) {
-      id = id.replace(/E3\+4G|:|Ç|ç/g, "");
-    }
-    setValue("serial", id, { shouldValidate: true });
-  };
+  const handleChangeInput = useDebounce(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setExtractedSerial(event.target.value);
+    },
+    450
+  );
 
   useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown, lastPressTime]);
+    if (extractedSerial) {
+      switch (technology.name.system) {
+        case Device.Model.DM_BWS_NB2:
+        case Device.Model.DM_BWS_LORA:
+        case Device.Model.DM_BWS_NB2_LORA:
+        case Device.Model.DM_BWS_4G: {
+          // const match = extractedSerial.match(/SN\s*:?\s*([a-fA-F0-9]{8})/i);
+          const match = extractedSerial.match(
+            /SN\s*[:Çç]?\s*([a-fA-F0-9]{8})/i
+          );
+          if (match) {
+            setValue("serial", match[1], { shouldValidate: true });
+          }
+          break;
+        }
+        case Device.Model.DM_E3_PLUS_4G:
+          const match = extractedSerial.match(/E3\+4G\s*:?\s*(\d{15})/i);
+          if (match) {
+            setValue("serial", match[1], { shouldValidate: true });
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  }, [extractedSerial, setValue, technology]);
+
+  // useEffect(() => {
+  //   const handler = (event: KeyboardEvent) => {
+  //     if (event.code === "Space") {
+  //       const now = Date.now();
+  //       if (now - lastPressRef.current < 300) {
+  //         event.preventDefault();
+  //         if (inputIdRef.current) {
+  //           inputIdRef.current.focus();
+  //           inputIdRef.current.value = "";
+  //           setValue("serial", "");
+  //         }
+  //       }
+  //       lastPressRef.current = now;
+  //     }
+  //   };
+
+  //   window.addEventListener("keydown", handler);
+  //   return () => window.removeEventListener("keydown", handler);
+  // }, []);
 
   return {
     register,
@@ -85,6 +106,5 @@ export function useIdentificationForm(props: {
     reset: hookFormReset,
     inputIdRef,
     handleChangeInput,
-    serial,
   };
 }

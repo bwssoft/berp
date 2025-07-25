@@ -12,6 +12,7 @@ declare module "next-auth" {
       current_profile: IProfile;
       temporary_password: boolean;
       image?: { key: string };
+      avatarUrl?: string;
     };
   }
 
