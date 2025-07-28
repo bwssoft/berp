@@ -27,7 +27,7 @@ const schema = z
     cpf: z.string().optional(),
     rg: z.string().optional(),
     contactFor: z
-      .array(z.enum(["Faturamento", "Marketing", "Suporte", "Comercial"]))
+      .array(z.enum(["Faturamento", "Marketing", "Suporte", "Comercial", "Fiscal"]))
       .min(1, "Contato para é obrigatório"),
     contactItems: z
       .array(

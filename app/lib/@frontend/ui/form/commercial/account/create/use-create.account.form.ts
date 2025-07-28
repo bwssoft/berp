@@ -396,16 +396,18 @@ export function useCreateAccountForm() {
           name: dataCnpj?.company.name || dataCnpj?.alias || "",
           contractEnabled: false,
           positionOrRelation: "",
-          contactFor: ["Comercial"],
+          originType: "api",
+          taxId: dataCnpj.taxId, // pra buscar o contato atualizado pelo taxId no card de contato
+          contactFor: ["Fiscal"],
           contactItems: [
             {
               id: crypto.randomUUID(),
               contact: `${contact.area}${contact.number}`,
               type:
                 dataCnpj?.phones[0].type === "LANDLINE"
-                  ? ("Telefone Comercial" as const)
-                  : ("Celular" as const),
-              preferredContact: { phone: true },
+                  ? "Telefone Comercial"
+                  : "Celular",
+              preferredContact: {},
             },
           ],
         };
