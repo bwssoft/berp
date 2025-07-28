@@ -1,7 +1,9 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { ContactSelection, IAccount, IContact } from "@/app/lib/@backend/domain";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface Props {
   contacts?: {
@@ -16,6 +18,12 @@ interface Props {
   ) => void;
 }
 
+const schema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  type: z.array(z.string(), {message: "Tipo é obrigatório"}).min(1, "Tipo é obrigatório"),
+  contact: z.string().min(1, "Contato é obrigatório"),
+});
+
 export function useSearchContactHistoricalAccount({
   contacts,
   selectContact,
@@ -28,6 +36,14 @@ export function useSearchContactHistoricalAccount({
     contact: "",
     channel: ""
   });
+
+  const { 
+    handleSubmit,
+    formState: errors,
+    control
+  } = useForm<z.infer<typeof schema>>({
+    resolver:  zodResolver(schema),
+  })
 
   useEffect(() => {
     if (contacts && contacts.length > 0) {
@@ -59,7 +75,7 @@ export function useSearchContactHistoricalAccount({
     });
   };
 
-  const handleAddOtherContact = () => {
+  const handleAddOtherContact = handleSubmit(() => {
     const { name, type, contact, channel} = otherContactInfo;
     if (!name || !type || !contact ) return;
 
@@ -101,7 +117,7 @@ export function useSearchContactHistoricalAccount({
     });
 
     setOtherContactInfo({ name: "", type: "", contact: "", channel: ""});
-  };
+  });
 
   return {
     contactData,
@@ -110,5 +126,7 @@ export function useSearchContactHistoricalAccount({
     handleAddOtherContact,
     otherContactInfo,
     setOtherContactInfo,
+    errors,
+    control
   };
 }

@@ -29,46 +29,53 @@ export function useSearchContactModal(accountId?: string) {
       const account = data.docs[0];
       setAccountData(account);
 
+      let groupCompanies: IAccount[] = [];
+
       if (
-        account?.economic_group_holding &&
-        account.economic_group_holding.taxId !== account.document?.value
+        !account?.economic_group_holding?.taxId ||
+        account.economic_group_holding.taxId === account.document?.value
       ) {
-        const dataForCnpj = await findManyAccount(
-          { economic_group_holding: account.economic_group_holding },
+        const controlleds  = await findManyAccount(
+          { "economic_group_holding.taxId": account.document?.value },
+          currentPage,
+          PAGE_SIZE
+        );
+        groupCompanies = controlleds.docs;
+      } else {
+        const holding = await findManyAccount(
+          { "document.value": account.economic_group_holding.taxId },
+          currentPage,
+          PAGE_SIZE
+        );
+        const otherControlled = await findManyAccount(
+          { "economic_group_holding.taxId": account.economic_group_holding.taxId },
           currentPage,
           PAGE_SIZE
         );
 
-        const novasEmpresas: {
-          name: string;
-          contacts: IContact[];
-          documentValue: string;
-        }[] = [];
+        groupCompanies = [...holding.docs, ...otherControlled.docs];
+      }
 
-        for (const empresa of dataForCnpj.docs) {
-          if (
+      const newCompanies = groupCompanies
+        .filter(
+          (empresa) =>
             empresa.document?.value !== account.document?.value &&
             Array.isArray(empresa.contacts) &&
             empresa.contacts.length > 0 &&
             empresa.fantasy_name &&
             empresa.document?.value
-          ) {
-            novasEmpresas.push({
-              name: empresa.fantasy_name,
-              documentValue: empresa.document.value,
-              contacts: empresa.contacts,
-            });
-          }
-        }
+        )
+        .map((empresa) => ({
+          name: empresa.social_name!,
+          documentValue: empresa.document.value!,
+          contacts: empresa.contacts ?? [],
+        }));
+        
+      const uniqueCompanies = Array.from(
+        new Map(newCompanies.map((emp) => [emp.documentValue, emp])).values()
+      );
 
-        setContactsByCompany((prev) => {
-          const existingDocs = new Set(prev.map((p) => p.documentValue));
-          const novosUnicos = novasEmpresas.filter(
-            (n) => !existingDocs.has(n.documentValue)
-          );
-          return [...prev, ...novosUnicos];
-        });
-      }
+      setContactsByCompany(uniqueCompanies);
 
       return data;
     },
