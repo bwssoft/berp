@@ -11,12 +11,14 @@ interface AddressProps {
   closeModal: () => void;
   accountId: string;
   createAddress: (data: AddressFormSchema, accountId: string) => Promise<void>;
+  defaultValues?: Partial<AddressFormSchema>;
 }
 export function CreateAddressModal({
   open,
   closeModal,
   accountId,
   createAddress,
+  defaultValues,
 }: AddressProps) {
   return (
     <Modal
@@ -32,6 +34,7 @@ export function CreateAddressModal({
             onSubmit={createAddress}
             closeModal={closeModal}
             accountId={accountId}
+            defaultValues={defaultValues}
           />
         </ModalBody>
       </ModalContent>

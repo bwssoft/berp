@@ -33,6 +33,7 @@ interface Props {
     hasPermissionEconomicGroup: boolean;
   };
 }
+
 export function AddressDataPage(props: Props) {
   const {
     account,
@@ -41,16 +42,14 @@ export function AddressDataPage(props: Props) {
   } = props;
 
   const [selectedAddress, setSelectedAddress] = useState<LocalAddress>();
+  const [copiedAddress, setCopiedAddress] = useState<LocalAddress>();
+
   const {
     open: openModalAddress,
     closeModal: closeCreateModalAddress,
     openModal: openCreateModalAddress,
     createAddressLocally: createAddress,
   } = useAddressModal();
-
-  /**
-   * MODAL ATUALIZAÇÃO - ADDRESS
-   */
 
   const {
     open: openUpdateAddress,
@@ -70,65 +69,66 @@ export function AddressDataPage(props: Props) {
   } = useAddressDeleteDialog();
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto space-y-6">
-      <div className="grid grid-cols-1 gap-6 items-stretch">
-        <Card className="w-full">
-          <CardHeader className="pb-3 flex-shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <MapPin className="h-5 w-5 text-primary" />
-                Endereços
-                <Badge variant="secondary" className="text-xs">
-                  {address.length}
-                </Badge>
-              </CardTitle>
-              {hasPermissionAddresses && (
-                <Button
-                  variant={"ghost"}
-                  className="border px-3 py-3"
-                  onClick={openCreateModalAddress}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 flex flex-col">
-            <div className="lg:col-span-2 h-full"></div>
-            <div className="lg:col-span-2 h-full space-y-3">
-              {address.length > 0 ? (
-                <div className="flex flex-wrap gap-3">
-                  {address.map((addr) => (
-                    <AddressCard
-                      key={addr.id}
-                      title="Endereço:"
-                      address={addr}
-                      onEdit={() => {
-                        setSelectedAddress(addr);
-                        openUpdateModalAddress();
-                      }}
-                      onDelete={() => {
-                        setSelectedAddress(addr);
-                        setOpenModalDelete(true);
-                      }}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Nenhum endereço encontrado</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>Cadastre um endereço para este cliente.</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+    <>
+      <div className="w-full max-w-[1400px] mx-auto space-y-6">
+        <div className="grid grid-cols-1 gap-6 items-stretch">
+          <Card className="w-full">
+            <CardHeader className="pb-3 flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  Endereços
+                  <Badge variant="secondary" className="text-xs">
+                    {address.length}
+                  </Badge>
+                </CardTitle>
+                {hasPermissionAddresses && (
+                  <Button
+                    variant={"ghost"}
+                    className="border px-3 py-3"
+                    onClick={openCreateModalAddress}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 flex flex-col">
+              <div className="lg:col-span-2 h-full"></div>
+              <div className="lg:col-span-2 h-full space-y-3">
+                {address.length > 0 ? (
+                  <div className="flex flex-wrap gap-3">
+                    {address.map((addr) => (
+                      <AddressCard
+                        key={addr.id}
+                        title="Endereço:"
+                        address={addr}
+                        onEdit={() => {
+                          setSelectedAddress(addr);
+                          openUpdateModalAddress();
+                        }}
+                        onDelete={() => {
+                          setSelectedAddress(addr);
+                          setOpenModalDelete(true);
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Nenhum endereço encontrado</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p>Cadastre um endereço para este cliente.</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-
       <AddressUpdateModal
         address={selectedAddress!}
         closeUpdateModal={closeUpdateModalAddress}
@@ -141,6 +141,17 @@ export function AddressDataPage(props: Props) {
         closeModal={closeCreateModalAddress}
         open={openModalAddress}
         createAddress={createAddress}
+        defaultValues={{
+          zip_code: copiedAddress?.zip_code ?? "",
+          street: copiedAddress?.street ?? "",
+          number: copiedAddress?.number ?? "",
+          complement: copiedAddress?.complement ?? "",
+          district: copiedAddress?.district ?? "",
+          city: copiedAddress?.city ?? "",
+          state: copiedAddress?.state ?? "",
+          reference_point: copiedAddress?.reference_point ?? "",
+          type: copiedAddress?.type ?? [],
+        }}
       />
 
       <AddressDeleteDialog
@@ -150,6 +161,14 @@ export function AddressDataPage(props: Props) {
         onDelete={(id) => deleteAddress(selectedAddress?.id || "")}
         isLoading={isLoading}
       />
-    </div>
+
+      <AddressDeleteDialog
+        address={selectedAddress}
+        open={openModalDelete}
+        onClose={() => setOpenModalDelete(false)}
+        onDelete={(id) => deleteAddress(id)}
+        isLoading={isLoading}
+      />
+    </>
   );
 }

@@ -11,6 +11,7 @@ export function CpfAccountForm() {
       <Input
         label="Nome completo"
         placeholder="Digite o nome completo"
+        required
         {...methods.register("cpf.name")}
         error={methods.formState.errors.cpf?.name?.message}
       />
@@ -19,13 +20,10 @@ export function CpfAccountForm() {
         name="cpf.rg"
         render={({ field }) => (
           <Input
-            label="RG/CPF"
-            placeholder={"Digite o RG ou CPF"}
+            label="RG"
+            placeholder={"Digite o RG"}
             value={field.value || ""}
-            onChange={(e) => {
-              const formattedValue = formatRgOrCpf(e.target.value);
-              field.onChange(formattedValue);
-            }}
+            onChange={field.onChange}
             error={methods.formState.errors.cpf?.rg?.message}
           />
         )}

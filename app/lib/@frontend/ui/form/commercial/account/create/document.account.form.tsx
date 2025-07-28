@@ -108,6 +108,7 @@ export function DocumentAccountForm({
           render={() => (
             <Input
               disabled
+              required
               value={type === "cpf" ? "Pessoa física" : "Pessoa jurídica"}
               label="Tipo de pessoa"
             />

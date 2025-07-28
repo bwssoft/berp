@@ -8,10 +8,12 @@ export function AddressCreateForm({
   closeModal,
   accountId,
   onSubmit,
+  defaultValues,
 }: {
   closeModal: () => void;
   accountId: string;
   onSubmit: (data: AddressFormSchema, accountId: string) => Promise<void>;
+  defaultValues?: Partial<AddressFormSchema>;
 }) {
   const router = useRouter();
   const {
@@ -28,6 +30,7 @@ export function AddressCreateForm({
       router.refresh();
     },
     accountId,
+    defaultValues,
     onSubmit,
   });
 

@@ -26,6 +26,7 @@ const AddressFormSchema = z.object({
     .array(z.enum(["Comercial", "Entrega", "Faturamento", "Residencial"]))
     .min(1, "Selecione pelo menos um tipo")
     .optional(),
+  default_address: z.boolean().optional(),
 });
 
 export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
@@ -63,6 +64,7 @@ export function useAddressUpdateForm({ address, onSubmit }: Props) {
         : address.type
           ? [address.type]
           : [],
+      default_address: address.default_address ?? false,
     },
   });
 

@@ -135,6 +135,8 @@ export function AccountDataPage(props: Props) {
     deleteAddress,
   } = useAddressDeleteDialog();
 
+  const [addressToClone, setAddressToClone] = useState<Partial<IAddress>>();
+
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
@@ -229,6 +231,10 @@ export function AccountDataPage(props: Props) {
                       key={addr.id}
                       title="Endereço:"
                       address={addr}
+                      onCopy={() => {
+                        setAddressToClone(addr);
+                        openCreateModalAddress();
+                      }}
                       onEdit={() => {
                         setSelectedAddress(addr);
                         openUpdateModalAddress();
