@@ -9,3 +9,7 @@ export async function fetchCnpjData(cnpj: string) {
 export async function fetchNameData(name: string) {
   return cnpjaGateway.getByName(name);
 }
+
+export async function fetcCnpjRegistrationData(cnpj: string) {
+  return cnpjaGateway.getCnpjRegistrationData(cnpj);
+}
