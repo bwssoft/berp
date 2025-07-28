@@ -202,7 +202,6 @@ export function useCreateAccountForm() {
 
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
-    shouldUnregister: true,
   });
 
   const handleCpfCnpj = async (
@@ -227,6 +226,9 @@ export function useCreateAccountForm() {
       return "invalid";
     }
 
+    // Determine the new document type
+    let newType: "cpf" | "cnpj" | "invalid" = "invalid";
+
     if (cleanedValue.length === 11) {
       const isValid = isValidCPF(cleanedValue);
       if (!isValid) {
@@ -236,13 +238,8 @@ export function useCreateAccountForm() {
         });
         return "invalid";
       }
-      methods.clearErrors("document.value");
-      methods.setValue("document.type", "cpf");
-      setType("cpf");
-      return "cpf";
-    }
-
-    if (cleanedValue.length === 14) {
+      newType = "cpf";
+    } else if (cleanedValue.length === 14) {
       const isValid = isValidCNPJ(cleanedValue);
       if (!isValid) {
         methods.setError("document.value", {
@@ -251,9 +248,45 @@ export function useCreateAccountForm() {
         });
         return "invalid";
       }
+      newType = "cnpj";
+    } else {
+      methods.setError("document.value", {
+        type: "manual",
+        message: "Documento inválido!",
+      });
+      return "invalid";
+    }
 
-      // fetcCnpjRegistrationData tras as mesmas informações que fetchCnpjData tras, com excessao de registrations
-      // const data = await fetchCnpjData(cleanedValue);
+    if (type && type !== newType) {
+      const currentDocument = methods.getValues("document");
+      methods.reset({
+        document: currentDocument,
+      });
+
+      // Reset all local states
+      setSelectedControlled([]);
+      setSelectedHolding([]);
+      setSelectedIE(null);
+      setDataHolding([]);
+      setDataControlled([]);
+      setDataCnpj(null);
+      setDisabledFields({
+        social_name: false,
+        fantasy_name: false,
+        status: false,
+        state_registration: false,
+        municipal_registration: false,
+      });
+    }
+
+    if (newType === "cpf") {
+      methods.clearErrors("document.value");
+      methods.setValue("document.type", "cpf");
+      setType("cpf");
+      return "cpf";
+    }
+
+    if (newType === "cnpj") {
       const data = await fetcCnpjRegistrationData(cleanedValue);
       if (data) {
         setDataCnpj(data);
@@ -293,10 +326,6 @@ export function useCreateAccountForm() {
       return "cnpj";
     }
 
-    methods.setError("document.value", {
-      type: "manual",
-      message: "Documento inválido!",
-    });
     return "invalid";
   };
 

@@ -21,7 +21,6 @@ export function CreateOneAccountForm() {
     form,
     isSubmitting,
   } = useCreateAccountForm();
-
   const router = useRouter();
 
   const hasValidated = type && methods.getValues("document.type") === type;
