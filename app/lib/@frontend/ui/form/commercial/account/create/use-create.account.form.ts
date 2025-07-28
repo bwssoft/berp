@@ -74,9 +74,11 @@ const schema = z
             })
           )
           .optional(),
-        sector: z.string({
-          required_error: "Setor obrigatório",
-        }).min(1, "Setor obrigatório"),
+        sector: z
+          .string({
+            required_error: "Setor obrigatório",
+          })
+          .min(1, "Setor obrigatório"),
         economic_group_holding: z
           .object({
             taxId: z.string().optional(),
@@ -359,7 +361,8 @@ export function useCreateAccountForm() {
           number: address.number,
           zip_code: address.zip,
           complement: address.details ?? "",
-          type: ["Comercial"],
+          type: ["Faturamento"],
+          default_address: true,
         });
       }
 

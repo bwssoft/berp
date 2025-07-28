@@ -5,6 +5,7 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   containerClassname?: string;
+  required?: boolean;
   help?: string;
 }
 
@@ -20,6 +21,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
       error,
       help,
       disabled,
+      required = false,
       ...rest
     },
     ref
@@ -31,7 +33,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             htmlFor={id}
             className="block text-sm font-medium leading-6 text-gray-900"
           >
-            {label}
+            {label} {required && <span className="!text-red-600">*</span>}
           </label>
         )}
         <div className={cn("relative", label && "mt-2")}>
@@ -52,7 +54,7 @@ const Input = forwardRef<HTMLInputElement, Props>(
             {...rest}
           />
         </div>
-        {error && <p className="text-xs text-red-600 absolute">{error}</p>}
+        {error && <p className="text-xs text-red-600">{error}</p>}
       </div>
     );
   }

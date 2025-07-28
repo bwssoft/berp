@@ -3,23 +3,26 @@
 import { Loader2, Settings } from "lucide-react";
 import { Button, Input } from "../../../component";
 import { useIdentificationForm } from "./use-identification.form";
+import { ITechnology } from "@/app/lib/@backend/domain";
 
 export function IdentificationForm(props: {
-  onSubmit: (id: string) => Promise<void>;
+  onSubmit: (
+    id: string,
+    detected: any[],
+    technology: ITechnology
+  ) => Promise<void>;
   isIdentifying: boolean;
   isDetecting: boolean;
+  technology: ITechnology;
+  detected: any[];
 }) {
-  const { onSubmit, isIdentifying, isDetecting } = props;
-  const {
-    handleSubmit,
-    errors,
-    inputIdRef,
-    register,
-    handleChangeInput,
-    serial,
-  } = useIdentificationForm({
-    onSubmit,
-  });
+  const { onSubmit, isIdentifying, isDetecting, technology, detected } = props;
+  const { handleSubmit, errors, register, handleChangeInput } =
+    useIdentificationForm({
+      onSubmit,
+      technology,
+      detected,
+    });
   return (
     <form
       autoComplete="off"
@@ -28,12 +31,19 @@ export function IdentificationForm(props: {
     >
       <Input
         {...register("serial")}
-        value={serial}
+        // ref={(el) => {
+        //   register("serial").ref(el);
+        //   inputIdRef.current = el;
+        // }}
         label="Enter serial to writing"
         placeholder="Field to insert serial"
-        ref={inputIdRef}
         error={errors["serial"]?.message ?? ""}
         onChange={handleChangeInput}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault(); // evita o submit
+          }
+        }}
       />
       <Button
         disabled={isDetecting || isIdentifying}

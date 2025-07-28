@@ -61,7 +61,7 @@ export function SearchContactAccountForm({
                         checked={selectedIds.includes(c.id)}
                         onChange={(e) => toggleCheckbox(c.id, e.target.checked)}
                       />
-                      {c.name}
+                      <span className="font-semilbold">{company.documentValue}</span> - {c.name} 
                     </label>
                   ))}
                 </DisclosurePanel>
