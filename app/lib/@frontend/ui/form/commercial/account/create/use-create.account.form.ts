@@ -173,12 +173,14 @@ export function useCreateAccountForm() {
     status: boolean;
     state_registration: boolean;
     municipal_registration: boolean;
+    typeIE: boolean;
   }>({
     social_name: false,
     fantasy_name: false,
     status: false,
     state_registration: false,
     municipal_registration: false,
+    typeIE: false,
   });
 
   const [buttonsState, setButtonsState] = useState({
@@ -276,6 +278,7 @@ export function useCreateAccountForm() {
         status: false,
         state_registration: false,
         municipal_registration: false,
+        typeIE: false,
       });
     }
 
@@ -316,6 +319,7 @@ export function useCreateAccountForm() {
           status: true,
           state_registration: false,
           municipal_registration: false,
+          typeIE: true,
         });
       }
 
@@ -384,7 +388,9 @@ export function useCreateAccountForm() {
               fantasy_name: data.cnpj?.fantasy_name,
               state_registration: data.cnpj?.state_registration,
               municipal_registration: data.cnpj?.municipal_registration,
-              status: data.cnpj?.status?.[0],
+              status: data.cnpj?.status,
+              situationIE: data.cnpj?.situationIE,
+              typeIE: data.cnpj?.typeIE,
               economic_group_holding: data.cnpj?.economic_group_holding
                 ? {
                     name: data.cnpj?.economic_group_holding?.name! as string,
