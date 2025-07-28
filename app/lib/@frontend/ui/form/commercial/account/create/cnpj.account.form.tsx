@@ -41,6 +41,8 @@ export function CNPJAccountForm() {
     disabledFields,
     selectedHolding,
     setSelectedHolding,
+    selectedIE,
+    setSelectedIE,
   } = useCreateAccountForm();
 
   const sectorModal = useSectorModal();
@@ -95,24 +97,57 @@ export function CNPJAccountForm() {
         control={control}
         name="cnpj.status"
         render={({ field }) => (
+          <Input
+            label="Situação CNPJ"
+            value={field.value}
+            onAbort={field.onChange}
+            placeholder="Digite a situação do CNPJ"
+            error={errors.cnpj?.status?.message}
+            disabled={disabledFields.status}
+          />
+        )}
+      />
+      <Controller
+        control={control}
+        name="cnpj.situationIE"
+        render={({ field }) => (
           <Combobox
             type="single"
-            label="Situação cadastral"
+            label="Situação IE"
             data={[
-              { id: "Nula", name: "Nula" },
-              { id: "Ativa", name: "Ativa" },
-              { id: "Suspensa", name: "Suspensa" },
-              { id: "Inapta", name: "Inapta" },
-              { id: "Baixada", name: "Baixada" },
+              { id: "1", text: "Habilitada", status: true },
+              { id: "2", text: "Não habilitada", status: false },
             ]}
-            value={field.value}
-            onOptionChange={(item) => field.onChange(item)}
-            error={errors.cnpj?.status?.message}
+            value={selectedIE ? [selectedIE] : []}
+            onOptionChange={(selectedItems) => {
+              const item = selectedItems[0];
+              if (item) {
+                setSelectedIE(item);
+                field.onChange(item);
+              } else {
+                setSelectedIE(null);
+                field.onChange(undefined);
+              }
+            }}
+            error={errors.cnpj?.situationIE?.message}
             keyExtractor={(item) => item.id}
-            placeholder="Selecione o status"
-            displayValueGetter={(item) => item.name}
+            placeholder="Selecione a situação IE"
+            displayValueGetter={(item) => item.text}
             disabled={disabledFields.status}
             modal={false}
+          />
+        )}
+      />
+      <Controller
+        control={control}
+        name="cnpj.typeIE"
+        render={({ field }) => (
+          <Input
+            label="Tipo IE"
+            value={field.value}
+            onChange={field.onChange}
+            placeholder="Digite o tipo IE"
+            error={errors.cnpj?.typeIE?.message}
           />
         )}
       />

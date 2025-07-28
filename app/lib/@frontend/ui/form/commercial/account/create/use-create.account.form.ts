@@ -19,6 +19,7 @@ import { debounce } from "lodash";
 import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import {
+  fetcCnpjRegistrationData,
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
@@ -55,14 +56,13 @@ const schema = z
         fantasy_name: z.string().optional(),
         state_registration: z.string().optional(),
         municipal_registration: z.string().optional(),
-        status: z
-          .array(
-            z.object({
-              id: z.string(),
-              name: z.string(),
-            })
-          )
-          .optional(),
+        status: z.string().optional(),
+        situationIE: z.object({
+          id: z.string(),
+          status: z.boolean(),
+          text: z.string(),
+        }),
+        typeIE: z.string().optional(),
         sector: z
           .string({
             required_error: "Setor obrigatório",
@@ -151,6 +151,12 @@ export function useCreateAccountForm() {
 
   const [selectedHolding, setSelectedHolding] = useState<ICnpjaResponse[]>([]);
 
+  const [selectedIE, setSelectedIE] = useState<{
+    id: string;
+    text: string;
+    status: boolean;
+  } | null>(null);
+
   const [disabledFields, setDisabledFields] = useState<{
     social_name: boolean;
     fantasy_name: boolean;
@@ -236,8 +242,9 @@ export function useCreateAccountForm() {
         return "invalid";
       }
 
-      const data = await fetchCnpjData(cleanedValue);
-
+      // fetcCnpjRegistrationData tras as mesmas informações que fetchCnpjData tras, com excessao de registrations
+      // const data = await fetchCnpjData(cleanedValue);
+      const data = await fetcCnpjRegistrationData(cleanedValue);
       if (data) {
         console.log("CNPJ Data:", data);
         setDataCnpj(data);
@@ -245,9 +252,21 @@ export function useCreateAccountForm() {
         // Set the values from API
         methods.setValue("cnpj.fantasy_name", data.alias ?? "");
         methods.setValue("cnpj.social_name", data.company.name);
-        methods.setValue("cnpj.status", [
-          { id: data.status.text, name: data.status.text },
-        ]);
+        methods.setValue(
+          "cnpj.state_registration",
+          data.registrations[0]?.number ?? ""
+        );
+        methods.setValue("cnpj.status", data.registrations[0]?.status.text);
+        const situationIE = {
+          id: data.registrations[0]?.enabled ? "1" : "2",
+          text: data.registrations[0]?.enabled
+            ? "Habilitada"
+            : "Não habilitada",
+          status: data.registrations[0]?.enabled,
+        };
+        methods.setValue("cnpj.situationIE", situationIE);
+        setSelectedIE(situationIE);
+        methods.setValue("cnpj.typeIE", data.registrations[0]?.type.text);
 
         setDisabledFields({
           social_name: true,
@@ -321,10 +340,12 @@ export function useCreateAccountForm() {
             fantasy_name: data.cnpj?.fantasy_name,
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
-            status: data.cnpj?.status?.[0]?.name,
+            status: data.cnpj?.status,
+            situationIE: data.cnpj?.situationIE,
+            typeIE: data.cnpj?.typeIE,
             economic_group_holding: {
-              name: data.cnpj?.economic_group_holding?.name! as string,
-              taxId: data.cnpj?.economic_group_holding?.taxId! as string,
+              name: data.cnpj?.economic_group_holding?.name ?? "",
+              taxId: data.cnpj?.economic_group_holding?.taxId ?? "",
             },
             economic_group_controlled:
               data.cnpj?.economic_group_controlled?.map((item) => ({
@@ -424,6 +445,8 @@ export function useCreateAccountForm() {
     selectedControlled,
     selectedHolding,
     setSelectedHolding,
+    selectedIE,
+    setSelectedIE,
     debouncedValidationHolding,
     debouncedValidationControlled,
     disabledFields,

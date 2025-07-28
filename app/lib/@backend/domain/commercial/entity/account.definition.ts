@@ -12,6 +12,8 @@ export interface IAccount {
   state_registration?: string;
   municipal_registration?: string;
   status?: string;
+  situationIE?: {id: string; status: boolean; text: string};
+  typeIE?: string;
   setor?: string[];
   address?: string[];
   contacts?: IContact[];
