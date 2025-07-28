@@ -41,23 +41,12 @@ const schema = z
           }),
         rg: z
           .string()
-          .min(7)
-          .refine(
-            (val) => {
-              if (!val) return true;
-
-              const cleaned = val.replace(/[^\w]/g, "");
-
-              if (cleaned.length === 11) {
-                return isValidCPF(cleaned);
-              }
-
-              return isValidRG(cleaned);
-            },
-            {
-              message: "Documento inválido: informe um CPF ou RG válido",
-            }
+          .regex(
+            /^[A-Za-z]{0,2}[-\s.]?\d{1,2}\.?\d{3}\.?\d{3}[-\s.]?[A-Za-z0-9]{0,2}$/,
+            "RG deve conter apenas números, pontos, barras e hífen"
           )
+          .min(5, "RG muito curto")
+          .max(20, "RG muito longo")
           .optional(),
       })
       .optional(),
@@ -154,7 +143,6 @@ export function useCreateAccountForm() {
 
   // Estado para guardar os dados retornados para holding e controlled
   const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
-
   const [dataControlled, setDataControlled] = useState<ICnpjaResponse[]>([]);
   const [dataCnpj, setDataCnpj] = useState<ICnpjaResponse | null>(null);
   const [selectedControlled, setSelectedControlled] = useState<
@@ -204,6 +192,7 @@ export function useCreateAccountForm() {
 
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
+    shouldUnregister: true,
   });
 
   const handleCpfCnpj = async (
@@ -237,6 +226,7 @@ export function useCreateAccountForm() {
         });
         return "invalid";
       }
+      methods.clearErrors("document.value");
       methods.setValue("document.type", "cpf");
       setType("cpf");
       return "cpf";
@@ -289,6 +279,8 @@ export function useCreateAccountForm() {
 
       methods.setValue("document.type", "cnpj");
       setType("cnpj");
+      methods.clearErrors("document.value");
+
       return "cnpj";
     }
 
@@ -304,21 +296,21 @@ export function useCreateAccountForm() {
     groupType: "controlled" | "holding"
   ) => {
     const cleanedValue = value.replace(/\D/g, "");
+
     let data;
 
-    if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
-      // É um CNPJ válido
-      data = await fetchCnpjData(cleanedValue);
+    if (isValidCNPJ(cleanedValue)) {
+      const cnpjData = await fetchCnpjData(cleanedValue);
+      data = [cnpjData];
     } else {
-      // Se não for CNPJ, trata como nome e usa outra função
       data = await fetchNameData(value);
-      if (groupType === "controlled") {
-        setDataControlled(data as ICnpjaResponse[]);
-        return;
-      }
+    }
+
+    if (groupType === "controlled") {
+      setDataControlled(data as ICnpjaResponse[]);
+    } else {
       setDataHolding(data as ICnpjaResponse[]);
     }
-    return data;
   };
 
   const debouncedValidationHolding = debounce(async (value: string) => {
@@ -341,7 +333,7 @@ export function useCreateAccountForm() {
       ...(type === "cpf"
         ? {
             name: data.cpf?.name,
-            rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
+            rg: data.cpf?.rg ? data.cpf?.rg.replace(/[^a-zA-Z0-9]/g, "") : "",
           }
         : {
             social_name: data.cnpj?.social_name,
@@ -378,7 +370,8 @@ export function useCreateAccountForm() {
           number: address.number,
           zip_code: address.zip,
           complement: address.details ?? "",
-          type: ["Comercial"],
+          type: ["Faturamento"],
+          default_address: true,
         });
       }
 

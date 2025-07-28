@@ -20,8 +20,6 @@ import {
   SectorModal,
   useSectorModal,
 } from "../../../../modal/comercial/sector";
-import { ICnpjaResponse } from "@/app/lib/@backend/domain";
-import { DebouncedFunc } from "lodash";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { useEffect, useState } from "react";
 import {
@@ -31,24 +29,6 @@ import {
   FormLabel,
   FormMessage,
 } from "../../../../component/form";
-
-interface CNPJAccountFormProps {
-  dataHolding: ICnpjaResponse[];
-  debouncedValidationHolding: DebouncedFunc<(value: string) => Promise<void>>;
-  debouncedValidationControlled: DebouncedFunc<
-    (value: string) => Promise<void>
-  >;
-  dataControlled: ICnpjaResponse[];
-  selectedControlled: ICnpjaResponse[] | null;
-  setSelectedControlled: (value: ICnpjaResponse[] | null) => void;
-  disabledFields?: {
-    social_name: boolean;
-    fantasy_name: boolean;
-    status: boolean;
-    state_registration: boolean;
-    municipal_registration: boolean;
-  };
-}
 
 export function CNPJAccountForm() {
   const {
@@ -94,6 +74,7 @@ export function CNPJAccountForm() {
         label="Razão Social"
         placeholder="Digite a razão social"
         {...register("cnpj.social_name")}
+        required
         error={errors.cnpj?.social_name?.message}
         disabled={disabledFields.social_name}
       />
@@ -183,7 +164,9 @@ export function CNPJAccountForm() {
           name="cnpj.sector"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel>Setor</FormLabel>
+              <FormLabel>
+                Setor <span className="text-red-600">*</span>
+              </FormLabel>
               <FormControl>
                 <Select
                   onValueChange={field.onChange}

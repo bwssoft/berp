@@ -141,6 +141,8 @@ export function SideBar(props: Props) {
   const { navigation, menuListItem } = props;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isOnPathname = useIsOnPathname();
+  const { avatarUrl } = useAuth();
+
   return (
     <>
       <div>
@@ -266,9 +268,9 @@ export function SideBar(props: Props) {
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
                   <img
-                    alt=""
-                    src="/avatar.webp"
-                    className="size-8 rounded-full"
+                    alt="User avatar"
+                    src={avatarUrl}
+                    className="size-8 rounded-full object-cover"
                   />
                 </MenuButton>
               </div>
@@ -311,8 +313,8 @@ export function SideBar(props: Props) {
             <span className="sr-only ">Your profile</span>
             <img
               className="h-8 w-8 rounded-full bg-gray-50 hidden lg:block"
-              src="/avatar.webp"
-              alt=""
+              src={avatarUrl}
+              alt="User avatar"
             />
           </a>
         </div>

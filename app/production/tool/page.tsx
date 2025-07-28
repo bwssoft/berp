@@ -7,7 +7,7 @@ import {
   Cog6ToothIcon,
   IdentificationIcon,
 } from "@heroicons/react/24/outline";
-import { CheckCheckIcon } from "lucide-react";
+import { CheckCheckIcon, FolderDownIcon } from "lucide-react";
 
 const actions = [
   {
@@ -47,6 +47,15 @@ const actions = [
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
     description: "Faça a checagem do perfil de configuração de equipamentos.",
+  },
+  {
+    title: "Gravador de Firmware",
+    href: "/production/tool/firmware-update",
+    code: "production:tool:firmware-update",
+    icon: FolderDownIcon,
+    iconForeground: "text-orange-700",
+    iconBackground: "bg-orange-50",
+    description: "Inicie o processo de gravação de firmware.",
   },
 ];
 

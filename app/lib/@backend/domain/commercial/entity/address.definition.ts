@@ -10,6 +10,7 @@ export interface IAddress {
     complement?: string | undefined;
     reference_point?: string | undefined;
     type?: ("Comercial" | "Entrega" | "Faturamento" | "Residencial")[];
+    default_address?: boolean;
     created_at?: Date;
     updated_at?: Date;
 }
