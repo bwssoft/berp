@@ -40,23 +40,12 @@ const schema = z
           }),
         rg: z
           .string()
-          .min(7)
-          .refine(
-            (val) => {
-              if (!val) return true;
-
-              const cleaned = val.replace(/[^\w]/g, "");
-
-              if (cleaned.length === 11) {
-                return isValidCPF(cleaned);
-              }
-
-              return isValidRG(cleaned);
-            },
-            {
-              message: "Documento inválido: informe um CPF ou RG válido",
-            }
+          .regex(
+            /^[A-Za-z]{0,2}[-\s.]?\d{1,2}\.?\d{3}\.?\d{3}[-\s.]?[A-Za-z0-9]{0,2}$/,
+            "RG deve conter apenas números, pontos, barras e hífen"
           )
+          .min(5, "RG muito curto")
+          .max(20, "RG muito longo")
           .optional(),
       })
       .optional(),
@@ -325,7 +314,7 @@ export function useCreateAccountForm() {
       ...(type === "cpf"
         ? {
             name: data.cpf?.name,
-            rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
+            rg: data.cpf?.rg ? data.cpf?.rg.replace(/[^a-zA-Z0-9]/g, "") : "",
           }
         : {
             social_name: data.cnpj?.social_name,
