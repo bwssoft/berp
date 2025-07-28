@@ -14,7 +14,7 @@ import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { debounce } from "lodash";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -69,7 +69,7 @@ export function useUpdateEconomicGroupForm(
   useEffect(() => {
     if (!isModalOpen) return;
 
-    if (initialHolding) {
+    if (initialHolding && Object.keys(initialHolding).length > 0) {
       setSelectedHolding([initialHolding]);
       setValue("cnpj.economic_group_holding", initialHolding);
     }
@@ -106,60 +106,45 @@ export function useUpdateEconomicGroupForm(
     }
   }, [isModalOpen, accountId, setValue, initialHolding, initialControlled]);
 
-  const handleCnpjOrName = useCallback(
-    async (value: string, groupType: "controlled" | "holding") => {
-      const cleanedValue = value.replace(/\D/g, "");
-      let data;
+  const handleCnpjOrName = async (
+    value: string,
+    groupType: "controlled" | "holding"
+  ) => {
+    const cleanedValue = value.replace(/\D/g, "");
+    let data;
 
-      if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
-        data = await fetchCnpjData(cleanedValue);
-      } else {
-        data = await fetchNameData(value);
+    if (isValidCNPJ(cleanedValue)) {
+      const cnpjData = await fetchCnpjData(cleanedValue);
+      data = [cnpjData];
+    } else {
+      data = await fetchNameData(value);
+    }
 
-        const normalized = Array.isArray(data)
-          ? data
-              .filter(
-                (item) =>
-                  item && item.taxId && item.company && item.company.name
-              )
-              .map((item) => ({
-                taxId: item.taxId.replace(/\D/g, ""),
-                name: item.company.name,
-              }))
-          : [];
+    const normalized = Array.isArray(data)
+      ? data
+          .filter(
+            (item) => item && item.taxId && item.company && item.company.name
+          )
+          .map((item) => ({
+            taxId: item?.taxId.replace(/\D/g, "") || "",
+            name: item?.company?.name || "",
+          }))
+      : [];
 
-        if (groupType === "controlled") {
-          setDataControlled(normalized);
-          return;
-        }
+    if (groupType === "controlled") {
+      setDataControlled(normalized);
+    } else {
+      setDataHolding(normalized);
+    }
+  };
 
-        setDataHolding(normalized);
-      }
+  const debouncedValidationHolding = debounce(async (value: string) => {
+    await handleCnpjOrName(value, "holding");
+  }, 500);
 
-      return data;
-    },
-    [setDataControlled, setDataHolding]
-  );
-
-  const debouncedValidationHolding = useCallback(
-    (value: string) => {
-      const debouncedFn = debounce(async (text: string) => {
-        await handleCnpjOrName(text, "holding");
-      }, 500);
-      debouncedFn(value);
-    },
-    [handleCnpjOrName]
-  );
-
-  const debouncedValidationControlled = useCallback(
-    (value: string) => {
-      const debouncedFn = debounce(async (text: string) => {
-        await handleCnpjOrName(text, "controlled");
-      }, 500);
-      debouncedFn(value);
-    },
-    [handleCnpjOrName]
-  );
+  const debouncedValidationControlled = debounce(async (value: string) => {
+    await handleCnpjOrName(value, "controlled");
+  }, 500);
 
   const onSubmit = handleSubmit(async (formData) => {
     const holding = formData.cnpj.economic_group_holding;

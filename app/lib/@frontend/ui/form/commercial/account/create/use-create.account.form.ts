@@ -154,7 +154,6 @@ export function useCreateAccountForm() {
 
   // Estado para guardar os dados retornados para holding e controlled
   const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
-
   const [dataControlled, setDataControlled] = useState<ICnpjaResponse[]>([]);
   const [dataCnpj, setDataCnpj] = useState<ICnpjaResponse | null>(null);
   const [selectedControlled, setSelectedControlled] = useState<
@@ -198,6 +197,7 @@ export function useCreateAccountForm() {
 
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
+    shouldUnregister: true,
   });
 
   const handleCpfCnpj = async (
@@ -231,6 +231,7 @@ export function useCreateAccountForm() {
         });
         return "invalid";
       }
+      methods.clearErrors("document.value");
       methods.setValue("document.type", "cpf");
       setType("cpf");
       return "cpf";
@@ -270,6 +271,8 @@ export function useCreateAccountForm() {
 
       methods.setValue("document.type", "cnpj");
       setType("cnpj");
+      methods.clearErrors("document.value");
+
       return "cnpj";
     }
 
@@ -285,21 +288,21 @@ export function useCreateAccountForm() {
     groupType: "controlled" | "holding"
   ) => {
     const cleanedValue = value.replace(/\D/g, "");
+
     let data;
 
-    if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
-      // É um CNPJ válido
-      data = await fetchCnpjData(cleanedValue);
+    if (isValidCNPJ(cleanedValue)) {
+      const cnpjData = await fetchCnpjData(cleanedValue);
+      data = [cnpjData];
     } else {
-      // Se não for CNPJ, trata como nome e usa outra função
       data = await fetchNameData(value);
-      if (groupType === "controlled") {
-        setDataControlled(data as ICnpjaResponse[]);
-        return;
-      }
+    }
+
+    if (groupType === "controlled") {
+      setDataControlled(data as ICnpjaResponse[]);
+    } else {
       setDataHolding(data as ICnpjaResponse[]);
     }
-    return data;
   };
 
   const debouncedValidationHolding = debounce(async (value: string) => {

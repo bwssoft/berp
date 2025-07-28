@@ -1,26 +1,39 @@
-// app/lib/@backend/usecase/commercial/sector/create-one-sector.usecase.ts
 import { singleton } from "@/app/lib/util/singleton";
-import { ISector, ISectorRepository } from "@/app/lib/@backend/domain";
+import { ISector } from "@/app/lib/@backend/domain";
 import { sectorRepository } from "../../../infra/repository";
+import { findManySectorUsecase } from "./find-many.sector.usecase";
+import { normalizeString } from "@/app/lib/util/normalize-string";
 
 class CreateOneSectorUsecase {
-    repository: ISectorRepository;
-
-    constructor() {
-        this.repository = sectorRepository;
-    }
-
     async execute(
         input: Omit<ISector, "id" | "created_at" | "updated_at">
     ): Promise<ISector> {
+        const sectors = await findManySectorUsecase.execute({});
+        const normalizedInputName = normalizeString(input.name);
+
+        const duplicated = sectors.find(
+            (sector) => normalizeString(sector.name) === normalizedInputName
+        );
+
+        if (duplicated) {
+            const same = duplicated.name === input.name;
+            if (same) {
+                throw new Error("Já existe um setor com esse nome.");
+            } else {
+                throw new Error(
+                    `Já existe um setor com nome semelhante: "${duplicated.name}".`
+                );
+            }
+        }
+
         const sector: ISector = {
             ...input,
             id: crypto.randomUUID(),
             active: true,
             created_at: new Date(),
         };
-        await this.repository.create(sector);
 
+        await sectorRepository.create(sector);
         return sector;
     }
 }

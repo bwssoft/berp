@@ -17,10 +17,15 @@ const schema = z.object({
 export type Schema = z.infer<typeof schema>;
 
 export function useIdentificationForm(props: {
-  onSubmit: (id: string) => Promise<void>;
+  onSubmit: (
+    id: string,
+    detected: any[],
+    technology: ITechnology
+  ) => Promise<void>;
   technology: ITechnology;
+  detected: any[];
 }) {
-  const { onSubmit, technology } = props;
+  const { onSubmit, technology, detected } = props;
 
   const {
     register,
@@ -33,40 +38,31 @@ export function useIdentificationForm(props: {
     resolver: zodResolver(schema),
     mode: "onChange",
   });
-  const [extractedSerial, setExtractedSerial] = useState<string | undefined>();
   const lastPressRef = useRef<number>(0);
   const inputIdRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = hookFormSubmit(async (data) => {
     const { serial } = data;
-    await onSubmit(serial);
+    await onSubmit(serial, detected, technology);
   });
 
   const handleChangeInput = useDebounce(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setExtractedSerial(event.target.value);
-    },
-    450
-  );
-
-  useEffect(() => {
-    if (extractedSerial) {
+      const raw = event.target.value;
       switch (technology.name.system) {
         case Device.Model.DM_BWS_NB2:
         case Device.Model.DM_BWS_LORA:
         case Device.Model.DM_BWS_NB2_LORA:
         case Device.Model.DM_BWS_4G: {
-          // const match = extractedSerial.match(/SN\s*:?\s*([a-fA-F0-9]{8})/i);
-          const match = extractedSerial.match(
-            /SN\s*[:Çç]?\s*([a-fA-F0-9]{8})/i
-          );
+          // const match = raw.match(/SN\s*:?\s*([a-fA-F0-9]{8})/i);
+          const match = raw.match(/SN\s*[:Çç]?\s*([a-fA-F0-9]{8})/i);
           if (match) {
             setValue("serial", match[1], { shouldValidate: true });
           }
           break;
         }
         case Device.Model.DM_E3_PLUS_4G:
-          const match = extractedSerial.match(/E3\+4G\s*:?\s*(\d{15})/i);
+          const match = raw.match(/E3\+4G\s*:?\s*(\d{15})/i);
           if (match) {
             setValue("serial", match[1], { shouldValidate: true });
           }
@@ -74,8 +70,10 @@ export function useIdentificationForm(props: {
         default:
           break;
       }
-    }
-  }, [extractedSerial, setValue, technology]);
+    },
+    450,
+    [technology]
+  );
 
   // useEffect(() => {
   //   const handler = (event: KeyboardEvent) => {
