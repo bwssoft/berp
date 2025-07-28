@@ -43,9 +43,6 @@ export function CNPJAccountForm() {
     setSelectedHolding,
   } = useCreateAccountForm();
 
-  console.log("🚀 ~ CNPJAccountForm ~ dataHolding:", dataHolding);
-  console.log("🚀 ~ CNPJAccountForm ~ dataControlled:", dataControlled);
-
   const sectorModal = useSectorModal();
   const {
     register,
@@ -75,6 +72,7 @@ export function CNPJAccountForm() {
         label="Razão Social"
         placeholder="Digite a razão social"
         {...register("cnpj.social_name")}
+        required
         error={errors.cnpj?.social_name?.message}
         disabled={disabledFields.social_name}
       />
@@ -131,7 +129,9 @@ export function CNPJAccountForm() {
           name="cnpj.sector"
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel>Setor</FormLabel>
+              <FormLabel>
+                Setor <span className="text-red-600">*</span>
+              </FormLabel>
               <FormControl>
                 <Select
                   onValueChange={field.onChange}
@@ -186,7 +186,6 @@ export function CNPJAccountForm() {
               data={dataHolding}
               label="Grupo Econômico (Holding)"
               behavior="search"
-              disableLocalFilter={true}
               onSearchChange={(text: string) => {
                 debouncedValidationHolding(text);
               }}
@@ -221,7 +220,6 @@ export function CNPJAccountForm() {
               data={dataControlled}
               label="Grupo Econômico (Controladas)"
               behavior="search"
-              disableLocalFilter={true}
               placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
               value={selectedControlled || []}
               onChange={(selectedItems) => {

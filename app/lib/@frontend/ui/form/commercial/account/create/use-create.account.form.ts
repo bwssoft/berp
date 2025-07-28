@@ -356,7 +356,8 @@ export function useCreateAccountForm() {
           number: address.number,
           zip_code: address.zip,
           complement: address.details ?? "",
-          type: ["Comercial"],
+          type: ["Faturamento"],
+          default_address: true,
         });
       }
 
