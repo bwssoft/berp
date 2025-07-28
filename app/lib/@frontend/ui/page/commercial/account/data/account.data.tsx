@@ -192,6 +192,7 @@ export function AccountDataPage(props: Props) {
                                                 setSelectedContact(contact);
                                                 openDeleteContactModal();
                                             }}
+                                            
                                         />
                                     )
                                 )}

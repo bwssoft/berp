@@ -316,6 +316,7 @@ export function useCreateContactAccount(closeModal: () => void) {
             type: Array.isArray(item.type) ? item.type[0] : item.type,
             id: item.id ?? crypto.randomUUID(),
           })) || [],
+        originType: "local",
       });
 
       if (success && accountId) {
