@@ -314,7 +314,7 @@ export function useCreateAccountForm() {
       ...(type === "cpf"
         ? {
             name: data.cpf?.name,
-            rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
+            rg: data.cpf?.rg ? data.cpf?.rg.replace(/[^a-zA-Z0-9]/g, "") : "",
           }
         : {
             social_name: data.cnpj?.social_name,
