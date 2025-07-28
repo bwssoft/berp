@@ -21,13 +21,16 @@ export function EconomicGroupCard({
   hasPermissionEconomicGroup,
   openModal,
 }: EconomicGroupCardProps) {
-  const hasHolding =
+  const hasHolding = !!(
     account.economic_group_holding &&
-    Object.keys(account.economic_group_holding).length;
-  const hasControlled =
-    account.economic_group_controlled &&
+    Object.keys(account.economic_group_holding).length
+  );
+
+  const hasControlled = !!(
     Array.isArray(account.economic_group_controlled) &&
-    account.economic_group_controlled.length;
+    account.economic_group_controlled.length
+  );
+
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="pb-4 flex-shrink-0">
