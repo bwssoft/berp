@@ -38,11 +38,15 @@ const schema = z
           .refine((val) => val.trim().split(/\s+/).length >= 2, {
             message: "Informe o nome completo",
           }),
-          rg: z
-            .string()
-            .regex(/^[0-9.\-\/]+$/, "RG deve conter apenas números, pontos, barras e hífen")
-            .min(5, "RG muito curto")
-            .optional(),
+        rg: z
+          .string()
+          .regex(
+            /^[A-Za-z]{0,2}[-\s.]?\d{1,2}\.?\d{3}\.?\d{3}[-\s.]?[A-Za-z0-9]{0,2}$/,
+            "RG deve conter apenas números, pontos, barras e hífen"
+          )
+          .min(5, "RG muito curto")
+          .max(20, "RG muito longo")
+          .optional(),
       })
       .optional(),
     cnpj: z
