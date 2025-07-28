@@ -74,9 +74,11 @@ const schema = z
           text: z.string(),
         }),
         typeIE: z.string().optional(),
-        sector: z.string({
-          required_error: "Setor obrigatório",
-        }).min(1, "Setor obrigatório"),
+        sector: z
+          .string({
+            required_error: "Setor obrigatório",
+          })
+          .min(1, "Setor obrigatório"),
         economic_group_holding: z
           .object({
             taxId: z.string().optional(),
@@ -160,6 +162,12 @@ export function useCreateAccountForm() {
   >([]);
 
   const [selectedHolding, setSelectedHolding] = useState<ICnpjaResponse[]>([]);
+
+  const [selectedIE, setSelectedIE] = useState<{
+    id: string;
+    text: string;
+    status: boolean;
+  } | null>(null);
 
   const [disabledFields, setDisabledFields] = useState<{
     social_name: boolean;
@@ -254,14 +262,21 @@ export function useCreateAccountForm() {
         // Set the values from API
         methods.setValue("cnpj.fantasy_name", data.alias ?? "");
         methods.setValue("cnpj.social_name", data.company.name);
-        methods.setValue("cnpj.state_registration", data.registrations[0]?.number ?? "");
+        methods.setValue(
+          "cnpj.state_registration",
+          data.registrations[0]?.number ?? ""
+        );
         methods.setValue("cnpj.status", data.registrations[0]?.status.text);
-        methods.setValue("cnpj.situationIE", {
+        const situationIE = {
           id: data.registrations[0]?.enabled ? "1" : "2",
-          text: data.registrations[0]?.enabled ? "Habilitada" : "Não habilitada",
+          text: data.registrations[0]?.enabled
+            ? "Habilitada"
+            : "Não habilitada",
           status: data.registrations[0]?.enabled,
-        });
-        methods.setValue("cnpj.typeIE", data.registrations[0]?.type.text)
+        };
+        methods.setValue("cnpj.situationIE", situationIE);
+        setSelectedIE(situationIE);
+        methods.setValue("cnpj.typeIE", data.registrations[0]?.type.text);
 
         setDisabledFields({
           social_name: true,
@@ -437,6 +452,8 @@ export function useCreateAccountForm() {
     selectedControlled,
     selectedHolding,
     setSelectedHolding,
+    selectedIE,
+    setSelectedIE,
     debouncedValidationHolding,
     debouncedValidationControlled,
     disabledFields,
