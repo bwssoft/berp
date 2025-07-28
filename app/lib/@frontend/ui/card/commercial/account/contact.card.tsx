@@ -18,7 +18,7 @@ import {
 } from "../../../component/tooltip";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { cn } from "@/app/lib/util/cn";
-import { copyToClipboard } from "@/app/lib/util/copyToClipboard";
+import { copyToClipboard } from "@/app/lib/util/copy-to-clipboard";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { fetchCnpjData } from "@/app/lib/@backend/action/cnpja/cnpja.action";
 import { updateOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
@@ -31,7 +31,7 @@ interface ContactCardProps {
   classname?: string;
   onClickEditContactButton: () => void;
   onClickDeleteButton: () => void;
-  onCopy: () => void;
+  onCopy?: () => void;
 }
 
 const getContactIcons = (
