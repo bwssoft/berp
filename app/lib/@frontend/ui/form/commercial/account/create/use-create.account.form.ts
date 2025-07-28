@@ -198,6 +198,7 @@ export function useCreateAccountForm() {
 
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
+    shouldUnregister: true,
   });
 
   const handleCpfCnpj = async (
@@ -231,7 +232,7 @@ export function useCreateAccountForm() {
         });
         return "invalid";
       }
-      methods.clearErrors("document.value");  
+      methods.clearErrors("document.value");
       methods.setValue("document.type", "cpf");
       setType("cpf");
       return "cpf";
