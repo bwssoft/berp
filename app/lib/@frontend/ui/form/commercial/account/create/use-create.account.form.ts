@@ -74,9 +74,11 @@ const schema = z
             })
           )
           .optional(),
-        sector: z.string({
-          required_error: "Setor obrigatório",
-        }).min(1, "Setor obrigatório"),
+        sector: z
+          .string({
+            required_error: "Setor obrigatório",
+          })
+          .min(1, "Setor obrigatório"),
         economic_group_holding: z
           .object({
             taxId: z.string().optional(),
@@ -152,7 +154,6 @@ export function useCreateAccountForm() {
 
   // Estado para guardar os dados retornados para holding e controlled
   const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
-
   const [dataControlled, setDataControlled] = useState<ICnpjaResponse[]>([]);
   const [dataCnpj, setDataCnpj] = useState<ICnpjaResponse | null>(null);
   const [selectedControlled, setSelectedControlled] = useState<
@@ -283,21 +284,21 @@ export function useCreateAccountForm() {
     groupType: "controlled" | "holding"
   ) => {
     const cleanedValue = value.replace(/\D/g, "");
+
     let data;
 
-    if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
-      // É um CNPJ válido
-      data = await fetchCnpjData(cleanedValue);
+    if (isValidCNPJ(cleanedValue)) {
+      const cnpjData = await fetchCnpjData(cleanedValue);
+      data = [cnpjData];
     } else {
-      // Se não for CNPJ, trata como nome e usa outra função
       data = await fetchNameData(value);
-      if (groupType === "controlled") {
-        setDataControlled(data as ICnpjaResponse[]);
-        return;
-      }
+    }
+
+    if (groupType === "controlled") {
+      setDataControlled(data as ICnpjaResponse[]);
+    } else {
       setDataHolding(data as ICnpjaResponse[]);
     }
-    return data;
   };
 
   const debouncedValidationHolding = debounce(async (value: string) => {
@@ -355,7 +356,8 @@ export function useCreateAccountForm() {
           number: address.number,
           zip_code: address.zip,
           complement: address.details ?? "",
-          type: ["Comercial"],
+          type: ["Faturamento"],
+          default_address: true,
         });
       }
 

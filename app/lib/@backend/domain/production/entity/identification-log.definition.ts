@@ -11,13 +11,13 @@ export interface IIdentificationLog {
   status: boolean;
   created_at: Date;
   equipment_before: {
-    imei: string;
     serial: string;
+    imei?: string;
     lora_keys?: Device.Equipment["lora_keys"];
   };
   equipment_after: {
-    imei: string;
     serial: string;
+    imei?: string;
     lora_keys?: Device.Equipment["lora_keys"];
   };
   messages: {
