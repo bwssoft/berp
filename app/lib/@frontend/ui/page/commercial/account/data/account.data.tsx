@@ -145,15 +145,13 @@ export function AccountDataPage(props: Props) {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
         <AccountCard account={account} />
 
-        {isCompany &&
-          (account.economic_group_holding ||
-            account.economic_group_controlled) && (
-            <EconomicGroupCard
-              openModal={openUpdateEconomicGroup}
-              account={account}
-              hasPermissionEconomicGroup={hasPermissionEconomicGroup}
-            />
-          )}
+        {isCompany && (
+          <EconomicGroupCard
+            openModal={openUpdateEconomicGroup}
+            account={account}
+            hasPermissionEconomicGroup={hasPermissionEconomicGroup}
+          />
+        )}
       </div>
 
       {/* Segunda linha - Contatos e Endereços com mesma altura */}
