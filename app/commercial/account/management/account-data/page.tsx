@@ -1,6 +1,7 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
+import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import { AccountDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/account.data";
 
 interface Props {
@@ -34,6 +35,7 @@ export default async function Page({ searchParams }: Props) {
   }
 
   const address = await findManyAddress({ accountId });
+  const contacts = await findManyContact({ accountId });
 
   const hasPermissionContacts = await restrictFeatureByProfile(
     "commercial:accounts:access:tab:data:contacts"
@@ -51,6 +53,7 @@ export default async function Page({ searchParams }: Props) {
     <AccountDataPage
       address={address}
       account={account}
+      contacts={contacts}
       permissions={{
         hasPermissionContacts,
         hasPermissionAddresses,

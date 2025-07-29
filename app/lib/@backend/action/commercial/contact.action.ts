@@ -19,13 +19,8 @@ export async function createOneContact(
   return await createOneContactUsecase.execute(contact);
 }
 
-export async function findManyContact(
-  filter: Filter<IContact> = {},
-  page?: number,
-  limit?: number,
-  sort?: Record<string, 1 | -1>
-) {
-  return await findManyContactUsecase.execute({ filter, page, limit, sort });
+export async function findManyContact(query: Filter<IContact>) {
+  return await findManyContactUsecase.execute(query);
 }
 
 export async function updateOneContact(

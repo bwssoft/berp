@@ -177,7 +177,7 @@ export const CreateAccountFlowProvider = ({
             ...address,
             accountId: createdAccountId,
           };
-          const addressResult = await createOneAddress(addressData);
+          await createOneAddress(addressData);
         } catch (error) {
           console.warn("Failed to create address:", error);
         }
@@ -190,7 +190,7 @@ export const CreateAccountFlowProvider = ({
             ...contact,
             accountId: createdAccountId,
           };
-          const contactResult = await createOneContact(contactData);
+          await createOneContact(contactData);
         } catch (error) {
           console.warn("Failed to create contact:", error);
         }

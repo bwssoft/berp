@@ -43,6 +43,8 @@ import { useEconomicGroupUpdateModal } from "../../../../modal/comercial/economi
 interface Props {
   account: IAccount;
   address: IAddress[];
+  contacts: IContact[];
+
   permissions: {
     hasPermissionContacts: boolean;
     hasPermissionAddresses: boolean;
@@ -54,6 +56,7 @@ export function AccountDataPage(props: Props) {
   const {
     account,
     address,
+    contacts,
     permissions: {
       hasPermissionContacts,
       hasPermissionAddresses,
@@ -163,7 +166,7 @@ export function AccountDataPage(props: Props) {
                 <Phone className="h-5 w-5 text-primary" />
                 Contatos
                 <Badge variant="secondary" className="text-xs">
-                  {account.contacts?.length}
+                  {contacts?.length}
                 </Badge>
               </CardTitle>
               {hasPermissionContacts && (
@@ -180,7 +183,7 @@ export function AccountDataPage(props: Props) {
           <CardContent className="flex-1 flex flex-col">
             <div className="lg:col-span-2 h-full">
               <div className="flex flex-wrap gap-x-1.5 gap-y-3">
-                {(account.contacts ?? [])?.map((contact, idx) => (
+                {contacts?.map((contact, idx) => (
                   <ContactCard
                     key={contact.id ?? idx}
                     contact={contact}
