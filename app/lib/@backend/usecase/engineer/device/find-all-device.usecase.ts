@@ -24,20 +24,13 @@ class FindAllDeviceUsecase {
   pipeline() {
     const pipeline = [
       { $match: {} },
-      {
-        $lookup: {
-          from: "product",
-          as: "product",
-          localField: "product_id",
-          foreignField: "id",
-        },
-      },
+      { $limit: 20 },
       {
         $project: {
           id: 1,
-          serial: 1,
+          equipment: 1,
+          model: 1,
           created_at: 1,
-          product: { $first: "$product" },
         },
       },
       {
