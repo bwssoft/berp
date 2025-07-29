@@ -44,6 +44,7 @@ export function useCreateContactModal() {
             type: Array.isArray(item.type) ? item.type[0] : item.type,
             id: item.id ?? crypto.randomUUID(),
           })) || [],
+        originType: "api",
       });
 
       if (success && accountId) {
@@ -131,7 +132,8 @@ export function useCreateContactModal() {
           type: Array.isArray(item.type) ? item.type[0] : item.type,
           id: item.id ?? crypto.randomUUID(),
         })) || [],
-    };
+      originType: "local",
+    } as IContact;
 
     createContactInContext(contactData);
 
