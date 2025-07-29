@@ -5,24 +5,30 @@ import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
 import {
-  createOneAccount,
-  accountExists,
-  updateOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
+  IAccount,
+  ICnpjaResponse,
+  IAddress,
+  IContact,
+} from "@/app/lib/@backend/domain";
+import { accountExists } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useRouter } from "next/navigation";
 import { debounce } from "lodash";
-import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import {
+  fetcCnpjRegistrationData,
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
+import {
+  useCreateAccountFlow,
+  LocalAccount,
+  LocalAddress,
+  LocalContact,
+} from "@/app/lib/@frontend/context/create-account-flow.context";
 
 const schema = z
   .object({
@@ -40,23 +46,12 @@ const schema = z
           }),
         rg: z
           .string()
-          .min(7)
-          .refine(
-            (val) => {
-              if (!val) return true;
-
-              const cleaned = val.replace(/[^\w]/g, "");
-
-              if (cleaned.length === 11) {
-                return isValidCPF(cleaned);
-              }
-
-              return isValidRG(cleaned);
-            },
-            {
-              message: "Documento inválido: informe um CPF ou RG válido",
-            }
+          .regex(
+            /^[A-Za-z]{0,2}[-\s.]?\d{1,2}\.?\d{3}\.?\d{3}[-\s.]?[A-Za-z0-9]{0,2}$/,
+            "RG deve conter apenas números, pontos, barras e hífen"
           )
+          .min(5, "RG muito curto")
+          .max(20, "RG muito longo")
           .optional(),
       })
       .optional(),
@@ -66,17 +61,18 @@ const schema = z
         fantasy_name: z.string().optional(),
         state_registration: z.string().optional(),
         municipal_registration: z.string().optional(),
-        status: z
-          .array(
-            z.object({
-              id: z.string(),
-              name: z.string(),
-            })
-          )
-          .optional(),
-        sector: z.string({
-          required_error: "Setor obrigatório",
-        }).min(1, "Setor obrigatório"),
+        status: z.string().optional(),
+        situationIE: z.object({
+          id: z.string(),
+          status: z.boolean(),
+          text: z.string(),
+        }),
+        typeIE: z.string().optional(),
+        sector: z
+          .string({
+            required_error: "Setor obrigatório",
+          })
+          .min(1, "Setor obrigatório"),
         economic_group_holding: z
           .object({
             taxId: z.string().optional(),
@@ -147,12 +143,16 @@ const schema = z
 export type CreateAccountFormSchema = z.infer<typeof schema>;
 
 export function useCreateAccountForm() {
+  // Get the create account flow context
+  const { createAccountLocally, createAddressLocally, createContactLocally } =
+    useCreateAccountFlow();
+
   // Estado para definir se o documento é CPF ou CNPJ:
   const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Estado para guardar os dados retornados para holding e controlled
   const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
-
   const [dataControlled, setDataControlled] = useState<ICnpjaResponse[]>([]);
   const [dataCnpj, setDataCnpj] = useState<ICnpjaResponse | null>(null);
   const [selectedControlled, setSelectedControlled] = useState<
@@ -161,18 +161,26 @@ export function useCreateAccountForm() {
 
   const [selectedHolding, setSelectedHolding] = useState<ICnpjaResponse[]>([]);
 
+  const [selectedIE, setSelectedIE] = useState<{
+    id: string;
+    text: string;
+    status: boolean;
+  } | null>(null);
+
   const [disabledFields, setDisabledFields] = useState<{
     social_name: boolean;
     fantasy_name: boolean;
     status: boolean;
     state_registration: boolean;
     municipal_registration: boolean;
+    typeIE: boolean;
   }>({
     social_name: false,
     fantasy_name: false,
     status: false,
     state_registration: false,
     municipal_registration: false,
+    typeIE: false,
   });
 
   const [buttonsState, setButtonsState] = useState({
@@ -220,6 +228,9 @@ export function useCreateAccountForm() {
       return "invalid";
     }
 
+    // Determine the new document type
+    let newType: "cpf" | "cnpj" | "invalid" = "invalid";
+
     if (cleanedValue.length === 11) {
       const isValid = isValidCPF(cleanedValue);
       if (!isValid) {
@@ -229,12 +240,8 @@ export function useCreateAccountForm() {
         });
         return "invalid";
       }
-      methods.setValue("document.type", "cpf");
-      setType("cpf");
-      return "cpf";
-    }
-
-    if (cleanedValue.length === 14) {
+      newType = "cpf";
+    } else if (cleanedValue.length === 14) {
       const isValid = isValidCNPJ(cleanedValue);
       if (!isValid) {
         methods.setError("document.value", {
@@ -243,19 +250,68 @@ export function useCreateAccountForm() {
         });
         return "invalid";
       }
+      newType = "cnpj";
+    } else {
+      methods.setError("document.value", {
+        type: "manual",
+        message: "Documento inválido!",
+      });
+      return "invalid";
+    }
 
-      const data = await fetchCnpjData(cleanedValue);
+    if (type && type !== newType) {
+      const currentDocument = methods.getValues("document");
+      methods.reset({
+        document: currentDocument,
+      });
 
+      // Reset all local states
+      setSelectedControlled([]);
+      setSelectedHolding([]);
+      setSelectedIE(null);
+      setDataHolding([]);
+      setDataControlled([]);
+      setDataCnpj(null);
+      setDisabledFields({
+        social_name: false,
+        fantasy_name: false,
+        status: false,
+        state_registration: false,
+        municipal_registration: false,
+        typeIE: false,
+      });
+    }
+
+    if (newType === "cpf") {
+      methods.clearErrors("document.value");
+      methods.setValue("document.type", "cpf");
+      setType("cpf");
+      return "cpf";
+    }
+
+    if (newType === "cnpj") {
+      const data = await fetcCnpjRegistrationData(cleanedValue);
       if (data) {
-        console.log("CNPJ Data:", data);
         setDataCnpj(data);
 
         // Set the values from API
         methods.setValue("cnpj.fantasy_name", data.alias ?? "");
         methods.setValue("cnpj.social_name", data.company.name);
-        methods.setValue("cnpj.status", [
-          { id: data.status.text, name: data.status.text },
-        ]);
+        methods.setValue(
+          "cnpj.state_registration",
+          data.registrations[0]?.number ?? ""
+        );
+        methods.setValue("cnpj.status", data.registrations[0]?.status.text);
+        const situationIE = {
+          id: data.registrations[0]?.enabled ? "1" : "2",
+          text: data.registrations[0]?.enabled
+            ? "Habilitada"
+            : "Não habilitada",
+          status: data.registrations[0]?.enabled,
+        };
+        methods.setValue("cnpj.situationIE", situationIE);
+        setSelectedIE(situationIE);
+        methods.setValue("cnpj.typeIE", data.registrations[0]?.type.text);
 
         setDisabledFields({
           social_name: true,
@@ -263,18 +319,17 @@ export function useCreateAccountForm() {
           status: true,
           state_registration: false,
           municipal_registration: false,
+          typeIE: true,
         });
       }
 
       methods.setValue("document.type", "cnpj");
       setType("cnpj");
+      methods.clearErrors("document.value");
+
       return "cnpj";
     }
 
-    methods.setError("document.value", {
-      type: "manual",
-      message: "Documento inválido!",
-    });
     return "invalid";
   };
 
@@ -283,21 +338,21 @@ export function useCreateAccountForm() {
     groupType: "controlled" | "holding"
   ) => {
     const cleanedValue = value.replace(/\D/g, "");
+
     let data;
 
-    if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
-      // É um CNPJ válido
-      data = await fetchCnpjData(cleanedValue);
+    if (isValidCNPJ(cleanedValue)) {
+      const cnpjData = await fetchCnpjData(cleanedValue);
+      data = [cnpjData];
     } else {
-      // Se não for CNPJ, trata como nome e usa outra função
       data = await fetchNameData(value);
-      if (groupType === "controlled") {
-        setDataControlled(data as ICnpjaResponse[]);
-        return;
-      }
+    }
+
+    if (groupType === "controlled") {
+      setDataControlled(data as ICnpjaResponse[]);
+    } else {
       setDataHolding(data as ICnpjaResponse[]);
     }
-    return data;
   };
 
   const debouncedValidationHolding = debounce(async (value: string) => {
@@ -309,45 +364,53 @@ export function useCreateAccountForm() {
   }, 500);
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
-    const address = dataCnpj?.address;
-    const contact = dataCnpj?.phones[0];
+    setIsSubmitting(true);
 
-    const base: Omit<IAccount, "id" | "created_at" | "updated_at"> = {
-      document: {
-        ...data.document,
-        value: data.document.value.replace(/\D/g, ""),
-      },
-      ...(type === "cpf"
-        ? {
-            name: data.cpf?.name,
-            rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
-          }
-        : {
-            social_name: data.cnpj?.social_name,
-            fantasy_name: data.cnpj?.fantasy_name,
-            state_registration: data.cnpj?.state_registration,
-            municipal_registration: data.cnpj?.municipal_registration,
-            status: data.cnpj?.status?.[0]?.name,
-            economic_group_holding: {
-              name: data.cnpj?.economic_group_holding?.name! as string,
-              taxId: data.cnpj?.economic_group_holding?.taxId! as string,
-            },
-            economic_group_controlled:
-              data.cnpj?.economic_group_controlled?.map((item) => ({
-                name: item.name! as string,
-                taxId: item.taxId! as string,
-              })),
-            setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
-          }),
-    };
+    try {
+      const address = dataCnpj?.address;
+      const contact = dataCnpj?.phones[0];
 
-    const { error, success, id } = await createOneAccount(base);
+      const accountLocalId = crypto.randomUUID();
 
-    if (success && id) {
-      // Criar endereço
+      const base: LocalAccount = {
+        id: accountLocalId,
+        document: {
+          ...data.document,
+          value: data.document.value.replace(/\D/g, ""),
+        },
+        ...(type === "cpf"
+          ? {
+              name: data.cpf?.name,
+              rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
+            }
+          : {
+              social_name: data.cnpj?.social_name,
+              fantasy_name: data.cnpj?.fantasy_name,
+              state_registration: data.cnpj?.state_registration,
+              municipal_registration: data.cnpj?.municipal_registration,
+              status: data.cnpj?.status,
+              situationIE: data.cnpj?.situationIE,
+              typeIE: data.cnpj?.typeIE,
+              economic_group_holding: data.cnpj?.economic_group_holding
+                ? {
+                    name: data.cnpj?.economic_group_holding?.name! as string,
+                    taxId: data.cnpj?.economic_group_holding?.taxId! as string,
+                  }
+                : undefined,
+              economic_group_controlled:
+                data.cnpj?.economic_group_controlled?.map((item) => ({
+                  name: item.name! as string,
+                  taxId: item.taxId! as string,
+                })),
+              setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
+            }),
+      };
+
+      createAccountLocally(base);
+
       if (address) {
-        await createOneAddress({
-          accountId: id,
+        const newAddress: LocalAddress = {
+          id: crypto.randomUUID(),
           city: address.city,
           state: address.state,
           street: address.street,
@@ -355,17 +418,22 @@ export function useCreateAccountForm() {
           number: address.number,
           zip_code: address.zip,
           complement: address.details ?? "",
-          type: ["Comercial"],
-        });
+          type: ["Faturamento"],
+          default_address: true,
+        };
+
+        createAddressLocally(newAddress);
       }
 
       if (contact) {
-        const contactCnpj = await createOneContact({
-          accountId: id,
+        const newContact: LocalContact = {
+          id: crypto.randomUUID(),
           name: dataCnpj?.company.name || dataCnpj?.alias || "",
           contractEnabled: false,
           positionOrRelation: "",
-          contactFor: ["Comercial"],
+          originType: "api",
+          taxId: dataCnpj.taxId, // pra buscar o contato atualizado pelo taxId no card de contato
+          contactFor: ["Fiscal"],
           contactItems: [
             {
               id: crypto.randomUUID(),
@@ -374,43 +442,29 @@ export function useCreateAccountForm() {
                 dataCnpj?.phones[0].type === "LANDLINE"
                   ? "Telefone Comercial"
                   : "Celular",
-              preferredContact: { phone: true },
+              preferredContact: {},
             },
           ],
-        });
-
-        contactCnpj.success &&
-          (await updateOneAccount({ id }, { contacts: [contactCnpj.success] }));
+        };
+        createContactLocally(newContact);
       }
 
-      router.push(`/commercial/account/form/create/tab/address?id=${id}`);
-    }
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // Erros
-    if (error) {
-      if (error.global) {
-        toast({
-          title: "Erro!",
-          description: error.global,
-          variant: "error",
-        });
-      }
+      router.push(
+        `/commercial/account/form/create/tab/address?accountId=${accountLocalId}`
+      );
 
-      Object.entries(error).forEach(([key, message]) => {
-        if (key === "cnpj") {
-          toast({
-            title: "Erro!",
-            description: message as string,
-            variant: "error",
-          });
-          methods.reset();
-        } else {
-          methods.setError(key as any, {
-            type: "manual",
-            message: message as string,
-          });
-        }
+      return;
+    } catch (error) {
+      console.error("Error in onSubmit:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao criar conta localmente",
+        variant: "error",
       });
+
+      setIsSubmitting(false);
     }
   };
 
@@ -420,6 +474,7 @@ export function useCreateAccountForm() {
     type,
     setType,
     onSubmit,
+    isSubmitting,
     handleCnpjOrName,
     dataHolding,
     dataControlled,
@@ -429,6 +484,8 @@ export function useCreateAccountForm() {
     selectedControlled,
     selectedHolding,
     setSelectedHolding,
+    selectedIE,
+    setSelectedIE,
     debouncedValidationHolding,
     debouncedValidationControlled,
     disabledFields,

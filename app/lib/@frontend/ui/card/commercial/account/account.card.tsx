@@ -49,17 +49,26 @@ export function AccountCard({ account }: { account: IAccount }) {
                 label="Inscrição Municipal"
                 value={account.municipal_registration}
               />
+ 
               {/* Campo adicional para preencher o grid se necessário */}
               {account.status && (
                 <div className="space-y-1">
                   <dt className="text-sm font-medium text-muted-foreground">
-                    Status Geral
+                    Situação CNPJ
                   </dt>
                   <dd className="flex items-center">
                     <StatusBadge status={account.status} type="general" />
                   </dd>
                 </div>
               )}
+              <InfoField
+                label="Situação IE"
+                value={account.situationIE?.text}
+              />
+              <InfoField
+                label="Tipo IE"
+                value={account.typeIE}
+              />
             </>
           ) : (
             <>

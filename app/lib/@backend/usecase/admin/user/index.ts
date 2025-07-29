@@ -8,3 +8,4 @@ export * from "./new-password.user.usecase";
 export * from "./update-one-user.usecase";
 export * from "./new-password.user.usecase";
 export * from "./reset-password.user.usecase";
+export * from "./get-avatar-url.user.usecase";

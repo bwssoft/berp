@@ -27,7 +27,7 @@ const schema = z
     cpf: z.string().optional(),
     rg: z.string().optional(),
     contactFor: z
-      .array(z.enum(["Faturamento", "Marketing", "Suporte", "Comercial"]))
+      .array(z.enum(["Faturamento", "Marketing", "Suporte", "Comercial", "Fiscal"]))
       .min(1, "Contato para é obrigatório"),
     contactItems: z
       .array(
@@ -112,8 +112,8 @@ const schema = z
   });
 
 export function useUpdateContactAccount(
-  closeModal: () => void,
-  contact: IContact
+  contact: IContact,
+  onSubmit: (data: any, contact: IContact, accountId?: string) => Promise<void>
 ) {
   const [isLoading, setIsLoading] = useState(false);
   const [tempContact, setTempContact] = useState<{
@@ -156,9 +156,7 @@ export function useUpdateContactAccount(
 
   const {
     control,
-    setError,
-    reset,
-    handleSubmit,
+    handleSubmit: hookFormSubmit,
     formState: { errors },
   } = methods;
 
@@ -274,103 +272,16 @@ export function useUpdateContactAccount(
     enabled: !!accountId,
   });
 
-  const queryClient = useQueryClient();
-  const onSubmit = handleSubmit(async (data) => {
-    setIsLoading(true);
-    try {
-      const { success, error } = await updateOneContact(
-        { id: contact.id },
-        {
-          ...data,
-          cpf: data.cpf ? data.cpf.replace(/[^a-zA-Z0-9]/g, "") : undefined,
-          rg: data.rg ? data.rg.replace(/[^a-zA-Z0-9]/g, "") : undefined,
-          accountId: accountId ?? undefined,
-          contactItems: data.contactItems.map((item) => {
-            const contactType = item.type[0];
+  const handleSubmit = hookFormSubmit(
+    async (data) => {
+      setIsLoading(true);
 
-            return {
-              ...item,
-              id: item.id ?? crypto.randomUUID(),
-              contact:
-                contactType === "Email"
-                  ? item.contact
-                  : item.contact.replace(/[^0-9]/g, ""),
-              type: contactType,
-            };
-          }),
-        }
-      );
-      if (success) {
-        if (accountId) {
-          const freshAccount = await findOneAccount({ id: accountId });
-          const currentContacts: IContact[] = freshAccount?.contacts ?? [];
+      await onSubmit(data, contact, accountId || undefined);
 
-          const updatedContact = { ...success, id: contact.id };
-
-          const uniqueContacts = new Map<string, IContact>();
-          currentContacts.forEach((c) => {
-            if (c?.id) {
-              if (c.id === contact.id) {
-                uniqueContacts.set(c.id, updatedContact);
-              } else {
-                uniqueContacts.set(c.id, c);
-              }
-            }
-          });
-
-          if (!uniqueContacts.has(contact.id)) {
-            uniqueContacts.set(contact.id, updatedContact);
-          }
-
-          const updatedContacts = Array.from(uniqueContacts.values());
-
-          await updateOneAccount(
-            { id: accountId },
-            { contacts: updatedContacts }
-          );
-        }
-
-        await queryClient.invalidateQueries({
-          queryKey: ["findOneAccount", accountId],
-        });
-
-        await queryClient.invalidateQueries({
-          queryKey: ["findManyAccount", accountId],
-        });
-
-        toast({
-          title: "Sucesso!",
-          description: "Contato atualizado com sucesso!",
-          variant: "success",
-        });
-
-        reset();
-        closeModal();
-      } else if (error) {
-        Object.entries(error).forEach(([key, msg]) => {
-          if (key !== "global" && msg) {
-            setError(key as any, { type: "manual", message: msg as string });
-          }
-        });
-        if (error.global) {
-          toast({
-            title: "Erro!",
-            description: error.global,
-            variant: "error",
-          });
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o contato.",
-        variant: "error",
-      });
-    } finally {
       setIsLoading(false);
-    }
-  });
+    },
+    () => {}
+  );
 
   const handleCheckboxChange = (
     fieldValue: string[] = [],
@@ -390,7 +301,7 @@ export function useUpdateContactAccount(
     handleNewContact,
     handlePreferredContact,
     handleRemove,
-    onSubmit,
+    handleSubmit,
     setTempContact,
     isLoading,
     handleCheckboxChange,

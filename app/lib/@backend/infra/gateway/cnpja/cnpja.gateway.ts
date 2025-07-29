@@ -29,6 +29,29 @@ export class CnpjaApiGateway implements ICnpjaGateway {
     }
   }
 
+    async getCnpjRegistrationData(cnpj: string): Promise<ICnpjaResponse | null> {
+    const cleanCnpj = cnpj.replace(/\D/g, "");
+
+    try {
+      const response = await fetch(`${this.baseUrl}/${cleanCnpj}?registrations=BR`, {
+        headers: {
+          Authorization: `${this.chaveApi}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error(`API error: ${response.status} ${response.statusText}`);
+        return null;
+      }
+
+      const data: ICnpjaResponse = await response.json();
+      return data;
+    } catch (error) {
+      console.error(`Fetch error: ${error}`);
+      return null;
+    }
+  }
+
   async getByName(alias: string): Promise<ICnpjaResponse[] | null> {
     try {
       const response = await fetch(

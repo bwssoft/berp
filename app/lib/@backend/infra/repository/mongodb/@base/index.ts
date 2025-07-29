@@ -122,6 +122,11 @@ export class BaseRepository<Entity extends object>
     return db.collection<Entity>(this.collection).deleteOne(query);
   }
 
+  async deleteMany(query: Filter<Entity>) {
+    const db = await this.connect();
+    return db.collection<Entity>(this.collection).deleteMany(query);
+  }
+
   async aggregate<T extends object>(
     pipeline?: object[],
     options?: AggregateOptions

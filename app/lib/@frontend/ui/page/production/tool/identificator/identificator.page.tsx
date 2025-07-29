@@ -119,6 +119,7 @@ export function IdentificatorPage(props: Props) {
                   isIdentifying={isIdentifying}
                   onSubmit={identify}
                   technology={technology}
+                  detected={detected}
                 />
 
                 <Button

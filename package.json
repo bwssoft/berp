@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.696.0",
+    "@aws-sdk/s3-request-presigner": "^3.844.0",
     "@bwsoft/accordion": "^2.5.10",
     "@bwsoft/badge": "^2.0.7",
     "@bwsoft/button": "^2.0.5",
