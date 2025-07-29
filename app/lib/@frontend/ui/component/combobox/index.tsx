@@ -93,6 +93,12 @@ export type ComboboxProps<T> = {
    * Na tela de /admin/user/profile essa prop faz o componente se perder nas referências
    */
   modal?: boolean;
+
+  /**
+   * Disables local filtering of options based on search query.
+   * When true, all data will be shown regardless of search query.
+   */
+  disableLocalFilter?: boolean;
 };
 
 const ComboboxContext = React.createContext({} as ComboboxContextValues<any>);
@@ -117,6 +123,7 @@ export function Combobox<TData>({
   searchChangeDebounceDelay = 500,
   useSearchChangeDebounce = true,
   modal = true,
+  disableLocalFilter = false,
   ...props
 }: ComboboxProps<TData>) {
   const { type, isLoading, onOptionChange, onSearchChange } =
@@ -146,13 +153,13 @@ export function Combobox<TData>({
       return onOptionsFilter(value ?? selectedOptions);
     }
 
-    if (!query || optionsSource === "all") {
+    if (disableLocalFilter || !query || optionsSource === "all") {
       return data;
     }
 
     return onOptionsFilter(data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, optionsSource, value, data]);
+  }, [query, optionsSource, value, data, disableLocalFilter]);
 
   function onOptionsFilter(dataSource: TData[]) {
     if (!query) {
@@ -227,16 +234,16 @@ export function Combobox<TData>({
     onOptionChange?.([]);
   }
 
-  function onLoad() {
+  const onLoad = React.useCallback(() => {
     try {
       const _value = value ?? defaultValue;
       if (type === "single" && _value && _value.length !== 0) {
         setQuery(displayValueGetter(_value[0]));
       }
     } catch {}
-  }
+  }, [value, defaultValue, type, displayValueGetter]);
 
-  function onControlledValueChange() {
+  const onControlledValueChange = React.useCallback(() => {
     if (type === "single" && value && value.length !== 0) {
       setQuery(displayValueGetter(value[0]));
     }
@@ -244,7 +251,7 @@ export function Combobox<TData>({
     if (type === "single" && (value?.length || 0) <= 0) {
       setQuery("");
     }
-  }
+  }, [type, value, displayValueGetter]);
 
   useClickOutside(
     [triggerContainerRef, popoverContentRef],
@@ -279,8 +286,8 @@ export function Combobox<TData>({
     }
   };
 
-  useEffect(() => onControlledValueChange(), [value]);
-  useEffect(() => onLoad(), []);
+  useEffect(() => onControlledValueChange(), [value, onControlledValueChange]);
+  useEffect(() => onLoad(), [onLoad]);
 
   return (
     <ComboboxContext.Provider

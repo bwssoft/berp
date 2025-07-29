@@ -19,6 +19,7 @@ import { debounce } from "lodash";
 import { createOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import {
+  fetcCnpjRegistrationData,
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
@@ -40,23 +41,12 @@ const schema = z
           }),
         rg: z
           .string()
-          .min(7)
-          .refine(
-            (val) => {
-              if (!val) return true;
-
-              const cleaned = val.replace(/[^\w]/g, "");
-
-              if (cleaned.length === 11) {
-                return isValidCPF(cleaned);
-              }
-
-              return isValidRG(cleaned);
-            },
-            {
-              message: "Documento inválido: informe um CPF ou RG válido",
-            }
+          .regex(
+            /^[A-Za-z]{0,2}[-\s.]?\d{1,2}\.?\d{3}\.?\d{3}[-\s.]?[A-Za-z0-9]{0,2}$/,
+            "RG deve conter apenas números, pontos, barras e hífen"
           )
+          .min(5, "RG muito curto")
+          .max(20, "RG muito longo")
           .optional(),
       })
       .optional(),
@@ -66,14 +56,13 @@ const schema = z
         fantasy_name: z.string().optional(),
         state_registration: z.string().optional(),
         municipal_registration: z.string().optional(),
-        status: z
-          .array(
-            z.object({
-              id: z.string(),
-              name: z.string(),
-            })
-          )
-          .optional(),
+        status: z.string().optional(),
+        situationIE: z.object({
+          id: z.string(),
+          status: z.boolean(),
+          text: z.string(),
+        }),
+        typeIE: z.string().optional(),
         sector: z
           .string({
             required_error: "Setor obrigatório",
@@ -154,7 +143,6 @@ export function useCreateAccountForm() {
 
   // Estado para guardar os dados retornados para holding e controlled
   const [dataHolding, setDataHolding] = useState<ICnpjaResponse[]>([]);
-
   const [dataControlled, setDataControlled] = useState<ICnpjaResponse[]>([]);
   const [dataCnpj, setDataCnpj] = useState<ICnpjaResponse | null>(null);
   const [selectedControlled, setSelectedControlled] = useState<
@@ -162,6 +150,12 @@ export function useCreateAccountForm() {
   >([]);
 
   const [selectedHolding, setSelectedHolding] = useState<ICnpjaResponse[]>([]);
+
+  const [selectedIE, setSelectedIE] = useState<{
+    id: string;
+    text: string;
+    status: boolean;
+  } | null>(null);
 
   const [disabledFields, setDisabledFields] = useState<{
     social_name: boolean;
@@ -198,6 +192,7 @@ export function useCreateAccountForm() {
 
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
+    shouldUnregister: true,
   });
 
   const handleCpfCnpj = async (
@@ -231,6 +226,7 @@ export function useCreateAccountForm() {
         });
         return "invalid";
       }
+      methods.clearErrors("document.value");
       methods.setValue("document.type", "cpf");
       setType("cpf");
       return "cpf";
@@ -246,8 +242,9 @@ export function useCreateAccountForm() {
         return "invalid";
       }
 
-      const data = await fetchCnpjData(cleanedValue);
-
+      // fetcCnpjRegistrationData tras as mesmas informações que fetchCnpjData tras, com excessao de registrations
+      // const data = await fetchCnpjData(cleanedValue);
+      const data = await fetcCnpjRegistrationData(cleanedValue);
       if (data) {
         console.log("CNPJ Data:", data);
         setDataCnpj(data);
@@ -255,9 +252,21 @@ export function useCreateAccountForm() {
         // Set the values from API
         methods.setValue("cnpj.fantasy_name", data.alias ?? "");
         methods.setValue("cnpj.social_name", data.company.name);
-        methods.setValue("cnpj.status", [
-          { id: data.status.text, name: data.status.text },
-        ]);
+        methods.setValue(
+          "cnpj.state_registration",
+          data.registrations[0]?.number ?? ""
+        );
+        methods.setValue("cnpj.status", data.registrations[0]?.status.text);
+        const situationIE = {
+          id: data.registrations[0]?.enabled ? "1" : "2",
+          text: data.registrations[0]?.enabled
+            ? "Habilitada"
+            : "Não habilitada",
+          status: data.registrations[0]?.enabled,
+        };
+        methods.setValue("cnpj.situationIE", situationIE);
+        setSelectedIE(situationIE);
+        methods.setValue("cnpj.typeIE", data.registrations[0]?.type.text);
 
         setDisabledFields({
           social_name: true,
@@ -270,6 +279,8 @@ export function useCreateAccountForm() {
 
       methods.setValue("document.type", "cnpj");
       setType("cnpj");
+      methods.clearErrors("document.value");
+
       return "cnpj";
     }
 
@@ -285,21 +296,21 @@ export function useCreateAccountForm() {
     groupType: "controlled" | "holding"
   ) => {
     const cleanedValue = value.replace(/\D/g, "");
+
     let data;
 
-    if (cleanedValue.length === 14 && isValidCNPJ(cleanedValue)) {
-      // É um CNPJ válido
-      data = await fetchCnpjData(cleanedValue);
+    if (isValidCNPJ(cleanedValue)) {
+      const cnpjData = await fetchCnpjData(cleanedValue);
+      data = [cnpjData];
     } else {
-      // Se não for CNPJ, trata como nome e usa outra função
       data = await fetchNameData(value);
-      if (groupType === "controlled") {
-        setDataControlled(data as ICnpjaResponse[]);
-        return;
-      }
+    }
+
+    if (groupType === "controlled") {
+      setDataControlled(data as ICnpjaResponse[]);
+    } else {
       setDataHolding(data as ICnpjaResponse[]);
     }
-    return data;
   };
 
   const debouncedValidationHolding = debounce(async (value: string) => {
@@ -322,17 +333,19 @@ export function useCreateAccountForm() {
       ...(type === "cpf"
         ? {
             name: data.cpf?.name,
-            rg: data.cpf?.rg ? data.cpf?.rg.replace(/\D/g, "") : "",
+            rg: data.cpf?.rg ? data.cpf?.rg.replace(/[^a-zA-Z0-9]/g, "") : "",
           }
         : {
             social_name: data.cnpj?.social_name,
             fantasy_name: data.cnpj?.fantasy_name,
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
-            status: data.cnpj?.status?.[0]?.name,
+            status: data.cnpj?.status,
+            situationIE: data.cnpj?.situationIE,
+            typeIE: data.cnpj?.typeIE,
             economic_group_holding: {
-              name: data.cnpj?.economic_group_holding?.name! as string,
-              taxId: data.cnpj?.economic_group_holding?.taxId! as string,
+              name: data.cnpj?.economic_group_holding?.name ?? "",
+              taxId: data.cnpj?.economic_group_holding?.taxId ?? "",
             },
             economic_group_controlled:
               data.cnpj?.economic_group_controlled?.map((item) => ({
@@ -368,7 +381,9 @@ export function useCreateAccountForm() {
           name: dataCnpj?.company.name || dataCnpj?.alias || "",
           contractEnabled: false,
           positionOrRelation: "",
-          contactFor: ["Comercial"],
+          originType: "api",
+          taxId: dataCnpj.taxId, // pra buscar o contato atualizado pelo taxId no card de contato
+          contactFor: ["Fiscal"],
           contactItems: [
             {
               id: crypto.randomUUID(),
@@ -377,7 +392,7 @@ export function useCreateAccountForm() {
                 dataCnpj?.phones[0].type === "LANDLINE"
                   ? "Telefone Comercial"
                   : "Celular",
-              preferredContact: { phone: true },
+              preferredContact: {},
             },
           ],
         });
@@ -432,6 +447,8 @@ export function useCreateAccountForm() {
     selectedControlled,
     selectedHolding,
     setSelectedHolding,
+    selectedIE,
+    setSelectedIE,
     debouncedValidationHolding,
     debouncedValidationControlled,
     disabledFields,
