@@ -17,15 +17,20 @@ import { formatCpf, formatRgOrCpf } from "@/app/lib/util/format-rg-cpf";
 type Props = {
   closeModal: () => void;
   contact: IContact;
+  onSubmit: (data: any, contact: IContact, accountId?: string) => Promise<void>;
 };
 
-export function UpdateContactAccountForm({ closeModal, contact }: Props) {
+export function UpdateContactAccountForm({
+  closeModal,
+  contact,
+  onSubmit,
+}: Props) {
   const {
     control,
     register,
     watch,
     fields,
-    onSubmit,
+    handleSubmit,
     handleNewContact,
     handlePreferredContact,
     handleRemove,
@@ -34,10 +39,13 @@ export function UpdateContactAccountForm({ closeModal, contact }: Props) {
     formState: { errors },
     tempContact,
     handleCheckboxChange,
-  } = useUpdateContactAccount(closeModal, contact);
+  } = useUpdateContactAccount(contact, onSubmit);
 
   return (
-    <form action={() => onSubmit()} className="flex flex-col items-start gap-4">
+    <form
+      action={() => handleSubmit()}
+      className="flex flex-col items-start gap-4"
+    >
       <Controller
         name="contractEnabled"
         control={control}

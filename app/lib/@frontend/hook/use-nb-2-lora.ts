@@ -52,8 +52,10 @@ const readResponse = async (
       const { value, done } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value);
-      buffer += chunk;
+      buffer += decoder.decode(value);
+
+      console.log("[RAW DATA]", buffer);
+
       let lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
       for (const line of lines) {
@@ -106,9 +108,12 @@ export const useNB2Lora = () => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
       const { command, timeout, check, delay_before } = msg;
+      console.info("-------------------------");
+      console.info("[MESSAGE SENT]", command);
       if (delay_before) await sleep(delay_before);
       await writeToPort(port, command);
       const response = await readResponse(reader, check ?? command, timeout);
+      console.info("[RESPONSE MATCHED]", response);
       await reader.cancel();
       reader.releaseLock();
       return response;

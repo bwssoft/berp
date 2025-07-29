@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/lib/@frontend/ui/component";
-import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { AccountFilterForm } from "@/app/lib/@frontend/ui/form/commercial/account/search/search.account.form";
 import { AccountTable } from "@/app/lib/@frontend/ui/table/commercial/account/account.table";
 import { PlusIcon } from "@heroicons/react/20/solid";

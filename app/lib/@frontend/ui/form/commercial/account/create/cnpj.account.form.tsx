@@ -105,8 +105,19 @@ export function CNPJAccountForm() {
                             { id: "Inapta", name: "Inapta" },
                             { id: "Baixada", name: "Baixada" },
                         ]}
-                        value={field.value}
-                        onOptionChange={(item) => field.onChange(item)}
+                        value={
+                            field.value
+                                ? [
+                                      {
+                                          id: field.value,
+                                          name: field.value,
+                                      },
+                                  ]
+                                : undefined
+                        }
+                        onOptionChange={(
+                            selectedOptions: { id: string; name: string }[]
+                        ) => field.onChange(selectedOptions[0]?.id)}
                         error={errors.cnpj?.status?.message}
                         keyExtractor={(item) => item.id}
                         placeholder="Selecione o status"
