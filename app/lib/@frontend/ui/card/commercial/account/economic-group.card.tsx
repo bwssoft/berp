@@ -47,9 +47,10 @@ export function EconomicGroupCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col">
-        {/* Holding */}
-        {hasHolding ? (
-          <div className="space-y-3 mb-6">
+        {/* Holding Section */}
+        <div className="space-y-3 mb-6">
+          <h4 className="text-sm font-medium text-muted-foreground">Holding</h4>
+          {hasHolding ? (
             <div
               className="p-3 rounded-md bg-muted/30 border hover:bg-muted/50 transition-colors"
               role="listitem"
@@ -63,24 +64,31 @@ export function EconomicGroupCard({
                 </p>
               </div>
             </div>
-          </div>
-        ) : (
-          <></>
-        )}
+          ) : (
+            <div className="flex items-center justify-center text-muted-foreground py-4">
+              <div className="text-center">
+                <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-xs">Nenhuma holding cadastrada</p>
+              </div>
+            </div>
+          )}
+        </div>
 
-        {/* Empresas Controladas */}
-        {hasControlled && account.economic_group_controlled!.length > 0 && (
-          <div className="flex-1 flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-medium text-muted-foreground">
-                Empresas Controladas
-              </h4>
+        {/* Empresas Controladas Section */}
+        <div className="flex-1 flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-sm font-medium text-muted-foreground">
+              Empresas Controladas
+            </h4>
+            {hasControlled && (
               <Badge variant="secondary" className="text-xs">
                 {account.economic_group_controlled!.length} empresa
                 {account.economic_group_controlled!.length !== 1 ? "s" : ""}
               </Badge>
-            </div>
+            )}
+          </div>
 
+          {hasControlled ? (
             <div
               className="flex-1 space-y-2 overflow-y-auto pr-2"
               role="list"
@@ -103,18 +111,15 @@ export function EconomicGroupCard({
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* Estado vazio quando não há grupo econômico */}
-        {!hasHolding && !hasControlled && (
-          <div className="flex-1 flex items-center justify-center text-muted-foreground">
-            <div className="text-center py-8">
-              <Users className="h-10 w-10 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">Nenhum grupo econômico cadastrado</p>
+          ) : (
+            <div className="flex-1 flex items-center justify-center text-muted-foreground">
+              <div className="text-center py-6">
+                <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-xs">Nenhuma empresa controlada cadastrada</p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </CardContent>
     </Card>
   );

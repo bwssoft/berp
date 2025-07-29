@@ -7,8 +7,8 @@ import {
   findManyAccountUsecase,
   findOneAccountUsecase,
 } from "../../usecase/commercial/account";
-import { redirect } from "next/navigation";
 import { updateOneAccountUsecase } from "../../usecase/commercial/account/update-one.account.usecase";
+import { deleteOneAccountUsecase } from "../../usecase/commercial/account/delete-one.account.usecase";
 import { revalidatePath } from "next/cache";
 
 export async function createOneAccount(
@@ -45,4 +45,10 @@ export async function findManyAccount(
 export async function accountExists(document: string): Promise<boolean> {
   const existing = await findOneAccount({ "document.value": document });
   return Boolean(existing);
+}
+
+export async function deleteOneAccount(filter: Partial<IAccount>) {
+  const result = await deleteOneAccountUsecase.execute(filter);
+  revalidatePath("/commercial");
+  return result;
 }

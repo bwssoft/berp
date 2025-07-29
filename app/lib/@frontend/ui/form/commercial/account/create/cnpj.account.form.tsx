@@ -100,7 +100,7 @@ export function CNPJAccountForm() {
           <Input
             label="Situação CNPJ"
             value={field.value}
-            onAbort={field.onChange}
+            onChange={field.onChange}
             placeholder="Digite a situação do CNPJ"
             error={errors.cnpj?.status?.message}
             disabled={disabledFields.status}
@@ -138,18 +138,12 @@ export function CNPJAccountForm() {
           />
         )}
       />
-      <Controller
-        control={control}
-        name="cnpj.typeIE"
-        render={({ field }) => (
-          <Input
-            label="Tipo IE"
-            value={field.value}
-            onChange={field.onChange}
-            placeholder="Digite o tipo IE"
-            error={errors.cnpj?.typeIE?.message}
-          />
-        )}
+      <Input
+        label="Tipo IE"
+        placeholder="Digite o tipo IE"
+        {...register("cnpj.typeIE")}
+        error={errors.cnpj?.typeIE?.message}
+        disabled={disabledFields.typeIE}
       />
       <Input
         label="Inscrição Municipal"

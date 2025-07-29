@@ -1,12 +1,22 @@
 "use client";
 
-import { deleteOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
+import {
+  createOneAddress,
+  deleteOneAddress,
+} from "@/app/lib/@backend/action/commercial/address.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState } from "react";
+import { addressesQueryKey } from "../../../form/commercial/address/get/useaddress";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
 
 export function useAddressModal() {
   const [open, setOpen] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const queryClient = useQueryClient();
+  const { createAddressLocally: createAddressInContext } =
+    useCreateAccountFlow();
+
   function openModal() {
     setOpen(true);
   }
@@ -18,24 +28,42 @@ export function useAddressModal() {
     setOpen(false);
   }
 
-  const deleteAdress = async (id: any) => {
+  async function createAddress(data: any, accountId: string) {
     try {
-      await deleteOneAddress({ id });
-      setOpenModalDelete(false);
+      await createOneAddress({
+        ...data,
+        accountId,
+        zip_code: data.zip_code.replace(/\D/g, ""),
+      });
       toast({
         title: "Sucesso!",
-        description: "Endereço excluído com sucesso",
+        description: "Endereço criado com sucesso!",
         variant: "success",
       });
-    } catch (err) {
-      console.error(err);
+      // Invalidate and refetch addresses query
+      await queryClient.invalidateQueries({
+        queryKey: addressesQueryKey(accountId),
+      });
+      closeModal();
+    } catch {
       toast({
-        title: "Erro",
-        description: "Não foi possível excluir o endereço.",
+        title: "Erro!",
+        description: "Falha ao registrar o endereço!",
         variant: "error",
       });
     }
-  };
+  }
+
+  async function createAddressLocally(data: any) {
+    const addressData = {
+      ...data,
+      id: crypto.randomUUID(),
+    };
+
+    createAddressInContext(addressData);
+
+    closeModal();
+  }
 
   return {
     open,
@@ -43,7 +71,8 @@ export function useAddressModal() {
     closeModal,
     openModalDelete,
     setOpenModalDelete,
-    deleteAdress,
     openModalDeleteCard,
+    createAddress,
+    createAddressLocally,
   };
 }
