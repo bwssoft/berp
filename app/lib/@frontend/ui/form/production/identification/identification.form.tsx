@@ -6,16 +6,22 @@ import { useIdentificationForm } from "./use-identification.form";
 import { ITechnology } from "@/app/lib/@backend/domain";
 
 export function IdentificationForm(props: {
-  onSubmit: (id: string) => Promise<void>;
+  onSubmit: (
+    id: string,
+    detected: any[],
+    technology: ITechnology
+  ) => Promise<void>;
   isIdentifying: boolean;
   isDetecting: boolean;
   technology: ITechnology;
+  detected: any[];
 }) {
-  const { onSubmit, isIdentifying, isDetecting, technology } = props;
+  const { onSubmit, isIdentifying, isDetecting, technology, detected } = props;
   const { handleSubmit, errors, register, handleChangeInput } =
     useIdentificationForm({
       onSubmit,
       technology,
+      detected,
     });
   return (
     <form

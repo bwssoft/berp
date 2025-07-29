@@ -6,12 +6,10 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidCEP } from "@/app/lib/util/is-valid-cep";
-import { useRouter } from "next/navigation";
 import { IAddress } from "@/app/lib/@backend/domain";
-import { useQueryClient } from "@tanstack/react-query";
-import { updateOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { viaCepGateway } from "@/app/lib/@backend/infra/gateway/viacep/viacep.gateway";
 import { formatCep } from "@/app/lib/util/format-cep";
+import { LocalAddress } from "@/app/lib/@frontend/context";
 
 const AddressFormSchema = z.object({
   zip_code: z.string().min(8, "CEP obrigatório").refine(isValidCEP, {
@@ -35,11 +33,10 @@ export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
 
 interface Props {
   address: IAddress;
-  closeModal: () => void;
+  onSubmit: (addressId: string, data: IAddress) => Promise<void>;
 }
 
-export function useAddressUpdateForm({ address, closeModal }: Props) {
-  const queryClient = useQueryClient();
+export function useAddressUpdateForm({ address, onSubmit }: Props) {
   const [loadingCep, setLoadingCep] = useState(false);
   const [cepEdited, setCepEdited] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -100,30 +97,10 @@ export function useAddressUpdateForm({ address, closeModal }: Props) {
   const handleSubmit = hookFormSubmit(
     async (data) => {
       setIsSubmitting(true);
-      const cleanedData = {
-        ...data,
-        zip_code: data.zip_code.replace(/\D/g, ""),
-      };
-      try {
-        await updateOneAddress({ id: address.id }, cleanedData);
-        toast({
-          title: "Sucesso!",
-          description: "Endereço atualizado com sucesso!",
-          variant: "success",
-        });
-        await queryClient.invalidateQueries({
-          queryKey: ["addresses"],
-        });
-        closeModal();
-      } catch {
-        toast({
-          title: "Erro!",
-          description: "Falha ao atualizar o endereço!",
-          variant: "error",
-        });
-      } finally {
-        setIsSubmitting(false);
-      }
+
+      await onSubmit(address.id || "", data);
+
+      setIsSubmitting(false);
     },
     () => {}
   );

@@ -49,7 +49,7 @@ export function useCreateHistoricalForm({
             await createOneHistorical({
                 ...data,
                 accountId: accountId,
-                title: "Histórico Manual de Conta",
+                title: "Histórico Manual",
                 type: "manual",
                 description: data.description,
                 author: {

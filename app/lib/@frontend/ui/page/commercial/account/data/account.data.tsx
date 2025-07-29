@@ -33,7 +33,7 @@ import { useState } from "react";
 import { useAddressUpdateModal } from "../../../../modal/comercial/address/update/use-address.update.modal";
 import { useAddressModal } from "../../../../modal/comercial/address/use-address.modal";
 import { AddressUpdateModal } from "../../../../modal/comercial/address/update";
-import { CreatedAddressModal } from "../../../../modal/comercial/address";
+import { CreateAddressModal } from "../../../../modal/comercial/address";
 import { AddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/delete.address";
 import { useAddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/use-delete.address";
 import { DeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/delete.contact.dialog";
@@ -43,6 +43,8 @@ import { useEconomicGroupUpdateModal } from "../../../../modal/comercial/economi
 interface Props {
   account: IAccount;
   address: IAddress[];
+  contacts: IContact[];
+
   permissions: {
     hasPermissionContacts: boolean;
     hasPermissionAddresses: boolean;
@@ -54,6 +56,7 @@ export function AccountDataPage(props: Props) {
   const {
     account,
     address,
+    contacts,
     permissions: {
       hasPermissionContacts,
       hasPermissionAddresses,
@@ -82,6 +85,7 @@ export function AccountDataPage(props: Props) {
     open: openCreateContact,
     openModal: openModalContact,
     closeModal: closeModalContact,
+    createContact,
   } = useCreateContactModal();
 
   /**
@@ -91,6 +95,7 @@ export function AccountDataPage(props: Props) {
     open: openUpdateContact,
     openModal: openUpdateModalContact,
     closeModal: closeUpdateModalContact,
+    updateContact,
   } = useUpdateContactModal();
 
   /**
@@ -100,8 +105,8 @@ export function AccountDataPage(props: Props) {
     open: openDeleteContact,
     openDialog: openDeleteContactModal,
     setOpen: setOpenDeleteContactModal,
-    confirm: deleteContact,
     isLoading: isLoadingDeleteContact,
+    deleteContact,
   } = useDeleteContactDialog();
 
   /**
@@ -112,6 +117,7 @@ export function AccountDataPage(props: Props) {
     open: openModalAddress,
     closeModal: closeCreateModalAddress,
     openModal: openCreateModalAddress,
+    createAddress,
   } = useAddressModal();
 
   /**
@@ -122,29 +128,30 @@ export function AccountDataPage(props: Props) {
     open: openUpdateAddress,
     closeModal: closeUpdateModalAddress,
     openModal: openUpdateModalAddress,
+    updateAddress,
   } = useAddressUpdateModal();
 
   const {
     open: openModalDelete,
     setOpen: setOpenModalDelete,
-    confirm: deleteAddress,
     isLoading: isLoadingAddressDelete,
+    deleteAddress,
   } = useAddressDeleteDialog();
+
+  const [addressToClone, setAddressToClone] = useState<Partial<IAddress>>();
 
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
         <AccountCard account={account} />
 
-        {isCompany &&
-          (account.economic_group_holding ||
-            account.economic_group_controlled) && (
-            <EconomicGroupCard
-              openModal={openUpdateEconomicGroup}
-              account={account}
-              hasPermissionEconomicGroup={hasPermissionEconomicGroup}
-            />
-          )}
+        {isCompany && (
+          <EconomicGroupCard
+            openModal={openUpdateEconomicGroup}
+            account={account}
+            hasPermissionEconomicGroup={hasPermissionEconomicGroup}
+          />
+        )}
       </div>
 
       {/* Segunda linha - Contatos e Endereços com mesma altura */}
@@ -157,7 +164,7 @@ export function AccountDataPage(props: Props) {
                 <Phone className="h-5 w-5 text-primary" />
                 Contatos
                 <Badge variant="secondary" className="text-xs">
-                  {account.contacts?.length}
+                  {contacts?.length}
                 </Badge>
               </CardTitle>
               {hasPermissionContacts && (
@@ -174,7 +181,7 @@ export function AccountDataPage(props: Props) {
           <CardContent className="flex-1 flex flex-col">
             <div className="lg:col-span-2 h-full">
               <div className="flex flex-wrap gap-x-1.5 gap-y-3">
-                {(account.contacts ?? [])?.map((contact, idx) => (
+                {contacts?.map((contact, idx) => (
                   <ContactCard
                     key={contact.id ?? idx}
                     contact={contact}
@@ -225,6 +232,10 @@ export function AccountDataPage(props: Props) {
                       key={addr.id}
                       title="Endereço:"
                       address={addr}
+                      onCopy={() => {
+                        setAddressToClone(addr);
+                        openCreateModalAddress();
+                      }}
                       onEdit={() => {
                         setSelectedAddress(addr);
                         openUpdateModalAddress();
@@ -254,18 +265,21 @@ export function AccountDataPage(props: Props) {
       <CreateContactModal
         open={openCreateContact}
         closeModal={closeModalContact}
+        createContact={createContact}
       />
 
       <UpdateContactModal
         contact={selectedContact!}
         open={openUpdateContact}
         closeModal={closeUpdateModalContact}
+        updateContact={updateContact}
       />
 
       <AddressUpdateModal
         address={selectedAddress!}
         closeUpdateModal={closeUpdateModalAddress}
         openUpdateModal={openUpdateAddress}
+        updateAddress={updateAddress}
       />
 
       <DeleteContactDialog
@@ -275,16 +289,11 @@ export function AccountDataPage(props: Props) {
         isLoading={isLoadingDeleteContact}
       />
 
-      <AddressUpdateModal
-        address={selectedAddress!}
-        closeUpdateModal={closeUpdateModalAddress}
-        openUpdateModal={openUpdateAddress}
-      />
-
-      <CreatedAddressModal
+      <CreateAddressModal
         accountId={account.id!}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}
+        createAddress={createAddress}
       />
 
       <AddressDeleteDialog
