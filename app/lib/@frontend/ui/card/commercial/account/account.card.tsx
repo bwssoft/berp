@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, DollarSign, Edit, RotateCcw, Tag, User } from "lucide-react";
+import { Building2, DollarSign, Tag, User } from "lucide-react";
 import {
   Badge,
   Button,
@@ -13,10 +13,23 @@ import {
 import { Separator } from "../../../component/separator";
 import { IAccount } from "@/app/lib/@backend/domain";
 import { StatusBadge } from "../../../page/commercial/account/data/account.data";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../component/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../../../component/tooltip";
 import { ArrowPathIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
-export function AccountCard({ account, onClickButtonEdit, onRefresh }: { account: IAccount, onClickButtonEdit?: () => void, onRefresh?: () => void; }) {
+export function AccountCard({
+  account,
+  onClickButtonEdit,
+  onRefresh,
+}: {
+  account: IAccount;
+  onClickButtonEdit?: () => void;
+  onRefresh?: () => void;
+}) {
   const isCompany = account.document.type === "cnpj";
 
   return (
@@ -40,17 +53,17 @@ export function AccountCard({ account, onClickButtonEdit, onRefresh }: { account
             <div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onRefresh}
-                        aria-label="Atualizar dados da conta"
-                    >
-                        <ArrowPathIcon className="h-4 w-4" />
-                    </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onRefresh}
+                    aria-label="Atualizar dados da conta"
+                  >
+                    <ArrowPathIcon className="h-4 w-4" />
+                  </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">
-                    <p>Atualizar dados da conta</p>
+                  <p>Atualizar dados da conta</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -65,10 +78,9 @@ export function AccountCard({ account, onClickButtonEdit, onRefresh }: { account
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">
-                    <p>Editar dados da conta</p>
+                  <p>Editar dados da conta</p>
                 </TooltipContent>
               </Tooltip>
-
             </div>
           </CardTitle>
         </CardHeader>
@@ -99,6 +111,11 @@ export function AccountCard({ account, onClickButtonEdit, onRefresh }: { account
                     </dd>
                   </div>
                 )}
+                <InfoField
+                  label="Situação IE"
+                  value={account.situationIE?.text}
+                />
+                <InfoField label="Tipo IE" value={account.typeIE} />
               </>
             ) : (
               <>

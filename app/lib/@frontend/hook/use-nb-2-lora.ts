@@ -52,8 +52,10 @@ const readResponse = async (
       const { value, done } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value);
-      buffer += chunk;
+      buffer += decoder.decode(value);
+
+      console.log("[RAW DATA]", buffer);
+
       let lines = buffer.split("\r\n");
       buffer = lines.pop() || "";
       for (const line of lines) {
@@ -106,9 +108,12 @@ export const useNB2Lora = () => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
       const { command, timeout, check, delay_before } = msg;
+      console.info("-------------------------");
+      console.info("[MESSAGE SENT]", command);
       if (delay_before) await sleep(delay_before);
       await writeToPort(port, command);
       const response = await readResponse(reader, check ?? command, timeout);
+      console.info("[RESPONSE MATCHED]", response);
       await reader.cancel();
       reader.releaseLock();
       return response;
@@ -914,6 +919,54 @@ export const useNB2Lora = () => {
     },
     [sendMultipleMessages]
   );
+  const handleFirmwareUpdate = useCallback(
+    async (detected: Namespace.Detected[]) => {
+      return await Promise.all(
+        detected.map(async ({ port, equipment }) => {
+          try {
+            const messages = [
+              {
+                key: "update_firmware",
+                command: `UPFW\r\n`,
+              },
+            ] as const;
+
+            const init_time = Date.now();
+            const response = await sendMultipleMessages({
+              transport: port,
+              messages,
+            });
+            const status =
+              response.update_firmware && response.update_firmware.length > 0;
+
+            const end_time = Date.now();
+            return {
+              port,
+              init_time,
+              end_time,
+              status,
+              messages: messages.map(({ key, command }) => ({
+                key,
+                request: command,
+                response: response[key],
+              })),
+              equipment: {
+                serial: equipment.serial,
+                imei: equipment.imei,
+                firmware: equipment.firmware,
+                lora_keys: equipment.lora_keys,
+              },
+            };
+          } catch (error) {
+            const message = `[(${new Date().toLocaleString()}) ERROR IN NB2 + LORA FIRMWARE UPDATE]`;
+            console.error(message, error);
+            throw new Error(message);
+          }
+        })
+      );
+    },
+    [sendMultipleMessages]
+  );
 
   const isIdentified = (input?: {
     imei?: string;
@@ -942,5 +995,6 @@ export const useNB2Lora = () => {
     requestPort,
     handleAutoTest,
     handleDetection,
+    handleFirmwareUpdate,
   };
 };
