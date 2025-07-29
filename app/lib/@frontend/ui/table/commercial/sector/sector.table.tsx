@@ -11,9 +11,13 @@ import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-param
 interface SectorTableProps {
     data: PaginationResult<ISector>;
     onToggle: (sector: ISector) => void;
+    onPageChange?: (page: number) => void;
 }
-
-export function SectorTable({ data, onToggle }: SectorTableProps) {
+export function SectorTable({
+    data,
+    onToggle,
+    onPageChange,
+}: SectorTableProps) {
     const PAGE_SIZE = 10;
 
     const { docs, pages = 1, total = 0, limit = PAGE_SIZE } = data;
@@ -23,17 +27,16 @@ export function SectorTable({ data, onToggle }: SectorTableProps) {
     const currentPage = pageParam ? Math.max(1, Number(pageParam)) : 1;
 
     const { handleParamsChange } = useHandleParamsChange();
-    const handlePageChange = (page: number) => handleParamsChange({ page });
-
-    const sortedDocs = [...docs].sort((a, b) =>
-        a.name.localeCompare(b.name, "pt-BR", { sensitivity: "base" })
-    );
+    const handlePageChange = (page: number) => {
+        handleParamsChange({ page });
+        onPageChange?.(page);
+    };
 
     return (
         <div>
             <DataTable
                 columns={sectorColumns(onToggle)}
-                data={sortedDocs}
+                data={docs}
                 mobileDisplayValue={(s) => s.name}
                 mobileKeyExtractor={(s) => s.id}
                 className="w-full"

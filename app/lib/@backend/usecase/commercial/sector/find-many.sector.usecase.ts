@@ -4,7 +4,17 @@ import type { Filter } from "mongodb";
 import { ISectorRepository } from "@/app/lib/@backend/domain/commercial";
 import { sectorRepository } from "@/app/lib/@backend/infra/repository";
 import { ISector } from "@/app/lib/@backend/domain";
+import { PaginationResult } from "../../../domain/@shared/repository/pagination.interface";
 
+namespace Dto {
+    export interface Input {
+        filter?: Filter<ISector>;
+        page?: number;
+        limit?: number;
+        sort?: Record<string, 1 | -1>;
+    }
+    export type Output = PaginationResult<ISector>;
+}
 class FindManySectorUsecase {
     repository: ISectorRepository;
 
@@ -13,9 +23,13 @@ class FindManySectorUsecase {
     }
 
     @RemoveMongoId()
-    async execute(input: Filter<ISector>) {
-        const { docs } = await this.repository.findMany(input);
-        return docs;
+    async execute(arg: Dto.Input): Promise<Dto.Output> {
+        return await this.repository.findMany(
+            arg.filter ?? {},
+            arg.limit,
+            arg.page,
+            arg.sort ?? { name: 1 }
+        );
     }
 }
 

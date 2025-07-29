@@ -11,6 +11,7 @@ import {
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import { SectorTable } from "../../../table/commercial/sector/sector.table";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 interface FormValues {
     name: string;
@@ -19,7 +20,8 @@ interface FormValues {
 interface Props {
     open: boolean;
     closeModal: () => void;
-    sectors: ISector[];
+    pagination: PaginationResult<ISector>;
+    setCurrentPage: (page: number) => void;
     register: UseFormRegister<FormValues>;
     errors: FieldErrors<FormValues>;
     handleAdd: () => void;
@@ -31,7 +33,8 @@ interface Props {
 export function SectorModal({
     open,
     closeModal,
-    sectors,
+    pagination,
+    setCurrentPage,
     register,
     errors,
     handleAdd,
@@ -69,8 +72,9 @@ export function SectorModal({
                     </div>
 
                     <SectorTable
-                        data={{ docs: sectors }}
+                        data={pagination}
                         onToggle={handleToggle}
+                        onPageChange={setCurrentPage}
                     />
 
                     <div className="flex gap-4 my-4 justify-end">
