@@ -8,7 +8,7 @@ class CreateOneSectorUsecase {
     async execute(
         input: Omit<ISector, "id" | "created_at" | "updated_at">
     ): Promise<ISector> {
-        const sectors = await findManySectorUsecase.execute({});
+        const { docs: sectors } = await findManySectorUsecase.execute({});
         const normalizedInputName = normalizeString(input.name);
 
         const duplicated = sectors.find(
