@@ -249,7 +249,7 @@ export const useNB2 = () => {
         },
         {
           command: "RFSM\r\n",
-          key: "sleep_mode",
+          key: "economy_mode",
         },
       ] as const;
 
@@ -329,7 +329,9 @@ export const useNB2 = () => {
                     BwsNb2Parser.full_functionality_table(
                       response.full_functionality_table
                     ),
-                  sleep_mode: BwsNb2Parser.sleep_mode(response.sleep_mode),
+                  economy_mode: BwsNb2Parser.economy_mode(
+                    response.economy_mode
+                  ),
                 },
               },
               messages: messages.map(({ key, command }) => ({
@@ -444,7 +446,7 @@ export const useNB2 = () => {
         },
         {
           command: "RFSM\r\n",
-          key: "read_sleep_mode",
+          key: "read_economy_mode",
         },
       ] as const;
       return await Promise.all(
@@ -479,7 +481,7 @@ export const useNB2 = () => {
               read_harsh_braking_threshold,
               read_full_configuration_table,
               read_full_functionality_table,
-              read_sleep_mode,
+              read_economy_mode,
               ...configuration
             } = response;
             const configurationEntries = Object.entries(configuration ?? {});
@@ -559,7 +561,7 @@ export const useNB2 = () => {
                     BwsNb2Parser.full_functionality_table(
                       read_full_functionality_table
                     ),
-                  sleep_mode: BwsNb2Parser.sleep_mode(read_sleep_mode),
+                  economy_mode: BwsNb2Parser.economy_mode(read_economy_mode),
                 },
               },
             };

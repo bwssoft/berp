@@ -1,10 +1,8 @@
 import { IDevice, IProduct } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { deleteOneDeviceById } from "@/app/lib/@backend/action/engineer/device.action";
 
-export type Row = IDevice & { product: IProduct };
+export type Row = IDevice;
 
 export const columns: ColumnDef<Row>[] = [
   {

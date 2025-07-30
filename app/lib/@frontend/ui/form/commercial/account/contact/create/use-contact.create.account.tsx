@@ -148,7 +148,12 @@ const schema = z
     }
   });
 
-export function useCreateContactAccount(closeModal: () => void) {
+export type ContactFormSchema = z.infer<typeof schema>;
+
+export function useCreateContactAccount(
+  closeModal: () => void,
+  onSubmit: (data: ContactFormSchema, accountId?: string) => Promise<void>
+) {
   const [isLoading, setIsLoading] = useState(false);
   const [tempContact, setTempContact] = useState<{
     type: ContactType | "";
@@ -180,7 +185,7 @@ export function useCreateContactAccount(closeModal: () => void) {
     control,
     setError,
     reset,
-    handleSubmit,
+    handleSubmit: hookFormSubmit,
     formState: { errors },
   } = methods;
 
@@ -295,97 +300,16 @@ export function useCreateContactAccount(closeModal: () => void) {
     enabled: !!accountId,
   });
 
-  const queryClient = useQueryClient();
+  const handleSubmit = hookFormSubmit(
+    async (data) => {
+      setIsLoading(true);
 
-  const onSubmit = handleSubmit(async (data) => {
-    setIsLoading(true);
-    try {
-      const { success, error } = await createOneContact({
-        ...data,
-        cpf: data.cpf ? data.cpf.replace(/[^a-zA-Z0-9]/g, "") : undefined,
-        rg: data.rg ? data.rg.replace(/[^a-zA-Z0-9]/g, "") : undefined,
-        accountId: accountId ?? undefined,
-        contractEnabled: data.contractEnabled ? true : false,
-        contactItems:
-          data.contactItems?.map((item) => ({
-            ...item,
-            contact:
-              item.type[0] === "Email"
-                ? item.contact
-                : item.contact.replace(/[^0-9]/g, ""),
-            type: Array.isArray(item.type) ? item.type[0] : item.type,
-            id: item.id ?? crypto.randomUUID(),
-          })) || [],
-        originType: "local",
-      });
+      await onSubmit(data, accountId || undefined);
 
-      if (success && accountId) {
-        const freshAccount = await findOneAccount({ id: accountId });
-        const currentContacts: IContact[] = freshAccount?.contacts ?? [];
-
-        const uniqueContacts = new Map<string, IContact>();
-        [...currentContacts, success].forEach((c) => {
-          if (c?.id) uniqueContacts.set(c.id, c);
-        });
-
-        const updatedContacts = Array.from(uniqueContacts.values());
-
-        try {
-          await updateOneAccount(
-            { id: accountId },
-            { contacts: updatedContacts }
-          );
-
-          await queryClient.invalidateQueries({
-            queryKey: ["findOneAccount", accountId],
-          });
-
-          await queryClient.invalidateQueries({
-            queryKey: ["findManyAccount", accountId],
-          });
-
-          toast({
-            title: "Sucesso!",
-            description: "Contato criado e conta atualizada com sucesso!",
-            variant: "success",
-          });
-
-          reset();
-          closeModal();
-        } catch (err) {
-          console.error(err);
-          toast({
-            title: "Erro ao atualizar conta!",
-            description:
-              "O contato foi criado, mas a conta não foi atualizada.",
-            variant: "error",
-          });
-        }
-      } else if (error) {
-        Object.entries(error).forEach(([key, msg]) => {
-          if (key !== "global" && msg) {
-            setError(key as any, { type: "manual", message: msg as string });
-          }
-        });
-        if (error.global) {
-          toast({
-            title: "Erro!",
-            description: error.global,
-            variant: "error",
-          });
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      toast({
-        title: "Erro",
-        description: "Não foi possível criar o contato.",
-        variant: "error",
-      });
-    } finally {
       setIsLoading(false);
-    }
-  });
+    },
+    () => {}
+  );
 
   const handleCheckboxChange = (
     fieldValue: string[] = [],
@@ -405,7 +329,7 @@ export function useCreateContactAccount(closeModal: () => void) {
     handleNewContact,
     handlePreferredContact,
     handleRemove,
-    onSubmit,
+    handleSubmit,
     setTempContact,
     tempContact,
     handleCheckboxChange,

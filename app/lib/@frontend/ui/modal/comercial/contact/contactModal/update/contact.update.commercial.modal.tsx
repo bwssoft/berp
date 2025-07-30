@@ -13,9 +13,19 @@ interface Props {
   open: boolean;
   closeModal: () => void;
   contact: IContact;
+  updateContact: (
+    data: any,
+    contact: IContact,
+    accountId?: string
+  ) => Promise<void>;
 }
 
-export function UpdateContactModal({ open, closeModal, contact }: Props) {
+export function UpdateContactModal({
+  open,
+  closeModal,
+  contact,
+  updateContact,
+}: Props) {
   return (
     <Modal
       open={open}
@@ -25,8 +35,12 @@ export function UpdateContactModal({ open, closeModal, contact }: Props) {
       position="center"
     >
       <ModalContent>
-        <ModalBody className="min-h-[50vh] max-h-[70vh] w-[70vh] relative">
-          <UpdateContactAccountForm contact={contact} closeModal={closeModal} />
+        <ModalBody className="min-h-[50vh] max-h-[70vh] w-[70vh]">
+          <UpdateContactAccountForm
+            onSubmit={updateContact}
+            contact={contact}
+            closeModal={closeModal}
+          />
         </ModalBody>
       </ModalContent>
     </Modal>

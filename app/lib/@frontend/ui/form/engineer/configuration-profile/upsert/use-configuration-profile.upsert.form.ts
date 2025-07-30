@@ -205,6 +205,8 @@ export const nb2ConfigSchema = z.object({
       path: ["initial"],
     })
     .optional(),
+  lock_type: z.coerce.number().optional(),
+  economy_mode: z.coerce.number().optional(),
   heading_detection_angle: z.coerce.number().min(0).max(180).optional(),
   speed_alert_threshold: oneBytesSchema.optional(),
   accel_threshold_for_ignition_on: oneBytesSchema.optional(),
