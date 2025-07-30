@@ -58,7 +58,7 @@ export function useUpdateEconomicGroupForm(
   const [isLoading, setIsLoading] = useState(false);
 
   const queryClient = useQueryClient();
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   const {
     control,
@@ -168,7 +168,7 @@ export function useUpdateEconomicGroupForm(
     };
 
     try {
-      const {success, editedFields, error} = await updateOneAccount(
+      const { success, editedFields, error } = await updateOneAccount(
         { id: accountId },
         {
           economic_group_holding: payload.economic_group_holding,
@@ -181,17 +181,37 @@ export function useUpdateEconomicGroupForm(
       });
 
       if (success && editedFields) {
-        // Criar histórico
-        await createOneHistorical({
+        try {
+          let historicalTitle = "Grupos econômicos atualizados.";
+
+          if (holding && controlled.length > 0) {
+            historicalTitle = `Grupo econômico (Holding) "${holding.name}" e ${controlled.length} empresa${controlled.length > 1 ? "s" : ""} controlada${controlled.length > 1 ? "s" : ""} vinculado${controlled.length > 1 ? "s" : ""}.`;
+          } else if (holding) {
+            historicalTitle = `Grupo econômico (Holding) "${holding.name}" vinculado.`;
+          } else if (controlled.length > 0) {
+            const controlledNames = controlled.map((c) => c.name).join(", ");
+            historicalTitle = `${controlled.length} empresa${controlled.length > 1 ? "s" : ""} controlada${controlled.length > 1 ? "s" : ""} "${controlledNames}" vinculada${controlled.length > 1 ? "s" : ""}.`;
+          }
+
+          await createOneHistorical({
             accountId: String(accountId),
-            title: `Atualização de conta`,
+            title: historicalTitle,
             editedFields: editedFields,
             type: "manual",
             author: {
-                name: user?.name ?? "",
-                avatarUrl: "",
+              name: user?.name ?? "",
+              avatarUrl: "",
             },
-        });
+          });
+          console.log(
+            "Economic group update historical entry created successfully"
+          );
+        } catch (error) {
+          console.warn(
+            "Failed to create economic group update historical entry:",
+            error
+          );
+        }
       }
 
       toast({
