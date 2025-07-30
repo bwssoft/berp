@@ -579,7 +579,7 @@ export class BwsNb2Parser {
     return value.length ? value : undefined;
   }
 
-  static sleep_mode(input: string) {
+  static economy_mode(input: string) {
     if (typeof input !== "string") return undefined;
 
     const parts = input.split("RFSM=");
@@ -590,8 +590,26 @@ export class BwsNb2Parser {
 
     const value = data.replace(/\s+/g, "");
 
-    if (value !== "00" && value !== "01") return undefined;
+    if (value !== "1" && value !== "2") return undefined;
 
     return value;
+  }
+
+  static lock_type(input: string) {
+    if (typeof input !== "string") return undefined;
+
+    const parts = input.split("ROUT=");
+
+    if (parts.length < 2) return undefined;
+
+    const data = parts[1].trim();
+
+    const value = data.replace(/\s+/g, "");
+
+    if (value !== "0,0,8" && value !== "0,0,0") return undefined;
+
+    if (value === "0,0,0") return 1;
+
+    if (value === "0,0,8") return 2;
   }
 }

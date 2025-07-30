@@ -531,7 +531,7 @@ export const useNB2Lora = () => {
 
         {
           command: "RFSM\r",
-          key: "read_sleep_mode",
+          key: "read_economy_mode",
         },
       ] as const;
       return await Promise.all(
@@ -566,7 +566,7 @@ export const useNB2Lora = () => {
               read_harsh_braking_threshold,
               read_full_configuration_table,
               read_full_functionality_table,
-              read_sleep_mode,
+              read_economy_mode,
               ...configuration
             } = response;
             const configurationEntries = Object.entries(configuration ?? {});
@@ -614,7 +614,7 @@ export const useNB2Lora = () => {
                   harsh_braking_threshold: read_harsh_braking_threshold,
                   full_configuration_table: read_full_configuration_table,
                   full_functionality_table: read_full_functionality_table,
-                  sleep_mode: read_sleep_mode,
+                  economy_mode: read_economy_mode,
                 },
               },
             };

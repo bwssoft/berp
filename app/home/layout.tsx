@@ -10,6 +10,7 @@ import {
   RectangleStackIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../lib/@frontend/context";
+import { Network } from "lucide-react";
 
 export default function HomeLayout({
   children,
@@ -52,5 +53,11 @@ const navigation = [
     icon: CircleStackIcon,
     pathname: "/logistic",
     code: "logistic",
+  },
+  {
+    name: "Conectividade",
+    icon: Network,
+    pathname: "/connectivity",
+    code: "connectivity",
   },
 ];

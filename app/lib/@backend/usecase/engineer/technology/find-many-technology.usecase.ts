@@ -1,7 +1,7 @@
 import { ITechnology, ITechnologyRepository } from "@/app/lib/@backend/domain";
 import { technologyRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveFields } from "@/app/lib/@backend/decorators";
 import type { Filter } from "mongodb";
 
 class FindManyTechnologyUsecase {
@@ -11,10 +11,10 @@ class FindManyTechnologyUsecase {
     this.repository = technologyRepository;
   }
 
-  @RemoveMongoId()
+  @RemoveFields("_id")
   async execute(input: Filter<ITechnology>) {
     const { docs } = await this.repository.findMany(input);
-    return docs
+    return docs;
   }
 }
 

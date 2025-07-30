@@ -1,10 +1,10 @@
-import { IDevice, IProduct } from "@/app/lib/@backend/domain";
+import { IDevice } from "@/app/lib/@backend/domain";
+import { deviceConstants } from "@/app/lib/constant";
 import { ColumnDef } from "@tanstack/react-table";
-import Link from "next/link";
 
 export type Row = IDevice;
 
-export const columns: ColumnDef<Row>[] = [
+export const columns = (activate: boolean): ColumnDef<Row>[] => [
   {
     header: "Serial",
     accessorKey: "serial",
@@ -18,7 +18,7 @@ export const columns: ColumnDef<Row>[] = [
     accessorKey: "product",
     cell: ({ row }) => {
       const device = row.original;
-      return device.model;
+      return deviceConstants.model[device.model];
     },
   },
   {
@@ -33,17 +33,7 @@ export const columns: ColumnDef<Row>[] = [
     header: "",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const device = row.original;
-      return (
-        <td className="flex gap-2 relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-          <Link
-            href={`/engineer/device/form/update?id=${device.id}`}
-            className="text-blue-600 hover:text-blue-900"
-          >
-            Editar
-          </Link>
-        </td>
-      );
+      return <td>{activate ? "Ativar" : "Desativar"}</td>;
     },
   },
 ];
