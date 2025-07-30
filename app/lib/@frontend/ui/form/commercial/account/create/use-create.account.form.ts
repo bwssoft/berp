@@ -4,7 +4,7 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   IAccount,
   ICnpjaResponse,
@@ -143,9 +143,13 @@ const schema = z
 export type CreateAccountFormSchema = z.infer<typeof schema>;
 
 export function useCreateAccountForm() {
-  // Get the create account flow context
-  const { createAccountLocally, createAddressLocally, createContactLocally } =
-    useCreateAccountFlow();
+  // Get the create account flow context including existing account data
+  const {
+    createAccountLocally,
+    createAddressLocally,
+    createContactLocally,
+    account: localAccount,
+  } = useCreateAccountFlow();
 
   // Estado para definir se o documento é CPF ou CNPJ:
   const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
@@ -205,6 +209,80 @@ export function useCreateAccountForm() {
   const methods = useForm<CreateAccountFormSchema>({
     resolver: zodResolver(schema),
   });
+
+  // Initialize form with existing account data from flow context
+  useEffect(() => {
+    if (localAccount) {
+      // Set the document type first
+      setType(localAccount.document.type);
+
+      // Populate form fields with existing data
+      methods.setValue("document.value", localAccount.document.value);
+      methods.setValue("document.type", localAccount.document.type);
+
+      if (localAccount.document.type === "cpf") {
+        if (localAccount.name) {
+          methods.setValue("cpf.name", localAccount.name);
+        }
+        if (localAccount.rg) {
+          methods.setValue("cpf.rg", localAccount.rg);
+        }
+      }
+
+      if (localAccount.document.type === "cnpj") {
+        if (localAccount.social_name) {
+          methods.setValue("cnpj.social_name", localAccount.social_name);
+        }
+        if (localAccount.fantasy_name) {
+          methods.setValue("cnpj.fantasy_name", localAccount.fantasy_name);
+        }
+        if (localAccount.state_registration) {
+          methods.setValue(
+            "cnpj.state_registration",
+            localAccount.state_registration
+          );
+        }
+        if (localAccount.municipal_registration) {
+          methods.setValue(
+            "cnpj.municipal_registration",
+            localAccount.municipal_registration
+          );
+        }
+        if (localAccount.status) {
+          methods.setValue("cnpj.status", localAccount.status);
+        }
+        if (localAccount.setor && localAccount.setor.length > 0) {
+          methods.setValue("cnpj.sector", localAccount.setor[0]); // Assuming first sector
+        }
+
+        if (localAccount.situationIE) {
+          methods.setValue("cnpj.situationIE", localAccount.situationIE);
+          setSelectedIE(localAccount.situationIE);
+        }
+
+        if (localAccount.typeIE) {
+          methods.setValue("cnpj.typeIE", localAccount.typeIE);
+        }
+
+        if (localAccount.economic_group_holding) {
+          methods.setValue(
+            "cnpj.economic_group_holding",
+            localAccount.economic_group_holding
+          );
+        }
+
+        if (
+          localAccount.economic_group_controlled &&
+          localAccount.economic_group_controlled.length > 0
+        ) {
+          methods.setValue(
+            "cnpj.economic_group_controlled",
+            localAccount.economic_group_controlled
+          );
+        }
+      }
+    }
+  }, [localAccount, methods]);
 
   const handleCpfCnpj = async (
     value: string
