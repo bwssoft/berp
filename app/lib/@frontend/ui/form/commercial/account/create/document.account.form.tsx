@@ -14,6 +14,7 @@ interface Props {
     key: "contact" | "controlled" | "holding",
     type: "Validar" | "Editar"
   ) => void;
+  resetType: () => void;
   type: "cpf" | "cnpj" | undefined;
   textButton: {
     holding: string;
@@ -27,9 +28,42 @@ export function DocumentAccountForm({
   type,
   textButton,
   toggleButtonText,
+  resetType,
 }: Props) {
   const methods = useFormContext<CreateAccountFormSchema>();
   const [isValidating, setIsValidating] = useState(false);
+
+  const isInValidateMode = textButton.contact === "Validar";
+  const isInEditMode = textButton.contact === "Editar";
+
+  const handleValidateDocument = async () => {
+    setIsValidating(true);
+    try {
+      const result = await onValidate(methods.getValues("document.value"));
+
+      if (result !== "invalid") {
+        toggleButtonText("contact", "Editar");
+      } else {
+        resetType();
+      }
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const handleEditDocument = () => {
+    toggleButtonText("contact", "Validar");
+    resetType();
+    methods.clearErrors("document.value");
+  };
+
+  const handleButtonClick = async () => {
+    if (isInValidateMode) {
+      await handleValidateDocument();
+    } else if (isInEditMode) {
+      handleEditDocument();
+    }
+  };
 
   return (
     <div className="space-y-2">
@@ -44,10 +78,15 @@ export function DocumentAccountForm({
               onChange={(e) => {
                 const maskedValue = maskCpfCnpj(e.target.value);
                 field.onChange(maskedValue);
+
+                methods.clearErrors("document.value");
+
+                if (isInEditMode) {
+                  resetType();
+                }
               }}
-              required
-              label="CPF/CNPJ"
-              disabled={textButton.contact !== "Validar" || isValidating}
+              label="CPF/CNPJ *"
+              disabled={!isInValidateMode || isValidating}
               placeholder="Insira um documento para ser validado"
               error={methods.formState.errors.document?.value?.message}
             />
@@ -56,23 +95,7 @@ export function DocumentAccountForm({
         <Button
           type="button"
           disabled={isValidating}
-          onClick={async () => {
-            if (textButton.contact === "Validar") {
-              setIsValidating(true);
-              try {
-                const result = await onValidate(
-                  methods.getValues("document.value")
-                );
-                if (type !== undefined && result !== "invalid") {
-                  toggleButtonText("contact", "Editar");
-                }
-              } finally {
-                setIsValidating(false);
-              }
-            } else {
-              toggleButtonText("contact", "Validar");
-            }
-          }}
+          onClick={handleButtonClick}
         >
           {isValidating ? "Validando..." : textButton.contact}
         </Button>
