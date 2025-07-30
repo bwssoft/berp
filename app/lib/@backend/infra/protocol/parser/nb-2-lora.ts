@@ -975,7 +975,7 @@ export class BwsNb2LoraParser {
     return value.length ? value : undefined;
   }
 
-  static sleep_mode(input: string) {
+  static economy_mode(input: string) {
     if (typeof input !== "string") return undefined;
 
     const parts = input.split("RFSM=");
@@ -986,7 +986,7 @@ export class BwsNb2LoraParser {
 
     const value = data.replace(/\s+/g, "");
 
-    if (value !== "00" && value !== "01") return undefined;
+    if (value !== "1" && value !== "2") return undefined;
 
     return value;
   }
