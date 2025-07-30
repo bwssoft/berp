@@ -39,6 +39,24 @@ interface Props {
 export function ContactDataPage(props: Props) {
   const { contacts, hasPermissionContacts, accountId } = props;
 
+  // Use create account flow context
+  const {
+    account: localAccount,
+    addresses: localAddresses,
+    contacts: localContacts,
+  } = useCreateAccountFlow();
+
+  // Props are already the local data, so use them directly
+  const currentAccount = localAccount;
+  const currentContacts = localContacts;
+
+  // Generate steps using the hook
+  const steps = useAccountStepProgress({
+    accountId: currentAccount?.id || "",
+    addresses: localAddresses,
+    contacts: currentContacts,
+  });
+
   const [selectedContact, setSelectedContact] = useState<LocalContact>();
   const [isCreatingEntities, setIsCreatingEntities] = useState(false);
   const router = useRouter();
@@ -138,6 +156,11 @@ export function ContactDataPage(props: Props) {
 
   return (
     <div>
+      {/* Step Navigation */}
+      <div className="mb-6">
+        <StepNavigation steps={steps} />
+      </div>
+
       <div className="flex gap-4 w-full justify-end"></div>
       <div>
         <Card className="w-full">
@@ -147,7 +170,7 @@ export function ContactDataPage(props: Props) {
                 <Phone className="h-5 w-5 text-primary" />
                 Contatos
                 <Badge variant="secondary" className="text-xs">
-                  {contacts?.length}
+                  {currentContacts?.length}
                 </Badge>
               </CardTitle>
               {hasPermissionContacts && (
@@ -165,7 +188,7 @@ export function ContactDataPage(props: Props) {
             </div>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            {(contacts ?? [])?.map((contact, idx) => (
+            {(currentContacts ?? [])?.map((contact, idx) => (
               <ContactCard
                 key={contact.id ?? idx}
                 contact={contact as any}

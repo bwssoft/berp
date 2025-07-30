@@ -14,6 +14,7 @@ import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/addr
 import {
   LocalAccount,
   LocalAddress,
+  useCreateAccountFlow,
 } from "@/app/lib/@frontend/context/create-account-flow.context";
 
 import { useState } from "react";
@@ -24,7 +25,6 @@ import { AddressUpdateModal } from "@/app/lib/@frontend/ui/modal/comercial/addre
 import { CreateAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
 import { AddressDeleteDialog } from "@/app/lib/@frontend/ui/dialog/commercial/account/address/delete/delete.address";
 import StepNavigation from "@/app/lib/@frontend/ui/card/commercial/tab/account-tab";
-import { accountSteps } from "@/app/lib/@frontend/ui/card/commercial/tab/default-steps";
 import { useAccountStepProgress } from "@/app/lib/@frontend/ui/card/commercial/tab/use-account-step-progress";
 
 interface Props {
@@ -43,6 +43,24 @@ export function AddressDataPage(props: Props) {
     address,
     permissions: { hasPermissionAddresses },
   } = props;
+
+  // Use create account flow context
+  const {
+    account: localAccount,
+    addresses: localAddresses,
+    contacts: localContacts,
+  } = useCreateAccountFlow();
+
+  // Props are already the local data, so use them directly
+  const currentAccount = localAccount;
+  const currentAddresses = localAddresses;
+
+  // Generate steps using the hook
+  const steps = useAccountStepProgress({
+    accountId: currentAccount?.id || "",
+    addresses: currentAddresses,
+    contacts: localContacts,
+  });
 
   const [selectedAddress, setSelectedAddress] = useState<LocalAddress>();
   const [copiedAddress, setCopiedAddress] = useState<LocalAddress>();
@@ -73,6 +91,11 @@ export function AddressDataPage(props: Props) {
 
   return (
     <>
+      {/* Step Navigation */}
+      <div className="mb-6">
+        <StepNavigation steps={steps} />
+      </div>
+
       <div className="w-full max-w-[1400px] mx-auto space-y-6">
         <div className="grid grid-cols-1 gap-6 items-stretch">
           <Card className="w-full">
@@ -82,7 +105,7 @@ export function AddressDataPage(props: Props) {
                   <MapPin className="h-5 w-5 text-primary" />
                   Endereços
                   <Badge variant="secondary" className="text-xs">
-                    {address.length}
+                    {currentAddresses.length}
                   </Badge>
                 </CardTitle>
                 {hasPermissionAddresses && (
@@ -99,9 +122,9 @@ export function AddressDataPage(props: Props) {
             <CardContent className="flex-1 flex flex-col">
               <div className="lg:col-span-2 h-full"></div>
               <div className="lg:col-span-2 h-full space-y-3">
-                {address.length > 0 ? (
+                {currentAddresses.length > 0 ? (
                   <div className="flex flex-wrap gap-3">
-                    {address.map((addr) => (
+                    {currentAddresses.map((addr) => (
                       <AddressCard
                         key={addr.id}
                         title="Endereço:"
@@ -140,7 +163,7 @@ export function AddressDataPage(props: Props) {
       />
 
       <CreateAddressModal
-        accountId={account.id || ""}
+        accountId={currentAccount?.id || ""}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}
         createAddress={createAddress}
