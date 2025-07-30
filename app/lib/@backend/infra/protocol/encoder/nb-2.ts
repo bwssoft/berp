@@ -128,19 +128,19 @@ export class BwsNb2Encoder {
   }
 
   static input_1(input: number): string {
-    return `WIN1=${input}`;
+    return `WIN1=${input}\r\n`;
   }
 
   static input_2(input: number): string {
-    return `WIN2=${input}`;
+    return `WIN2=${input}\r\n`;
   }
 
   static input_3(input: number): string {
-    return `WIN3=${input}`;
+    return `WIN3=${input}\r\n`;
   }
 
   static input_4(input: number): string {
-    return `WIN4=${input}`;
+    return `WIN4=${input}\r\n`;
   }
 
   static serial(input: string): string | undefined {
@@ -161,9 +161,26 @@ export class BwsNb2Encoder {
     return "WF=";
   }
 
-  static sleep_mode(input: string): string | undefined {
-    if (input !== "00" && input !== "01") return undefined;
-    return `WFSM=${input}\r`;
+  static economy_mode(input: number): string | undefined {
+    if (
+      typeof input !== "number" ||
+      Number.isNaN(input) ||
+      (input !== 1 && input !== 2)
+    ) {
+      return undefined;
+    }
+    return `WFSM=${input}\r\n`;
+  }
+
+  static lock_type(input: number): string | undefined {
+    if (typeof input !== "number" || (input !== 1 && input !== 2)) {
+      return undefined;
+    }
+    let lock = "0,0,0";
+    if (input === 2) {
+      lock = "0,0,8";
+    }
+    return `WOUT=${lock}\r\n`;
   }
 
   static commands() {
@@ -196,6 +213,8 @@ export class BwsNb2Encoder {
       input_2: BwsNb2Encoder.input_2,
       input_3: BwsNb2Encoder.input_3,
       input_4: BwsNb2Encoder.input_4,
+      lock_type: BwsNb2Encoder.lock_type,
+      economy_mode: BwsNb2Encoder.economy_mode,
     };
   }
 

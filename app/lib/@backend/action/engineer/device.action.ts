@@ -12,6 +12,8 @@ import {
   upsertOneDeviceUsecase,
 } from "@/app/lib/@backend/usecase";
 import { IDevice, IProduct } from "@/app/lib/@backend/domain";
+import { findManyDeviceUsecase } from "../../usecase/engineer/device/find-many-device.usecase";
+import { Filter } from "mongodb";
 
 export async function createOneDevice(
   device: Omit<IDevice, "id" | "created_at">
@@ -54,6 +56,10 @@ export async function findAllDevice(): Promise<
   })[]
 > {
   return await findAllDeviceUsecase.execute();
+}
+
+export async function findManyDevice(input: Filter<IDevice>) {
+  return await findManyDeviceUsecase.execute(input);
 }
 
 export async function findManyDeviceBySerial(

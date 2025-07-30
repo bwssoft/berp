@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ContactFormSchema,
   CreateContactAccountForm,
   Modal,
   ModalBody,
@@ -11,9 +12,10 @@ import React from "react";
 interface Props {
   open: boolean;
   closeModal: () => void;
+  createContact: (data: ContactFormSchema, accountId?: string) => Promise<void>;
 }
 
-export function CreateContactModal({ open, closeModal }: Props) {
+export function CreateContactModal({ open, closeModal, createContact }: Props) {
   return (
     <Modal
       open={open}
@@ -23,8 +25,11 @@ export function CreateContactModal({ open, closeModal }: Props) {
       position="center"
     >
       <ModalContent>
-        <ModalBody className="min-h-[50vh] max-h-[70vh] w-[70vh] relative">
-          <CreateContactAccountForm closeModal={closeModal} />
+        <ModalBody className="min-h-[50vh] max-h-[70vh] w-[70vh]">
+          <CreateContactAccountForm
+            onSubmit={createContact}
+            closeModal={closeModal}
+          />
         </ModalBody>
       </ModalContent>
     </Modal>

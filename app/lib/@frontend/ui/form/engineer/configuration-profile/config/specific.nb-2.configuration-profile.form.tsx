@@ -20,6 +20,13 @@ import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { Cpu, Settings, Zap, Navigation, Activity, Cable } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { ConfigurationProfileSchema } from "../upsert/use-configuration-profile.upsert.form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../../component";
 
 export function SpecificNB2ConfigurationProfileForm() {
   const { control } = useFormContext<ConfigurationProfileSchema>();
@@ -83,6 +90,60 @@ export function SpecificNB2ConfigurationProfileForm() {
                     <FormControl>
                       <Input placeholder="5000" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="config.specific.economy_mode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Modo de economia</FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      defaultValue={field.value?.toString()}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um modo de economia" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1">
+                          Modo 1 (GPS OFF e Rede ON em sleep)
+                        </SelectItem>
+                        <SelectItem value="2">
+                          Modo 2 (GPS OFF e Rede OFF em sleep)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="config.specific.lock_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tipo de bloqueio</FormLabel>
+                    <Select
+                      onValueChange={(value) => field.onChange(Number(value))}
+                      defaultValue={field.value?.toString()}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um tipo de bloqueio" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="1">Bloqueio Padrão</SelectItem>
+                        <SelectItem value="2">Bloqueio invertido</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -220,7 +281,7 @@ export function SpecificNB2ConfigurationProfileForm() {
             </div>
           </div>
 
-          <div className="rounded-lg border bg-card p-4">
+          {/* <div className="rounded-lg border bg-card p-4">
             <h5 className="text-sm font-medium mb-4">
               Configurações do Acelerômetro
             </h5>
@@ -299,7 +360,7 @@ export function SpecificNB2ConfigurationProfileForm() {
                 )}
               />
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Configurações de Hardware */}
