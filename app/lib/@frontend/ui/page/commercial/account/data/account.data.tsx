@@ -39,6 +39,9 @@ import { useAddressDeleteDialog } from "../../../../dialog/commercial/account/ad
 import { DeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/delete.contact.dialog";
 import { useDeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/use-delete.contact.dialog";
 import { useEconomicGroupUpdateModal } from "../../../../modal/comercial/economic-group/update/use-economic-group.update.modal";
+import StepNavigation from "../../../../card/commercial/tab/account-tab";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
+import { useAccountStepProgress } from "../../../../card/commercial/tab/use-account-step-progress";
 
 interface Props {
   account: IAccount;
@@ -63,9 +66,29 @@ export function AccountDataPage(props: Props) {
       hasPermissionEconomicGroup,
     },
   } = props;
-  const [selectedContact, setSelectedContact] = useState<IContact>();
-  const [selectedAddress, setSelectedAddress] = useState<IAddress>();
-  const isCompany = account.document.type === "cnpj";
+
+  // Use create account flow context if we're in flow mode
+  const {
+    account: localAccount,
+    addresses: localAddresses,
+    contacts: localContacts,
+  } = useCreateAccountFlow();
+
+  // Props are already the local data when available, otherwise use props data
+  const currentAccount = localAccount || account;
+  const currentAddresses = localAddresses || address;
+  const currentContacts = localContacts || contacts;
+
+  // Generate steps using the hook
+  const steps = useAccountStepProgress({
+    accountId: currentAccount?.id || "",
+    addresses: currentAddresses,
+    contacts: currentContacts,
+  });
+
+  const [selectedContact, setSelectedContact] = useState<IContact | any>();
+  const [selectedAddress, setSelectedAddress] = useState<IAddress | any>();
+  const isCompany = currentAccount.document.type === "cnpj";
 
   /**
    * MODAL ATUALIZAÇÃO - GRUPO ECONOMICO
@@ -142,13 +165,20 @@ export function AccountDataPage(props: Props) {
 
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
+      {/* Step Navigation - only show in flow mode */}
+      {localAccount && (
+        <div className="mb-6">
+          <StepNavigation steps={steps} />
+        </div>
+      )}
+
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
-        <AccountCard account={account} />
+        <AccountCard account={currentAccount} />
 
         {isCompany && (
           <EconomicGroupCard
             openModal={openUpdateEconomicGroup}
-            account={account}
+            account={currentAccount}
             hasPermissionEconomicGroup={hasPermissionEconomicGroup}
           />
         )}
@@ -164,7 +194,7 @@ export function AccountDataPage(props: Props) {
                 <Phone className="h-5 w-5 text-primary" />
                 Contatos
                 <Badge variant="secondary" className="text-xs">
-                  {contacts?.length}
+                  {currentContacts?.length || 0}
                 </Badge>
               </CardTitle>
               {hasPermissionContacts && (
@@ -181,11 +211,11 @@ export function AccountDataPage(props: Props) {
           <CardContent className="flex-1 flex flex-col">
             <div className="lg:col-span-2 h-full">
               <div className="flex flex-wrap gap-x-1.5 gap-y-3">
-                {contacts?.map((contact, idx) => (
+                {currentContacts?.map((contact, idx) => (
                   <ContactCard
                     key={contact.id ?? idx}
                     contact={contact}
-                    accountId={account.id!}
+                    accountId={currentAccount.id!}
                     onClickEditContactButton={() => {
                       setSelectedContact(contact);
                       openUpdateModalContact();
@@ -208,7 +238,7 @@ export function AccountDataPage(props: Props) {
                 <MapPin className="h-5 w-5 text-primary" />
                 Endereços
                 <Badge variant="secondary" className="text-xs">
-                  {address.length}
+                  {currentAddresses.length}
                 </Badge>
               </CardTitle>
               {hasPermissionAddresses && (
@@ -290,7 +320,7 @@ export function AccountDataPage(props: Props) {
       />
 
       <CreateAddressModal
-        accountId={account.id!}
+        accountId={currentAccount.id!}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}
         createAddress={createAddress}

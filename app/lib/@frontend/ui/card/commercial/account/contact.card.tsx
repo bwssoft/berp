@@ -1,6 +1,7 @@
 "use client";
 
 import { IContact } from "@/app/lib/@backend/domain";
+import { LocalContact } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { Phone, Mail, Edit, Star, Trash, Copy } from "lucide-react";
 import {
   Avatar,
@@ -26,7 +27,7 @@ import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { WhatsappIcon } from "../../../../svg/whatsapp-icon";
 
 interface ContactCardProps {
-  contact: IContact;
+  contact: IContact | LocalContact;
   accountId: string;
   classname?: string;
   onClickEditContactButton: () => void;
@@ -35,8 +36,12 @@ interface ContactCardProps {
 }
 
 const getContactIcons = (
-  type: IContact["contactItems"][number]["type"],
-  preferred: IContact["contactItems"][number]["preferredContact"]
+  type:
+    | IContact["contactItems"][number]["type"]
+    | LocalContact["contactItems"][number]["type"],
+  preferred:
+    | IContact["contactItems"][number]["preferredContact"]
+    | LocalContact["contactItems"][number]["preferredContact"]
 ) => {
   const icons = [];
 
