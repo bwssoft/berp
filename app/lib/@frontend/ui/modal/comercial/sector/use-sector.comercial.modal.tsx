@@ -11,6 +11,7 @@ import {
     updateOneSector,
 } from "@/app/lib/@backend/action/commercial/sector.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 const SectorSchema = z.object({ name: z.string().trim().min(1) });
 type SectorForm = z.infer<typeof SectorSchema>;
@@ -19,6 +20,15 @@ export function useSectorModal() {
     const [open, setOpen] = useState(false);
     const [sectors, setSectors] = useState<ISector[]>([]);
     const [enabledSectors, setEnabledSectors] = useState<ISector[]>([]);
+
+    const [pagination, setPagination] = useState<PaginationResult<ISector>>({
+        docs: [],
+        total: 0,
+        pages: 1,
+        limit: 10,
+    });
+
+    const [currentPage, setCurrentPage] = useState(1);
 
     const [updatedSectors, setUpdatedSectors] = useState<
         Record<string, boolean>
@@ -35,19 +45,30 @@ export function useSectorModal() {
         defaultValues: { name: "" },
     });
 
-    const fetchSectors = async () => {
+    const fetchSectors = async (page = 1) => {
         setIsLoading(true);
-        const data = await findManySector({});
-
-        setSectors(data);
-        setEnabledSectors(data.filter((sector) => sector.active));
-
-        setIsLoading(false);
+        try {
+            const result = await findManySector({ filter: {}, page });
+            setPagination(result);
+            setSectors(result.docs);
+            setEnabledSectors(result.docs.filter((s) => s.active));
+        } catch (error: any) {
+            toast({
+                title: "Erro ao buscar setores",
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : "Erro desconhecido",
+                variant: "error",
+            });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => {
-        fetchSectors();
-    }, []);
+        fetchSectors(currentPage);
+    }, [currentPage]);
 
     const handleToggle = (sector: ISector) => {
         const newActive = !sector.active;
@@ -77,13 +98,11 @@ export function useSectorModal() {
                 title: "Sucesso!",
                 variant: "success",
             });
-
-            await fetchSectors();
-
+            await fetchSectors(currentPage);
             closeModal();
         } catch (error: any) {
             toast({
-                title: "Erro ao salvar.",
+                title: "Erro ao salvar",
                 description:
                     error instanceof Error
                         ? error.message
@@ -99,12 +118,12 @@ export function useSectorModal() {
     const addSector = async ({ name }: SectorForm) => {
         try {
             await createOneSector({ name, active: true });
-            await fetchSectors();
+            await fetchSectors(currentPage);
             reset();
             closeModal();
         } catch (error: any) {
             toast({
-                title: "Erro ao criar setor.",
+                title: "Erro ao criar setor",
                 description:
                     error instanceof Error
                         ? error.message
@@ -128,5 +147,8 @@ export function useSectorModal() {
         handleToggle,
         handleSave,
         updatedSectors,
+        pagination,
+        currentPage,
+        setCurrentPage,
     };
 }
