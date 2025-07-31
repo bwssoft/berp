@@ -240,23 +240,34 @@ export function AccountDataPage(props: Props) {
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
             <div className="lg:col-span-2 h-full">
-              <div className="flex flex-wrap gap-x-1.5 gap-y-3">
-                {currentContacts?.map((contact, idx) => (
-                  <ContactCard
-                    key={contact.id ?? idx}
-                    contact={contact}
-                    accountId={currentAccount.id!}
-                    onClickEditContactButton={() => {
-                      setSelectedContact(contact);
-                      openUpdateModalContact();
-                    }}
-                    onClickDeleteButton={() => {
-                      setSelectedContact(contact);
-                      openDeleteContactModal();
-                    }}
-                  />
-                ))}
-              </div>
+              {currentContacts && currentContacts.length > 0 ? (
+                <div className="flex flex-wrap gap-x-1.5 gap-y-3">
+                  {currentContacts.map((contact, idx) => (
+                    <ContactCard
+                      key={contact.id ?? idx}
+                      contact={contact}
+                      accountId={currentAccount.id!}
+                      onClickEditContactButton={() => {
+                        setSelectedContact(contact);
+                        openUpdateModalContact();
+                      }}
+                      onClickDeleteButton={() => {
+                        setSelectedContact(contact);
+                        openDeleteContactModal();
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Nenhum contato encontrado</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>Cadastre um contato para este cliente.</p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </CardContent>
         </Card>
