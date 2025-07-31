@@ -50,19 +50,7 @@ export function useAddressForm({
     reset,
   } = useForm<AddressFormSchema>({
     resolver: zodResolver(AddressFormSchema),
-    defaultValues: {
-      address_search: "",
-      zip_code: "",
-      street: "",
-      number: "",
-      complement: "",
-      district: "",
-      state: "",
-      city: "",
-      reference_point: "",
-      type: [],
-      default_address: false,
-    },
+    defaultValues,
   });
 
   const zip = useWatch({ control, name: "zip_code" });
