@@ -104,7 +104,7 @@ export function AccountCard({
                 {account.status && (
                   <div className="space-y-1">
                     <dt className="text-sm font-medium text-muted-foreground">
-                      Status Geral
+                      Situação CNPJ
                     </dt>
                     <dd className="flex items-center">
                       <StatusBadge status={account.status} type="general" />
