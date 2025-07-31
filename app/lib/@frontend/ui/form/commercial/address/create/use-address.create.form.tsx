@@ -31,7 +31,6 @@ const AddressFormSchema = z.object({
 export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
 
 export function useAddressForm({
-  closeModal,
   accountId,
   onSubmit,
   defaultValues,
@@ -47,10 +46,21 @@ export function useAddressForm({
     handleSubmit: hookFormSubmit,
     formState: { errors },
     setValue,
-    reset,
   } = useForm<AddressFormSchema>({
     resolver: zodResolver(AddressFormSchema),
-    defaultValues,
+    defaultValues: defaultValues || {
+      address_search: "",
+      zip_code: "",
+      street: "",
+      number: "",
+      complement: "",
+      district: "",
+      state: "",
+      city: "",
+      reference_point: "",
+      type: [],
+      default_address: false,
+    },
   });
 
   const zip = useWatch({ control, name: "zip_code" });
