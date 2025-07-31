@@ -39,6 +39,10 @@ import { useAddressDeleteDialog } from "../../../../dialog/commercial/account/ad
 import { DeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/delete.contact.dialog";
 import { useDeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/use-delete.contact.dialog";
 import { useEconomicGroupUpdateModal } from "../../../../modal/comercial/economic-group/update/use-economic-group.update.modal";
+import { useAccountDataUpdateModal } from "../../../../modal/comercial/account/update/use-account-data.update.modal";
+import { AccountDataUpdateModal } from "../../../../modal/comercial/account/update/account-data.update.modal";
+import { refreshOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import StepNavigation from "../../../../card/commercial/tab/account-tab";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { useAccountStepProgress } from "../../../../card/commercial/tab/use-account-step-progress";
@@ -161,6 +165,26 @@ export function AccountDataPage(props: Props) {
     deleteAddress,
   } = useAddressDeleteDialog();
 
+  /**
+   * MODAL ATUALIZAÇÃO - DADOS DA CONTA
+   */
+  const {
+    openModal: openUpdateModalAccountData,
+    open: openUpdateAccountData,
+    closeModal: closeUpdateAccountData,
+  } = useAccountDataUpdateModal();
+
+  /**
+   * ATUALIZAÇÃO - DADOS DA CONTA
+   */
+  const onRefreshAccountData = async () => {
+    await refreshOneAccount(account.document.value);
+    toast({
+      variant: "success",
+      description: "Conta atualizada com sucesso!",
+      title: "Sucesso",
+    });
+  };
   const [addressToClone, setAddressToClone] = useState<Partial<IAddress>>();
 
   return (
@@ -173,7 +197,13 @@ export function AccountDataPage(props: Props) {
       )}
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
-        <AccountCard account={currentAccount} />
+        <AccountCard
+          account={account}
+          onClickButtonEdit={() => {
+            openUpdateModalAccountData();
+          }}
+          onRefresh={onRefreshAccountData}
+        />
 
         {isCompany && (
           <EconomicGroupCard
@@ -340,6 +370,12 @@ export function AccountDataPage(props: Props) {
         open={updateEconomicGroup}
         economicGroupHolding={account.economic_group_holding}
         economicGroupControlled={account.economic_group_controlled}
+      />
+
+      <AccountDataUpdateModal
+        openUpdateModal={openUpdateAccountData}
+        closeUpdateModal={closeUpdateAccountData}
+        accountData={account}
       />
     </div>
   );
