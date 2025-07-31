@@ -220,6 +220,7 @@ export function CNPJAccountForm() {
           name="cnpj.economic_group_holding"
           render={({ field }) => (
             <Combobox
+              disableLocalFilter={true}
               data={dataHolding}
               label="Grupo Econômico (Holding)"
               behavior="search"
@@ -253,6 +254,7 @@ export function CNPJAccountForm() {
           name="cnpj.economic_group_controlled"
           render={({ field }) => (
             <Combobox
+              disableLocalFilter={true}
               type="multiple"
               data={dataControlled}
               label="Grupo Econômico (Controladas)"
