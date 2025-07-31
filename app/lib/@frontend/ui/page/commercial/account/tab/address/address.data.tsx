@@ -137,6 +137,10 @@ export function AddressDataPage(props: Props) {
                           setSelectedAddress(addr);
                           setOpenModalDelete(true);
                         }}
+                        onCopy={() => {
+                          setCopiedAddress(addr);
+                          openCreateModalAddress();
+                        }}
                       />
                     ))}
                   </div>
@@ -177,6 +181,7 @@ export function AddressDataPage(props: Props) {
           state: copiedAddress?.state ?? "",
           reference_point: copiedAddress?.reference_point ?? "",
           type: copiedAddress?.type ?? [],
+          default_address: copiedAddress?.default_address ?? false,
         }}
       />
 
