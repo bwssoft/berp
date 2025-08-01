@@ -6,6 +6,8 @@ export * from "./button";
 export * from "../chart";
 export * from "./checkbox";
 export * from "./checkbox-editable";
+export * from "./commercial/historical/selected-contact-card";
+export * from "./commercial/historical/selected-contact-badge";
 export * from "./data-table";
 export * from "./input-file";
 export * from "../form";
