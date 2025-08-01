@@ -44,12 +44,12 @@ export function SearchContactHistoricalAccountForm({
   const {
     toggleSelection,
     isSelected,
-    handleAddOtherContact,
     otherContactInfo,
     setOtherContactInfo,
     contactData,
     control,
     errors,
+    trigger,
   } = useSearchContactHistoricalAccount({
     contacts,
     selectContact,
@@ -150,13 +150,15 @@ export function SearchContactHistoricalAccountForm({
                       label="Nome"
                       placeholder="Digite o nome do contato"
                       value={otherContactInfo.name}
-                      error={errors.errors.name?.message}
-                      onChange={(e) => {
+                      error={errors.name?.message}
+                      onChange={async (e) => {
                         setOtherContactInfo((prev) => ({
                           ...prev,
                           name: e.target.value,
                         }));
-                        field.onChange(e);
+                        field.onChange(e.target.value);
+                        // Trigger validation for this field
+                        await trigger("name");
                       }}
                     />
                   )}
@@ -173,18 +175,21 @@ export function SearchContactHistoricalAccountForm({
                           "Telefone Residencial",
                           "Telefone Comercial",
                         ]}
-                        error={errors.errors.type?.message}
+                        error={errors.type?.message}
                         value={
                           otherContactInfo.type ? [otherContactInfo.type] : []
                         }
-                        onChange={(value) => {
+                        onChange={async (value) => {
+                          const selectedType = Array.isArray(value)
+                            ? (value[0] ?? "")
+                            : value;
                           setOtherContactInfo((prev) => ({
                             ...prev,
-                            type: Array.isArray(value)
-                              ? (value[0] ?? "")
-                              : value,
+                            type: selectedType,
                           }));
-                          field.onChange(value);
+                          field.onChange([selectedType]);
+                          // Trigger validation for this field
+                          await trigger("type");
                         }}
                         label="Tipo"
                         type="single"
@@ -202,21 +207,19 @@ export function SearchContactHistoricalAccountForm({
                         label="Contato"
                         placeholder="Digite o contato"
                         value={otherContactInfo.contact}
-                        error={errors.errors.contact?.message}
-                        onChange={(e) => {
+                        error={errors.contact?.message}
+                        onChange={async (e) => {
                           setOtherContactInfo((prev) => ({
                             ...prev,
                             contact: e.target.value,
                           }));
-                          field.onChange(e);
+                          field.onChange(e.target.value);
+                          await trigger("contact");
                         }}
                       />
                     )}
                   />
                 </div>
-                <Button type="button" onClick={handleAddOtherContact}>
-                  Adicionar Contato
-                </Button>
               </DisclosurePanel>
             </>
           )}
