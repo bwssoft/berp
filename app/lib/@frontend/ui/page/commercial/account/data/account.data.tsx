@@ -43,13 +43,10 @@ import { useAccountDataUpdateModal } from "../../../../modal/comercial/account/u
 import { AccountDataUpdateModal } from "../../../../modal/comercial/account/update/account-data.update.modal";
 import { refreshOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import StepNavigation from "../../../../card/commercial/tab/account-tab";
-import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
-import { useAccountStepProgress } from "../../../../card/commercial/tab/use-account-step-progress";
 
 interface Props {
   account: IAccount;
-  address: IAddress[];
+  addresses: IAddress[];
   contacts: IContact[];
 
   permissions: {
@@ -62,7 +59,7 @@ interface Props {
 export function AccountDataPage(props: Props) {
   const {
     account,
-    address,
+    addresses,
     contacts,
     permissions: {
       hasPermissionContacts,
@@ -71,28 +68,9 @@ export function AccountDataPage(props: Props) {
     },
   } = props;
 
-  // Use create account flow context if we're in flow mode
-  const {
-    account: localAccount,
-    addresses: localAddresses,
-    contacts: localContacts,
-  } = useCreateAccountFlow();
-
-  // Props are already the local data when available, otherwise use props data
-  const currentAccount = localAccount || account;
-  const currentAddresses = localAddresses || address;
-  const currentContacts = localContacts || contacts;
-
-  // Generate steps using the hook
-  const steps = useAccountStepProgress({
-    accountId: currentAccount?.id || "",
-    addresses: currentAddresses,
-    contacts: currentContacts,
-  });
-
   const [selectedContact, setSelectedContact] = useState<IContact | any>();
   const [selectedAddress, setSelectedAddress] = useState<IAddress | any>();
-  const isCompany = currentAccount.document.type === "cnpj";
+  const isCompany = account.document.type === "cnpj";
 
   /**
    * MODAL ATUALIZAÇÃO - GRUPO ECONOMICO
@@ -185,17 +163,10 @@ export function AccountDataPage(props: Props) {
       title: "Sucesso",
     });
   };
-  const [addressToClone, setAddressToClone] = useState<Partial<IAddress>>();
+  const [copiedAddress, setCopiedAddress] = useState<Partial<IAddress>>();
 
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
-      {/* Step Navigation - only show in flow mode */}
-      {localAccount && (
-        <div className="mb-6">
-          <StepNavigation steps={steps} />
-        </div>
-      )}
-
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
         <AccountCard
           account={account}
@@ -208,7 +179,7 @@ export function AccountDataPage(props: Props) {
         {isCompany && (
           <EconomicGroupCard
             openModal={openUpdateEconomicGroup}
-            account={currentAccount}
+            account={account}
             hasPermissionEconomicGroup={hasPermissionEconomicGroup}
           />
         )}
@@ -224,7 +195,7 @@ export function AccountDataPage(props: Props) {
                 <Phone className="h-5 w-5 text-primary" />
                 Contatos
                 <Badge variant="secondary" className="text-xs">
-                  {currentContacts?.length || 0}
+                  {contacts?.length || 0}
                 </Badge>
               </CardTitle>
               {hasPermissionContacts && (
@@ -240,13 +211,13 @@ export function AccountDataPage(props: Props) {
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
             <div className="lg:col-span-2 h-full">
-              {currentContacts && currentContacts.length > 0 ? (
+              {contacts && contacts.length > 0 ? (
                 <div className="flex flex-wrap gap-x-1.5 gap-y-3">
-                  {currentContacts.map((contact, idx) => (
+                  {contacts.map((contact, idx) => (
                     <ContactCard
                       key={contact.id ?? idx}
                       contact={contact}
-                      accountId={currentAccount.id!}
+                      accountId={account.id!}
                       onClickEditContactButton={() => {
                         setSelectedContact(contact);
                         openUpdateModalContact();
@@ -279,7 +250,7 @@ export function AccountDataPage(props: Props) {
                 <MapPin className="h-5 w-5 text-primary" />
                 Endereços
                 <Badge variant="secondary" className="text-xs">
-                  {currentAddresses.length}
+                  {addresses.length}
                 </Badge>
               </CardTitle>
               {hasPermissionAddresses && (
@@ -296,15 +267,15 @@ export function AccountDataPage(props: Props) {
           <CardContent className="flex-1 flex flex-col">
             <div className="lg:col-span-2 h-full"></div>
             <div className="lg:col-span-2 h-full space-y-3">
-              {address.length > 0 ? (
+              {addresses.length > 0 ? (
                 <div className="flex flex-wrap gap-3">
-                  {address.map((addr) => (
+                  {addresses.map((addr) => (
                     <AddressCard
                       key={addr.id}
                       title="Endereço:"
                       address={addr}
                       onCopy={() => {
-                        setAddressToClone(addr);
+                        setCopiedAddress(addr);
                         openCreateModalAddress();
                       }}
                       onEdit={() => {
@@ -361,10 +332,22 @@ export function AccountDataPage(props: Props) {
       />
 
       <CreateAddressModal
-        accountId={currentAccount.id!}
+        accountId={account.id!}
         closeModal={closeCreateModalAddress}
         open={openModalAddress}
         createAddress={createAddress}
+        defaultValues={{
+          zip_code: copiedAddress?.zip_code ?? "",
+          street: copiedAddress?.street ?? "",
+          number: copiedAddress?.number ?? "",
+          complement: copiedAddress?.complement ?? "",
+          district: copiedAddress?.district ?? "",
+          city: copiedAddress?.city ?? "",
+          state: copiedAddress?.state ?? "",
+          reference_point: copiedAddress?.reference_point ?? "",
+          type: copiedAddress?.type ?? [],
+          default_address: copiedAddress?.default_address ?? false,
+        }}
       />
 
       <AddressDeleteDialog

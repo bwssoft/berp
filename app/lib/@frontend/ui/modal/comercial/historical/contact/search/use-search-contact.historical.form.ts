@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { IAccount, IContact } from "@/app/lib/@backend/domain";
-import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import {
+  findManyAccount,
+  findOneAccount,
+} from "@/app/lib/@backend/action/commercial/account.action";
 
 const PAGE_SIZE = 10;
 const currentPage = 1;
@@ -13,19 +16,14 @@ export function useSearchContactHistoricalModal(accountId?: string) {
   const [contactsByCompany, setContactsByCompany] = useState<
     { name: string; contacts: IContact[]; documentValue: string }[]
   >([]);
-  const [accountData, setAccountData] = useState<IAccount>();
+  const [accountData, setAccountData] = useState<IAccount | null>();
 
   const { isLoading: accountLoading } = useQuery({
     queryKey: ["findManyAccount", accountId, currentPage],
     queryFn: async () => {
       if (!accountId) return { docs: [], total: 0, pages: 1 };
 
-      const data = await findManyAccount(
-        { id: accountId },
-        currentPage,
-        PAGE_SIZE
-      );
-      const account = data.docs[0];
+      const account = await findOneAccount({ id: accountId });
       setAccountData(account);
 
       const empresas: {
@@ -56,9 +54,13 @@ export function useSearchContactHistoricalModal(accountId?: string) {
       if (account) {
         addEmpresa(account);
 
-        if (account.economic_group_holding) {
+        if (account.economic_group_holding?.name) {
           const grupo = await findManyAccount(
-            { economic_group_holding: account.economic_group_holding },
+            {
+              economic_group_holding: {
+                name: account.economic_group_holding.name,
+              },
+            },
             currentPage,
             PAGE_SIZE
           );
@@ -69,7 +71,7 @@ export function useSearchContactHistoricalModal(accountId?: string) {
         setContactsByCompany(empresas);
       }
 
-      return data;
+      return empresas;
     },
     enabled: !!accountId,
   });

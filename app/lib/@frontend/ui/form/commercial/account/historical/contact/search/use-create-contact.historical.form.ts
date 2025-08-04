@@ -1,6 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
-import { ContactSelection, IAccount, IContact } from "@/app/lib/@backend/domain";
+import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  ContactSelection,
+  IAccount,
+  IContact,
+} from "@/app/lib/@backend/domain";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,13 +18,18 @@ interface Props {
   accountData?: IAccount;
   selectContact: ContactSelection | undefined;
   setSelectContact: (
-    value: ContactSelection | undefined | ((prev: ContactSelection | undefined) => ContactSelection | undefined)
+    value:
+      | ContactSelection
+      | undefined
+      | ((prev: ContactSelection | undefined) => ContactSelection | undefined)
   ) => void;
 }
 
 const schema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
-  type: z.array(z.string(), {message: "Tipo é obrigatório"}).min(1, "Tipo é obrigatório"),
+  type: z
+    .array(z.string(), { message: "Tipo é obrigatório" })
+    .min(1, "Tipo é obrigatório"),
   contact: z.string().min(1, "Contato é obrigatório"),
 });
 
@@ -34,16 +43,17 @@ export function useSearchContactHistoricalAccount({
     name: "",
     type: "",
     contact: "",
-    channel: ""
+    channel: "",
   });
+  const hasAutoSelectedRef = useRef(false);
 
-  const { 
-    handleSubmit,
-    formState: errors,
-    control
+  const {
+    formState: { errors },
+    control,
+    trigger,
   } = useForm<z.infer<typeof schema>>({
-    resolver:  zodResolver(schema),
-  })
+    resolver: zodResolver(schema),
+  });
 
   useEffect(() => {
     if (contacts && contacts.length > 0) {
@@ -54,79 +64,66 @@ export function useSearchContactHistoricalAccount({
     }
   }, [contacts]);
 
+  const isSelected = (id: string, channel: string) =>
+    selectContact?.id === id && selectContact?.channel === channel;
 
- const isSelected = (id: string, channel: string) =>
-  selectContact?.id === id && selectContact?.channel === channel;
+  const toggleSelection = useCallback(
+    (
+      id: string,
+      name: string,
+      type: string,
+      contact: string,
+      channel: string
+    ) => {
+      setSelectContact((prev) => {
+        if (prev?.id === id && prev?.channel === channel) {
+          return undefined;
+        } else {
+          return { id, name, type, contact, channel };
+        }
+      });
+    },
+    [setSelectContact]
+  );
 
+  useEffect(() => {
+    const { name, type, contact } = otherContactInfo;
 
-  const toggleSelection = (
-    id: string,
-    name: string,
-    type: string,
-    contact: string,
-    channel: string,
-  ) => {
-    setSelectContact((prev) => {
-      if (prev?.id === id && prev?.channel === channel) {
-        return undefined;
-      } else {
-        return { id, name, type, contact, channel };
+    const validateAndSelect = async () => {
+      if (name && type && contact && !hasAutoSelectedRef.current) {
+        // Trigger validation for all fields
+        const isValid = await trigger();
+
+        if (isValid) {
+          const id = "outros-contact";
+          toggleSelection(id, name, type, contact, type);
+          hasAutoSelectedRef.current = true;
+        }
+      } else if (!name || !type || !contact) {
+        hasAutoSelectedRef.current = false;
+        if (selectContact?.id === "outros-contact") {
+          setSelectContact(undefined);
+        }
       }
-    });
-  };
-
-  const handleAddOtherContact = handleSubmit(() => {
-    const { name, type, contact, channel} = otherContactInfo;
-    if (!name || !type || !contact ) return;
-
-    const id = crypto.randomUUID();
-    const newContactItem = {
-      id,
-      type,
-      contact,
-      channel,
-      contactItems: [
-        {
-          id,
-          type,
-          contact,
-        },
-      ],
     };
 
-    toggleSelection(id, name, type, contact, channel);
-
-    setContactData((prev: any) => {
-      const existingGroup = prev.find((g: any) => g.name === "Outros");
-      if (existingGroup) {
-        return prev.map((group: any) =>
-          group.name === "Outros"
-            ? { ...group, contacts: [...group.contacts, newContactItem] }
-            : group
-        );
-      } else {
-        return [
-          ...prev,
-          {
-            name: "Outros",
-            documentValue: "000.000.000-00",
-            contacts: [newContactItem],
-          },
-        ];
-      }
-    });
-
-    setOtherContactInfo({ name: "", type: "", contact: "", channel: ""});
-  });
+    validateAndSelect();
+  }, [
+    otherContactInfo,
+    toggleSelection,
+    trigger,
+    selectContact,
+    setSelectContact,
+  ]);
 
   return {
     contactData,
     toggleSelection,
     isSelected,
-    handleAddOtherContact,
     otherContactInfo,
     setOtherContactInfo,
     errors,
-    control
+    control,
+    trigger,
   };
 }
