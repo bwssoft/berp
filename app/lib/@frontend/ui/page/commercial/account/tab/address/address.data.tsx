@@ -79,6 +79,18 @@ export function AddressDataPage(props: Props) {
     updateAddressLocally,
   } = useAddressUpdateModal();
 
+  // Reset copied address when closing create modal
+  const handleCloseCreateModal = () => {
+    setCopiedAddress(undefined);
+    closeCreateModalAddress();
+  };
+
+  // Reset copied address after successful form submission
+  const handleCreateAddress = async (data: any) => {
+    await createAddress(data);
+    setCopiedAddress(undefined);
+  };
+
   /**
    * MODAL Exclusão - ADDRESS
    */
@@ -168,9 +180,9 @@ export function AddressDataPage(props: Props) {
 
       <CreateAddressModal
         accountId={currentAccount?.id || ""}
-        closeModal={closeCreateModalAddress}
+        closeModal={handleCloseCreateModal}
         open={openModalAddress}
-        createAddress={createAddress}
+        createAddress={handleCreateAddress}
         defaultValues={{
           zip_code: copiedAddress?.zip_code ?? "",
           street: copiedAddress?.street ?? "",
