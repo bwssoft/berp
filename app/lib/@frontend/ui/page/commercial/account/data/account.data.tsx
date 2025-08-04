@@ -358,7 +358,7 @@ export function AccountDataPage(props: Props) {
           state: copiedAddress?.state ?? "",
           reference_point: copiedAddress?.reference_point ?? "",
           type: copiedAddress?.type ?? [],
-          default_address: copiedAddress?.default_address ?? false,
+          default_address: false,
         }}
       />
 
