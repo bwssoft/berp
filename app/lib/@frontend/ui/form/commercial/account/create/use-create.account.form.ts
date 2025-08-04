@@ -54,8 +54,14 @@ const schema = z
       .object({
         social_name: z.string().min(1, "Razão social é obrigatória"),
         fantasy_name: z.string().optional(),
-        state_registration: z.string().optional(),
-        municipal_registration: z.string().optional(),
+        state_registration: z
+          .string()
+          .max(14, "Inscrição Estadual deve ter no máximo 14 dígitos")
+          .optional(),
+        municipal_registration: z
+          .string()
+          .max(15, "Inscrição Municipal deve ter no máximo 15 dígitos")
+          .optional(),
         status: z.string().optional(),
         situationIE: z.object({
           id: z.string(),
