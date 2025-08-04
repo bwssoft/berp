@@ -541,6 +541,32 @@ export function useCreateAccountForm() {
     }
   };
 
+  const registerStateRegistration = () => {
+    const registration = methods.register("cnpj.state_registration");
+    return {
+      ...registration,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = e.target.value.replace(/\D/g, "");
+        methods.setValue("cnpj.state_registration", formatted, {
+          shouldValidate: true,
+        });
+      },
+    };
+  };
+
+  const registerMunicipalRegistration = () => {
+    const registration = methods.register("cnpj.municipal_registration");
+    return {
+      ...registration,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = e.target.value.replace(/\D/g, "");
+        methods.setValue("cnpj.municipal_registration", formatted, {
+          shouldValidate: true,
+        });
+      },
+    };
+  };
+
   return {
     methods,
     handleCpfCnpj,
@@ -563,5 +589,7 @@ export function useCreateAccountForm() {
     debouncedValidationControlled,
     disabledFields,
     form: methods,
+    registerStateRegistration,
+    registerMunicipalRegistration,
   };
 }
