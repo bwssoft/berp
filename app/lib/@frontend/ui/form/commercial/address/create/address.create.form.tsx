@@ -22,6 +22,7 @@ export function AddressCreateForm({
     handleSubmit,
     errors,
     formatCep,
+    formatNumber,
     loadingCep,
     isSubmitting,
   } = useAddressForm({
@@ -72,12 +73,19 @@ export function AddressCreateForm({
         disabled={loadingCep}
       />
       <div className="grid grid-cols-2 gap-4  w-full">
-        <Input
-          label="Número"
-          placeholder="Digite o número"
-          {...register("number")}
-          error={errors.number?.message}
-          disabled={loadingCep}
+        <Controller
+          name="number"
+          control={control}
+          render={({ field }) => (
+            <Input
+              label="Número"
+              placeholder="Digite o número"
+              value={formatNumber(field.value || "")}
+              onChange={(e) => field.onChange(formatNumber(e.target.value))}
+              error={errors.number?.message}
+              disabled={loadingCep}
+            />
+          )}
         />
         <Input
           label="Complemento"
