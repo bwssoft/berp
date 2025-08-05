@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
 import { useAuth } from "@/app/lib/@frontend/context";
 import { useSearchParams } from "next/navigation";
+import { getChangedFields } from "@/app/lib/util/get-changed-fields";
 
 export function useAddressUpdateModal() {
   const [open, setOpen] = useState(false);
@@ -28,18 +29,25 @@ export function useAddressUpdateModal() {
     setOpen(false);
   }
 
-  async function updateAddress(addressId: string, data: IAddress) {
+  async function updateAddress(
+    addressId: string,
+    newData: IAddress,
+    originalAddress?: IAddress
+  ) {
     try {
-      await updateOneAddress({ id: addressId }, data);
+      const editedFields = getChangedFields(originalAddress, newData);
 
-      const targetAccountId = accountId || data.accountId;
+      await updateOneAddress({ id: addressId }, newData);
+
+      const targetAccountId = accountId || newData.accountId;
 
       if (targetAccountId) {
         try {
-          const addressType = data.type?.join?.(", ") || "comercial";
+          const addressType = newData.type?.join?.(", ") || "comercial";
           await createOneHistorical({
             accountId: targetAccountId,
             title: `Endereço ${addressType} atualizado.`,
+            editedFields: editedFields,
             type: "manual",
             author: {
               name: user?.name ?? "",
