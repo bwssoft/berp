@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/lib/@frontend/ui/component";
+
 import {
   FormControl,
   FormField,
@@ -133,7 +134,6 @@ export function UpdateAccountDataForm({ accountData, closeModal }: Props) {
                   <PlusIcon className="size-5" />
                 </Button>
               )}
-
               <SectorModal
                 open={sectorModal.open}
                 closeModal={sectorModal.closeModal}
