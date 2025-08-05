@@ -12,6 +12,7 @@ import React, {
 } from "react";
 import { IProfile, IUser } from "../../@backend/domain";
 import { logout } from "../../@backend/action/auth/login.action";
+import { useSessionExpiry } from "../hook/use-session-expiry";
 
 type AuthUser = Partial<IUser> & {
   current_profile: IProfile;
@@ -46,6 +47,9 @@ export const AuthProvider = ({
   children: React.ReactNode;
 }) => {
   const { data, update } = useSession();
+
+  // Initialize session expiry monitoring
+  useSessionExpiry();
 
   const [avatarUrl, setAvatarUrl] = useState(
     data?.user?.avatarUrl || session?.user?.avatarUrl || "/avatar.webp"
