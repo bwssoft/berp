@@ -16,7 +16,12 @@ const AddressFormSchema = z.object({
     message: "CEP inválido.",
   }),
   street: z.string().min(1, "Logradouro obrigatório"),
-  number: z.string().min(1, "Número obrigatório"),
+  number: z
+    .string()
+    .min(1, "Número obrigatório")
+    .refine((val) => /^\d+$/.test(val), {
+      message: "Número deve conter apenas dígitos",
+    }),
   complement: z.string().optional(),
   district: z.string().min(1, "Bairro obrigatório"),
   state: z.string().min(1, "Estado obrigatório"),
@@ -118,9 +123,21 @@ export function useAddressUpdateForm({ address, onSubmit }: Props) {
     };
   };
 
+  const registerNumber = () => {
+    const registration = register("number");
+    return {
+      ...registration,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = e.target.value.replace(/\D/g, "");
+        setValue("number", formatted, { shouldValidate: true });
+      },
+    };
+  };
+
   return {
     register,
     registerCep,
+    registerNumber,
     control,
     handleSubmit,
     errors,
