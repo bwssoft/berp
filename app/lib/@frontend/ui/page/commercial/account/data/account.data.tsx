@@ -136,6 +136,18 @@ export function AccountDataPage(props: Props) {
     updateAddress,
   } = useAddressUpdateModal();
 
+  // Reset copied address when closing create modal
+  const handleCloseCreateModal = () => {
+    setCopiedAddress(undefined);
+    closeCreateModalAddress();
+  };
+
+  // Reset copied address after successful form submission
+  const handleCreateAddress = async (data: any, accountId: string) => {
+    await createAddress(data, accountId);
+    setCopiedAddress(undefined);
+  };
+
   const {
     open: openModalDelete,
     setOpen: setOpenModalDelete,
@@ -333,9 +345,9 @@ export function AccountDataPage(props: Props) {
 
       <CreateAddressModal
         accountId={account.id!}
-        closeModal={closeCreateModalAddress}
+        closeModal={handleCloseCreateModal}
         open={openModalAddress}
-        createAddress={createAddress}
+        createAddress={handleCreateAddress}
         defaultValues={{
           zip_code: copiedAddress?.zip_code ?? "",
           street: copiedAddress?.street ?? "",
@@ -346,7 +358,7 @@ export function AccountDataPage(props: Props) {
           state: copiedAddress?.state ?? "",
           reference_point: copiedAddress?.reference_point ?? "",
           type: copiedAddress?.type ?? [],
-          default_address: copiedAddress?.default_address ?? false,
+          default_address: false,
         }}
       />
 

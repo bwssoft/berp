@@ -37,6 +37,7 @@ export function useAddressModal() {
         ...data,
         accountId,
         zip_code: data.zip_code.replace(/\D/g, ""),
+        default_address: false,
       });
 
       try {
