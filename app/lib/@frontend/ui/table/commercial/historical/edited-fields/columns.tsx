@@ -16,9 +16,27 @@ export const columns: ColumnDef<{
     accessorKey: "key",
     cell: ({ row }) => {
       const type = row.original.key;
+      const mappedValue = fieldLabelsMapping[type] || type;
+
       return (
-        <div className="w-44 truncate overflow-hidden whitespace-nowrap">
-          {fieldLabelsMapping[type]}
+        <div className="w-44">
+          {Array.isArray(mappedValue) ? (
+            <div className="space-y-1">
+              <div className="text-xs text-gray-500 font-medium">
+                Array ({mappedValue.length} item
+                {mappedValue.length !== 1 ? "s" : ""})
+              </div>
+              <div className="text-xs bg-gray-50 p-2 rounded border max-h-24 overflow-y-auto">
+                <pre className="whitespace-pre-wrap text-xs">
+                  {JSON.stringify(mappedValue, null, 2)}
+                </pre>
+              </div>
+            </div>
+          ) : (
+            <div className="truncate overflow-hidden whitespace-nowrap">
+              {mappedValue}
+            </div>
+          )}
         </div>
       );
     },
@@ -28,6 +46,52 @@ export const columns: ColumnDef<{
     accessorKey: "oldValue",
     cell: ({ row }) => {
       const value = row.original.oldValue ?? "-";
+
+      // Check if the value looks like a JSON array or object
+      const isJsonArray =
+        typeof value === "string" &&
+        value.startsWith("[") &&
+        value.endsWith("]");
+      const isJsonObject =
+        typeof value === "string" &&
+        value.startsWith("{") &&
+        value.endsWith("}");
+
+      if (isJsonArray || isJsonObject) {
+        try {
+          const parsed = JSON.parse(value);
+          const isArray = Array.isArray(parsed);
+
+          return (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="w-36">
+                    <div className="text-xs text-gray-500 font-medium mb-1">
+                      {isArray
+                        ? `Array (${parsed.length} item${parsed.length !== 1 ? "s" : ""})`
+                        : "Object"}
+                    </div>
+                    <div className="text-xs bg-gray-50 p-2 rounded border max-h-20 overflow-y-auto">
+                      <pre className="whitespace-pre-wrap text-xs">
+                        {JSON.stringify(parsed, null, 2)}
+                      </pre>
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-md">
+                  <pre className="whitespace-pre-wrap text-xs max-h-64 overflow-y-auto">
+                    {JSON.stringify(parsed, null, 2)}
+                  </pre>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          );
+        } catch (e) {
+          // If parsing fails, fall back to normal display
+        }
+      }
+
       return (
         <TooltipProvider>
           <Tooltip>
@@ -49,6 +113,52 @@ export const columns: ColumnDef<{
     accessorKey: "newValue",
     cell: ({ row }) => {
       const value = row.original.newValue ?? "-";
+
+      // Check if the value looks like a JSON array or object
+      const isJsonArray =
+        typeof value === "string" &&
+        value.startsWith("[") &&
+        value.endsWith("]");
+      const isJsonObject =
+        typeof value === "string" &&
+        value.startsWith("{") &&
+        value.endsWith("}");
+
+      if (isJsonArray || isJsonObject) {
+        try {
+          const parsed = JSON.parse(value);
+          const isArray = Array.isArray(parsed);
+
+          return (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="w-36">
+                    <div className="text-xs text-gray-500 font-medium mb-1">
+                      {isArray
+                        ? `Array (${parsed.length} item${parsed.length !== 1 ? "s" : ""})`
+                        : "Object"}
+                    </div>
+                    <div className="text-xs bg-gray-50 p-2 rounded border max-h-20 overflow-y-auto">
+                      <pre className="whitespace-pre-wrap text-xs">
+                        {JSON.stringify(parsed, null, 2)}
+                      </pre>
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-md">
+                  <pre className="whitespace-pre-wrap text-xs max-h-64 overflow-y-auto">
+                    {JSON.stringify(parsed, null, 2)}
+                  </pre>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          );
+        } catch (e) {
+          // If parsing fails, fall back to normal display
+        }
+      }
+
       return (
         <TooltipProvider>
           <Tooltip>
