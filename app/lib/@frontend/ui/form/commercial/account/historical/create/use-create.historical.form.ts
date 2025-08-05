@@ -59,6 +59,10 @@ export function useCreateHistoricalForm({
                 file: file,
                 contacts: selectContact,
             });
+
+            queryClient.invalidateQueries({
+                queryKey: [accountId, "historical"],
+            });
         } finally {
             setIsLoading(false);
             closeModalAnnex?.();
