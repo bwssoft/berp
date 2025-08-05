@@ -20,7 +20,7 @@ export function SectorTable({
 }: SectorTableProps) {
     const PAGE_SIZE = 10;
 
-    const { docs, pages = 1, total = 0, limit = PAGE_SIZE } = data;
+    const { docs, pages = 1, total = 0, limit = PAGE_SIZE } = data ?? {};
 
     const searchParams = useSearchParams();
     const pageParam = searchParams.get("page");
