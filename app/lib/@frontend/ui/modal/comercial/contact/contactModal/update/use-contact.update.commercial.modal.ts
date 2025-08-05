@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
 import { useAuth } from "@/app/lib/@frontend/context";
 import { useSearchParams } from "next/navigation";
+import { getChangedFields } from "@/app/lib/util/get-changed-fields";
 
 export function useUpdateContactModal() {
   const [open, setOpen] = useState(false);
@@ -39,27 +40,33 @@ export function useUpdateContactModal() {
     try {
       const targetAccountId = accountIdFromUrl || accountId;
 
+      // Prepare the new contact data for comparison
+      const newContactData = {
+        ...data,
+        cpf: data.cpf ? data.cpf.replace(/[^a-zA-Z0-9]/g, "") : undefined,
+        rg: data.rg ? data.rg.replace(/[^a-zA-Z0-9]/g, "") : undefined,
+        accountId: targetAccountId ?? undefined,
+        contactItems: data.contactItems.map((item: any) => {
+          const contactType = item.type[0];
+
+          return {
+            ...item,
+            id: item.id ?? crypto.randomUUID(),
+            contact:
+              contactType === "Email"
+                ? item.contact
+                : item.contact.replace(/[^0-9]/g, ""),
+            type: contactType,
+          };
+        }),
+      };
+
+      // Get the changed fields by comparing old contact with new data
+      const editedFields = getChangedFields(contact, newContactData);
+
       const { success, error } = await updateOneContact(
         { id: contact.id },
-        {
-          ...data,
-          cpf: data.cpf ? data.cpf.replace(/[^a-zA-Z0-9]/g, "") : undefined,
-          rg: data.rg ? data.rg.replace(/[^a-zA-Z0-9]/g, "") : undefined,
-          accountId: targetAccountId ?? undefined,
-          contactItems: data.contactItems.map((item: any) => {
-            const contactType = item.type[0];
-
-            return {
-              ...item,
-              id: item.id ?? crypto.randomUUID(),
-              contact:
-                contactType === "Email"
-                  ? item.contact
-                  : item.contact.replace(/[^0-9]/g, ""),
-              type: contactType,
-            };
-          }),
-        }
+        newContactData
       );
       if (success) {
         if (targetAccountId) {
@@ -105,10 +112,11 @@ export function useUpdateContactModal() {
             await createOneHistorical({
               accountId: targetAccountId,
               title: `Contato atualizado: ${success.name || contact.name}`,
-              description: `Contato foi atualizado com sucesso.`,
+              editedFields: editedFields,
               type: "manual",
               author: {
-                name: user?.email || "Sistema",
+                name: user?.name ?? "",
+                avatarUrl: "",
               },
             });
             console.log("Contact update historical entry created successfully");

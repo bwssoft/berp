@@ -5,9 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
-import {
-  updateOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
+import { updateOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
@@ -57,8 +55,14 @@ const schema = z
       .object({
         social_name: z.string().min(1, "Razão social é obrigatória"),
         fantasy_name: z.string().optional(),
-        state_registration: z.string().optional(),
-        municipal_registration: z.string().optional(),
+        state_registration: z
+          .string()
+          .max(14, "Inscrição Estadual deve ter no máximo 14 dígitos")
+          .optional(),
+        municipal_registration: z
+          .string()
+          .max(15, "Inscrição Municipal deve ter no máximo 15 dígitos")
+          .optional(),
         status: z
           .array(
             z.object({
@@ -67,9 +71,11 @@ const schema = z
             })
           )
           .optional(),
-        sector: z.string({
-          required_error: "Setor obrigatório",
-        }).min(1, "Setor obrigatório"),
+        sector: z
+          .string({
+            required_error: "Setor obrigatório",
+          })
+          .min(1, "Setor obrigatório"),
         economic_group_holding: z
           .object({
             taxId: z.string().optional(),
@@ -140,11 +146,11 @@ const schema = z
 export type CreateAccountFormSchema = z.infer<typeof schema>;
 
 interface Props {
-  accountData?: IAccount,
-  closeModal: () => void
+  accountData?: IAccount;
+  closeModal: () => void;
 }
 
-export function useUpdateAccountForm({accountData, closeModal}:Props) {
+export function useUpdateAccountForm({ accountData, closeModal }: Props) {
   // Estado para definir se o documento é CPF ou CNPJ:
   const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
 
@@ -176,7 +182,7 @@ export function useUpdateAccountForm({accountData, closeModal}:Props) {
   });
 
   const router = useRouter();
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   // Função para alternar o texto de qualquer botão
   const toggleButtonText = (
@@ -189,55 +195,54 @@ export function useUpdateAccountForm({accountData, closeModal}:Props) {
     }));
   };
 
-const sectorData = accountData?.setor && accountData.setor.length > 0
-  ? accountData.setor[0]
-  : "";
+  const sectorData =
+    accountData?.setor && accountData.setor.length > 0
+      ? accountData.setor[0]
+      : "";
 
-const methods = useForm<CreateAccountFormSchema>({
-  resolver: zodResolver(schema),
-  defaultValues: {
-    ...accountData,
-     ...(accountData?.document.type === "cnpj" ? 
-      {
-        cnpj: {
-          sector: sectorData,
-          social_name: accountData?.social_name,
-          fantasy_name: accountData?.fantasy_name,
-          municipal_registration: accountData?.municipal_registration,
-          state_registration: accountData?.state_registration,
-          economic_group_holding: {
-            name: accountData?.economic_group_holding?.name! as string,
-            taxId: accountData?.economic_group_holding?.taxId! as string,
-          },
-          economic_group_controlled:
-            accountData?.economic_group_controlled?.map((item) => ({
-              name: item.name! as string,
-              taxId: item.taxId! as string,
-            })),
-          status: [
-            {
-              id: accountData?.id,
-              name: accountData?.status
-            }
-          ]
-        }
-      } :
-      {
-        cpf: {
-          name: accountData?.name,
-          rg: accountData?.rg
-        }
-      }
-     ),
-    document: {
-      type: accountData?.document.type,
-      value: accountData?.document.value
+  const methods = useForm<CreateAccountFormSchema>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      ...accountData,
+      ...(accountData?.document.type === "cnpj"
+        ? {
+            cnpj: {
+              sector: sectorData,
+              social_name: accountData?.social_name,
+              fantasy_name: accountData?.fantasy_name,
+              municipal_registration: accountData?.municipal_registration,
+              state_registration: accountData?.state_registration,
+              economic_group_holding: {
+                name: accountData?.economic_group_holding?.name! as string,
+                taxId: accountData?.economic_group_holding?.taxId! as string,
+              },
+              economic_group_controlled:
+                accountData?.economic_group_controlled?.map((item) => ({
+                  name: item.name! as string,
+                  taxId: item.taxId! as string,
+                })),
+              status: [
+                {
+                  id: accountData?.id,
+                  name: accountData?.status,
+                },
+              ],
+            },
+          }
+        : {
+            cpf: {
+              name: accountData?.name,
+              rg: accountData?.rg,
+            },
+          }),
+      document: {
+        type: accountData?.document.type,
+        value: accountData?.document.value,
+      },
+      address: accountData?.address,
+      contact: accountData?.contacts,
     },
-    address: accountData?.address,
-    contact: accountData?.contacts
-  }
-});
-
+  });
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
     const base = {
@@ -270,19 +275,22 @@ const methods = useForm<CreateAccountFormSchema>({
           }),
     };
 
-    const { success, error, editedFields } = await updateOneAccount({id: accountData?.id}, base);
-    
+    const { success, error, editedFields } = await updateOneAccount(
+      { id: accountData?.id },
+      base
+    );
+
     if (success && editedFields) {
       // Criar histórico
       await createOneHistorical({
-          accountId: String(accountData?.id),
-          title: `Atualização de conta`,
-          editedFields: editedFields,
-          type: "manual",
-          author: {
-              name: user?.name ?? "",
-              avatarUrl: "",
-          },
+        accountId: String(accountData?.id),
+        title: `Atualização de conta`,
+        editedFields: editedFields,
+        type: "manual",
+        author: {
+          name: user?.name ?? "",
+          avatarUrl: "",
+        },
       });
       toast({
         title: "Sucesso!",
@@ -290,9 +298,9 @@ const methods = useForm<CreateAccountFormSchema>({
         variant: "success",
       });
 
-      closeModal()
+      closeModal();
     }
-      
+
     // Erros
     if (error) {
       if (error.global) {
@@ -321,6 +329,32 @@ const methods = useForm<CreateAccountFormSchema>({
     }
   };
 
+  const registerStateRegistration = () => {
+    const registration = methods.register("cnpj.state_registration");
+    return {
+      ...registration,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = e.target.value.replace(/\D/g, "");
+        methods.setValue("cnpj.state_registration", formatted, {
+          shouldValidate: true,
+        });
+      },
+    };
+  };
+
+  const registerMunicipalRegistration = () => {
+    const registration = methods.register("cnpj.municipal_registration");
+    return {
+      ...registration,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = e.target.value.replace(/\D/g, "");
+        methods.setValue("cnpj.municipal_registration", formatted, {
+          shouldValidate: true,
+        });
+      },
+    };
+  };
+
   return {
     methods,
     type,
@@ -335,7 +369,9 @@ const methods = useForm<CreateAccountFormSchema>({
     disabledFields,
     form: methods,
     register: methods.register,
+    registerStateRegistration,
+    registerMunicipalRegistration,
     errors: methods.formState,
-    control: methods.control
+    control: methods.control,
   };
 }
