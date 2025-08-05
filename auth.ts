@@ -22,6 +22,9 @@ async function getAvatarUrl(imageKey: string | undefined): Promise<string> {
 
 const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
+  jwt: {
+    maxAge: 24 * 60 * 60, // 24 hours in seconds
+  },
   providers: [
     Credentials({
       async authorize(credentials) {
