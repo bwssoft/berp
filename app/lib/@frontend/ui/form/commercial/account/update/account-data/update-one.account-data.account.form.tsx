@@ -30,15 +30,9 @@ interface Props {
 }
 
 export function UpdateAccountDataForm({ accountData, closeModal }: Props) {
-  const {
-    methods,
-    onSubmit,
-    register,
-    errors,
-    control,
-    registerStateRegistration,
-    registerMunicipalRegistration,
-  } = useUpdateAccountForm({ accountData, closeModal });
+  const { methods, onSubmit, register, errors, control } = useUpdateAccountForm(
+    { accountData, closeModal }
+  );
   const sectorModal = useSectorModal();
 
   const [canShowSectorButton, setCanShowSectorButton] =
@@ -86,13 +80,25 @@ export function UpdateAccountDataForm({ accountData, closeModal }: Props) {
             <Input
               label="Inscrição Estadual"
               placeholder="Digite a inscrição estadual"
-              {...registerStateRegistration()}
+              {...register("cnpj.state_registration")}
+              onChange={(e) => {
+                const formatted = e.target.value.replace(/\D/g, "");
+                methods.setValue("cnpj.state_registration", formatted, {
+                  shouldValidate: true,
+                });
+              }}
               error={errors.errors.cnpj?.state_registration?.message}
             />
             <Input
               label="Inscrição Municipal"
               placeholder="Digite a inscrição municipal"
-              {...registerMunicipalRegistration()}
+              {...register("cnpj.municipal_registration")}
+              onChange={(e) => {
+                const formatted = e.target.value.replace(/\D/g, "");
+                methods.setValue("cnpj.municipal_registration", formatted, {
+                  shouldValidate: true,
+                });
+              }}
               error={errors.errors.cnpj?.municipal_registration?.message}
             />
             <div className="flex items-end gap-2 w-full">
