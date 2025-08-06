@@ -1,10 +1,9 @@
-import { useFormContext, Controller } from "react-hook-form";
-import { CreateAccountFormSchema } from "./use-create.account.form";
+import { Controller } from "react-hook-form";
+import { useCreateAccountFormContext } from "@/app/lib/@frontend/context/create-account-form.context";
 import { Input } from "../../../../component";
-import { formatRgOrCpf } from "@/app/lib/util/format-rg-cpf";
 
 export function CpfAccountForm() {
-  const methods = useFormContext<CreateAccountFormSchema>();
+  const { methods } = useCreateAccountFormContext();
 
   return (
     <div className="flex flex-col gap-2">
