@@ -34,7 +34,7 @@ export default async function Page({ searchParams }: Props) {
     );
   }
 
-  const address = await findManyAddress({ accountId });
+  const addresses = await findManyAddress({ accountId });
   const contacts = await findManyContact({ accountId });
 
   const hasPermissionContacts = await restrictFeatureByProfile(
@@ -51,7 +51,7 @@ export default async function Page({ searchParams }: Props) {
 
   return (
     <AccountDataPage
-      address={address}
+      addresses={addresses}
       account={account}
       contacts={contacts}
       permissions={{

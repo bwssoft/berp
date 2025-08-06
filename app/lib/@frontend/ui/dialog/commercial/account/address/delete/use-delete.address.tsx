@@ -4,12 +4,14 @@ import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { deleteOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
+import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import {
   findOneAccount,
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { useSearchParams } from "next/navigation";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
+import { useAuth } from "@/app/lib/@frontend/context";
 
 export function useAddressDeleteDialog() {
   const [open, setOpen] = React.useState(false);
@@ -17,6 +19,7 @@ export function useAddressDeleteDialog() {
   const qc = useQueryClient();
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
+  const { user } = useAuth();
   const { deleteAddressLocally: deleteAddressInContext } =
     useCreateAccountFlow();
 
@@ -24,10 +27,20 @@ export function useAddressDeleteDialog() {
     setIsLoading(true);
 
     try {
+      let addressToDelete = null;
       if (accountId) {
+        const freshAccount = await findOneAccount({ id: accountId });
+        addressToDelete = freshAccount?.address?.find(
+          (addr: any) => addr && addr.id === id
+        );
+        console.log(
+          "Address delete - found address to delete:",
+          addressToDelete
+        );
+
         try {
           await deleteOneAddress({ id });
-          const freshAccount = await findOneAccount({ id: accountId });
+
           if (freshAccount) {
             const updatedAddresses =
               freshAccount.address?.filter(
@@ -38,6 +51,27 @@ export function useAddressDeleteDialog() {
               { id: accountId },
               { address: updatedAddresses }
             );
+          }
+
+          if (addressToDelete) {
+            try {
+              const addressType =
+                (addressToDelete as any).type?.join?.(", ") || "comercial";
+              await createOneHistorical({
+                accountId: accountId,
+                title: `Endereço ${addressType} removido.`,
+                type: "manual",
+                author: {
+                  name: user?.name ?? "",
+                  avatarUrl: "",
+                },
+              });
+            } catch (error) {
+              console.warn(
+                "Failed to create address deletion historical entry:",
+                error
+              );
+            }
           }
         } catch (error) {
           console.error(

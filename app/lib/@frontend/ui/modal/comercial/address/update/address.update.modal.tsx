@@ -9,7 +9,11 @@ interface AddressProps {
   openUpdateModal: any;
   closeUpdateModal: () => void;
   address: IAddress;
-  updateAddress: (addressId: string, data: IAddress) => Promise<void>;
+  updateAddress: (
+    addressId: string,
+    newData: IAddress,
+    originalAddress?: IAddress
+  ) => Promise<void>;
 }
 export function AddressUpdateModal({
   openUpdateModal,
@@ -17,6 +21,11 @@ export function AddressUpdateModal({
   address,
   updateAddress,
 }: AddressProps) {
+  // Create a wrapper function that includes the original address
+  const handleSubmit = (addressId: string, newData: IAddress) => {
+    return updateAddress(addressId, newData, address);
+  };
+
   return (
     <Modal
       open={openUpdateModal}
@@ -28,7 +37,7 @@ export function AddressUpdateModal({
       <ModalContent>
         <ModalBody className="min-h-[50vh] max-h-[70vh] w-[70vh]">
           <AddressUpdateForm
-            onSubmit={updateAddress}
+            onSubmit={handleSubmit}
             address={address}
             closeModal={closeUpdateModal}
           />

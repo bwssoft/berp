@@ -4,16 +4,19 @@ import {
   createOneAddress,
   deleteOneAddress,
 } from "@/app/lib/@backend/action/commercial/address.action";
+import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState } from "react";
 import { addressesQueryKey } from "../../../form/commercial/address/get/useaddress";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
+import { useAuth } from "@/app/lib/@frontend/context";
 
 export function useAddressModal() {
   const [open, setOpen] = useState(false);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const { createAddressLocally: createAddressInContext } =
     useCreateAccountFlow();
 
@@ -34,7 +37,28 @@ export function useAddressModal() {
         ...data,
         accountId,
         zip_code: data.zip_code.replace(/\D/g, ""),
+        default_address: false,
       });
+
+      try {
+        const addressType = data.type?.join?.(", ") || "comercial";
+        await createOneHistorical({
+          accountId: accountId,
+          title: `Endereço ${addressType} adicionado.`,
+          type: "manual",
+          author: {
+            name: user?.name ?? "",
+            avatarUrl: "",
+          },
+        });
+        console.log("Address creation historical entry created successfully");
+      } catch (error) {
+        console.warn(
+          "Failed to create address creation historical entry:",
+          error
+        );
+      }
+
       toast({
         title: "Sucesso!",
         description: "Endereço criado com sucesso!",
