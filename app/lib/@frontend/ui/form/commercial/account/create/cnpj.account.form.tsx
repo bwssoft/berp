@@ -43,8 +43,7 @@ export function CNPJAccountForm() {
     setSelectedHolding,
     selectedIE,
     setSelectedIE,
-    registerStateRegistration,
-    registerMunicipalRegistration,
+    methods,
   } = useCreateAccountForm();
 
   const sectorModal = useSectorModal();
@@ -91,7 +90,13 @@ export function CNPJAccountForm() {
       <Input
         label="Inscrição Estadual"
         placeholder="Digite a inscrição estadual"
-        {...registerStateRegistration()}
+        {...register("cnpj.state_registration")}
+        onChange={(e) => {
+          const formatted = e.target.value.replace(/\D/g, "");
+          methods.setValue("cnpj.state_registration", formatted, {
+            shouldValidate: true,
+          });
+        }}
         error={errors.cnpj?.state_registration?.message}
         disabled={disabledFields.state_registration}
       />
@@ -157,7 +162,13 @@ export function CNPJAccountForm() {
       <Input
         label="Inscrição Municipal"
         placeholder="Digite a inscrição municipal"
-        {...registerMunicipalRegistration()}
+        {...register("cnpj.municipal_registration")}
+        onChange={(e) => {
+          const formatted = e.target.value.replace(/\D/g, "");
+          methods.setValue("cnpj.municipal_registration", formatted, {
+            shouldValidate: true,
+          });
+        }}
         error={errors.cnpj?.municipal_registration?.message}
         disabled={disabledFields.municipal_registration}
       />
