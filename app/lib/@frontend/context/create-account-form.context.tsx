@@ -458,14 +458,16 @@ export function CreateAccountFormProvider({
         setSelectedIE(situationIE);
         methods.setValue("cnpj.typeIE", data.registrations[0]?.type.text);
 
-        setDisabledFields({
-          social_name: true,
-          fantasy_name: Boolean(data?.alias?.length),
-          status: true,
-          state_registration: true,
+        const newDisabledFields = {
+          social_name: Boolean(data.company?.name),
+          fantasy_name: Boolean(data.alias),
+          status: Boolean(data.registrations?.[0]?.status?.text),
+          state_registration: Boolean(data.registrations?.[0]?.number),
           municipal_registration: false,
-          typeIE: true,
-        });
+          typeIE: Boolean(data.registrations?.[0]?.type?.text),
+        };
+
+        setDisabledFields(newDisabledFields);
       }
 
       methods.setValue("document.type", "cnpj");
