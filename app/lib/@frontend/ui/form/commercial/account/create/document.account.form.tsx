@@ -1,7 +1,7 @@
 "use client";
 
-import { Controller, useFormContext } from "react-hook-form";
-import { CreateAccountFormSchema } from "./use-create.account.form";
+import { Controller } from "react-hook-form";
+import { useCreateAccountFormContext } from "@/app/lib/@frontend/context/create-account-form.context";
 import { Button, Input } from "../../../../component";
 import { useState } from "react";
 import { maskCpfCnpj } from "@/app/lib/util/format-mask-cpf-cnpj";
@@ -30,7 +30,7 @@ export function DocumentAccountForm({
   toggleButtonText,
   resetType,
 }: Props) {
-  const methods = useFormContext<CreateAccountFormSchema>();
+  const { methods } = useCreateAccountFormContext();
   const [isValidating, setIsValidating] = useState(false);
 
   const isInValidateMode = textButton.contact === "Validar";
