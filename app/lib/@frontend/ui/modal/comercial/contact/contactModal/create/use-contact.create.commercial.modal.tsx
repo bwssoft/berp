@@ -5,16 +5,19 @@ import {
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { IContact } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { ContactFormSchema } from "@/app/lib/@frontend/ui/form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
+import { useAuth } from "@/app/lib/@frontend/context";
 
 export function useCreateContactModal() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const { createContactLocally: createContactInContext } =
     useCreateAccountFlow();
 
@@ -71,6 +74,26 @@ export function useCreateContactModal() {
           await queryClient.invalidateQueries({
             queryKey: ["findManyAccount", accountId],
           });
+
+          try {
+            await createOneHistorical({
+              accountId: accountId,
+              title: `Contato "${success.name}" adicionado.`,
+              type: "manual",
+              author: {
+                name: user?.name ?? "",
+                avatarUrl: "",
+              },
+            });
+            console.log(
+              "Contact creation historical entry created successfully"
+            );
+          } catch (error) {
+            console.warn(
+              "Failed to create contact creation historical entry:",
+              error
+            );
+          }
 
           toast({
             title: "Sucesso!",

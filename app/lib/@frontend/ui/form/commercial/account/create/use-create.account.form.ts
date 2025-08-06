@@ -5,12 +5,7 @@ import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
-import {
-  IAccount,
-  ICnpjaResponse,
-  IAddress,
-  IContact,
-} from "@/app/lib/@backend/domain";
+import { ICnpjaResponse } from "@/app/lib/@backend/domain";
 import { accountExists } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 
@@ -22,7 +17,7 @@ import {
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
-import { isValidRG } from "@/app/lib/util/is-valid-rg";
+import { useAuth } from "@/app/lib/@frontend/context";
 import {
   useCreateAccountFlow,
   LocalAccount,
@@ -59,8 +54,14 @@ const schema = z
       .object({
         social_name: z.string().min(1, "Razão social é obrigatória"),
         fantasy_name: z.string().optional(),
-        state_registration: z.string().optional(),
-        municipal_registration: z.string().optional(),
+        state_registration: z
+          .string()
+          .max(14, "Inscrição Estadual deve ter no máximo 14 dígitos")
+          .optional(),
+        municipal_registration: z
+          .string()
+          .max(15, "Inscrição Municipal deve ter no máximo 15 dígitos")
+          .optional(),
         status: z.string().optional(),
         situationIE: z.object({
           id: z.string(),
@@ -194,6 +195,7 @@ export function useCreateAccountForm() {
   });
 
   const router = useRouter();
+  const { user } = useAuth();
 
   // Função para alternar o texto de qualquer botão
   const toggleButtonText = (
@@ -486,6 +488,7 @@ export function useCreateAccountForm() {
 
       createAccountLocally(base);
 
+      // Criar endereço
       if (address) {
         const newAddress: LocalAddress = {
           id: crypto.randomUUID(),
@@ -526,8 +529,6 @@ export function useCreateAccountForm() {
         };
         createContactLocally(newContact);
       }
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
 
       router.push(
         `/commercial/account/form/create/tab/address?accountId=${accountLocalId}`

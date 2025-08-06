@@ -17,6 +17,7 @@ export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
   const {
     register,
     registerCep,
+    registerNumber,
     handleSubmit,
     loadingCep,
     errors,
@@ -55,7 +56,7 @@ export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
       <div className="grid grid-cols-2 gap-4 w-full">
         <Input
           label="Número"
-          {...register("number")}
+          {...registerNumber()}
           error={errors.number?.message}
           disabled={loadingCep}
         />

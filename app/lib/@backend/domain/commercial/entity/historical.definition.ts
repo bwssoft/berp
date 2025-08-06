@@ -5,6 +5,7 @@ export interface IHistorical {
     name: string;
     avatarUrl?: string;
   };
+  editedFields?: {key: string, newValue: string, oldValue: string}[]
   action?: string; // exemplo: "Proposta (nº" 83787584758) igual jaisson deixou de exemplo
   file?: {
     name?: string,

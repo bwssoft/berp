@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "../../../component/button";
 import { WhatsappIcon } from "../../../../svg/whatsapp-icon";
+import { EditedFieldsTable } from "../../../table/commercial/historical/edited-fields/table";
 
 type TimelineProps = {
     historical: IHistorical[];
@@ -84,11 +85,11 @@ export function TimelineItem({
                                     <div className="flex justify-between items-start mb-2">
                                         <div className="text-sm flex gap-1 font-medium text-gray-900">
                                             {entry.type === "sistema"
-                                                ? "Sistema"
-                                                : entry.author?.name ||
-                                                  "Usuário"}
+                                                ? <p className="font-bold">Sistema</p>
+                                                : <p className="font-bold">{entry.author?.name ||
+                                                  "Usuário"}</p> }
                                             {entry.title && (
-                                                <p className="font-semibold">
+                                                <p className="font-medium text-gray-600">
                                                     {entry.title}
                                                 </p>
                                             )}
@@ -138,6 +139,12 @@ export function TimelineItem({
                                         )}
                                         {entry.description && (
                                             <p>{entry.description}</p>
+                                        )}
+
+                                        {entry.editedFields && (
+                                                <EditedFieldsTable 
+                                                    data={entry.editedFields}
+                                                />
                                         )}
 
                                         {entry.file && entry.file && (

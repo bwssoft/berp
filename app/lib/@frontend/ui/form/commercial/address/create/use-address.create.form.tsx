@@ -15,7 +15,12 @@ const AddressFormSchema = z.object({
     message: "CEP inválido.",
   }),
   street: z.string().min(1, "Logradouro obrigatório"),
-  number: z.string().min(1, "Número obrigatório"),
+  number: z
+    .string()
+    .min(1, "Número obrigatório")
+    .refine((val) => /^\d+$/.test(val), {
+      message: "Número deve conter apenas dígitos",
+    }),
   complement: z.string().optional(),
   district: z.string().min(1, "Bairro obrigatório"),
   state: z.string().min(1, "Estado obrigatório"),
@@ -31,7 +36,6 @@ const AddressFormSchema = z.object({
 export type AddressFormSchema = z.infer<typeof AddressFormSchema>;
 
 export function useAddressForm({
-  closeModal,
   accountId,
   onSubmit,
   defaultValues,
@@ -47,10 +51,9 @@ export function useAddressForm({
     handleSubmit: hookFormSubmit,
     formState: { errors },
     setValue,
-    reset,
   } = useForm<AddressFormSchema>({
     resolver: zodResolver(AddressFormSchema),
-    defaultValues: {
+    defaultValues: defaultValues || {
       address_search: "",
       zip_code: "",
       street: "",
@@ -109,6 +112,7 @@ export function useAddressForm({
     errors,
     loadingCep,
     formatCep,
+    formatNumber: (v: string) => v.replace(/\D/g, ""),
     isSubmitting,
   };
 }

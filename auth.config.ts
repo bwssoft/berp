@@ -10,6 +10,10 @@ export const authConfig: NextAuthConfig = {
   pages: {
     signIn: "/login",
   },
+  session: {
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60, // 24 hours in seconds
+  },
   callbacks: {
     // Callback para autorização: determina se o usuário pode acessar uma rota específica
     authorized({ auth, request: { nextUrl } }) {
@@ -45,6 +49,17 @@ export const authConfig: NextAuthConfig = {
     },
     // Callback para manipulação do token JWT
     jwt({ user, token, trigger, session }) {
+      // Check if token is expired (24 hours = 86400 seconds)
+      const now = Math.floor(Date.now() / 1000);
+      if (token.exp && now >= token.exp) {
+        return null; // Force token invalidation
+      }
+
+      // Set token expiration time if not already set
+      if (!token.exp) {
+        token.exp = now + (24 * 60 * 60); // 24 hours from now
+      }
+
       // Caso a autenticação inicial tenha ocorrido, atualiza o token com os dados do usuário
       if (user) {
         token = Object.assign(token, {
@@ -54,6 +69,7 @@ export const authConfig: NextAuthConfig = {
           temporary_password: user.temporary_password,
           name: user.name,
           avatarUrl: user.image || "/avatar.webp",
+          exp: now + (24 * 60 * 60), // Reset expiration on new login (24 hours)
         });
       }
       // Caso o token esteja sendo atualizado via trigger ("update") e haja dados de sessão,
