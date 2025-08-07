@@ -394,6 +394,10 @@ export function AccountDataPage(props: Props) {
         openUpdateModal={openUpdateAccountData}
         closeUpdateModal={closeUpdateAccountData}
         accountData={account}
+        lgpdPermissions={{
+          fullLgpdAccess,
+          partialLgpdAccess,
+        }}
       />
     </div>
   );
