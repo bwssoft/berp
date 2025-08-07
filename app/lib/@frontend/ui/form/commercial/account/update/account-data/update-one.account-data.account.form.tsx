@@ -35,7 +35,11 @@ interface Props {
   };
 }
 
-export function UpdateAccountDataForm({ accountData, closeModal, lgpdPermissions }: Props) {
+export function UpdateAccountDataForm({
+  accountData,
+  closeModal,
+  lgpdPermissions,
+}: Props) {
   const { methods, onSubmit, register, errors, control } = useUpdateAccountForm(
     { accountData, closeModal }
   );
@@ -66,7 +70,7 @@ export function UpdateAccountDataForm({ accountData, closeModal, lgpdPermissions
     (async () => {
       try {
         const sectorPermission = await restrictFeatureByProfile(
-          "commercial:accounts:access:tab:data:sector"
+          "commercial:accounts:new:sector"
         );
         setCanShowSectorButton(sectorPermission);
       } catch (error) {
