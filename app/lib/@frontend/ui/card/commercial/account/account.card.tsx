@@ -20,17 +20,32 @@ import {
   TooltipTrigger,
 } from "../../../component/tooltip";
 import { ArrowPathIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";
+import { formatLgpdCnpj } from "@/app/lib/util/format-lgpd-cnpj";
 
 export function AccountCard({
   account,
   onClickButtonEdit,
   onRefresh,
+  lgpdPermissions = {},
 }: {
   account: IAccount;
   onClickButtonEdit?: () => void;
   onRefresh?: () => void;
+  lgpdPermissions?: {
+    fullLgpdAccess?: boolean;
+    partialLgpdAccess?: boolean;
+  };
 }) {
   const isCompany = account.document.type === "cnpj";
+
+  const formatDocumentValue = (documentValue: string, documentType: string) => {
+    if (documentType === "cpf") {
+      return formatLgpdCpf(documentValue, lgpdPermissions);
+    } else {
+      return formatLgpdCnpj(documentValue, lgpdPermissions);
+    }
+  };
 
   return (
     <TooltipProvider>
@@ -91,7 +106,13 @@ export function AccountCard({
               <>
                 <InfoField label="Razão Social" value={account.social_name} />
                 <InfoField label="Nome Fantasia" value={account.fantasy_name} />
-                <InfoField label="CNPJ" value={account.document.value} />
+                <InfoField
+                  label="CNPJ"
+                  value={formatDocumentValue(
+                    account.document.value,
+                    account.document.type
+                  )}
+                />
                 <InfoField
                   label="Inscrição Estadual"
                   value={account.state_registration}
@@ -120,7 +141,13 @@ export function AccountCard({
             ) : (
               <>
                 <InfoField label="Nome" value={account.name} />
-                <InfoField label="CPF" value={account.document.value} />
+                <InfoField
+                  label="CPF"
+                  value={formatDocumentValue(
+                    account.document.value,
+                    account.document.type
+                  )}
+                />
                 <InfoField label="RG/CIN" value={account.rg} />
                 {account.status && (
                   <div className="space-y-1">

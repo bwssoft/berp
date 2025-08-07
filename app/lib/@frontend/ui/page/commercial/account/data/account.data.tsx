@@ -53,6 +53,8 @@ interface Props {
     hasPermissionContacts: boolean;
     hasPermissionAddresses: boolean;
     hasPermissionEconomicGroup: boolean;
+    fullLgpdAccess?: boolean;
+    partialLgpdAccess?: boolean;
   };
 }
 
@@ -65,6 +67,8 @@ export function AccountDataPage(props: Props) {
       hasPermissionContacts,
       hasPermissionAddresses,
       hasPermissionEconomicGroup,
+      fullLgpdAccess,
+      partialLgpdAccess,
     },
   } = props;
 
@@ -186,6 +190,10 @@ export function AccountDataPage(props: Props) {
             openUpdateModalAccountData();
           }}
           onRefresh={onRefreshAccountData}
+          lgpdPermissions={{
+            fullLgpdAccess,
+            partialLgpdAccess,
+          }}
         />
 
         {isCompany && (
