@@ -45,6 +45,8 @@ export const ComboboxSingleTriggerImpl = ({
   }, [selectedOptions]);
 
   const handleInputFocus = () => {
+    if (disabled) return;
+    
     if (!isOptionsOpened) {
       setIsOptionsOpened(true);
 
@@ -67,6 +69,7 @@ export const ComboboxSingleTriggerImpl = ({
   };
 
   const handleToggleClick = () => {
+    if (disabled) return;
     setIsOptionsOpened((opened) => !opened);
   };
 
@@ -80,7 +83,8 @@ export const ComboboxSingleTriggerImpl = ({
       <div
         className={cn(
           "flex h-9 w-full items-center rounded-md bg-white ring-1 ring-gray-300 group-focus-within:ring-2 group-focus-within:ring-blue-600 hover:ring-blue-600",
-          error && "border-red-500 ring-red-500"
+          error && "border-red-500 ring-red-500",
+          disabled && "bg-gray-100 ring-gray-200 hover:ring-gray-200 cursor-not-allowed"
         )}
       >
         <input
@@ -100,7 +104,7 @@ export const ComboboxSingleTriggerImpl = ({
           }}
           className={cn(
             "h-full w-full rounded-md rounded-r-none border-0 border-r-0 border-gray-300 bg-white px-2 text-sm text-gray-900 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0",
-            disabled && "text-muted-foreground",
+            disabled && "bg-gray-100 text-gray-500 cursor-not-allowed placeholder:text-gray-300",
             className
           )}
         />
@@ -109,7 +113,11 @@ export const ComboboxSingleTriggerImpl = ({
           <button
             type="button"
             onClick={onReset}
-            className="group-focus:ring-ring/20 h-full px-3 text-gray-900 duration-200 animate-in slide-in-from-right-3 group-focus:ring-2 hover:bg-blue-600 focus-visible:border-blue-600/70"
+            disabled={disabled}
+            className={cn(
+              "group-focus:ring-ring/20 h-full px-3 text-gray-900 duration-200 animate-in slide-in-from-right-3 group-focus:ring-2",
+              disabled ? "cursor-not-allowed text-gray-500" : "hover:bg-blue-600 focus-visible:border-blue-600/70"
+            )}
           >
             <XMarkIcon className="h-3.5 w-3.5" />
           </button>
@@ -121,7 +129,10 @@ export const ComboboxSingleTriggerImpl = ({
           type="button"
           disabled={disabled}
           onClick={handleToggleClick}
-          className="h-full rounded-l-none rounded-r-md border-border px-3 text-gray-900 transition-colors hover:bg-blue-600"
+          className={cn(
+            "h-full rounded-l-none rounded-r-md border-border px-3 text-gray-900 transition-colors",
+            disabled ? "bg-gray-100 cursor-not-allowed text-gray-500" : "hover:bg-blue-600"
+          )}
         >
           {isLoading ? (
             <ArrowPathIcon className="h-4 w-4 animate-spin" />
