@@ -9,6 +9,7 @@ import {
     Input,
     useCreateContactAccount,
 } from "../../../../../component";
+import { ContactFormSchemaWithOrigin } from "./use-contact.create.account";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { ContactTable } from "@/app/lib/@frontend/ui/table/commercial/contact/table";
 import { maskPhoneNumber } from "@/app/lib/util/mask-phone-number";
@@ -16,7 +17,7 @@ import { formatCpf, formatRgOrCpf } from "@/app/lib/util/format-rg-cpf";
 
 type Props = {
     closeModal?: () => void;
-    onSubmit: (data: ContactFormSchema, accountId?: string) => Promise<void>;
+    onSubmit: (data: ContactFormSchemaWithOrigin, accountId?: string) => Promise<void>;
 };
 
 export function CreateContactAccountForm({ closeModal, onSubmit }: Props) {

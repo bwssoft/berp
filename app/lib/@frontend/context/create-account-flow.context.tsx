@@ -121,7 +121,7 @@ export const CreateAccountFlowProvider = ({
   // Contact methods
   const createContactLocally = useCallback((newContact: LocalContact) => {
     setContacts((prevContacts) => {
-      return [...prevContacts, newContact];
+      return [...prevContacts, { ...newContact, originType: "local" }];
     });
   }, []);
 
