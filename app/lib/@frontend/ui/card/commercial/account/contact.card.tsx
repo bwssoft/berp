@@ -145,7 +145,6 @@ export default function ContactCard({
           name: data?.company.name || data?.alias || "",
           contractEnabled: false,
           positionOrRelation: "",
-          originType: "api",
           taxId: data?.taxId,
           contactFor: ["Fiscal"],
           contactItems: [
