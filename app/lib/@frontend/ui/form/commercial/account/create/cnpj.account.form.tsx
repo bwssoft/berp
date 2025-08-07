@@ -1,10 +1,7 @@
 "use client";
 
-import { Controller, useFormContext } from "react-hook-form";
-import {
-  CreateAccountFormSchema,
-  useCreateAccountForm,
-} from "./use-create.account.form";
+import { Controller } from "react-hook-form";
+import { useCreateAccountFormContext } from "@/app/lib/@frontend/context/create-account-form.context";
 import {
   Input,
   Combobox,
@@ -44,14 +41,15 @@ export function CNPJAccountForm() {
     selectedIE,
     setSelectedIE,
     methods,
-  } = useCreateAccountForm();
+  } = useCreateAccountFormContext();
 
   const sectorModal = useSectorModal();
   const {
     register,
     control,
     formState: { errors },
-  } = useFormContext<CreateAccountFormSchema>();
+    setValue,
+  } = methods;
 
   const [canShowSectorButton, setCanShowSectorButton] =
     useState<boolean>(false);
@@ -93,7 +91,7 @@ export function CNPJAccountForm() {
         {...register("cnpj.state_registration")}
         onChange={(e) => {
           const formatted = e.target.value.replace(/\D/g, "");
-          methods.setValue("cnpj.state_registration", formatted, {
+          setValue("cnpj.state_registration", formatted, {
             shouldValidate: true,
           });
         }}
@@ -156,6 +154,7 @@ export function CNPJAccountForm() {
             onChange={field.onChange}
             placeholder="Digite o tipo IE"
             error={errors.cnpj?.typeIE?.message}
+            disabled={disabledFields.typeIE}
           />
         )}
       />
@@ -165,7 +164,7 @@ export function CNPJAccountForm() {
         {...register("cnpj.municipal_registration")}
         onChange={(e) => {
           const formatted = e.target.value.replace(/\D/g, "");
-          methods.setValue("cnpj.municipal_registration", formatted, {
+          setValue("cnpj.municipal_registration", formatted, {
             shouldValidate: true,
           });
         }}

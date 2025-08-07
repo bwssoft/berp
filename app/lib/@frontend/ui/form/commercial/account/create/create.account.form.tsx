@@ -1,7 +1,10 @@
 "use client";
 
 import { FormProvider } from "react-hook-form";
-import { useCreateAccountForm } from "./use-create.account.form";
+import {
+  CreateAccountFormProvider,
+  useCreateAccountFormContext,
+} from "@/app/lib/@frontend/context/create-account-form.context";
 import { DocumentAccountForm } from "./document.account.form";
 import { Button, Form } from "../../../../component";
 import { CpfAccountForm } from "./cpf.account.form";
@@ -9,7 +12,7 @@ import { CNPJAccountForm } from "./cnpj.account.form";
 import { FakeLoadingButton } from "../../../../component/fake-load-button";
 import { useRouter } from "next/navigation";
 
-export function CreateOneAccountForm() {
+function CreateAccountFormContent() {
   const {
     methods,
     onSubmit,
@@ -18,16 +21,15 @@ export function CreateOneAccountForm() {
     buttonsState,
     toggleButtonText,
     setType,
-    form,
     isSubmitting,
-  } = useCreateAccountForm();
+  } = useCreateAccountFormContext();
   const router = useRouter();
 
   const hasValidated = type && methods.getValues("document.type") === type;
 
   return (
     <FormProvider {...methods}>
-      <Form {...form}>
+      <Form {...methods}>
         <form
           className="flex flex-col gap-2"
           onSubmit={methods.handleSubmit(onSubmit)}
@@ -68,5 +70,13 @@ export function CreateOneAccountForm() {
         </form>
       </Form>
     </FormProvider>
+  );
+}
+
+export function CreateOneAccountForm() {
+  return (
+    <CreateAccountFormProvider>
+      <CreateAccountFormContent />
+    </CreateAccountFormProvider>
   );
 }
