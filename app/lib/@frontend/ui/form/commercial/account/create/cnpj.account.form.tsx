@@ -60,7 +60,7 @@ export function CNPJAccountForm() {
     (async () => {
       try {
         const hasPermission = await restrictFeatureByProfile(
-          "commercial:accounts:access:tab:data:sector"
+          "commercial:accounts:new:sector"
         );
         setCanShowSectorButton(hasPermission);
       } catch (error) {
