@@ -201,6 +201,10 @@ export function AccountDataPage(props: Props) {
             openModal={openUpdateEconomicGroup}
             account={account}
             hasPermissionEconomicGroup={hasPermissionEconomicGroup}
+            lgpdPermissions={{
+              fullLgpdAccess,
+              partialLgpdAccess,
+            }}
           />
         )}
       </div>
