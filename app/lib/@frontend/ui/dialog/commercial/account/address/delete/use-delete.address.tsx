@@ -81,7 +81,8 @@ export function useAddressDeleteDialog() {
         }
       }
 
-      await qc.invalidateQueries({ queryKey: ["findOneAccount"] });
+      await qc.invalidateQueries({ queryKey: ["findOneAccount", accountId] });
+      await qc.invalidateQueries({ queryKey: ["findManyAddress", accountId] });
       await qc.invalidateQueries({ queryKey: ["findManyAccount"] });
 
       toast({
