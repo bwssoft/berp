@@ -8,6 +8,7 @@ import {
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { useQueries } from "@tanstack/react-query";
 
 export default function AccountManagementLayout({
   children,
@@ -19,11 +20,48 @@ export default function AccountManagementLayout({
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
   const [activeTab, setActiveTab] = useState<string>("account-data");
-  const [permissions, setPermissions] = useState({
-    dataTab: true,
-    historyTab: true,
-    attachmentsTab: true,
+
+  const permissionQueries = useQueries({
+    queries: [
+      {
+        queryKey: [
+          "restrictFeatureByProfile",
+          "commercial:accounts:access:tab:data:enable",
+        ],
+        queryFn: () =>
+          restrictFeatureByProfile(
+            "commercial:accounts:access:tab:data:enable"
+          ),
+      },
+      {
+        queryKey: [
+          "restrictFeatureByProfile",
+          "commercial:accounts:access:tab:history",
+        ],
+        queryFn: () =>
+          restrictFeatureByProfile("commercial:accounts:access:tab:history"),
+      },
+      {
+        queryKey: [
+          "restrictFeatureByProfile",
+          "commercial:accounts:access:tab:attachments:enable",
+        ],
+        queryFn: () =>
+          restrictFeatureByProfile(
+            "commercial:accounts:access:tab:attachments:enable"
+          ),
+      },
+    ],
   });
+
+  const isLoadingPermissions = permissionQueries.some(
+    (query) => query.isLoading
+  );
+  const permissions = {
+    dataTab: permissionQueries[0]?.data ?? true,
+    historyTab: permissionQueries[1]?.data ?? true,
+    attachmentsTab: permissionQueries[2]?.data ?? true,
+  };
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -40,69 +78,42 @@ export default function AccountManagementLayout({
     }
   }, [pathname]);
 
-  // Fetch permissions for tabs
-  useEffect(() => {
-    const fetchPermissions = async () => {
-      try {
-        const [
-          dataTabPermission,
-          historyTabPermission,
-          attachmentsTabPermission,
-        ] = await Promise.all([
-          restrictFeatureByProfile(
-            "commercial:accounts:access:tab:data:enable"
-          ),
-          restrictFeatureByProfile("commercial:accounts:access:tab:history"),
-          restrictFeatureByProfile(
-            "commercial:accounts:access:tab:attachments:enable"
-          ),
-        ]);
-
-        setPermissions({
-          dataTab: dataTabPermission,
-          historyTab: historyTabPermission,
-          attachmentsTab: attachmentsTabPermission,
-        });
-      } catch (error) {
-        console.error("Error fetching tab permissions:", error);
-      }
-    };
-
-    fetchPermissions();
-  }, [pathname, handleTabChange]);
-
   return (
     <div className="flex flex-col w-full gap-4">
       <Tabs value={activeTab} className="w-full">
-        <TabsList className="bg-transparent border-gray-200">
-          {permissions.dataTab && (
-            <TabsTrigger
-              className="data-[state=active]:bg-transparent hover:bg-gray-50"
-              value="account-data"
-              onClick={() => handleTabChange("account-data")}
-            >
-              Dados da conta
-            </TabsTrigger>
-          )}
-          {permissions.historyTab && (
-            <TabsTrigger
-              className="data-[state=active]:bg-transparent hover:bg-gray-50"
-              value="historical"
-              onClick={() => handleTabChange("historical")}
-            >
-              Histórico
-            </TabsTrigger>
-          )}
-          {permissions.attachmentsTab && (
-            <TabsTrigger
-              className="data-[state=active]:bg-transparent hover:bg-gray-50"
-              value="account-attachments"
-              onClick={() => handleTabChange("account-attachments")}
-            >
-              Anexos
-            </TabsTrigger>
-          )}
-        </TabsList>
+        {isLoadingPermissions ? (
+          <TabsList className="bg-transparent border-gray-200"></TabsList>
+        ) : (
+          <TabsList className="bg-transparent border-gray-200">
+            {permissions.dataTab && (
+              <TabsTrigger
+                className="data-[state=active]:bg-transparent hover:bg-gray-50"
+                value="account-data"
+                onClick={() => handleTabChange("account-data")}
+              >
+                Dados da conta
+              </TabsTrigger>
+            )}
+            {permissions.historyTab && (
+              <TabsTrigger
+                className="data-[state=active]:bg-transparent hover:bg-gray-50"
+                value="historical"
+                onClick={() => handleTabChange("historical")}
+              >
+                Histórico
+              </TabsTrigger>
+            )}
+            {permissions.attachmentsTab && (
+              <TabsTrigger
+                className="data-[state=active]:bg-transparent hover:bg-gray-50"
+                value="account-attachments"
+                onClick={() => handleTabChange("account-attachments")}
+              >
+                Anexos
+              </TabsTrigger>
+            )}
+          </TabsList>
+        )}
       </Tabs>
 
       <div className="p-4">{children}</div>
