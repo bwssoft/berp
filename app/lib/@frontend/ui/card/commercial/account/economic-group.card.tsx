@@ -9,17 +9,26 @@ import {
 } from "../../../component";
 import { IAccount } from "@/app/lib/@backend/domain";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";
+import { formatLgpdCnpj } from "@/app/lib/util/format-lgpd-cnpj";
+
+interface LgpdPermissions {
+  fullLgpdAccess?: boolean;
+  partialLgpdAccess?: boolean;
+}
 
 interface EconomicGroupCardProps {
   account: IAccount;
   hasPermissionEconomicGroup: boolean;
   openModal: () => void;
+  lgpdPermissions?: LgpdPermissions;
 }
 
 export function EconomicGroupCard({
   account,
   hasPermissionEconomicGroup,
   openModal,
+  lgpdPermissions,
 }: EconomicGroupCardProps) {
   const hasHolding = !!(
     account.economic_group_holding &&
@@ -30,6 +39,20 @@ export function EconomicGroupCard({
     Array.isArray(account.economic_group_controlled) &&
     account.economic_group_controlled.length
   );
+
+  const formatDocumentValue = (taxId: string): string => {
+    if (!taxId) return "";
+
+    const cleanDocument = taxId.replace(/\D/g, "");
+
+    if (cleanDocument.length === 11) {
+      return formatLgpdCpf(cleanDocument, lgpdPermissions || {});
+    } else if (cleanDocument.length === 14) {
+      return formatLgpdCnpj(cleanDocument, lgpdPermissions || {});
+    }
+
+    return "***.***.***-**";
+  };
 
   return (
     <Card className="flex flex-col h-full">
@@ -60,7 +83,7 @@ export function EconomicGroupCard({
                   {account.economic_group_holding!.name}
                 </p>
                 <p className="text-xs font-mono text-muted-foreground">
-                  {account.economic_group_holding!.taxId}
+                  {formatDocumentValue(account.economic_group_holding!.taxId)}
                 </p>
               </div>
             </div>
@@ -105,7 +128,7 @@ export function EconomicGroupCard({
                       {company.name}
                     </p>
                     <p className="text-xs font-mono text-muted-foreground">
-                      {company.taxId}
+                      {formatDocumentValue(company.taxId)}
                     </p>
                   </div>
                 </div>

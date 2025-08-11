@@ -49,6 +49,14 @@ export default async function Page({ searchParams }: Props) {
     "commercial:accounts:access:tab:data:group-edit"
   );
 
+  const fullLgpdAccess = await restrictFeatureByProfile(
+    "commercial:accounts:access:lgpd:full"
+  );
+
+  const partialLgpdAccess = await restrictFeatureByProfile(
+    "commercial:accounts:access:lgpd:partial"
+  );
+
   return (
     <AccountDataPage
       addresses={addresses}
@@ -58,6 +66,8 @@ export default async function Page({ searchParams }: Props) {
         hasPermissionContacts,
         hasPermissionAddresses,
         hasPermissionEconomicGroup,
+        fullLgpdAccess,
+        partialLgpdAccess,
       }}
     />
   );
