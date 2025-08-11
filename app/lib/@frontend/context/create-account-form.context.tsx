@@ -566,7 +566,7 @@ export function CreateAccountFormProvider({
           number: address.number,
           zip_code: address.zip,
           complement: address.details ?? "",
-          type: ["Faturamento"],
+          type: ["Fiscal"],
           default_address: true,
         };
 
