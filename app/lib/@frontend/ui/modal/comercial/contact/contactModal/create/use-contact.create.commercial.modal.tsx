@@ -74,7 +74,11 @@ export function useCreateContactModal() {
           });
 
           await queryClient.invalidateQueries({
-            queryKey: ["findManyAccount", accountId],
+            queryKey: ["findManyContact", accountId],
+          });
+
+          await queryClient.invalidateQueries({
+            queryKey: ["findManyAccount"],
           });
 
           try {

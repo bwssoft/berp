@@ -17,17 +17,17 @@ const actions = [
     iconForeground: "text-sky-700",
     iconBackground: "bg-sky-50",
     description:
-        "Gerencie o cadastro, edição e exclusão de usuários do sistema, além de visualizar seus detalhes e status de acesso.",
+      "Gerencie o cadastro, edição e exclusão de usuários do sistema, além de visualizar seus detalhes e status de acesso.",
   },
   {
     title: "Perfil",
     href: "/admin/profile",
-    code: "admin:profile",
+    code: "admin:profile:view",
     icon: BookOpenIcon,
     iconForeground: "text-teal-700",
     iconBackground: "bg-teal-50",
     description:
-       "Configure perfis de acesso, definindo permissões e regras específicas para diferentes grupos de usuários.",
+      "Configure perfis de acesso, definindo permissões e regras específicas para diferentes grupos de usuários.",
   },
   {
     title: "Controle de acesso",
@@ -37,7 +37,7 @@ const actions = [
     iconForeground: "text-purple-700",
     iconBackground: "bg-purple-50",
     description:
-       "Administre as regras de autorização do sistema, vinculando usuários e perfis às funcionalidades disponíveis.",
+      "Administre as regras de autorização do sistema, vinculando usuários e perfis às funcionalidades disponíveis.",
   },
 ];
 

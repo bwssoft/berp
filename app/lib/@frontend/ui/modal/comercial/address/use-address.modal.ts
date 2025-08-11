@@ -66,7 +66,13 @@ export function useAddressModal() {
       });
       // Invalidate and refetch addresses query
       await queryClient.invalidateQueries({
-        queryKey: addressesQueryKey(accountId),
+        queryKey: ["findOneAccount", accountId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["findManyAddress", accountId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["findManyAccount"],
       });
       closeModal();
     } catch {

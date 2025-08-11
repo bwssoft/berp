@@ -1,8 +1,11 @@
+"use client";
+
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import { AccountDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/account.data";
+import { useQueries, useQuery } from "@tanstack/react-query";
 
 interface Props {
   searchParams: {
@@ -10,65 +13,115 @@ interface Props {
   };
 }
 
-export default async function Page({ searchParams }: Props) {
+export default function Page({ searchParams }: Props) {
   const { id: accountId } = searchParams;
 
-  const account = await findOneAccount({ id: accountId });
+  // Query for account data
+  const { data: account, isLoading: isLoadingAccount } = useQuery({
+    queryKey: ["findOneAccount", accountId],
+    queryFn: () => findOneAccount({ id: accountId }),
+    enabled: !!accountId,
+  });
 
-  if (!account) {
-    return (
-      <div className="p-4">
-        <h1>Conta não encontrada</h1>
-        <p>ID procurado: {accountId}</p>
-        <p>
-          A conta pode ainda estar sendo criada. Aguarde alguns segundos e
-          recarregue a página.
-        </p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Recarregar página
-        </button>
-      </div>
-    );
+  // Query for addresses
+  const { data: addresses = [], isLoading: isLoadingAddresses } = useQuery({
+    queryKey: ["findManyAddress", accountId],
+    queryFn: () => findManyAddress({ accountId }),
+    enabled: !!accountId && !!account,
+  });
+
+  // Query for contacts
+  const { data: contacts = [], isLoading: isLoadingContacts } = useQuery({
+    queryKey: ["findManyContact", accountId],
+    queryFn: () => findManyContact({ accountId }),
+    enabled: !!accountId && !!account,
+  });
+
+  // Query for permissions using useQueries
+  const permissionQueries = useQueries({
+    queries: [
+      {
+        queryKey: [
+          "restrictFeatureByProfile",
+          "commercial:accounts:access:tab:data:contacts",
+        ],
+        queryFn: () =>
+          restrictFeatureByProfile(
+            "commercial:accounts:access:tab:data:contacts"
+          ),
+      },
+      {
+        queryKey: [
+          "restrictFeatureByProfile",
+          "commercial:accounts:access:tab:data:addresses",
+        ],
+        queryFn: () =>
+          restrictFeatureByProfile(
+            "commercial:accounts:access:tab:data:addresses"
+          ),
+      },
+      {
+        queryKey: [
+          "restrictFeatureByProfile",
+          "commercial:accounts:access:tab:data:group-edit",
+        ],
+        queryFn: () =>
+          restrictFeatureByProfile(
+            "commercial:accounts:access:tab:data:group-edit"
+          ),
+      },
+      {
+        queryKey: [
+          "restrictFeatureByProfile",
+          "commercial:accounts:access:lgpd:full",
+        ],
+        queryFn: () =>
+          restrictFeatureByProfile("commercial:accounts:access:lgpd:full"),
+      },
+      {
+        queryKey: [
+          "restrictFeatureByProfile",
+          "commercial:accounts:access:lgpd:partial",
+        ],
+        queryFn: () =>
+          restrictFeatureByProfile("commercial:accounts:access:lgpd:partial"),
+      },
+    ],
+  });
+
+  const isLoadingPermissions = permissionQueries.some(
+    (query) => query.isLoading
+  );
+
+  const permissions = {
+    hasPermissionContacts: permissionQueries[0]?.data ?? false,
+    hasPermissionAddresses: permissionQueries[1]?.data ?? false,
+    hasPermissionEconomicGroup: permissionQueries[2]?.data ?? false,
+    fullLgpdAccess: permissionQueries[3]?.data ?? false,
+    partialLgpdAccess: permissionQueries[4]?.data ?? false,
+  };
+
+  // TODO: ADD SKELETON LOADING FOR DATA
+  if (
+    isLoadingAccount ||
+    isLoadingAddresses ||
+    isLoadingContacts ||
+    isLoadingPermissions
+  ) {
+    return <div className="p-4"></div>;
   }
 
-  const addresses = await findManyAddress({ accountId });
-  const contacts = await findManyContact({ accountId });
-
-  const hasPermissionContacts = await restrictFeatureByProfile(
-    "commercial:accounts:access:tab:data:contacts"
-  );
-
-  const hasPermissionAddresses = await restrictFeatureByProfile(
-    "commercial:accounts:access:tab:data:addresses"
-  );
-
-  const hasPermissionEconomicGroup = await restrictFeatureByProfile(
-    "commercial:accounts:access:tab:data:group-edit"
-  );
-
-  const fullLgpdAccess = await restrictFeatureByProfile(
-    "commercial:accounts:access:lgpd:full"
-  );
-
-  const partialLgpdAccess = await restrictFeatureByProfile(
-    "commercial:accounts:access:lgpd:partial"
-  );
+  // TODO: ADD NOT FOUND PAGE
+  if (!account) {
+    return <div className="p-4">Conta não encontrada</div>;
+  }
 
   return (
     <AccountDataPage
       addresses={addresses}
       account={account}
       contacts={contacts}
-      permissions={{
-        hasPermissionContacts,
-        hasPermissionAddresses,
-        hasPermissionEconomicGroup,
-        fullLgpdAccess,
-        partialLgpdAccess,
-      }}
+      permissions={permissions}
     />
   );
 }
