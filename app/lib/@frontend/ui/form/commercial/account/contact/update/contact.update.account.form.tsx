@@ -106,7 +106,7 @@ export function UpdateContactAccountForm({
         </>
       )}
 
-      <div className="flex gap-4 justify-between w-full items-end">
+      <div className="flex gap-4 justify-between w-full items-end max">
         <Combobox
           data={[
             "Celular",

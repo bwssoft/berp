@@ -17,7 +17,6 @@ import {
   SectorModal,
   useSectorModal,
 } from "../../../../modal/comercial/sector";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { useEffect, useState } from "react";
 import {
   FormControl,
@@ -26,6 +25,9 @@ import {
   FormLabel,
   FormMessage,
 } from "../../../../component/form";
+import { SectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/delete-sector.dialog";
+import { useSectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/use-delete-sector.dialog";
+import { ISector } from "@/app/lib/@backend/domain";
 
 export function CNPJAccountForm() {
   const {
@@ -51,21 +53,14 @@ export function CNPJAccountForm() {
     setValue,
   } = methods;
 
-  const [canShowSectorButton, setCanShowSectorButton] =
-    useState<boolean>(false);
+  const [canShowSectorButton, setCanShowSectorButton] = useState<boolean>(true);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const hasPermission = await restrictFeatureByProfile(
-          "commercial:accounts:new:sector"
-        );
-        setCanShowSectorButton(hasPermission);
-      } catch (error) {
-        console.error("Error checking sector permission:", error);
-      }
-    })();
-  }, []);
+  const deleteDlg = useSectorDeleteDialog();
+
+  function handleAskDelete(s: ISector) {
+    sectorModal.closeModal();
+    setTimeout(() => deleteDlg.openDialog(s), 0);
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -143,7 +138,6 @@ export function CNPJAccountForm() {
           />
         )}
       />
-
       <Controller
         control={control}
         name="cnpj.typeIE"
@@ -212,7 +206,6 @@ export function CNPJAccountForm() {
             <PlusIcon className="size-5" />
           </Button>
         )}
-
         <SectorModal
           open={sectorModal.open}
           closeModal={sectorModal.closeModal}
@@ -224,6 +217,7 @@ export function CNPJAccountForm() {
           isPending={sectorModal.isPending}
           handleToggle={sectorModal.handleToggle}
           handleSave={sectorModal.handleSave}
+          onAskDelete={handleAskDelete}
         />
       </div>
       <div className="flex gap-2 items-end">
@@ -259,7 +253,6 @@ export function CNPJAccountForm() {
           )}
         />
       </div>
-
       <div className="flex gap-2 items-end">
         <Controller
           control={control}
@@ -291,6 +284,14 @@ export function CNPJAccountForm() {
           )}
         />
       </div>
+
+      <SectorDeleteDialog
+        sector={deleteDlg.sectorToDelete ?? undefined}
+        open={deleteDlg.open}
+        onClose={deleteDlg.closeDialog}
+        onDelete={deleteDlg.deleteSector}
+        isLoading={deleteDlg.isLoading}
+      />
     </div>
   );
 }
