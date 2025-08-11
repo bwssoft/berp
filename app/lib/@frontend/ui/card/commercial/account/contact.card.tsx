@@ -326,7 +326,10 @@ export default function ContactCard({
                 (item.type === "Email" && item.preferredContact.email);
 
               return (
-                <div key={item.id} className="flex items-center gap-2 text-sm">
+                <div
+                  key={item.id}
+                  className="flex items-center gap-2 text-sm my-auto"
+                >
                   <div className="flex items-center gap-1">
                     {getContactIcons(item.type, item.preferredContact)}
                     {isPreferred && (
@@ -334,11 +337,12 @@ export default function ContactCard({
                     )}
                   </div>
                   <span
-                    className={
+                    className={cn(
+                      "min-w-0 break-words whitespace-normal ",
                       isPreferred
                         ? "font-medium text-foreground"
                         : "text-muted-foreground"
-                    }
+                    )}
                   >
                     {formatContactValue(item.type, item.contact)}
                   </span>
