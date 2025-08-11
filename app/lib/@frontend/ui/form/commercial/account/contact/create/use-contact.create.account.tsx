@@ -150,9 +150,17 @@ const schema = z
 
 export type ContactFormSchema = z.infer<typeof schema>;
 
+// Extended interface for submit function that includes originType
+export type ContactFormSchemaWithOrigin = ContactFormSchema & {
+  originType: "api" | "local";
+};
+
 export function useCreateContactAccount(
   closeModal: () => void,
-  onSubmit: (data: ContactFormSchema, accountId?: string) => Promise<void>
+  onSubmit: (
+    data: ContactFormSchemaWithOrigin,
+    accountId?: string
+  ) => Promise<void>
 ) {
   const [isLoading, setIsLoading] = useState(false);
   const [tempContact, setTempContact] = useState<{
@@ -288,23 +296,11 @@ export function useCreateContactAccount(
     remove(index);
   };
 
-  const { data: accountData } = useQuery({
-    queryKey: ["findManyAccount", accountId],
-    queryFn: () => {
-      if (!accountId) {
-        return null;
-      } else {
-        return findManyAccount({ id: accountId });
-      }
-    },
-    enabled: !!accountId,
-  });
-
   const handleSubmit = hookFormSubmit(
     async (data) => {
       setIsLoading(true);
 
-      await onSubmit(data, accountId || undefined);
+      await onSubmit({ ...data, originType: "local" }, accountId || undefined);
 
       setIsLoading(false);
     },

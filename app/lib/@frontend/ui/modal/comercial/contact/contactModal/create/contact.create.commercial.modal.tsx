@@ -1,18 +1,18 @@
 "use client";
 
 import {
-  ContactFormSchema,
   CreateContactAccountForm,
   Modal,
   ModalBody,
   ModalContent,
 } from "@/app/lib/@frontend/ui/component";
+import { ContactFormSchemaWithOrigin } from "@/app/lib/@frontend/ui/form/commercial/account/contact/create/use-contact.create.account";
 import React from "react";
 
 interface Props {
   open: boolean;
   closeModal: () => void;
-  createContact: (data: ContactFormSchema, accountId?: string) => Promise<void>;
+  createContact: (data: ContactFormSchemaWithOrigin, accountId?: string) => Promise<void>;
 }
 
 export function CreateContactModal({ open, closeModal, createContact }: Props) {

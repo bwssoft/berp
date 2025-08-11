@@ -8,7 +8,7 @@ import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.a
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { IContact } from "@/app/lib/@backend/domain";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { ContactFormSchema } from "@/app/lib/@frontend/ui/form";
+import { ContactFormSchemaWithOrigin } from "@/app/lib/@frontend/ui/form/commercial/account/contact/create/use-contact.create.account";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
@@ -29,7 +29,10 @@ export function useCreateContactModal() {
     setOpen(false);
   }
 
-  async function createContact(data: ContactFormSchema, accountId?: string) {
+  async function createContact(
+    data: ContactFormSchemaWithOrigin,
+    accountId?: string
+  ) {
     try {
       const { success, error } = await createOneContact({
         ...data,
@@ -47,7 +50,6 @@ export function useCreateContactModal() {
             type: Array.isArray(item.type) ? item.type[0] : item.type,
             id: item.id ?? crypto.randomUUID(),
           })) || [],
-        originType: "api",
       });
 
       if (success && accountId) {
@@ -89,9 +91,6 @@ export function useCreateContactModal() {
                 avatarUrl: "",
               },
             });
-            console.log(
-              "Contact creation historical entry created successfully"
-            );
           } catch (error) {
             console.warn(
               "Failed to create contact creation historical entry:",
@@ -141,7 +140,7 @@ export function useCreateContactModal() {
     }
   }
 
-  async function createContactLocally(data: ContactFormSchema) {
+  async function createContactLocally(data: ContactFormSchemaWithOrigin) {
     // Create contact in context with proper data transformation
     const contactData = {
       ...data,
@@ -159,7 +158,6 @@ export function useCreateContactModal() {
           type: Array.isArray(item.type) ? item.type[0] : item.type,
           id: item.id ?? crypto.randomUUID(),
         })) || [],
-      originType: "local",
     } as IContact;
 
     createContactInContext(contactData);
