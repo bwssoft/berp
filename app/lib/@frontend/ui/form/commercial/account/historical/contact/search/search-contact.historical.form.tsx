@@ -56,6 +56,7 @@ export function SearchContactHistoricalAccountForm({
     errors,
     trigger,
     validateAndConfirm,
+    tempSelectedContact,
   } = useSearchContactHistoricalAccount({
     contacts,
     selectContact,
@@ -63,12 +64,9 @@ export function SearchContactHistoricalAccountForm({
   });
 
   const handleConfirm = async () => {
-    if (showOutroForm) {
-      // If outro form is shown, validate before closing
-      const isValid = await validateAndConfirm();
-      if (!isValid) {
-        return; // Don't close modal if validation fails
-      }
+    const isValid = await validateAndConfirm();
+    if (!isValid) {
+      return;
     }
     closeModal();
   };
@@ -241,6 +239,15 @@ export function SearchContactHistoricalAccountForm({
       </div>
 
       <div className="flex justify-end gap-4 w-full pt-4">
+        {tempSelectedContact && (
+          <div className="flex-1 text-sm text-gray-600 bg-blue-50 p-2 rounded">
+            <strong>Selecionado:</strong> {tempSelectedContact.name} -{" "}
+            {tempSelectedContact.contact}
+            <div className="text-xs text-gray-500">
+              Pressione &quot;Confirmar&quot; para adicionar
+            </div>
+          </div>
+        )}
         <Button
           type="button"
           variant="ghost"

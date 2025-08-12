@@ -84,6 +84,9 @@ export function useSearchContactHistoricalAccount({
   setSelectContact,
 }: Props) {
   const [contactData, setContactData] = useState<Props["contacts"]>([]);
+  const [tempSelectedContact, setTempSelectedContact] = useState<
+    ContactSelection | undefined
+  >(undefined);
   const [otherContactInfo, setOtherContactInfo] = useState({
     name: "",
     type: "",
@@ -112,7 +115,7 @@ export function useSearchContactHistoricalAccount({
   }, [contacts]);
 
   const isSelected = (id: string, channel: string) =>
-    selectContact?.id === id && selectContact?.channel === channel;
+    tempSelectedContact?.id === id && tempSelectedContact?.channel === channel;
 
   const toggleSelection = useCallback(
     (
@@ -122,7 +125,7 @@ export function useSearchContactHistoricalAccount({
       contact: string,
       channel: string
     ) => {
-      setSelectContact((prev) => {
+      setTempSelectedContact((prev) => {
         if (prev?.id === id && prev?.channel === channel) {
           return undefined;
         } else {
@@ -130,7 +133,7 @@ export function useSearchContactHistoricalAccount({
         }
       });
     },
-    [setSelectContact]
+    []
   );
 
   useEffect(() => {
@@ -143,59 +146,56 @@ export function useSearchContactHistoricalAccount({
 
         if (isValid) {
           const id = "outros-contact";
-          toggleSelection(id, name, type, contact, type);
+          setTempSelectedContact({ id, name, type, contact, channel: type });
           hasAutoSelectedRef.current = true;
         }
       } else if (!name || !type || !contact) {
         hasAutoSelectedRef.current = false;
-        if (selectContact?.id === "outros-contact") {
-          setSelectContact(undefined);
+        if (tempSelectedContact?.id === "outros-contact") {
+          setTempSelectedContact(undefined);
         }
       }
     };
 
     validateAndSelect();
-  }, [
-    otherContactInfo,
-    toggleSelection,
-    trigger,
-    selectContact,
-    setSelectContact,
-  ]);
+  }, [otherContactInfo, trigger, tempSelectedContact]);
 
   const validateAndConfirm = async () => {
-    const { name, type, contact } = otherContactInfo;
-
-    clearErrors();
-
-    // Prepare the data for validation
-    const formData = {
-      name: name || "",
-      type: type ? [type] : [],
-      contact: contact || "",
-    };
-
-    try {
-      // Validate against the schema
-      const validatedData = schema.parse(formData);
-
-      // If validation passes, select the contact
-      const id = "outros-contact";
-      toggleSelection(id, name, type, contact, type);
-      return true;
-    } catch (error) {
-      // If validation fails, set errors manually
-      if (error instanceof z.ZodError) {
-        error.errors.forEach((err) => {
-          const field = err.path[0] as keyof typeof formData;
-          setError(field, {
-            type: "manual",
-            message: err.message,
-          });
-        });
-      }
-      return false;
+    // Check if we have a temporary selection (either from existing contacts or outros form)
+    if (!tempSelectedContact) {
+      return false; // No selection made
     }
+
+    // If it's an "outros" contact, validate the form
+    if (tempSelectedContact.id === "outros-contact") {
+      const { name, type, contact } = otherContactInfo;
+
+      clearErrors();
+
+      const formData = {
+        name: name || "",
+        type: type ? [type] : [],
+        contact: contact || "",
+      };
+
+      try {
+        schema.parse(formData);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            const field = err.path[0] as keyof typeof formData;
+            setError(field, {
+              type: "manual",
+              message: err.message,
+            });
+          });
+        }
+        return false;
+      }
+    }
+
+    setSelectContact(tempSelectedContact);
+    return true;
   };
 
   return {
@@ -209,5 +209,6 @@ export function useSearchContactHistoricalAccount({
     trigger,
     validateAndConfirm,
     clearErrors,
+    tempSelectedContact,
   };
 }
