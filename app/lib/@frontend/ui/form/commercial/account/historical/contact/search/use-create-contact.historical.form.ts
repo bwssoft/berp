@@ -9,6 +9,8 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { unmaskPhoneNumber } from "@/app/lib/util/mask-phone-number";
+
 interface Props {
   contacts?: {
     name: string;
@@ -25,13 +27,56 @@ interface Props {
   ) => void;
 }
 
-const schema = z.object({
-  name: z.string().min(1, "Nome é obrigatório"),
-  type: z
-    .array(z.string(), { message: "Tipo é obrigatório" })
-    .min(1, "Tipo é obrigatório"),
-  contact: z.string().min(1, "Contato é obrigatório"),
-});
+const schema = z
+  .object({
+    name: z.string().min(1, "Nome é obrigatório"),
+    type: z
+      .array(z.string(), { message: "Tipo é obrigatório" })
+      .min(1, "Tipo é obrigatório"),
+    contact: z.string().min(1, "Contato é obrigatório"),
+  })
+  .superRefine((data, ctx) => {
+    const contactType = data.type[0]; // Get the first selected type
+
+    if (contactType === "Email") {
+      const emailValidation = z
+        .string()
+        .email("Email inválido")
+        .safeParse(data.contact);
+      if (!emailValidation.success) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["contact"],
+          message: "Email inválido",
+        });
+      }
+    }
+
+    if (
+      ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(
+        contactType
+      )
+    ) {
+      const numericValue = unmaskPhoneNumber(data.contact);
+      const isCellphone =
+        contactType === "Celular" && numericValue.length !== 11;
+      const isLandline =
+        (contactType === "Telefone Residencial" ||
+          contactType === "Telefone Comercial") &&
+        numericValue.length !== 10;
+
+      if (isCellphone || isLandline) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["contact"],
+          message:
+            contactType === "Celular"
+              ? "Celular deve ter 11 dígitos (incluindo DDD)"
+              : "Telefone deve ter 10 dígitos (incluindo DDD)",
+        });
+      }
+    }
+  });
 
 export function useSearchContactHistoricalAccount({
   contacts,
@@ -51,6 +96,8 @@ export function useSearchContactHistoricalAccount({
     formState: { errors },
     control,
     trigger,
+    setError,
+    clearErrors,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
@@ -116,6 +163,41 @@ export function useSearchContactHistoricalAccount({
     setSelectContact,
   ]);
 
+  const validateAndConfirm = async () => {
+    const { name, type, contact } = otherContactInfo;
+
+    clearErrors();
+
+    // Prepare the data for validation
+    const formData = {
+      name: name || "",
+      type: type ? [type] : [],
+      contact: contact || "",
+    };
+
+    try {
+      // Validate against the schema
+      const validatedData = schema.parse(formData);
+
+      // If validation passes, select the contact
+      const id = "outros-contact";
+      toggleSelection(id, name, type, contact, type);
+      return true;
+    } catch (error) {
+      // If validation fails, set errors manually
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          const field = err.path[0] as keyof typeof formData;
+          setError(field, {
+            type: "manual",
+            message: err.message,
+          });
+        });
+      }
+      return false;
+    }
+  };
+
   return {
     contactData,
     toggleSelection,
@@ -125,5 +207,7 @@ export function useSearchContactHistoricalAccount({
     errors,
     control,
     trigger,
+    validateAndConfirm,
+    clearErrors,
   };
 }
