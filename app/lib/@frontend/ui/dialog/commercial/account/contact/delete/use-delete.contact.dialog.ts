@@ -62,7 +62,8 @@ export function useDeleteContactDialog() {
         }
       }
 
-      await qc.invalidateQueries({ queryKey: ["findOneAccount"] });
+      await qc.invalidateQueries({ queryKey: ["findOneAccount", accountId] });
+      await qc.invalidateQueries({ queryKey: ["findManyContact", accountId] });
       await qc.invalidateQueries({ queryKey: ["findManyAccount"] });
 
       // Create historical entry for contact deletion

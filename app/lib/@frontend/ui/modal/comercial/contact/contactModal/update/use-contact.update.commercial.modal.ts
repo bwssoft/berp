@@ -103,7 +103,11 @@ export function useUpdateContactModal() {
         });
 
         await queryClient.invalidateQueries({
-          queryKey: ["findManyAccount", targetAccountId],
+          queryKey: ["findManyContact", targetAccountId],
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: ["findManyAccount"],
         });
 
         // Create historical entry for contact update

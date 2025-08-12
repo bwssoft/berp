@@ -9,6 +9,7 @@ import {
   Input,
 } from "../../../../component";
 import { useCreateOneUserForm } from "./use-create-one.user.form";
+import { formatCpf } from "@/app/lib/util/format-rg-cpf";
 
 export function CreateOneUserForm() {
   const {
@@ -18,7 +19,7 @@ export function CreateOneUserForm() {
     profiles,
     errors,
     handleCancelEdit,
-    setSearchTerm
+    setSearchTerm,
   } = useCreateOneUserForm();
 
   return (
@@ -67,7 +68,11 @@ export function CreateOneUserForm() {
 
           <Input
             label="CPF"
-            {...register("cpf")}
+            {...register("cpf", {
+              onChange: (e) => {
+                e.target.value = formatCpf(e.target.value);
+              },
+            })}
             error={errors.cpf?.message}
             placeholder="Digite o CPF"
           />

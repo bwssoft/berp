@@ -53,6 +53,8 @@ interface Props {
     hasPermissionContacts: boolean;
     hasPermissionAddresses: boolean;
     hasPermissionEconomicGroup: boolean;
+    fullLgpdAccess?: boolean;
+    partialLgpdAccess?: boolean;
   };
 }
 
@@ -65,6 +67,8 @@ export function AccountDataPage(props: Props) {
       hasPermissionContacts,
       hasPermissionAddresses,
       hasPermissionEconomicGroup,
+      fullLgpdAccess,
+      partialLgpdAccess,
     },
   } = props;
 
@@ -186,6 +190,10 @@ export function AccountDataPage(props: Props) {
             openUpdateModalAccountData();
           }}
           onRefresh={onRefreshAccountData}
+          lgpdPermissions={{
+            fullLgpdAccess,
+            partialLgpdAccess,
+          }}
         />
 
         {isCompany && (
@@ -193,6 +201,10 @@ export function AccountDataPage(props: Props) {
             openModal={openUpdateEconomicGroup}
             account={account}
             hasPermissionEconomicGroup={hasPermissionEconomicGroup}
+            lgpdPermissions={{
+              fullLgpdAccess,
+              partialLgpdAccess,
+            }}
           />
         )}
       </div>
@@ -382,6 +394,10 @@ export function AccountDataPage(props: Props) {
         openUpdateModal={openUpdateAccountData}
         closeUpdateModal={closeUpdateAccountData}
         accountData={account}
+        lgpdPermissions={{
+          fullLgpdAccess,
+          partialLgpdAccess,
+        }}
       />
     </div>
   );
