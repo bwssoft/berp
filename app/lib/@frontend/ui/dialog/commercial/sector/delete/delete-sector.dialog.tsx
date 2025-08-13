@@ -18,12 +18,12 @@ export function SectorDeleteDialog({
   isLoading = false,
 }: SectorDeleteDialogProps) {
   return (
-    <Dialog open={open} setOpen={onClose}>
+    <Dialog open={open} setOpen={(isOpen) => !isOpen && onClose()}>
       <div className="p-4">
         <h2 className="text-lg font-semibold">Excluir setor</h2>
 
         <p className="mt-2 text-sm text-gray-600">
-          Tem certeza que deseja excluir o setor "{sector?.name}"?
+          Tem certeza que deseja excluir o setor &quot;{sector?.name}&quot;?
         </p>
 
         <div className="mt-6 flex justify-end gap-2">

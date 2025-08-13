@@ -160,6 +160,10 @@ export function useSectorModal() {
 
   const hasUnsavedChanges = Object.keys(updatedSectors).length > 0;
 
+  const refreshSectors = useCallback(async () => {
+    await fetchSectors(currentPage);
+  }, [fetchSectors, currentPage]);
+
   return {
     open,
     openModal,
@@ -178,5 +182,6 @@ export function useSectorModal() {
     pagination,
     currentPage,
     setCurrentPage,
+    refreshSectors,
   };
 }
