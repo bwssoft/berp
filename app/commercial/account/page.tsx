@@ -40,10 +40,10 @@ export default async function Page(props: Props) {
 
   const canCreate = await restrictFeatureByProfile("commercial:accounts:new");
   const canViewFullLgpd = await restrictFeatureByProfile(
-    "commercial:accounts:view:lgpd:full"
+    "commercial:accounts:access:lgpd:full"
   );
   const canViewPartialLgpd = await restrictFeatureByProfile(
-    "commercial:accounts:view:lgpd:partial"
+    "commercial:accounts:access:lgpd:partial"
   );
 
   const accountsWithPermissions = {
