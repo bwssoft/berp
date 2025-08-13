@@ -15,11 +15,12 @@ export function sectorColumns(
       cell: ({ row }) => {
         const sector = row.original;
         return (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between">
             <Button
               type="button"
               variant="ghost"
               onClick={() => onToggle(sector)}
+              className="p-0"
             >
               <Toggle
                 value={sector.active}
@@ -34,8 +35,9 @@ export function sectorColumns(
                 variant="ghost"
                 onClick={() => onDelete(sector)}
                 title="Excluir setor"
+                className="p-0 h-10 w-10"
               >
-                <TrashIcon className="h-5 w-5 text-red-500" />
+                <TrashIcon className="text-red-500" />
               </Button>
             )}
           </div>
