@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { useAuth } from "@/app/lib/@frontend/context";
-import { useAccountDataUpdateModal } from "@/app/lib/@frontend/ui/modal/comercial/account/update/use-account-data.update.modal";
+import { useQueryClient } from "@tanstack/react-query";
 
 const schema = z
   .object({
@@ -183,6 +183,7 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
 
   const router = useRouter();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   // Função para alternar o texto de qualquer botão
   const toggleButtonText = (
@@ -296,6 +297,14 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
         title: "Sucesso!",
         description: "Dados da conta atualizado com sucesso!",
         variant: "success",
+      });
+
+      // Invalidate queries to refresh the UI
+      await queryClient.invalidateQueries({
+        queryKey: ["findOneAccount", accountData?.id],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["findManyAccount"],
       });
 
       closeModal();

@@ -9,11 +9,16 @@ interface AddressProps {
     openUpdateModal: any;
     closeUpdateModal: () => void;
     accountData?: IAccount;
+    lgpdPermissions?: {
+        fullLgpdAccess?: boolean;
+        partialLgpdAccess?: boolean;
+    };
 }
 export function AccountDataUpdateModal({
     openUpdateModal,
     closeUpdateModal,
     accountData,
+    lgpdPermissions,
 }: AddressProps) {
     return (
         <Modal
@@ -28,6 +33,7 @@ export function AccountDataUpdateModal({
                     <UpdateAccountDataForm
                         accountData={accountData}
                         closeModal={closeUpdateModal}
+                        lgpdPermissions={lgpdPermissions}
                     />
                 </ModalBody>
             </ModalContent>
