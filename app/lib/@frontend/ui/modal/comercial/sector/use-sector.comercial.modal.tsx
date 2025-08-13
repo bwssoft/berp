@@ -79,6 +79,13 @@ export function useSectorModal() {
       return newSectors;
     });
 
+    setPagination((prev) => ({
+      ...prev,
+      docs: prev.docs.map((s) =>
+        s.id === sector.id ? { ...s, active: newActive } : s
+      ),
+    }));
+
     setUpdatedSectors((prev) => ({
       ...prev,
       [sector.id]: newActive,
@@ -91,15 +98,31 @@ export function useSectorModal() {
   const handleSave = useCallback(async () => {
     try {
       const updates = Object.entries(updatedSectors);
+
+      if (updates.length === 0) {
+        toast({
+          title: "Nenhuma alteração para salvar",
+          variant: "default",
+        });
+        closeModal();
+        return;
+      }
+
       for (const [id, active] of updates) {
         await updateOneSector({ id }, { active });
       }
+
+      // Clear the pending updates
       setUpdatedSectors({});
+
+      // Refresh the data to ensure consistency
+      await fetchSectors(currentPage);
+
       toast({
-        title: "Sucesso!",
+        title: "Alterações salvas com sucesso!",
         variant: "success",
       });
-      await fetchSectors(currentPage);
+
       closeModal();
     } catch (error) {
       toast({
@@ -115,9 +138,14 @@ export function useSectorModal() {
     async ({ name }: SectorForm) => {
       try {
         await createOneSector({ name, active: true });
+
         await fetchSectors(currentPage);
         reset();
-        closeModal();
+
+        toast({
+          title: "Setor criado com sucesso!",
+          variant: "success",
+        });
       } catch (error) {
         toast({
           title: "Erro ao criar setor",
@@ -127,8 +155,10 @@ export function useSectorModal() {
         });
       }
     },
-    [currentPage, fetchSectors, reset, closeModal]
+    [currentPage, fetchSectors, reset]
   );
+
+  const hasUnsavedChanges = Object.keys(updatedSectors).length > 0;
 
   return {
     open,
@@ -144,6 +174,7 @@ export function useSectorModal() {
     handleToggle,
     handleSave,
     updatedSectors,
+    hasUnsavedChanges,
     pagination,
     currentPage,
     setCurrentPage,

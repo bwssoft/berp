@@ -29,6 +29,7 @@ interface Props {
   handleToggle: (s: ISector) => void;
   handleSave: () => void;
   onAskDelete: (s: ISector) => void;
+  hasUnsavedChanges?: boolean;
 }
 
 export function SectorModal({
@@ -43,6 +44,7 @@ export function SectorModal({
   handleToggle,
   handleSave,
   onAskDelete,
+  hasUnsavedChanges = false,
 }: Props) {
   return (
     <Modal
@@ -81,10 +83,25 @@ export function SectorModal({
           />
 
           <div className="flex gap-4 my-4 justify-end">
+            {hasUnsavedChanges ? (
+              <div className="flex-1 text-sm text-orange-600 bg-orange-50 p-2 rounded">
+                <strong>Alterações não salvas</strong> - Pressione
+                &quot;Salvar&quot; para confirmar
+              </div>
+            ) : (
+              <div className="flex-1 text-sm text-gray-500 bg-gray-50 p-2 rounded">
+                <strong>Nenhuma alteração</strong> - Todos os setores estão
+                salvos
+              </div>
+            )}
             <Button type="button" variant="ghost" onClick={closeModal}>
               Cancelar
             </Button>
-            <Button type="button" onClick={handleSave}>
+            <Button
+              type="button"
+              onClick={handleSave}
+              variant={hasUnsavedChanges ? "default" : "ghost"}
+            >
               Salvar
             </Button>
           </div>

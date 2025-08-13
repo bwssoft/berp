@@ -217,6 +217,7 @@ export function CNPJAccountForm() {
           isPending={sectorModal.isPending}
           handleToggle={sectorModal.handleToggle}
           handleSave={sectorModal.handleSave}
+          hasUnsavedChanges={sectorModal.hasUnsavedChanges}
           onAskDelete={handleAskDelete}
         />
       </div>
