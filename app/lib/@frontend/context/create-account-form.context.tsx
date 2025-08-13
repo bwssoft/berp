@@ -68,11 +68,13 @@ const schema = z
           .max(15, "Inscrição Municipal deve ter no máximo 15 dígitos")
           .optional(),
         status: z.string().optional(),
-        situationIE: z.object({
-          id: z.string(),
-          status: z.boolean(),
-          text: z.string(),
-        }),
+        situationIE: z
+          .object({
+            id: z.string().optional(),
+            status: z.boolean().optional(),
+            text: z.string().optional(),
+          })
+          .optional(),
         typeIE: z.string().optional(),
         sector: z
           .string({
@@ -566,7 +568,7 @@ export function CreateAccountFormProvider({
           number: address.number,
           zip_code: address.zip,
           complement: address.details ?? "",
-          type: ["Faturamento"],
+          type: ["Fiscal"],
           default_address: true,
         };
 
