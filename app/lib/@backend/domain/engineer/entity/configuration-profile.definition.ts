@@ -170,6 +170,7 @@ export type BwsNb2Config = {
   full_configuration_table?: string | undefined;
   full_functionality_table?: string | undefined;
   sleep_mode?: string | undefined;
+  lock_type?: number | undefined;
 };
 
 export type BwsLoraConfig = {

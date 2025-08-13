@@ -1,10 +1,12 @@
 "use client";
 import { useUpdateAccountForm } from "./use-update-account-data.account.form";
-import { IAccount } from "@/app/lib/@backend/domain";
+import { IAccount, ISector } from "@/app/lib/@backend/domain";
 import { PlusIcon } from "lucide-react";
 import { SectorModal, useSectorModal } from "@/app/lib/@frontend/ui/modal";
 import { useEffect, useState } from "react";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";
+import { formatLgpdCnpj } from "@/app/lib/util/format-lgpd-cnpj";
 import {
   Button,
   Input,
@@ -23,13 +25,22 @@ import {
   FormMessage,
 } from "../../../../../component/form";
 import { FormProvider } from "react-hook-form";
+import { useSectorDeleteDialog } from "@/app/lib/@frontend/ui/dialog/commercial/sector/delete/use-delete-sector.dialog";
 
 interface Props {
   accountData?: IAccount;
   closeModal: () => void;
+  lgpdPermissions?: {
+    fullLgpdAccess?: boolean;
+    partialLgpdAccess?: boolean;
+  };
 }
 
-export function UpdateAccountDataForm({ accountData, closeModal }: Props) {
+export function UpdateAccountDataForm({
+  accountData,
+  closeModal,
+  lgpdPermissions,
+}: Props) {
   const { methods, onSubmit, register, errors, control } = useUpdateAccountForm(
     { accountData, closeModal }
   );
@@ -38,13 +49,37 @@ export function UpdateAccountDataForm({ accountData, closeModal }: Props) {
   const [canShowSectorButton, setCanShowSectorButton] =
     useState<boolean>(false);
 
+  // Helper function to format document value based on type and LGPD permissions
+  const formatDocumentValue = (
+    documentValue: string,
+    documentType: string
+  ): string => {
+    if (!documentValue) return "";
+
+    const permissions = lgpdPermissions || {};
+
+    if (documentType === "cnpj") {
+      return formatLgpdCnpj(documentValue, permissions);
+    } else if (documentType === "cpf") {
+      return formatLgpdCpf(documentValue, permissions);
+    }
+
+    return documentValue;
+  };
+
+  const deleteDlg = useSectorDeleteDialog();
+
+  function handleAskDelete(s: ISector) {
+    deleteDlg.openDialog(s);
+  }
+
   useEffect(() => {
     (async () => {
       try {
-        const hasPermission = await restrictFeatureByProfile(
-          "commercial:accounts:access:tab:data:sector"
+        const sectorPermission = await restrictFeatureByProfile(
+          "commercial:accounts:new:sector"
         );
-        setCanShowSectorButton(hasPermission);
+        setCanShowSectorButton(sectorPermission);
       } catch (error) {
         console.error("Error checking sector permission:", error);
       }
@@ -60,7 +95,10 @@ export function UpdateAccountDataForm({ accountData, closeModal }: Props) {
         {accountData?.document.type === "cnpj" && (
           <div>
             <Input
-              value={accountData?.document.value || ""}
+              value={formatDocumentValue(
+                accountData?.document.value || "",
+                "cnpj"
+              )}
               label={"CNPJ"}
               disabled
               error={methods.formState.errors.document?.value?.message}
@@ -151,6 +189,7 @@ export function UpdateAccountDataForm({ accountData, closeModal }: Props) {
                 isPending={sectorModal.isPending}
                 handleToggle={sectorModal.handleToggle}
                 handleSave={sectorModal.handleSave}
+                onAskDelete={handleAskDelete}
               />
             </div>
           </div>
@@ -158,8 +197,12 @@ export function UpdateAccountDataForm({ accountData, closeModal }: Props) {
         {accountData?.document.type === "cpf" && (
           <div>
             <Input
+              value={formatDocumentValue(
+                accountData?.document.value || "",
+                "cpf"
+              )}
               label={"CPF"}
-              {...methods.register("document.value")}
+              disabled
               error={methods.formState.errors.document?.value?.message}
             />
             <Input

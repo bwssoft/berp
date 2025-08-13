@@ -67,11 +67,11 @@ export function useAddressUpdateModal() {
       }
 
       await queryClient.invalidateQueries({
-        queryKey: ["addresses"],
+        queryKey: ["findOneAccount", targetAccountId],
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["findOneAccount", targetAccountId],
+        queryKey: ["findManyAddress", targetAccountId],
       });
 
       await queryClient.invalidateQueries({
