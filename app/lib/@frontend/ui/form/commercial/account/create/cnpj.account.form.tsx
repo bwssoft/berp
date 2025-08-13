@@ -75,6 +75,9 @@ export function CNPJAccountForm() {
 
       deleteDlg.closeDialog();
 
+      // Refresh the sectors data in the modal
+      await sectorModal.refreshSectors();
+
       toast({
         title: "Sucesso!",
         description: "Setor excluído com sucesso!",
