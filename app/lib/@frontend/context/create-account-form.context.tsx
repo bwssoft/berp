@@ -579,7 +579,6 @@ export function CreateAccountFormProvider({
           name: dataCnpj?.company.name || dataCnpj?.alias || "",
           contractEnabled: false,
           positionOrRelation: "",
-          originType: "api",
           taxId: dataCnpj.taxId,
           contactFor: ["Fiscal"],
           contactItems: [
@@ -593,6 +592,7 @@ export function CreateAccountFormProvider({
               preferredContact: {},
             },
           ],
+          originType: "api",
         };
         createContactLocally(newContact);
       }

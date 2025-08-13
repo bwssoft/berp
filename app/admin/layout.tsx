@@ -29,7 +29,7 @@ const navigation: any[] = [
     name: "Perfis",
     icon: BookOpenIcon,
     pathname: "/admin/profile",
-    code: "admin:profile",
+    code: "admin:profile:view",
   },
   {
     name: "Controle de acesso",
