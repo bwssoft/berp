@@ -7,28 +7,35 @@ import { findManySectorUsecase } from "../../usecase/commercial/sector/find-many
 import { updateOneSectorUsecase } from "../../usecase/commercial/sector/update-one.sector.usecase";
 import { revalidatePath } from "next/cache";
 import { PaginationResult } from "../../domain/@shared/repository/pagination.interface";
+import { deleteOneSectorUsecase } from "../../usecase/commercial/sector/delete-one.sector";
 
 type CreateSectorInput = Omit<ISector, "id" | "created_at" | "updated_at">;
 
 export async function createOneSector(data: CreateSectorInput) {
-    const sector = await createOneSectorUsecase.execute(data);
-    revalidatePath("/commercial/account/form/create", "page");
-    return sector;
+  const sector = await createOneSectorUsecase.execute(data);
+  revalidatePath("/commercial/account/form/create", "page");
+  return sector;
 }
 
 export async function updateOneSector(
-    filter: Filter<ISector>,
-    update: Partial<ISector>
+  filter: Filter<ISector>,
+  update: Partial<ISector>
 ) {
-    const result = await updateOneSectorUsecase.execute(filter, update);
-    revalidatePath("/commercial/account/form/create", "page");
-    return result;
+  const result = await updateOneSectorUsecase.execute(filter, update);
+  revalidatePath("/commercial/account/form/create", "page");
+  return result;
 }
 export async function findManySector(input: {
-    filter?: Filter<ISector>;
-    page?: number;
-    limit?: number;
-    sort?: Record<string, 1 | -1>;
+  filter?: Filter<ISector>;
+  page?: number;
+  limit?: number;
+  sort?: Record<string, 1 | -1>;
 }): Promise<PaginationResult<ISector>> {
-    return await findManySectorUsecase.execute(input);
+  return await findManySectorUsecase.execute(input);
+}
+
+export async function deleteOneSector(filter: Partial<ISector>) {
+  const result = await deleteOneSectorUsecase.execute(filter);
+  revalidatePath("/commercial/account/form/create", "page");
+  return result;
 }
