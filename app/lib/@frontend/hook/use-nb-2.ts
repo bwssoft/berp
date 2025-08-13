@@ -251,6 +251,10 @@ export const useNB2 = () => {
           command: "RFSM\r\n",
           key: "economy_mode",
         },
+        {
+          command: "ROUT\r\n",
+          key: "lock_type",
+        },
       ] as const;
 
       return await Promise.all(
@@ -332,6 +336,7 @@ export const useNB2 = () => {
                   economy_mode: BwsNb2Parser.economy_mode(
                     response.economy_mode
                   ),
+                  lock_type: BwsNb2Parser.lock_type(response.lock_type),
                 },
               },
               messages: messages.map(({ key, command }) => ({
@@ -356,10 +361,20 @@ export const useNB2 = () => {
     ) => {
       const messages = [
         ...typedObjectEntries(generateMessages(configuration_profile)).map(
-          ([key, command]) => ({
-            key,
-            command,
-          })
+          ([key, command]) => {
+            if (key === "lock_type") {
+              return {
+                key,
+                command,
+                check: "ROUT",
+              };
+            } else {
+              return {
+                key,
+                command,
+              };
+            }
+          }
         ),
         {
           command: "RCN\r\n",
@@ -448,6 +463,10 @@ export const useNB2 = () => {
           command: "RFSM\r\n",
           key: "read_economy_mode",
         },
+        {
+          command: "ROUT\r\n",
+          key: "read_lock_type",
+        },
       ] as const;
       return await Promise.all(
         detected.map(async ({ port, equipment }) => {
@@ -482,6 +501,7 @@ export const useNB2 = () => {
               read_full_configuration_table,
               read_full_functionality_table,
               read_economy_mode,
+              read_lock_type,
               ...configuration
             } = response;
             const configurationEntries = Object.entries(configuration ?? {});
@@ -562,6 +582,7 @@ export const useNB2 = () => {
                       read_full_functionality_table
                     ),
                   economy_mode: BwsNb2Parser.economy_mode(read_economy_mode),
+                  lock_type: BwsNb2Parser.lock_type(read_lock_type),
                 },
               },
             };
