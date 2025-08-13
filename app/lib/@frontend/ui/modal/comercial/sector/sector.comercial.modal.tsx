@@ -30,6 +30,7 @@ interface Props {
   handleSave: () => void;
   onAskDelete: (s: ISector) => void;
   hasUnsavedChanges?: boolean;
+  preventClose?: boolean;
 }
 
 export function SectorModal({
@@ -46,10 +47,15 @@ export function SectorModal({
   onAskDelete,
   hasUnsavedChanges = false,
 }: Props) {
+  // Prevent modal from closing during delete operations
+  const handleModalClose = () => {
+    closeModal();
+  };
+
   return (
     <Modal
       open={open}
-      onClose={closeModal}
+      onClose={handleModalClose}
       title="Novo tipo de setor"
       className="bg-white"
       position="center"

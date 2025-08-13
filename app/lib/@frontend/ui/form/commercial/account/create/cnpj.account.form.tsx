@@ -17,7 +17,9 @@ import {
   SectorModal,
   useSectorModal,
 } from "../../../../modal/comercial/sector";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { deleteOneSector } from "@/app/lib/@backend/action/commercial/sector.action";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import {
   FormControl,
   FormField,
@@ -54,13 +56,41 @@ export function CNPJAccountForm() {
   } = methods;
 
   const [canShowSectorButton, setCanShowSectorButton] = useState<boolean>(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const deleteDlg = useSectorDeleteDialog();
 
   function handleAskDelete(s: ISector) {
-    sectorModal.closeModal();
-    setTimeout(() => deleteDlg.openDialog(s), 0);
+    deleteDlg.openDialog(s);
   }
+
+  const handleDelete = async () => {
+    if (!deleteDlg.sectorToDelete) return;
+
+    setIsDeleting(true);
+    const sectorToDeleteId = deleteDlg.sectorToDelete.id;
+
+    try {
+      await deleteOneSector({ id: sectorToDeleteId });
+
+      deleteDlg.closeDialog();
+
+      toast({
+        title: "Sucesso!",
+        description: "Setor excluído com sucesso!",
+        variant: "success",
+      });
+    } catch (err) {
+      console.error("Erro ao excluir setor:", err);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir o setor.",
+        variant: "error",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -290,8 +320,8 @@ export function CNPJAccountForm() {
         sector={deleteDlg.sectorToDelete ?? undefined}
         open={deleteDlg.open}
         onClose={deleteDlg.closeDialog}
-        onDelete={deleteDlg.deleteSector}
-        isLoading={deleteDlg.isLoading}
+        onDelete={handleDelete}
+        isLoading={isDeleting}
       />
     </div>
   );
