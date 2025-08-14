@@ -46,7 +46,7 @@ export function SearchContactHistoricalModal({
         open={open}
         onClose={closeModal}
         title="Selecione um contato para o histórico"
-        className="bg-white h-full max-h-[70vh]"
+        className="bg-white h-full max-h-[70vh] w-full max-w-3xl"
         position="center"
       >
         <ModalContent>
