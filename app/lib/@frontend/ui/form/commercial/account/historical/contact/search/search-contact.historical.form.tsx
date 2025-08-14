@@ -171,76 +171,93 @@ export function SearchContactHistoricalAccountForm({
         ) : (
           /* Contact Disclosures */
           contactData?.map((company) => (
-            <Disclosure key={company.documentValue}>
-              {({ open }) => (
-                <>
-                  <DisclosureButton className="flex justify-between w-full px-4 py-2 text-sm font-medium text-left text-black bg-gray-100 rounded-lg hover:bg-gray-200">
-                    <span>{company.name}</span>
-                    <ChevronUpIcon
-                      className={`${open ? "rotate-180 transform" : ""} w-5 h-5 text-purple-500`}
-                    />
-                  </DisclosureButton>
-                  <DisclosurePanel className="px-4 pb-2 flex flex-col gap-2">
-                    {company.contacts.map((c) =>
-                      c.contactItems.map((ci) => (
-                        <label key={ci.id} className="flex items-center gap-1">
-                          <span className="text-gray-500 text-sm">
-                            {ci.type + ": " + ci.contact}
-                          </span>
-                          <Checkbox
-                            checked={isSelected(ci.id, ci.type)}
-                            onChange={() =>
-                              toggleSelection(
-                                ci.id,
-                                company.name,
-                                ci.type,
-                                ci.contact,
-                                ci.type
-                              )
-                            }
-                          />
-                          <div className="flex gap-2">
-                            {ci.type.includes("Telefone") && (
-                              <PhoneIcon className="w-5 h-5" />
-                            )}
-                            {ci.type === "Email" && (
-                              <EnvelopeIcon className="w-5 h-5" />
-                            )}
-                            {ci.type === "Celular" && (
-                              <WhatsappIcon classname="w-5 h-5" />
-                            )}
-                          </div>
-                          {ci.type === "Celular" && (
-                            <label className="flex items-center gap-1">
-                              <Checkbox
-                                checked={isSelected(ci.id, "Whatsapp")}
-                                onChange={() =>
-                                  toggleSelection(
-                                    ci.id,
-                                    company.name,
-                                    ci.type,
-                                    ci.contact,
-                                    "Whatsapp"
-                                  )
-                                }
-                              />
-                              <PhoneIcon className="w-5 h-5" />
-                            </label>
-                          )}
-                        </label>
-                      ))
-                    )}
-                  </DisclosurePanel>
-                </>
-              )}
-            </Disclosure>
+            <div
+              key={company.documentValue}
+              className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden"
+            >
+              <Disclosure>
+                {({ open }) => (
+                  <>
+                    <DisclosureButton className="flex justify-between w-full px-6 py-4 text-base font-semibold text-left text-gray-800 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-150 transition-all duration-200">
+                      <span className="text-base">{company.name}</span>
+                      <ChevronUpIcon
+                        className={`${open ? "rotate-180 transform" : ""} w-6 h-6 text-blue-600 transition-transform duration-200`}
+                      />
+                    </DisclosureButton>
+                    <DisclosurePanel className="px-6 py-4 bg-white">
+                      <div className="space-y-3">
+                        {company.contacts.map((c) =>
+                          c.contactItems.map((ci) => (
+                            <div
+                              key={ci.id}
+                              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-150"
+                            >
+                              <div className="flex flex-col">
+                                <span className="text-sm font-medium text-gray-700">
+                                  {ci.type}
+                                </span>
+                                <span className="text-sm text-gray-600">
+                                  {ci.contact}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2">
+                                  {ci.type.includes("Telefone") && (
+                                    <PhoneIcon className="w-5 h-5 text-blue-600" />
+                                  )}
+                                  {ci.type === "Email" && (
+                                    <EnvelopeIcon className="w-5 h-5 text-green-600" />
+                                  )}
+                                  {ci.type === "Celular" && (
+                                    <WhatsappIcon classname="w-5 h-5 text-green-600" />
+                                  )}
+                                  <Checkbox
+                                    checked={isSelected(ci.id, ci.type)}
+                                    onChange={() =>
+                                      toggleSelection(
+                                        ci.id,
+                                        company.name,
+                                        ci.type,
+                                        ci.contact,
+                                        ci.type
+                                      )
+                                    }
+                                  />
+                                </div>
+                                {ci.type === "Celular" && (
+                                  <div className="flex items-center gap-2">
+                                    <PhoneIcon className="w-5 h-5 text-green-600" />
+                                    <Checkbox
+                                      checked={isSelected(ci.id, "Whatsapp")}
+                                      onChange={() =>
+                                        toggleSelection(
+                                          ci.id,
+                                          company.name,
+                                          ci.type,
+                                          ci.contact,
+                                          "Whatsapp"
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </DisclosurePanel>
+                  </>
+                )}
+              </Disclosure>
+            </div>
           ))
         )}
       </div>
 
       <div className="flex justify-end gap-4 w-full pt-4">
         {tempSelectedContact && (
-          <div className="flex-1 text-sm text-gray-600 bg-blue-50 p-2 rounded">
+          <div className="flex-1 text-sm text-gray-600 bg-blue-50 p-4 rounded">
             <strong>Selecionado:</strong> {tempSelectedContact.name} -{" "}
             {tempSelectedContact.contact}
             <div className="text-xs text-gray-500">
