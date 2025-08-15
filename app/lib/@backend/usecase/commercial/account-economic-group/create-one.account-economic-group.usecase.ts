@@ -10,7 +10,7 @@ import { createOneAuditUsecase } from "../../admin/audit";
 
 export type CreateOneAccountEconomicGroupOutput = {
   success: boolean;
-  id?: string;
+  data?: IAccountEconomicGroup;
   error?: {
     global?: string;
   };
@@ -47,7 +47,7 @@ class CreateOneAccountEconomicGroupUsecase {
         });
       }
 
-      return { success: true, id: accountEconomicGroup.id };
+      return { success: true, data: accountEconomicGroup };
     } catch {
       return {
         success: false,

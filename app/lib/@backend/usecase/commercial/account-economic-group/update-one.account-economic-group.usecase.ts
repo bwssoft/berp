@@ -12,6 +12,7 @@ import { createOneAuditUsecase } from "../../admin/audit";
 
 export type UpdateOneAccountEconomicGroupOutput = {
   success: boolean;
+  data?: IAccountEconomicGroup;
   error?: {
     global?: string;
   };
@@ -39,7 +40,7 @@ class UpdateOneAccountEconomicGroupUsecase {
         };
       }
 
-      await this.repository.updateOne(filter, update);
+      await this.repository.updateOne(filter, { $set: update });
 
       const after = await this.repository.findOne(filter);
 
@@ -56,7 +57,7 @@ class UpdateOneAccountEconomicGroupUsecase {
         });
       }
 
-      return { success: true };
+      return { success: true, data: after || undefined };
     } catch {
       return {
         success: false,
