@@ -27,18 +27,16 @@ export async function updateOneAccount(
   return result;
 }
 
-export async function refreshOneAccount(taxId: string, accountId: string) {
-  // const result = await fetchCnpjData(taxId);
-  // descomentar após mergear a branch 16
+export async function refreshOneAccount(taxId: string, id: string) {
   const result = await fetcCnpjRegistrationData(taxId);
 
   if (!result) return null;
 
   await updateOneAccount(
-    { id: accountId },
+    { id: id },
     {
-      fantasy_name: result.alias ?? "",
-      social_name: result.company.name ?? "",
+      fantasy_name: result.alias,
+      social_name: result.company.name,
       status: result?.registrations[0]?.status.text ?? "",
       state_registration: result?.registrations[0]?.number ?? "",
       situationIE: {

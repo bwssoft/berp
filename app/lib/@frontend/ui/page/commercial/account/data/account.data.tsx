@@ -43,6 +43,7 @@ import { useAccountDataUpdateModal } from "../../../../modal/comercial/account/u
 import { AccountDataUpdateModal } from "../../../../modal/comercial/account/update/account-data.update.modal";
 import { refreshOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   account: IAccount;
@@ -72,6 +73,7 @@ export function AccountDataPage(props: Props) {
     },
   } = props;
 
+  const queryClient = useQueryClient();
   const [selectedContact, setSelectedContact] = useState<IContact | any>();
   const [selectedAddress, setSelectedAddress] = useState<IAddress | any>();
   const isCompany = account.document.type === "cnpj";
@@ -173,6 +175,11 @@ export function AccountDataPage(props: Props) {
    */
   const onRefreshAccountData = async () => {
     await refreshOneAccount(account.document.value, account.id!);
+
+    await queryClient.invalidateQueries({
+      queryKey: ["findOneAccount", account.id],
+    });
+
     toast({
       variant: "success",
       description: "Conta atualizada com sucesso!",
