@@ -1,6 +1,4 @@
-import { IAddress } from "./address.definition";
 import { IContact } from "./contact.definition";
-import { ISector } from "./sector.definition";
 
 export interface IAccount {
   id?: string | undefined;

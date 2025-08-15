@@ -5,6 +5,7 @@ export * from "./proposal.definition";
 export * from "./rule.definition";
 export * from "./negotiation-type.definition";
 export * from "./account.definition";
+export * from "./account.economic-group.definition";
 export * from "./sector.definition";
 export * from "./product.category.definition";
 export * from "./product.definition";
