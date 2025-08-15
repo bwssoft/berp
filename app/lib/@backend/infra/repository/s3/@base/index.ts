@@ -60,7 +60,8 @@ export class BaseObjectRepository<Entity extends object>
       Bucket: this.bucket,
       Key: this.getKey(key),
     });
-    const url = await getSignedUrl(this.client, command, { expiresIn: 28800 });
+    // Isso fará com que expire em 24 horas.
+    const url = await getSignedUrl(this.client, command, { expiresIn: 86400 });
     return url;
   }
 

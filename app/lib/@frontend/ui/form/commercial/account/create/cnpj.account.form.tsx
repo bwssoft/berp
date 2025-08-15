@@ -17,8 +17,9 @@ import {
   SectorModal,
   useSectorModal,
 } from "../../../../modal/comercial/sector";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { deleteOneSector } from "@/app/lib/@backend/action/commercial/sector.action";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import {
   FormControl,
   FormField,
@@ -26,6 +27,9 @@ import {
   FormLabel,
   FormMessage,
 } from "../../../../component/form";
+import { SectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/delete-sector.dialog";
+import { useSectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/use-delete-sector.dialog";
+import { ISector } from "@/app/lib/@backend/domain";
 
 export function CNPJAccountForm() {
   const {
@@ -51,21 +55,45 @@ export function CNPJAccountForm() {
     setValue,
   } = methods;
 
-  const [canShowSectorButton, setCanShowSectorButton] =
-    useState<boolean>(false);
+  const [canShowSectorButton, setCanShowSectorButton] = useState<boolean>(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const hasPermission = await restrictFeatureByProfile(
-          "commercial:accounts:new:sector"
-        );
-        setCanShowSectorButton(hasPermission);
-      } catch (error) {
-        console.error("Error checking sector permission:", error);
-      }
-    })();
-  }, []);
+  const deleteDlg = useSectorDeleteDialog();
+
+  function handleAskDelete(s: ISector) {
+    deleteDlg.openDialog(s);
+  }
+
+  const handleDelete = async () => {
+    if (!deleteDlg.sectorToDelete) return;
+
+    setIsDeleting(true);
+    const sectorToDeleteId = deleteDlg.sectorToDelete.id;
+
+    try {
+      await deleteOneSector({ id: sectorToDeleteId });
+
+      deleteDlg.closeDialog();
+
+      // Refresh the sectors data in the modal
+      await sectorModal.refreshSectors();
+
+      toast({
+        title: "Sucesso!",
+        description: "Setor excluído com sucesso!",
+        variant: "success",
+      });
+    } catch (err) {
+      console.error("Erro ao excluir setor:", err);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir o setor.",
+        variant: "error",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -143,7 +171,6 @@ export function CNPJAccountForm() {
           />
         )}
       />
-
       <Controller
         control={control}
         name="cnpj.typeIE"
@@ -212,7 +239,6 @@ export function CNPJAccountForm() {
             <PlusIcon className="size-5" />
           </Button>
         )}
-
         <SectorModal
           open={sectorModal.open}
           closeModal={sectorModal.closeModal}
@@ -224,6 +250,8 @@ export function CNPJAccountForm() {
           isPending={sectorModal.isPending}
           handleToggle={sectorModal.handleToggle}
           handleSave={sectorModal.handleSave}
+          hasUnsavedChanges={sectorModal.hasUnsavedChanges}
+          onAskDelete={handleAskDelete}
         />
       </div>
       <div className="flex gap-2 items-end">
@@ -259,7 +287,6 @@ export function CNPJAccountForm() {
           )}
         />
       </div>
-
       <div className="flex gap-2 items-end">
         <Controller
           control={control}
@@ -291,6 +318,14 @@ export function CNPJAccountForm() {
           )}
         />
       </div>
+
+      <SectorDeleteDialog
+        sector={deleteDlg.sectorToDelete ?? undefined}
+        open={deleteDlg.open}
+        onClose={deleteDlg.closeDialog}
+        onDelete={handleDelete}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
