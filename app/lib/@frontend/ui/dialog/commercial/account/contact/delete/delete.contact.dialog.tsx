@@ -18,12 +18,11 @@ export function DeleteContactDialog({
   return (
     <Dialog open={open} setOpen={setOpen}>
       <div className="p-4">
-        <h2 className="text-lg font-semibold">
-          Excluir contato
-        </h2>
+        <h2 className="text-lg font-semibold">Excluir contato</h2>
 
         <p className="mt-2 text-sm text-gray-600">
-           Você tem certeza que deseja excluir este contato? Essa ação é irreversível.
+          Você tem certeza que deseja excluir este contato? Essa ação é
+          irreversível.
         </p>
 
         <div className="mt-6 flex justify-end gap-2">
@@ -34,7 +33,12 @@ export function DeleteContactDialog({
           >
             Cancelar
           </Button>
-          <Button variant="default" onClick={confirm} disabled={isLoading}>
+          <Button
+            type="button"
+            variant="default"
+            onClick={confirm}
+            disabled={isLoading}
+          >
             Confirmar
           </Button>
         </div>

@@ -77,7 +77,7 @@ export class BwsNb2Encoder {
   }
 
   static odometer(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
+    if (typeof input !== "number") return undefined;
     return `WODM=${input}\r\n`;
   }
 

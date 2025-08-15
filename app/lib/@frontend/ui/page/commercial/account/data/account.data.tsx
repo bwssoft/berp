@@ -172,7 +172,7 @@ export function AccountDataPage(props: Props) {
    * ATUALIZAÇÃO - DADOS DA CONTA
    */
   const onRefreshAccountData = async () => {
-    await refreshOneAccount(account.document.value);
+    await refreshOneAccount(account.document.value, account.id!);
     toast({
       variant: "success",
       description: "Conta atualizada com sucesso!",
