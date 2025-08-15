@@ -27,6 +27,7 @@ import {
   LocalAccount,
   LocalAddress,
   LocalContact,
+  LocalAccountEconomicGroup,
 } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 
@@ -79,20 +80,6 @@ const schema = z
             required_error: "Setor obrigatório",
           })
           .min(1, "Setor obrigatório"),
-        economic_group_holding: z
-          .object({
-            taxId: z.string().optional(),
-            name: z.string().optional(),
-          })
-          .optional(),
-        economic_group_controlled: z
-          .array(
-            z.object({
-              taxId: z.string().optional(),
-              name: z.string().optional(),
-            })
-          )
-          .optional(),
       })
       .optional(),
     contact: z.any().optional(),
@@ -216,7 +203,9 @@ export function CreateAccountFormProvider({
     createAccountLocally,
     createAddressLocally,
     createContactLocally,
+    createEconomicGroupLocally,
     account: localAccount,
+    economicGroup: localEconomicGroup,
   } = useCreateAccountFlow();
 
   // Estado para definir se o documento é CPF ou CNPJ:
@@ -330,26 +319,37 @@ export function CreateAccountFormProvider({
         if (localAccount.typeIE) {
           methods.setValue("cnpj.typeIE", localAccount.typeIE);
         }
-
-        if (localAccount.economic_group_holding) {
-          methods.setValue(
-            "cnpj.economic_group_holding",
-            localAccount.economic_group_holding
-          );
-        }
-
-        if (
-          localAccount.economic_group_controlled &&
-          localAccount.economic_group_controlled.length > 0
-        ) {
-          methods.setValue(
-            "cnpj.economic_group_controlled",
-            localAccount.economic_group_controlled
-          );
-        }
       }
     }
-  }, [localAccount, methods]);
+
+    // Initialize economic group data from separate context
+    if (localEconomicGroup) {
+      if (localEconomicGroup.economic_group_holding) {
+        setSelectedHolding([
+          {
+            taxId: localEconomicGroup.economic_group_holding.taxId || "",
+            company: {
+              name: localEconomicGroup.economic_group_holding.name || "",
+            },
+          } as ICnpjaResponse,
+        ]);
+      }
+
+      if (
+        localEconomicGroup.economic_group_controlled &&
+        localEconomicGroup.economic_group_controlled.length > 0
+      ) {
+        setSelectedControlled(
+          localEconomicGroup.economic_group_controlled.map((controlled) => ({
+            taxId: controlled.taxId || "",
+            company: {
+              name: controlled.name || "",
+            },
+          })) as ICnpjaResponse[]
+        );
+      }
+    }
+  }, [localAccount, localEconomicGroup, methods]);
 
   const handleCpfCnpj = async (
     value: string
@@ -538,22 +538,29 @@ export function CreateAccountFormProvider({
               status: data.cnpj?.status,
               situationIE: data.cnpj?.situationIE,
               typeIE: data.cnpj?.typeIE,
-              economic_group_holding: data.cnpj?.economic_group_holding
-                ? {
-                    name: data.cnpj?.economic_group_holding?.name! as string,
-                    taxId: data.cnpj?.economic_group_holding?.taxId! as string,
-                  }
-                : undefined,
-              economic_group_controlled:
-                data.cnpj?.economic_group_controlled?.map((item) => ({
-                  name: item.name! as string,
-                  taxId: item.taxId! as string,
-                })),
               setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
             }),
       };
 
       createAccountLocally(base);
+
+      // Create economic group if data exists
+      if (type === "cnpj" && (selectedHolding.length > 0 || selectedControlled.length > 0)) {
+        const economicGroupData: LocalAccountEconomicGroup = {
+          economic_group_holding: selectedHolding.length > 0 ? {
+            name: selectedHolding[0].company?.name || "",
+            taxId: selectedHolding[0].taxId || "",
+          } : undefined,
+          economic_group_controlled: selectedControlled.length > 0 
+            ? selectedControlled.map(controlled => ({
+                name: controlled.company?.name || "",
+                taxId: controlled.taxId || "",
+              }))
+            : undefined,
+        };
+
+        createEconomicGroupLocally(economicGroupData);
+      }
 
       // Criar endereço
       if (address) {

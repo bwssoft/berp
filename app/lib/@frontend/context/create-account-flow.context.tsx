@@ -1,11 +1,17 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { IAccount, IAddress, IContact } from "../../@backend/domain";
+import {
+  IAccount,
+  IAddress,
+  IContact,
+  IAccountEconomicGroup,
+} from "../../@backend/domain";
 import { createOneAccount } from "../../@backend/action/commercial/account.action";
 import { createOneAddress } from "../../@backend/action/commercial/address.action";
 import { createOneContact } from "../../@backend/action/commercial/contact.action";
 import { createOneHistorical } from "../../@backend/action/commercial/historical.action";
+import { createOneAccountEconomicGroup } from "../../@backend/action/commercial/account.economic-group.action";
 import { useAuth } from "./auth.context";
 
 // Extended types with local IDs
@@ -14,6 +20,8 @@ export type LocalAccount = Omit<IAccount, "created_at" | "updated_at">;
 export type LocalAddress = Omit<IAddress, "created_at" | "updated_at">;
 
 export type LocalContact = Omit<IContact, "created_at" | "updated_at">;
+
+export type LocalAccountEconomicGroup = Omit<IAccountEconomicGroup, "id">;
 
 interface CreateAccountFlowContextType {
   // Account state
@@ -24,6 +32,9 @@ interface CreateAccountFlowContextType {
 
   // Contact state
   contacts: LocalContact[];
+
+  // Economic group state
+  economicGroup: LocalAccountEconomicGroup | null;
 
   // Account methods
   createAccountLocally: (account: LocalAccount) => void;
@@ -42,6 +53,16 @@ interface CreateAccountFlowContextType {
   updateContactLocally: (id: string, updates: Partial<LocalContact>) => void;
   deleteContactLocally: (id: string) => void;
   setContacts: (contacts: LocalContact[]) => void;
+
+  // Economic group methods
+  createEconomicGroupLocally: (
+    economicGroup: LocalAccountEconomicGroup
+  ) => void;
+  updateEconomicGroupLocally: (
+    updates: Partial<LocalAccountEconomicGroup>
+  ) => void;
+  deleteEconomicGroupLocally: () => void;
+  setEconomicGroup: (economicGroup: LocalAccountEconomicGroup | null) => void;
 
   // Utility methods
   resetFlow: () => void;
@@ -67,6 +88,8 @@ export const CreateAccountFlowProvider = ({
   const [account, setAccount] = useState<LocalAccount | null>(null);
   const [addresses, setAddresses] = useState<LocalAddress[]>([]);
   const [contacts, setContacts] = useState<LocalContact[]>([]);
+  const [economicGroup, setEconomicGroup] =
+    useState<LocalAccountEconomicGroup | null>(null);
 
   // Account methods
   const createAccountLocally = useCallback((newAccount: LocalAccount) => {
@@ -88,6 +111,7 @@ export const CreateAccountFlowProvider = ({
     // Clear related data when account is deleted
     setAddresses([]);
     setContacts([]);
+    setEconomicGroup(null);
   }, []);
 
   // Address methods
@@ -116,6 +140,30 @@ export const CreateAccountFlowProvider = ({
       );
       return filteredAddresses;
     });
+  }, []);
+
+  // Economic group methods
+  const createEconomicGroupLocally = useCallback(
+    (newEconomicGroup: LocalAccountEconomicGroup) => {
+      setEconomicGroup(newEconomicGroup);
+    },
+    []
+  );
+
+  const updateEconomicGroupLocally = useCallback(
+    (updates: Partial<LocalAccountEconomicGroup>) => {
+      setEconomicGroup((prevEconomicGroup) => {
+        if (prevEconomicGroup) {
+          return { ...prevEconomicGroup, ...updates };
+        }
+        return prevEconomicGroup;
+      });
+    },
+    []
+  );
+
+  const deleteEconomicGroupLocally = useCallback(() => {
+    setEconomicGroup(null);
   }, []);
 
   // Contact methods
@@ -151,6 +199,7 @@ export const CreateAccountFlowProvider = ({
     setAccount(null);
     setAddresses([]);
     setContacts([]);
+    setEconomicGroup(null);
   }, []);
 
   // API creation method
@@ -230,49 +279,48 @@ export const CreateAccountFlowProvider = ({
         }
       }
 
-      // 4. Create historical entries for economic groups
-      if (account.economic_group_holding) {
+      // 4. Create economic group if exists
+      if (economicGroup) {
         try {
-          await createOneHistorical({
-            accountId: createdAccountId,
-            title: `Grupo econômico (Holding) "${account.economic_group_holding.name}" vinculado.`,
-            type: "manual",
-            author: {
-              name: user?.name ?? "",
-              avatarUrl: "",
-            },
-          });
-        } catch (error) {
-          console.warn("Failed to create holding historical entry:", error);
-        }
-      }
+          await createOneAccountEconomicGroup(economicGroup);
 
-      if (
-        account.economic_group_controlled &&
-        account.economic_group_controlled.length > 0
-      ) {
-        try {
-          const controlledCount = account.economic_group_controlled.length;
-          const isPlural = controlledCount > 1;
-          const pluralSuffix = isPlural ? "s" : "";
-          const controlledNames = account.economic_group_controlled
-            .map((company) => company.name)
-            .join(", ");
+          // Create historical entries for economic groups
+          if (economicGroup.economic_group_holding) {
+            await createOneHistorical({
+              accountId: createdAccountId,
+              title: `Grupo econômico (Holding) "${economicGroup.economic_group_holding.name}" vinculado.`,
+              type: "manual",
+              author: {
+                name: user?.name ?? "",
+                avatarUrl: "",
+              },
+            });
+          }
 
-          await createOneHistorical({
-            accountId: createdAccountId,
-            title: `Empresa${pluralSuffix} controlada${pluralSuffix} "${controlledNames}" vinculada${pluralSuffix}.`,
-            type: "manual",
-            author: {
-              name: user?.name ?? "",
-              avatarUrl: "",
-            },
-          });
+          if (
+            economicGroup.economic_group_controlled &&
+            economicGroup.economic_group_controlled.length > 0
+          ) {
+            const controlledCount =
+              economicGroup.economic_group_controlled.length;
+            const isPlural = controlledCount > 1;
+            const pluralSuffix = isPlural ? "s" : "";
+            const controlledNames = economicGroup.economic_group_controlled
+              .map((company) => company.name)
+              .join(", ");
+
+            await createOneHistorical({
+              accountId: createdAccountId,
+              title: `Empresa${pluralSuffix} controlada${pluralSuffix} "${controlledNames}" vinculada${pluralSuffix}.`,
+              type: "manual",
+              author: {
+                name: user?.name ?? "",
+                avatarUrl: "",
+              },
+            });
+          }
         } catch (error) {
-          console.warn(
-            "Failed to create controlled companies historical entry:",
-            error
-          );
+          console.warn("Failed to create economic group:", error);
         }
       }
 
@@ -287,13 +335,14 @@ export const CreateAccountFlowProvider = ({
         error: "Erro inesperado ao criar entidades",
       };
     }
-  }, [account, addresses, contacts, user?.name]);
+  }, [account, addresses, contacts, economicGroup, user?.name]);
 
   const value: CreateAccountFlowContextType = {
     // State
     account,
     addresses,
     contacts,
+    economicGroup,
 
     // Account methods
     createAccountLocally,
@@ -312,6 +361,12 @@ export const CreateAccountFlowProvider = ({
     updateContactLocally,
     deleteContactLocally,
     setContacts,
+
+    // Economic group methods
+    createEconomicGroupLocally,
+    updateEconomicGroupLocally,
+    deleteEconomicGroupLocally,
+    setEconomicGroup,
 
     // Utility methods
     resetFlow,
