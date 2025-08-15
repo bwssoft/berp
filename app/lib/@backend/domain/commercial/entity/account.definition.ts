@@ -14,6 +14,7 @@ export interface IAccount {
   typeIE?: string;
   setor?: string[];
   address?: string[];
+  economicGroupId?: string;
   contacts?: IContact[];
   created_at?: Date;
   updated_at?: Date;

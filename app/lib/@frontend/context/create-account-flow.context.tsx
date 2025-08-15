@@ -209,8 +209,35 @@ export const CreateAccountFlowProvider = ({
         return { success: false, error: "Nenhuma conta encontrada para criar" };
       }
 
-      // 1. Create the account first
-      const accountResult = await createOneAccount(account);
+      let economicGroupId: string | undefined;
+
+      // 1. Create economic group first if it exists (without accountId initially)
+      if (economicGroup) {
+        try {
+          // Create economic group without accountId initially
+          const economicGroupData = {
+            economic_group_holding: economicGroup.economic_group_holding,
+            economic_group_controlled: economicGroup.economic_group_controlled,
+          };
+
+          const economicGroupResult =
+            await createOneAccountEconomicGroup(economicGroupData);
+
+          if (economicGroupResult.success && economicGroupResult.id) {
+            economicGroupId = economicGroupResult.id;
+          }
+        } catch (error) {
+          console.warn("Failed to create economic group:", error);
+        }
+      }
+
+      // 2. Create the account with economic group ID
+      const accountData = {
+        ...account,
+        economicGroupId,
+      };
+
+      const accountResult = await createOneAccount(accountData);
 
       if (!accountResult.success || !accountResult.id) {
         return {
@@ -279,13 +306,10 @@ export const CreateAccountFlowProvider = ({
         }
       }
 
-      // 4. Create economic group if exists
+      // 4. Create historical entries for economic groups if they exist
       if (economicGroup) {
-        try {
-          await createOneAccountEconomicGroup(economicGroup);
-
-          // Create historical entries for economic groups
-          if (economicGroup.economic_group_holding) {
+        if (economicGroup.economic_group_holding) {
+          try {
             await createOneHistorical({
               accountId: createdAccountId,
               title: `Grupo econômico (Holding) "${economicGroup.economic_group_holding.name}" vinculado.`,
@@ -295,12 +319,16 @@ export const CreateAccountFlowProvider = ({
                 avatarUrl: "",
               },
             });
+          } catch (error) {
+            console.warn("Failed to create holding historical entry:", error);
           }
+        }
 
-          if (
-            economicGroup.economic_group_controlled &&
-            economicGroup.economic_group_controlled.length > 0
-          ) {
+        if (
+          economicGroup.economic_group_controlled &&
+          economicGroup.economic_group_controlled.length > 0
+        ) {
+          try {
             const controlledCount =
               economicGroup.economic_group_controlled.length;
             const isPlural = controlledCount > 1;
@@ -318,9 +346,12 @@ export const CreateAccountFlowProvider = ({
                 avatarUrl: "",
               },
             });
+          } catch (error) {
+            console.warn(
+              "Failed to create controlled companies historical entry:",
+              error
+            );
           }
-        } catch (error) {
-          console.warn("Failed to create economic group:", error);
         }
       }
 

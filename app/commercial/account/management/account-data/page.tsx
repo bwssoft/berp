@@ -4,6 +4,7 @@ import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restric
 import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import { findOneAccountEconomicGroup } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { AccountDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/account.data";
 import { useQueries, useQuery } from "@tanstack/react-query";
 
@@ -35,6 +36,13 @@ export default function Page({ searchParams }: Props) {
     queryKey: ["findManyContact", accountId],
     queryFn: () => findManyContact({ accountId }),
     enabled: !!accountId && !!account,
+  });
+
+  // Query for economic group
+  const { data: economicGroup, isLoading: isLoadingEconomicGroup } = useQuery({
+    queryKey: ["findOneAccountEconomicGroup", account?.economicGroupId],
+    queryFn: () => findOneAccountEconomicGroup({ id: account!.economicGroupId! }),
+    enabled: !!account && !!account.economicGroupId,
   });
 
   // Query for permissions using useQueries
@@ -106,6 +114,7 @@ export default function Page({ searchParams }: Props) {
     isLoadingAccount ||
     isLoadingAddresses ||
     isLoadingContacts ||
+    isLoadingEconomicGroup ||
     isLoadingPermissions
   ) {
     return <div className="p-4"></div>;
@@ -121,6 +130,7 @@ export default function Page({ searchParams }: Props) {
       addresses={addresses}
       account={account}
       contacts={contacts}
+      economicGroup={economicGroup}
       permissions={permissions}
     />
   );
