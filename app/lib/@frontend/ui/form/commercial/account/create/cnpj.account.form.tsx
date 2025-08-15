@@ -229,7 +229,7 @@ export function CNPJAccountForm() {
       <div className="flex gap-2 items-end">
         <Controller
           control={control}
-          name="cnpj.economic_group_holding"
+          name="economic_group.economic_group_holding"
           render={({ field }) => (
             <Combobox
               disableLocalFilter={true}
@@ -263,7 +263,7 @@ export function CNPJAccountForm() {
       <div className="flex gap-2 items-end">
         <Controller
           control={control}
-          name="cnpj.economic_group_controlled"
+          name="economic_group.economic_group_controlled"
           render={({ field }) => (
             <Combobox
               disableLocalFilter={true}

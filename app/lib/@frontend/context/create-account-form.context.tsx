@@ -82,6 +82,24 @@ const schema = z
           .min(1, "Setor obrigatório"),
       })
       .optional(),
+    economic_group: z
+      .object({
+        economic_group_holding: z
+          .object({
+            name: z.string(),
+            taxId: z.string(),
+          })
+          .optional(),
+        economic_group_controlled: z
+          .array(
+            z.object({
+              name: z.string(),
+              taxId: z.string(),
+            })
+          )
+          .optional(),
+      })
+      .optional(),
     contact: z.any().optional(),
     address: z.any().optional(),
   })
@@ -325,27 +343,37 @@ export function CreateAccountFormProvider({
     // Initialize economic group data from separate context
     if (localEconomicGroup) {
       if (localEconomicGroup.economic_group_holding) {
-        setSelectedHolding([
-          {
-            taxId: localEconomicGroup.economic_group_holding.taxId || "",
-            company: {
-              name: localEconomicGroup.economic_group_holding.name || "",
-            },
-          } as ICnpjaResponse,
-        ]);
+        const holdingData = {
+          taxId: localEconomicGroup.economic_group_holding.taxId || "",
+          company: {
+            name: localEconomicGroup.economic_group_holding.name || "",
+          },
+        } as ICnpjaResponse;
+
+        setSelectedHolding([holdingData]);
+        methods.setValue("economic_group.economic_group_holding", {
+          name: localEconomicGroup.economic_group_holding.name,
+          taxId: localEconomicGroup.economic_group_holding.taxId,
+        });
       }
 
       if (
         localEconomicGroup.economic_group_controlled &&
         localEconomicGroup.economic_group_controlled.length > 0
       ) {
-        setSelectedControlled(
-          localEconomicGroup.economic_group_controlled.map((controlled) => ({
+        const controlledData = localEconomicGroup.economic_group_controlled.map(
+          (controlled) => ({
             taxId: controlled.taxId || "",
             company: {
               name: controlled.name || "",
             },
-          })) as ICnpjaResponse[]
+          })
+        ) as ICnpjaResponse[];
+
+        setSelectedControlled(controlledData);
+        methods.setValue(
+          "economic_group.economic_group_controlled",
+          localEconomicGroup.economic_group_controlled
         );
       }
     }
@@ -545,18 +573,15 @@ export function CreateAccountFormProvider({
       createAccountLocally(base);
 
       // Create economic group if data exists
-      if (type === "cnpj" && (selectedHolding.length > 0 || selectedControlled.length > 0)) {
+      if (
+        data.economic_group &&
+        (data.economic_group.economic_group_holding ||
+          data.economic_group.economic_group_controlled)
+      ) {
         const economicGroupData: LocalAccountEconomicGroup = {
-          economic_group_holding: selectedHolding.length > 0 ? {
-            name: selectedHolding[0].company?.name || "",
-            taxId: selectedHolding[0].taxId || "",
-          } : undefined,
-          economic_group_controlled: selectedControlled.length > 0 
-            ? selectedControlled.map(controlled => ({
-                name: controlled.company?.name || "",
-                taxId: controlled.taxId || "",
-              }))
-            : undefined,
+          economic_group_holding: data.economic_group.economic_group_holding,
+          economic_group_controlled:
+            data.economic_group.economic_group_controlled,
         };
 
         createEconomicGroupLocally(economicGroupData);
