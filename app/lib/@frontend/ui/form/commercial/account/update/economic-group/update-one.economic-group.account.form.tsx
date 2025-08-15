@@ -44,7 +44,7 @@ export function EconomicGroupAccountForm({
     <form onSubmit={onSubmit} className="flex flex-col gap-4 w-full h-fit">
       <Controller
         control={control}
-        name="cnpj.economic_group_holding"
+        name="economic_group.economic_group_holding"
         render={({ field }) => (
           <Combobox
             modal={true}
@@ -74,7 +74,7 @@ export function EconomicGroupAccountForm({
 
       <Controller
         control={control}
-        name="cnpj.economic_group_controlled"
+        name="economic_group.economic_group_controlled"
         render={({ field }) => (
           <Combobox
             modal={true}

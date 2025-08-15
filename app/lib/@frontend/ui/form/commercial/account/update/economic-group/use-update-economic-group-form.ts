@@ -5,9 +5,14 @@ import {
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
 import {
-  findManyAccount,
+  findOneAccount,
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
+import {
+  createOneAccountEconomicGroup,
+  updateOneAccountEconomicGroup,
+  findOneAccountEconomicGroup,
+} from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { EconomicGroup } from "@/app/lib/@backend/domain";
 import { useAuth } from "@/app/lib/@frontend/context";
@@ -21,7 +26,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const schema = z.object({
-  cnpj: z.object({
+  economic_group: z.object({
     economic_group_holding: z
       .object({
         name: z.string().min(1, "CNPJ da holding é obrigatório"),
@@ -74,31 +79,40 @@ export function useUpdateEconomicGroupForm(
 
     if (initialHolding && Object.keys(initialHolding).length > 0) {
       setSelectedHolding([initialHolding]);
-      setValue("cnpj.economic_group_holding", initialHolding);
+      setValue("economic_group.economic_group_holding", initialHolding);
     }
 
     if (initialControlled && initialControlled.length > 0) {
       setSelectedControlled(initialControlled);
-      setValue("cnpj.economic_group_controlled", initialControlled);
+      setValue("economic_group.economic_group_controlled", initialControlled);
     }
 
-    // If initial values aren't provided, fetch them from the API
+    // If initial values aren't provided, fetch them from the economic group entity
     if (!initialHolding || !initialControlled) {
       const fetchData = async () => {
         setIsLoading(true);
         try {
-          const data = await findManyAccount({ id: accountId });
-          const holding = data.docs[0]?.economic_group_holding;
-          const controlled = data.docs[0]?.economic_group_controlled;
+          // First get the account to find the economicGroupId
+          const accountData = await findOneAccount({ id: accountId });
+          const economicGroupId = accountData?.economicGroupId;
 
-          if (!initialHolding && holding && Object.keys(holding).length > 0) {
-            setSelectedHolding([holding]);
-            setValue("cnpj.economic_group_holding", holding);
-          }
+          if (economicGroupId) {
+            // Then fetch the economic group data using the ID
+            const economicGroupData = await findOneAccountEconomicGroup({
+              id: economicGroupId,
+            });
+            const holding = economicGroupData?.economic_group_holding;
+            const controlled = economicGroupData?.economic_group_controlled;
 
-          if (!initialControlled && controlled) {
-            setSelectedControlled(controlled || []);
-            setValue("cnpj.economic_group_controlled", controlled);
+            if (!initialHolding && holding && Object.keys(holding).length > 0) {
+              setSelectedHolding([holding]);
+              setValue("economic_group.economic_group_holding", holding);
+            }
+
+            if (!initialControlled && controlled) {
+              setSelectedControlled(controlled || []);
+              setValue("economic_group.economic_group_controlled", controlled);
+            }
           }
         } finally {
           setIsLoading(false);
@@ -150,8 +164,8 @@ export function useUpdateEconomicGroupForm(
   }, 500);
 
   const onSubmit = handleSubmit(async (formData) => {
-    const holding = formData.cnpj.economic_group_holding;
-    const controlled = formData.cnpj.economic_group_controlled || [];
+    const holding = formData.economic_group.economic_group_holding;
+    const controlled = formData.economic_group.economic_group_controlled || [];
 
     if (!holding) {
       toast({
@@ -162,25 +176,52 @@ export function useUpdateEconomicGroupForm(
       return;
     }
 
-    const payload = {
-      economic_group_holding: holding,
-      economic_group_controlled: controlled,
-    };
-
     try {
-      const { success, editedFields, error } = await updateOneAccount(
-        { id: accountId },
-        {
-          economic_group_holding: payload.economic_group_holding,
-          economic_group_controlled: payload.economic_group_controlled,
-        }
-      );
+      // First get the account to find the economicGroupId
+      const accountData = await findOneAccount({ id: accountId });
+      const economicGroupId = accountData?.economicGroupId;
 
+      const economicGroupPayload = {
+        accountId,
+        economic_group_holding: holding,
+        economic_group_controlled: controlled,
+      };
+
+      let economicGroupResult;
+
+      if (economicGroupId) {
+        economicGroupResult = await updateOneAccountEconomicGroup(
+          { id: economicGroupId },
+          {
+            economic_group_holding: holding,
+            economic_group_controlled: controlled,
+          }
+        );
+      } else {
+        economicGroupResult =
+          await createOneAccountEconomicGroup(economicGroupPayload);
+
+        if (economicGroupResult.success && economicGroupResult.data?.id) {
+          await updateOneAccount(
+            { id: accountId },
+            { economicGroupId: economicGroupResult.data.id }
+          );
+        }
+      }
+
+      // Invalidate relevant queries
       queryClient.invalidateQueries({
-        queryKey: ["findManyAccount", accountId, isModalOpen],
+        queryKey: ["findOneAccount", accountId],
       });
 
-      if (success && editedFields) {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "findOneAccountEconomicGroup",
+          economicGroupId || economicGroupResult.data?.id,
+        ],
+      });
+
+      if (economicGroupResult.success) {
         try {
           let historicalTitle = "Grupos econômicos atualizados.";
 
@@ -189,14 +230,41 @@ export function useUpdateEconomicGroupForm(
           } else if (holding) {
             historicalTitle = `Grupo econômico (Holding) "${holding.name}" vinculado.`;
           } else if (controlled.length > 0) {
-            const controlledNames = controlled.map((c) => c.name).join(", ");
+            const controlledNames = controlled
+              .map((c: { name: string; taxId: string }) => c.name)
+              .join(", ");
             historicalTitle = `${controlled.length} empresa${controlled.length > 1 ? "s" : ""} controlada${controlled.length > 1 ? "s" : ""} "${controlledNames}" vinculada${controlled.length > 1 ? "s" : ""}.`;
           }
 
           await createOneHistorical({
             accountId: String(accountId),
             title: historicalTitle,
-            editedFields: editedFields,
+            editedFields: [
+              {
+                key: "economic_group_holding",
+                newValue: holding ? `${holding.name} (${holding.taxId})` : "",
+                oldValue: initialHolding
+                  ? `${initialHolding.name} (${initialHolding.taxId})`
+                  : "",
+              },
+              {
+                key: "economic_group_controlled",
+                newValue: controlled
+                  .map(
+                    (c: { name: string; taxId: string }) =>
+                      `${c.name} (${c.taxId})`
+                  )
+                  .join(", "),
+                oldValue: initialControlled
+                  ? initialControlled
+                      .map(
+                        (c: { name: string; taxId: string }) =>
+                          `${c.name} (${c.taxId})`
+                      )
+                      .join(", ")
+                  : "",
+              },
+            ],
             type: "manual",
             author: {
               name: user?.name ?? "",
@@ -222,6 +290,7 @@ export function useUpdateEconomicGroupForm(
 
       closeModal?.();
     } catch (error) {
+      console.error("Economic group update error:", error);
       toast({
         title: "Erro!",
         description: "Falha ao atualizar os grupos econômicos!",
