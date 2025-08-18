@@ -63,14 +63,6 @@ const schema = z
           .string()
           .max(15, "Inscrição Municipal deve ter no máximo 15 dígitos")
           .optional(),
-        status: z
-          .array(
-            z.object({
-              id: z.string(),
-              name: z.string(),
-            })
-          )
-          .optional(),
         sector: z
           .string({
             required_error: "Setor obrigatório",
@@ -152,7 +144,9 @@ interface Props {
 
 export function useUpdateAccountForm({ accountData, closeModal }: Props) {
   // Estado para definir se o documento é CPF ou CNPJ:
-  const [type, setType] = useState<"cpf" | "cnpj" | undefined>(undefined);
+  const [type, setType] = useState<"cpf" | "cnpj" | undefined>(
+    accountData?.document.type
+  );
 
   // Estado para guardar os dados retornados para holding e controlled
   const [selectedControlled, setSelectedControlled] = useState<
@@ -164,13 +158,11 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
   const [disabledFields, setDisabledFields] = useState<{
     social_name: boolean;
     fantasy_name: boolean;
-    status: boolean;
     state_registration: boolean;
     municipal_registration: boolean;
   }>({
     social_name: false,
     fantasy_name: false,
-    status: false,
     state_registration: false,
     municipal_registration: false,
   });
@@ -213,12 +205,6 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
               fantasy_name: accountData?.fantasy_name,
               municipal_registration: accountData?.municipal_registration,
               state_registration: accountData?.state_registration,
-              status: [
-                {
-                  id: accountData?.id,
-                  name: accountData?.status,
-                },
-              ],
             },
           }
         : {
@@ -253,16 +239,18 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
             fantasy_name: data.cnpj?.fantasy_name,
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
-            status: data.cnpj?.status?.[0]?.name,
-            economic_group_holding: {
-              name: data.cnpj?.economic_group_holding?.name! as string,
-              taxId: data.cnpj?.economic_group_holding?.taxId! as string,
-            },
-            economic_group_controlled:
-              data.cnpj?.economic_group_controlled?.map((item) => ({
+            ...(data.cnpj?.economic_group_holding?.name && data.cnpj?.economic_group_holding?.taxId ? {
+              economic_group_holding: {
+                name: data.cnpj.economic_group_holding.name,
+                taxId: data.cnpj.economic_group_holding.taxId,
+              },
+            } : {}),
+            ...(data.cnpj?.economic_group_controlled && data.cnpj.economic_group_controlled.length > 0 ? {
+              economic_group_controlled: data.cnpj.economic_group_controlled.map((item) => ({
                 name: item.name! as string,
                 taxId: item.taxId! as string,
               })),
+            } : {}),
             setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
           }),
     };
@@ -343,7 +331,7 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
     disabledFields,
     form: methods,
     register: methods.register,
-    errors: methods.formState,
+    errors: methods.formState.errors,
     control: methods.control,
   };
 }

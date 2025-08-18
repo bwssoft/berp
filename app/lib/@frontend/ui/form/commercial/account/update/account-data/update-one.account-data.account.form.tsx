@@ -106,7 +106,7 @@ export function UpdateAccountDataForm({
               label="Nome Fantasia"
               placeholder="Digite o nome fantasia"
               {...register("cnpj.fantasy_name")}
-              error={errors.errors.cnpj?.fantasy_name?.message}
+              error={errors.cnpj?.fantasy_name?.message}
             />
             <Input
               label="Inscrição Estadual"
@@ -118,7 +118,7 @@ export function UpdateAccountDataForm({
                   shouldValidate: true,
                 });
               }}
-              error={errors.errors.cnpj?.state_registration?.message}
+              error={errors.cnpj?.state_registration?.message}
             />
             <Input
               label="Inscrição Municipal"
@@ -130,7 +130,7 @@ export function UpdateAccountDataForm({
                   shouldValidate: true,
                 });
               }}
-              error={errors.errors.cnpj?.municipal_registration?.message}
+              error={errors.cnpj?.municipal_registration?.message}
             />
             <div className="flex items-end gap-2 w-full">
               <FormField
@@ -213,11 +213,15 @@ export function UpdateAccountDataForm({
         )}
 
         <div className="flex gap-4">
-          <Button type="button" variant="ghost">
+          <Button type="button" variant="ghost" onClick={closeModal}>
             Cancelar
           </Button>
-          <Button variant="default" type="submit">
-            Salvar
+          <Button
+            variant="default"
+            type="submit"
+            disabled={sectorModal.isLoading}
+          >
+            {sectorModal.isLoading ? "Carregando setores..." : "Salvar"}
           </Button>
         </div>
       </form>
