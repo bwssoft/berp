@@ -188,9 +188,6 @@ interface CreateAccountFormContextData {
     typeIE: boolean;
   };
 
-  // Economic group disabled state
-  economicGroupDisabled: boolean;
-
   // Button states
   buttonsState: {
     holding: string;
@@ -264,8 +261,6 @@ export function CreateAccountFormProvider({
     municipal_registration: false,
     typeIE: false,
   });
-
-  const [economicGroupDisabled, setEconomicGroupDisabled] = useState(false);
 
   const [buttonsState, setButtonsState] = useState({
     holding: "Validar",
@@ -452,7 +447,6 @@ export function CreateAccountFormProvider({
       setDataHolding([]);
       setDataControlled([]);
       setDataCnpj(null);
-      setEconomicGroupDisabled(false);
       setDisabledFields({
         social_name: false,
         fantasy_name: false,
@@ -577,12 +571,6 @@ export function CreateAccountFormProvider({
             economicGroupControlled
           );
         }
-
-        // Disable economic group fields since they're from existing data
-        setEconomicGroupDisabled(true);
-      } else {
-        // No existing economic group found, enable fields
-        setEconomicGroupDisabled(false);
       }
 
       methods.setValue("document.type", "cnpj");
@@ -629,7 +617,6 @@ export function CreateAccountFormProvider({
     if (!item) {
       setSelectedHolding([]);
       setSelectedControlled([]);
-      setEconomicGroupDisabled(false);
       methods.setValue("economic_group.economic_group_holding", undefined);
       methods.setValue("economic_group.economic_group_controlled", undefined);
       return;
@@ -698,9 +685,6 @@ export function CreateAccountFormProvider({
           controlledFormData
         );
 
-        // Disable economic group fields since they're from existing data
-        setEconomicGroupDisabled(true);
-
         toast({
           title: "Grupo Econômico Encontrado",
           description:
@@ -710,14 +694,12 @@ export function CreateAccountFormProvider({
       } else {
         // No existing economic group found, enable fields for manual input
         setSelectedControlled([]);
-        setEconomicGroupDisabled(false);
         methods.setValue("economic_group.economic_group_controlled", undefined);
       }
     } catch (error) {
       console.error("Error searching for economic group:", error);
       // On error, allow manual input
       setSelectedControlled([]);
-      setEconomicGroupDisabled(false);
       methods.setValue("economic_group.economic_group_controlled", undefined);
     }
   };
@@ -728,6 +710,7 @@ export function CreateAccountFormProvider({
     try {
       const address = dataCnpj?.address;
       const phones = dataCnpj?.phones || [];
+      const emails = dataCnpj?.emails || [];
 
       const accountLocalId = crypto.randomUUID();
 
@@ -814,6 +797,30 @@ export function CreateAccountFormProvider({
         });
       }
 
+      // Create contacts for each email
+      if (emails && emails.length > 0 && dataCnpj) {
+        emails.forEach((email, index) => {
+          const newContact: LocalContact = {
+            id: crypto.randomUUID(),
+            name: dataCnpj.company.name || dataCnpj.alias || "",
+            contractEnabled: false,
+            positionOrRelation: "",
+            taxId: dataCnpj.taxId,
+            contactFor: ["Fiscal"],
+            contactItems: [
+              {
+                id: crypto.randomUUID(),
+                contact: email.address,
+                type: "Email",
+                preferredContact: {},
+              },
+            ],
+            originType: "api",
+          };
+          createContactLocally(newContact);
+        });
+      }
+
       router.push(
         `/commercial/account/form/create/tab/address?accountId=${accountLocalId}`
       );
@@ -848,7 +855,6 @@ export function CreateAccountFormProvider({
     selectedIE,
     setSelectedIE,
     disabledFields,
-    economicGroupDisabled,
     buttonsState,
     toggleButtonText,
     handleCpfCnpj,
