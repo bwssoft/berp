@@ -840,8 +840,6 @@ export function CreateAccountFormProvider({
     }
   };
 
-  console.log("🚀 ~ CreateAccountFormProvider ~ dataHolding:", dataHolding);
-
   const contextValue: CreateAccountFormContextData = {
     methods,
     type,

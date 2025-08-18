@@ -58,7 +58,6 @@ export function useSearchContactHistoricalModal(accountId?: string) {
       };
 
       if (account) {
-        console.log("🚀 ~ useSearchContactHistoricalModal ~ account:", account);
         await addEmpresa(account);
 
         // Check if account has economic group data
