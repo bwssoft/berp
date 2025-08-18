@@ -11,7 +11,11 @@ import { createOneAccount } from "../../@backend/action/commercial/account.actio
 import { createOneAddress } from "../../@backend/action/commercial/address.action";
 import { createOneContact } from "../../@backend/action/commercial/contact.action";
 import { createOneHistorical } from "../../@backend/action/commercial/historical.action";
-import { createOneAccountEconomicGroup, findOneAccountEconomicGroup, updateOneAccountEconomicGroup } from "../../@backend/action/commercial/account.economic-group.action";
+import {
+  createOneAccountEconomicGroup,
+  findOneAccountEconomicGroup,
+  updateOneAccountEconomicGroup,
+} from "../../@backend/action/commercial/account.economic-group.action";
 import { useAuth } from "./auth.context";
 
 // Extended types with local IDs
@@ -216,21 +220,23 @@ export const CreateAccountFlowProvider = ({
         try {
           // Check if an economic group already exists with the same holding taxId
           let existingEconomicGroup = null;
-          
+
           if (economicGroup.economic_group_holding?.taxId) {
             existingEconomicGroup = await findOneAccountEconomicGroup({
-              "economic_group_holding.taxId": economicGroup.economic_group_holding.taxId,
+              "economic_group_holding.taxId":
+                economicGroup.economic_group_holding.taxId,
             });
           }
 
           if (existingEconomicGroup) {
             // Update the existing economic group by adding new controlled companies
-            const existingControlled = existingEconomicGroup.economic_group_controlled || [];
+            const existingControlled =
+              existingEconomicGroup.economic_group_controlled || [];
             const newControlled = economicGroup.economic_group_controlled || [];
-            
+
             // Merge controlled companies, avoiding duplicates based on taxId
             const mergedControlled = [...existingControlled];
-            
+
             newControlled.forEach((newCompany) => {
               const exists = existingControlled.some(
                 (existing) => existing.taxId === newCompany.taxId
@@ -258,7 +264,8 @@ export const CreateAccountFlowProvider = ({
             // Create new economic group if none exists
             const economicGroupData = {
               economic_group_holding: economicGroup.economic_group_holding,
-              economic_group_controlled: economicGroup.economic_group_controlled,
+              economic_group_controlled:
+                economicGroup.economic_group_controlled,
             };
 
             const economicGroupResult =
@@ -353,7 +360,9 @@ export const CreateAccountFlowProvider = ({
       if (economicGroup) {
         if (economicGroup.economic_group_holding) {
           try {
-            const actionType = economicGroupWasUpdated ? "atualizado" : "vinculado";
+            const actionType = economicGroupWasUpdated
+              ? "atualizado"
+              : "vinculado";
             await createOneHistorical({
               accountId: createdAccountId,
               title: `Grupo econômico (Holding) "${economicGroup.economic_group_holding.name}" ${actionType}.`,
@@ -381,8 +390,12 @@ export const CreateAccountFlowProvider = ({
               .map((company) => company.name)
               .join(", ");
 
-            const actionType = economicGroupWasUpdated ? "atualizada" : "vinculada";
-            const actionTypePlural = economicGroupWasUpdated ? "atualizadas" : "vinculadas";
+            const actionType = economicGroupWasUpdated
+              ? "atualizada"
+              : "vinculada";
+            const actionTypePlural = economicGroupWasUpdated
+              ? "atualizadas"
+              : "vinculadas";
             const finalActionType = isPlural ? actionTypePlural : actionType;
 
             await createOneHistorical({
