@@ -560,7 +560,10 @@ export function CreateAccountFormProvider({
             taxId: cleanedValue,
           };
 
-          const updatedControlledFormData = [...economicGroupControlled, currentCompanyFormData];
+          const updatedControlledFormData = [
+            ...economicGroupControlled,
+            currentCompanyFormData,
+          ];
 
           setSelectedControlled(controlledData);
           methods.setValue(
@@ -652,23 +655,26 @@ export function CreateAccountFormProvider({
 
         // Add existing controlled companies
         if (existingEconomicGroup.economic_group_controlled) {
-          const existingControlled = existingEconomicGroup.economic_group_controlled.map(
-            (controlled) => ({
-              taxId: controlled.taxId,
-              company: {
-                name: controlled.name,
-              },
-            })
-          ) as ICnpjaResponse[];
+          const existingControlled =
+            existingEconomicGroup.economic_group_controlled.map(
+              (controlled) => ({
+                taxId: controlled.taxId,
+                company: {
+                  name: controlled.name,
+                },
+              })
+            ) as ICnpjaResponse[];
 
           controlledData = [...existingControlled];
-          controlledFormData = [...existingEconomicGroup.economic_group_controlled];
+          controlledFormData = [
+            ...existingEconomicGroup.economic_group_controlled,
+          ];
         }
 
         // Add the current company being created to controlled companies
         const currentCompany = methods.getValues("cnpj");
         const currentDocument = methods.getValues("document");
-        
+
         if (currentCompany?.social_name && currentDocument?.value) {
           const currentCompanyData = {
             taxId: currentDocument.value,
@@ -687,14 +693,18 @@ export function CreateAccountFormProvider({
         }
 
         setSelectedControlled(controlledData);
-        methods.setValue("economic_group.economic_group_controlled", controlledFormData);
+        methods.setValue(
+          "economic_group.economic_group_controlled",
+          controlledFormData
+        );
 
         // Disable economic group fields since they're from existing data
         setEconomicGroupDisabled(true);
 
         toast({
           title: "Grupo Econômico Encontrado",
-          description: "Dados do grupo econômico foram carregados automaticamente.",
+          description:
+            "Dados do grupo econômico foram carregados automaticamente.",
           variant: "default",
         });
       } else {
