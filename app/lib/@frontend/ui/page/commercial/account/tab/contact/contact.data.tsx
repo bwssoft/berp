@@ -37,13 +37,16 @@ interface Props {
 }
 
 export function ContactDataPage(props: Props) {
-  const { contacts, hasPermissionContacts, accountId } = props;
+  const { hasPermissionContacts, accountId } = props;
 
   // Use create account flow context
   const {
     account: localAccount,
     addresses: localAddresses,
     contacts: localContacts,
+    economicGroup: localEconomicGroup,
+    resetFlow,
+    createEntitiesApi,
   } = useCreateAccountFlow();
 
   // Props are already the local data, so use them directly
@@ -60,7 +63,6 @@ export function ContactDataPage(props: Props) {
   const [selectedContact, setSelectedContact] = useState<LocalContact>();
   const [isCreatingEntities, setIsCreatingEntities] = useState(false);
   const router = useRouter();
-  const { resetFlow, createEntitiesApi } = useCreateAccountFlow();
 
   /**
    * MODAL CRIAÇÃO - CONTATO
@@ -175,7 +177,13 @@ export function ContactDataPage(props: Props) {
               </CardTitle>
               {hasPermissionContacts && (
                 <div className="flex items-center gap-4">
-                  <SearchContactModal accountId={accountId ?? ""} />
+                  {!!localEconomicGroup?.economic_group_holding?.taxId && (
+                    <SearchContactModal
+                      holdingTaxId={
+                        localEconomicGroup.economic_group_holding?.taxId
+                      }
+                    />
+                  )}
                   <Button
                     variant={"ghost"}
                     className="border px-3 py-3"
