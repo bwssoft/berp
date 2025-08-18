@@ -204,6 +204,7 @@ interface CreateAccountFormContextData {
 
   // Functions
   handleCpfCnpj: (value: string) => Promise<"cpf" | "cnpj" | "invalid">;
+  handleHoldingSelection: (item: ICnpjaResponse | null) => Promise<void>;
   debouncedValidationHolding: (value: string) => void;
   debouncedValidationControlled: (value: string) => void;
   onSubmit: (data: CreateAccountFormSchema) => Promise<void>;
@@ -543,11 +544,36 @@ export function CreateAccountFormProvider({
           },
         })) as ICnpjaResponse[];
 
-        setSelectedControlled(controlledData);
-        methods.setValue(
-          "economic_group.economic_group_controlled",
-          economicGroupControlled
-        );
+        // Add the current company being created to controlled companies
+        if (data?.company?.name) {
+          const currentCompanyData = {
+            taxId: cleanedValue,
+            company: {
+              name: data.company.name,
+            },
+          } as ICnpjaResponse;
+
+          controlledData.push(currentCompanyData);
+
+          const currentCompanyFormData = {
+            name: data.company.name,
+            taxId: cleanedValue,
+          };
+
+          const updatedControlledFormData = [...economicGroupControlled, currentCompanyFormData];
+
+          setSelectedControlled(controlledData);
+          methods.setValue(
+            "economic_group.economic_group_controlled",
+            updatedControlledFormData
+          );
+        } else {
+          setSelectedControlled(controlledData);
+          methods.setValue(
+            "economic_group.economic_group_controlled",
+            economicGroupControlled
+          );
+        }
 
         // Disable economic group fields since they're from existing data
         setEconomicGroupDisabled(true);
@@ -595,6 +621,96 @@ export function CreateAccountFormProvider({
   const debouncedValidationControlled = debounce(async (value: string) => {
     await handleCnpjOrName(value, "controlled");
   }, 500);
+
+  const handleHoldingSelection = async (item: ICnpjaResponse | null) => {
+    if (!item) {
+      setSelectedHolding([]);
+      setSelectedControlled([]);
+      setEconomicGroupDisabled(false);
+      methods.setValue("economic_group.economic_group_holding", undefined);
+      methods.setValue("economic_group.economic_group_controlled", undefined);
+      return;
+    }
+
+    // Set the selected holding first
+    setSelectedHolding([item]);
+    methods.setValue("economic_group.economic_group_holding", {
+      name: item.company.name,
+      taxId: item.taxId,
+    });
+
+    try {
+      // Search for existing economic group with this holding
+      const existingEconomicGroup = await findOneAccountEconomicGroup({
+        "economic_group_holding.taxId": item.taxId,
+      });
+
+      if (existingEconomicGroup) {
+        // Found existing economic group, populate controlled companies and disable fields
+        let controlledData: ICnpjaResponse[] = [];
+        let controlledFormData: { name: string; taxId: string }[] = [];
+
+        // Add existing controlled companies
+        if (existingEconomicGroup.economic_group_controlled) {
+          const existingControlled = existingEconomicGroup.economic_group_controlled.map(
+            (controlled) => ({
+              taxId: controlled.taxId,
+              company: {
+                name: controlled.name,
+              },
+            })
+          ) as ICnpjaResponse[];
+
+          controlledData = [...existingControlled];
+          controlledFormData = [...existingEconomicGroup.economic_group_controlled];
+        }
+
+        // Add the current company being created to controlled companies
+        const currentCompany = methods.getValues("cnpj");
+        const currentDocument = methods.getValues("document");
+        
+        if (currentCompany?.social_name && currentDocument?.value) {
+          const currentCompanyData = {
+            taxId: currentDocument.value,
+            company: {
+              name: currentCompany.social_name,
+            },
+          } as ICnpjaResponse;
+
+          const currentCompanyFormData = {
+            name: currentCompany.social_name,
+            taxId: currentDocument.value,
+          };
+
+          controlledData.push(currentCompanyData);
+          controlledFormData.push(currentCompanyFormData);
+        }
+
+        setSelectedControlled(controlledData);
+        methods.setValue("economic_group.economic_group_controlled", controlledFormData);
+
+        // Disable economic group fields since they're from existing data
+        setEconomicGroupDisabled(true);
+
+        toast({
+          title: "Grupo Econômico Encontrado",
+          description: "Dados do grupo econômico foram carregados automaticamente.",
+          variant: "default",
+        });
+      } else {
+        // No existing economic group found, enable fields for manual input
+        setSelectedControlled([]);
+        setEconomicGroupDisabled(false);
+        methods.setValue("economic_group.economic_group_controlled", undefined);
+      }
+    } catch (error) {
+      console.error("Error searching for economic group:", error);
+      // On error, allow manual input
+      setSelectedControlled([]);
+      setEconomicGroupDisabled(false);
+      methods.setValue("economic_group.economic_group_controlled", undefined);
+    }
+  };
 
   const onSubmit = async (data: CreateAccountFormSchema) => {
     setIsSubmitting(true);
@@ -723,6 +839,7 @@ export function CreateAccountFormProvider({
     buttonsState,
     toggleButtonText,
     handleCpfCnpj,
+    handleHoldingSelection,
     debouncedValidationHolding,
     debouncedValidationControlled,
     onSubmit,

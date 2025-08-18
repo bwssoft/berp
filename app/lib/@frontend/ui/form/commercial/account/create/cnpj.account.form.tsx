@@ -39,6 +39,7 @@ export function CNPJAccountForm() {
     economicGroupDisabled,
     selectedHolding,
     setSelectedHolding,
+    handleHoldingSelection,
     selectedIE,
     setSelectedIE,
     methods,
@@ -243,14 +244,13 @@ export function CNPJAccountForm() {
               }}
               value={selectedHolding}
               onOptionChange={([item]) => {
+                handleHoldingSelection(item || null);
                 if (item) {
-                  setSelectedHolding([item]);
                   field.onChange({
                     name: item.company.name,
                     taxId: item.taxId,
                   });
                 } else {
-                  setSelectedHolding([]);
                   field.onChange(undefined);
                 }
               }}
