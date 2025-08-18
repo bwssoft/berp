@@ -223,8 +223,8 @@ export const CreateAccountFlowProvider = ({
           const economicGroupResult =
             await createOneAccountEconomicGroup(economicGroupData);
 
-          if (economicGroupResult.success && economicGroupResult.id) {
-            economicGroupId = economicGroupResult.id;
+          if (economicGroupResult.success && economicGroupResult.data?.id) {
+            economicGroupId = economicGroupResult.data.id;
           }
         } catch (error) {
           console.warn("Failed to create economic group:", error);
