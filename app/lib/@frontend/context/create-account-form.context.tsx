@@ -72,9 +72,9 @@ const schema = z
         status: z.string().optional(),
         situationIE: z
           .object({
-            id: z.string().optional(),
-            status: z.boolean().optional(),
-            text: z.string().optional(),
+            id: z.string(),
+            status: z.boolean(),
+            text: z.string(),
           })
           .optional(),
         typeIE: z.string().optional(),

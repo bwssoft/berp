@@ -239,18 +239,25 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
             fantasy_name: data.cnpj?.fantasy_name,
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
-            ...(data.cnpj?.economic_group_holding?.name && data.cnpj?.economic_group_holding?.taxId ? {
-              economic_group_holding: {
-                name: data.cnpj.economic_group_holding.name,
-                taxId: data.cnpj.economic_group_holding.taxId,
-              },
-            } : {}),
-            ...(data.cnpj?.economic_group_controlled && data.cnpj.economic_group_controlled.length > 0 ? {
-              economic_group_controlled: data.cnpj.economic_group_controlled.map((item) => ({
-                name: item.name! as string,
-                taxId: item.taxId! as string,
-              })),
-            } : {}),
+            ...(data.cnpj?.economic_group_holding?.name &&
+            data.cnpj?.economic_group_holding?.taxId
+              ? {
+                  economic_group_holding: {
+                    name: data.cnpj.economic_group_holding.name,
+                    taxId: data.cnpj.economic_group_holding.taxId,
+                  },
+                }
+              : {}),
+            ...(data.cnpj?.economic_group_controlled &&
+            data.cnpj.economic_group_controlled.length > 0
+              ? {
+                  economic_group_controlled:
+                    data.cnpj.economic_group_controlled.map((item) => ({
+                      name: item.name! as string,
+                      taxId: item.taxId! as string,
+                    })),
+                }
+              : {}),
             setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
           }),
     };

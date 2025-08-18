@@ -7,6 +7,8 @@ import {
   findManyAccount,
   findOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
+import { findOneAccountEconomicGroup } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
+import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
 
 const PAGE_SIZE = 10;
 const currentPage = 1;
@@ -31,38 +33,58 @@ export function useSearchContactHistoricalModal(accountId?: string) {
 
       const documentosInseridos = new Set<string>();
 
-      const addEmpresa = (empresa: IAccount) => {
+      const addEmpresa = async (empresa: IAccount) => {
         const docValue = empresa.document?.value;
         if (
           docValue &&
           !documentosInseridos.has(docValue) &&
           empresa.fantasy_name &&
-          Array.isArray(empresa.contacts)
+          empresa.id
         ) {
-          documentosInseridos.add(docValue);
-          empresas.push({
-            name: empresa.fantasy_name,
-            documentValue: docValue,
-            contacts: empresa.contacts,
+          // Fetch contacts for this account
+          const accountContacts = await findManyContact({
+            accountId: empresa.id,
           });
+
+          if (accountContacts && accountContacts.length > 0) {
+            documentosInseridos.add(docValue);
+            empresas.push({
+              name: empresa.fantasy_name,
+              documentValue: docValue,
+              contacts: accountContacts,
+            });
+          }
         }
       };
 
       if (account) {
-        addEmpresa(account);
+        console.log("🚀 ~ useSearchContactHistoricalModal ~ account:", account);
+        await addEmpresa(account);
 
-        if (account.economic_group_holding?.name) {
-          const grupo = await findManyAccount(
-            {
-              economic_group_holding: {
-                name: account.economic_group_holding.name,
-              },
-            },
-            currentPage,
-            PAGE_SIZE
-          );
+        // Check if account has economic group data
+        if (account.economicGroupId) {
+          try {
+            const economicGroupData = await findOneAccountEconomicGroup({
+              id: account.economicGroupId,
+            });
 
-          grupo.docs.forEach(addEmpresa);
+            if (economicGroupData?.economic_group_holding?.name) {
+              const grupo = await findManyAccount(
+                {
+                  economicGroupId: account.economicGroupId,
+                },
+                currentPage,
+                PAGE_SIZE
+              );
+
+              // Process each account in the economic group
+              for (const groupAccount of grupo.docs) {
+                await addEmpresa(groupAccount);
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching economic group data:", error);
+          }
         }
       }
 
