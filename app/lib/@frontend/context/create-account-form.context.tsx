@@ -727,7 +727,7 @@ export function CreateAccountFormProvider({
 
     try {
       const address = dataCnpj?.address;
-      const contact = dataCnpj?.phones[0];
+      const phones = dataCnpj?.phones || [];
 
       const accountLocalId = crypto.randomUUID();
 
@@ -789,28 +789,29 @@ export function CreateAccountFormProvider({
         createAddressLocally(newAddress);
       }
 
-      if (contact) {
-        const newContact: LocalContact = {
-          id: crypto.randomUUID(),
-          name: dataCnpj?.company.name || dataCnpj?.alias || "",
-          contractEnabled: false,
-          positionOrRelation: "",
-          taxId: dataCnpj.taxId,
-          contactFor: ["Fiscal"],
-          contactItems: [
-            {
-              id: crypto.randomUUID(),
-              contact: `${contact.area}${contact.number}`,
-              type:
-                dataCnpj?.phones[0].type === "LANDLINE"
-                  ? "Telefone Comercial"
-                  : "Celular",
-              preferredContact: {},
-            },
-          ],
-          originType: "api",
-        };
-        createContactLocally(newContact);
+      // Create contacts for each phone
+      if (phones && phones.length > 0 && dataCnpj) {
+        phones.forEach((phone, index) => {
+          const newContact: LocalContact = {
+            id: crypto.randomUUID(),
+            name: dataCnpj.company.name || dataCnpj.alias || "",
+            contractEnabled: false,
+            positionOrRelation: "",
+            taxId: dataCnpj.taxId,
+            contactFor: ["Fiscal"],
+            contactItems: [
+              {
+                id: crypto.randomUUID(),
+                contact: `${phone.area}${phone.number}`,
+                type:
+                  phone.type === "LANDLINE" ? "Telefone Comercial" : "Celular",
+                preferredContact: {},
+              },
+            ],
+            originType: "api",
+          };
+          createContactLocally(newContact);
+        });
       }
 
       router.push(
@@ -829,6 +830,8 @@ export function CreateAccountFormProvider({
       setIsSubmitting(false);
     }
   };
+
+  console.log("🚀 ~ CreateAccountFormProvider ~ dataHolding:", dataHolding);
 
   const contextValue: CreateAccountFormContextData = {
     methods,
