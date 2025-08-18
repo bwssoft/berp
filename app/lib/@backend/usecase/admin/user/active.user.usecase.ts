@@ -2,7 +2,9 @@ import { singleton } from "@/app/lib/util/singleton";
 
 import { resetPasswordUserUsecase } from "./reset-password.user.usecase";
 import { userRepository } from "@/app/lib/@backend/infra";
-import { IUserRepository } from "@/app/lib/@backend/domain";
+import { AuditDomain, IUser, IUserRepository } from "@/app/lib/@backend/domain";
+import { auth } from "@/auth";
+import { createOneAuditUsecase } from "../audit";
 
 namespace Dto {
     export type Input = {
@@ -24,13 +26,40 @@ class ActiveUserUsecase {
     }
 
     async execute(input: Dto.Input): Promise<Dto.Output> {
-        const { id, active } = input;
+        const { active } = input;
 
         try {
+            const oldUser = await this.repository.findOne({ id: input.id });
+            if (!oldUser) {
+                return {
+                success: false,
+                error: "Usuário não encontrado",
+                };
+            }
+
             const updated = await this.repository.updateOne(
-                { id },
+                { id: input.id },
                 { $set: { active } }
             );
+
+            const after = await this.repository.findOne({ id: input.id });
+            if (!after) {
+                return {
+                success: false,
+                error: "Usuário não encontrado após atualização"
+                }
+            }
+
+            const session = await auth();
+            const { name, id, email } = session?.user!;
+
+            await createOneAuditUsecase.execute<IUser, IUser>({
+                before: oldUser,
+                after,
+                domain: AuditDomain.user,
+                user: { name, id, email },
+                action: `Usuário '${after.name}' ${active ? "ativado" : "inativado"}.`,
+            });
 
             if (!updated) {
                 return {
@@ -44,7 +73,7 @@ class ActiveUserUsecase {
                 const reset = await resetPasswordUserUsecase.execute({ id });
 
                 if (!reset.success) {
-                    return { success: false, error: reset.error };
+                    return { success: false, error: typeof reset.error === "string" ? reset.error : JSON.stringify(reset.error) };
                 }
             }
 
