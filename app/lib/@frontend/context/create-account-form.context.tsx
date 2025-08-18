@@ -21,6 +21,7 @@ import {
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
+import { findOneAccountEconomicGroup } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { useAuth } from "@/app/lib/@frontend/context";
 import {
   useCreateAccountFlow,
@@ -187,6 +188,9 @@ interface CreateAccountFormContextData {
     typeIE: boolean;
   };
 
+  // Economic group disabled state
+  economicGroupDisabled: boolean;
+
   // Button states
   buttonsState: {
     holding: string;
@@ -259,6 +263,8 @@ export function CreateAccountFormProvider({
     municipal_registration: false,
     typeIE: false,
   });
+
+  const [economicGroupDisabled, setEconomicGroupDisabled] = useState(false);
 
   const [buttonsState, setButtonsState] = useState({
     holding: "Validar",
@@ -445,6 +451,7 @@ export function CreateAccountFormProvider({
       setDataHolding([]);
       setDataControlled([]);
       setDataCnpj(null);
+      setEconomicGroupDisabled(false);
       setDisabledFields({
         social_name: false,
         fantasy_name: false,
@@ -463,7 +470,16 @@ export function CreateAccountFormProvider({
     }
 
     if (newType === "cnpj") {
-      const data = await fetcCnpjRegistrationData(cleanedValue);
+      const [data, economicGroupResults] = await Promise.all([
+        fetcCnpjRegistrationData(cleanedValue),
+        findOneAccountEconomicGroup({
+          $or: [
+            { "economic_group_holding.taxId": cleanedValue },
+            { "economic_group_controlled.taxId": cleanedValue },
+          ],
+        }),
+      ]);
+
       if (data) {
         setDataCnpj(data);
 
@@ -496,6 +512,48 @@ export function CreateAccountFormProvider({
         };
 
         setDisabledFields(newDisabledFields);
+      }
+
+      if (
+        economicGroupResults?.economic_group_holding &&
+        economicGroupResults?.economic_group_controlled
+      ) {
+        const {
+          economic_group_holding: economicGroupHolding,
+          economic_group_controlled: economicGroupControlled,
+        } = economicGroupResults;
+
+        const holdingData = {
+          taxId: economicGroupHolding.taxId,
+          company: {
+            name: economicGroupHolding.name,
+          },
+        } as ICnpjaResponse;
+
+        setSelectedHolding([holdingData]);
+        methods.setValue("economic_group.economic_group_holding", {
+          name: holdingData.company.name,
+          taxId: holdingData.taxId,
+        });
+
+        const controlledData = economicGroupControlled.map((controlled) => ({
+          taxId: controlled.taxId,
+          company: {
+            name: controlled.name,
+          },
+        })) as ICnpjaResponse[];
+
+        setSelectedControlled(controlledData);
+        methods.setValue(
+          "economic_group.economic_group_controlled",
+          economicGroupControlled
+        );
+
+        // Disable economic group fields since they're from existing data
+        setEconomicGroupDisabled(true);
+      } else {
+        // No existing economic group found, enable fields
+        setEconomicGroupDisabled(false);
       }
 
       methods.setValue("document.type", "cnpj");
@@ -661,6 +719,7 @@ export function CreateAccountFormProvider({
     selectedIE,
     setSelectedIE,
     disabledFields,
+    economicGroupDisabled,
     buttonsState,
     toggleButtonText,
     handleCpfCnpj,

@@ -54,20 +54,6 @@ export function useSearchContactHistoricalModal(accountId?: string) {
       if (account) {
         addEmpresa(account);
 
-        if (account.economic_group_holding?.name) {
-          const grupo = await findManyAccount(
-            {
-              economic_group_holding: {
-                name: account.economic_group_holding.name,
-              },
-            },
-            currentPage,
-            PAGE_SIZE
-          );
-
-          grupo.docs.forEach(addEmpresa);
-        }
-
         setContactsByCompany(empresas);
       }
 

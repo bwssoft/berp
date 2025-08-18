@@ -31,29 +31,19 @@ export function useSearchContactModal(accountId?: string) {
 
       let groupCompanies: IAccount[] = [];
 
-      if (
-        !account?.economic_group_holding?.taxId ||
-        account.economic_group_holding.taxId === account.document?.value
-      ) {
-        const controlleds  = await findManyAccount(
-          { "economic_group_holding.taxId": account.document?.value },
+      // Since economic group is now separate and doesn't have account relationship,
+      // we'll use the account's economicGroupId to find related companies
+      if (account?.economicGroupId) {
+        // Find all accounts with the same economicGroupId
+        const groupAccountsQuery = await findManyAccount(
+          {
+            economicGroupId: account.economicGroupId,
+            id: { $ne: account.id }, // Exclude current account
+          },
           currentPage,
           PAGE_SIZE
         );
-        groupCompanies = controlleds.docs;
-      } else {
-        const holding = await findManyAccount(
-          { "document.value": account.economic_group_holding.taxId },
-          currentPage,
-          PAGE_SIZE
-        );
-        const otherControlled = await findManyAccount(
-          { "economic_group_holding.taxId": account.economic_group_holding.taxId },
-          currentPage,
-          PAGE_SIZE
-        );
-
-        groupCompanies = [...holding.docs, ...otherControlled.docs];
+        groupCompanies = groupAccountsQuery.docs;
       }
 
       const newCompanies = groupCompanies
@@ -70,7 +60,7 @@ export function useSearchContactModal(accountId?: string) {
           documentValue: empresa.document.value!,
           contacts: empresa.contacts ?? [],
         }));
-        
+
       const uniqueCompanies = Array.from(
         new Map(newCompanies.map((emp) => [emp.documentValue, emp])).values()
       );

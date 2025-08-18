@@ -213,15 +213,6 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
               fantasy_name: accountData?.fantasy_name,
               municipal_registration: accountData?.municipal_registration,
               state_registration: accountData?.state_registration,
-              economic_group_holding: {
-                name: accountData?.economic_group_holding?.name! as string,
-                taxId: accountData?.economic_group_holding?.taxId! as string,
-              },
-              economic_group_controlled:
-                accountData?.economic_group_controlled?.map((item) => ({
-                  name: item.name! as string,
-                  taxId: item.taxId! as string,
-                })),
               status: [
                 {
                   id: accountData?.id,

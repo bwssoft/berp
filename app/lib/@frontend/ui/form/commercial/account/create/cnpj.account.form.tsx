@@ -36,6 +36,7 @@ export function CNPJAccountForm() {
     debouncedValidationHolding,
     debouncedValidationControlled,
     disabledFields,
+    economicGroupDisabled,
     selectedHolding,
     setSelectedHolding,
     selectedIE,
@@ -236,6 +237,7 @@ export function CNPJAccountForm() {
               data={dataHolding}
               label="Grupo Econômico (Holding)"
               behavior="search"
+              disabled={economicGroupDisabled}
               onSearchChange={(text: string) => {
                 debouncedValidationHolding(text);
               }}
@@ -271,6 +273,7 @@ export function CNPJAccountForm() {
               data={dataControlled}
               label="Grupo Econômico (Controladas)"
               behavior="search"
+              disabled={economicGroupDisabled}
               placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
               value={selectedControlled || []}
               onChange={(selectedItems) => {
