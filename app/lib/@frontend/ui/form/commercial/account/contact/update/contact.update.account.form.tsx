@@ -158,7 +158,7 @@ export function UpdateContactAccountForm({
         />
 
         <div
-          className="bg-black text-white rounded-full p-1 mb-1.5 cursor-pointer"
+          className="self-center p-0.5 mt-auto bg-black text-white rounded-full cursor-pointer"
           onClick={handleNewContact}
         >
           <PlusIcon className="text-white w-5 h-5" />
