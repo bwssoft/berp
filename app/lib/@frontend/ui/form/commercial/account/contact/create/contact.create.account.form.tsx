@@ -163,7 +163,7 @@ export function CreateContactAccountForm({ closeModal, onSubmit }: Props) {
         />
 
         <div
-          className="self-center p-0.5 mt-5 bg-black text-white rounded-full cursor-pointer"
+          className="self-center p-0.5 mt-auto bg-black text-white rounded-full cursor-pointer"
           onClick={handleNewContact}
         >
           <PlusIcon className="text-white w-7 h-7" />
