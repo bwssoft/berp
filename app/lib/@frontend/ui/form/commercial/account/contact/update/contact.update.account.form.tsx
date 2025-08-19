@@ -106,7 +106,7 @@ export function UpdateContactAccountForm({
         </>
       )}
 
-      <div className="flex gap-4 w-full items-start">
+      <div className="flex gap-4 justify-between w-full items-end max">
         <Combobox
           data={[
             "Celular",
@@ -158,7 +158,7 @@ export function UpdateContactAccountForm({
         />
 
         <div
-          className="self-center p-0.5 mt-5 bg-black text-white rounded-full cursor-pointer"
+          className="self-center p-0.5 mt-auto bg-black text-white rounded-full cursor-pointer"
           onClick={handleNewContact}
         >
           <PlusIcon className="text-white w-5 h-5" />

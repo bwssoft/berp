@@ -16,6 +16,7 @@ interface FileUploadProps {
   multiple?: boolean;
   accept: string;
   currentImageUrl?: string;
+  disabled?: boolean;
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
@@ -26,12 +27,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   multiple,
   accept,
   currentImageUrl,
+  disabled = false,
 }) => {
   const inputFileId = id ?? `file-upload-${crypto.randomUUID()}`;
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
+
     const newFiles = event.target.files ? Array.from(event.target.files) : [];
     const updatedFiles = [...selectedFiles, ...newFiles];
 
@@ -40,6 +45,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   };
 
   const removeFile = (index: number) => {
+    if (disabled) return;
+
     const newFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(newFiles);
 
@@ -51,6 +58,77 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     handleFile(newFiles);
   };
 
+  // Drag and drop handlers
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const dropZone = e.currentTarget;
+    const relatedTarget = e.relatedTarget as Node;
+
+    if (!relatedTarget || !dropZone.contains(relatedTarget)) {
+      setIsDragOver(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    console.log("Files dropped:", droppedFiles.length, droppedFiles);
+
+    const validFiles = accept
+      ? droppedFiles.filter((file) => {
+          const acceptTypes = accept.split(",").map((type) => type.trim());
+          return acceptTypes.some((acceptType) => {
+            if (acceptType.startsWith(".") || !acceptType.includes("/")) {
+              const extension = acceptType.startsWith(".")
+                ? acceptType
+                : `.${acceptType}`;
+              return file.name.toLowerCase().endsWith(extension.toLowerCase());
+            }
+            if (acceptType.includes("/*")) {
+              const mimeType = acceptType.split("/")[0];
+              return file.type.startsWith(mimeType);
+            }
+            return file.type === acceptType;
+          });
+        })
+      : droppedFiles;
+
+    console.log("Valid files after filtering:", validFiles.length, validFiles);
+    console.log("Accept prop:", accept);
+
+    if (validFiles.length > 0) {
+      const updatedFiles = multiple
+        ? [...selectedFiles, ...validFiles]
+        : validFiles;
+      setSelectedFiles(updatedFiles);
+      handleFile(updatedFiles);
+      console.log("Files added to state:", updatedFiles);
+    } else {
+      console.log("No valid files found");
+    }
+  };
+
   return (
     <div className="col-span-full">
       {element ? (
@@ -58,7 +136,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           {element({
             files: selectedFiles,
             removeFile,
-            upload: () => fileInputRef.current?.click(),
+            upload: () => !disabled && fileInputRef.current?.click(),
           })}
           <input
             id={inputFileId}
@@ -68,6 +146,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             accept={accept}
             onChange={onFileChange}
             ref={fileInputRef}
+            disabled={disabled}
           />
         </div>
       ) : (
@@ -80,30 +159,60 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               {label}
             </label>
           )}
-          <div className="mt-2 flex gap-6 justify-center align-bottom rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+          <div
+            className={`mt-2 flex gap-6 justify-center align-bottom rounded-lg border border-dashed px-6 py-10 transition-colors ${
+              disabled
+                ? "border-gray-200 bg-gray-50 cursor-not-allowed"
+                : isDragOver
+                  ? "border-blue-400 bg-blue-50"
+                  : "border-gray-900/25 hover:border-gray-400"
+            }`}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
             <div className="text-center">
               <PhotoIcon
-                className="mx-auto h-12 w-12 text-gray-300"
+                className={`mx-auto h-12 w-12 transition-colors ${
+                  disabled
+                    ? "text-gray-200"
+                    : isDragOver
+                      ? "text-blue-400"
+                      : "text-gray-300"
+                }`}
                 aria-hidden="true"
               />
               <div className="mt-4 flex text-sm leading-6 text-gray-600">
                 <label
-                  htmlFor={inputFileId}
-                  className="relative cursor-pointer rounded-md bg-white font-semibold text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 hover:text-blue-500"
+                  htmlFor={disabled ? undefined : inputFileId}
+                  className={`relative rounded-md bg-white font-semibold transition-colors ${
+                    disabled
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-blue-600 cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 hover:text-blue-500"
+                  }`}
                 >
                   <span>Selecione os arquivos</span>
                   <input
                     id={inputFileId}
                     type="file"
                     className="sr-only"
-                    multiple
+                    multiple={multiple}
                     accept={accept}
                     onChange={onFileChange}
                     ref={fileInputRef}
+                    disabled={disabled}
                   />
                 </label>
-                <p className="pl-1">ou arraste e solte</p>
+                <p className={disabled ? "pl-1 text-gray-400" : "pl-1"}>
+                  ou arraste e solte
+                </p>
               </div>
+              {isDragOver && !disabled && (
+                <p className="mt-2 text-sm text-blue-600 font-medium">
+                  Solte os arquivos aqui
+                </p>
+              )}
             </div>
           </div>
 
@@ -169,7 +278,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                       <button
                         type="button"
                         onClick={() => removeFile(index)}
-                        className="text-red-500 hover:text-red-700 transition"
+                        disabled={disabled}
+                        className={`transition ${
+                          disabled
+                            ? "text-gray-300 cursor-not-allowed"
+                            : "text-red-500 hover:text-red-700"
+                        }`}
                       >
                         <TrashIcon className="h-5 w-5" />
                       </button>

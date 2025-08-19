@@ -13,6 +13,7 @@ interface AuditUserModalProps {
   user?: Pick<IUser, "id" | "name">;
   handlePageChange: (page: number) => void;
   currentPage: number;
+  isLoading?: boolean;
 }
 
 export function AuditUserModal({
@@ -22,13 +23,13 @@ export function AuditUserModal({
   user,
   handlePageChange,
   currentPage,
+  isLoading,
 }: AuditUserModalProps) {
   return (
     <Modal
       open={open}
       onClose={closeModal}
       title={`Histórico de Alterações - ${user?.name}`}
-      className="bg-white"
       position="center"
     >
       <ModalContent>
@@ -37,6 +38,7 @@ export function AuditUserModal({
             handlePageChange={handlePageChange}
             currentPage={currentPage}
             data={auditData}
+            isLoading={isLoading}
           />
         </ModalBody>
       </ModalContent>

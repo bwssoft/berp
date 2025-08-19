@@ -8,7 +8,7 @@ import {
   findOneAccountUsecase,
 } from "../../usecase/commercial/account";
 import { updateOneAccountUsecase } from "../../usecase/commercial/account/update-one.account.usecase";
-import { fetchCnpjData } from "../cnpja/cnpja.action";
+import { fetcCnpjRegistrationData } from "../cnpja/cnpja.action";
 import { deleteOneAccountUsecase } from "../../usecase/commercial/account/delete-one.account.usecase";
 import { revalidatePath } from "next/cache";
 
@@ -27,27 +27,26 @@ export async function updateOneAccount(
   return result;
 }
 
-export async function refreshOneAccount(taxId: string) {
-  const result = await fetchCnpjData(taxId);
-  // descomentar após mergear a branch 16
-  // const result = await fetcCnpjRegistrationData(taxId)
+export async function refreshOneAccount(taxId: string, id: string) {
+  const result = await fetcCnpjRegistrationData(taxId);
 
   if (!result) return null;
 
   await updateOneAccount(
-    { "document.value": taxId },
+    { id: id },
     {
       fantasy_name: result.alias,
       social_name: result.company.name,
-      // descomentar após mergear a branch 16
-      // status: result?.registrations[0]?.status.text ?? "",
-      // state_registration: result?.registrations[0]?.number ?? "",
-      // situationIE: {
-      //   id: result.registrations[0]?.enabled ? "1" : "2",
-      //   text: result.registrations[0]?.enabled ? "Habilitada" : "Não habilitada",
-      //   status: result.registrations[0]?.enabled
-      // }
-      // typeIe: data.registrations[0]?.type.text
+      status: result?.registrations[0]?.status.text ?? "",
+      state_registration: result?.registrations[0]?.number ?? "",
+      situationIE: {
+        id: result.registrations[0]?.enabled ? "1" : "2",
+        text: result.registrations[0]?.enabled
+          ? "Habilitada"
+          : "Não habilitada",
+        status: result.registrations[0]?.enabled,
+      },
+      typeIE: result.registrations[0]?.type.text,
     }
   );
   return;
