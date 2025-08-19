@@ -75,9 +75,9 @@ const schema = z
         status: z.string().optional(),
         situationIE: z
           .object({
-            id: z.string(),
-            status: z.boolean(),
-            text: z.string(),
+            id: z.string().optional(),
+            status: z.boolean().optional(),
+            text: z.string().optional(),
           })
           .optional(),
         typeIE: z.string().optional(),
@@ -546,32 +546,49 @@ export function CreateAccountFormProvider({
           },
         })) as ICnpjaResponse[];
 
-        // Add the current company being created to controlled companies
+        // Add the current company being created to controlled companies if not already present
         if (data?.company?.name) {
-          const currentCompanyData = {
-            taxId: cleanedValue,
-            company: {
-              name: data.company.name,
-            },
-          } as ICnpjaResponse;
+          const currentCompanyTaxId = cleanedValue.replace(/\D/g, "");
 
-          controlledData.push(currentCompanyData);
-
-          const currentCompanyFormData = {
-            name: data.company.name,
-            taxId: cleanedValue,
-          };
-
-          const updatedControlledFormData = [
-            ...economicGroupControlled,
-            currentCompanyFormData,
-          ];
-
-          setSelectedControlled(controlledData);
-          methods.setValue(
-            "economic_group.economic_group_controlled",
-            updatedControlledFormData
+          // Check if current company is already in the controlled list
+          const isCurrentCompanyAlreadyIncluded = economicGroupControlled.some(
+            (controlled) =>
+              controlled.taxId.replace(/\D/g, "") === currentCompanyTaxId
           );
+
+          if (!isCurrentCompanyAlreadyIncluded) {
+            const currentCompanyData = {
+              taxId: cleanedValue,
+              company: {
+                name: data.company.name,
+              },
+            } as ICnpjaResponse;
+
+            controlledData.push(currentCompanyData);
+
+            const currentCompanyFormData = {
+              name: data.company.name,
+              taxId: cleanedValue,
+            };
+
+            const updatedControlledFormData = [
+              ...economicGroupControlled,
+              currentCompanyFormData,
+            ];
+
+            setSelectedControlled(controlledData);
+            methods.setValue(
+              "economic_group.economic_group_controlled",
+              updatedControlledFormData
+            );
+          } else {
+            // Current company is already in the list, just set the existing data
+            setSelectedControlled(controlledData);
+            methods.setValue(
+              "economic_group.economic_group_controlled",
+              economicGroupControlled
+            );
+          }
         } else {
           setSelectedControlled(controlledData);
           methods.setValue(
@@ -666,25 +683,36 @@ export function CreateAccountFormProvider({
           ];
         }
 
-        // Add the current company being created to controlled companies
+        // Add the current company being created to controlled companies if not already present
         const currentCompany = methods.getValues("cnpj");
         const currentDocument = methods.getValues("document");
 
         if (currentCompany?.social_name && currentDocument?.value) {
-          const currentCompanyData = {
-            taxId: currentDocument.value,
-            company: {
+          const currentCompanyTaxId = currentDocument.value.replace(/\D/g, "");
+
+          // Check if current company is already in the controlled list
+          const isCurrentCompanyAlreadyIncluded =
+            existingEconomicGroup.economic_group_controlled?.some(
+              (controlled) =>
+                controlled.taxId.replace(/\D/g, "") === currentCompanyTaxId
+            ) || false;
+
+          if (!isCurrentCompanyAlreadyIncluded) {
+            const currentCompanyData = {
+              taxId: currentDocument.value,
+              company: {
+                name: currentCompany.social_name,
+              },
+            } as ICnpjaResponse;
+
+            const currentCompanyFormData = {
               name: currentCompany.social_name,
-            },
-          } as ICnpjaResponse;
+              taxId: currentDocument.value,
+            };
 
-          const currentCompanyFormData = {
-            name: currentCompany.social_name,
-            taxId: currentDocument.value,
-          };
-
-          controlledData.push(currentCompanyData);
-          controlledFormData.push(currentCompanyFormData);
+            controlledData.push(currentCompanyData);
+            controlledFormData.push(currentCompanyFormData);
+          }
         }
 
         setSelectedControlled(controlledData);
@@ -699,14 +727,9 @@ export function CreateAccountFormProvider({
             "Dados do grupo econômico foram carregados automaticamente.",
           variant: "default",
         });
-      } else {
-        // No existing economic group found, leave controlled enterprises as they are for manual input
-        // Don't clear selectedControlled or the form value
       }
     } catch (error) {
       console.error("Error searching for economic group:", error);
-      // On error, leave controlled enterprises as they are for manual input
-      // Don't clear selectedControlled or the form value
     }
   };
 
@@ -803,6 +826,7 @@ export function CreateAccountFormProvider({
 
       const accountLocalId = crypto.randomUUID();
 
+      // @ts-ignore
       const base: LocalAccount = {
         id: accountLocalId,
         document: {
@@ -820,7 +844,7 @@ export function CreateAccountFormProvider({
               state_registration: data.cnpj?.state_registration,
               municipal_registration: data.cnpj?.municipal_registration,
               status: data.cnpj?.status,
-              situationIE: data.cnpj?.situationIE,
+              situationIE: data.cnpj?.situationIE || {},
               typeIE: data.cnpj?.typeIE,
               setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
             }),
