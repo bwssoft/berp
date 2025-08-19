@@ -50,6 +50,84 @@ export async function findManyAccountEconomicGroup(
   });
 }
 
+export async function validateControlledEnterprisesNotInHolding(
+  controlledTaxIds: string[]
+): Promise<{
+  isValid: boolean;
+  conflictingEntries?: Array<{
+    taxId: string;
+    name: string;
+    conflictType: "holding" | "controlled";
+    holdingName?: string;
+    holdingTaxId?: string;
+  }>;
+}> {
+  try {
+    // Find economic groups that contain any of the controlled tax IDs either as holding or controlled
+    const existingGroups = await findManyAccountEconomicGroupUsecase.execute({
+      filter: {
+        $or: [
+          { "economic_group_holding.taxId": { $in: controlledTaxIds } },
+          { "economic_group_controlled.taxId": { $in: controlledTaxIds } },
+        ],
+      },
+      page: 1,
+      limit: 100, // Should be enough for most cases
+    });
+
+    if (!existingGroups.docs || existingGroups.docs.length === 0) {
+      return { isValid: true };
+    }
+
+    // Check for conflicts
+    const conflictingEntries: Array<{
+      taxId: string;
+      name: string;
+      conflictType: "holding" | "controlled";
+      holdingName?: string;
+      holdingTaxId?: string;
+    }> = [];
+
+    existingGroups.docs.forEach((group) => {
+      // Check if any of the controlled tax IDs is already a holding
+      if (
+        group.economic_group_holding &&
+        controlledTaxIds.includes(group.economic_group_holding.taxId)
+      ) {
+        conflictingEntries.push({
+          taxId: group.economic_group_holding.taxId,
+          name: group.economic_group_holding.name,
+          conflictType: "holding",
+        });
+      }
+
+      // Check if any of the controlled tax IDs is already controlled in another group
+      if (group.economic_group_controlled) {
+        group.economic_group_controlled.forEach((controlled) => {
+          if (controlledTaxIds.includes(controlled.taxId)) {
+            conflictingEntries.push({
+              taxId: controlled.taxId,
+              name: controlled.name,
+              conflictType: "controlled",
+              holdingName: group.economic_group_holding?.name,
+              holdingTaxId: group.economic_group_holding?.taxId,
+            });
+          }
+        });
+      }
+    });
+
+    return {
+      isValid: conflictingEntries.length === 0,
+      conflictingEntries:
+        conflictingEntries.length > 0 ? conflictingEntries : undefined,
+    };
+  } catch (error) {
+    console.error("Error validating controlled enterprises:", error);
+    return { isValid: false };
+  }
+}
+
 export async function deleteOneAccountEconomicGroup(
   filter: Partial<IAccountEconomicGroup>
 ) {

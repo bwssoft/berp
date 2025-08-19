@@ -21,7 +21,10 @@ import {
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
-import { findOneAccountEconomicGroup } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
+import {
+  findOneAccountEconomicGroup,
+  validateControlledEnterprisesNotInHolding,
+} from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { useAuth } from "@/app/lib/@frontend/context";
 import {
   useCreateAccountFlow,
@@ -204,6 +207,9 @@ interface CreateAccountFormContextData {
   // Functions
   handleCpfCnpj: (value: string) => Promise<"cpf" | "cnpj" | "invalid">;
   handleHoldingSelection: (item: ICnpjaResponse | null) => Promise<void>;
+  validateControlledEnterprises: (
+    selectedControlled: ICnpjaResponse[]
+  ) => Promise<boolean>;
   debouncedValidationHolding: (value: string) => void;
   debouncedValidationControlled: (value: string) => void;
   onSubmit: (data: CreateAccountFormSchema) => Promise<void>;
@@ -706,10 +712,125 @@ export function CreateAccountFormProvider({
     }
   };
 
+  const validateControlledEnterprises = async (
+    selectedControlled: ICnpjaResponse[]
+  ): Promise<boolean> => {
+    if (!selectedControlled || selectedControlled.length === 0) {
+      return true;
+    }
+
+    try {
+      const controlledTaxIds = selectedControlled.map((item) =>
+        item.taxId.replace(/\D/g, "")
+      );
+
+      // Check if current account's taxId is in the controlled list
+      const currentAccountTaxId = methods
+        .getValues("document.value")
+        ?.replace(/\D/g, "");
+      if (
+        currentAccountTaxId &&
+        controlledTaxIds.includes(currentAccountTaxId)
+      ) {
+        toast({
+          title: "Configuração Inválida",
+          description:
+            "Uma empresa não pode ser controlada por si mesma. Remova a empresa atual da lista de controladas.",
+          variant: "error",
+        });
+        return false;
+      }
+
+      // Check if any controlled enterprise is the same as the selected holding
+      const selectedHolding = methods.getValues(
+        "economic_group.economic_group_holding"
+      );
+      if (selectedHolding) {
+        const holdingTaxId = selectedHolding.taxId?.replace(/\D/g, "");
+        if (holdingTaxId && controlledTaxIds.includes(holdingTaxId)) {
+          toast({
+            title: "Configuração Inválida",
+            description: `A holding "${selectedHolding.name}" não pode ser adicionada como empresa controlada.`,
+            variant: "error",
+          });
+          return false;
+        }
+      }
+
+      const validationResult =
+        await validateControlledEnterprisesNotInHolding(controlledTaxIds);
+
+      if (!validationResult.isValid && validationResult.conflictingEntries) {
+        // Group conflicts by type for better error messages
+        const holdingConflicts = validationResult.conflictingEntries.filter(
+          (entry) => entry.conflictType === "holding"
+        );
+        const controlledConflicts = validationResult.conflictingEntries.filter(
+          (entry) => entry.conflictType === "controlled"
+        );
+
+        let errorMessage =
+          "Não é possível adicionar as seguintes empresas como controladas:\n\n";
+
+        if (holdingConflicts.length > 0) {
+          errorMessage += "⚠️ Empresas que já são Holdings:\n";
+          holdingConflicts.forEach((entry) => {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já é uma holding de grupo econômico\n`;
+          });
+          errorMessage += "\n";
+        }
+
+        if (controlledConflicts.length > 0) {
+          errorMessage += "⚠️ Empresas já controladas por outros grupos:\n";
+          controlledConflicts.forEach((entry) => {
+            if (entry.holdingName) {
+              errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
+            } else {
+              errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence a outro grupo econômico\n`;
+            }
+          });
+        }
+
+        toast({
+          title: "Conflito de Grupo Econômico",
+          description: errorMessage.trim(),
+          variant: "error",
+        });
+
+        return false;
+      }
+
+      return validationResult.isValid;
+    } catch (error) {
+      console.error("Error validating controlled enterprises:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao validar empresas controladas",
+        variant: "error",
+      });
+      return false;
+    }
+  };
+
   const onSubmit = async (data: CreateAccountFormSchema) => {
     setIsSubmitting(true);
 
     try {
+      if (data.economic_group?.economic_group_controlled) {
+        const controlledAsICnpjaResponse =
+          data.economic_group.economic_group_controlled.map((controlled) => ({
+            taxId: controlled.taxId,
+            company: { name: controlled.name },
+          })) as ICnpjaResponse[];
+
+        const isValid = await validateControlledEnterprises(
+          controlledAsICnpjaResponse
+        );
+        if (!isValid) {
+          setIsSubmitting(false);
+          return;
+        }
+      }
       const address = dataCnpj?.address;
       const phones = dataCnpj?.phones || [];
       const emails = dataCnpj?.emails || [];
@@ -859,6 +980,7 @@ export function CreateAccountFormProvider({
     toggleButtonText,
     handleCpfCnpj,
     handleHoldingSelection,
+    validateControlledEnterprises,
     debouncedValidationHolding,
     debouncedValidationControlled,
     onSubmit,

@@ -45,6 +45,7 @@ export function CNPJAccountForm() {
     handleHoldingSelection,
     selectedIE,
     setSelectedIE,
+    validateControlledEnterprises,
     methods,
   } = useCreateAccountFormContext();
 
@@ -300,16 +301,37 @@ export function CNPJAccountForm() {
               behavior="search"
               placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
               value={selectedControlled || []}
-              onChange={(selectedItems) => {
-                setSelectedControlled(selectedItems);
-                field.onChange(
-                  selectedItems.map((item) => {
-                    return {
-                      name: item.company.name,
-                      taxId: item.taxId,
-                    };
-                  })
+              onChange={async (selectedItems) => {
+                // Check for duplicates within the current selection
+                const taxIds = selectedItems.map((item) =>
+                  item.taxId.replace(/\D/g, "")
                 );
+                const uniqueTaxIds = new Set(taxIds);
+
+                if (taxIds.length !== uniqueTaxIds.size) {
+                  toast({
+                    title: "Seleção Duplicada",
+                    description:
+                      "Você não pode selecionar a mesma empresa mais de uma vez.",
+                    variant: "error",
+                  });
+                  return; // Don't update the selection
+                }
+
+                // Validate the controlled enterprises before setting them
+                const isValid =
+                  await validateControlledEnterprises(selectedItems);
+                if (isValid) {
+                  setSelectedControlled(selectedItems);
+                  field.onChange(
+                    selectedItems.map((item) => {
+                      return {
+                        name: item.company.name,
+                        taxId: item.taxId,
+                      };
+                    })
+                  );
+                }
               }}
               keyExtractor={(item) => item.taxId}
               displayValueGetter={(item) => item.company.name}
