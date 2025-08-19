@@ -1,10 +1,10 @@
 "use client";
-import { CheckCircleIcon, InformationCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { Button, Input, PasswordInput } from "../../../../component";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { Button, PasswordInput } from "../../../../component";
 import { useSetNewPasswordUserForm } from "./use-set-new-password.user.form";
 
 export function SetNewPasswordUserForm({ userId }: { userId: string }) {
-  const { register, handleSubmit, rules } = useSetNewPasswordUserForm(userId);
+  const { register, handleSubmit, rules, errors } = useSetNewPasswordUserForm(userId);
 
   return (
     <form action={() => handleSubmit()}>
@@ -38,6 +38,7 @@ export function SetNewPasswordUserForm({ userId }: { userId: string }) {
         <PasswordInput
           label="Confirme sua senha"
           {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
         />
       </div>
 
