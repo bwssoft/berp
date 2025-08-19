@@ -318,20 +318,26 @@ export function CNPJAccountForm() {
                   return; // Don't update the selection
                 }
 
-                // Validate the controlled enterprises before setting them
-                const isValid =
-                  await validateControlledEnterprises(selectedItems);
-                if (isValid) {
-                  setSelectedControlled(selectedItems);
-                  field.onChange(
-                    selectedItems.map((item) => {
-                      return {
-                        name: item.company.name,
-                        taxId: item.taxId,
-                      };
-                    })
-                  );
+                const isAddingCompanies =
+                  selectedItems.length > (selectedControlled?.length || 0);
+
+                if (isAddingCompanies) {
+                  const isValid =
+                    await validateControlledEnterprises(selectedItems);
+                  if (!isValid) {
+                    return;
+                  }
                 }
+
+                setSelectedControlled(selectedItems);
+                field.onChange(
+                  selectedItems.map((item) => {
+                    return {
+                      name: item.company.name,
+                      taxId: item.taxId,
+                    };
+                  })
+                );
               }}
               keyExtractor={(item) => item.taxId}
               displayValueGetter={(item) => item.company.name}
