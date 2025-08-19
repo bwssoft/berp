@@ -8,7 +8,8 @@ import {
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
+import { IAccount } from "@/app/lib/@backend/domain";
 
 export default function AccountManagementLayout({
   children,
@@ -20,6 +21,13 @@ export default function AccountManagementLayout({
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
   const [activeTab, setActiveTab] = useState<string>("account-data");
+
+  // Get account data from cache (already fetched by the page component)
+  const queryClient = useQueryClient();
+  const account = queryClient.getQueryData<IAccount>([
+    "findOneAccount",
+    accountId,
+  ]);
 
   const permissionQueries = useQueries({
     queries: [
@@ -80,6 +88,17 @@ export default function AccountManagementLayout({
 
   return (
     <div className="flex flex-col w-full gap-4">
+      {/* Page Title */}
+      {account && (
+        <div className="px-4 pt-4">
+          <h1 className="text-2xl font-semibold text-gray-900">
+            {account.document.type === "cpf"
+              ? `${account.name} - ${account.document.value}`
+              : `${account.social_name} - ${account.document.value}`}
+          </h1>
+        </div>
+      )}
+
       <Tabs value={activeTab} className="w-full">
         {isLoadingPermissions ? (
           <TabsList className="bg-transparent border-gray-200"></TabsList>

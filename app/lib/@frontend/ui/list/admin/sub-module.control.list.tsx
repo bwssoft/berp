@@ -72,6 +72,7 @@ export function SubModuleControlList(props: Props) {
         control={auditModal.control}
         currentPage={auditModal.page}
         handleChangePage={auditModal.handleChangePage}
+        isLoading={auditModal.isLoading}
       />
     </>
   );

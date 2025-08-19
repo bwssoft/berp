@@ -13,15 +13,12 @@ const currentPage = 1;
 
 export function useSearchContactHistoricalModal(accountId?: string) {
   const [open, setOpen] = useState(false);
-  const [contactsByCompany, setContactsByCompany] = useState<
-    { name: string; contacts: IContact[]; documentValue: string }[]
-  >([]);
   const [accountData, setAccountData] = useState<IAccount | null>();
 
-  const { isLoading: accountLoading } = useQuery({
-    queryKey: ["findManyAccount", accountId, currentPage],
+  const { data: contactsByCompany, isLoading: accountLoading } = useQuery({
+    queryKey: ["contactsByCompany", accountId, currentPage],
     queryFn: async () => {
-      if (!accountId) return { docs: [], total: 0, pages: 1 };
+      if (!accountId) return [];
 
       const account = await findOneAccount({ id: accountId });
       setAccountData(account);
@@ -67,8 +64,6 @@ export function useSearchContactHistoricalModal(accountId?: string) {
 
           grupo.docs.forEach(addEmpresa);
         }
-
-        setContactsByCompany(empresas);
       }
 
       return empresas;
@@ -89,7 +84,7 @@ export function useSearchContactHistoricalModal(accountId?: string) {
     openModal,
     closeModal,
     accountData,
-    contactsByCompany,
+    contactsByCompany: contactsByCompany ?? [],
     isLoading: accountLoading,
   };
 }
