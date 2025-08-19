@@ -118,8 +118,44 @@ function formatScalar(v: unknown, field?: string) {
       timeStyle: "short",
     }).format(v);
   }
-  if (Array.isArray(v)) return v.join(", ");
+  if (Array.isArray(v)) {
+    // Handle profile array specifically
+    if (
+      field === "profile" &&
+      v.length > 0 &&
+      typeof v[0] === "object" &&
+      v[0] !== null
+    ) {
+      return v.map((p: any) => p?.name || String(p)).join(", ");
+    }
+    return v.join(", ");
+  }
   if (v == null) return "";
+
+  // Handle objects specifically
+  if (typeof v === "object" && v !== null) {
+    // Handle image object
+    if (field === "image" && "key" in v) {
+      return (v as any).key || "";
+    }
+
+    // Handle profile objects (single profile)
+    if (field === "profile" && "name" in v) {
+      return (v as any).name || "";
+    }
+
+    // For other objects, try to extract meaningful information
+    if ("name" in v) {
+      return (v as any).name;
+    }
+    if ("id" in v && "name" in v) {
+      return (v as any).name;
+    }
+
+    // Fallback: return empty string instead of [object Object]
+    return "";
+  }
+
   return String(v);
 }
 
