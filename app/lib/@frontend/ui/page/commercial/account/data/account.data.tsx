@@ -379,7 +379,7 @@ export function AccountDataPage(props: Props) {
           city: copiedAddress?.city ?? "",
           state: copiedAddress?.state ?? "",
           reference_point: copiedAddress?.reference_point ?? "",
-          type: copiedAddress?.type ?? [],
+          type: [],
           default_address: false,
         }}
       />

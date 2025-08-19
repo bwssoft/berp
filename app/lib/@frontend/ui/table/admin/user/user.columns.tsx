@@ -37,7 +37,15 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     accessorKey: "profile",
     cell: ({ row }) => {
       const user = row.original;
-      return user.profile.map(({ name }) => name).join(", ");
+      return (
+        <div className="flex flex-wrap gap-2 w-64">
+          {user.profile.map((profile) => (
+            <Badge key={profile.id} variant="outline">
+              {profile.name}
+            </Badge>
+          ))}
+        </div>
+      )
     },
   },
   {
