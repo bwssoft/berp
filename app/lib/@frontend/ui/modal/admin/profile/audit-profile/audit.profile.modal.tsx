@@ -31,7 +31,7 @@ export function AuditProfileModal({
       onClose={closeModal}
     >
       <ModalBody>
-        <ModalContent className="overflow-y-scroll max-h-[70vh]">
+        <ModalContent>
           <AuditTable
             data={audits}
             currentPage={currentPage}

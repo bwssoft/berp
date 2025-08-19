@@ -30,7 +30,6 @@ export function AuditUserModal({
       open={open}
       onClose={closeModal}
       title={`Histórico de Alterações - ${user?.name}`}
-      className="bg-white"
       position="center"
     >
       <ModalContent>

@@ -50,7 +50,7 @@ export function AuditTable({
         data={data.docs}
         mobileDisplayValue={(audit) => `${audit.action} - ${audit.user.name}`}
         mobileKeyExtractor={(audit) => audit.created_at?.toISOString()}
-        className="h-96"
+        className="h-[70vh] w-[50vw]"
       />
 
       <Pagination
