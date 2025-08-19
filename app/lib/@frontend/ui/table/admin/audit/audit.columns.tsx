@@ -210,29 +210,20 @@ export const columns: ColumnDef<IAudit>[] = [
                   <div>{`Permissões de '${label}' alteradas`}</div>
                   {addedMap.length > 0 && (
                     <div className="text-sm">
-                      <span className="mr-1">Adicionadas:</span>
+                      <span className="mr-1 text-green-600 font-medium">
+                        Adicionadas:
+                      </span>
                       <ChipsRow items={addedMap} />
                     </div>
                   )}
                   {removedMap.length > 0 && (
                     <div className="text-sm">
-                      <span className="mr-1">Removidas:</span>
+                      <span className="mr-1 text-red-600 font-medium">
+                        Removidas:
+                      </span>
                       <ChipsRow items={removedMap} />
                     </div>
                   )}
-                  <details className="text-xs opacity-80">
-                    <summary>Ver lista completa</summary>
-                    <div className="mt-1">
-                      <div>
-                        <span className="font-medium">Antes:</span>{" "}
-                        {beforeMap.join(", ") || "—"}
-                      </div>
-                      <div>
-                        <span className="font-medium">Depois:</span>{" "}
-                        {afterMap.join(", ") || "—"}
-                      </div>
-                    </div>
-                  </details>
                 </div>
               );
             }

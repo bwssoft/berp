@@ -11,6 +11,7 @@ interface Props {
   audits: PaginationResult<IAudit>;
   currentPage: number;
   handlePageChange: (page: number) => void;
+  isLoading?: boolean;
 }
 
 export function AuditProfileModal({
@@ -20,11 +21,12 @@ export function AuditProfileModal({
   audits,
   currentPage,
   handlePageChange,
+  isLoading,
 }: Props) {
   return (
     <Modal
       position="center"
-      title={`Histório de alterações de perfil - ${profile?.name}`}
+      title={`Histórico de alterações de perfil - ${profile?.name}`}
       open={open}
       onClose={closeModal}
     >
@@ -34,6 +36,7 @@ export function AuditProfileModal({
             data={audits}
             currentPage={currentPage}
             handlePageChange={handlePageChange}
+            isLoading={isLoading}
           />
         </ModalContent>
       </ModalBody>
