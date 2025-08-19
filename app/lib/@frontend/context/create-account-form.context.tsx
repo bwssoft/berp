@@ -722,23 +722,6 @@ export function CreateAccountFormProvider({
         item.taxId.replace(/\D/g, "")
       );
 
-      // Check if current account's taxId is in the controlled list
-      const currentAccountTaxId = methods
-        .getValues("document.value")
-        ?.replace(/\D/g, "");
-      if (
-        currentAccountTaxId &&
-        controlledTaxIds.includes(currentAccountTaxId)
-      ) {
-        toast({
-          title: "Configuração Inválida",
-          description:
-            "Uma empresa não pode ser controlada por si mesma. Remova a empresa atual da lista de controladas.",
-          variant: "error",
-        });
-        return false;
-      }
-
       // Check if any controlled enterprise is the same as the selected holding
       const selectedHolding = methods.getValues(
         "economic_group.economic_group_holding"
@@ -814,21 +797,6 @@ export function CreateAccountFormProvider({
     setIsSubmitting(true);
 
     try {
-      if (data.economic_group?.economic_group_controlled) {
-        const controlledAsICnpjaResponse =
-          data.economic_group.economic_group_controlled.map((controlled) => ({
-            taxId: controlled.taxId,
-            company: { name: controlled.name },
-          })) as ICnpjaResponse[];
-
-        const isValid = await validateControlledEnterprises(
-          controlledAsICnpjaResponse
-        );
-        if (!isValid) {
-          setIsSubmitting(false);
-          return;
-        }
-      }
       const address = dataCnpj?.address;
       const phones = dataCnpj?.phones || [];
       const emails = dataCnpj?.emails || [];
