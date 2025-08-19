@@ -122,7 +122,16 @@ export const useSearchUserForm = () => {
     });
 
     const onReset = () => {
-        reset();
+        reset({
+            quick: "",
+            name: "",
+            cpf: "",
+            profile: [],
+            username: "",
+            email: "",
+            active: [],
+            external: [],
+        });
         handleParamsChange({
             name: "",
             cpf: "",
