@@ -92,6 +92,7 @@ export function ProfileTable(props: Props) {
           closeModal={audtiModal.closeModal}
           open={audtiModal.open}
           profile={audtiModal.profile}
+          isLoading={audtiModal.isLoading}
         />
       </TooltipProvider>
     </>
