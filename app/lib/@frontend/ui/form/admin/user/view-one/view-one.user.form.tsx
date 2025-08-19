@@ -44,6 +44,7 @@ export function ViewOneUserForm({ user }: Props) {
             multiple={false}
             accept={"jpeg, jpg, png"}
             currentImageUrl={avatarUrl}
+            disabled
           />
         </div>
       </div>

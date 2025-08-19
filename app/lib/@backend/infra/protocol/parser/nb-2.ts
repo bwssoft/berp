@@ -592,7 +592,7 @@ export class BwsNb2Parser {
 
     if (value !== "1" && value !== "2") return undefined;
 
-    return value;
+    return Number(value);
   }
 
   static lock_type(input: string) {
@@ -604,12 +604,10 @@ export class BwsNb2Parser {
 
     const data = parts[1].trim();
 
-    const value = data.replace(/\s+/g, "");
+    if (data !== "0 0 8" && data !== "0 0 0") return undefined;
 
-    if (value !== "0,0,8" && value !== "0,0,0") return undefined;
+    if (data === "0 0 0") return 1;
 
-    if (value === "0,0,0") return 1;
-
-    if (value === "0,0,8") return 2;
+    if (data === "0 0 8") return 2;
   }
 }

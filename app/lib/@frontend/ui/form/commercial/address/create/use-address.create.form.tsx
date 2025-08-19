@@ -27,7 +27,9 @@ const AddressFormSchema = z.object({
   city: z.string().min(1, "Cidade obrigatória"),
   reference_point: z.string().optional(),
   type: z
-    .array(z.enum(["Comercial", "Entrega", "Faturamento", "Residencial"]))
+    .array(
+      z.enum(["Comercial", "Entrega", "Faturamento", "Residencial", "Fiscal"])
+    )
     .min(1, "Selecione pelo menos um tipo")
     .optional(),
   default_address: z.boolean().optional(),

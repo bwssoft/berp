@@ -1,6 +1,6 @@
 "use client";
 import { useUpdateAccountForm } from "./use-update-account-data.account.form";
-import { IAccount } from "@/app/lib/@backend/domain";
+import { IAccount, ISector } from "@/app/lib/@backend/domain";
 import { PlusIcon } from "lucide-react";
 import { SectorModal, useSectorModal } from "@/app/lib/@frontend/ui/modal";
 import { useEffect, useState } from "react";
@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from "../../../../../component/form";
 import { FormProvider } from "react-hook-form";
+import { useSectorDeleteDialog } from "@/app/lib/@frontend/ui/dialog/commercial/sector/delete/use-delete-sector.dialog";
 
 interface Props {
   accountData?: IAccount;
@@ -65,6 +66,12 @@ export function UpdateAccountDataForm({
 
     return documentValue;
   };
+
+  const deleteDlg = useSectorDeleteDialog();
+
+  function handleAskDelete(s: ISector) {
+    deleteDlg.openDialog(s);
+  }
 
   useEffect(() => {
     (async () => {
@@ -182,6 +189,7 @@ export function UpdateAccountDataForm({
                 isPending={sectorModal.isPending}
                 handleToggle={sectorModal.handleToggle}
                 handleSave={sectorModal.handleSave}
+                onAskDelete={handleAskDelete}
               />
             </div>
           </div>

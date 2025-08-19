@@ -17,23 +17,7 @@ import {
   TooltipTrigger,
 } from "../../../component/tooltip";
 import { Separator } from "../../../component/separator";
-
-interface IAddress {
-  id?: string | undefined;
-  accountId?: string;
-  street?: string | undefined;
-  district?: string | undefined;
-  city?: string | undefined;
-  zip_code?: string | undefined;
-  state?: string | undefined;
-  number?: string | undefined;
-  complement?: string | undefined;
-  reference_point?: string | undefined;
-  type?: ("Comercial" | "Entrega" | "Faturamento" | "Residencial")[];
-  default_address?: boolean;
-  created_at?: Date;
-  updated_at?: Date;
-}
+import { IAddress } from "@/app/lib/@backend/domain";
 
 interface AddressCardProps {
   title?: string;
