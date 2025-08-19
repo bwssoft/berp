@@ -700,15 +700,13 @@ export function CreateAccountFormProvider({
           variant: "default",
         });
       } else {
-        // No existing economic group found, enable fields for manual input
-        setSelectedControlled([]);
-        methods.setValue("economic_group.economic_group_controlled", undefined);
+        // No existing economic group found, leave controlled enterprises as they are for manual input
+        // Don't clear selectedControlled or the form value
       }
     } catch (error) {
       console.error("Error searching for economic group:", error);
-      // On error, allow manual input
-      setSelectedControlled([]);
-      methods.setValue("economic_group.economic_group_controlled", undefined);
+      // On error, leave controlled enterprises as they are for manual input
+      // Don't clear selectedControlled or the form value
     }
   };
 
