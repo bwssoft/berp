@@ -12,6 +12,8 @@ import {
   createOneAccountEconomicGroup,
   updateOneAccountEconomicGroup,
   findOneAccountEconomicGroup,
+  validateHoldingEnterpriseNotInGroup,
+  validateControlledEnterprisesNotInHolding,
 } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { EconomicGroup } from "@/app/lib/@backend/domain";
@@ -155,6 +157,133 @@ export function useUpdateEconomicGroupForm(
     }
   };
 
+  const validateHoldingEnterprise = async (
+    holdingTaxId: string
+  ): Promise<boolean> => {
+    try {
+      const cleanedTaxId = holdingTaxId.replace(/\D/g, "");
+
+      const validationResult =
+        await validateHoldingEnterpriseNotInGroup(cleanedTaxId);
+
+      if (!validationResult.isValid && validationResult.conflictingEntry) {
+        const entry = validationResult.conflictingEntry;
+
+        let errorMessage =
+          "Não é possível selecionar esta empresa como holding:\n\n";
+
+        if (entry.conflictType === "controlled") {
+          errorMessage += `⚠️ Esta empresa já está controlada por outro grupo:\n`;
+          if (entry.holdingName) {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
+          } else {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence a outro grupo econômico\n`;
+          }
+        }
+
+        toast({
+          title: "Conflito de Grupo Econômico",
+          description: errorMessage.trim(),
+          variant: "error",
+        });
+
+        return false;
+      }
+
+      return validationResult.isValid;
+    } catch (error) {
+      console.error("Error validating holding enterprise:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao validar empresa holding",
+        variant: "error",
+      });
+      return false;
+    }
+  };
+
+  const validateControlledEnterprises = async (
+    selectedControlled: EconomicGroup[]
+  ): Promise<boolean> => {
+    if (!selectedControlled || selectedControlled.length === 0) {
+      return true;
+    }
+
+    try {
+      const controlledTaxIds = selectedControlled.map((item) =>
+        item.taxId.replace(/\D/g, "")
+      );
+
+      // Check if any controlled enterprise is the same as the selected holding
+      const currentSelectedHolding =
+        selectedHolding.length > 0 ? selectedHolding[0] : null;
+      if (currentSelectedHolding) {
+        const holdingTaxId = currentSelectedHolding.taxId?.replace(/\D/g, "");
+        if (holdingTaxId && controlledTaxIds.includes(holdingTaxId)) {
+          toast({
+            title: "Configuração Inválida",
+            description: `A holding "${currentSelectedHolding.name}" não pode ser adicionada como empresa controlada.`,
+            variant: "error",
+          });
+          return false;
+        }
+      }
+
+      const validationResult =
+        await validateControlledEnterprisesNotInHolding(controlledTaxIds);
+
+      if (!validationResult.isValid && validationResult.conflictingEntries) {
+        // Group conflicts by type for better error messages
+        const holdingConflicts = validationResult.conflictingEntries.filter(
+          (entry) => entry.conflictType === "holding"
+        );
+        const controlledConflicts = validationResult.conflictingEntries.filter(
+          (entry) => entry.conflictType === "controlled"
+        );
+
+        let errorMessage =
+          "Não é possível adicionar as seguintes empresas como controladas:\n\n";
+
+        if (holdingConflicts.length > 0) {
+          errorMessage += "⚠️ Empresas que já são Holdings:\n";
+          holdingConflicts.forEach((entry) => {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já é uma holding de grupo econômico\n`;
+          });
+          errorMessage += "\n";
+        }
+
+        if (controlledConflicts.length > 0) {
+          errorMessage += "⚠️ Empresas já controladas por outros grupos:\n";
+          controlledConflicts.forEach((entry) => {
+            if (entry.holdingName) {
+              errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
+            } else {
+              errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence a outro grupo econômico\n`;
+            }
+          });
+        }
+
+        toast({
+          title: "Conflito de Grupo Econômico",
+          description: errorMessage.trim(),
+          variant: "error",
+        });
+
+        return false;
+      }
+
+      return validationResult.isValid;
+    } catch (error) {
+      console.error("Error validating controlled enterprises:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao validar empresas controladas",
+        variant: "error",
+      });
+      return false;
+    }
+  };
+
   const debouncedValidationHolding = debounce(async (value: string) => {
     await handleCnpjOrName(value, "holding");
   }, 500);
@@ -166,6 +295,22 @@ export function useUpdateEconomicGroupForm(
   const onSubmit = handleSubmit(async (formData) => {
     const holding = formData.economic_group.economic_group_holding;
     const controlled = formData.economic_group.economic_group_controlled || [];
+
+    // Validate holding if provided
+    if (holding) {
+      const isHoldingValid = await validateHoldingEnterprise(holding.taxId);
+      if (!isHoldingValid) {
+        return; // Stop if holding validation fails
+      }
+    }
+
+    // Validate controlled enterprises if provided
+    if (controlled.length > 0) {
+      const isControlledValid = await validateControlledEnterprises(controlled);
+      if (!isControlledValid) {
+        return; // Stop if controlled validation fails
+      }
+    }
 
     if (!holding) {
       toast({
@@ -190,6 +335,53 @@ export function useUpdateEconomicGroupForm(
       let economicGroupResult;
 
       if (economicGroupId) {
+        // Get existing economic group to compare for disconnections
+        const existingEconomicGroup = await findOneAccountEconomicGroup({
+          id: economicGroupId,
+        });
+
+        if (existingEconomicGroup) {
+          const existingControlled =
+            existingEconomicGroup.economic_group_controlled || [];
+          const newControlledTaxIds = controlled.map((company) =>
+            company.taxId.replace(/\D/g, "")
+          );
+
+          // Find companies that were removed from the controlled list
+          const removedAccounts = existingControlled.filter((company) => {
+            const cleanTaxId = company.taxId.replace(/\D/g, "");
+            return !newControlledTaxIds.includes(cleanTaxId);
+          });
+
+          // Disconnect removed accounts from economic group
+          if (removedAccounts.length > 0) {
+            try {
+              for (const removedAccount of removedAccounts) {
+                // Find account by taxId first, then update by ID
+                const accountToDisconnect = await findOneAccount({
+                  "document.value": removedAccount.taxId,
+                });
+
+                if (accountToDisconnect?.id) {
+                  await updateOneAccount(
+                    { id: accountToDisconnect.id },
+                    { economicGroupId: "" }
+                  );
+
+                  console.log(
+                    `Disconnected account ${removedAccount.name} (${removedAccount.taxId}) from economic group`
+                  );
+                }
+              }
+            } catch (error) {
+              console.warn(
+                "Failed to disconnect some accounts from economic group:",
+                error
+              );
+            }
+          }
+        }
+
         economicGroupResult = await updateOneAccountEconomicGroup(
           { id: economicGroupId },
           {
@@ -306,6 +498,8 @@ export function useUpdateEconomicGroupForm(
     setDataHolding,
     debouncedValidationHolding,
     debouncedValidationControlled,
+    validateHoldingEnterprise,
+    validateControlledEnterprises,
     dataControlled,
     setDataControlled,
     selectedHolding,

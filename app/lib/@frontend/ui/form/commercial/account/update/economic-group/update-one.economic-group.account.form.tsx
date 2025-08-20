@@ -32,6 +32,8 @@ export function EconomicGroupAccountForm({
     dataControlled,
     debouncedValidationHolding,
     debouncedValidationControlled,
+    validateHoldingEnterprise,
+    validateControlledEnterprises,
   } = useUpdateEconomicGroupForm(
     accountId,
     isModalOpen,
@@ -56,8 +58,14 @@ export function EconomicGroupAccountForm({
               debouncedValidationHolding(text);
             }}
             value={selectedHolding}
-            onOptionChange={([item]) => {
+            onOptionChange={async ([item]) => {
               if (item) {
+                // Validate holding selection before proceeding
+                const isValid = await validateHoldingEnterprise(item.taxId);
+                if (!isValid) {
+                  return; // Stop if validation fails
+                }
+
                 setSelectedHolding([item]);
                 field.onChange(item);
               } else {
@@ -85,8 +93,17 @@ export function EconomicGroupAccountForm({
             behavior="search"
             placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
             value={selectedControlled}
-            onChange={(selectedItems) => {
+            onChange={async (selectedItems) => {
               const validItems = selectedItems.filter((item) => item);
+
+              // Only validate when adding items (not removing)
+              if (validItems.length > selectedControlled.length) {
+                const isValid = await validateControlledEnterprises(validItems);
+                if (!isValid) {
+                  return; // Stop if validation fails
+                }
+              }
+
               setSelectedControlled(validItems);
               field.onChange(validItems);
             }}
