@@ -141,13 +141,10 @@ export async function validateHoldingEnterpriseNotInGroup(
   };
 }> {
   try {
-    // Find economic groups that contain the holding tax ID either as holding or controlled
+    // Find economic groups that contain the holding tax ID as controlled (we only check controlled, not holding)
     const existingGroups = await findManyAccountEconomicGroupUsecase.execute({
       filter: {
-        $or: [
-          { "economic_group_holding.taxId": holdingTaxId },
-          { "economic_group_controlled.taxId": holdingTaxId },
-        ],
+        "economic_group_controlled.taxId": holdingTaxId,
       },
       page: 1,
       limit: 100, // Should be enough for most cases
@@ -157,7 +154,7 @@ export async function validateHoldingEnterpriseNotInGroup(
       return { isValid: true };
     }
 
-    // Check for conflicts
+    // Check for conflicts - only if the enterprise is already controlled
     let conflictingEntry:
       | {
           taxId: string;
@@ -169,20 +166,8 @@ export async function validateHoldingEnterpriseNotInGroup(
       | undefined;
 
     for (const group of existingGroups.docs) {
-      // Check if the holding tax ID is already a holding in another group
-      if (
-        group.economic_group_holding &&
-        group.economic_group_holding.taxId === holdingTaxId
-      ) {
-        conflictingEntry = {
-          taxId: group.economic_group_holding.taxId,
-          name: group.economic_group_holding.name,
-          conflictType: "holding",
-        };
-        break;
-      }
-
-      // Check if the holding tax ID is already controlled in another group
+      // Only check if the holding tax ID is already controlled in another group
+      // (we allow selecting holdings that are already holdings)
       if (group.economic_group_controlled) {
         const controlledMatch = group.economic_group_controlled.find(
           (controlled) => controlled.taxId === holdingTaxId

@@ -655,10 +655,7 @@ export function CreateAccountFormProvider({
         let errorMessage =
           "Não é possível selecionar esta empresa como holding:\n\n";
 
-        if (entry.conflictType === "holding") {
-          errorMessage += `⚠️ Esta empresa já é uma holding:\n`;
-          errorMessage += `• ${entry.name} (${entry.taxId}) - já é uma holding de grupo econômico\n`;
-        } else if (entry.conflictType === "controlled") {
+        if (entry.conflictType === "controlled") {
           errorMessage += `⚠️ Esta empresa já está controlada por outro grupo:\n`;
           if (entry.holdingName) {
             errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
