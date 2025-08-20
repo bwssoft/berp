@@ -27,7 +27,7 @@ class UpdateOneAccountUsecase {
     update: Partial<IAccount>
   ): Promise<Dto.Output> {
     try {
-      const original = await this.repository.findOne({ id: filter.id });
+      const original = await this.repository.findOne(filter);
 
       if (!original) {
         return {

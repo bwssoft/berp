@@ -7,7 +7,10 @@ import {
   IContact,
   IAccountEconomicGroup,
 } from "../../@backend/domain";
-import { createOneAccount } from "../../@backend/action/commercial/account.action";
+import {
+  createOneAccount,
+  updateOneAccount,
+} from "../../@backend/action/commercial/account.action";
 import { createOneAddress } from "../../@backend/action/commercial/address.action";
 import { createOneContact } from "../../@backend/action/commercial/contact.action";
 import { createOneHistorical } from "../../@backend/action/commercial/historical.action";
@@ -234,21 +237,59 @@ export const CreateAccountFlowProvider = ({
               existingEconomicGroup.economic_group_controlled || [];
             const newControlled = economicGroup.economic_group_controlled || [];
 
+            const newTaxIds = newControlled.map((company) =>
+              company.taxId.replace(/\D/g, "")
+            );
+
+            // Find companies that were removed from the controlled list
+            const removedAccounts = existingControlled.filter((company) => {
+              const cleanTaxId = company.taxId.replace(/\D/g, "");
+              return !newTaxIds.includes(cleanTaxId);
+            });
+
+            if (removedAccounts.length > 0) {
+              try {
+                for (const removedAccount of removedAccounts) {
+                  await updateOneAccount(
+                    { "document.value": removedAccount.taxId },
+                    { economicGroupId: "" }
+                  );
+
+                  console.log(
+                    `Disconnected account ${removedAccount.name} (${removedAccount.taxId}) from economic group`
+                  );
+                }
+              } catch (error) {
+                console.warn(
+                  "Failed to disconnect some accounts from economic group:",
+                  error
+                );
+              }
+            }
+
             // Merge controlled companies, avoiding duplicates based on taxId
             const mergedControlled = [...existingControlled];
 
             newControlled.forEach((newCompany) => {
               const exists = existingControlled.some(
-                (existing) => existing.taxId === newCompany.taxId
+                (existing) =>
+                  existing.taxId.replace(/\D/g, "") ===
+                  newCompany.taxId.replace(/\D/g, "")
               );
               if (!exists) {
                 mergedControlled.push(newCompany);
               }
             });
 
+            // Filter out removed companies from the merged list
+            const finalControlled = mergedControlled.filter((company) => {
+              const cleanTaxId = company.taxId.replace(/\D/g, "");
+              return newTaxIds.includes(cleanTaxId);
+            });
+
             const updateData = {
               economic_group_holding: economicGroup.economic_group_holding,
-              economic_group_controlled: mergedControlled,
+              economic_group_controlled: finalControlled,
             };
 
             const economicGroupResult = await updateOneAccountEconomicGroup(
