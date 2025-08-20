@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { SearchContactModal } from "@/app/lib/@frontend/ui/modal";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   account: LocalAccount;
@@ -48,6 +49,8 @@ export function ContactDataPage(props: Props) {
     resetFlow,
     createEntitiesApi,
   } = useCreateAccountFlow();
+
+  const queryClient = useQueryClient();
 
   // Props are already the local data, so use them directly
   const currentAccount = localAccount;
@@ -136,6 +139,21 @@ export function ContactDataPage(props: Props) {
         router.push(
           `/commercial/account/management/account-data?id=${result.accountId}`
         );
+
+        await queryClient.invalidateQueries({
+          queryKey: ["findOneAccount", result.accountId],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["findManyAddress", result.accountId],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["findManyContact", result.accountId],
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: ["findOneAccountEconomicGroup"],
+        });
+
         resetFlow();
       } else {
         toast({
