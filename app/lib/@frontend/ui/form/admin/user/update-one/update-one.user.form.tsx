@@ -19,6 +19,8 @@ import {
   useResetPasswordUserDialog,
 } from "../../../../dialog";
 import { useAuth } from "@/app/lib/@frontend/context";
+import { useEffect, useState } from "react";
+import { getUserAvatarUrlByKey } from "@/app/lib/@backend/action/admin/user.action";
 
 interface Props {
   user: IUser;
@@ -35,7 +37,19 @@ export function UpdateOneUserForm({ user }: Props) {
     handleBackPage,
     setSearchTerm,
   } = useUpdateOneUserForm(user);
-  const { restrictFeatureByProfile, avatarUrl } = useAuth();
+  const { restrictFeatureByProfile } = useAuth();
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    async function fetchAvatarUrl() {
+      if (userData.id && userData.image?.key) {
+        const url = await getUserAvatarUrlByKey(userData.id, userData.image.key);
+        setAvatarUrl(url);
+      }
+    }
+    fetchAvatarUrl();
+  }, [userData.id, userData.image?.key, getUserAvatarUrlByKey]);
+    
 
   const lockDialog = useLockUserDialog({
     userId: userData.id,
