@@ -24,6 +24,7 @@ import {
 import {
   findOneAccountEconomicGroup,
   validateControlledEnterprisesNotInHolding,
+  validateHoldingEnterpriseNotInGroup,
 } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { useAuth } from "@/app/lib/@frontend/context";
 import {
@@ -207,6 +208,7 @@ interface CreateAccountFormContextData {
   // Functions
   handleCpfCnpj: (value: string) => Promise<"cpf" | "cnpj" | "invalid">;
   handleHoldingSelection: (item: ICnpjaResponse | null) => Promise<void>;
+  validateHoldingEnterprise: (holdingTaxId: string) => Promise<boolean>;
   validateControlledEnterprises: (
     selectedControlled: ICnpjaResponse[]
   ) => Promise<boolean>;
@@ -638,6 +640,54 @@ export function CreateAccountFormProvider({
     await handleCnpjOrName(value, "controlled");
   }, 500);
 
+  const validateHoldingEnterprise = async (
+    holdingTaxId: string
+  ): Promise<boolean> => {
+    try {
+      const cleanedTaxId = holdingTaxId.replace(/\D/g, "");
+
+      const validationResult =
+        await validateHoldingEnterpriseNotInGroup(cleanedTaxId);
+
+      if (!validationResult.isValid && validationResult.conflictingEntry) {
+        const entry = validationResult.conflictingEntry;
+
+        let errorMessage =
+          "Não é possível selecionar esta empresa como holding:\n\n";
+
+        if (entry.conflictType === "holding") {
+          errorMessage += `⚠️ Esta empresa já é uma holding:\n`;
+          errorMessage += `• ${entry.name} (${entry.taxId}) - já é uma holding de grupo econômico\n`;
+        } else if (entry.conflictType === "controlled") {
+          errorMessage += `⚠️ Esta empresa já está controlada por outro grupo:\n`;
+          if (entry.holdingName) {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
+          } else {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence a outro grupo econômico\n`;
+          }
+        }
+
+        toast({
+          title: "Conflito de Grupo Econômico",
+          description: errorMessage.trim(),
+          variant: "error",
+        });
+
+        return false;
+      }
+
+      return validationResult.isValid;
+    } catch (error) {
+      console.error("Error validating holding enterprise:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao validar empresa holding",
+        variant: "error",
+      });
+      return false;
+    }
+  };
+
   const handleHoldingSelection = async (item: ICnpjaResponse | null) => {
     if (!item) {
       setSelectedHolding([]);
@@ -645,6 +695,12 @@ export function CreateAccountFormProvider({
       methods.setValue("economic_group.economic_group_holding", undefined);
       methods.setValue("economic_group.economic_group_controlled", undefined);
       return;
+    }
+
+    // Validate the holding selection before proceeding
+    const isValid = await validateHoldingEnterprise(item.taxId);
+    if (!isValid) {
+      return; // Stop if validation fails
     }
 
     // Set the selected holding first
@@ -970,6 +1026,7 @@ export function CreateAccountFormProvider({
     toggleButtonText,
     handleCpfCnpj,
     handleHoldingSelection,
+    validateHoldingEnterprise,
     validateControlledEnterprises,
     debouncedValidationHolding,
     debouncedValidationControlled,

@@ -128,6 +128,88 @@ export async function validateControlledEnterprisesNotInHolding(
   }
 }
 
+export async function validateHoldingEnterpriseNotInGroup(
+  holdingTaxId: string
+): Promise<{
+  isValid: boolean;
+  conflictingEntry?: {
+    taxId: string;
+    name: string;
+    conflictType: "holding" | "controlled";
+    holdingName?: string;
+    holdingTaxId?: string;
+  };
+}> {
+  try {
+    // Find economic groups that contain the holding tax ID either as holding or controlled
+    const existingGroups = await findManyAccountEconomicGroupUsecase.execute({
+      filter: {
+        $or: [
+          { "economic_group_holding.taxId": holdingTaxId },
+          { "economic_group_controlled.taxId": holdingTaxId },
+        ],
+      },
+      page: 1,
+      limit: 100, // Should be enough for most cases
+    });
+
+    if (!existingGroups.docs || existingGroups.docs.length === 0) {
+      return { isValid: true };
+    }
+
+    // Check for conflicts
+    let conflictingEntry:
+      | {
+          taxId: string;
+          name: string;
+          conflictType: "holding" | "controlled";
+          holdingName?: string;
+          holdingTaxId?: string;
+        }
+      | undefined;
+
+    for (const group of existingGroups.docs) {
+      // Check if the holding tax ID is already a holding in another group
+      if (
+        group.economic_group_holding &&
+        group.economic_group_holding.taxId === holdingTaxId
+      ) {
+        conflictingEntry = {
+          taxId: group.economic_group_holding.taxId,
+          name: group.economic_group_holding.name,
+          conflictType: "holding",
+        };
+        break;
+      }
+
+      // Check if the holding tax ID is already controlled in another group
+      if (group.economic_group_controlled) {
+        const controlledMatch = group.economic_group_controlled.find(
+          (controlled) => controlled.taxId === holdingTaxId
+        );
+        if (controlledMatch) {
+          conflictingEntry = {
+            taxId: controlledMatch.taxId,
+            name: controlledMatch.name,
+            conflictType: "controlled",
+            holdingName: group.economic_group_holding?.name,
+            holdingTaxId: group.economic_group_holding?.taxId,
+          };
+          break;
+        }
+      }
+    }
+
+    return {
+      isValid: !conflictingEntry,
+      conflictingEntry,
+    };
+  } catch (error) {
+    console.error("Error validating holding enterprise:", error);
+    return { isValid: false };
+  }
+}
+
 export async function deleteOneAccountEconomicGroup(
   filter: Partial<IAccountEconomicGroup>
 ) {
