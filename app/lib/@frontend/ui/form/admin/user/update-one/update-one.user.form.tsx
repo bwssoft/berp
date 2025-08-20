@@ -166,23 +166,22 @@ export function UpdateOneUserForm({ user }: Props) {
               placeholder="Digite o nome de Usuário"
             />
           </div>
-          {(!isLocked || !isActive) && (
-            <div className="mt-6">
-              <Controller
-                control={control}
-                name="image"
-                render={({ field }) => (
-                  <FileUpload
-                    label="Imagem de perfil"
-                    handleFile={field.onChange}
-                    multiple={false}
-                    accept={"jpeg, jpg, png"}
-                    currentImageUrl={avatarUrl}
-                  />
-                )}
-              />
-            </div>
-          )}
+          <div className="mt-6">
+            <Controller
+              control={control}
+              name="image"
+              render={({ field }) => (
+                <FileUpload
+                  disabled={isLocked || !isActive}
+                  label="Imagem de perfil"
+                  handleFile={field.onChange}
+                  multiple={false}
+                  accept={"jpeg, jpg, png"}
+                  currentImageUrl={avatarUrl}
+                />
+              )}
+            />
+          </div>
         </div>
 
         <div className="flex gap-2  mt-6 justify-end">
