@@ -24,7 +24,7 @@ class RequestNewPasswordUserUsecase {
                 return { success: false, error: "Usuário não encontrado." };
             }
 
-            if (user.lock) {
+            if (user.lock || !user.active) {
                 return { success: false, error: "Não foi possível realizar esta solicitação, entre em contato com o administrador do sistema!" };
             }
 
