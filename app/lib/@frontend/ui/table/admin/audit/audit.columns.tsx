@@ -215,68 +215,85 @@ export const columns: ColumnDef<IAudit>[] = [
 
       const label = action.split("'")[1] ?? "registro";
 
-      return (
-        <div className="space-y-2">
-          {metadata.map((m, i) => {
-            const field = m.field;
-            const pretty = fieldLabel[field] ?? field;
+return (
+  <div className="space-y-2">
+    {metadata.map((m, i) => {
+      const field = m.field;
+      const pretty = fieldLabel[field] ?? field;
 
-            if (field === "locked_control_code") {
-              const { added, removed, beforeAll, prevAll } = diffLists(
-                m.before,
-                m.after
-              );
-              const addedMap = added.map((code) => ({
-                code,
-                label: translatePermission(code),
-              }));
-              const removedMap = removed.map((code) => ({
-                code,
-                label: translatePermission(code),
-              }));
-              const beforeMap = prevAll.map((code) =>
-                translatePermission(code)
-              );
-              const afterMap = beforeAll.map((code) =>
-                translatePermission(code)
-              );
+      if (field === "locked_control_code") {
+        const { added, removed, beforeAll, prevAll } = diffLists(
+          m.before,
+          m.after
+        );
+        const addedMap = added.map((code) => ({
+          code,
+          label: translatePermission(code),
+        }));
+        const removedMap = removed.map((code) => ({
+          code,
+          label: translatePermission(code),
+        }));
+        const beforeMap = prevAll.map((code) =>
+          translatePermission(code)
+        );
+        const afterMap = beforeAll.map((code) =>
+          translatePermission(code)
+        );
 
-              return (
-                <div key={i} className="space-y-1">
-                  <div>{`Permissões de '${label}' alteradas`}</div>
-                  {addedMap.length > 0 && (
-                    <div className="text-sm">
-                      <span className="mr-1 text-green-600 font-medium">
-                        Adicionadas:
-                      </span>
-                      <ChipsRow items={addedMap} />
-                    </div>
-                  )}
-                  {removedMap.length > 0 && (
-                    <div className="text-sm">
-                      <span className="mr-1 text-red-600 font-medium">
-                        Removidas:
-                      </span>
-                      <ChipsRow items={removedMap} />
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            const before = formatScalar(m.before, field);
-            const after = formatScalar(m.after, field);
-
-            return (
-              <div key={i} className="text-sm">
-                <span className="mr-1">{`Campo '${pretty}' de`}</span>
-                <span className="font-medium">“{before}”</span>
-                <span className="mx-1">para</span>
-                <span className="font-medium">“{after}”</span>
+        return (
+          <div key={i} className="space-y-1">
+            <div>{`Permissões de '${label}' alteradas`}</div>
+            {addedMap.length > 0 && (
+              <div className="text-sm">
+                <span className="mr-1 text-green-600 font-medium">
+                  Adicionadas:
+                </span>
+                <ChipsRow items={addedMap} />
               </div>
-            );
-          })}
-        </div>
+            )}
+            {removedMap.length > 0 && (
+              <div className="text-sm">
+                <span className="mr-1 text-red-600 font-medium">
+                  Removidas:
+                </span>
+                <ChipsRow items={removedMap} />
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      const before = formatScalar(m.before, field);
+      const after = formatScalar(m.after, field);
+
+      const renderValue = (value: string) => {
+        if (pretty === "perfil") {
+          return (
+            <span className="font-medium flex flex-wrap">
+              {value.split(",").map((part, idx, arr) => (
+                <span key={idx}>
+                  {part.trim()}
+                  {idx < arr.length - 1 && `,\u00A0`} 
+                </span>
+              ))}
+            </span>
+          );
+        }
+
+        return <span className="font-medium break-words">{value}</span>;
+      };
+
+        return (
+          <div key={i} className="text-sm w-[20vw]">
+            <span className="mr-1 font-bold">{`Campo '${pretty}' de`}</span>
+            {renderValue(before)}
+            <span className="mx-1 font-bold">para</span>
+            {renderValue(after)}
+          </div>
+          );
+        })}
+      </div>
       );
     },
   },
