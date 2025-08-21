@@ -304,11 +304,23 @@ export function useUpdateEconomicGroupForm(
       }
     }
 
-    // Validate controlled enterprises if provided
+    // Only validate controlled enterprises that are new additions
     if (controlled.length > 0) {
-      const isControlledValid = await validateControlledEnterprises(controlled);
-      if (!isControlledValid) {
-        return; // Stop if controlled validation fails
+      const initialControlledTaxIds = (initialControlled || []).map((item) =>
+        item.taxId.replace(/\D/g, "")
+      );
+
+      const newlyAddedControlled = controlled.filter((item) => {
+        const cleanTaxId = item.taxId.replace(/\D/g, "");
+        return !initialControlledTaxIds.includes(cleanTaxId);
+      });
+
+      if (newlyAddedControlled.length > 0) {
+        const isControlledValid =
+          await validateControlledEnterprises(newlyAddedControlled);
+        if (!isControlledValid) {
+          return; // Stop if controlled validation fails
+        }
       }
     }
 

@@ -98,9 +98,21 @@ export function EconomicGroupAccountForm({
 
               // Only validate when adding items (not removing)
               if (validItems.length > selectedControlled.length) {
-                const isValid = await validateControlledEnterprises(validItems);
-                if (!isValid) {
-                  return; // Stop if validation fails
+                // Find only newly added items
+                const currentTaxIds = selectedControlled.map(
+                  (item) => item.taxId
+                );
+                const newlyAddedItems = validItems.filter(
+                  (item) => !currentTaxIds.includes(item.taxId)
+                );
+
+                // Only validate the newly added items
+                if (newlyAddedItems.length > 0) {
+                  const isValid =
+                    await validateControlledEnterprises(newlyAddedItems);
+                  if (!isValid) {
+                    return; // Stop if validation fails
+                  }
                 }
               }
 
