@@ -91,7 +91,7 @@ export function UpdateOneUserForm({ user }: Props) {
                 <Button
                   variant="secondary"
                   onClick={resetPasswordDialog.openDialog}
-                  disabled={isLocked}
+                  disabled={isLocked || !isActive}
                   type="button"
                 >
                   Reset de Senha
@@ -117,7 +117,7 @@ export function UpdateOneUserForm({ user }: Props) {
                     checked={field.value}
                     onChange={field.onChange}
                     onBlur={field.onBlur}
-                    disabled={isLocked}
+                    disabled={isLocked || !isActive}
                     name={field.name}
                     label="Usuário externo"
                   />
@@ -141,7 +141,7 @@ export function UpdateOneUserForm({ user }: Props) {
                     value={field.value}
                     keyExtractor={(item) => item.id}
                     displayValueGetter={(item) => item.name}
-                    disabled={isLocked}
+                    disabled={isLocked || !isActive}
                   />
                 )}
               />
@@ -151,7 +151,7 @@ export function UpdateOneUserForm({ user }: Props) {
               label="CPF"
               {...register("cpf")}
               error={errors.cpf?.message}
-              disabled={isLocked}
+              disabled={isLocked || !isActive}
               placeholder="Digite o CPF"
             />
 
@@ -159,7 +159,7 @@ export function UpdateOneUserForm({ user }: Props) {
               label="Nome Completo"
               {...register("name")}
               error={errors.name?.message}
-              disabled={isLocked}
+              disabled={isLocked || !isActive}
               placeholder="Digite o nome completo"
             />
 
@@ -168,7 +168,7 @@ export function UpdateOneUserForm({ user }: Props) {
               type="email"
               {...register("email")}
               error={errors.email?.message}
-              disabled={isLocked}
+              disabled={isLocked || !isActive}
               placeholder="Digite o Email"
             />
 
@@ -176,27 +176,26 @@ export function UpdateOneUserForm({ user }: Props) {
               label="Usuário"
               {...register("username")}
               error={errors.username?.message}
-              disabled={isLocked}
+              disabled={isLocked || !isActive}
               placeholder="Digite o nome de Usuário"
             />
           </div>
-          {!isLocked && (
-            <div className="mt-6">
-              <Controller
-                control={control}
-                name="image"
-                render={({ field }) => (
-                  <FileUpload
-                    label="Imagem de perfil"
-                    handleFile={field.onChange}
-                    multiple={false}
-                    accept={"jpeg, jpg, png"}
-                    currentImageUrl={avatarUrl}
-                  />
-                )}
-              />
-            </div>
-          )}
+          <div className="mt-6">
+            <Controller
+              control={control}
+              name="image"
+              render={({ field }) => (
+                <FileUpload
+                  disabled={isLocked || !isActive}
+                  label="Imagem de perfil"
+                  handleFile={field.onChange}
+                  multiple={false}
+                  accept={"jpeg, jpg, png"}
+                  currentImageUrl={avatarUrl}
+                />
+              )}
+            />
+          </div>
         </div>
 
         <div className="flex gap-2  mt-6 justify-end">
@@ -204,7 +203,7 @@ export function UpdateOneUserForm({ user }: Props) {
             <Button variant="secondary" onClick={handleBackPage} type="button">
               Cancelar
             </Button>
-            <Button type="submit" variant="default">
+            <Button type="submit" variant="default" disabled={!isActive}>
               Salvar
             </Button>
           </div>
