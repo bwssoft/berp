@@ -9,14 +9,11 @@ import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.ac
 
 export function useSearchContactModal(holdingTaxId?: string) {
   const [open, setOpen] = useState(false);
-  const [contactsByCompany, setContactsByCompany] = useState<
-    { name: string; contacts: IContact[]; documentValue: string }[]
-  >([]);
 
-  const { isLoading: accountLoading } = useQuery({
-    queryKey: ["findAccountsByHoldingTaxId", holdingTaxId],
+  const { data: queryResult, isLoading: accountLoading } = useQuery({
+    queryKey: ["findAccountsByHoldingTaxId", holdingTaxId, "v2"],
     queryFn: async () => {
-      if (!holdingTaxId) return { docs: [], total: 0, pages: 1 };
+      if (!holdingTaxId) return { docs: [], contactsByCompany: [] };
 
       // Find economic groups that contain this holding taxId
       const economicGroup = await findOneAccountEconomicGroup({
@@ -24,6 +21,11 @@ export function useSearchContactModal(holdingTaxId?: string) {
       });
 
       let groupCompanies: IAccount[] = [];
+      let companiesWithContacts: {
+        name: string;
+        contacts: IContact[];
+        documentValue: string;
+      }[] = [];
 
       if (economicGroup) {
         const accountsByEconomicGroup = await findManyAccount({
@@ -37,7 +39,7 @@ export function useSearchContactModal(holdingTaxId?: string) {
         groupCompanies = accountsByEconomicGroup.docs;
 
         // Map accounts with their contacts
-        const companiesWithContacts = accountsByEconomicGroup.docs
+        companiesWithContacts = accountsByEconomicGroup.docs
           .map((account) => {
             // Find contacts for this account
             const accountContacts = contactsByAccountId.filter(
@@ -62,14 +64,18 @@ export function useSearchContactModal(holdingTaxId?: string) {
           contacts: IContact[];
           documentValue: string;
         }[];
-
-        setContactsByCompany(companiesWithContacts);
       }
 
-      return { docs: groupCompanies, total: groupCompanies.length, pages: 1 };
+      return { docs: groupCompanies, contactsByCompany: companiesWithContacts };
     },
     enabled: !!holdingTaxId,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+    gcTime: 0, // Don't cache the result
   });
+
+  const contactsByCompany = (queryResult as any)?.contactsByCompany || [];
 
   function openModal() {
     setOpen(true);

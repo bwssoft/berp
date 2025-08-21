@@ -339,7 +339,6 @@ export function useUpdateEconomicGroupForm(
       const economicGroupId = accountData?.economicGroupId;
 
       const economicGroupPayload = {
-        accountId,
         economic_group_holding: holding,
         economic_group_controlled: controlled,
       };

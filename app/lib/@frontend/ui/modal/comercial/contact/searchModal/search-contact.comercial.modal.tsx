@@ -13,7 +13,7 @@ export function SearchContactModal({ holdingTaxId }: ContactModalProps) {
   const { closeModal, openModal, open, contactsByCompany, isLoading } =
     useSearchContactModal(holdingTaxId);
 
-  if (!contactsByCompany) return null;
+  if (contactsByCompany.length === 0) return null;
 
   return (
     <>
