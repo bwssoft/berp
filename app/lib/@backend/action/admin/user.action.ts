@@ -14,6 +14,7 @@ import {
   getAvatarUrlUserUsecase,
 } from "../../usecase";
 import { revalidatePath } from "next/cache";
+import { getAvatarUrlByKeyUserUsecase } from "../../usecase/admin/user/get-avatar-url-by-key.user.usecase";
 
 type UpdateUserData = Partial<Omit<IUser, "id" | "created_at">>;
 
@@ -77,6 +78,10 @@ export const setUserActive = async (data: { id: string; active: boolean }) => {
 
 export const getUserAvatarUrl = async (userId: string): Promise<string> => {
   return await getAvatarUrlUserUsecase.execute(userId);
+};
+
+export const getUserAvatarUrlByKey = async (userId: string, key: string): Promise<string> => {
+  return await getAvatarUrlByKeyUserUsecase.execute(userId, key);
 };
 
 export const requestNewPassword = async (data: { email: string }) => {
