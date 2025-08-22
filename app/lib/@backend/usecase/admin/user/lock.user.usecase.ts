@@ -16,7 +16,7 @@ export const lockUserUsecase = async (
     const { id, lock } = input;
 
     const filter: Filter<{ id: string }> = { id };
-    const update = { $set: { lock, active: !lock } };
+    const update = { $set: { lock} };
 
     try {
         const oldUser = await repo.findOne({ id: input.id });

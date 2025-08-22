@@ -2,9 +2,8 @@
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState, useEffect } from "react";
-import { IAccount, IContact } from "@/app/lib/@backend/domain";
-import { useQueryClient } from "@tanstack/react-query";
-import { updateOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { IContact } from "@/app/lib/@backend/domain";
+import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 
 interface Props {
   contacts?: {
@@ -12,17 +11,16 @@ interface Props {
     contacts: IContact[];
     documentValue: string;
   }[];
-  accountData?: IAccount;
   closeModal: () => void;
 }
 
-export function useSearchContactAccount({
-  accountData,
-  contacts,
-  closeModal,
-}: Props) {
+export function useSearchContactAccount({ contacts, closeModal }: Props) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [contactData, setContactData] = useState<Props["contacts"]>([]);
+
+  // Use the create account flow context to add contacts locally
+  const { createContactLocally, contacts: currentContacts } =
+    useCreateAccountFlow();
 
   useEffect(() => {
     if (contacts && contacts.length > 0) {
@@ -30,50 +28,50 @@ export function useSearchContactAccount({
     }
   }, [contacts]);
 
-  const queryClient = useQueryClient();
-
   const handleSave = async () => {
     try {
-      if (!accountData?.id) return;
-
       const selectedContacts = contactData
         ?.flatMap((group) => group.contacts)
         .filter((contact) => selectedIds.includes(contact.id));
 
-      const existingContacts: IContact[] = accountData.contacts ?? [];
+      if (selectedContacts && selectedContacts.length > 0) {
+        // Add each selected contact to the local flow context
+        selectedContacts.forEach((contact) => {
+          // Check if contact doesn't already exist in current contacts
+          const existsLocally = currentContacts?.some(
+            (c) => c.id === contact.id
+          );
+          if (!existsLocally) {
+            createContactLocally({
+              id: contact.id,
+              contractEnabled: contact.contractEnabled,
+              name: contact.name,
+              positionOrRelation: contact.positionOrRelation,
+              department: contact.department,
+              cpf: contact.cpf,
+              rg: contact.rg,
+              originType: contact.originType,
+              contactItems: contact.contactItems,
+              contactFor: contact.contactFor,
+              accountId: contact.accountId,
+              taxId: contact.taxId,
+            });
+          }
+        });
 
-      const merged = new Map<string, IContact>();
+        toast({
+          title: "Sucesso!",
+          variant: "success",
+          description: `${selectedContacts.length} contato(s) adicionado(s) com sucesso!`,
+        });
+      }
 
-      [...existingContacts, ...(selectedContacts ?? [])].forEach((c) => {
-        if (c?.id) merged.set(c.id, c);
-      });
-
-      const updatedContacts = Array.from(merged.values());
-
-      await updateOneAccount(
-        { id: accountData.id },
-        { contacts: updatedContacts }
-      );
-
-      await queryClient.invalidateQueries({
-        queryKey: ["findOneAccount", accountData.id],
-      });
-
-      await queryClient.invalidateQueries({
-        queryKey: ["findManyAccount", accountData.id],
-      });
-
-      toast({
-        title: "Sucesso!",
-        variant: "success",
-        description: "Contatos atualizados com sucesso!",
-      });
       closeModal();
     } catch (error) {
       console.error({ error });
       toast({
         title: "Erro!",
-        description: "Não foi possível atualizar os contatos!",
+        description: "Não foi possível adicionar os contatos!",
         variant: "error",
       });
     }

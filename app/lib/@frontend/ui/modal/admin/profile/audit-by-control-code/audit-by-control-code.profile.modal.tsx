@@ -11,6 +11,7 @@ interface Props {
   audits: PaginationResult<IAudit>;
   currentPage: number;
   handleChangePage: (page: number) => void;
+  isLoading?: boolean;
 }
 
 export function AuditByControlCodeProfileModal({
@@ -20,6 +21,7 @@ export function AuditByControlCodeProfileModal({
   audits,
   handleChangePage,
   currentPage,
+  isLoading,
 }: Props) {
   return (
     <Modal
@@ -34,6 +36,7 @@ export function AuditByControlCodeProfileModal({
             data={audits}
             handlePageChange={handleChangePage}
             currentPage={currentPage}
+            isLoading={isLoading}
           />
         </ModalContent>
       </ModalBody>

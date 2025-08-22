@@ -45,6 +45,7 @@ export function SearchContactHistoricalAccountForm({
   setSelectContact,
 }: ContactAccountFormProps) {
   const [showOutroForm, setShowOutroForm] = useState(false);
+  const [openDisclosure, setOpenDisclosure] = useState<string | null>(null);
 
   const {
     toggleSelection,
@@ -176,16 +177,31 @@ export function SearchContactHistoricalAccountForm({
               className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden"
             >
               <Disclosure>
-                {({ open }) => (
-                  <>
-                    <DisclosureButton className="flex justify-between w-full px-6 py-4 text-base font-semibold text-left text-gray-800 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-150 transition-all duration-200">
-                      <span className="text-base">{company.name}</span>
-                      <ChevronUpIcon
-                        className={`${open ? "rotate-180 transform" : ""} w-6 h-6 text-blue-600 transition-transform duration-200`}
-                      />
-                    </DisclosureButton>
-                    <DisclosurePanel className="px-6 py-4 bg-white">
-                      <div className="space-y-3">
+                {({ open }) => {
+                  const isOpen = openDisclosure === company.documentValue;
+                  return (
+                    <>
+                      <DisclosureButton 
+                        className="flex justify-between w-full px-6 py-4 text-base font-semibold text-left text-gray-800 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-150 transition-all duration-200"
+                        onClick={() => {
+                          if (isOpen) {
+                            setOpenDisclosure(null);
+                          } else {
+                            setOpenDisclosure(company.documentValue);
+                          }
+                        }}
+                      >
+                        <span className="text-base">{company.name}</span>
+                        <ChevronUpIcon
+                          className={`${isOpen ? "rotate-180 transform" : ""} w-6 h-6 text-blue-600 transition-transform duration-200`}
+                        />
+                      </DisclosureButton>
+                      {isOpen && (
+                        <DisclosurePanel 
+                          static 
+                          className="px-6 py-4 bg-white max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+                        >
+                          <div className="space-y-3">
                         {company.contacts.map((c) =>
                           c.contactItems.map((ci) => (
                             <div
@@ -247,8 +263,10 @@ export function SearchContactHistoricalAccountForm({
                         )}
                       </div>
                     </DisclosurePanel>
-                  </>
-                )}
+                      )}
+                    </>
+                  );
+                }}
               </Disclosure>
             </div>
           ))

@@ -1,11 +1,25 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { IAccount, IAddress, IContact } from "../../@backend/domain";
-import { createOneAccount } from "../../@backend/action/commercial/account.action";
+import {
+  IAccount,
+  IAddress,
+  IContact,
+  IAccountEconomicGroup,
+} from "../../@backend/domain";
+import {
+  createOneAccount,
+  updateOneAccount,
+  findOneAccount,
+} from "../../@backend/action/commercial/account.action";
 import { createOneAddress } from "../../@backend/action/commercial/address.action";
 import { createOneContact } from "../../@backend/action/commercial/contact.action";
 import { createOneHistorical } from "../../@backend/action/commercial/historical.action";
+import {
+  createOneAccountEconomicGroup,
+  findOneAccountEconomicGroup,
+  updateOneAccountEconomicGroup,
+} from "../../@backend/action/commercial/account.economic-group.action";
 import { useAuth } from "./auth.context";
 
 // Extended types with local IDs
@@ -14,6 +28,8 @@ export type LocalAccount = Omit<IAccount, "created_at" | "updated_at">;
 export type LocalAddress = Omit<IAddress, "created_at" | "updated_at">;
 
 export type LocalContact = Omit<IContact, "created_at" | "updated_at">;
+
+export type LocalAccountEconomicGroup = Omit<IAccountEconomicGroup, "id">;
 
 interface CreateAccountFlowContextType {
   // Account state
@@ -24,6 +40,9 @@ interface CreateAccountFlowContextType {
 
   // Contact state
   contacts: LocalContact[];
+
+  // Economic group state
+  economicGroup: LocalAccountEconomicGroup | null;
 
   // Account methods
   createAccountLocally: (account: LocalAccount) => void;
@@ -42,6 +61,16 @@ interface CreateAccountFlowContextType {
   updateContactLocally: (id: string, updates: Partial<LocalContact>) => void;
   deleteContactLocally: (id: string) => void;
   setContacts: (contacts: LocalContact[]) => void;
+
+  // Economic group methods
+  createEconomicGroupLocally: (
+    economicGroup: LocalAccountEconomicGroup
+  ) => void;
+  updateEconomicGroupLocally: (
+    updates: Partial<LocalAccountEconomicGroup>
+  ) => void;
+  deleteEconomicGroupLocally: () => void;
+  setEconomicGroup: (economicGroup: LocalAccountEconomicGroup | null) => void;
 
   // Utility methods
   resetFlow: () => void;
@@ -67,6 +96,8 @@ export const CreateAccountFlowProvider = ({
   const [account, setAccount] = useState<LocalAccount | null>(null);
   const [addresses, setAddresses] = useState<LocalAddress[]>([]);
   const [contacts, setContacts] = useState<LocalContact[]>([]);
+  const [economicGroup, setEconomicGroup] =
+    useState<LocalAccountEconomicGroup | null>(null);
 
   // Account methods
   const createAccountLocally = useCallback((newAccount: LocalAccount) => {
@@ -88,6 +119,7 @@ export const CreateAccountFlowProvider = ({
     // Clear related data when account is deleted
     setAddresses([]);
     setContacts([]);
+    setEconomicGroup(null);
   }, []);
 
   // Address methods
@@ -116,6 +148,30 @@ export const CreateAccountFlowProvider = ({
       );
       return filteredAddresses;
     });
+  }, []);
+
+  // Economic group methods
+  const createEconomicGroupLocally = useCallback(
+    (newEconomicGroup: LocalAccountEconomicGroup) => {
+      setEconomicGroup(newEconomicGroup);
+    },
+    []
+  );
+
+  const updateEconomicGroupLocally = useCallback(
+    (updates: Partial<LocalAccountEconomicGroup>) => {
+      setEconomicGroup((prevEconomicGroup) => {
+        if (prevEconomicGroup) {
+          return { ...prevEconomicGroup, ...updates };
+        }
+        return prevEconomicGroup;
+      });
+    },
+    []
+  );
+
+  const deleteEconomicGroupLocally = useCallback(() => {
+    setEconomicGroup(null);
   }, []);
 
   // Contact methods
@@ -151,6 +207,7 @@ export const CreateAccountFlowProvider = ({
     setAccount(null);
     setAddresses([]);
     setContacts([]);
+    setEconomicGroup(null);
   }, []);
 
   // API creation method
@@ -160,8 +217,157 @@ export const CreateAccountFlowProvider = ({
         return { success: false, error: "Nenhuma conta encontrada para criar" };
       }
 
-      // 1. Create the account first
-      const accountResult = await createOneAccount(account);
+      let economicGroupId: string | undefined;
+      let economicGroupWasUpdated = false;
+
+      if (economicGroup) {
+        try {
+          // Check if an economic group already exists with the same holding taxId
+          let existingEconomicGroup = null;
+
+          if (economicGroup.economic_group_holding?.taxId) {
+            existingEconomicGroup = await findOneAccountEconomicGroup({
+              "economic_group_holding.taxId":
+                economicGroup.economic_group_holding.taxId,
+            });
+          }
+
+          if (existingEconomicGroup) {
+            // Update the existing economic group by adding new controlled companies
+            const existingControlled =
+              existingEconomicGroup.economic_group_controlled || [];
+            const newControlled = economicGroup.economic_group_controlled || [];
+
+            const newTaxIds = newControlled.map((company) =>
+              company.taxId.replace(/\D/g, "")
+            );
+
+            // Find companies that were removed from the controlled list
+            const removedAccounts = existingControlled.filter((company) => {
+              const cleanTaxId = company.taxId.replace(/\D/g, "");
+              return !newTaxIds.includes(cleanTaxId);
+            });
+
+            // Disconnect removed accounts from economic group
+            if (removedAccounts.length > 0) {
+              try {
+                for (const removedAccount of removedAccounts) {
+                  await updateOneAccount(
+                    { "document.value": removedAccount.taxId },
+                    { economicGroupId: "" }
+                  );
+
+                  console.log(
+                    `Disconnected account ${removedAccount.name} (${removedAccount.taxId}) from economic group`
+                  );
+                }
+              } catch (error) {
+                console.warn(
+                  "Failed to disconnect some accounts from economic group:",
+                  error
+                );
+              }
+            }
+
+            // Find companies that were added to the controlled list
+            const existingTaxIds = existingControlled.map((company) =>
+              company.taxId.replace(/\D/g, "")
+            );
+            const addedAccounts = newControlled.filter((company) => {
+              const cleanTaxId = company.taxId.replace(/\D/g, "");
+              return !existingTaxIds.includes(cleanTaxId);
+            });
+
+            // Connect newly added accounts to economic group
+            if (addedAccounts.length > 0) {
+              try {
+                for (const addedAccount of addedAccounts) {
+                  // Find account by taxId first, then update by ID
+                  const accountToConnect = await findOneAccount({
+                    "document.value": addedAccount.taxId,
+                  });
+
+                  if (accountToConnect?.id) {
+                    await updateOneAccount(
+                      { id: accountToConnect.id },
+                      { economicGroupId: existingEconomicGroup.id! }
+                    );
+
+                    console.log(
+                      `Connected account ${addedAccount.name} (${addedAccount.taxId}) to existing economic group ${existingEconomicGroup.id}`
+                    );
+                  }
+                }
+              } catch (error) {
+                console.warn(
+                  "Failed to connect some accounts to economic group:",
+                  error
+                );
+              }
+            }
+
+            // Merge controlled companies, avoiding duplicates based on taxId
+            const mergedControlled = [...existingControlled];
+
+            newControlled.forEach((newCompany) => {
+              const exists = existingControlled.some(
+                (existing) =>
+                  existing.taxId.replace(/\D/g, "") ===
+                  newCompany.taxId.replace(/\D/g, "")
+              );
+              if (!exists) {
+                mergedControlled.push(newCompany);
+              }
+            });
+
+            // Filter out removed companies from the merged list
+            const finalControlled = mergedControlled.filter((company) => {
+              const cleanTaxId = company.taxId.replace(/\D/g, "");
+              return newTaxIds.includes(cleanTaxId);
+            });
+
+            const updateData = {
+              economic_group_holding: economicGroup.economic_group_holding,
+              economic_group_controlled: finalControlled,
+            };
+
+            const economicGroupResult = await updateOneAccountEconomicGroup(
+              { id: existingEconomicGroup.id! },
+              updateData
+            );
+
+            if (economicGroupResult.success && economicGroupResult.data?.id) {
+              economicGroupId = economicGroupResult.data.id;
+              economicGroupWasUpdated = true;
+            }
+          } else {
+            // Create new economic group if none exists
+            const economicGroupData = {
+              economic_group_holding: economicGroup.economic_group_holding,
+              economic_group_controlled:
+                economicGroup.economic_group_controlled,
+            };
+
+            const economicGroupResult =
+              await createOneAccountEconomicGroup(economicGroupData);
+
+            if (economicGroupResult.success && economicGroupResult.data?.id) {
+              economicGroupId = economicGroupResult.data.id;
+              economicGroupWasUpdated = false;
+            }
+          }
+        } catch (error) {
+          console.warn("Failed to create/update economic group:", error);
+        }
+      }
+
+      // 2. Create the account with economic group ID
+      const accountData = {
+        ...account,
+        economicGroupId,
+      };
+
+      const accountResult = await createOneAccount(accountData);
 
       if (!accountResult.success || !accountResult.id) {
         return {
@@ -171,6 +377,34 @@ export const CreateAccountFlowProvider = ({
       }
 
       const createdAccountId = accountResult.id;
+
+      // 2.1. Connect controlled accounts to economic group if economic group was created/updated
+      if (economicGroupId && economicGroup?.economic_group_controlled) {
+        try {
+          for (const controlledAccount of economicGroup.economic_group_controlled) {
+            // Find account by taxId first, then update by ID
+            const accountToConnect = await findOneAccount({
+              "document.value": controlledAccount.taxId,
+            });
+
+            if (accountToConnect?.id) {
+              await updateOneAccount(
+                { id: accountToConnect.id },
+                { economicGroupId }
+              );
+
+              console.log(
+                `Connected controlled account ${controlledAccount.name} (${controlledAccount.taxId}) to economic group ${economicGroupId}`
+              );
+            }
+          }
+        } catch (error) {
+          console.warn(
+            "Failed to connect some controlled accounts to economic group:",
+            error
+          );
+        }
+      }
 
       await createOneHistorical({
         accountId: createdAccountId,
@@ -230,49 +464,63 @@ export const CreateAccountFlowProvider = ({
         }
       }
 
-      // 4. Create historical entries for economic groups
-      if (account.economic_group_holding) {
-        try {
-          await createOneHistorical({
-            accountId: createdAccountId,
-            title: `Grupo econômico (Holding) "${account.economic_group_holding.name}" vinculado.`,
-            type: "manual",
-            author: {
-              name: user?.name ?? "",
-              avatarUrl: "",
-            },
-          });
-        } catch (error) {
-          console.warn("Failed to create holding historical entry:", error);
+      // 4. Create historical entries for economic groups if they exist
+      if (economicGroup) {
+        if (economicGroup.economic_group_holding) {
+          try {
+            const actionType = economicGroupWasUpdated
+              ? "atualizado"
+              : "vinculado";
+            await createOneHistorical({
+              accountId: createdAccountId,
+              title: `Grupo econômico (Holding) "${economicGroup.economic_group_holding.name}" ${actionType}.`,
+              type: "manual",
+              author: {
+                name: user?.name ?? "",
+                avatarUrl: "",
+              },
+            });
+          } catch (error) {
+            console.warn("Failed to create holding historical entry:", error);
+          }
         }
-      }
 
-      if (
-        account.economic_group_controlled &&
-        account.economic_group_controlled.length > 0
-      ) {
-        try {
-          const controlledCount = account.economic_group_controlled.length;
-          const isPlural = controlledCount > 1;
-          const pluralSuffix = isPlural ? "s" : "";
-          const controlledNames = account.economic_group_controlled
-            .map((company) => company.name)
-            .join(", ");
+        if (
+          economicGroup.economic_group_controlled &&
+          economicGroup.economic_group_controlled.length > 0
+        ) {
+          try {
+            const controlledCount =
+              economicGroup.economic_group_controlled.length;
+            const isPlural = controlledCount > 1;
+            const pluralSuffix = isPlural ? "s" : "";
+            const controlledNames = economicGroup.economic_group_controlled
+              .map((company) => company.name)
+              .join(", ");
 
-          await createOneHistorical({
-            accountId: createdAccountId,
-            title: `Empresa${pluralSuffix} controlada${pluralSuffix} "${controlledNames}" vinculada${pluralSuffix}.`,
-            type: "manual",
-            author: {
-              name: user?.name ?? "",
-              avatarUrl: "",
-            },
-          });
-        } catch (error) {
-          console.warn(
-            "Failed to create controlled companies historical entry:",
-            error
-          );
+            const actionType = economicGroupWasUpdated
+              ? "atualizada"
+              : "vinculada";
+            const actionTypePlural = economicGroupWasUpdated
+              ? "atualizadas"
+              : "vinculadas";
+            const finalActionType = isPlural ? actionTypePlural : actionType;
+
+            await createOneHistorical({
+              accountId: createdAccountId,
+              title: `Empresa${pluralSuffix} controlada${pluralSuffix} "${controlledNames}" ${finalActionType}.`,
+              type: "manual",
+              author: {
+                name: user?.name ?? "",
+                avatarUrl: "",
+              },
+            });
+          } catch (error) {
+            console.warn(
+              "Failed to create controlled companies historical entry:",
+              error
+            );
+          }
         }
       }
 
@@ -287,13 +535,14 @@ export const CreateAccountFlowProvider = ({
         error: "Erro inesperado ao criar entidades",
       };
     }
-  }, [account, addresses, contacts, user?.name]);
+  }, [account, addresses, contacts, economicGroup, user?.name]);
 
   const value: CreateAccountFlowContextType = {
     // State
     account,
     addresses,
     contacts,
+    economicGroup,
 
     // Account methods
     createAccountLocally,
@@ -312,6 +561,12 @@ export const CreateAccountFlowProvider = ({
     updateContactLocally,
     deleteContactLocally,
     setContacts,
+
+    // Economic group methods
+    createEconomicGroupLocally,
+    updateEconomicGroupLocally,
+    deleteEconomicGroupLocally,
+    setEconomicGroup,
 
     // Utility methods
     resetFlow,

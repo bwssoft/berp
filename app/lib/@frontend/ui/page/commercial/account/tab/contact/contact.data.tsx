@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { SearchContactModal } from "@/app/lib/@frontend/ui/modal";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   account: LocalAccount;
@@ -37,14 +38,19 @@ interface Props {
 }
 
 export function ContactDataPage(props: Props) {
-  const { contacts, hasPermissionContacts, accountId } = props;
+  const { hasPermissionContacts, accountId } = props;
 
   // Use create account flow context
   const {
     account: localAccount,
     addresses: localAddresses,
     contacts: localContacts,
+    economicGroup: localEconomicGroup,
+    resetFlow,
+    createEntitiesApi,
   } = useCreateAccountFlow();
+
+  const queryClient = useQueryClient();
 
   // Props are already the local data, so use them directly
   const currentAccount = localAccount;
@@ -60,7 +66,6 @@ export function ContactDataPage(props: Props) {
   const [selectedContact, setSelectedContact] = useState<LocalContact>();
   const [isCreatingEntities, setIsCreatingEntities] = useState(false);
   const router = useRouter();
-  const { resetFlow, createEntitiesApi } = useCreateAccountFlow();
 
   /**
    * MODAL CRIAÇÃO - CONTATO
@@ -134,6 +139,21 @@ export function ContactDataPage(props: Props) {
         router.push(
           `/commercial/account/management/account-data?id=${result.accountId}`
         );
+
+        await queryClient.invalidateQueries({
+          queryKey: ["findOneAccount", result.accountId],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["findManyAddress", result.accountId],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["findManyContact", result.accountId],
+        });
+
+        await queryClient.invalidateQueries({
+          queryKey: ["findOneAccountEconomicGroup"],
+        });
+
         resetFlow();
       } else {
         toast({
@@ -175,7 +195,13 @@ export function ContactDataPage(props: Props) {
               </CardTitle>
               {hasPermissionContacts && (
                 <div className="flex items-center gap-4">
-                  <SearchContactModal accountId={accountId ?? ""} />
+                  {!!localEconomicGroup?.economic_group_holding?.taxId && (
+                    <SearchContactModal
+                      holdingTaxId={
+                        localEconomicGroup.economic_group_holding?.taxId
+                      }
+                    />
+                  )}
                   <Button
                     variant={"ghost"}
                     className="border px-3 py-3"
