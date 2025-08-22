@@ -21,7 +21,7 @@ export function useAuditByControlCodeProfileModal() {
     []
   );
 
-  const { data: audits } = useQuery({
+  const { data: audits, isLoading } = useQuery({
     queryKey: ["findManyAudit", control, page],
     queryFn: async () => {
       const { docs, pages, total } = await findManyAudit(
@@ -53,6 +53,7 @@ export function useAuditByControlCodeProfileModal() {
 
   return {
     audits,
+    isLoading,
     open,
     setOpen,
     openModal,

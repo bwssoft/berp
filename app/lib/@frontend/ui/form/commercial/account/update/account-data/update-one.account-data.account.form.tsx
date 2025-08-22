@@ -1,6 +1,6 @@
 "use client";
 import { useUpdateAccountForm } from "./use-update-account-data.account.form";
-import { IAccount } from "@/app/lib/@backend/domain";
+import { IAccount, ISector } from "@/app/lib/@backend/domain";
 import { PlusIcon } from "lucide-react";
 import { SectorModal, useSectorModal } from "@/app/lib/@frontend/ui/modal";
 import { useEffect, useState } from "react";
@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from "../../../../../component/form";
 import { FormProvider } from "react-hook-form";
+import { useSectorDeleteDialog } from "@/app/lib/@frontend/ui/dialog/commercial/sector/delete/use-delete-sector.dialog";
 
 interface Props {
   accountData?: IAccount;
@@ -66,6 +67,12 @@ export function UpdateAccountDataForm({
     return documentValue;
   };
 
+  const deleteDlg = useSectorDeleteDialog();
+
+  function handleAskDelete(s: ISector) {
+    deleteDlg.openDialog(s);
+  }
+
   useEffect(() => {
     (async () => {
       try {
@@ -106,7 +113,7 @@ export function UpdateAccountDataForm({
               label="Nome Fantasia"
               placeholder="Digite o nome fantasia"
               {...register("cnpj.fantasy_name")}
-              error={errors.errors.cnpj?.fantasy_name?.message}
+              error={errors.cnpj?.fantasy_name?.message}
             />
             <Input
               label="Inscrição Estadual"
@@ -118,7 +125,7 @@ export function UpdateAccountDataForm({
                   shouldValidate: true,
                 });
               }}
-              error={errors.errors.cnpj?.state_registration?.message}
+              error={errors.cnpj?.state_registration?.message}
             />
             <Input
               label="Inscrição Municipal"
@@ -130,7 +137,7 @@ export function UpdateAccountDataForm({
                   shouldValidate: true,
                 });
               }}
-              error={errors.errors.cnpj?.municipal_registration?.message}
+              error={errors.cnpj?.municipal_registration?.message}
             />
             <div className="flex items-end gap-2 w-full">
               <FormField
@@ -182,6 +189,7 @@ export function UpdateAccountDataForm({
                 isPending={sectorModal.isPending}
                 handleToggle={sectorModal.handleToggle}
                 handleSave={sectorModal.handleSave}
+                onAskDelete={handleAskDelete}
               />
             </div>
           </div>
@@ -213,11 +221,15 @@ export function UpdateAccountDataForm({
         )}
 
         <div className="flex gap-4">
-          <Button type="button" variant="ghost">
+          <Button type="button" variant="ghost" onClick={closeModal}>
             Cancelar
           </Button>
-          <Button variant="default" type="submit">
-            Salvar
+          <Button
+            variant="default"
+            type="submit"
+            disabled={sectorModal.isLoading}
+          >
+            {sectorModal.isLoading ? "Carregando setores..." : "Salvar"}
           </Button>
         </div>
       </form>

@@ -21,7 +21,7 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import { IAccount, IAddress, IContact } from "@/app/lib/@backend/domain";
+import { IAccount, IAddress, IContact, IAccountEconomicGroup } from "@/app/lib/@backend/domain";
 import {
   CreateContactModal,
   UpdateContactModal,
@@ -43,11 +43,13 @@ import { useAccountDataUpdateModal } from "../../../../modal/comercial/account/u
 import { AccountDataUpdateModal } from "../../../../modal/comercial/account/update/account-data.update.modal";
 import { refreshOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   account: IAccount;
   addresses: IAddress[];
   contacts: IContact[];
+  economicGroup?: IAccountEconomicGroup | null;
 
   permissions: {
     hasPermissionContacts: boolean;
@@ -63,6 +65,7 @@ export function AccountDataPage(props: Props) {
     account,
     addresses,
     contacts,
+    economicGroup,
     permissions: {
       hasPermissionContacts,
       hasPermissionAddresses,
@@ -72,6 +75,7 @@ export function AccountDataPage(props: Props) {
     },
   } = props;
 
+  const queryClient = useQueryClient();
   const [selectedContact, setSelectedContact] = useState<IContact | any>();
   const [selectedAddress, setSelectedAddress] = useState<IAddress | any>();
   const isCompany = account.document.type === "cnpj";
@@ -172,7 +176,12 @@ export function AccountDataPage(props: Props) {
    * ATUALIZAÇÃO - DADOS DA CONTA
    */
   const onRefreshAccountData = async () => {
-    await refreshOneAccount(account.document.value);
+    await refreshOneAccount(account.document.value, account.id!);
+
+    await queryClient.invalidateQueries({
+      queryKey: ["findOneAccount", account.id],
+    });
+
     toast({
       variant: "success",
       description: "Conta atualizada com sucesso!",
@@ -199,7 +208,8 @@ export function AccountDataPage(props: Props) {
         {isCompany && (
           <EconomicGroupCard
             openModal={openUpdateEconomicGroup}
-            account={account}
+            accountId={account.id!}
+            economicGroup={economicGroup}
             hasPermissionEconomicGroup={hasPermissionEconomicGroup}
             lgpdPermissions={{
               fullLgpdAccess,
@@ -369,7 +379,7 @@ export function AccountDataPage(props: Props) {
           city: copiedAddress?.city ?? "",
           state: copiedAddress?.state ?? "",
           reference_point: copiedAddress?.reference_point ?? "",
-          type: copiedAddress?.type ?? [],
+          type: [],
           default_address: false,
         }}
       />
@@ -386,8 +396,8 @@ export function AccountDataPage(props: Props) {
         accountId={account.id!}
         onClose={closeUpdateEconomicGroup}
         open={updateEconomicGroup}
-        economicGroupHolding={account.economic_group_holding}
-        economicGroupControlled={account.economic_group_controlled}
+        economicGroupHolding={economicGroup?.economic_group_holding}
+        economicGroupControlled={economicGroup?.economic_group_controlled}
       />
 
       <AccountDataUpdateModal

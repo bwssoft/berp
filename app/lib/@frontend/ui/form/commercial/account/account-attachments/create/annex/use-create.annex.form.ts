@@ -13,8 +13,8 @@ const schema = z.object({
   name: z.string().min(1, "Nome do anexo é obrigatório"),
   file: z
     .instanceof(File, { message: "Arquivo é obrigatório" })
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: "Arquivo deve ter no máximo 5MB",
+    .refine((file) => file.size <= 10 * 1024 * 1024, {
+      message: "Arquivo deve ter no máximo 10MB",
     }),
 });
 
@@ -78,16 +78,16 @@ export function useCreateAnnexForm({
           variant: "success",
         });
         await createOneHistorical({
-            ...data,
-            accountId: accountId,
-            title: "Rotina de criação de um anexo.",
-            type: "manual",
-            description: `Criação do anexo ${data.name}`,
-            author: {
-                name: user?.name ?? "",
-                avatarUrl: "",
-            },
-            file: fileData,
+          ...data,
+          accountId: accountId,
+          title: "Rotina de criação de um anexo.",
+          type: "manual",
+          description: `Criação do anexo ${data.name}`,
+          author: {
+            name: user?.name ?? "",
+            avatarUrl: "",
+          },
+          file: fileData,
         });
         closeModal();
       } else {

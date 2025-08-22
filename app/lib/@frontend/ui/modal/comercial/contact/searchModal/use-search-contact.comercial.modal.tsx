@@ -4,83 +4,78 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { IAccount, IContact } from "@/app/lib/@backend/domain";
 import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { findOneAccountEconomicGroup } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
+import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
 
-const PAGE_SIZE = 10;
-const currentPage = 1;
-
-export function useSearchContactModal(accountId?: string) {
+export function useSearchContactModal(holdingTaxId?: string) {
   const [open, setOpen] = useState(false);
-  const [contactsByCompany, setContactsByCompany] = useState<
-    { name: string; contacts: IContact[]; documentValue: string }[]
-  >([]);
-  const [accountData, setAccountData] = useState<IAccount>();
 
-  const { isLoading: accountLoading } = useQuery({
-    queryKey: ["findManyAccount", accountId, currentPage],
+  const { data: queryResult, isLoading: accountLoading } = useQuery({
+    queryKey: ["findAccountsByHoldingTaxId", holdingTaxId, "v2"],
     queryFn: async () => {
-      if (!accountId) return { docs: [], total: 0, pages: 1 };
+      if (!holdingTaxId) return { docs: [], contactsByCompany: [] };
 
-      const data = await findManyAccount(
-        { id: accountId },
-        currentPage,
-        PAGE_SIZE
-      );
-
-      const account = data.docs[0];
-      setAccountData(account);
+      // Find economic groups that contain this holding taxId
+      const economicGroup = await findOneAccountEconomicGroup({
+        "economic_group_holding.taxId": holdingTaxId,
+      });
 
       let groupCompanies: IAccount[] = [];
+      let companiesWithContacts: {
+        name: string;
+        contacts: IContact[];
+        documentValue: string;
+      }[] = [];
 
-      if (
-        !account?.economic_group_holding?.taxId ||
-        account.economic_group_holding.taxId === account.document?.value
-      ) {
-        const controlleds  = await findManyAccount(
-          { "economic_group_holding.taxId": account.document?.value },
-          currentPage,
-          PAGE_SIZE
-        );
-        groupCompanies = controlleds.docs;
-      } else {
-        const holding = await findManyAccount(
-          { "document.value": account.economic_group_holding.taxId },
-          currentPage,
-          PAGE_SIZE
-        );
-        const otherControlled = await findManyAccount(
-          { "economic_group_holding.taxId": account.economic_group_holding.taxId },
-          currentPage,
-          PAGE_SIZE
-        );
+      if (economicGroup) {
+        const accountsByEconomicGroup = await findManyAccount({
+          economicGroupId: economicGroup.id,
+        });
 
-        groupCompanies = [...holding.docs, ...otherControlled.docs];
+        const contactsByAccountId = await findManyContact({
+          accountId: { $in: accountsByEconomicGroup.docs.map((acc) => acc.id) },
+        });
+
+        groupCompanies = accountsByEconomicGroup.docs;
+
+        // Map accounts with their contacts
+        companiesWithContacts = accountsByEconomicGroup.docs
+          .map((account) => {
+            // Find contacts for this account
+            const accountContacts = contactsByAccountId.filter(
+              (contact: IContact) => contact.accountId === account.id
+            );
+
+            // Only include companies that have contacts
+            if (accountContacts.length > 0) {
+              return {
+                name:
+                  account.social_name ||
+                  account.fantasy_name ||
+                  "Empresa sem nome",
+                documentValue: account.document?.value || "",
+                contacts: accountContacts,
+              };
+            }
+            return null;
+          })
+          .filter(Boolean) as {
+          name: string;
+          contacts: IContact[];
+          documentValue: string;
+        }[];
       }
 
-      const newCompanies = groupCompanies
-        .filter(
-          (empresa) =>
-            empresa.document?.value !== account.document?.value &&
-            Array.isArray(empresa.contacts) &&
-            empresa.contacts.length > 0 &&
-            empresa.fantasy_name &&
-            empresa.document?.value
-        )
-        .map((empresa) => ({
-          name: empresa.social_name!,
-          documentValue: empresa.document.value!,
-          contacts: empresa.contacts ?? [],
-        }));
-        
-      const uniqueCompanies = Array.from(
-        new Map(newCompanies.map((emp) => [emp.documentValue, emp])).values()
-      );
-
-      setContactsByCompany(uniqueCompanies);
-
-      return data;
+      return { docs: groupCompanies, contactsByCompany: companiesWithContacts };
     },
-    enabled: !!accountId,
+    enabled: !!holdingTaxId,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    staleTime: 0,
+    gcTime: 0, // Don't cache the result
   });
+
+  const contactsByCompany = (queryResult as any)?.contactsByCompany || [];
 
   function openModal() {
     setOpen(true);
@@ -94,7 +89,6 @@ export function useSearchContactModal(accountId?: string) {
     open,
     openModal,
     closeModal,
-    accountData,
     contactsByCompany,
     isLoading: accountLoading,
   };

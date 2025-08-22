@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../component";
-import { IAccount } from "@/app/lib/@backend/domain";
+import { IAccountEconomicGroup } from "@/app/lib/@backend/domain";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";
 import { formatLgpdCnpj } from "@/app/lib/util/format-lgpd-cnpj";
@@ -18,27 +18,27 @@ interface LgpdPermissions {
 }
 
 interface EconomicGroupCardProps {
-  account: IAccount;
+  accountId: string;
+  economicGroup?: IAccountEconomicGroup | null;
   hasPermissionEconomicGroup: boolean;
   openModal: () => void;
   lgpdPermissions?: LgpdPermissions;
 }
 
 export function EconomicGroupCard({
-  account,
+  accountId,
+  economicGroup,
   hasPermissionEconomicGroup,
   openModal,
   lgpdPermissions,
 }: EconomicGroupCardProps) {
-  const hasHolding = !!(
-    account.economic_group_holding &&
-    Object.keys(account.economic_group_holding).length
-  );
+  const hasHolding =
+    economicGroup?.economic_group_holding &&
+    Object.keys(economicGroup.economic_group_holding).length;
 
-  const hasControlled = !!(
-    Array.isArray(account.economic_group_controlled) &&
-    account.economic_group_controlled.length
-  );
+  const hasControlled =
+    Array.isArray(economicGroup?.economic_group_controlled) &&
+    economicGroup.economic_group_controlled.length;
 
   const formatDocumentValue = (taxId: string): string => {
     if (!taxId) return "";
@@ -62,7 +62,7 @@ export function EconomicGroupCard({
             <Users className="h-5 w-5 text-primary" />
             Grupo Econômico
           </div>
-          {hasPermissionEconomicGroup && account.id && (
+          {hasPermissionEconomicGroup && accountId && (
             <Button onClick={openModal} variant={"ghost"}>
               <PencilSquareIcon className="w-5 h-5 cursor-pointer" />
             </Button>
@@ -80,10 +80,12 @@ export function EconomicGroupCard({
             >
               <div className="space-y-1">
                 <p className="text-sm font-medium text-foreground">
-                  {account.economic_group_holding!.name}
+                  {economicGroup!.economic_group_holding!.name}
                 </p>
                 <p className="text-xs font-mono text-muted-foreground">
-                  {formatDocumentValue(account.economic_group_holding!.taxId)}
+                  {formatDocumentValue(
+                    economicGroup!.economic_group_holding!.taxId
+                  )}
                 </p>
               </div>
             </div>
@@ -105,8 +107,10 @@ export function EconomicGroupCard({
             </h4>
             {hasControlled && (
               <Badge variant="secondary" className="text-xs">
-                {account.economic_group_controlled!.length} empresa
-                {account.economic_group_controlled!.length !== 1 ? "s" : ""}
+                {economicGroup!.economic_group_controlled!.length} empresa
+                {economicGroup!.economic_group_controlled!.length !== 1
+                  ? "s"
+                  : ""}
               </Badge>
             )}
           </div>
@@ -117,22 +121,24 @@ export function EconomicGroupCard({
               role="list"
               aria-label="Lista de empresas controladas"
             >
-              {account.economic_group_controlled!.map((company, index) => (
-                <div
-                  key={index}
-                  className="p-3 rounded-md bg-muted/30 border hover:bg-muted/50 transition-colors"
-                  role="listitem"
-                >
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-foreground">
-                      {company.name}
-                    </p>
-                    <p className="text-xs font-mono text-muted-foreground">
-                      {formatDocumentValue(company.taxId)}
-                    </p>
+              {economicGroup!.economic_group_controlled!.map(
+                (company: any, index: number) => (
+                  <div
+                    key={index}
+                    className="p-3 rounded-md bg-muted/30 border hover:bg-muted/50 transition-colors"
+                    role="listitem"
+                  >
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-foreground">
+                        {company.name}
+                      </p>
+                      <p className="text-xs font-mono text-muted-foreground">
+                        {formatDocumentValue(company.taxId)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           ) : (
             <div className="flex-1 flex items-center justify-center text-muted-foreground">

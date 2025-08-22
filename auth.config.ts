@@ -57,7 +57,7 @@ export const authConfig: NextAuthConfig = {
 
       // Set token expiration time if not already set
       if (!token.exp) {
-        token.exp = now + (24 * 60 * 60); // 24 hours from now
+        token.exp = now + 24 * 60 * 60; // 24 hours from now
       }
 
       // Caso a autenticação inicial tenha ocorrido, atualiza o token com os dados do usuário
@@ -69,7 +69,7 @@ export const authConfig: NextAuthConfig = {
           temporary_password: user.temporary_password,
           name: user.name,
           avatarUrl: user.image || "/avatar.webp",
-          exp: now + (24 * 60 * 60), // Reset expiration on new login (24 hours)
+          exp: now + 24 * 60 * 60, // Reset expiration on new login (24 hours)
         });
       }
       // Caso o token esteja sendo atualizado via trigger ("update") e haja dados de sessão,
