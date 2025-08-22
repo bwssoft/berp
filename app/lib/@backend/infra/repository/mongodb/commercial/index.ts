@@ -8,5 +8,6 @@ export * from "./product.category.repository";
 export * from "./address.repository";
 export * from "./contact.repository";
 export * from "./account.repository";
+export * from "./account.economic-group.repository";
 export * from "./historical.repository";
 export * from "./account-attachment.repository";

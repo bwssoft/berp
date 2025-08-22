@@ -191,17 +191,20 @@ export const columns: ColumnDef<IAudit>[] = [
     header: "Data/Hora",
     accessorKey: "created_at",
     cell: ({ row }) => {
-      const d = row.original.created_at;
+      const data = row.original.created_at;
       return new Intl.DateTimeFormat("pt-BR", {
         dateStyle: "short",
         timeStyle: "medium",
-      }).format(d);
+      }).format(data);
     },
   },
   {
     header: "Usuário",
     accessorKey: "user",
-    cell: ({ row }) => row.original.user?.name ?? "",
+    cell: ({ row }) => {
+      const { user } = row.original;
+      return user?.name ?? "";
+    },
   },
   {
     header: "Ação",
@@ -234,12 +237,6 @@ export const columns: ColumnDef<IAudit>[] = [
                 code,
                 label: translatePermission(code),
               }));
-              const beforeMap = prevAll.map((code) =>
-                translatePermission(code)
-              );
-              const afterMap = beforeAll.map((code) =>
-                translatePermission(code)
-              );
 
               return (
                 <div key={i} className="space-y-1">
@@ -264,15 +261,62 @@ export const columns: ColumnDef<IAudit>[] = [
               );
             }
 
+            const sensitiveFields = new Set(["password", "temporary_password"]);
+
+            const formatChange = (
+              field: string,
+              before: string,
+              after: string
+            ) => {
+              const nomeCampo = fieldLabel[field] ?? field;
+
+              if (sensitiveFields.has(field)) {
+                return `campo '${nomeCampo}'`;
+              }
+
+              return `campo '${nomeCampo}' de '${before}' para '${after}'`;
+            };
+
+            if (type === "update" && metadata && metadata.length > 0) {
+              const label = action.split("'")[1] ?? "usuário";
+
+              const camposAlterados = metadata
+                .map(({ field, before, after }) =>
+                  formatChange(field, before, after)
+                )
+                .join("; ");
+
+              const plural = metadata.length > 1 ? "alterados" : "alterado";
+
+              return `Usuário '${label}' teve ${camposAlterados} ${plural}`;
+            }
+
             const before = formatScalar(m.before, field);
             const after = formatScalar(m.after, field);
 
+            const renderValue = (value: string) => {
+              if (pretty === "perfil") {
+                return (
+                  <span className="font-medium flex flex-wrap">
+                    {value.split(",").map((part, idx, arr) => (
+                      <span key={idx}>
+                        {part.trim()}
+                        {idx < arr.length - 1 && `,\u00A0`}
+                      </span>
+                    ))}
+                  </span>
+                );
+              }
+
+              return <span className="font-medium break-words">{value}</span>;
+            };
+
             return (
-              <div key={i} className="text-sm">
-                <span className="mr-1">{`Campo '${pretty}' de`}</span>
-                <span className="font-medium">“{before}”</span>
-                <span className="mx-1">para</span>
-                <span className="font-medium">“{after}”</span>
+              <div key={i} className="text-sm w-[20vw]">
+                <span className="mr-1 font-bold">{`Campo '${pretty}' de`}</span>
+                {renderValue(before)}
+                <span className="mx-1 font-bold">para</span>
+                {renderValue(after)}
               </div>
             );
           })}

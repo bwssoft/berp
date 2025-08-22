@@ -21,7 +21,7 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import { IAccount, IAddress, IContact } from "@/app/lib/@backend/domain";
+import { IAccount, IAddress, IContact, IAccountEconomicGroup } from "@/app/lib/@backend/domain";
 import {
   CreateContactModal,
   UpdateContactModal,
@@ -49,6 +49,7 @@ interface Props {
   account: IAccount;
   addresses: IAddress[];
   contacts: IContact[];
+  economicGroup?: IAccountEconomicGroup | null;
 
   permissions: {
     hasPermissionContacts: boolean;
@@ -64,6 +65,7 @@ export function AccountDataPage(props: Props) {
     account,
     addresses,
     contacts,
+    economicGroup,
     permissions: {
       hasPermissionContacts,
       hasPermissionAddresses,
@@ -206,7 +208,8 @@ export function AccountDataPage(props: Props) {
         {isCompany && (
           <EconomicGroupCard
             openModal={openUpdateEconomicGroup}
-            account={account}
+            accountId={account.id!}
+            economicGroup={economicGroup}
             hasPermissionEconomicGroup={hasPermissionEconomicGroup}
             lgpdPermissions={{
               fullLgpdAccess,
@@ -393,8 +396,8 @@ export function AccountDataPage(props: Props) {
         accountId={account.id!}
         onClose={closeUpdateEconomicGroup}
         open={updateEconomicGroup}
-        economicGroupHolding={account.economic_group_holding}
-        economicGroupControlled={account.economic_group_controlled}
+        economicGroupHolding={economicGroup?.economic_group_holding}
+        economicGroupControlled={economicGroup?.economic_group_controlled}
       />
 
       <AccountDataUpdateModal
