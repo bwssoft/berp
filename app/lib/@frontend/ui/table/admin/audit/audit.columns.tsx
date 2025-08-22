@@ -261,6 +261,36 @@ export const columns: ColumnDef<IAudit>[] = [
               );
             }
 
+            const sensitiveFields = new Set(["password", "temporary_password"]);
+
+            const formatChange = (
+              field: string,
+              before: string,
+              after: string
+            ) => {
+              const nomeCampo = fieldLabel[field] ?? field;
+
+              if (sensitiveFields.has(field)) {
+                return `campo '${nomeCampo}'`;
+              }
+
+              return `campo '${nomeCampo}' de '${before}' para '${after}'`;
+            };
+
+            if (type === "update" && metadata && metadata.length > 0) {
+              const label = action.split("'")[1] ?? "usuário";
+
+              const camposAlterados = metadata
+                .map(({ field, before, after }) =>
+                  formatChange(field, before, after)
+                )
+                .join("; ");
+
+              const plural = metadata.length > 1 ? "alterados" : "alterado";
+
+              return `Usuário '${label}' teve ${camposAlterados} ${plural}`;
+            }
+
             const before = formatScalar(m.before, field);
             const after = formatScalar(m.after, field);
 

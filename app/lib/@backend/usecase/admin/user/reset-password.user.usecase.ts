@@ -6,8 +6,10 @@ import {
 
 import { hash } from "bcrypt";
 import { randomInt } from "crypto";
-import { IBMessageGateway, IUserRepository } from "@/app/lib/@backend/domain";
+import { AuditDomain, IBMessageGateway, IUser, IUserRepository } from "@/app/lib/@backend/domain";
 import { userRepository, bmessageGateway } from "@/app/lib/@backend/infra";
+import { auth } from "@/auth";
+import { createOneAuditUsecase } from "../audit";
 
 namespace Dto {
   export type Input = {
@@ -16,7 +18,12 @@ namespace Dto {
 
   export type Output = {
     success: boolean;
-    error?: string;
+    error?: string | { 
+      id?: string; 
+      email?: string; 
+      cpf?: string; 
+      username?: string 
+    };
   };
 }
 
@@ -30,10 +37,9 @@ class ResetPasswordUserUsecase {
   }
 
   async execute(input: Dto.Input): Promise<Dto.Output> {
-    const { id } = input;
-
+    
     try {
-      const user = await this.repository.findOne({ id });
+      const user = await this.repository.findOne({ id: input.id });
 
       if (!user) {
         return { success: false, error: "Usuário não encontrado." };
@@ -43,10 +49,36 @@ class ResetPasswordUserUsecase {
       const salt = randomInt(10, 16);
       const hashedPassword = await hash(temporaryPassword, salt);
 
+      const oldUser = await this.repository.findOne({ id: input.id });
+      if (!oldUser) {
+        return {
+          success: false,
+          error: { id: "Usuário não encontrado" },
+        };
+      }
       await this.repository.updateOne(
-        { id },
+        { id: input.id },
         { $set: { password: hashedPassword, temporary_password: true } }
       );
+
+      const after = await this.repository.findOne({ id: input.id });
+      if (!after) {
+        return {
+          success: false,
+          error: { id: "Usuário não encontrado após atualização" },
+        };
+      }
+
+      const session = await auth();
+      const { name, id, email } = session?.user!;
+
+      await createOneAuditUsecase.execute<IUser, IUser>({
+          before: oldUser,
+          after,
+          domain: AuditDomain.user,
+          user: { name, id, email },
+          action: `Usuário '${after.name}' teve a senha redefinida.`,
+      });
 
       const html = await formatResetPasswordEmail({
         name: user.name,
