@@ -9,6 +9,8 @@ import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { unmaskPhoneNumber } from "@/app/lib/util/mask-phone-number";
+
 interface Props {
   contacts?: {
     name: string;
@@ -25,13 +27,56 @@ interface Props {
   ) => void;
 }
 
-const schema = z.object({
-  name: z.string().min(1, "Nome é obrigatório"),
-  type: z
-    .array(z.string(), { message: "Tipo é obrigatório" })
-    .min(1, "Tipo é obrigatório"),
-  contact: z.string().min(1, "Contato é obrigatório"),
-});
+const schema = z
+  .object({
+    name: z.string().min(1, "Nome é obrigatório"),
+    type: z
+      .array(z.string(), { message: "Tipo é obrigatório" })
+      .min(1, "Tipo é obrigatório"),
+    contact: z.string().min(1, "Contato é obrigatório"),
+  })
+  .superRefine((data, ctx) => {
+    const contactType = data.type[0]; // Get the first selected type
+
+    if (contactType === "Email") {
+      const emailValidation = z
+        .string()
+        .email("Email inválido")
+        .safeParse(data.contact);
+      if (!emailValidation.success) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["contact"],
+          message: "Email inválido",
+        });
+      }
+    }
+
+    if (
+      ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(
+        contactType
+      )
+    ) {
+      const numericValue = unmaskPhoneNumber(data.contact);
+      const isCellphone =
+        contactType === "Celular" && numericValue.length !== 11;
+      const isLandline =
+        (contactType === "Telefone Residencial" ||
+          contactType === "Telefone Comercial") &&
+        numericValue.length !== 10;
+
+      if (isCellphone || isLandline) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["contact"],
+          message:
+            contactType === "Celular"
+              ? "Celular deve ter 11 dígitos (incluindo DDD)"
+              : "Telefone deve ter 10 dígitos (incluindo DDD)",
+        });
+      }
+    }
+  });
 
 export function useSearchContactHistoricalAccount({
   contacts,
@@ -39,6 +84,9 @@ export function useSearchContactHistoricalAccount({
   setSelectContact,
 }: Props) {
   const [contactData, setContactData] = useState<Props["contacts"]>([]);
+  const [tempSelectedContact, setTempSelectedContact] = useState<
+    ContactSelection | undefined
+  >(undefined);
   const [otherContactInfo, setOtherContactInfo] = useState({
     name: "",
     type: "",
@@ -51,6 +99,8 @@ export function useSearchContactHistoricalAccount({
     formState: { errors },
     control,
     trigger,
+    setError,
+    clearErrors,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
@@ -65,7 +115,7 @@ export function useSearchContactHistoricalAccount({
   }, [contacts]);
 
   const isSelected = (id: string, channel: string) =>
-    selectContact?.id === id && selectContact?.channel === channel;
+    tempSelectedContact?.id === id && tempSelectedContact?.channel === channel;
 
   const toggleSelection = useCallback(
     (
@@ -75,7 +125,7 @@ export function useSearchContactHistoricalAccount({
       contact: string,
       channel: string
     ) => {
-      setSelectContact((prev) => {
+      setTempSelectedContact((prev) => {
         if (prev?.id === id && prev?.channel === channel) {
           return undefined;
         } else {
@@ -83,7 +133,7 @@ export function useSearchContactHistoricalAccount({
         }
       });
     },
-    [setSelectContact]
+    []
   );
 
   useEffect(() => {
@@ -96,25 +146,57 @@ export function useSearchContactHistoricalAccount({
 
         if (isValid) {
           const id = "outros-contact";
-          toggleSelection(id, name, type, contact, type);
+          setTempSelectedContact({ id, name, type, contact, channel: type });
           hasAutoSelectedRef.current = true;
         }
       } else if (!name || !type || !contact) {
         hasAutoSelectedRef.current = false;
-        if (selectContact?.id === "outros-contact") {
-          setSelectContact(undefined);
+        if (tempSelectedContact?.id === "outros-contact") {
+          setTempSelectedContact(undefined);
         }
       }
     };
 
     validateAndSelect();
-  }, [
-    otherContactInfo,
-    toggleSelection,
-    trigger,
-    selectContact,
-    setSelectContact,
-  ]);
+  }, [otherContactInfo, trigger, tempSelectedContact]);
+
+  const validateAndConfirm = async () => {
+    // Check if we have a temporary selection (either from existing contacts or outros form)
+    if (!tempSelectedContact) {
+      return false; // No selection made
+    }
+
+    // If it's an "outros" contact, validate the form
+    if (tempSelectedContact.id === "outros-contact") {
+      const { name, type, contact } = otherContactInfo;
+
+      clearErrors();
+
+      const formData = {
+        name: name || "",
+        type: type ? [type] : [],
+        contact: contact || "",
+      };
+
+      try {
+        schema.parse(formData);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          error.errors.forEach((err) => {
+            const field = err.path[0] as keyof typeof formData;
+            setError(field, {
+              type: "manual",
+              message: err.message,
+            });
+          });
+        }
+        return false;
+      }
+    }
+
+    setSelectContact(tempSelectedContact);
+    return true;
+  };
 
   return {
     contactData,
@@ -125,5 +207,8 @@ export function useSearchContactHistoricalAccount({
     errors,
     control,
     trigger,
+    validateAndConfirm,
+    clearErrors,
+    tempSelectedContact,
   };
 }

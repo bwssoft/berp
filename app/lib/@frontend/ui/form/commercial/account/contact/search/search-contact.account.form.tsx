@@ -17,14 +17,12 @@ type ContactAccountFormProps = {
     documentValue: string;
   }[];
   isLoading?: boolean;
-  accountData?: IAccount;
   closeModal: () => void;
 };
 
 export function SearchContactAccountForm({
   contacts,
   isLoading,
-  accountData = {} as IAccount,
   closeModal,
 }: ContactAccountFormProps) {
   const {
@@ -33,7 +31,7 @@ export function SearchContactAccountForm({
     selectedIds,
     setSelectedIds,
     contactData,
-  } = useSearchContactAccount({ accountData, contacts, closeModal });
+  } = useSearchContactAccount({ contacts, closeModal });
 
   if (isLoading) return <div>Carregando...</div>;
 
@@ -61,7 +59,10 @@ export function SearchContactAccountForm({
                         checked={selectedIds.includes(c.id)}
                         onChange={(e) => toggleCheckbox(c.id, e.target.checked)}
                       />
-                      <span className="font-semilbold">{company.documentValue}</span> - {c.name} 
+                      <span className="font-semilbold">
+                        {company.documentValue}
+                      </span>{" "}
+                      - {c.name}
                     </label>
                   ))}
                 </DisclosurePanel>

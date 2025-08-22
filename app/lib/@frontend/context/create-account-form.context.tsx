@@ -21,12 +21,18 @@ import {
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
+import {
+  findOneAccountEconomicGroup,
+  validateControlledEnterprisesNotInHolding,
+  validateHoldingEnterpriseNotInGroup,
+} from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { useAuth } from "@/app/lib/@frontend/context";
 import {
   useCreateAccountFlow,
   LocalAccount,
   LocalAddress,
   LocalContact,
+  LocalAccountEconomicGroup,
 } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 
@@ -68,28 +74,34 @@ const schema = z
           .max(15, "Inscrição Municipal deve ter no máximo 15 dígitos")
           .optional(),
         status: z.string().optional(),
-        situationIE: z.object({
-          id: z.string(),
-          status: z.boolean(),
-          text: z.string(),
-        }),
+        situationIE: z
+          .object({
+            id: z.string().optional(),
+            status: z.boolean().optional(),
+            text: z.string().optional(),
+          })
+          .optional(),
         typeIE: z.string().optional(),
         sector: z
           .string({
             required_error: "Setor obrigatório",
           })
           .min(1, "Setor obrigatório"),
+      })
+      .optional(),
+    economic_group: z
+      .object({
         economic_group_holding: z
           .object({
-            taxId: z.string().optional(),
-            name: z.string().optional(),
+            name: z.string(),
+            taxId: z.string(),
           })
           .optional(),
         economic_group_controlled: z
           .array(
             z.object({
-              taxId: z.string().optional(),
-              name: z.string().optional(),
+              name: z.string(),
+              taxId: z.string(),
             })
           )
           .optional(),
@@ -195,6 +207,11 @@ interface CreateAccountFormContextData {
 
   // Functions
   handleCpfCnpj: (value: string) => Promise<"cpf" | "cnpj" | "invalid">;
+  handleHoldingSelection: (item: ICnpjaResponse | null) => Promise<void>;
+  validateHoldingEnterprise: (holdingTaxId: string) => Promise<boolean>;
+  validateControlledEnterprises: (
+    selectedControlled: ICnpjaResponse[]
+  ) => Promise<boolean>;
   debouncedValidationHolding: (value: string) => void;
   debouncedValidationControlled: (value: string) => void;
   onSubmit: (data: CreateAccountFormSchema) => Promise<void>;
@@ -216,7 +233,9 @@ export function CreateAccountFormProvider({
     createAccountLocally,
     createAddressLocally,
     createContactLocally,
+    createEconomicGroupLocally,
     account: localAccount,
+    economicGroup: localEconomicGroup,
   } = useCreateAccountFlow();
 
   // Estado para definir se o documento é CPF ou CNPJ:
@@ -330,26 +349,47 @@ export function CreateAccountFormProvider({
         if (localAccount.typeIE) {
           methods.setValue("cnpj.typeIE", localAccount.typeIE);
         }
-
-        if (localAccount.economic_group_holding) {
-          methods.setValue(
-            "cnpj.economic_group_holding",
-            localAccount.economic_group_holding
-          );
-        }
-
-        if (
-          localAccount.economic_group_controlled &&
-          localAccount.economic_group_controlled.length > 0
-        ) {
-          methods.setValue(
-            "cnpj.economic_group_controlled",
-            localAccount.economic_group_controlled
-          );
-        }
       }
     }
-  }, [localAccount, methods]);
+
+    // Initialize economic group data from separate context
+    if (localEconomicGroup) {
+      if (localEconomicGroup.economic_group_holding) {
+        const holdingData = {
+          taxId: localEconomicGroup.economic_group_holding.taxId || "",
+          company: {
+            name: localEconomicGroup.economic_group_holding.name || "",
+          },
+        } as ICnpjaResponse;
+
+        setSelectedHolding([holdingData]);
+        methods.setValue("economic_group.economic_group_holding", {
+          name: localEconomicGroup.economic_group_holding.name,
+          taxId: localEconomicGroup.economic_group_holding.taxId,
+        });
+      }
+
+      if (
+        localEconomicGroup.economic_group_controlled &&
+        localEconomicGroup.economic_group_controlled.length > 0
+      ) {
+        const controlledData = localEconomicGroup.economic_group_controlled.map(
+          (controlled) => ({
+            taxId: controlled.taxId || "",
+            company: {
+              name: controlled.name || "",
+            },
+          })
+        ) as ICnpjaResponse[];
+
+        setSelectedControlled(controlledData);
+        methods.setValue(
+          "economic_group.economic_group_controlled",
+          localEconomicGroup.economic_group_controlled
+        );
+      }
+    }
+  }, [localAccount, localEconomicGroup, methods]);
 
   const handleCpfCnpj = async (
     value: string
@@ -435,7 +475,16 @@ export function CreateAccountFormProvider({
     }
 
     if (newType === "cnpj") {
-      const data = await fetcCnpjRegistrationData(cleanedValue);
+      const [data, economicGroupResults] = await Promise.all([
+        fetcCnpjRegistrationData(cleanedValue),
+        findOneAccountEconomicGroup({
+          $or: [
+            { "economic_group_holding.taxId": cleanedValue },
+            { "economic_group_controlled.taxId": cleanedValue },
+          ],
+        }),
+      ]);
+
       if (data) {
         setDataCnpj(data);
 
@@ -468,6 +517,87 @@ export function CreateAccountFormProvider({
         };
 
         setDisabledFields(newDisabledFields);
+      }
+
+      if (
+        economicGroupResults?.economic_group_holding &&
+        economicGroupResults?.economic_group_controlled
+      ) {
+        const {
+          economic_group_holding: economicGroupHolding,
+          economic_group_controlled: economicGroupControlled,
+        } = economicGroupResults;
+
+        const holdingData = {
+          taxId: economicGroupHolding.taxId,
+          company: {
+            name: economicGroupHolding.name,
+          },
+        } as ICnpjaResponse;
+
+        setSelectedHolding([holdingData]);
+        methods.setValue("economic_group.economic_group_holding", {
+          name: holdingData.company.name,
+          taxId: holdingData.taxId,
+        });
+
+        const controlledData = economicGroupControlled.map((controlled) => ({
+          taxId: controlled.taxId,
+          company: {
+            name: controlled.name,
+          },
+        })) as ICnpjaResponse[];
+
+        // Add the current company being created to controlled companies if not already present
+        if (data?.company?.name) {
+          const currentCompanyTaxId = cleanedValue.replace(/\D/g, "");
+
+          // Check if current company is already in the controlled list
+          const isCurrentCompanyAlreadyIncluded = economicGroupControlled.some(
+            (controlled) =>
+              controlled.taxId.replace(/\D/g, "") === currentCompanyTaxId
+          );
+
+          if (!isCurrentCompanyAlreadyIncluded) {
+            const currentCompanyData = {
+              taxId: cleanedValue,
+              company: {
+                name: data.company.name,
+              },
+            } as ICnpjaResponse;
+
+            controlledData.push(currentCompanyData);
+
+            const currentCompanyFormData = {
+              name: data.company.name,
+              taxId: cleanedValue,
+            };
+
+            const updatedControlledFormData = [
+              ...economicGroupControlled,
+              currentCompanyFormData,
+            ];
+
+            setSelectedControlled(controlledData);
+            methods.setValue(
+              "economic_group.economic_group_controlled",
+              updatedControlledFormData
+            );
+          } else {
+            // Current company is already in the list, just set the existing data
+            setSelectedControlled(controlledData);
+            methods.setValue(
+              "economic_group.economic_group_controlled",
+              economicGroupControlled
+            );
+          }
+        } else {
+          setSelectedControlled(controlledData);
+          methods.setValue(
+            "economic_group.economic_group_controlled",
+            economicGroupControlled
+          );
+        }
       }
 
       methods.setValue("document.type", "cnpj");
@@ -510,15 +640,261 @@ export function CreateAccountFormProvider({
     await handleCnpjOrName(value, "controlled");
   }, 500);
 
+  const validateHoldingEnterprise = async (
+    holdingTaxId: string
+  ): Promise<boolean> => {
+    try {
+      const cleanedTaxId = holdingTaxId.replace(/\D/g, "");
+
+      const validationResult =
+        await validateHoldingEnterpriseNotInGroup(cleanedTaxId);
+
+      if (!validationResult.isValid && validationResult.conflictingEntry) {
+        const entry = validationResult.conflictingEntry;
+
+        let errorMessage =
+          "Não é possível selecionar esta empresa como holding:\n\n";
+
+        if (entry.conflictType === "controlled") {
+          errorMessage += `⚠️ Esta empresa já está controlada por outro grupo:\n`;
+          if (entry.holdingName) {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
+          } else {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence a outro grupo econômico\n`;
+          }
+        }
+
+        toast({
+          title: "Conflito de Grupo Econômico",
+          description: errorMessage.trim(),
+          variant: "error",
+        });
+
+        return false;
+      }
+
+      return validationResult.isValid;
+    } catch (error) {
+      console.error("Error validating holding enterprise:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao validar empresa holding",
+        variant: "error",
+      });
+      return false;
+    }
+  };
+
+  const handleHoldingSelection = async (item: ICnpjaResponse | null) => {
+    if (!item) {
+      setSelectedHolding([]);
+      setSelectedControlled([]);
+      methods.setValue("economic_group.economic_group_holding", undefined);
+      methods.setValue("economic_group.economic_group_controlled", undefined);
+      return;
+    }
+
+    // Validate the holding selection before proceeding
+    const isValid = await validateHoldingEnterprise(item.taxId);
+    if (!isValid) {
+      return; // Stop if validation fails
+    }
+
+    // Set the selected holding first
+    setSelectedHolding([item]);
+    methods.setValue("economic_group.economic_group_holding", {
+      name: item.company.name,
+      taxId: item.taxId,
+    });
+
+    try {
+      // Search for existing economic group with this holding
+      const existingEconomicGroup = await findOneAccountEconomicGroup({
+        "economic_group_holding.taxId": item.taxId,
+      });
+
+      if (existingEconomicGroup) {
+        // Found existing economic group, populate controlled companies and disable fields
+        let controlledData: ICnpjaResponse[] = [];
+        let controlledFormData: { name: string; taxId: string }[] = [];
+
+        // Add existing controlled companies
+        if (existingEconomicGroup.economic_group_controlled) {
+          const existingControlled =
+            existingEconomicGroup.economic_group_controlled.map(
+              (controlled) => ({
+                taxId: controlled.taxId,
+                company: {
+                  name: controlled.name,
+                },
+              })
+            ) as ICnpjaResponse[];
+
+          controlledData = [...existingControlled];
+          controlledFormData = [
+            ...existingEconomicGroup.economic_group_controlled,
+          ];
+        }
+
+        // Add the current company being created to controlled companies if not already present
+        const currentCompany = methods.getValues("cnpj");
+        const currentDocument = methods.getValues("document");
+
+        if (currentCompany?.social_name && currentDocument?.value) {
+          const currentCompanyTaxId = currentDocument.value.replace(/\D/g, "");
+
+          // Check if current company is already in the controlled list
+          const isCurrentCompanyAlreadyIncluded =
+            existingEconomicGroup.economic_group_controlled?.some(
+              (controlled) =>
+                controlled.taxId.replace(/\D/g, "") === currentCompanyTaxId
+            ) || false;
+
+          if (!isCurrentCompanyAlreadyIncluded) {
+            const currentCompanyData = {
+              taxId: currentDocument.value,
+              company: {
+                name: currentCompany.social_name,
+              },
+            } as ICnpjaResponse;
+
+            const currentCompanyFormData = {
+              name: currentCompany.social_name,
+              taxId: currentDocument.value,
+            };
+
+            controlledData.push(currentCompanyData);
+            controlledFormData.push(currentCompanyFormData);
+          }
+        }
+
+        setSelectedControlled(controlledData);
+        methods.setValue(
+          "economic_group.economic_group_controlled",
+          controlledFormData
+        );
+
+        toast({
+          title: "Grupo Econômico Encontrado",
+          description:
+            "Dados do grupo econômico foram carregados automaticamente.",
+          variant: "default",
+        });
+      }
+    } catch (error) {
+      console.error("Error searching for economic group:", error);
+    }
+  };
+
+  const validateControlledEnterprises = async (
+    selectedControlled: ICnpjaResponse[]
+  ): Promise<boolean> => {
+    if (!selectedControlled || selectedControlled.length === 0) {
+      return true;
+    }
+
+    try {
+      const initialControlled =
+        localEconomicGroup?.economic_group_controlled || [];
+      const initialControlledTaxIds = initialControlled.map((item) =>
+        item.taxId.replace(/\D/g, "")
+      );
+
+      const newlyAddedControlled = selectedControlled.filter((item) => {
+        const cleanTaxId = item.taxId.replace(/\D/g, "");
+        return !initialControlledTaxIds.includes(cleanTaxId);
+      });
+
+      if (newlyAddedControlled.length === 0) {
+        return true;
+      }
+
+      const controlledTaxIds = newlyAddedControlled.map((item) =>
+        item.taxId.replace(/\D/g, "")
+      );
+
+      // Check if any controlled enterprise is the same as the selected holding
+      const selectedHolding = methods.getValues(
+        "economic_group.economic_group_holding"
+      );
+      if (selectedHolding) {
+        const holdingTaxId = selectedHolding.taxId?.replace(/\D/g, "");
+        if (holdingTaxId && controlledTaxIds.includes(holdingTaxId)) {
+          toast({
+            title: "Configuração Inválida",
+            description: `A holding "${selectedHolding.name}" não pode ser adicionada como empresa controlada.`,
+            variant: "error",
+          });
+          return false;
+        }
+      }
+
+      const validationResult =
+        await validateControlledEnterprisesNotInHolding(controlledTaxIds);
+
+      if (!validationResult.isValid && validationResult.conflictingEntries) {
+        // Group conflicts by type for better error messages
+        const holdingConflicts = validationResult.conflictingEntries.filter(
+          (entry) => entry.conflictType === "holding"
+        );
+        const controlledConflicts = validationResult.conflictingEntries.filter(
+          (entry) => entry.conflictType === "controlled"
+        );
+
+        let errorMessage =
+          "Não é possível adicionar as seguintes empresas como controladas:\n\n";
+
+        if (holdingConflicts.length > 0) {
+          errorMessage += "⚠️ Empresas que já são Holdings:\n";
+          holdingConflicts.forEach((entry) => {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já é uma holding de grupo econômico\n`;
+          });
+          errorMessage += "\n";
+        }
+
+        if (controlledConflicts.length > 0) {
+          errorMessage += "⚠️ Empresas já controladas por outros grupos:\n";
+          controlledConflicts.forEach((entry) => {
+            if (entry.holdingName) {
+              errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
+            } else {
+              errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence a outro grupo econômico\n`;
+            }
+          });
+        }
+
+        toast({
+          title: "Conflito de Grupo Econômico",
+          description: errorMessage.trim(),
+          variant: "error",
+        });
+
+        return false;
+      }
+
+      return validationResult.isValid;
+    } catch (error) {
+      console.error("Error validating controlled enterprises:", error);
+      toast({
+        title: "Erro",
+        description: "Erro ao validar empresas controladas",
+        variant: "error",
+      });
+      return false;
+    }
+  };
+
   const onSubmit = async (data: CreateAccountFormSchema) => {
     setIsSubmitting(true);
 
     try {
       const address = dataCnpj?.address;
-      const contact = dataCnpj?.phones[0];
+      const phones = dataCnpj?.phones || [];
+      const emails = dataCnpj?.emails || [];
 
       const accountLocalId = crypto.randomUUID();
 
+      // @ts-ignore
       const base: LocalAccount = {
         id: accountLocalId,
         document: {
@@ -536,24 +912,28 @@ export function CreateAccountFormProvider({
               state_registration: data.cnpj?.state_registration,
               municipal_registration: data.cnpj?.municipal_registration,
               status: data.cnpj?.status,
-              situationIE: data.cnpj?.situationIE,
+              situationIE: data.cnpj?.situationIE || {},
               typeIE: data.cnpj?.typeIE,
-              economic_group_holding: data.cnpj?.economic_group_holding
-                ? {
-                    name: data.cnpj?.economic_group_holding?.name! as string,
-                    taxId: data.cnpj?.economic_group_holding?.taxId! as string,
-                  }
-                : undefined,
-              economic_group_controlled:
-                data.cnpj?.economic_group_controlled?.map((item) => ({
-                  name: item.name! as string,
-                  taxId: item.taxId! as string,
-                })),
               setor: data.cnpj?.sector ? [data.cnpj?.sector] : undefined,
             }),
       };
 
       createAccountLocally(base);
+
+      // Create economic group if data exists
+      if (
+        data.economic_group &&
+        (data.economic_group.economic_group_holding ||
+          data.economic_group.economic_group_controlled)
+      ) {
+        const economicGroupData: LocalAccountEconomicGroup = {
+          economic_group_holding: data.economic_group.economic_group_holding,
+          economic_group_controlled:
+            data.economic_group.economic_group_controlled,
+        };
+
+        createEconomicGroupLocally(economicGroupData);
+      }
 
       // Criar endereço
       if (address) {
@@ -566,35 +946,60 @@ export function CreateAccountFormProvider({
           number: address.number,
           zip_code: address.zip,
           complement: address.details ?? "",
-          type: ["Faturamento"],
+          type: ["Fiscal"],
           default_address: true,
         };
 
         createAddressLocally(newAddress);
       }
 
-      if (contact) {
-        const newContact: LocalContact = {
-          id: crypto.randomUUID(),
-          name: dataCnpj?.company.name || dataCnpj?.alias || "",
-          contractEnabled: false,
-          positionOrRelation: "",
-          taxId: dataCnpj.taxId,
-          contactFor: ["Fiscal"],
-          contactItems: [
-            {
-              id: crypto.randomUUID(),
-              contact: `${contact.area}${contact.number}`,
-              type:
-                dataCnpj?.phones[0].type === "LANDLINE"
-                  ? "Telefone Comercial"
-                  : "Celular",
-              preferredContact: {},
-            },
-          ],
-          originType: "api",
-        };
-        createContactLocally(newContact);
+      // Create contacts for each phone
+      if (phones && phones.length > 0 && dataCnpj) {
+        phones.forEach((phone, index) => {
+          const newContact: LocalContact = {
+            id: crypto.randomUUID(),
+            name: dataCnpj.company.name || dataCnpj.alias || "",
+            contractEnabled: false,
+            positionOrRelation: "",
+            taxId: dataCnpj.taxId,
+            contactFor: ["Fiscal"],
+            contactItems: [
+              {
+                id: crypto.randomUUID(),
+                contact: `${phone.area}${phone.number}`,
+                type:
+                  phone.type === "LANDLINE" ? "Telefone Comercial" : "Celular",
+                preferredContact: {},
+              },
+            ],
+            originType: "api",
+          };
+          createContactLocally(newContact);
+        });
+      }
+
+      // Create contacts for each email
+      if (emails && emails.length > 0 && dataCnpj) {
+        emails.forEach((email, index) => {
+          const newContact: LocalContact = {
+            id: crypto.randomUUID(),
+            name: dataCnpj.company.name || dataCnpj.alias || "",
+            contractEnabled: false,
+            positionOrRelation: "",
+            taxId: dataCnpj.taxId,
+            contactFor: ["Fiscal"],
+            contactItems: [
+              {
+                id: crypto.randomUUID(),
+                contact: email.address,
+                type: "Email",
+                preferredContact: {},
+              },
+            ],
+            originType: "api",
+          };
+          createContactLocally(newContact);
+        });
       }
 
       router.push(
@@ -632,6 +1037,9 @@ export function CreateAccountFormProvider({
     buttonsState,
     toggleButtonText,
     handleCpfCnpj,
+    handleHoldingSelection,
+    validateHoldingEnterprise,
+    validateControlledEnterprises,
     debouncedValidationHolding,
     debouncedValidationControlled,
     onSubmit,

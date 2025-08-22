@@ -32,8 +32,16 @@ type FilterFormData = {
   billingSituation?: string;
 };
 
+const DEFAULTS: FilterFormData = {
+  client: "",
+  document: "",
+  sector: "",
+  status: "Todos",
+  billingSituation: "Todos",
+};
+
 export function AccountFilterForm() {
-  const form = useForm<FilterFormData>();
+  const form = useForm<FilterFormData>({ defaultValues: DEFAULTS });
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -61,7 +69,7 @@ export function AccountFilterForm() {
   }
 
   function handleClear() {
-    form.reset();
+    form.reset(DEFAULTS);
     startTransition(() => {
       router.push("?");
     });
@@ -74,7 +82,6 @@ export function AccountFilterForm() {
         className="flex items-end justify-between"
       >
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Cliente */}
           <FormField
             control={form.control}
             name="client"
@@ -92,7 +99,6 @@ export function AccountFilterForm() {
             )}
           />
 
-          {/* CPF/CNPJ */}
           <FormField
             control={form.control}
             name="document"
@@ -114,7 +120,6 @@ export function AccountFilterForm() {
             )}
           />
 
-          {/* Setor */}
           <FormField
             control={form.control}
             name="sector"
@@ -123,7 +128,7 @@ export function AccountFilterForm() {
                 <FormLabel>Setor</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(v) => field.onChange(v || "")}
                     value={field.value ?? ""}
                   >
                     <SelectTrigger>
@@ -143,8 +148,8 @@ export function AccountFilterForm() {
             )}
           />
 
-          {/* Status Faturamento */}
-          {/* <FormField
+          {/*
+          <FormField
             control={form.control}
             name="status"
             render={({ field }) => (
@@ -152,13 +157,14 @@ export function AccountFilterForm() {
                 <FormLabel>Status Faturamento</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(v) => field.onChange(v || "")}
                     value={field.value ?? ""}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o status" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="Todos">Todos</SelectItem>
                       <SelectItem value="Ativo">Ativo</SelectItem>
                       <SelectItem value="Inativo">Inativo</SelectItem>
                     </SelectContent>
@@ -167,10 +173,9 @@ export function AccountFilterForm() {
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
 
-          {/* Situação Faturamento */}
-          {/* <FormField
+          <FormField
             control={form.control}
             name="billingSituation"
             render={({ field }) => (
@@ -178,13 +183,14 @@ export function AccountFilterForm() {
                 <FormLabel>Situação Faturamento</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(v) => field.onChange(v || "")}
                     value={field.value ?? ""}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a situação" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="Todos">Todos</SelectItem>
                       <SelectItem value="Adimplente">Adimplente</SelectItem>
                       <SelectItem value="Inadimplente">Inadimplente</SelectItem>
                       <SelectItem value="Inadimplente/Bloqueado">
@@ -196,7 +202,8 @@ export function AccountFilterForm() {
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
+          */}
         </div>
 
         <div className="flex justify-end gap-3 pt-2">

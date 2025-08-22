@@ -67,7 +67,7 @@ export function useCreateOneUserForm() {
   const initialProfiles = useQuery({
     queryKey: ["findManyProfiles", "initial"],
     queryFn: async () => {
-      const { docs } = await findManyProfile({});
+      const { docs } = await findManyProfile({active: true});
       return docs;
     }
   });
@@ -80,7 +80,7 @@ export function useCreateOneUserForm() {
       if (searchTerm.trim() !== "") {
         filter["name"] = { $regex: searchTerm, $options: "i" };
       }
-      const { docs } = await findManyProfile(filter);
+      const { docs } = await findManyProfile({...filter, active: true});
         return docs;
     },
     enabled: searchTerm.length > 0

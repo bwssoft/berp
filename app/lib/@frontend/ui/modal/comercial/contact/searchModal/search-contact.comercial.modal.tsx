@@ -6,32 +6,24 @@ import { SearchContactAccountForm } from "../../../../form/commercial/account/co
 import { useSearchContactModal } from "./use-search-contact.comercial.modal";
 
 interface ContactModalProps {
-  accountId?: string;
+  holdingTaxId?: string;
 }
 
-export function SearchContactModal({ accountId }: ContactModalProps) {
-  const {
-    closeModal,
-    openModal,
-    open,
-    contactsByCompany,
-    isLoading,
-    accountData,
-  } = useSearchContactModal(accountId ?? "");
+export function SearchContactModal({ holdingTaxId }: ContactModalProps) {
+  const { closeModal, openModal, open, contactsByCompany, isLoading } =
+    useSearchContactModal(holdingTaxId);
 
-  if (!contactsByCompany) return null;
+  if (contactsByCompany.length === 0) return null;
 
   return (
     <>
-      {contactsByCompany.length > 0 && (
-        <Button 
-          variant={"ghost"} 
-          className="border px-3 py-3"
-          onClick={openModal}
-        >
-          Buscar contato
-        </Button>
-      )}
+      <Button
+        variant={"ghost"}
+        className="border px-3 py-3"
+        onClick={openModal}
+      >
+        Buscar contato
+      </Button>
 
       <Modal
         open={open}
@@ -46,7 +38,6 @@ export function SearchContactModal({ accountId }: ContactModalProps) {
               isLoading={isLoading}
               closeModal={closeModal}
               contacts={contactsByCompany ?? []}
-              accountData={accountData}
             />
           </ModalBody>
         </ModalContent>
