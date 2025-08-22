@@ -794,7 +794,22 @@ export function CreateAccountFormProvider({
     }
 
     try {
-      const controlledTaxIds = selectedControlled.map((item) =>
+      const initialControlled =
+        localEconomicGroup?.economic_group_controlled || [];
+      const initialControlledTaxIds = initialControlled.map((item) =>
+        item.taxId.replace(/\D/g, "")
+      );
+
+      const newlyAddedControlled = selectedControlled.filter((item) => {
+        const cleanTaxId = item.taxId.replace(/\D/g, "");
+        return !initialControlledTaxIds.includes(cleanTaxId);
+      });
+
+      if (newlyAddedControlled.length === 0) {
+        return true;
+      }
+
+      const controlledTaxIds = newlyAddedControlled.map((item) =>
         item.taxId.replace(/\D/g, "")
       );
 

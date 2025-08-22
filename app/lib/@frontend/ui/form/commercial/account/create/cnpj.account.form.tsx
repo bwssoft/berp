@@ -318,14 +318,26 @@ export function CNPJAccountForm() {
                   return; // Don't update the selection
                 }
 
+                // Only validate if we're adding new companies (not removing)
                 const isAddingCompanies =
                   selectedItems.length > (selectedControlled?.length || 0);
 
                 if (isAddingCompanies) {
-                  const isValid =
-                    await validateControlledEnterprises(selectedItems);
-                  if (!isValid) {
-                    return;
+                  const currentTaxIds = (selectedControlled || []).map((item) =>
+                    item.taxId.replace(/\D/g, "")
+                  );
+
+                  const newlyAddedItems = selectedItems.filter((item) => {
+                    const cleanTaxId = item.taxId.replace(/\D/g, "");
+                    return !currentTaxIds.includes(cleanTaxId);
+                  });
+
+                  if (newlyAddedItems.length > 0) {
+                    const isValid =
+                      await validateControlledEnterprises(newlyAddedItems);
+                    if (!isValid) {
+                      return;
+                    }
                   }
                 }
 

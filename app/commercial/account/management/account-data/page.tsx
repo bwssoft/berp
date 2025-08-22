@@ -44,7 +44,8 @@ export default function Page({ searchParams }: Props) {
   // Query for economic group
   const { data: economicGroup, isLoading: isLoadingEconomicGroup } = useQuery({
     queryKey: ["findOneAccountEconomicGroup", account?.economicGroupId],
-    queryFn: () => findOneAccountEconomicGroup({ id: account!.economicGroupId! }),
+    queryFn: () =>
+      findOneAccountEconomicGroup({ id: account!.economicGroupId! }),
     enabled: !!account && !!account.economicGroupId,
     refetchOnMount: true,
   });
