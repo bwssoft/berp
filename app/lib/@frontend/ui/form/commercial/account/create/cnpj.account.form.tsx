@@ -42,8 +42,10 @@ export function CNPJAccountForm() {
     disabledFields,
     selectedHolding,
     setSelectedHolding,
+    handleHoldingSelection,
     selectedIE,
     setSelectedIE,
+    validateControlledEnterprises,
     methods,
   } = useCreateAccountFormContext();
 
@@ -257,7 +259,7 @@ export function CNPJAccountForm() {
       <div className="flex gap-2 items-end">
         <Controller
           control={control}
-          name="cnpj.economic_group_holding"
+          name="economic_group.economic_group_holding"
           render={({ field }) => (
             <Combobox
               disableLocalFilter={true}
@@ -269,14 +271,13 @@ export function CNPJAccountForm() {
               }}
               value={selectedHolding}
               onOptionChange={([item]) => {
+                handleHoldingSelection(item || null);
                 if (item) {
-                  setSelectedHolding([item]);
                   field.onChange({
                     name: item.company.name,
                     taxId: item.taxId,
                   });
                 } else {
-                  setSelectedHolding([]);
                   field.onChange(undefined);
                 }
               }}
@@ -290,7 +291,7 @@ export function CNPJAccountForm() {
       <div className="flex gap-2 items-end">
         <Controller
           control={control}
-          name="cnpj.economic_group_controlled"
+          name="economic_group.economic_group_controlled"
           render={({ field }) => (
             <Combobox
               disableLocalFilter={true}
@@ -300,7 +301,46 @@ export function CNPJAccountForm() {
               behavior="search"
               placeholder="Digite o CNPJ, Razão Social ou Nome Fantasia..."
               value={selectedControlled || []}
-              onChange={(selectedItems) => {
+              onChange={async (selectedItems) => {
+                // Check for duplicates within the current selection
+                const taxIds = selectedItems.map((item) =>
+                  item.taxId.replace(/\D/g, "")
+                );
+                const uniqueTaxIds = new Set(taxIds);
+
+                if (taxIds.length !== uniqueTaxIds.size) {
+                  toast({
+                    title: "Seleção Duplicada",
+                    description:
+                      "Você não pode selecionar a mesma empresa mais de uma vez.",
+                    variant: "error",
+                  });
+                  return; // Don't update the selection
+                }
+
+                // Only validate if we're adding new companies (not removing)
+                const isAddingCompanies =
+                  selectedItems.length > (selectedControlled?.length || 0);
+
+                if (isAddingCompanies) {
+                  const currentTaxIds = (selectedControlled || []).map((item) =>
+                    item.taxId.replace(/\D/g, "")
+                  );
+
+                  const newlyAddedItems = selectedItems.filter((item) => {
+                    const cleanTaxId = item.taxId.replace(/\D/g, "");
+                    return !currentTaxIds.includes(cleanTaxId);
+                  });
+
+                  if (newlyAddedItems.length > 0) {
+                    const isValid =
+                      await validateControlledEnterprises(newlyAddedItems);
+                    if (!isValid) {
+                      return;
+                    }
+                  }
+                }
+
                 setSelectedControlled(selectedItems);
                 field.onChange(
                   selectedItems.map((item) => {
