@@ -391,6 +391,43 @@ export function useUpdateEconomicGroupForm(
               );
             }
           }
+
+          // Find companies that were added to the controlled list
+          const existingControlledTaxIds = existingControlled.map((company) =>
+            company.taxId.replace(/\D/g, "")
+          );
+          const addedAccounts = controlled.filter((company) => {
+            const cleanTaxId = company.taxId.replace(/\D/g, "");
+            return !existingControlledTaxIds.includes(cleanTaxId);
+          });
+
+          // Connect newly added accounts to economic group
+          if (addedAccounts.length > 0) {
+            try {
+              for (const addedAccount of addedAccounts) {
+                // Find account by taxId first, then update by ID
+                const accountToConnect = await findOneAccount({
+                  "document.value": addedAccount.taxId,
+                });
+
+                if (accountToConnect?.id) {
+                  await updateOneAccount(
+                    { id: accountToConnect.id },
+                    { economicGroupId: economicGroupId }
+                  );
+
+                  console.log(
+                    `Connected account ${addedAccount.name} (${addedAccount.taxId}) to economic group ${economicGroupId}`
+                  );
+                }
+              }
+            } catch (error) {
+              console.warn(
+                "Failed to connect some accounts to economic group:",
+                error
+              );
+            }
+          }
         }
 
         economicGroupResult = await updateOneAccountEconomicGroup(
@@ -405,10 +442,39 @@ export function useUpdateEconomicGroupForm(
           await createOneAccountEconomicGroup(economicGroupPayload);
 
         if (economicGroupResult.success && economicGroupResult.data?.id) {
+          // Connect the main account to the economic group
           await updateOneAccount(
             { id: accountId },
             { economicGroupId: economicGroupResult.data.id }
           );
+
+          // Connect all controlled accounts to the economic group
+          if (controlled.length > 0) {
+            try {
+              for (const controlledAccount of controlled) {
+                // Find account by taxId first, then update by ID
+                const accountToConnect = await findOneAccount({
+                  "document.value": controlledAccount.taxId,
+                });
+
+                if (accountToConnect?.id) {
+                  await updateOneAccount(
+                    { id: accountToConnect.id },
+                    { economicGroupId: economicGroupResult.data.id }
+                  );
+
+                  console.log(
+                    `Connected controlled account ${controlledAccount.name} (${controlledAccount.taxId}) to new economic group ${economicGroupResult.data.id}`
+                  );
+                }
+              }
+            } catch (error) {
+              console.warn(
+                "Failed to connect some controlled accounts to new economic group:",
+                error
+              );
+            }
+          }
         }
       }
 

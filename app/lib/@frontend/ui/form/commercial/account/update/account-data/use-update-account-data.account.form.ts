@@ -9,7 +9,6 @@ import { updateOneAccount } from "@/app/lib/@backend/action/commercial/account.a
 import { z } from "zod";
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { useRouter } from "next/navigation";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { useAuth } from "@/app/lib/@frontend/context";
@@ -173,7 +172,6 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
     contact: "Validar",
   });
 
-  const router = useRouter();
   const { user } = useAuth();
   const queryClient = useQueryClient();
 

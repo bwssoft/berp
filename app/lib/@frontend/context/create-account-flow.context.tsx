@@ -10,6 +10,7 @@ import {
 import {
   createOneAccount,
   updateOneAccount,
+  findOneAccount,
 } from "../../@backend/action/commercial/account.action";
 import { createOneAddress } from "../../@backend/action/commercial/address.action";
 import { createOneContact } from "../../@backend/action/commercial/contact.action";
@@ -247,6 +248,7 @@ export const CreateAccountFlowProvider = ({
               return !newTaxIds.includes(cleanTaxId);
             });
 
+            // Disconnect removed accounts from economic group
             if (removedAccounts.length > 0) {
               try {
                 for (const removedAccount of removedAccounts) {
@@ -262,6 +264,43 @@ export const CreateAccountFlowProvider = ({
               } catch (error) {
                 console.warn(
                   "Failed to disconnect some accounts from economic group:",
+                  error
+                );
+              }
+            }
+
+            // Find companies that were added to the controlled list
+            const existingTaxIds = existingControlled.map((company) =>
+              company.taxId.replace(/\D/g, "")
+            );
+            const addedAccounts = newControlled.filter((company) => {
+              const cleanTaxId = company.taxId.replace(/\D/g, "");
+              return !existingTaxIds.includes(cleanTaxId);
+            });
+
+            // Connect newly added accounts to economic group
+            if (addedAccounts.length > 0) {
+              try {
+                for (const addedAccount of addedAccounts) {
+                  // Find account by taxId first, then update by ID
+                  const accountToConnect = await findOneAccount({
+                    "document.value": addedAccount.taxId,
+                  });
+
+                  if (accountToConnect?.id) {
+                    await updateOneAccount(
+                      { id: accountToConnect.id },
+                      { economicGroupId: existingEconomicGroup.id! }
+                    );
+
+                    console.log(
+                      `Connected account ${addedAccount.name} (${addedAccount.taxId}) to existing economic group ${existingEconomicGroup.id}`
+                    );
+                  }
+                }
+              } catch (error) {
+                console.warn(
+                  "Failed to connect some accounts to economic group:",
                   error
                 );
               }
@@ -338,6 +377,34 @@ export const CreateAccountFlowProvider = ({
       }
 
       const createdAccountId = accountResult.id;
+
+      // 2.1. Connect controlled accounts to economic group if economic group was created/updated
+      if (economicGroupId && economicGroup?.economic_group_controlled) {
+        try {
+          for (const controlledAccount of economicGroup.economic_group_controlled) {
+            // Find account by taxId first, then update by ID
+            const accountToConnect = await findOneAccount({
+              "document.value": controlledAccount.taxId,
+            });
+
+            if (accountToConnect?.id) {
+              await updateOneAccount(
+                { id: accountToConnect.id },
+                { economicGroupId }
+              );
+
+              console.log(
+                `Connected controlled account ${controlledAccount.name} (${controlledAccount.taxId}) to economic group ${economicGroupId}`
+              );
+            }
+          }
+        } catch (error) {
+          console.warn(
+            "Failed to connect some controlled accounts to economic group:",
+            error
+          );
+        }
+      }
 
       await createOneHistorical({
         accountId: createdAccountId,

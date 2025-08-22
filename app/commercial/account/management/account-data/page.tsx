@@ -22,6 +22,7 @@ export default function Page({ searchParams }: Props) {
     queryKey: ["findOneAccount", accountId],
     queryFn: () => findOneAccount({ id: accountId }),
     enabled: !!accountId,
+    refetchOnMount: true,
   });
 
   // Query for addresses
@@ -29,6 +30,7 @@ export default function Page({ searchParams }: Props) {
     queryKey: ["findManyAddress", accountId],
     queryFn: () => findManyAddress({ accountId }),
     enabled: !!accountId && !!account,
+    refetchOnMount: true,
   });
 
   // Query for contacts
@@ -36,6 +38,7 @@ export default function Page({ searchParams }: Props) {
     queryKey: ["findManyContact", accountId],
     queryFn: () => findManyContact({ accountId }),
     enabled: !!accountId && !!account,
+    refetchOnMount: true,
   });
 
   // Query for economic group
@@ -43,6 +46,7 @@ export default function Page({ searchParams }: Props) {
     queryKey: ["findOneAccountEconomicGroup", account?.economicGroupId],
     queryFn: () => findOneAccountEconomicGroup({ id: account!.economicGroupId! }),
     enabled: !!account && !!account.economicGroupId,
+    refetchOnMount: true,
   });
 
   // Query for permissions using useQueries
@@ -57,6 +61,7 @@ export default function Page({ searchParams }: Props) {
           restrictFeatureByProfile(
             "commercial:accounts:access:tab:data:contacts"
           ),
+        refetchOnMount: true,
       },
       {
         queryKey: [
@@ -67,6 +72,7 @@ export default function Page({ searchParams }: Props) {
           restrictFeatureByProfile(
             "commercial:accounts:access:tab:data:addresses"
           ),
+        refetchOnMount: true,
       },
       {
         queryKey: [
@@ -77,6 +83,7 @@ export default function Page({ searchParams }: Props) {
           restrictFeatureByProfile(
             "commercial:accounts:access:tab:data:group-edit"
           ),
+        refetchOnMount: true,
       },
       {
         queryKey: [
@@ -85,6 +92,7 @@ export default function Page({ searchParams }: Props) {
         ],
         queryFn: () =>
           restrictFeatureByProfile("commercial:accounts:access:lgpd:full"),
+        refetchOnMount: true,
       },
       {
         queryKey: [
@@ -93,6 +101,7 @@ export default function Page({ searchParams }: Props) {
         ],
         queryFn: () =>
           restrictFeatureByProfile("commercial:accounts:access:lgpd:partial"),
+        refetchOnMount: true,
       },
     ],
   });
