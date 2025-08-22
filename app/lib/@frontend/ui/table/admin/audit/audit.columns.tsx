@@ -264,12 +264,29 @@ export const columns: ColumnDef<IAudit>[] = [
             const before = formatScalar(m.before, field);
             const after = formatScalar(m.after, field);
 
+            const renderValue = (value: string) => {
+              if (pretty === "perfil") {
+                return (
+                  <span className="font-medium flex flex-wrap">
+                    {value.split(",").map((part, idx, arr) => (
+                      <span key={idx}>
+                        {part.trim()}
+                        {idx < arr.length - 1 && `,\u00A0`}
+                      </span>
+                    ))}
+                  </span>
+                );
+              }
+
+              return <span className="font-medium break-words">{value}</span>;
+            };
+
             return (
-              <div key={i} className="text-sm">
-                <span className="mr-1">{`Campo '${pretty}' de`}</span>
-                <span className="font-medium">“{before}”</span>
-                <span className="mx-1">para</span>
-                <span className="font-medium">“{after}”</span>
+              <div key={i} className="text-sm w-[20vw]">
+                <span className="mr-1 font-bold">{`Campo '${pretty}' de`}</span>
+                {renderValue(before)}
+                <span className="mx-1 font-bold">para</span>
+                {renderValue(after)}
               </div>
             );
           })}
