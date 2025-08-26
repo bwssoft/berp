@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import {
   IAccount,
   IAddress,
@@ -128,8 +134,10 @@ const CreateAccountFlowContext = createContext<CreateAccountFlowContextType>(
 
 export const CreateAccountFlowProvider = ({
   children,
+  resetOnMount = false,
 }: {
   children: React.ReactNode;
+  resetOnMount?: boolean;
 }) => {
   const { user } = useAuth();
 
@@ -303,7 +311,20 @@ export const CreateAccountFlowProvider = ({
     setAddresses([]);
     setContacts([]);
     setEconomicGroup(null);
+
+    // Clear localStorage data
+    removeFromStorage(STORAGE_KEYS.ACCOUNT);
+    removeFromStorage(STORAGE_KEYS.ADDRESSES);
+    removeFromStorage(STORAGE_KEYS.CONTACTS);
+    removeFromStorage(STORAGE_KEYS.ECONOMIC_GROUP);
   }, [setAccount, setAddresses, setContacts, setEconomicGroup]);
+
+  // Reset flow on mount if requested (for "Nova Conta" button clicks)
+  useEffect(() => {
+    if (resetOnMount) {
+      resetFlow();
+    }
+  }, [resetOnMount, resetFlow]);
 
   // API creation method
   const createEntitiesApi = useCallback(async () => {

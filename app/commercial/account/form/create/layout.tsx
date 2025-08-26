@@ -7,5 +7,9 @@ interface CreateAccountLayoutProps {
 export default function CreateAccountLayout({
   children,
 }: CreateAccountLayoutProps) {
-  return <CreateAccountFlowProvider>{children}</CreateAccountFlowProvider>;
+  return (
+    <CreateAccountFlowProvider resetOnMount>
+      {children}
+    </CreateAccountFlowProvider>
+  );
 }
