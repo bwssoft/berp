@@ -37,6 +37,7 @@ export function HistoricalDataPage({ historical, accountId }:Props) {
         openModalAnnex={openModal}
         closeModalAnnex={closeModal}
         file={file}
+        setFile={setFile}
       />
 
       <TimelineItem

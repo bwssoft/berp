@@ -1,13 +1,14 @@
 "use client";
 
 import { downloadAccountAttachmentHistorical } from "@/app/lib/@backend/action/commercial/account-attachment-historical.download.action";
+import { deleteAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.delete.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { ContactSelection } from "@/app/lib/@backend/domain";
 import { useAuth } from "@/app/lib/@frontend/context";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -21,12 +22,18 @@ type Props = {
     accountId: string;
     closeModalAnnex?: () => void;
     file?: { name: string; url: string; id: string };
+    setFile?: Dispatch<SetStateAction<{
+    name: string;
+    url: string;
+    id: string;
+} | undefined>>
 };
 
 export function useCreateHistoricalForm({
     accountId,
     closeModalAnnex,
     file,
+    setFile
 }: Props) {
     const {
         handleSubmit,
@@ -122,6 +129,13 @@ export function useCreateHistoricalForm({
         }
     };
 
+    const onHandleRemoveFile = async () => {
+        if (setFile && file) {
+            setFile(undefined);
+            await deleteAccountAttachment(file?.id);
+        }
+    }
+
     return {
         onSubmit,
         register,
@@ -131,5 +145,6 @@ export function useCreateHistoricalForm({
         errors,
         handleDownload,
         isLoading,
+        onHandleRemoveFile
     };
 }
