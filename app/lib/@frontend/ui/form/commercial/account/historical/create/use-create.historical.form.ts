@@ -54,7 +54,7 @@ export function useCreateHistoricalForm({
                 description: data.description,
                 author: {
                     name: user?.name ?? "",
-                    avatarUrl: "",
+                    avatarUrl: user?.avatarUrl ?? "",
                 },
                 file: file,
                 contacts: selectContact,
