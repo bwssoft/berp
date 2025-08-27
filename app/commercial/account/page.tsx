@@ -1,3 +1,4 @@
+"use client"
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { IAccount } from "@/app/lib/@backend/domain";
@@ -12,6 +13,7 @@ import {
 import { AccountFilterForm } from "@/app/lib/@frontend/ui/form/commercial/account/search/search.account.form";
 import { AccountTable } from "@/app/lib/@frontend/ui/table/commercial/account/account.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { useQuery } from "@tanstack/react-query";
 import { Filter } from "mongodb";
 import Link from "next/link";
 
@@ -30,31 +32,58 @@ interface Props {
   };
 }
 
-export default async function Page(props: Props) {
+export default function Page(props: Props) {
   const {
     searchParams: { page, ...rest },
   } = props;
   const _page = page ? Number(page) : 1;
+  const accounts = useQuery({
+    queryKey: ["attachments", rest, _page],
+    queryFn: () => findManyAccount(query(rest), _page),
+  })
 
-  const accounts = await findManyAccount(query(rest), _page);
+  const canCreate = useQuery({
+    queryKey: [
+        "restrictFeatureByProfile",
+        "commercial:accounts:new",
+      ],
+    queryFn: () => restrictFeatureByProfile(
+      "commercial:accounts:new"
+    ),
+    refetchOnMount: true,
+  }).data;
 
-  const canCreate = await restrictFeatureByProfile("commercial:accounts:new");
-  const canViewFullLgpd = await restrictFeatureByProfile(
-    "commercial:accounts:access:lgpd:full"
-  );
-  const canViewPartialLgpd = await restrictFeatureByProfile(
-    "commercial:accounts:access:lgpd:partial"
-  );
+  const canViewFullLgpd = useQuery({
+    queryKey: [
+        "restrictFeatureByProfile",
+        "commercial:accounts:access:lgpd:full",
+      ],
+    queryFn: () => restrictFeatureByProfile(
+      "commercial:accounts:access:lgpd:full"
+    ),
+    refetchOnMount: true,
+  }).data;
+
+  const canViewPartialLgpd = useQuery({
+    queryKey: [
+        "restrictFeatureByProfile",
+        "commercial:accounts:access:lgpd:partial",
+      ],
+    queryFn: () => restrictFeatureByProfile(
+      "commercial:accounts:access:lgpd:partial"
+    ),
+    refetchOnMount: true,
+  }).data;
 
   const accountsWithPermissions = {
     ...accounts,
-    docs: accounts.docs.map((account) => ({
+    docs: accounts.data?.docs?.map((account) => ({
       ...account,
       _permissions: {
         fullLgpdAccess: canViewFullLgpd,
         partialLgpdAccess: canViewPartialLgpd,
       },
-    })),
+    })) ?? [],
   };
 
   return (
