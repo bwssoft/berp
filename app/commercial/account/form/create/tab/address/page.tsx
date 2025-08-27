@@ -27,11 +27,6 @@ export default function Page() {
     checkPermission();
   }, []);
 
-  // Verify that the account exists and matches the accountId from URL
-  const isValidAccount = useMemo(() => {
-    return account && account.id === accountId;
-  }, [account, accountId]);
-
   if (!accountId) {
     return (
       <AccountNotFoundState
@@ -40,13 +35,13 @@ export default function Page() {
         action={{
           label: "Voltar ao início",
           onClick: () => router.push("/commercial/account/form/create"),
-          variant: "outline"
+          variant: "outline",
         }}
       />
     );
   }
 
-  if (!isValidAccount) {
+  if (!account?.document.value) {
     return (
       <AccountNotFoundState
         title="Conta não encontrada no contexto local"
@@ -54,7 +49,7 @@ export default function Page() {
         action={{
           label: "Criar nova conta",
           onClick: () => router.push("/commercial/account/form/create"),
-          variant: "outline"
+          variant: "outline",
         }}
       />
     );

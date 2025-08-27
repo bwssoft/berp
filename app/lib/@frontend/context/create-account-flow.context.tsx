@@ -1,17 +1,10 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
 import {
   IAccount,
+  IAccountEconomicGroup,
   IAddress,
   IContact,
-  IAccountEconomicGroup,
 } from "../../@backend/domain";
 import {
   createOneAccount,
@@ -27,6 +20,15 @@ import {
   updateOneAccountEconomicGroup,
 } from "../../@backend/action/commercial/account.economic-group.action";
 import { useAuth } from "./auth.context";
+
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 
 // Extended types with local IDs
 export type LocalAccount = Omit<IAccount, "created_at" | "updated_at">;
@@ -141,51 +143,126 @@ export const CreateAccountFlowProvider = ({
 }) => {
   const { user } = useAuth();
 
-  // Initialize state from localStorage or defaults
-  const [account, setAccountState] = useState<LocalAccount | null>(() =>
-    getFromStorage(STORAGE_KEYS.ACCOUNT, null)
-  );
-  const [addresses, setAddressesState] = useState<LocalAddress[]>(() =>
-    getFromStorage(STORAGE_KEYS.ADDRESSES, [])
-  );
-  const [contacts, setContactsState] = useState<LocalContact[]>(() =>
-    getFromStorage(STORAGE_KEYS.CONTACTS, [])
-  );
-  const [economicGroup, setEconomicGroupState] =
-    useState<LocalAccountEconomicGroup | null>(() =>
-      getFromStorage(STORAGE_KEYS.ECONOMIC_GROUP, null)
+  // State to hold the current localStorage data
+  const [currentData, setCurrentData] = useState({
+    account: null as LocalAccount | null,
+    addresses: [] as LocalAddress[],
+    contacts: [] as LocalContact[],
+    economicGroup: null as LocalAccountEconomicGroup | null,
+  });
+
+  // Function to load data from localStorage
+  const loadDataFromLocalStorage = useCallback(() => {
+    const newData = {
+      account: getFromStorage<LocalAccount | null>(STORAGE_KEYS.ACCOUNT, null),
+      addresses: getFromStorage<LocalAddress[]>(STORAGE_KEYS.ADDRESSES, []),
+      contacts: getFromStorage<LocalContact[]>(STORAGE_KEYS.CONTACTS, []),
+      economicGroup: getFromStorage<LocalAccountEconomicGroup | null>(
+        STORAGE_KEYS.ECONOMIC_GROUP,
+        null
+      ),
+    };
+
+    setCurrentData(newData);
+  }, []);
+
+  // Load data on mount and when localStorage changes
+  useEffect(() => {
+    loadDataFromLocalStorage();
+  }, [loadDataFromLocalStorage]);
+
+  // Listen for localStorage changes and reload data
+  useEffect(() => {
+    const handleStorageChange = () => {
+      loadDataFromLocalStorage();
+    };
+
+    // Listen for storage events from other tabs
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [loadDataFromLocalStorage]);
+
+  // Getter functions that read and JSON parse directly from localStorage
+  const getAccount = useCallback((): LocalAccount | null => {
+    return currentData.account;
+  }, [currentData.account]);
+
+  const getAddresses = useCallback((): LocalAddress[] => {
+    const addresses = getFromStorage<LocalAddress[]>(
+      STORAGE_KEYS.ADDRESSES,
+      []
     );
-
-  // Wrapper functions that update both state and localStorage
-  const setAccount = useCallback((newAccount: LocalAccount | null) => {
-    setAccountState(newAccount);
-    if (newAccount) {
-      setToStorage(STORAGE_KEYS.ACCOUNT, newAccount);
-    } else {
-      removeFromStorage(STORAGE_KEYS.ACCOUNT);
-    }
+    // Ensure the parsed addresses is a valid array
+    return Array.isArray(addresses) ? addresses : [];
   }, []);
 
-  const setAddresses = useCallback((newAddresses: LocalAddress[]) => {
-    setAddressesState(newAddresses);
-    setToStorage(STORAGE_KEYS.ADDRESSES, newAddresses);
+  const getContacts = useCallback((): LocalContact[] => {
+    const contacts = getFromStorage<LocalContact[]>(STORAGE_KEYS.CONTACTS, []);
+    // Ensure the parsed contacts is a valid array
+    return Array.isArray(contacts) ? contacts : [];
   }, []);
 
-  const setContacts = useCallback((newContacts: LocalContact[]) => {
-    setContactsState(newContacts);
-    setToStorage(STORAGE_KEYS.CONTACTS, newContacts);
+  const getEconomicGroup = useCallback((): LocalAccountEconomicGroup | null => {
+    const economicGroup = getFromStorage<LocalAccountEconomicGroup | null>(
+      STORAGE_KEYS.ECONOMIC_GROUP,
+      null
+    );
+    // Ensure the parsed economic group object is valid
+    return economicGroup && typeof economicGroup === "object"
+      ? economicGroup
+      : null;
   }, []);
+
+  // Setter functions that write and JSON stringify directly to localStorage
+  const setAccount = useCallback(
+    (newAccount: LocalAccount | null) => {
+      if (newAccount && typeof newAccount === "object") {
+        setToStorage<LocalAccount>(STORAGE_KEYS.ACCOUNT, newAccount);
+      } else {
+        removeFromStorage(STORAGE_KEYS.ACCOUNT);
+      }
+
+      loadDataFromLocalStorage();
+    },
+    [loadDataFromLocalStorage]
+  );
+
+  const setAddresses = useCallback(
+    (newAddresses: LocalAddress[]) => {
+      if (Array.isArray(newAddresses)) {
+        setToStorage<LocalAddress[]>(STORAGE_KEYS.ADDRESSES, newAddresses);
+      }
+      loadDataFromLocalStorage();
+    },
+    [loadDataFromLocalStorage]
+  );
+
+  const setContacts = useCallback(
+    (newContacts: LocalContact[]) => {
+      if (Array.isArray(newContacts)) {
+        setToStorage<LocalContact[]>(STORAGE_KEYS.CONTACTS, newContacts);
+      }
+      loadDataFromLocalStorage();
+    },
+    [loadDataFromLocalStorage]
+  );
 
   const setEconomicGroup = useCallback(
     (newEconomicGroup: LocalAccountEconomicGroup | null) => {
-      setEconomicGroupState(newEconomicGroup);
-      if (newEconomicGroup) {
-        setToStorage(STORAGE_KEYS.ECONOMIC_GROUP, newEconomicGroup);
+      if (newEconomicGroup && typeof newEconomicGroup === "object") {
+        setToStorage<LocalAccountEconomicGroup>(
+          STORAGE_KEYS.ECONOMIC_GROUP,
+          newEconomicGroup
+        );
       } else {
         removeFromStorage(STORAGE_KEYS.ECONOMIC_GROUP);
       }
+      loadDataFromLocalStorage();
     },
-    []
+    [loadDataFromLocalStorage]
   );
 
   // Account methods
@@ -196,16 +273,16 @@ export const CreateAccountFlowProvider = ({
     [setAccount]
   );
 
-  const updateAccountLocally = useCallback((updates: Partial<LocalAccount>) => {
-    setAccountState((prevAccount) => {
-      if (prevAccount) {
-        const updatedAccount = { ...prevAccount, ...updates };
-        setToStorage(STORAGE_KEYS.ACCOUNT, updatedAccount);
-        return updatedAccount;
+  const updateAccountLocally = useCallback(
+    (updates: Partial<LocalAccount>) => {
+      const currentAccount = getAccount();
+      if (currentAccount) {
+        const updatedAccount = { ...currentAccount, ...updates };
+        setAccount(updatedAccount);
       }
-      return prevAccount;
-    });
-  }, []);
+    },
+    [getAccount, setAccount]
+  );
 
   const deleteAccountLocally = useCallback(() => {
     setAccount(null);
@@ -216,36 +293,36 @@ export const CreateAccountFlowProvider = ({
   }, [setAccount, setAddresses, setContacts, setEconomicGroup]);
 
   // Address methods
-  const createAddressLocally = useCallback((newAddress: LocalAddress) => {
-    setAddressesState((prevAddresses) => {
-      const updatedAddresses = [...prevAddresses, newAddress];
-      setToStorage(STORAGE_KEYS.ADDRESSES, updatedAddresses);
-      return updatedAddresses;
-    });
-  }, []);
+  const createAddressLocally = useCallback(
+    (newAddress: LocalAddress) => {
+      const currentAddresses = getAddresses();
+      const updatedAddresses = [...currentAddresses, newAddress];
+      setAddresses(updatedAddresses);
+    },
+    [getAddresses, setAddresses]
+  );
 
   const updateAddressLocally = useCallback(
     (id: string, updates: Partial<LocalAddress>) => {
-      setAddressesState((prevAddresses) => {
-        const updatedAddresses = prevAddresses.map((address) => {
-          return address.id === id ? { ...address, ...updates } : address;
-        });
-        setToStorage(STORAGE_KEYS.ADDRESSES, updatedAddresses);
-        return updatedAddresses;
+      const currentAddresses = getAddresses();
+      const updatedAddresses = currentAddresses.map((address) => {
+        return address.id === id ? { ...address, ...updates } : address;
       });
+      setAddresses(updatedAddresses);
     },
-    []
+    [getAddresses, setAddresses]
   );
 
-  const deleteAddressLocally = useCallback((id: string) => {
-    setAddressesState((prevAddresses) => {
-      const filteredAddresses = prevAddresses.filter(
+  const deleteAddressLocally = useCallback(
+    (id: string) => {
+      const currentAddresses = getAddresses();
+      const filteredAddresses = currentAddresses.filter(
         (address) => address.id !== id
       );
-      setToStorage(STORAGE_KEYS.ADDRESSES, filteredAddresses);
-      return filteredAddresses;
-    });
-  }, []);
+      setAddresses(filteredAddresses);
+    },
+    [getAddresses, setAddresses]
+  );
 
   // Economic group methods
   const createEconomicGroupLocally = useCallback(
@@ -257,16 +334,13 @@ export const CreateAccountFlowProvider = ({
 
   const updateEconomicGroupLocally = useCallback(
     (updates: Partial<LocalAccountEconomicGroup>) => {
-      setEconomicGroupState((prevEconomicGroup) => {
-        if (prevEconomicGroup) {
-          const updatedEconomicGroup = { ...prevEconomicGroup, ...updates };
-          setToStorage(STORAGE_KEYS.ECONOMIC_GROUP, updatedEconomicGroup);
-          return updatedEconomicGroup;
-        }
-        return prevEconomicGroup;
-      });
+      const currentEconomicGroup = getEconomicGroup();
+      if (currentEconomicGroup) {
+        const updatedEconomicGroup = { ...currentEconomicGroup, ...updates };
+        setEconomicGroup(updatedEconomicGroup);
+      }
     },
-    []
+    [getEconomicGroup, setEconomicGroup]
   );
 
   const deleteEconomicGroupLocally = useCallback(() => {
@@ -274,36 +348,36 @@ export const CreateAccountFlowProvider = ({
   }, [setEconomicGroup]);
 
   // Contact methods
-  const createContactLocally = useCallback((newContact: LocalContact) => {
-    setContactsState((prevContacts) => {
-      const updatedContacts = [...prevContacts, newContact];
-      setToStorage(STORAGE_KEYS.CONTACTS, updatedContacts);
-      return updatedContacts;
-    });
-  }, []);
+  const createContactLocally = useCallback(
+    (newContact: LocalContact) => {
+      const currentContacts = getContacts();
+      const updatedContacts = [...currentContacts, newContact];
+      setContacts(updatedContacts);
+    },
+    [getContacts, setContacts]
+  );
 
   const updateContactLocally = useCallback(
     (id: string, updates: Partial<LocalContact>) => {
-      setContactsState((prevContacts) => {
-        const updatedContacts = prevContacts.map((contact) =>
-          contact.id === id ? { ...contact, ...updates } : contact
-        );
-        setToStorage(STORAGE_KEYS.CONTACTS, updatedContacts);
-        return updatedContacts;
-      });
+      const currentContacts = getContacts();
+      const updatedContacts = currentContacts.map((contact) =>
+        contact.id === id ? { ...contact, ...updates } : contact
+      );
+      setContacts(updatedContacts);
     },
-    []
+    [getContacts, setContacts]
   );
 
-  const deleteContactLocally = useCallback((id: string) => {
-    setContactsState((prevContacts) => {
-      const filteredContacts = prevContacts.filter(
+  const deleteContactLocally = useCallback(
+    (id: string) => {
+      const currentContacts = getContacts();
+      const filteredContacts = currentContacts.filter(
         (contact) => contact.id !== id
       );
-      setToStorage(STORAGE_KEYS.CONTACTS, filteredContacts);
-      return filteredContacts;
-    });
-  }, []);
+      setContacts(filteredContacts);
+    },
+    [getContacts, setContacts]
+  );
 
   // Utility methods
   const resetFlow = useCallback(() => {
@@ -329,9 +403,13 @@ export const CreateAccountFlowProvider = ({
   // API creation method
   const createEntitiesApi = useCallback(async () => {
     try {
-      if (!account) {
-        return { success: false, error: "Nenhuma conta encontrada para criar" };
-      }
+      const account = getAccount();
+      const addresses = getAddresses();
+      const contacts = getContacts();
+      const economicGroup = getEconomicGroup();
+
+      // Continue with account creation even if account data is minimal
+      // The API will handle validation and return appropriate errors
 
       let economicGroupId: string | undefined;
       let economicGroupWasUpdated = false;
@@ -372,10 +450,6 @@ export const CreateAccountFlowProvider = ({
                     { "document.value": removedAccount.taxId },
                     { economicGroupId: "" }
                   );
-
-                  console.log(
-                    `Disconnected account ${removedAccount.name} (${removedAccount.taxId}) from economic group`
-                  );
                 }
               } catch (error) {
                 console.warn(
@@ -407,10 +481,6 @@ export const CreateAccountFlowProvider = ({
                     await updateOneAccount(
                       { id: accountToConnect.id },
                       { economicGroupId: existingEconomicGroup.id! }
-                    );
-
-                    console.log(
-                      `Connected account ${addedAccount.name} (${addedAccount.taxId}) to existing economic group ${existingEconomicGroup.id}`
                     );
                   }
                 }
@@ -478,6 +548,15 @@ export const CreateAccountFlowProvider = ({
       }
 
       // 2. Create the account with economic group ID
+      // Ensure account has required fields for API
+      if (!account?.document?.value) {
+        console.error("❌ Account missing required document field");
+        return {
+          success: false,
+          error: "Dados da conta incompletos - documento obrigatório",
+        };
+      }
+
       const accountData = {
         ...account,
         economicGroupId,
@@ -507,10 +586,6 @@ export const CreateAccountFlowProvider = ({
               await updateOneAccount(
                 { id: accountToConnect.id },
                 { economicGroupId }
-              );
-
-              console.log(
-                `Connected controlled account ${controlledAccount.name} (${controlledAccount.taxId}) to economic group ${economicGroupId}`
               );
             }
           }
@@ -651,45 +726,70 @@ export const CreateAccountFlowProvider = ({
         error: "Erro inesperado ao criar entidades",
       };
     }
-  }, [account, addresses, contacts, economicGroup, user?.name]);
+  }, [getAccount, getAddresses, getContacts, getEconomicGroup, user?.name]);
 
-  const value: CreateAccountFlowContextType = {
-    // State
-    account,
-    addresses,
-    contacts,
-    economicGroup,
+  // Memoize context value and trigger update when localStorage changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const value: CreateAccountFlowContextType = useMemo(
+    () => ({
+      // State - use current data from state
+      account: currentData.account,
+      addresses: currentData.addresses,
+      contacts: currentData.contacts,
+      economicGroup: currentData.economicGroup,
 
-    // Account methods
-    createAccountLocally,
-    updateAccountLocally,
-    deleteAccountLocally,
-    setAccount,
+      // Account methods
+      createAccountLocally,
+      updateAccountLocally,
+      deleteAccountLocally,
+      setAccount,
 
-    // Address methods
-    createAddressLocally,
-    updateAddressLocally,
-    deleteAddressLocally,
-    setAddresses,
+      // Address methods
+      createAddressLocally,
+      updateAddressLocally,
+      deleteAddressLocally,
+      setAddresses,
 
-    // Contact methods
-    createContactLocally,
-    updateContactLocally,
-    deleteContactLocally,
-    setContacts,
+      // Contact methods
+      createContactLocally,
+      updateContactLocally,
+      deleteContactLocally,
+      setContacts,
 
-    // Economic group methods
-    createEconomicGroupLocally,
-    updateEconomicGroupLocally,
-    deleteEconomicGroupLocally,
-    setEconomicGroup,
+      // Economic group methods
+      createEconomicGroupLocally,
+      updateEconomicGroupLocally,
+      deleteEconomicGroupLocally,
+      setEconomicGroup,
 
-    // Utility methods
-    resetFlow,
+      // Utility methods
+      resetFlow,
 
-    // API creation method
-    createEntitiesApi,
-  };
+      // API creation method
+      createEntitiesApi,
+    }),
+    [
+      currentData, // This will change when localStorage data changes
+      createAccountLocally,
+      updateAccountLocally,
+      deleteAccountLocally,
+      setAccount,
+      createAddressLocally,
+      updateAddressLocally,
+      deleteAddressLocally,
+      setAddresses,
+      createContactLocally,
+      updateContactLocally,
+      deleteContactLocally,
+      setContacts,
+      createEconomicGroupLocally,
+      updateEconomicGroupLocally,
+      deleteEconomicGroupLocally,
+      setEconomicGroup,
+      resetFlow,
+      createEntitiesApi,
+    ]
+  );
 
   return (
     <CreateAccountFlowContext.Provider value={value}>
