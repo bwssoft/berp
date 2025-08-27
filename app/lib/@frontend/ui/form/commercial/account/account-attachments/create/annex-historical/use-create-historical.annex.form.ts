@@ -26,9 +26,10 @@ type FormData = z.infer<typeof schema>;
 interface Props {
   accountId: string;
   closeModal: () => void;
+  handleFileUploadSuccess: (name: string, url: string, id: string) => void
 }
 
-export function useCreateAnnexHistoricalForm({ accountId, closeModal }: Props) {
+export function useCreateAnnexHistoricalForm({ accountId, closeModal, handleFileUploadSuccess }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -76,28 +77,11 @@ export function useCreateAnnexHistoricalForm({ accountId, closeModal }: Props) {
         throw new Error("Falha no upload");
       }
 
-      // 2) já cria o histórico com o anexo
-      await createOneHistorical({
-        accountId,
-        title: "Anexo de arquivo",
-        type: "manual",
-        description: "", // sem texto
-        author: {
-          name: user?.name ?? "",
-          avatarUrl: user?.avatarUrl ?? "",
-        },
-        file: {
-          id: uploadResult.id!,
-          name: uploadResult.name,
-          url: uploadResult.fileUrl!,
-        },
-        contacts: undefined,
-      });
-
-      // 3) invalida e refaz a lista de históricos
-      queryClient.invalidateQueries({
-        queryKey: ["historicals", accountId],
-      });
+    handleFileUploadSuccess?.(
+      uploadResult.name ?? "",
+      uploadResult.fileUrl!,
+      uploadResult.id!
+    );
 
       // 4) fecha modal e limpa form
       reset();
