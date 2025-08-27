@@ -9,6 +9,8 @@ import { useCreateHistoricalForm } from "./use-create.historical.form";
 import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
 import { IHistorical } from "@/app/lib/@backend/domain";
+import { SelectedAnnexCard } from "@/app/lib/@frontend/ui/component/commercial/historical/selected-file-card";
+import { Dispatch, SetStateAction } from "react";
 
 type Props = {
   accountId: string;
@@ -16,6 +18,11 @@ type Props = {
   openModalAnnex?: () => void;
   closeModalAnnex?: () => void;
   file?: { name: string; url: string; id: string };
+  setFile?: Dispatch<SetStateAction<{
+    name: string;
+    url: string;
+    id: string;
+} | undefined>>
 };
 
 export function CreateHistoricalForm({
@@ -23,15 +30,17 @@ export function CreateHistoricalForm({
   openModalAnnex,
   closeModalAnnex,
   file,
+  setFile
 }: Props) {
   const {
     register,
     onSubmit,
     setSelectContact,
     selectContact,
+    onHandleRemoveFile,
     errors,
     isLoading,
-  } = useCreateHistoricalForm({ accountId, closeModalAnnex, file });
+  } = useCreateHistoricalForm({ accountId, closeModalAnnex, file, setFile });
 
   return (
     <form onSubmit={onSubmit}>
@@ -42,6 +51,13 @@ export function CreateHistoricalForm({
         selectContact={selectContact}
         onRemove={() => setSelectContact(undefined)}
       />
+
+      {file && (
+        <SelectedAnnexCard 
+          selectFile={file} 
+          onRemove={onHandleRemoveFile} 
+        />
+      )}
 
       <div className="border rounded-md p-4 mb-4 bg-white ">
         <textarea
