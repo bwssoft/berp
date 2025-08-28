@@ -12,7 +12,15 @@ import {
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { TechnologySearchForm } from "@/app/lib/@frontend/ui/form";
-import { Settings, Zap, CheckCircle, Plus, Loader2 } from "lucide-react";
+import {
+  Settings,
+  Zap,
+  CheckCircle,
+  Plus,
+  Loader2,
+  Pause,
+  Play,
+} from "lucide-react";
 import { DevicesDetectedTable } from "@/app/lib/@frontend/ui/table/production/devices-detected/table";
 import { useFirmwareUpdate } from "./use-firmware-update";
 import { DevicesUpdatedFirmwareTable } from "../../../../table/production/devices-updated-firmware/table";
@@ -24,10 +32,18 @@ interface Props {
 export function FirmwareUpdatePage(props: Props) {
   const { technology } = props;
 
-  const { detected, updated, update, requestPort, isUpdating, isDetecting } =
-    useFirmwareUpdate({
-      technology,
-    });
+  const {
+    detected,
+    updated,
+    update,
+    requestPort,
+    isUpdating,
+    isDetecting,
+    toDetect,
+    setToDetect,
+  } = useFirmwareUpdate({
+    technology,
+  });
 
   const date = new Date();
   const hasRecorded = updated.length > 0;
@@ -78,19 +94,24 @@ export function FirmwareUpdatePage(props: Props) {
         {/* Etapa 2: Portas */}
         <Card>
           <CardHeader className="pb-4">
-            <div className="flex items-center gap-3">
-              <Badge
-                variant="default"
-                className="w-8 h-8 rounded-full flex items-center justify-center p-0"
-              >
-                2
-              </Badge>
-              <div className="flex items-center gap-2">
-                <Zap className="h-5 w-5 text-primary" />
-                <CardTitle className="text-xl">
-                  Gerenciamento de Portas
-                </CardTitle>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <Badge
+                  variant="default"
+                  className="w-8 h-8 rounded-full flex items-center justify-center p-0"
+                >
+                  2
+                </Badge>
+                <div className="flex items-center gap-2">
+                  <Zap className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-xl">
+                    Gerenciamento de Portas
+                  </CardTitle>
+                </div>
               </div>
+              <Button onClick={() => setToDetect((prev) => !prev)}>
+                {toDetect ? <Pause /> : <Play />}
+              </Button>
             </div>
             <CardDescription className="ml-11">
               Visualize os equipamentos conectados às portas seriais
