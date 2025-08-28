@@ -39,8 +39,6 @@ interface Props {
 
 export function AddressDataPage(props: Props) {
   const {
-    account,
-    address,
     permissions: { hasPermissionAddresses },
   } = props;
 

@@ -36,6 +36,7 @@ export function CreateAnnexHistoricalModal({
                 <ModalBody>
                     <CreateAnnexHistoricalForm
                         closeModal={closeModal}
+                        handleFileUploadSuccess={handleFileUploadSuccess}
                         accountId={accountId}
                     />
                 </ModalBody>
