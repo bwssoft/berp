@@ -404,6 +404,13 @@ export async function GET() {
       code: "commercial:proposal",
       parent_code: "commercial",
     },
+    {
+      id: nanoid(),
+      name: "Tabela de Preços",
+      description: "Tabela de Preços",
+      code: "commercial:price-table",
+      parent_code: "commercial",
+    },
   ];
 
   // await controlRepository.createMany(controls);
