@@ -35,6 +35,7 @@ namespace Namespace {
 export const useFirmwareUpdate = (props: Namespace.UseFirmwareUpdateProps) => {
   const { technology } = props;
 
+  const [toDetect, setToDetect] = useState<boolean>(true);
   const [detected, setDetected] = useState<Namespace.Detected[]>([]);
   const [isDetecting, setIsDetecting] = useState<boolean>(false);
 
@@ -101,6 +102,7 @@ export const useFirmwareUpdate = (props: Namespace.UseFirmwareUpdateProps) => {
     } catch (error) {
       console.error("[ERROR] update use-firmware-update", error);
     } finally {
+      setToDetect(false);
       setIsUpdating(false);
     }
   };
@@ -108,6 +110,8 @@ export const useFirmwareUpdate = (props: Namespace.UseFirmwareUpdateProps) => {
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     const interval = setInterval(async () => {
+      if (!toDetect) return;
+
       if (isUpdating) return;
 
       if (!isDetecting && ports.length) {
@@ -135,7 +139,7 @@ export const useFirmwareUpdate = (props: Namespace.UseFirmwareUpdateProps) => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [ports, handleDetection, isUpdating, isDetecting]);
+  }, [ports, handleDetection, isUpdating, isDetecting, toDetect]);
 
   return {
     updated,
@@ -144,5 +148,7 @@ export const useFirmwareUpdate = (props: Namespace.UseFirmwareUpdateProps) => {
     requestPort,
     isUpdating,
     isDetecting,
+    toDetect,
+    setToDetect,
   };
 };
