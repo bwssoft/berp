@@ -12,7 +12,7 @@ import {
   createOneAccountEconomicGroup,
   updateOneAccountEconomicGroup,
   findOneAccountEconomicGroup,
-  validateHoldingEnterpriseNotInGroup,
+  validateHoldingEnterpriseNotInAnyGroup,
   validateControlledEnterprisesNotInHolding,
 } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
@@ -164,7 +164,7 @@ export function useUpdateEconomicGroupForm(
       const cleanedTaxId = holdingTaxId.replace(/\D/g, "");
 
       const validationResult =
-        await validateHoldingEnterpriseNotInGroup(cleanedTaxId);
+        await validateHoldingEnterpriseNotInAnyGroup(cleanedTaxId);
 
       if (!validationResult.isValid && validationResult.conflictingEntry) {
         const entry = validationResult.conflictingEntry;
@@ -172,7 +172,10 @@ export function useUpdateEconomicGroupForm(
         let errorMessage =
           "Não é possível selecionar esta empresa como holding:\n\n";
 
-        if (entry.conflictType === "controlled") {
+        if (entry.conflictType === "holding") {
+          errorMessage += `⚠️ Esta empresa já é holding de outro grupo econômico:\n`;
+          errorMessage += `• ${entry.name} (${entry.taxId}) - já é holding de um grupo existente\n`;
+        } else if (entry.conflictType === "controlled") {
           errorMessage += `⚠️ Esta empresa já está controlada por outro grupo:\n`;
           if (entry.holdingName) {
             errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
