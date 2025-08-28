@@ -352,6 +352,101 @@ export function useUpdateEconomicGroupForm(
         });
 
         if (existingEconomicGroup) {
+          const existingHolding = existingEconomicGroup.economic_group_holding;
+
+          if (existingHolding && holding) {
+            const existingHoldingTaxId = existingHolding.taxId?.replace(
+              /\D/g,
+              ""
+            );
+            const newHoldingTaxId = holding.taxId?.replace(/\D/g, "");
+
+            // If holding has changed, disconnect the old one and connect the new one
+            if (existingHoldingTaxId !== newHoldingTaxId) {
+              try {
+                // Disconnect the old holding account
+                const oldHoldingAccount = await findOneAccount({
+                  "document.value": existingHoldingTaxId,
+                });
+
+                if (oldHoldingAccount?.id) {
+                  await updateOneAccount(
+                    { id: oldHoldingAccount.id },
+                    { economicGroupId: "" }
+                  );
+
+                  console.log(
+                    `Disconnected old holding account ${existingHolding.name} (${existingHolding.taxId}) from economic group`
+                  );
+                }
+
+                // Connect the new holding account (if it exists in the database)
+                const newHoldingAccount = await findOneAccount({
+                  "document.value": newHoldingTaxId,
+                });
+
+                if (newHoldingAccount?.id) {
+                  await updateOneAccount(
+                    { id: newHoldingAccount.id },
+                    { economicGroupId: economicGroupId }
+                  );
+
+                  console.log(
+                    `Connected new holding account ${holding.name} (${holding.taxId}) to economic group ${economicGroupId}`
+                  );
+                }
+              } catch (error) {
+                console.warn(
+                  "Failed to update holding account connections:",
+                  error
+                );
+              }
+            }
+          } else if (existingHolding && !holding) {
+            // If holding was removed, disconnect the old holding
+            try {
+              const oldHoldingAccount = await findOneAccount({
+                "document.value": existingHolding.taxId?.replace(/\D/g, ""),
+              });
+
+              if (oldHoldingAccount?.id) {
+                await updateOneAccount(
+                  { id: oldHoldingAccount.id },
+                  { economicGroupId: "" }
+                );
+
+                console.log(
+                  `Disconnected removed holding account ${existingHolding.name} (${existingHolding.taxId}) from economic group`
+                );
+              }
+            } catch (error) {
+              console.warn(
+                "Failed to disconnect removed holding account:",
+                error
+              );
+            }
+          } else if (!existingHolding && holding) {
+            // If holding was added, connect the new holding
+            try {
+              const newHoldingAccount = await findOneAccount({
+                "document.value": holding.taxId?.replace(/\D/g, ""),
+              });
+
+              if (newHoldingAccount?.id) {
+                await updateOneAccount(
+                  { id: newHoldingAccount.id },
+                  { economicGroupId: economicGroupId }
+                );
+
+                console.log(
+                  `Connected new holding account ${holding.name} (${holding.taxId}) to economic group ${economicGroupId}`
+                );
+              }
+            } catch (error) {
+              console.warn("Failed to connect new holding account:", error);
+            }
+          }
+
           const existingControlled =
             existingEconomicGroup.economic_group_controlled || [];
           const newControlledTaxIds = controlled.map((company) =>
@@ -447,6 +542,31 @@ export function useUpdateEconomicGroupForm(
             { id: accountId },
             { economicGroupId: economicGroupResult.data.id }
           );
+
+          // Connect the holding account to the economic group (if it exists in the database)
+          if (holding) {
+            try {
+              const holdingAccount = await findOneAccount({
+                "document.value": holding.taxId?.replace(/\D/g, ""),
+              });
+
+              if (holdingAccount?.id) {
+                await updateOneAccount(
+                  { id: holdingAccount.id },
+                  { economicGroupId: economicGroupResult.data.id }
+                );
+
+                console.log(
+                  `Connected holding account ${holding.name} (${holding.taxId}) to new economic group ${economicGroupResult.data.id}`
+                );
+              }
+            } catch (error) {
+              console.warn(
+                "Failed to connect holding account to new economic group:",
+                error
+              );
+            }
+          }
 
           // Connect all controlled accounts to the economic group
           if (controlled.length > 0) {
