@@ -59,7 +59,7 @@ const navigation = [
   {
     name: "Tabela de Preços",
     pathname: "/commercial/price-table",
-    code: "commercial:price-table",
+    code: "commercial:price-table:view",
     icon: CurrencyDollarIcon,
   },
 ];

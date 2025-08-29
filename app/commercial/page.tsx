@@ -42,7 +42,7 @@ const actions = [
   {
     title: "Tabela de Preços",
     href: "/commercial/price-table",
-    code: "commercial:price-table",
+    code: "commercial:price-table:view",
     icon: CurrencyDollarIcon,
     iconForeground: "text-green-700",
     iconBackground: "bg-green-50",

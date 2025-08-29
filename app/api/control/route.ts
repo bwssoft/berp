@@ -408,7 +408,7 @@ export async function GET() {
       id: nanoid(),
       name: "Tabela de Preços",
       description: "Tabela de Preços",
-      code: "commercial:price-table",
+      code: "commercial:price-table:view",
       parent_code: "commercial",
     },
   ];
