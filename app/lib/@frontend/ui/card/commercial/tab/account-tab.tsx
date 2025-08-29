@@ -136,7 +136,7 @@ export default function StepNavigation({
                 href={step.href}
                 className={cn(
                   "flex-1 flex justify-center transition-all duration-200",
-                  "hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg p-2",
+                  "hover:scale-105 rounded-lg p-2 focus:border-none",
                   !isActive && "hover:opacity-80"
                 )}
                 aria-current={isActive ? "step" : undefined}
@@ -147,7 +147,7 @@ export default function StepNavigation({
             ) : (
               <div
                 key={step.id}
-                className="flex-1 flex justify-center cursor-not-allowed"
+                className="flex-1 flex justify-center cursor-not-allowed focus:border-none"
                 title="Complete a etapa anterior para acessar"
                 aria-label={`${step.title} - Bloqueado`}
               >
