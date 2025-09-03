@@ -1,0 +1,112 @@
+"use client";
+
+import { Button } from "@/app/lib/@frontend/ui/component";
+import { ColumnDef } from "@tanstack/react-table";
+import { Copy, Eye, History, Pencil } from "lucide-react";
+
+interface PriceTable {
+  id: number;
+  name: string;
+  createdDate: string;
+  startDate: string;
+  endDate: string;
+  type: string;
+  status: string;
+}
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case "Ativa":
+      return "bg-green-100 text-green-800";
+    case "Em Pausa":
+      return "bg-purple-100 text-purple-800";
+    case "Rascunho":
+      return "bg-blue-100 text-blue-800";
+    case "Aguardando Publicação":
+      return "bg-yellow-100 text-yellow-800";
+    case "Inativa":
+      return "bg-red-100 text-red-800";
+    case "Cancelada":
+      return "bg-gray-100 text-gray-800";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+};
+
+export const columns: ColumnDef<PriceTable>[] = [
+  {
+    accessorKey: "name",
+    header: "NOME DA TABELA",
+    cell: ({ row }) => (
+      <div className="font-medium">{row.getValue("name")}</div>
+    ),
+  },
+  {
+    accessorKey: "createdDate",
+    header: "DATA DE CADASTRO",
+    cell: ({ row }) => <div>{row.getValue("createdDate")}</div>,
+  },
+  {
+    accessorKey: "startDate",
+    header: "DATA INICIAL",
+    cell: ({ row }) => <div>{row.getValue("startDate")}</div>,
+  },
+  {
+    accessorKey: "endDate",
+    header: "DATA FINAL",
+    cell: ({ row }) => <div>{row.getValue("endDate")}</div>,
+  },
+  {
+    accessorKey: "type",
+    header: "TIPO",
+    cell: ({ row }) => <div>{row.getValue("type")}</div>,
+  },
+  {
+    accessorKey: "status",
+    header: "STATUS",
+    cell: ({ row }) => {
+      const status = row.getValue("status") as string;
+      return (
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+            status
+          )}`}
+        >
+          {status}
+        </span>
+      );
+    },
+  },
+  {
+    id: "actions",
+    header: "AÇÃO",
+    cell: ({ row }) => (
+      <div className="flex gap-1">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          title="Histórico"
+        >
+          <History className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          title="Clonar tabela"
+        >
+          <Copy className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          title="Editar"
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
+      </div>
+    ),
+  },
+];
