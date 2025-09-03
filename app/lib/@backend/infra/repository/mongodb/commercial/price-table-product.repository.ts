@@ -11,4 +11,6 @@ class PriceTableProductRepository extends BaseRepository<IPriceTableProduct> {
   }
 }
 
-export const priceTableProductRepository = singleton(PriceTableProductRepository);
+export const priceTableProductRepository = singleton(
+  PriceTableProductRepository
+);
