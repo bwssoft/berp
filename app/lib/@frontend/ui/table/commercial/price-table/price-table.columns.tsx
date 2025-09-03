@@ -2,7 +2,7 @@
 
 import { Button } from "@/app/lib/@frontend/ui/component";
 import { ColumnDef } from "@tanstack/react-table";
-import { Copy, Eye, History, Pencil } from "lucide-react";
+import { Copy, History, Pencil } from "lucide-react";
 
 interface PriceTable {
   id: number;
