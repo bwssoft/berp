@@ -1,4 +1,4 @@
-import { IAccount, IClient } from "@/app/lib/@backend/domain";
+import { IAccount } from "@/app/lib/@backend/domain";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
