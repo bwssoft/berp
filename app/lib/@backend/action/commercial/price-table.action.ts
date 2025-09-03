@@ -7,6 +7,7 @@ import { findOnePriceTableUsecase } from "../../usecase/commercial/price-table/f
 import { createOnePriceTableUsecase } from "../../usecase/commercial/price-table/create-one.price-table.usecase";
 import { inactivatePriceTableUsecase } from "../../usecase/commercial/price-table/inactivate.price-table.usecase";
 import { updateOnePriceTableUsecase } from "../../usecase/commercial/price-table/update-one.price-table.usecase";
+import { cancelPriceTableUsecase } from "../../usecase/commercial/price-table/cancel.price-table.usecase";
 
 export async function findManyPriceTable(
   filter: Filter<IPriceTable> = {},
@@ -35,5 +36,10 @@ export async function updateOnePriceTable(
 
 export const inactivatePriceTable = async (id: string) => {
   const result = await inactivatePriceTableUsecase.execute({ id });
+  return result;
+};
+
+export const cancelPriceTable = async (id: string) => {
+  const result = await cancelPriceTableUsecase.execute({ id });
   return result;
 };

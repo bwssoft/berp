@@ -1,4 +1,4 @@
-export type StatusPriceTable = "ativa" | "inativa";
+export type StatusPriceTable = "ativa" | "inativa" | "cancelada";
 
 export interface IPriceTable {
   id?: string;
