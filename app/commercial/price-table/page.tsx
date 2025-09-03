@@ -41,7 +41,7 @@ export default function PriceTablePage(props: Props) {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Tabela de Preços</h1>
