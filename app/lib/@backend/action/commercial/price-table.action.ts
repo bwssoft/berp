@@ -5,6 +5,7 @@ import { IPriceTable } from "../../domain";
 import { findManyPriceTableUsecase } from "../../usecase/commercial/price-table/find-many.price-table.usecase";
 import { findOnePriceTableUsecase } from "../../usecase/commercial/price-table/find-one.price-table.usecase";
 import { createOnePriceTableUsecase } from "../../usecase/commercial/price-table/create-one.price-table.usecase";
+import { inactivatePriceTableUsecase } from "../../usecase/commercial/price-table/inactivate.price-table.usecase";
 
 export async function findManyPriceTable(
   filter: Filter<IPriceTable> = {},
@@ -24,3 +25,8 @@ export async function createOnePriceTable(
 ) {
   return await createOnePriceTableUsecase.execute(input);
 }
+
+export const inactivatePriceTable = async (id: string) => {
+  const result = await inactivatePriceTableUsecase.execute({ id });
+  return result;
+};

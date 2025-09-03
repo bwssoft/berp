@@ -1,7 +1,10 @@
+export type StatusPriceTable = "ativa" | "inativa";
+
 export interface IPriceTable {
   id?: string;
   name: string;
   startDateTime: Date;
+  status?: StatusPriceTable;
   endDateTime: Date;
   isTemporary: boolean;
   conditionGroupIds: string[];
