@@ -16,6 +16,7 @@ export enum AuditDomain {
   accountAddress = "accountAddress",
   accountContact = "accountContact",
   accountAttachments = "accountAttachments",
+  priceTable = "priceTable",
 }
 
 export interface AuditUser {
