@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function CreatePriceTablePage() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-8">
       {/* Header with title and buttons */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">
