@@ -1,4 +1,4 @@
-export type StatusPriceTable = "ativa" | "inativa" | "cancelada";
+export type StatusPriceTable = "ativa" | "inativa" | "cancelada" | "aguardando publicação" | "tabela programada para publicação" | "rascunho";
 
 export interface IPriceTable {
   id?: string;
@@ -6,7 +6,7 @@ export interface IPriceTable {
   startDateTime: Date;
   status?: StatusPriceTable;
   endDateTime: Date;
-  isTemporary: boolean;
+  isTemporary: boolean; // tabela provisoria // tabela normal
   conditionGroupIds: string[];
   enabledProductsIds: string[];
   created_at?: Date;
