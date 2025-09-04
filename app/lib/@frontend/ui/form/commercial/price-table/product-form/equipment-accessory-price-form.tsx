@@ -26,7 +26,7 @@ interface EquipmentPriceFormProps {
   onPriceChange?: (prices: any) => void;
 }
 
-export function EquipmentPriceForm({
+export function EquipmentAccessoryPriceForm({
   equipmentModel,
   onPriceChange,
 }: EquipmentPriceFormProps) {

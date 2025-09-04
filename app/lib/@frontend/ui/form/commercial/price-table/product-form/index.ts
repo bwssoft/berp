@@ -1,2 +1,2 @@
-export { EquipmentPriceForm } from "./equipment-price-form";
+export { EquipmentAccessoryPriceForm } from "./equipment-accessory-price-form";
 export { SimCardPriceForm } from "./simcard-price-form";

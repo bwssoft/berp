@@ -13,7 +13,7 @@ import {
   Input,
   Toggle,
 } from "../../../../component";
-import { EquipmentPriceForm, SimCardPriceForm } from "../product-form";
+import { EquipmentAccessoryPriceForm, SimCardPriceForm } from "../product-form";
 
 const equipmentModels = [
   "E3+",
@@ -180,7 +180,7 @@ export function CreatePriceTableForm() {
                       {/* Render pricing form when equipment is enabled */}
                       {enabledEquipmentWithSim[e] && (
                         <div className="mt-4">
-                          <EquipmentPriceForm
+                          <EquipmentAccessoryPriceForm
                             equipmentModel={`${e} (com SIM Card)`}
                             onPriceChange={(prices) => {
                               console.log(
@@ -240,7 +240,7 @@ export function CreatePriceTableForm() {
                       {/* Render pricing form when equipment is enabled */}
                       {enabledEquipmentWithoutSim[e] && (
                         <div className="mt-4">
-                          <EquipmentPriceForm
+                          <EquipmentAccessoryPriceForm
                             equipmentModel={`${e} (sem SIM Card)`}
                             onPriceChange={(prices) => {
                               console.log(
@@ -318,7 +318,7 @@ export function CreatePriceTableForm() {
                       {/* Render pricing form when accessory is enabled */}
                       {enabledAccessories[accessory] && (
                         <div className="mt-4">
-                          <EquipmentPriceForm
+                          <EquipmentAccessoryPriceForm
                             equipmentModel={accessory}
                             onPriceChange={(prices) => {
                               console.log(
