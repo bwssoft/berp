@@ -29,12 +29,23 @@ const equipmentModels = [
   "E3+ Personal",
 ];
 
+const accessoriesItems = [
+  "Relé (12V - 20A)",
+  "Chicote Tróia - 6 pinos",
+  "Chicote Tróia - 9 pinos",
+  "Chicote de Instalação E3+",
+  "Chicote OBD E3+",
+];
+
 export function CreatePriceTableForm() {
   // State to track which equipment models are toggled on
   const [enabledEquipmentWithSim, setEnabledEquipmentWithSim] = useState<
     Record<string, boolean>
   >({});
   const [enabledEquipmentWithoutSim, setEnabledEquipmentWithoutSim] = useState<
+    Record<string, boolean>
+  >({});
+  const [enabledAccessories, setEnabledAccessories] = useState<
     Record<string, boolean>
   >({});
 
@@ -55,6 +66,14 @@ export function CreatePriceTableForm() {
         [equipment]: enabled,
       }));
     }
+  };
+
+  // Handle accessories toggle
+  const handleAccessoryToggle = (accessory: string, enabled: boolean) => {
+    setEnabledAccessories((prev) => ({
+      ...prev,
+      [accessory]: enabled,
+    }));
   };
 
   return (
@@ -256,6 +275,66 @@ export function CreatePriceTableForm() {
                     // Handle SIM card price data here
                   }}
                 />
+              </DisclosurePanel>
+            </Disclosure>
+
+            {/* Venda de Acessórios */}
+            <Disclosure>
+              <DisclosureButton className="border border-gray-200 rounded-md w-full p-3 group flex justify-between items-center gap-2 bg-gray-50">
+                <h3 className="font-semibold text-sm">Venda de Acessórios</h3>
+                <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
+              </DisclosureButton>
+              <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
+                <div className="border border-gray-200 rounded-md p-2 space-y-2">
+                  {accessoriesItems.map((accessory, index) => (
+                    <div key={`accessory-${accessory}`}>
+                      {index % 2 === 0 && (
+                        <div className="flex justify-between bg-[#fdde9a] p-2 rounded-md">
+                          <h4 className="font-semibold text-sm">{accessory}</h4>
+                          <Toggle
+                            value={enabledAccessories[accessory] || false}
+                            onChange={(enabled) =>
+                              handleAccessoryToggle(accessory, enabled)
+                            }
+                            disabled={false}
+                            title={() => "Habilitar acessório"}
+                          />
+                        </div>
+                      )}
+                      {index % 2 === 1 && (
+                        <div className="flex justify-between bg-[#feefcc] p-2 rounded-md">
+                          <h4 className="font-semibold text-sm">{accessory}</h4>
+                          <Toggle
+                            value={enabledAccessories[accessory] || false}
+                            onChange={(enabled) =>
+                              handleAccessoryToggle(accessory, enabled)
+                            }
+                            disabled={false}
+                            title={() => "Habilitar acessório"}
+                          />
+                        </div>
+                      )}
+
+                      {/* Render pricing form when accessory is enabled */}
+                      {enabledAccessories[accessory] && (
+                        <div className="mt-4">
+                          <EquipmentPriceForm
+                            equipmentModel={accessory}
+                            onPriceChange={(prices) => {
+                              console.log(
+                                "Price change for accessory",
+                                accessory,
+                                ":",
+                                prices
+                              );
+                              // Handle accessory price data here
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </DisclosurePanel>
             </Disclosure>
           </DisclosurePanel>

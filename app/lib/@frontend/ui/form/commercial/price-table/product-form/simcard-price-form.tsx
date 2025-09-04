@@ -152,11 +152,7 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                         type="single"
                         value={tier.dataMB ? [tier.dataMB] : []}
                         onChange={(value) => {
-                          updateSimCardTier(
-                            tier.id,
-                            "dataMB",
-                            value[0] || ""
-                          );
+                          updateSimCardTier(tier.id, "dataMB", value[0] || "");
                           handlePriceChange();
                         }}
                         placeholder="Selecione quantidade"
