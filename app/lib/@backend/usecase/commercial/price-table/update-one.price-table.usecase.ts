@@ -74,6 +74,8 @@ class UpdateOnePriceTableUsecase {
             startDateTime: input.startDateTime,
             endDateTime: input.endDateTime,
             isTemporary: input.isTemporary,
+            //se editar e salvar enquanto status for Aguardando Publicação, voltar o status para Rascunho.
+            status: input.status == "aguardando publicação" ? "rascunho" : input.status,
             conditionGroupIds: input.conditionGroupIds,
             enabledProductsIds: input.enabledProductsIds,
             updated_at: updatedAt,
