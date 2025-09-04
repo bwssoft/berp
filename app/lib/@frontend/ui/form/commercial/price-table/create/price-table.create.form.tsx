@@ -122,110 +122,124 @@ export function CreatePriceTableForm() {
         <div>
           <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 my-4 space-y-4">
             {/* Venda com SIM Card */}
-            <div className="border border-gray-200 rounded-md p-2 space-y-2">
-              <h3 className="font-semibold text-sm">Venda com SIM Card</h3>
-              {equipmentModels.map((e, index) => (
-                <div key={`with-sim-${e}`}>
-                  {index % 2 === 0 && (
-                    <div className="flex justify-between bg-[#fdde9a] p-2 rounded-md">
-                      <h4 className="font-semibold text-sm">{e}</h4>
-                      <Toggle
-                        value={enabledEquipmentWithSim[e] || false}
-                        onChange={(enabled) =>
-                          handleEquipmentToggle(e, enabled, "withSim")
-                        }
-                        disabled={false}
-                        title={() => "Habilitar equipamento"}
-                      />
-                    </div>
-                  )}
-                  {index % 2 === 1 && (
-                    <div className="flex justify-between bg-[#feefcc] p-2 rounded-md">
-                      <h4 className="font-semibold text-sm">{e}</h4>
-                      <Toggle
-                        value={enabledEquipmentWithSim[e] || false}
-                        onChange={(enabled) =>
-                          handleEquipmentToggle(e, enabled, "withSim")
-                        }
-                        disabled={false}
-                        title={() => "Habilitar equipamento"}
-                      />
-                    </div>
-                  )}
+            <Disclosure>
+              <DisclosureButton className="border border-gray-200 rounded-md w-full p-3 group flex justify-between items-center gap-2 bg-gray-50">
+                <h3 className="font-semibold text-sm">Venda com SIM Card</h3>
+                <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
+              </DisclosureButton>
+              <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
+                <div className="border border-gray-200 rounded-md p-2 space-y-2">
+                  {equipmentModels.map((e, index) => (
+                    <div key={`with-sim-${e}`}>
+                      {index % 2 === 0 && (
+                        <div className="flex justify-between bg-[#fdde9a] p-2 rounded-md">
+                          <h4 className="font-semibold text-sm">{e}</h4>
+                          <Toggle
+                            value={enabledEquipmentWithSim[e] || false}
+                            onChange={(enabled) =>
+                              handleEquipmentToggle(e, enabled, "withSim")
+                            }
+                            disabled={false}
+                            title={() => "Habilitar equipamento"}
+                          />
+                        </div>
+                      )}
+                      {index % 2 === 1 && (
+                        <div className="flex justify-between bg-[#feefcc] p-2 rounded-md">
+                          <h4 className="font-semibold text-sm">{e}</h4>
+                          <Toggle
+                            value={enabledEquipmentWithSim[e] || false}
+                            onChange={(enabled) =>
+                              handleEquipmentToggle(e, enabled, "withSim")
+                            }
+                            disabled={false}
+                            title={() => "Habilitar equipamento"}
+                          />
+                        </div>
+                      )}
 
-                  {/* Render pricing form when equipment is enabled */}
-                  {enabledEquipmentWithSim[e] && (
-                    <div className="mt-4">
-                      <EquipmentPriceForm
-                        equipmentModel={`${e} (com SIM Card)`}
-                        onPriceChange={(prices) => {
-                          console.log(
-                            "Price change for",
-                            e,
-                            "with SIM:",
-                            prices
-                          );
-                          // Handle price data here
-                        }}
-                      />
+                      {/* Render pricing form when equipment is enabled */}
+                      {enabledEquipmentWithSim[e] && (
+                        <div className="mt-4">
+                          <EquipmentPriceForm
+                            equipmentModel={`${e} (com SIM Card)`}
+                            onPriceChange={(prices) => {
+                              console.log(
+                                "Price change for",
+                                e,
+                                "with SIM:",
+                                prices
+                              );
+                              // Handle price data here
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
-                  )}
+                  ))}
                 </div>
-              ))}
-            </div>
+              </DisclosurePanel>
+            </Disclosure>
 
             {/* Venda sem SIM Card */}
-            <div className="border border-gray-200 rounded-md p-2 space-y-2">
-              <h3 className="font-semibold text-sm">Venda sem SIM Card</h3>
-              {equipmentModels.map((e, index) => (
-                <div key={`without-sim-${e}`}>
-                  {index % 2 === 0 && (
-                    <div className="flex justify-between bg-[#fdde9a] p-2 rounded-md">
-                      <h4 className="font-semibold text-sm">{e}</h4>
-                      <Toggle
-                        value={enabledEquipmentWithoutSim[e] || false}
-                        onChange={(enabled) =>
-                          handleEquipmentToggle(e, enabled, "withoutSim")
-                        }
-                        disabled={false}
-                        title={() => "Habilitar equipamento"}
-                      />
-                    </div>
-                  )}
-                  {index % 2 === 1 && (
-                    <div className="flex justify-between bg-[#feefcc] p-2 rounded-md">
-                      <h4 className="font-semibold text-sm">{e}</h4>
-                      <Toggle
-                        value={enabledEquipmentWithoutSim[e] || false}
-                        onChange={(enabled) =>
-                          handleEquipmentToggle(e, enabled, "withoutSim")
-                        }
-                        disabled={false}
-                        title={() => "Habilitar equipamento"}
-                      />
-                    </div>
-                  )}
+            <Disclosure>
+              <DisclosureButton className="border border-gray-200 rounded-md w-full p-3 group flex justify-between items-center gap-2 bg-gray-50">
+                <h3 className="font-semibold text-sm">Venda sem SIM Card</h3>
+                <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
+              </DisclosureButton>
+              <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
+                <div className="border border-gray-200 rounded-md p-2 space-y-2">
+                  {equipmentModels.map((e, index) => (
+                    <div key={`without-sim-${e}`}>
+                      {index % 2 === 0 && (
+                        <div className="flex justify-between bg-[#fdde9a] p-2 rounded-md">
+                          <h4 className="font-semibold text-sm">{e}</h4>
+                          <Toggle
+                            value={enabledEquipmentWithoutSim[e] || false}
+                            onChange={(enabled) =>
+                              handleEquipmentToggle(e, enabled, "withoutSim")
+                            }
+                            disabled={false}
+                            title={() => "Habilitar equipamento"}
+                          />
+                        </div>
+                      )}
+                      {index % 2 === 1 && (
+                        <div className="flex justify-between bg-[#feefcc] p-2 rounded-md">
+                          <h4 className="font-semibold text-sm">{e}</h4>
+                          <Toggle
+                            value={enabledEquipmentWithoutSim[e] || false}
+                            onChange={(enabled) =>
+                              handleEquipmentToggle(e, enabled, "withoutSim")
+                            }
+                            disabled={false}
+                            title={() => "Habilitar equipamento"}
+                          />
+                        </div>
+                      )}
 
-                  {/* Render pricing form when equipment is enabled */}
-                  {enabledEquipmentWithoutSim[e] && (
-                    <div className="mt-4">
-                      <EquipmentPriceForm
-                        equipmentModel={`${e} (sem SIM Card)`}
-                        onPriceChange={(prices) => {
-                          console.log(
-                            "Price change for",
-                            e,
-                            "without SIM:",
-                            prices
-                          );
-                          // Handle price data here
-                        }}
-                      />
+                      {/* Render pricing form when equipment is enabled */}
+                      {enabledEquipmentWithoutSim[e] && (
+                        <div className="mt-4">
+                          <EquipmentPriceForm
+                            equipmentModel={`${e} (sem SIM Card)`}
+                            onPriceChange={(prices) => {
+                              console.log(
+                                "Price change for",
+                                e,
+                                "without SIM:",
+                                prices
+                              );
+                              // Handle price data here
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
-                  )}
+                  ))}
                 </div>
-              ))}
-            </div>
+              </DisclosurePanel>
+            </Disclosure>
           </DisclosurePanel>
         </div>
       </Disclosure>
