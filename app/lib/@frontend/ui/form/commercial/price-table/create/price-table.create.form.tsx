@@ -13,7 +13,11 @@ import {
   Input,
   Toggle,
 } from "../../../../component";
-import { EquipmentAccessoryPriceForm, SimCardPriceForm } from "../product-form";
+import {
+  EquipmentAccessoryPriceForm,
+  SimCardPriceForm,
+  ServicePriceForm,
+} from "../product-form";
 
 const equipmentModels = [
   "E3+",
@@ -335,6 +339,22 @@ export function CreatePriceTableForm() {
                     </div>
                   ))}
                 </div>
+              </DisclosurePanel>
+            </Disclosure>
+
+            {/* Serviços */}
+            <Disclosure>
+              <DisclosureButton className="border border-gray-200 rounded-md w-full p-3 group flex justify-between items-center gap-2 bg-gray-50">
+                <h3 className="font-semibold text-sm">Serviços</h3>
+                <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
+              </DisclosureButton>
+              <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
+                <ServicePriceForm
+                  onPriceChange={(prices) => {
+                    console.log("Service price change:", prices);
+                    // Handle service price data here
+                  }}
+                />
               </DisclosurePanel>
             </Disclosure>
           </DisclosurePanel>
