@@ -15,30 +15,34 @@ import { Plus, Trash2 } from "lucide-react";
 
 interface SimCardTier {
   id: string;
-  operadoras: string[];
-  quantidadeMB: string;
-  tipo: string;
-  fornecedor: string;
+  carriers: string[];
+  dataMB: string;
+  type: string;
+  supplier: string;
+  priceWithoutEquipment: string;
+  priceInCombo: string;
 }
 
 interface SimCardPriceFormProps {
   onPriceChange?: (prices: any) => void;
 }
 
-const operadorasOptions = ["Tim", "Claro", "Vivo"];
-const quantidadeMBOptions = ["10MB", "20MB", "30MB"];
-const tipoOptions = ["Compartilhado", "Nao compartilhado"];
-const fornecedorOptions = ["Arquia Mobile", "Emnify", "Links Field"];
+const carriersOptions = ["Tim", "Claro", "Vivo"];
+const dataMBOptions = ["10MB", "20MB", "30MB"];
+const typeOptions = ["Compartilhado", "Nao compartilhado"];
+const supplierOptions = ["Arquia Mobile", "Emnify", "Links Field"];
 
 export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
   const [showForm, setShowForm] = useState(false);
   const [simCardTiers, setSimCardTiers] = useState<SimCardTier[]>([
-    { 
-      id: "1", 
-      operadoras: [],
-      quantidadeMB: "",
-      tipo: "",
-      fornecedor: ""
+    {
+      id: "1",
+      carriers: [],
+      dataMB: "",
+      type: "",
+      supplier: "",
+      priceWithoutEquipment: "",
+      priceInCombo: "",
     },
   ]);
 
@@ -51,10 +55,12 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
     // Add new tier
     const newTier: SimCardTier = {
       id: Date.now().toString(),
-      operadoras: [],
-      quantidadeMB: "",
-      tipo: "",
-      fornecedor: "",
+      carriers: [],
+      dataMB: "",
+      type: "",
+      supplier: "",
+      priceWithoutEquipment: "",
+      priceInCombo: "",
     };
 
     setSimCardTiers([...simCardTiers, newTier]);
@@ -107,11 +113,13 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
         /* SIM Card Pricing Form */
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Configuração de SIM Cards</CardTitle>
+            <CardTitle className="text-base">
+              Configuração de SIM Cards
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-4">
-                            {/* SIM Card Tiers */}
+              {/* SIM Card Tiers */}
               {simCardTiers.map((tier, index) => (
                 <div
                   key={tier.id}
@@ -122,13 +130,13 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                     <div className="space-y-2">
                       <Label className="text-sm">Operadora</Label>
                       <Combobox
-                        data={operadorasOptions}
+                        data={carriersOptions}
                         keyExtractor={(item) => item}
                         displayValueGetter={(item) => item}
                         type="multiple"
-                        value={tier.operadoras}
+                        value={tier.carriers}
                         onChange={(value) => {
-                          updateSimCardTier(tier.id, "operadoras", value);
+                          updateSimCardTier(tier.id, "carriers", value);
                           handlePriceChange();
                         }}
                         placeholder="Selecione operadoras"
@@ -138,13 +146,17 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                     <div className="space-y-2">
                       <Label className="text-sm">Quantidade MB</Label>
                       <Combobox
-                        data={quantidadeMBOptions}
+                        data={dataMBOptions}
                         keyExtractor={(item) => item}
                         displayValueGetter={(item) => item}
                         type="single"
-                        value={tier.quantidadeMB ? [tier.quantidadeMB] : []}
+                        value={tier.dataMB ? [tier.dataMB] : []}
                         onChange={(value) => {
-                          updateSimCardTier(tier.id, "quantidadeMB", value[0] || "");
+                          updateSimCardTier(
+                            tier.id,
+                            "dataMB",
+                            value[0] || ""
+                          );
                           handlePriceChange();
                         }}
                         placeholder="Selecione quantidade"
@@ -154,13 +166,13 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                     <div className="space-y-2">
                       <Label className="text-sm">Tipo</Label>
                       <Combobox
-                        data={tipoOptions}
+                        data={typeOptions}
                         keyExtractor={(item) => item}
                         displayValueGetter={(item) => item}
                         type="single"
-                        value={tier.tipo ? [tier.tipo] : []}
+                        value={tier.type ? [tier.type] : []}
                         onChange={(value) => {
-                          updateSimCardTier(tier.id, "tipo", value[0] || "");
+                          updateSimCardTier(tier.id, "type", value[0] || "");
                           handlePriceChange();
                         }}
                         placeholder="Selecione tipo"
@@ -170,16 +182,55 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                     <div className="space-y-2">
                       <Label className="text-sm">Fornecedor</Label>
                       <Combobox
-                        data={fornecedorOptions}
+                        data={supplierOptions}
                         keyExtractor={(item) => item}
                         displayValueGetter={(item) => item}
                         type="single"
-                        value={tier.fornecedor ? [tier.fornecedor] : []}
+                        value={tier.supplier ? [tier.supplier] : []}
                         onChange={(value) => {
-                          updateSimCardTier(tier.id, "fornecedor", value[0] || "");
+                          updateSimCardTier(
+                            tier.id,
+                            "supplier",
+                            value[0] || ""
+                          );
                           handlePriceChange();
                         }}
                         placeholder="Selecione fornecedor"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Price Fields */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm">Preço sem equipamento</Label>
+                      <Input
+                        value={tier.priceWithoutEquipment}
+                        onChange={(e) => {
+                          updateSimCardTier(
+                            tier.id,
+                            "priceWithoutEquipment",
+                            e.target.value
+                          );
+                          handlePriceChange();
+                        }}
+                        placeholder="R$ 0,00"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm">Preço no combo</Label>
+                      <Input
+                        value={tier.priceInCombo}
+                        onChange={(e) => {
+                          updateSimCardTier(
+                            tier.id,
+                            "priceInCombo",
+                            e.target.value
+                          );
+                          handlePriceChange();
+                        }}
+                        placeholder="R$ 0,00"
                       />
                     </div>
                   </div>
