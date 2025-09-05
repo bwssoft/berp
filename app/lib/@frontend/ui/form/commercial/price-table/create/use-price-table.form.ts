@@ -6,7 +6,11 @@ import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { IEquipmentPayment, IPriceRange } from "@/app/lib/@backend/domain/commercial/entity/price-table-product.definition";
+import {
+  IEquipmentPayment,
+  IPriceRange,
+  ISimcardPayment,
+} from "@/app/lib/@backend/domain/commercial/entity/price-table-product.definition";
 
 // Schema de validação com Zod baseado no IPriceTable
 const priceTableSchema = z
@@ -82,16 +86,17 @@ export function usePriceTableForm() {
   // Helper function to format date for datetime-local input
   const formatDateTimeLocal = (date: Date) => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
   // Get formatted default values for datetime inputs
   const getDefaultStartDateTime = () => formatDateTimeLocal(new Date());
-  const getDefaultEndDateTime = () => formatDateTimeLocal(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000));
+  const getDefaultEndDateTime = () =>
+    formatDateTimeLocal(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000));
 
   // Handle equipment price changes - transform to IEquipmentPayment format
   const handleEquipmentPriceChange = (
@@ -172,12 +177,37 @@ export function usePriceTableForm() {
     }
 
     // Log the transformed data for debugging
-    console.log(`Equipment payment data for ${equipmentModel} (${type}):`, equipmentPayment);
+    console.log(
+      `Equipment payment data for ${equipmentModel} (${type}):`,
+      equipmentPayment
+    );
   };
 
-  // Handle SIM card price changes
+  // Handle SIM card price changes - transform to ISimcardPayment format
   const handleSimCardPriceChange = (prices: any) => {
-    form.setValue("simCards", prices.simCardTiers || []);
+    // Transform simCardTiers to ISimcardPayment format
+    const simcardPayments: ISimcardPayment[] =
+      prices.simCardTiers
+        ?.filter(
+          (tier: any) =>
+            tier.carriers?.length > 0 &&
+            tier.dataMB &&
+            tier.type &&
+            tier.supplier
+        )
+        .map((tier: any) => ({
+          carriers: tier.carriers,
+          dataAmountMb: Number(tier.dataMB.replace("MB", "")), // Convert "10MB" to 10
+          planType: tier.type,
+          provider: tier.supplier,
+          priceWithoutDevice: Number(tier.priceWithoutEquipment) || 0,
+          priceInBundle: Number(tier.priceInCombo) || 0,
+        })) || [];
+
+    form.setValue("simCards", simcardPayments);
+
+    // Log the transformed data for debugging
+    console.log("SIM Card payment data:", simcardPayments);
   };
 
   // Handle accessories price changes

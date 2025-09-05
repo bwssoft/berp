@@ -300,7 +300,11 @@ export function CreatePriceTableForm() {
                             <EquipmentAccessoryPriceForm
                               equipmentModel={e}
                               onPriceChange={(prices) => {
-                                handleEquipmentPriceChange(e, prices, "withSim");
+                                handleEquipmentPriceChange(
+                                  e,
+                                  prices,
+                                  "withSim"
+                                );
                               }}
                             />
                           </div>
@@ -354,7 +358,11 @@ export function CreatePriceTableForm() {
                             <EquipmentAccessoryPriceForm
                               equipmentModel={e}
                               onPriceChange={(prices) => {
-                                handleEquipmentPriceChange(e, prices, "withoutSim");
+                                handleEquipmentPriceChange(
+                                  e,
+                                  prices,
+                                  "withoutSim"
+                                );
                               }}
                             />
                           </div>
