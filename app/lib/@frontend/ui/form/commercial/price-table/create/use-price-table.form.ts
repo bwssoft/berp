@@ -6,6 +6,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { IEquipmentPayment, IPriceRange } from "@/app/lib/@backend/domain/commercial/entity/price-table-product.definition";
 
 // Schema de validação com Zod baseado no IPriceTable
 const priceTableSchema = z
@@ -33,9 +34,9 @@ const priceTableSchema = z
         billTo: z.string().optional(),
       })
       .optional(),
-    // Dados de preços dos produtos
-    equipmentWithSim: z.record(z.any()).default({}),
-    equipmentWithoutSim: z.record(z.any()).default({}),
+    // Dados de preços dos produtos com tipos específicos
+    equipmentWithSim: z.record(z.any()).default({}), // Record<string, IEquipmentPayment>
+    equipmentWithoutSim: z.record(z.any()).default({}), // Record<string, IEquipmentPayment>
     simCards: z.array(z.any()).default([]),
     accessories: z.record(z.any()).default({}),
     services: z.array(z.any()).default([]),
@@ -78,7 +79,21 @@ export function usePriceTableForm() {
     },
   });
 
-  // Handle equipment price changes
+  // Helper function to format date for datetime-local input
+  const formatDateTimeLocal = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  // Get formatted default values for datetime inputs
+  const getDefaultStartDateTime = () => formatDateTimeLocal(new Date());
+  const getDefaultEndDateTime = () => formatDateTimeLocal(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000));
+
+  // Handle equipment price changes - transform to IEquipmentPayment format
   const handleEquipmentPriceChange = (
     equipmentModel: string,
     prices: any,
@@ -86,19 +101,78 @@ export function usePriceTableForm() {
   ) => {
     const currentData = form.getValues();
 
+    // Transform the data to IEquipmentPayment format
+    const equipmentPayment: {
+      onSight?: IEquipmentPayment;
+      onDemand?: IEquipmentPayment;
+    } = {};
+
+    // Handle credit payment (pagamento a prazo)
+    if (prices.useQuantityRange && prices.priceTiers?.length > 0) {
+      // Batch pricing with quantity ranges
+      const priceRange: IPriceRange[] = prices.priceTiers
+        .filter((tier: any) => tier.from && tier.pricePerUnit)
+        .map((tier: any) => ({
+          from: Number(tier.from),
+          to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
+          unitPrice: Number(tier.pricePerUnit),
+        }));
+
+      equipmentPayment.onDemand = {
+        type: "batch",
+        unitPrice: 0, // Not used for batch pricing
+        priceRange,
+      };
+    } else if (prices.singlePrice) {
+      // Unit pricing
+      equipmentPayment.onDemand = {
+        type: "unit",
+        unitPrice: Number(prices.singlePrice),
+        priceRange: [],
+      };
+    }
+
+    // Handle cash payment (pagamento à vista)
+    if (prices.useCashQuantityRange && prices.cashPriceTiers?.length > 0) {
+      // Batch pricing with quantity ranges
+      const priceRange: IPriceRange[] = prices.cashPriceTiers
+        .filter((tier: any) => tier.from && tier.pricePerUnit)
+        .map((tier: any) => ({
+          from: Number(tier.from),
+          to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
+          unitPrice: Number(tier.pricePerUnit),
+        }));
+
+      equipmentPayment.onSight = {
+        type: "batch",
+        unitPrice: 0, // Not used for batch pricing
+        priceRange,
+      };
+    } else if (prices.cashPrice) {
+      // Unit pricing
+      equipmentPayment.onSight = {
+        type: "unit",
+        unitPrice: Number(prices.cashPrice),
+        priceRange: [],
+      };
+    }
+
     if (type === "withSim") {
       const updatedEquipmentWithSim = {
         ...currentData.equipmentWithSim,
-        [equipmentModel]: prices,
+        [equipmentModel]: equipmentPayment,
       };
       form.setValue("equipmentWithSim", updatedEquipmentWithSim);
     } else {
       const updatedEquipmentWithoutSim = {
         ...currentData.equipmentWithoutSim,
-        [equipmentModel]: prices,
+        [equipmentModel]: equipmentPayment,
       };
       form.setValue("equipmentWithoutSim", updatedEquipmentWithoutSim);
     }
+
+    // Log the transformed data for debugging
+    console.log(`Equipment payment data for ${equipmentModel} (${type}):`, equipmentPayment);
   };
 
   // Handle SIM card price changes
@@ -268,6 +342,10 @@ export function usePriceTableForm() {
     handleSimCardPriceChange,
     handleAccessoryPriceChange,
     handleServicePriceChange,
+    // Helper functions
+    getDefaultStartDateTime,
+    getDefaultEndDateTime,
+    formatDateTimeLocal,
     // Schema for external validation
     schema: priceTableSchema,
   };

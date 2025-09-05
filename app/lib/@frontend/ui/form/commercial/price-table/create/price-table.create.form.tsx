@@ -58,6 +58,8 @@ export function CreatePriceTableForm() {
     handleSimCardPriceChange,
     handleAccessoryPriceChange,
     handleServicePriceChange,
+    getDefaultStartDateTime,
+    getDefaultEndDateTime,
   } = usePriceTableForm();
 
   // Dialog hooks
@@ -177,8 +179,9 @@ export function CreatePriceTableForm() {
                     type="datetime-local"
                     required
                     {...form.register("startDateTime", {
-                      valueAsDate: true,
+                      setValueAs: (value) => new Date(value),
                     })}
+                    defaultValue={getDefaultStartDateTime()}
                     error={form.formState.errors.startDateTime?.message}
                   />
                   <Input
@@ -186,8 +189,9 @@ export function CreatePriceTableForm() {
                     type="datetime-local"
                     required
                     {...form.register("endDateTime", {
-                      valueAsDate: true,
+                      setValueAs: (value) => new Date(value),
                     })}
+                    defaultValue={getDefaultEndDateTime()}
                     error={form.formState.errors.endDateTime?.message}
                   />
                 </div>
@@ -294,15 +298,9 @@ export function CreatePriceTableForm() {
                         {enabledEquipmentWithSim[e] && (
                           <div className="mt-4">
                             <EquipmentAccessoryPriceForm
-                              equipmentModel={`${e} (com SIM Card)`}
+                              equipmentModel={e}
                               onPriceChange={(prices) => {
-                                console.log(
-                                  "Price change for",
-                                  e,
-                                  "with SIM:",
-                                  prices
-                                );
-                                // Handle price data here
+                                handleEquipmentPriceChange(e, prices, "withSim");
                               }}
                             />
                           </div>
@@ -354,15 +352,9 @@ export function CreatePriceTableForm() {
                         {enabledEquipmentWithoutSim[e] && (
                           <div className="mt-4">
                             <EquipmentAccessoryPriceForm
-                              equipmentModel={`${e} (sem SIM Card)`}
+                              equipmentModel={e}
                               onPriceChange={(prices) => {
-                                console.log(
-                                  "Price change for",
-                                  e,
-                                  "without SIM:",
-                                  prices
-                                );
-                                // Handle price data here
+                                handleEquipmentPriceChange(e, prices, "withoutSim");
                               }}
                             />
                           </div>
