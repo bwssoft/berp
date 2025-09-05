@@ -32,7 +32,7 @@ export interface IPriceTableCondition {
   billingLimit?: string;
   toBillFor: string;
   salesFor: BrazilianUF[];
-  priority?: number;
+  priority?: boolean;
 }
 
 export interface IPriceTableConditionGroup {

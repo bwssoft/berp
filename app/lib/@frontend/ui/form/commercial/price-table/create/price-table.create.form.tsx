@@ -18,6 +18,7 @@ import {
   SimCardPriceForm,
   ServicePriceForm,
 } from "../product-form";
+import { BrazilianUF, IPriceTableCondition } from "@/app/lib/@backend/domain";
 
 const equipmentModels = [
   "E3+",
@@ -80,6 +81,30 @@ export function CreatePriceTableForm() {
     }));
   };
 
+  type Group = { id: string; conditions: IPriceTableCondition[] };
+
+  const uid = () => (crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2));
+  const emptyCondition = (): IPriceTableCondition => ({ id: uid(), salesFor: [], billingLimit: "", toBillFor: "", priority: false });
+
+  // state para grupos e condições
+  const [groups, setGroups] = useState<Group[]>([
+    { id: uid(), conditions: [emptyCondition()] }
+  ]);
+
+  // adicionar novo GRUPO
+  const addGroup = () =>
+    setGroups(prev => [...prev, { id: uid(), conditions: [emptyCondition()] }]);
+
+  // adicionar nova CONDIÇÃO dentro de um grupo
+  const addCondition = (groupId: string, init?: Partial<IPriceTableCondition>) =>
+    setGroups(prev =>
+      prev.map(g =>
+        g.id === groupId
+          ? { ...g, conditions: [...g.conditions, { ...emptyCondition(), ...init }] }
+          : g
+      )
+    );
+
   return (
     <>
       <Disclosure>
@@ -102,33 +127,91 @@ export function CreatePriceTableForm() {
             <Checkbox label="Tabela provisória?" />
 
             {/* Configurações de faturamento */}
-            <div className="space-y-2">
-              <h3 className="font-semibold text-sm">
-                Configurações de Faturamento
-              </h3>
-              <div className="flex gap-4">
-                <Combobox
-                  label="Vendas para"
-                  data={[]}
-                  keyExtractor={(e) => e}
-                  displayValueGetter={(e) => e}
-                />
-                <Input label="Limite de faturamento" />
-                <Combobox
-                  label="Faturar para"
-                  data={[]}
-                  keyExtractor={(e) => e}
-                  displayValueGetter={(e) => e}
-                />
-              </div>
+            <div className="space-y-3">
+              <h3 className="font-semibold text-sm">Configurações de Faturamento</h3>
+
+              {groups.map((group, gi) => (
+                <div key={group.id} className="space-y-2 rounded-lg border p-3">
+                  {group.conditions.map((cond) => (
+                    <div key={cond.id} className="flex gap-2 items-center">
+                      <Combobox
+                        label="Vendas para"
+                        data={[]}
+                        value={cond.salesFor}
+                        onChange={(v: string[]) =>
+                          setGroups(prev =>
+                            prev.map(g =>
+                              g.id === group.id
+                                ? {
+                                    ...g,
+                                    conditions: g.conditions.map(c =>
+                                      c.id === cond.id
+                                        ? { ...c, salesFor: v as BrazilianUF[] }
+                                        : c
+                                    ),
+                                  }
+                                : g
+                            )
+                          )
+                        }
+                        keyExtractor={(e) => e}
+                        displayValueGetter={(e) => e}
+                      />
+                      <Input
+                        label="Limite de faturamento"
+                        value={cond.billingLimit}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setGroups(prev =>
+                            prev.map(g =>
+                              g.id === group.id
+                                ? {
+                                    ...g,
+                                    conditions: g.conditions.map(c =>
+                                      c.id === cond.id ? { ...c, billingLimit: e.target.value } : c
+                                    ),
+                                  }
+                                : g
+                            )
+                          )
+                        }
+                      />
+                      <Combobox
+                        label="Faturar para"
+                        data={[]}
+                        value={[cond.toBillFor]}
+                        onChange={(v: string[]) =>
+                          setGroups(prev =>
+                            prev.map(g =>
+                              g.id === group.id
+                                ? {
+                                    ...g,
+                                    conditions: g.conditions.map(c =>
+                                      c.id === cond.id ? { ...c, toBillFor: v[0] ?? "" } : c
+                                    ),
+                                  }
+                                : g
+                            )
+                          )
+                        }
+                        keyExtractor={(e) => e}
+                        displayValueGetter={(e) => e}
+                      />
+                    </div>
+                  ))}
+
+                  <Button className="bg-purple-600 w-fit" onClick={() => addCondition(group.id)}>
+                    Nova condição
+                  </Button>
+                </div>
+              ))}
             </div>
+
 
             {/* Botões para condições */}
             <div className="flex flex-col gap-3">
-              <Button className="bg-purple-600 w-fit">Nova condição</Button>
 
               <div className="flex gap-4">
-                <Button className="bg-blue-600">Novo grupo de condições</Button>
+                <Button className="bg-blue-600" onClick={addGroup}>Novo grupo de condições</Button>
                 <Button className="bg-green-600">Validar condições</Button>
               </div>
             </div>
