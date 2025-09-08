@@ -6,11 +6,13 @@ import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { createOnePriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
 import {
   IEquipmentPayment,
   IPriceRange,
   ISimcardPayment,
   IServicePayment,
+  StatusPriceTable,
 } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 
 // Schema de validação com Zod baseado no IPriceTable
@@ -255,30 +257,59 @@ export function usePriceTableForm() {
     console.log("Transformed services data:", transformedServices);
   };
 
+  // Helper function to transform form data to IPriceTable payload
+  const transformToPriceTablePayload = (
+    data: CreatePriceTableFormData,
+    status: StatusPriceTable = "DRAFT"
+  ) => {
+    // Transform equipment data from nested objects to arrays
+    const equipmentPayment: IEquipmentPayment[] = [];
+
+    // Add equipment with SIM
+    Object.entries(data.equipmentWithSim || {}).forEach(
+      ([productId, payment]) => {
+        if (payment?.onSight) {
+          equipmentPayment.push(payment.onSight);
+        }
+        if (payment?.onDemand) {
+          equipmentPayment.push(payment.onDemand);
+        }
+      }
+    );
+
+    // Add equipment without SIM
+    Object.entries(data.equipmentWithoutSim || {}).forEach(
+      ([productId, payment]) => {
+        if (payment?.onSight) {
+          equipmentPayment.push(payment.onSight);
+        }
+        if (payment?.onDemand) {
+          equipmentPayment.push(payment.onDemand);
+        }
+      }
+    );
+
+    return {
+      name: data.name,
+      startDateTime: data.startDateTime,
+      endDateTime: data.endDateTime,
+      isTemporary: data.isTemporary,
+      conditionGroupIds: data.conditionGroupIds,
+      enabledProductsIds: data.enabledProductsIds,
+      status,
+      equipmentPayment,
+      simcardPayment: data.simCards || [],
+      servicePayment: data.services || [],
+    };
+  };
+
   const handleSubmit = form.handleSubmit(
     async (data: CreatePriceTableFormData) => {
       setLoading(true);
 
       try {
-        // Transform data to match IPriceTable interface
-        const priceTablePayload = {
-          name: data.name,
-          startDateTime: data.startDateTime,
-          endDateTime: data.endDateTime,
-          isTemporary: data.isTemporary,
-          conditionGroupIds: data.conditionGroupIds,
-          enabledProductsIds: data.enabledProductsIds,
-          status: "rascunho" as const, // Default status for new tables
-          // Additional data for price configurations
-          billingConfig: data.billingConfig,
-          pricing: {
-            equipmentWithSim: data.equipmentWithSim,
-            equipmentWithoutSim: data.equipmentWithoutSim,
-            simCards: data.simCards,
-            accessories: data.accessories,
-            services: data.services,
-          },
-        };
+        // Transform data to match IPriceTable interface exactly
+        const priceTablePayload = transformToPriceTablePayload(data, "DRAFT");
 
         // Log the payload for debugging
         console.log(
@@ -286,53 +317,20 @@ export function usePriceTableForm() {
           JSON.stringify(priceTablePayload, null, 2)
         );
 
-        // TODO: Replace with actual API call
-        // const { success, error } = await createPriceTable(priceTablePayload);
+        // Call the actual API action
+        await createOnePriceTable(priceTablePayload);
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Simulate success for now
-        const success = true;
-        const error = null;
-
-        if (success) {
-          toast({
-            title: "Sucesso!",
-            description: "Tabela de preços criada com sucesso!",
-            variant: "success",
-          });
-          router.push("/commercial/price-table");
-          return;
-        }
-
-        if (error) {
-          // Handle field-specific errors
-          if (typeof error === "object") {
-            Object.entries(error).forEach(([key, message]) => {
-              if (key !== "global" && message) {
-                form.setError(key as keyof CreatePriceTableFormData, {
-                  type: "manual",
-                  message: message as string,
-                });
-              }
-            });
-          }
-
-          toast({
-            title: "Erro!",
-            description:
-              typeof error === "string"
-                ? error
-                : "Falha ao criar a tabela de preços!",
-            variant: "error",
-          });
-        }
+        toast({
+          title: "Sucesso!",
+          description: "Tabela de preços criada com sucesso!",
+          variant: "success",
+        });
+        router.push("/commercial/price-table");
       } catch (error) {
         console.error("Error creating price table:", error);
         toast({
           title: "Erro!",
-          description: "Falha inesperada ao criar a tabela de preços!",
+          description: "Falha ao criar a tabela de preços!",
           variant: "error",
         });
       } finally {
@@ -345,15 +343,14 @@ export function usePriceTableForm() {
     const currentData = form.getValues();
 
     try {
-      // Create payload for draft save (less strict validation)
-      const draftPayload = {
-        ...currentData,
-        status: "rascunho" as const,
-      };
+      // Create payload for draft save
+      const draftPayload = transformToPriceTablePayload(currentData, "DRAFT");
 
       console.log("Draft Payload:", JSON.stringify(draftPayload, null, 2));
 
-      // TODO: Implement draft save API call
+      // Call the actual API action
+      await createOnePriceTable(draftPayload);
+
       toast({
         title: "Rascunho salvo!",
         description: "Suas alterações foram salvas como rascunho.",
