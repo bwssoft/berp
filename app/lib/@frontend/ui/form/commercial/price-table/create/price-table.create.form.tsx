@@ -274,8 +274,6 @@ export function CreatePriceTableForm() {
                 </label>
               </div>
 
-            <Checkbox label="Tabela provisória?" />
-
             {/* Configurações de faturamento */}
             <div className="space-y-3">
               <h3 className="font-semibold text-sm">Configurações de Faturamento</h3>
@@ -351,7 +349,7 @@ export function CreatePriceTableForm() {
                     </div>
                   ))}
 
-                  <Button className="bg-purple-600 w-fit" onClick={() => addCondition(group.id)}>
+                  <Button className="bg-purple-600 w-fit" type="button" onClick={() => addCondition(group.id)}>
                     Nova condição
                   </Button>
                 </div>
@@ -363,8 +361,8 @@ export function CreatePriceTableForm() {
             <div className="flex flex-col gap-3">
 
               <div className="flex gap-4">
-                <Button className="bg-blue-600" onClick={addGroup}>Novo grupo de condições</Button>
-                <Button className="bg-green-600">Validar condições</Button>
+                <Button type="button" className="bg-blue-600" onClick={addGroup}>Novo grupo de condições</Button>
+                <Button type="button" className="bg-green-600">Validar condições</Button>
               </div>
             </div>
           </DisclosurePanel>
