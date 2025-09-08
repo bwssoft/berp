@@ -60,12 +60,12 @@ export function PriceTableFilterForm() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="">Todos</option>
-            <option value="Ativa">Ativa</option>
-            <option value="Inativa">Inativa</option>
-            <option value="Rascunho">Rascunho</option>
+            <option value="ACTIVE">Ativa</option>
+            <option value="INACTIVE">Inativa</option>
+            <option value="DRAFT">Rascunho</option>
             <option value="Em Pausa">Em Pausa</option>
-            <option value="Cancelada">Cancelada</option>
-            <option value="Aguardando Publicação">Aguardando Publicação</option>
+            <option value="CANCELLED">Cancelada</option>
+            <option value="AWAITING_PUBLICATION">Aguardando Publicação</option>
           </select>
         </div>
       </div>

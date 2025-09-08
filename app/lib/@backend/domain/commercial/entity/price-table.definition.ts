@@ -1,10 +1,10 @@
 export type StatusPriceTable =
-  | "ativa"
-  | "inativa"
-  | "cancelada"
-  | "aguardando publicação"
-  | "tabela programada para publicação"
-  | "rascunho";
+  | "ACTIVE"
+  | "INACTIVE"
+  | "CANCELLED"
+  | "AWAITING_PUBLICATION"
+  | "SCHEDULED_FOR_PUBLICATION"
+  | "DRAFT";
 
 export interface IPriceTable {
   id?: string;
