@@ -46,6 +46,27 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
     },
   ]);
 
+  const updateSimCardTier = (
+    id: string,
+    field: keyof SimCardTier,
+    value: string | string[]
+  ) => {
+    setSimCardTiers((tiers) =>
+      tiers.map((tier) => (tier.id === id ? { ...tier, [field]: value } : tier))
+    );
+    // Trigger price change notification after state update
+    setTimeout(() => handlePriceChange(), 0);
+  };
+
+  const removeSimCardTier = (id: string) => {
+    if (simCardTiers.length <= 1) return; // Keep at least 1 tier
+
+    const filtered = simCardTiers.filter((tier) => tier.id !== id);
+    setSimCardTiers(filtered);
+    // Trigger price change notification after state update
+    setTimeout(() => handlePriceChange(), 0);
+  };
+
   const addSimCardTier = () => {
     if (!showForm) {
       setShowForm(true);
@@ -64,23 +85,8 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
     };
 
     setSimCardTiers([...simCardTiers, newTier]);
-  };
-
-  const removeSimCardTier = (id: string) => {
-    if (simCardTiers.length <= 1) return; // Keep at least 1 tier
-
-    const filtered = simCardTiers.filter((tier) => tier.id !== id);
-    setSimCardTiers(filtered);
-  };
-
-  const updateSimCardTier = (
-    id: string,
-    field: keyof SimCardTier,
-    value: string | string[]
-  ) => {
-    setSimCardTiers((tiers) =>
-      tiers.map((tier) => (tier.id === id ? { ...tier, [field]: value } : tier))
-    );
+    // Trigger price change notification after state update
+    setTimeout(() => handlePriceChange(), 0);
   };
 
   // Notify parent component when prices change
@@ -137,7 +143,6 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                         value={tier.carriers}
                         onChange={(value) => {
                           updateSimCardTier(tier.id, "carriers", value);
-                          handlePriceChange();
                         }}
                         placeholder="Selecione operadoras"
                       />
@@ -153,7 +158,6 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                         value={tier.dataMB ? [tier.dataMB] : []}
                         onChange={(value) => {
                           updateSimCardTier(tier.id, "dataMB", value[0] || "");
-                          handlePriceChange();
                         }}
                         placeholder="Selecione quantidade"
                       />
@@ -169,7 +173,6 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                         value={tier.type ? [tier.type] : []}
                         onChange={(value) => {
                           updateSimCardTier(tier.id, "type", value[0] || "");
-                          handlePriceChange();
                         }}
                         placeholder="Selecione tipo"
                       />
@@ -189,7 +192,6 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                             "supplier",
                             value[0] || ""
                           );
-                          handlePriceChange();
                         }}
                         placeholder="Selecione fornecedor"
                       />
@@ -208,7 +210,6 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                             "priceWithoutEquipment",
                             e.target.value
                           );
-                          handlePriceChange();
                         }}
                         placeholder="R$ 0,00"
                       />
@@ -224,7 +225,6 @@ export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
                             "priceInCombo",
                             e.target.value
                           );
-                          handlePriceChange();
                         }}
                         placeholder="R$ 0,00"
                       />
