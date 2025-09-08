@@ -1,0 +1,412 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import {
+  IEquipmentPayment,
+  IPriceRange,
+  ISimcardPayment,
+  IServicePayment,
+} from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
+
+// Schema de validação com Zod baseado no IPriceTable
+const priceTableSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, "Nome da tabela é obrigatório")
+      .max(100, "Nome muito longo (máximo 100 caracteres)"),
+    startDateTime: z.date({
+      required_error: "Data e hora de início são obrigatórias",
+      invalid_type_error: "Data inválida",
+    }),
+    endDateTime: z.date({
+      required_error: "Data e hora de fim são obrigatórias",
+      invalid_type_error: "Data inválida",
+    }),
+    isTemporary: z.boolean().default(false),
+    conditionGroupIds: z.array(z.string()).default([]),
+    enabledProductsIds: z.array(z.string()).default([]),
+    // Configurações de faturamento
+    billingConfig: z
+      .object({
+        salesFor: z.string().optional(),
+        billingLimit: z.string().optional(),
+        billTo: z.string().optional(),
+      })
+      .optional(),
+    // Dados de preços dos produtos com tipos específicos
+    equipmentWithSim: z.record(z.any()).default({}), // Record<string, IEquipmentPayment>
+    equipmentWithoutSim: z.record(z.any()).default({}), // Record<string, IEquipmentPayment>
+    simCards: z.array(z.any()).default([]),
+    accessories: z.record(z.any()).default({}),
+    services: z.array(z.any()).default([]),
+  })
+  .refine(
+    (data) => {
+      return data.endDateTime > data.startDateTime;
+    },
+    {
+      message: "Data de fim deve ser posterior à data de início",
+      path: ["endDateTime"],
+    }
+  );
+
+export type CreatePriceTableFormData = z.infer<typeof priceTableSchema>;
+
+export function usePriceTableForm() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const form = useForm<CreatePriceTableFormData>({
+    resolver: zodResolver(priceTableSchema),
+    defaultValues: {
+      name: "",
+      startDateTime: new Date(),
+      endDateTime: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
+      isTemporary: false,
+      conditionGroupIds: [],
+      enabledProductsIds: [],
+      billingConfig: {
+        salesFor: "",
+        billingLimit: "",
+        billTo: "",
+      },
+      equipmentWithSim: {},
+      equipmentWithoutSim: {},
+      simCards: [],
+      accessories: {},
+      services: [],
+    },
+  });
+
+  // Helper function to format date for datetime-local input
+  const formatDateTimeLocal = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  // Get formatted default values for datetime inputs
+  const getDefaultStartDateTime = () => formatDateTimeLocal(new Date());
+  const getDefaultEndDateTime = () =>
+    formatDateTimeLocal(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000));
+
+  // Handle equipment price changes - transform to IEquipmentPayment format
+  const handleEquipmentPriceChange = (
+    equipmentModel: string,
+    prices: any,
+    type: "withSim" | "withoutSim"
+  ) => {
+    const currentData = form.getValues();
+
+    // Transform the data to IEquipmentPayment format
+    const equipmentPayment: {
+      onSight?: IEquipmentPayment;
+      onDemand?: IEquipmentPayment;
+    } = {};
+
+    // Handle credit payment (pagamento a prazo)
+    if (prices.useQuantityRange && prices.priceTiers?.length > 0) {
+      // Batch pricing with quantity ranges
+      const priceRange: IPriceRange[] = prices.priceTiers
+        .filter((tier: any) => tier.from && tier.pricePerUnit)
+        .map((tier: any) => ({
+          from: Number(tier.from),
+          to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
+          unitPrice: Number(tier.pricePerUnit),
+        }));
+
+      equipmentPayment.onDemand = {
+        type: "batch",
+        productId: equipmentModel, // Use equipment model as productId for now
+        productName: equipmentModel, // Use equipment model as productName for now
+        unitPrice: 0, // Not used for batch pricing
+        priceRange,
+      };
+    } else if (prices.singlePrice) {
+      // Unit pricing
+      equipmentPayment.onDemand = {
+        type: "unit",
+        productId: equipmentModel, // Use equipment model as productId for now
+        productName: equipmentModel, // Use equipment model as productName for now
+        unitPrice: Number(prices.singlePrice),
+        priceRange: [],
+      };
+    }
+
+    // Handle cash payment (pagamento à vista)
+    if (prices.useCashQuantityRange && prices.cashPriceTiers?.length > 0) {
+      // Batch pricing with quantity ranges
+      const priceRange: IPriceRange[] = prices.cashPriceTiers
+        .filter((tier: any) => tier.from && tier.pricePerUnit)
+        .map((tier: any) => ({
+          from: Number(tier.from),
+          to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
+          unitPrice: Number(tier.pricePerUnit),
+        }));
+
+      equipmentPayment.onSight = {
+        type: "batch",
+        productId: equipmentModel, // Use equipment model as productId for now
+        productName: equipmentModel, // Use equipment model as productName for now
+        unitPrice: 0, // Not used for batch pricing
+        priceRange,
+      };
+    } else if (prices.cashPrice) {
+      // Unit pricing
+      equipmentPayment.onSight = {
+        type: "unit",
+        productId: equipmentModel, // Use equipment model as productId for now
+        productName: equipmentModel, // Use equipment model as productName for now
+        unitPrice: Number(prices.cashPrice),
+        priceRange: [],
+      };
+    }
+
+    if (type === "withSim") {
+      const updatedEquipmentWithSim = {
+        ...currentData.equipmentWithSim,
+        [equipmentModel]: equipmentPayment,
+      };
+      form.setValue("equipmentWithSim", updatedEquipmentWithSim);
+    } else {
+      const updatedEquipmentWithoutSim = {
+        ...currentData.equipmentWithoutSim,
+        [equipmentModel]: equipmentPayment,
+      };
+      form.setValue("equipmentWithoutSim", updatedEquipmentWithoutSim);
+    }
+
+    // Log the transformed data for debugging
+    console.log(
+      `Equipment payment data for ${equipmentModel} (${type}):`,
+      equipmentPayment
+    );
+  };
+
+  // Handle SIM card price changes - transform to ISimcardPayment format
+  const handleSimCardPriceChange = (prices: any) => {
+    // Transform simCardTiers to ISimcardPayment format
+    const simcardPayments: ISimcardPayment[] =
+      prices.simCardTiers
+        ?.filter(
+          (tier: any) =>
+            tier.carriers?.length > 0 &&
+            tier.dataMB &&
+            tier.type &&
+            tier.supplier
+        )
+        .map((tier: any) => ({
+          carriers: tier.carriers,
+          dataAmountMb: Number(tier.dataMB.replace("MB", "")), // Convert "10MB" to 10
+          planType: tier.type,
+          provider: tier.supplier,
+          priceWithoutDevice: Number(tier.priceWithoutEquipment) || 0,
+          priceInBundle: Number(tier.priceInCombo) || 0,
+        })) || [];
+
+    form.setValue("simCards", simcardPayments);
+
+    // Log the transformed data for debugging
+    console.log("SIM Card payment data:", simcardPayments);
+  };
+
+  // Handle accessories price changes
+  const handleAccessoryPriceChange = (accessory: string, prices: any) => {
+    const currentData = form.getValues();
+    const updatedAccessories = {
+      ...currentData.accessories,
+      [accessory]: prices,
+    };
+    form.setValue("accessories", updatedAccessories);
+  };
+
+  // Handle services price changes - transform to IServicePayment format
+  const handleServicePriceChange = (services: any[]) => {
+    console.log("Service price change:", services);
+
+    // Transform service data to match IServicePayment interface
+    const transformedServices: IServicePayment[] = services
+      .filter((service: any) => service.service) // Only include services with a selected serviceId
+      .map((service: any) => ({
+        serviceId: service.service || "", // The selected service acts as serviceId
+        monthlyPrice: service.monthlyPrice
+          ? parseFloat(service.monthlyPrice)
+          : undefined,
+        yearlyPrice: service.annualPrice
+          ? parseFloat(service.annualPrice)
+          : undefined, // Map annualPrice to yearlyPrice
+        fixedPrice: service.fixedPrice
+          ? parseFloat(service.fixedPrice)
+          : undefined,
+      }));
+
+    // Update the form data
+    form.setValue("services", transformedServices);
+
+    console.log("Transformed services data:", transformedServices);
+  };
+
+  const handleSubmit = form.handleSubmit(
+    async (data: CreatePriceTableFormData) => {
+      setLoading(true);
+
+      try {
+        // Transform data to match IPriceTable interface
+        const priceTablePayload = {
+          name: data.name,
+          startDateTime: data.startDateTime,
+          endDateTime: data.endDateTime,
+          isTemporary: data.isTemporary,
+          conditionGroupIds: data.conditionGroupIds,
+          enabledProductsIds: data.enabledProductsIds,
+          status: "rascunho" as const, // Default status for new tables
+          // Additional data for price configurations
+          billingConfig: data.billingConfig,
+          pricing: {
+            equipmentWithSim: data.equipmentWithSim,
+            equipmentWithoutSim: data.equipmentWithoutSim,
+            simCards: data.simCards,
+            accessories: data.accessories,
+            services: data.services,
+          },
+        };
+
+        // Log the payload for debugging
+        console.log(
+          "Price Table Payload:",
+          JSON.stringify(priceTablePayload, null, 2)
+        );
+
+        // TODO: Replace with actual API call
+        // const { success, error } = await createPriceTable(priceTablePayload);
+
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Simulate success for now
+        const success = true;
+        const error = null;
+
+        if (success) {
+          toast({
+            title: "Sucesso!",
+            description: "Tabela de preços criada com sucesso!",
+            variant: "success",
+          });
+          router.push("/commercial/price-table");
+          return;
+        }
+
+        if (error) {
+          // Handle field-specific errors
+          if (typeof error === "object") {
+            Object.entries(error).forEach(([key, message]) => {
+              if (key !== "global" && message) {
+                form.setError(key as keyof CreatePriceTableFormData, {
+                  type: "manual",
+                  message: message as string,
+                });
+              }
+            });
+          }
+
+          toast({
+            title: "Erro!",
+            description:
+              typeof error === "string"
+                ? error
+                : "Falha ao criar a tabela de preços!",
+            variant: "error",
+          });
+        }
+      } catch (error) {
+        console.error("Error creating price table:", error);
+        toast({
+          title: "Erro!",
+          description: "Falha inesperada ao criar a tabela de preços!",
+          variant: "error",
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+  );
+
+  const handleSaveDraft = async () => {
+    const currentData = form.getValues();
+
+    try {
+      // Create payload for draft save (less strict validation)
+      const draftPayload = {
+        ...currentData,
+        status: "rascunho" as const,
+      };
+
+      console.log("Draft Payload:", JSON.stringify(draftPayload, null, 2));
+
+      // TODO: Implement draft save API call
+      toast({
+        title: "Rascunho salvo!",
+        description: "Suas alterações foram salvas como rascunho.",
+        variant: "success",
+      });
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      toast({
+        title: "Erro!",
+        description: "Falha ao salvar rascunho.",
+        variant: "error",
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    router.push("/commercial/price-table");
+  };
+
+  // Helper function to validate current form state
+  const validateForm = () => {
+    return form.trigger();
+  };
+
+  // Helper function to get form errors
+  const getFormErrors = () => {
+    return form.formState.errors;
+  };
+
+  // Helper function to check if form is dirty
+  const isFormDirty = () => {
+    return form.formState.isDirty;
+  };
+
+  return {
+    form,
+    handleSubmit,
+    handleSaveDraft,
+    handleCancel,
+    loading,
+    validateForm,
+    getFormErrors,
+    isFormDirty,
+    // Price change handlers
+    handleEquipmentPriceChange,
+    handleSimCardPriceChange,
+    handleAccessoryPriceChange,
+    handleServicePriceChange,
+    // Helper functions
+    getDefaultStartDateTime,
+    getDefaultEndDateTime,
+    formatDateTimeLocal,
+    // Schema for external validation
+    schema: priceTableSchema,
+  };
+}
