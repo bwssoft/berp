@@ -42,6 +42,47 @@ const accessoriesItems = [
   "Chicote OBD E3+",
 ];
 
+const BRAZILIAN_UF_LIST = [
+  {id:"AC", text:"Acre"},
+  {id:"AL", text:"Alagoas"},
+  {id:"AP", text:"Amapá"},
+  {id:"AM", text:"Amazonas"},
+  {id:"BA", text:"Bahia"},
+  {id:"CE", text:"Ceará"},
+  {id:"DF", text:"Distrito Federal"},
+  {id:"ES", text:"Espírito Santo"},
+  {id:"GO", text:"Goiás"},
+  {id:"MA", text:"Maranhão"},
+  {id:"MT", text:"Mato Grosso"},
+  {id:"MS", text:"Mato Grosso do Sul"},
+  {id:"MG", text:"Minas Gerais"},
+  {id:"PA", text:"Pará"},
+  {id:"PB", text:"Paraíba"},
+  {id:"PR", text:"Paraná"},
+  {id:"PE", text:"Pernambuco"},
+  {id:"PI", text:"Piauí"},
+  {id:"RJ", text:"Rio de Janeiro"},
+  {id:"RN", text:"Rio Grande do Norte"},
+  {id:"RS", text:"Rio Grande do Sul"},
+  {id:"RO", text:"Rondônia"},
+  {id:"RR", text:"Roraima"},
+  {id:"SC", text:"Santa Catarina"},
+  {id:"SP", text:"São Paulo"},
+  {id:"SE", text:"Sergipe"},
+  {id:"TO", text:"Tocantins"}
+]
+
+const TO_BILL_FOR_OPTIONS = [
+  {id: "20.618.574/0002-16", text: "BWS - 20.618.574/0002-16"},
+  {id: "41.459.104/0001-46", text: "HYBRID - 41.459.104/0001-46 (MATRIZ)"},
+  {id: "41.459.104/0002-27", text: "HYBRID - 41.459.104/0002-27 (FILIAL MG)"},
+  {id: "34.984.723/0001-94", text: "ICB - 34.984.723/0001-94 (MATRIZ)"},
+  {id: "34.984.723/0002-75", text: "ICB - 34.984.723/0002-75 (FILIAL SP)"},
+  {id: "34.984.723/0003-56", text: "ICB 34.984.723/0003-56 (FILIAL MG)"},
+  {id: "31.941.680/0001-71", text: "MGC - 31.941.680/0001-71"},
+  {id: "14.334.132/0001-64", text: "WFC - 14.334.132/0001-64"}
+]
+
 export function CreatePriceTableForm() {
   // State to track which equipment models are toggled on
   const [enabledEquipmentWithSim, setEnabledEquipmentWithSim] = useState<
@@ -136,9 +177,10 @@ export function CreatePriceTableForm() {
                     <div key={cond.id} className="flex gap-2 items-center">
                       <Combobox
                         label="Vendas para"
-                        data={[]}
-                        value={cond.salesFor}
-                        onChange={(v: string[]) =>
+                        placeholder="Selecione"
+                        data={BRAZILIAN_UF_LIST}
+                        value={BRAZILIAN_UF_LIST.filter(uf => cond.salesFor.includes(uf.id as BrazilianUF))}
+                        onChange={(v: { id: string; text: string }[]) =>
                           setGroups(prev =>
                             prev.map(g =>
                               g.id === group.id
@@ -146,7 +188,7 @@ export function CreatePriceTableForm() {
                                     ...g,
                                     conditions: g.conditions.map(c =>
                                       c.id === cond.id
-                                        ? { ...c, salesFor: v as BrazilianUF[] }
+                                        ? { ...c, salesFor: v.map(item => item.id) as BrazilianUF[] }
                                         : c
                                     ),
                                   }
@@ -154,8 +196,8 @@ export function CreatePriceTableForm() {
                             )
                           )
                         }
-                        keyExtractor={(e) => e}
-                        displayValueGetter={(e) => e}
+                        keyExtractor={(e) => e.id}
+                        displayValueGetter={(e) => e.text}
                       />
                       <Input
                         label="Limite de faturamento"
@@ -177,8 +219,9 @@ export function CreatePriceTableForm() {
                       />
                       <Combobox
                         label="Faturar para"
-                        data={[]}
-                        value={[cond.toBillFor]}
+                        placeholder="Selecione"
+                        data={TO_BILL_FOR_OPTIONS.map(option => option.id)}
+                        value={cond.toBillFor ? [cond.toBillFor] : []}
                         onChange={(v: string[]) =>
                           setGroups(prev =>
                             prev.map(g =>
@@ -193,8 +236,8 @@ export function CreatePriceTableForm() {
                             )
                           )
                         }
-                        keyExtractor={(e) => e}
-                        displayValueGetter={(e) => e}
+                        keyExtractor={(id) => id}
+                        displayValueGetter={(id) => TO_BILL_FOR_OPTIONS.find(option => option.id === id)?.text ?? id}
                       />
                     </div>
                   ))}
