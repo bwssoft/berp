@@ -10,7 +10,8 @@ import {
   IEquipmentPayment,
   IPriceRange,
   ISimcardPayment,
-} from "@/app/lib/@backend/domain/commercial/entity/price-table-product.definition";
+  IServicePayment,
+} from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 
 // Schema de validação com Zod baseado no IPriceTable
 const priceTableSchema = z
@@ -125,6 +126,8 @@ export function usePriceTableForm() {
 
       equipmentPayment.onDemand = {
         type: "batch",
+        productId: equipmentModel, // Use equipment model as productId for now
+        productName: equipmentModel, // Use equipment model as productName for now
         unitPrice: 0, // Not used for batch pricing
         priceRange,
       };
@@ -132,6 +135,8 @@ export function usePriceTableForm() {
       // Unit pricing
       equipmentPayment.onDemand = {
         type: "unit",
+        productId: equipmentModel, // Use equipment model as productId for now
+        productName: equipmentModel, // Use equipment model as productName for now
         unitPrice: Number(prices.singlePrice),
         priceRange: [],
       };
@@ -150,6 +155,8 @@ export function usePriceTableForm() {
 
       equipmentPayment.onSight = {
         type: "batch",
+        productId: equipmentModel, // Use equipment model as productId for now
+        productName: equipmentModel, // Use equipment model as productName for now
         unitPrice: 0, // Not used for batch pricing
         priceRange,
       };
@@ -157,6 +164,8 @@ export function usePriceTableForm() {
       // Unit pricing
       equipmentPayment.onSight = {
         type: "unit",
+        productId: equipmentModel, // Use equipment model as productId for now
+        productName: equipmentModel, // Use equipment model as productName for now
         unitPrice: Number(prices.cashPrice),
         priceRange: [],
       };
@@ -220,9 +229,30 @@ export function usePriceTableForm() {
     form.setValue("accessories", updatedAccessories);
   };
 
-  // Handle services price changes
-  const handleServicePriceChange = (prices: any) => {
-    form.setValue("services", prices.serviceTiers || []);
+  // Handle services price changes - transform to IServicePayment format
+  const handleServicePriceChange = (services: any[]) => {
+    console.log("Service price change:", services);
+
+    // Transform service data to match IServicePayment interface
+    const transformedServices: IServicePayment[] = services
+      .filter((service: any) => service.service) // Only include services with a selected serviceId
+      .map((service: any) => ({
+        serviceId: service.service || "", // The selected service acts as serviceId
+        monthlyPrice: service.monthlyPrice
+          ? parseFloat(service.monthlyPrice)
+          : undefined,
+        yearlyPrice: service.annualPrice
+          ? parseFloat(service.annualPrice)
+          : undefined, // Map annualPrice to yearlyPrice
+        fixedPrice: service.fixedPrice
+          ? parseFloat(service.fixedPrice)
+          : undefined,
+      }));
+
+    // Update the form data
+    form.setValue("services", transformedServices);
+
+    console.log("Transformed services data:", transformedServices);
   };
 
   const handleSubmit = form.handleSubmit(
