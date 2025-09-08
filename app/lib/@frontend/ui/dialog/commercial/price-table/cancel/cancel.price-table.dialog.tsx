@@ -25,8 +25,8 @@ export function CancelPriceTableDialog({
         </h2>
 
         <p className="mt-2 text-sm text-gray-600">
-          Você tem certeza que deseja cancelar esta tabela de preços? Essa ação
-          é irreversível e todos os dados não salvos serão perdidos.
+          Ao confirmar esta ação, não será mais possível utilizar a tabela em
+          questão. Posteriormente poderá ser clonada apenas.
         </p>
 
         <div className="mt-6 flex justify-end gap-2">

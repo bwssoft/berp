@@ -14,4 +14,3 @@ export * from "./historical.definition";
 export * from "./account-attachment.definition";
 export * from "./price-table.definition";
 export * from "./price-table-condition.definition";
-export * from "./price-table-product.definition";

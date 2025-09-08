@@ -62,14 +62,25 @@ export function ServicePriceForm({ onPriceChange }: ServicePriceFormProps) {
       fixedPrice: "",
     };
 
-    setServiceTiers([...serviceTiers, newTier]);
+    const updatedTiers = [...serviceTiers, newTier];
+    setServiceTiers(updatedTiers);
+
+    // Notify parent about the new tier
+    if (onPriceChange) {
+      onPriceChange(updatedTiers);
+    }
   };
 
   const removeServiceTier = (id: string) => {
     if (serviceTiers.length <= 1) return; // Keep at least 1 tier
 
-    const filtered = serviceTiers.filter((tier) => tier.id !== id);
-    setServiceTiers(filtered);
+    const updatedTiers = serviceTiers.filter((tier) => tier.id !== id);
+    setServiceTiers(updatedTiers);
+
+    // Notify parent about tier removal
+    if (onPriceChange) {
+      onPriceChange(updatedTiers);
+    }
   };
 
   const updateServiceTier = (
@@ -77,17 +88,14 @@ export function ServicePriceForm({ onPriceChange }: ServicePriceFormProps) {
     field: keyof ServiceTier,
     value: string
   ) => {
-    setServiceTiers((tiers) =>
-      tiers.map((tier) => (tier.id === id ? { ...tier, [field]: value } : tier))
+    const updatedTiers = serviceTiers.map((tier) =>
+      tier.id === id ? { ...tier, [field]: value } : tier
     );
-  };
+    setServiceTiers(updatedTiers);
 
-  // Notify parent component when prices change
-  const handlePriceChange = () => {
+    // Automatically notify parent about price changes
     if (onPriceChange) {
-      onPriceChange({
-        serviceTiers,
-      });
+      onPriceChange(updatedTiers);
     }
   };
 
@@ -134,7 +142,7 @@ export function ServicePriceForm({ onPriceChange }: ServicePriceFormProps) {
                         value={tier.service ? [tier.service] : []}
                         onChange={(value) => {
                           updateServiceTier(tier.id, "service", value[0] || "");
-                          handlePriceChange();
+                          // Removed duplicate handlePriceChange() - now handled by updateServiceTier
                         }}
                         placeholder="Selecione um serviço"
                       />
@@ -153,7 +161,7 @@ export function ServicePriceForm({ onPriceChange }: ServicePriceFormProps) {
                             "monthlyPrice",
                             e.target.value
                           );
-                          handlePriceChange();
+                          // Removed duplicate handlePriceChange() - now handled by updateServiceTier
                         }}
                         placeholder="R$ 0,00"
                       />
@@ -169,7 +177,7 @@ export function ServicePriceForm({ onPriceChange }: ServicePriceFormProps) {
                             "annualPrice",
                             e.target.value
                           );
-                          handlePriceChange();
+                          // Removed duplicate handlePriceChange() - now handled by updateServiceTier
                         }}
                         placeholder="R$ 0,00"
                       />
@@ -185,7 +193,7 @@ export function ServicePriceForm({ onPriceChange }: ServicePriceFormProps) {
                             "fixedPrice",
                             e.target.value
                           );
-                          handlePriceChange();
+                          // Removed duplicate handlePriceChange() - now handled by updateServiceTier
                         }}
                         placeholder="R$ 0,00"
                       />
