@@ -14,7 +14,6 @@ export interface IPriceTable {
   endDateTime: Date;
   isTemporary: boolean; // tabela provisoria // tabela normal
   conditionGroupIds: string[];
-  enabledProductsIds: string[];
   equipmentPayment?: IEquipmentPayment[];
   simcardPayment?: ISimcardPayment[];
   servicePayment?: IServicePayment[];

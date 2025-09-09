@@ -2,7 +2,9 @@ import { IPriceTableService } from "@/app/lib/@backend/domain";
 import { priceTableServiceRepository } from "@/app/lib/@backend/infra/repository/mongodb/commercial/price-table-service.repository";
 
 class CreateOnePriceTableServiceUsecase {
-  async execute(input: Omit<IPriceTableService, "id" | "created_at" | "updated_at">) {
+  async execute(
+    input: Omit<IPriceTableService, "id" | "created_at" | "updated_at">
+  ) {
     try {
       // Add timestamps and ID
       const priceTableServiceData: IPriceTableService = {
@@ -12,7 +14,9 @@ class CreateOnePriceTableServiceUsecase {
         updated_at: new Date(),
       };
 
-      const result = await priceTableServiceRepository.create(priceTableServiceData);
+      const result = await priceTableServiceRepository.create(
+        priceTableServiceData
+      );
 
       if (!result) {
         return {
@@ -35,4 +39,5 @@ class CreateOnePriceTableServiceUsecase {
   }
 }
 
-export const createOnePriceTableServiceUsecase = new CreateOnePriceTableServiceUsecase();
+export const createOnePriceTableServiceUsecase =
+  new CreateOnePriceTableServiceUsecase();

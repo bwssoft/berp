@@ -35,4 +35,5 @@ class FindManyPriceTableServiceUsecase {
   }
 }
 
-export const findManyPriceTableServiceUsecase = new FindManyPriceTableServiceUsecase();
+export const findManyPriceTableServiceUsecase =
+  new FindManyPriceTableServiceUsecase();
