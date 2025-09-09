@@ -240,6 +240,7 @@ class ValidateBillingConditionsPriceTableUsecase {
         details.invalidPriorityGroups = prio.invalid;
       }
 
+      messages.push("Condições validadas com sucesso!");
       return { success: true, status, messages, details };
     } catch (err) {
       console.error("Falha na validação de condições de faturamento:", err);
