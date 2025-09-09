@@ -8,7 +8,6 @@ import {
 import { CheckCircleIcon, ChevronDownIcon, ExclamationTriangleIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import {
   Button,
-  Checkbox,
   Combobox,
   Input,
   Toggle,
@@ -18,7 +17,7 @@ import {
   SimCardPriceForm,
   ServicePriceForm,
 } from "../product-form";
-import { BrazilianUF, IPriceTableCondition } from "@/app/lib/@backend/domain";
+import { BrazilianUF } from "@/app/lib/@backend/domain";
 import { usePriceTableForm } from "./use-price-table.form";
 import Link from "next/link";
 import { CancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/cancel.price-table.dialog";
@@ -26,6 +25,7 @@ import { PublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercia
 import { useCancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/use-cancel.price-table.dialog";
 import { usePublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/use-publish.price-table.dialog";
 import { cn } from "@/app/lib/util";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 const equipmentModels = [
   "E3+",
@@ -110,7 +110,8 @@ export function CreatePriceTableForm() {
     handleValidationConditions,
     messageErrorCondition,
     STATUS_STYLES,
-    status
+    status,
+    removeCondition
   } = usePriceTableForm();
 
   // Dialog hooks
@@ -266,7 +267,7 @@ export function CreatePriceTableForm() {
               {groups.map((group, gi) => (
                 <div key={group.id} className="space-y-2 rounded-lg border p-3">
                   {group.conditions.map((cond) => (
-                    <div key={cond.id} className="flex gap-2 items-center">
+                    <div key={cond.id} className="flex gap-2 items-end">
                       <Combobox
                         label="Vendas para"
                         placeholder="Selecione"
@@ -331,6 +332,9 @@ export function CreatePriceTableForm() {
                         keyExtractor={(id) => id}
                         displayValueGetter={(id) => TO_BILL_FOR_OPTIONS.find(option => option.id === id)?.text ?? id}
                       />
+                      <Button variant={"outline"} type="button" onClick={() => removeCondition(group.id, cond.id)} title="Remover condição">
+                        <TrashIcon className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
 

@@ -381,6 +381,27 @@ export function usePriceTableForm() {
       )
   );
 
+  const removeCondition = (groupId: string, conditionId: string) => {
+    setGroups(prev => {
+      // 1) remove a condição do grupo alvo
+      const updated = prev.map(g =>
+        g.id === groupId
+          ? { ...g, conditions: g.conditions.filter(c => c.id !== conditionId) }
+          : g
+      );
+
+      // 2) remove grupos que ficaram sem condições
+      let pruned = updated.filter(g => g.conditions.length > 0);
+
+      // 3) se não sobrar nenhum grupo, mantém 1 grupo com 1 condição vazia (coloquei isso pq é obrigatório ter pelo menos 1 condição)
+      if (pruned.length === 0) {
+        pruned = [{ id: uid(), conditions: [emptyCondition()] }];
+      }
+
+      return pruned;
+    });
+  };
+
 
   const handleSaveDraft = async () => {
     const currentData = form.getValues();
@@ -466,6 +487,7 @@ export function usePriceTableForm() {
     handleValidationConditions,
     messageErrorCondition,
     STATUS_STYLES,
-    status
+    status,
+    removeCondition
   };
 }
