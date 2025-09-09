@@ -14,8 +14,29 @@ interface PriceTable {
   status: string;
 }
 
-const getStatusColor = (status: string) => {
+const getStatusDisplayText = (status: string) => {
   switch (status) {
+    case "ACTIVE":
+      return "Ativa";
+    case "INACTIVE":
+      return "Inativa";
+    case "CANCELLED":
+      return "Cancelada";
+    case "AWAITING_PUBLICATION":
+      return "Aguardando Publicação";
+    case "SCHEDULED_FOR_PUBLICATION":
+      return "Tabela Programada para Publicação";
+    case "DRAFT":
+      return "Rascunho";
+    default:
+      return status; // fallback to original value
+  }
+};
+
+const getStatusColor = (status: string) => {
+  // Use display text for color mapping
+  const displayText = getStatusDisplayText(status);
+  switch (displayText) {
     case "Ativa":
       return "bg-green-100 text-green-800";
     case "Em Pausa":
@@ -66,13 +87,14 @@ export const columns: ColumnDef<PriceTable>[] = [
     header: "STATUS",
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
+      const displayText = getStatusDisplayText(status);
       return (
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
             status
           )}`}
         >
-          {status}
+          {displayText}
         </span>
       );
     },

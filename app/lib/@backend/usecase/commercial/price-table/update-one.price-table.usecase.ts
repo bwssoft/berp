@@ -1,5 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { AuditDomain, IPriceTable, IPriceTableRepository } from "../../../domain";
+import {
+  AuditDomain,
+  IPriceTable,
+  IPriceTableRepository,
+} from "../../../domain";
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../../admin/audit";
 import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
@@ -7,7 +11,7 @@ import { normalizeString } from "@/app/lib/util/normalize-string";
 import { findManyPriceTableUsecase } from "./find-many.price-table.usecase";
 
 namespace Dto {
-  export type Input = IPriceTable ;
+  export type Input = IPriceTable;
 
   export type Output = {
     success: boolean;
@@ -23,28 +27,48 @@ namespace Dto {
 
 class UpdateOnePriceTableUsecase {
   repository: IPriceTableRepository = priceTableRepository;
-  
+
   async execute(input: Dto.Input): Promise<Dto.Output> {
     const nowIso = new Date();
     try {
       const existing = await this.repository.findOne({ id: input.id });
       if (!existing) {
-        return { success: false, error: { notFound: "Tabela de Preços não encontrada." } };
+        return {
+          success: false,
+          error: { notFound: "Tabela de Preços não encontrada." },
+        };
       }
 
       // (talvez eu adicione essas validações no form do front tbm, mas to mantendo aq pra garantir)
       if (input.startDateTime < nowIso) {
-        return { success: false, error: { startDateTime: "A data/hora de início não pode estar no passado." } };
+        return {
+          success: false,
+          error: {
+            startDateTime: "A data/hora de início não pode estar no passado.",
+          },
+        };
       }
       if (input.isTemporary) {
         if (!input.endDateTime) {
-          return { success: false, error: { endDateTime: "Para tabela provisória, informe a data/hora de término." } };
+          return {
+            success: false,
+            error: {
+              endDateTime:
+                "Para tabela provisória, informe a data/hora de término.",
+            },
+          };
         }
         if (input.endDateTime <= input.startDateTime) {
-          return { success: false, error: { endDateTime: "Término deve ser maior que o início." } };
+          return {
+            success: false,
+            error: { endDateTime: "Término deve ser maior que o início." },
+          };
         }
       } else if (input.endDateTime && input.endDateTime < input.startDateTime) {
-        return { success: false, error: { endDateTime: "Término não pode ser menor que o início." } };
+        return {
+          success: false,
+          error: { endDateTime: "Término não pode ser menor que o início." },
+        };
       }
 
       // Unicidade de nome (CI) só se o nome mudou
@@ -59,8 +83,8 @@ class UpdateOnePriceTableUsecase {
             success: false,
             error: {
               global: "Já existe uma Tabela de Preços com este nome.",
-              name: "Nome já está em uso."
-            }
+              name: "Nome já está em uso.",
+            },
           };
         }
       }
@@ -75,7 +99,8 @@ class UpdateOnePriceTableUsecase {
             endDateTime: input.endDateTime,
             isTemporary: input.isTemporary,
             //se editar e salvar enquanto status for Aguardando Publicação, voltar o status para Rascunho.
-            status: input.status == "aguardando publicação" ? "rascunho" : input.status,
+            status:
+              input.status == "AWAITING_PUBLICATION" ? "DRAFT" : input.status,
             conditionGroupIds: input.conditionGroupIds,
             enabledProductsIds: input.enabledProductsIds,
             updated_at: updatedAt,
@@ -84,7 +109,10 @@ class UpdateOnePriceTableUsecase {
       );
 
       if (!updated) {
-        return { success: false, error: { global: "Tabela de Preços não atualizada." } };
+        return {
+          success: false,
+          error: { global: "Tabela de Preços não atualizada." },
+        };
       }
 
       const after = await this.repository.findOne({ id: existing.id });
@@ -104,7 +132,10 @@ class UpdateOnePriceTableUsecase {
       return { success: true };
     } catch (err) {
       console.error("Falha ao atualizar Tabela de Preços:", err);
-      return { success: false, error: { global: "Falha ao atualizar Tabela de Preços." } };
+      return {
+        success: false,
+        error: { global: "Falha ao atualizar Tabela de Preços." },
+      };
     }
   }
 }

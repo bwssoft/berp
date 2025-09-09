@@ -6,7 +6,12 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import {
+  CheckCircleIcon,
+  ChevronDownIcon,
+  ExclamationTriangleIcon,
+  XCircleIcon,
+} from "@heroicons/react/20/solid";
 import {
   Button,
   Checkbox,
@@ -19,7 +24,7 @@ import {
   SimCardPriceForm,
   ServicePriceForm,
 } from "../product-form";
-import { BrazilianUF, IPriceTableCondition } from "@/app/lib/@backend/domain";
+import { BrazilianUF } from "@/app/lib/@backend/domain";
 import { usePriceTableForm } from "./use-price-table.form";
 import Link from "next/link";
 import { CancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/cancel.price-table.dialog";
@@ -27,6 +32,8 @@ import { PublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercia
 import { useCancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/use-cancel.price-table.dialog";
 import { usePublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/use-publish.price-table.dialog";
 import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { cn } from "@/app/lib/util";
 
 const BRAZILIAN_UF_LIST = [
   { id: "AC", text: "Acre" },
@@ -127,6 +134,16 @@ export function CreatePriceTableForm() {
     handleServicePriceChange,
     getDefaultStartDateTime,
     getDefaultEndDateTime,
+    addCondition,
+    addGroup,
+    groups,
+    setGroups,
+    handleValidationConditions,
+    messageErrorCondition,
+    STATUS_STYLES,
+    status,
+    removeCondition,
+    setGroupPriority,
   } = usePriceTableForm();
 
   // Dialog hooks
@@ -183,46 +200,6 @@ export function CreatePriceTableForm() {
       [accessory]: enabled,
     }));
   };
-
-  type Group = { id: string; conditions: IPriceTableCondition[] };
-
-  const uid = () =>
-    crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
-  const emptyCondition = (): IPriceTableCondition => ({
-    id: uid(),
-    salesFor: [],
-    billingLimit: "",
-    toBillFor: "",
-    priority: false,
-  });
-
-  // state para grupos e condições
-  const [groups, setGroups] = useState<Group[]>([
-    { id: uid(), conditions: [emptyCondition()] },
-  ]);
-
-  // adicionar novo GRUPO
-  const addGroup = () =>
-    setGroups((prev) => [
-      ...prev,
-      { id: uid(), conditions: [emptyCondition()] },
-    ]);
-
-  // adicionar nova CONDIÇÃO dentro de um grupo
-  const addCondition = (
-    groupId: string,
-    init?: Partial<IPriceTableCondition>
-  ) =>
-    setGroups((prev) =>
-      prev.map((g) =>
-        g.id === groupId
-          ? {
-              ...g,
-              conditions: [...g.conditions, { ...emptyCondition(), ...init }],
-            }
-          : g
-      )
-    );
 
   return (
     <div className="space-y-4">
@@ -315,8 +292,6 @@ export function CreatePriceTableForm() {
                 </label>
               </div>
 
-              <Checkbox label="Tabela provisória?" />
-
               {/* Configurações de faturamento */}
               <div className="space-y-3">
                 <h3 className="font-semibold text-sm">
@@ -329,7 +304,7 @@ export function CreatePriceTableForm() {
                     className="space-y-2 rounded-lg border p-3"
                   >
                     {group.conditions.map((cond) => (
-                      <div key={cond.id} className="flex gap-2 items-center">
+                      <div key={cond.id} className="flex gap-2 items-end">
                         <Combobox
                           label="Vendas para"
                           placeholder="Selecione"
@@ -412,31 +387,82 @@ export function CreatePriceTableForm() {
                             )?.text ?? id
                           }
                         />
+                        <Button
+                          variant={"outline"}
+                          type="button"
+                          onClick={() => removeCondition(group.id, cond.id)}
+                          title="Remover condição"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </Button>
                       </div>
                     ))}
 
-                    <Button
-                      className="bg-purple-600 w-fit"
-                      onClick={() => addCondition(group.id)}
-                    >
-                      Nova condição
-                    </Button>
+                    <div className="flex gap-2 items-center mt-2">
+                      <Button
+                        className="bg-purple-600 w-fit"
+                        type="button"
+                        onClick={() => addCondition(group.id)}
+                      >
+                        Nova condição
+                      </Button>
+                      <Checkbox
+                        checked={group.priority || false}
+                        onChange={() =>
+                          setGroupPriority(group.id, !group.priority!)
+                        }
+                        label="Habilitar prioridade"
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
 
               {/* Botões para condições */}
-              <div className="flex flex-col gap-3">
-                <div className="flex gap-4">
-                  <Button className="bg-blue-600" onClick={addGroup}>
-                    Novo grupo de condições
-                  </Button>
-                  <Button className="bg-green-600">Validar condições</Button>
-                </div>
+              <div className="flex gap-4">
+                <Button
+                  type="button"
+                  className="bg-blue-600"
+                  onClick={addGroup}
+                >
+                  Novo grupo de condições
+                </Button>
+                <Button
+                  type="button"
+                  className="bg-green-600"
+                  onClick={handleValidationConditions}
+                >
+                  Validar condições
+                </Button>
               </div>
+              {/* mensagens de erro ou sucesso na validação das condições */}
+              {messageErrorCondition.status && (
+                <div
+                  className={cn(
+                    "flex items-center gap-2 py-4 rounded-md px-4 border-l-4",
+                    STATUS_STYLES[status]
+                  )}
+                >
+                  {messageErrorCondition.status == "green" && (
+                    <CheckCircleIcon className="text-[#3cd59d] h-6 w-6" />
+                  )}
+                  {messageErrorCondition.status == "yellow" && (
+                    <ExclamationTriangleIcon className="text-[#fcc73e] h-6 w-6" />
+                  )}
+                  {messageErrorCondition.status == "red" && (
+                    <XCircleIcon className="text-[#f87272] h-6 w-6" />
+                  )}
+                  <p
+                    className={`font-medium text-sm ${messageErrorCondition.status == "red" && "text-[#ad4444]"} ${messageErrorCondition.status == "yellow" && "text-[#b77f58]"} ${messageErrorCondition.status == "green" && "text-[#6cb39d]"}`}
+                  >
+                    {messageErrorCondition.message}
+                  </p>
+                </div>
+              )}
             </DisclosurePanel>
           </div>
         </Disclosure>
+
         <Disclosure>
           <DisclosureButton className="border-b border-gray-200 w-full py-2 group flex justify-between items-center gap-2">
             <p className="flex gap-2 font-semibold text-gray-800 text-base">
