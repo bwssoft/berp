@@ -8,6 +8,7 @@ import {
 import { CheckCircleIcon, ChevronDownIcon, ExclamationTriangleIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import {
   Button,
+  Checkbox,
   Combobox,
   Input,
   Toggle,
@@ -111,7 +112,8 @@ export function CreatePriceTableForm() {
     messageErrorCondition,
     STATUS_STYLES,
     status,
-    removeCondition
+    removeCondition,
+    setGroupPriority
   } = usePriceTableForm();
 
   // Dialog hooks
@@ -338,9 +340,16 @@ export function CreatePriceTableForm() {
                     </div>
                   ))}
 
-                  <Button className="bg-purple-600 w-fit" type="button" onClick={() => addCondition(group.id)}>
-                    Nova condição
-                  </Button>
+                  <div className="flex gap-2 items-center mt-2">
+                    <Button className="bg-purple-600 w-fit" type="button" onClick={() => addCondition(group.id)}>
+                      Nova condição
+                    </Button>
+                    <Checkbox
+                      checked={group.priority || false}
+                      onChange={() => setGroupPriority(group.id, !group.priority!)}
+                      label="Habilitar prioridade"
+                    />
+                  </div>
                 </div>
               ))}
             </div>

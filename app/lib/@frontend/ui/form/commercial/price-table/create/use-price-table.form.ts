@@ -62,16 +62,16 @@ const priceTableSchema = z
 export type CreatePriceTableFormData = z.infer<typeof priceTableSchema>;
 
 export function usePriceTableForm() {
-  type Group = { id: string; conditions: IPriceTableCondition[] };
+  type Group = { id: string; conditions: IPriceTableCondition[], priority?: boolean };
 
   const uid = () => (crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2));
-  const emptyCondition = (): IPriceTableCondition => ({ id: uid(), salesFor: [], billingLimit: "", toBillFor: "", priority: false });
+  const emptyCondition = (): IPriceTableCondition => ({ id: uid(), salesFor: [], billingLimit: "", toBillFor: "" });
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   // state para grupos e condições
   const [groups, setGroups] = useState<Group[]>([
-    { id: uid(), conditions: [emptyCondition()] }
+    { id: uid(), conditions: [emptyCondition()], priority: false }
   ]);
   const [messageErrorCondition, setMessageErrorCondition] = useState<{
     status: string;
@@ -460,6 +460,12 @@ export function usePriceTableForm() {
 
   const status = (messageErrorCondition.status ?? "red") as Status;
 
+  const setGroupPriority = (groupId: string, enabled: boolean) => {
+    setGroups(prev =>
+      prev.map(g => (g.id === groupId ? { ...g, priority: enabled } : g))
+    );
+  };
+
   return {
     form,
     handleSubmit,
@@ -488,6 +494,7 @@ export function usePriceTableForm() {
     messageErrorCondition,
     STATUS_STYLES,
     status,
-    removeCondition
+    removeCondition,
+    setGroupPriority
   };
 }
