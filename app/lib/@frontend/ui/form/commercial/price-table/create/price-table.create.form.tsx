@@ -5,7 +5,7 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { CheckCircleIcon, ChevronDownIcon, ExclamationTriangleIcon, XCircleIcon } from "@heroicons/react/20/solid";
 import {
   Button,
   Checkbox,
@@ -25,6 +25,7 @@ import { CancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial
 import { PublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/publish.price-table.dialog";
 import { useCancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/use-cancel.price-table.dialog";
 import { usePublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/use-publish.price-table.dialog";
+import { cn } from "@/app/lib/util";
 
 const equipmentModels = [
   "E3+",
@@ -102,6 +103,14 @@ export function CreatePriceTableForm() {
     handleServicePriceChange,
     getDefaultStartDateTime,
     getDefaultEndDateTime,
+    addCondition,
+    addGroup,
+    groups,
+    setGroups,
+    handleValidationConditions,
+    messageErrorCondition,
+    STATUS_STYLES,
+    status
   } = usePriceTableForm();
 
   // Dialog hooks
@@ -158,30 +167,6 @@ export function CreatePriceTableForm() {
       [accessory]: enabled,
     }));
   };
-
-  type Group = { id: string; conditions: IPriceTableCondition[] };
-
-  const uid = () => (crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2));
-  const emptyCondition = (): IPriceTableCondition => ({ id: uid(), salesFor: [], billingLimit: "", toBillFor: "", priority: false });
-
-  // state para grupos e condições
-  const [groups, setGroups] = useState<Group[]>([
-    { id: uid(), conditions: [emptyCondition()] }
-  ]);
-
-  // adicionar novo GRUPO
-  const addGroup = () =>
-    setGroups(prev => [...prev, { id: uid(), conditions: [emptyCondition()] }]);
-
-  // adicionar nova CONDIÇÃO dentro de um grupo
-  const addCondition = (groupId: string, init?: Partial<IPriceTableCondition>) =>
-    setGroups(prev =>
-      prev.map(g =>
-        g.id === groupId
-          ? { ...g, conditions: [...g.conditions, { ...emptyCondition(), ...init }] }
-          : g
-      )
-    );
 
   return (
     <div className="space-y-4">
@@ -356,15 +341,26 @@ export function CreatePriceTableForm() {
               ))}
             </div>
 
-
             {/* Botões para condições */}
-            <div className="flex flex-col gap-3">
-
-              <div className="flex gap-4">
-                <Button type="button" className="bg-blue-600" onClick={addGroup}>Novo grupo de condições</Button>
-                <Button type="button" className="bg-green-600">Validar condições</Button>
-              </div>
+            <div className="flex gap-4">
+              <Button type="button" className="bg-blue-600" onClick={addGroup}>Novo grupo de condições</Button>
+              <Button type="button" className="bg-green-600" onClick={handleValidationConditions}>Validar condições</Button>
             </div>
+            {/* mensagens de erro ou sucesso na validação das condições */}
+            {messageErrorCondition.status && (
+              <div
+                className={cn(
+                  "flex items-center gap-2 py-4 rounded-md px-4 border-l-4",
+                  STATUS_STYLES[status]
+                )}
+              >
+                {messageErrorCondition.status == "green" && <CheckCircleIcon className="text-[#3cd59d] h-6 w-6" />}
+                {messageErrorCondition.status == "yellow" && <ExclamationTriangleIcon className="text-[#fcc73e] h-6 w-6" />}
+                {messageErrorCondition.status == "red" && <XCircleIcon className="text-[#f87272] h-6 w-6" />}
+                <p className={`font-medium text-sm ${messageErrorCondition.status == "red" && "text-[#ad4444]"} ${messageErrorCondition.status == "yellow" && "text-[#b77f58]"} ${messageErrorCondition.status == "green" && "text-[#6cb39d]"}`}>{messageErrorCondition.message}</p>
+              </div>
+            )}
+            
           </DisclosurePanel>
         </div>
       </Disclosure>

@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { createOnePriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
+import { createOnePriceTable, validateBillingConditionsPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
 import {
   IEquipmentPayment,
   IPriceRange,
@@ -14,6 +14,7 @@ import {
   IServicePayment,
   StatusPriceTable,
 } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
+import { IPriceTableCondition } from "@/app/lib/@backend/domain/commercial/entity/price-table-condition.definition";
 
 // Schema de validação com Zod baseado no IPriceTable
 const priceTableSchema = z
@@ -61,8 +62,24 @@ const priceTableSchema = z
 export type CreatePriceTableFormData = z.infer<typeof priceTableSchema>;
 
 export function usePriceTableForm() {
+  type Group = { id: string; conditions: IPriceTableCondition[] };
+
+  const uid = () => (crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2));
+  const emptyCondition = (): IPriceTableCondition => ({ id: uid(), salesFor: [], billingLimit: "", toBillFor: "", priority: false });
+
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  // state para grupos e condições
+  const [groups, setGroups] = useState<Group[]>([
+    { id: uid(), conditions: [emptyCondition()] }
+  ]);
+  const [messageErrorCondition, setMessageErrorCondition] = useState<{
+    status: string;
+    message: string;
+  }>({
+    status: "",
+    message: ""
+  });
 
   const form = useForm<CreatePriceTableFormData>({
     resolver: zodResolver(priceTableSchema),
@@ -186,12 +203,6 @@ export function usePriceTableForm() {
       };
       form.setValue("equipmentWithoutSim", updatedEquipmentWithoutSim);
     }
-
-    // Log the transformed data for debugging
-    console.log(
-      `Equipment payment data for ${equipmentModel} (${type}):`,
-      equipmentPayment
-    );
   };
 
   // Handle SIM card price changes - transform to ISimcardPayment format
@@ -233,7 +244,6 @@ export function usePriceTableForm() {
 
   // Handle services price changes - transform to IServicePayment format
   const handleServicePriceChange = (services: any[]) => {
-    console.log("Service price change:", services);
 
     // Transform service data to match IServicePayment interface
     const transformedServices: IServicePayment[] = services
@@ -339,6 +349,39 @@ export function usePriceTableForm() {
     }
   );
 
+  const handleValidationConditions = async () => {
+      try {
+        const result = await validateBillingConditionsPriceTable(groups);
+        console.log("Validation result:", result);
+        setMessageErrorCondition({
+          status: result.status,
+          message: result.messages[0] ?? ""
+        });
+      } catch (error) {
+        console.error("Error creating price table:", error);
+        toast({
+          title: "Erro!",
+          description: "Falha ao criar a tabela de preços!",
+          variant: "error",
+        });
+      }
+  };
+
+  // adicionar novo GRUPO
+  const addGroup = () =>
+    setGroups(prev => [...prev, { id: uid(), conditions: [emptyCondition()] }]);
+
+  // adicionar nova CONDIÇÃO dentro de um grupo
+  const addCondition = (groupId: string, init?: Partial<IPriceTableCondition>) =>
+    setGroups(prev =>
+      prev.map(g =>
+        g.id === groupId
+          ? { ...g, conditions: [...g.conditions, { ...emptyCondition(), ...init }] }
+          : g
+      )
+  );
+
+
   const handleSaveDraft = async () => {
     const currentData = form.getValues();
 
@@ -385,6 +428,17 @@ export function usePriceTableForm() {
     return form.formState.isDirty;
   };
 
+  type Status = "red" | "yellow" | "green" | "blue";
+
+  const STATUS_STYLES: Record<Status, string> = {
+    red:    "bg-red-100 border-l-red-500 text-red-800",
+    yellow: "bg-yellow-100 border-l-yellow-500 text-yellow-800",
+    green:  "bg-green-100 border-l-green-500 text-green-800",
+    blue:   "bg-blue-100 border-l-blue-500 text-blue-800",
+  };
+
+  const status = (messageErrorCondition.status ?? "red") as Status;
+
   return {
     form,
     handleSubmit,
@@ -405,5 +459,13 @@ export function usePriceTableForm() {
     formatDateTimeLocal,
     // Schema for external validation
     schema: priceTableSchema,
+    addCondition,
+    addGroup,
+    groups,
+    setGroups,
+    handleValidationConditions,
+    messageErrorCondition,
+    STATUS_STYLES,
+    status
   };
 }
