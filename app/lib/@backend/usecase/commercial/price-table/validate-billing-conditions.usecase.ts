@@ -94,19 +94,16 @@ function validateCompanyRequired(groups: Dto.GroupWithPriority[]) {
 }
 
 /* ---- 4) Duplicadas (com exceção: específico + sem limite dentro do mesmo grupo) ---- */
+function limitKind(limit?: string) {
+  return isUnlimited(limit) ? "SEM_LIM" : "LIM"; // binário
+}
+
 function findDuplicates(groups: Dto.GroupWithPriority[]) {
-  // key global: estados + empresa + tipo de limite
-  type CountsPerGroup = Map<number, number>;
-  const counts: Map<string, CountsPerGroup> = new Map();
+  const counts = new Map<string, Map<number, number>>();
 
   groups.forEach((g, gi) => {
     g.conditions.forEach(c => {
-      const sKey = statesKey(c.salesFor);
-      const lKey = limitKey(c.billingLimit);
-      const bKey = billKey(c.toBillFor);
-      const key = `${sKey}::${bKey}::${lKey}`;
-
-      // registra ocorrência
+      const key = `${statesKey(c.salesFor)}::${billKey(c.toBillFor)}::${limitKind(c.billingLimit)}`;
       const perGroup = counts.get(key) ?? new Map<number, number>();
       perGroup.set(gi, (perGroup.get(gi) ?? 0) + 1);
       counts.set(key, perGroup);
@@ -114,31 +111,11 @@ function findDuplicates(groups: Dto.GroupWithPriority[]) {
   });
 
   const duplicates: string[] = [];
-
-  counts.forEach((perGroup, key) => {
-    // aparece em múltiplos grupos? -> sempre duplicado
-    if (perGroup.size > 1) {
-      duplicates.push(key);
-      return;
-    }
-    // aparece mais de uma vez no mesmo grupo?
-    const [gi, qty] = Array.from(perGroup.entries())[0];
-    if (qty <= 1) return;
-
-    // exceção: "pode repetir" quando for ESTADOS ESPECÍFICOS + SEM LIMITE dentro do MESMO grupo
-    const [sKey, , lKey] = key.split("::");
-    const isSpecific = sKey !== "ALL";
-    const isSemLim = lKey === "SEM_LIM";
-    const group = groups[gi];
-
-    if (isSpecific && isSemLim) {
-      // permitido (não marca duplicado)
-      return;
-    }
-    // caso contrário, é duplicado
-    duplicates.push(key);
+  counts.forEach((perGroup) => {
+    if (perGroup.size > 1) { duplicates.push("x"); return; } // aparece em grupos diferentes
+    const [, qty] = Array.from(perGroup.entries())[0];
+    if (qty > 1) duplicates.push("x"); // repete no mesmo grupo
   });
-
   return duplicates;
 }
 
@@ -240,6 +217,7 @@ class ValidateBillingConditionsPriceTableUsecase {
         details.invalidPriorityGroups = prio.invalid;
       }
 
+      messages.push("Condições validadas com sucesso!");
       return { success: true, status, messages, details };
     } catch (err) {
       console.error("Falha na validação de condições de faturamento:", err);
