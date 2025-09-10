@@ -24,6 +24,7 @@ interface Props {
     type?: string;
     status?: string;
     created_date?: string;
+    activation_date?: string;
     start_date?: string;
     end_date?: string;
   };
@@ -111,11 +112,26 @@ function query(params: Props["searchParams"]): Filter<IPriceTable> {
     });
   }
 
+  // Handle created_date filter
+  if (params.created_date) {
+    conditions.push({
+      created_at: new Date(params.created_date),
+    });
+  }
+
+  // Handle activation_date filter
+  if (params.activation_date) {
+    conditions.push({
+      startDateTime: new Date(params.activation_date),
+    });
+  }
+
+  // Handle period filter (start_date and end_date)
   if (params.start_date || params.end_date) {
     const range: Record<string, Date> = {};
     if (params.start_date) range.$gte = new Date(params.start_date);
     if (params.end_date) range.$lte = new Date(params.end_date);
-    conditions.push({ created_at: range });
+    conditions.push({ startDateTime: range });
   }
 
   if (conditions.length === 1) {

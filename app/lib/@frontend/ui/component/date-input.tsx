@@ -75,17 +75,21 @@ export const DateInput = React.forwardRef<HTMLButtonElement, DateInputProps>(
       selectedValue: Date | { from: Date; to: Date } | undefined
     ) => {
       if (type === "period") {
-        if (
-          selectedValue &&
-          typeof selectedValue === "object" &&
-          "from" in selectedValue
-        ) {
+        console.log("Period selection:", selectedValue);
+        
+        // For period type, NEVER close the popover automatically
+        // Only update the value, let user close manually
+        if (selectedValue && typeof selectedValue === "object" && "from" in selectedValue) {
           onChange?.(selectedValue);
-          if (selectedValue.from && selectedValue.to) {
-            setOpen(false);
-          }
+          // Do NOT close the popover - let user continue selecting or close manually
+        } else if (!selectedValue) {
+          // Handle clear/reset case
+          onChange?.(null);
+          // Do NOT close the popover
         }
+        // Popover stays open for period selection
       } else {
+        // For single date selection, update the value and close
         onChange?.(selectedValue as Date | null);
         setOpen(false);
       }
@@ -135,7 +139,7 @@ export const DateInput = React.forwardRef<HTMLButtonElement, DateInputProps>(
               {formatDisplayValue()}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-auto p-0" align="start" onClick={(e) => e.stopPropagation()}>
             {type === "period" ? (
               <Calendar
                 mode="range"
@@ -145,6 +149,7 @@ export const DateInput = React.forwardRef<HTMLButtonElement, DateInputProps>(
                 initialFocus
                 locale={ptBR}
                 numberOfMonths={2}
+                captionLayout="dropdown"
               />
             ) : (
               <Calendar
