@@ -34,6 +34,7 @@ export const DateInput = React.forwardRef<HTMLButtonElement, DateInputProps>(
     ref
   ) => {
     const [open, setOpen] = React.useState(false);
+    const [isSelectingStart, setIsSelectingStart] = React.useState(true);
 
     const formatDisplayValue = () => {
       if (!value) {
@@ -75,17 +76,47 @@ export const DateInput = React.forwardRef<HTMLButtonElement, DateInputProps>(
       selectedValue: Date | { from: Date; to: Date } | undefined
     ) => {
       if (type === "period") {
-        console.log("Period selection:", selectedValue);
-        
-        // For period type, NEVER close the popover automatically
-        // Only update the value, let user close manually
-        if (selectedValue && typeof selectedValue === "object" && "from" in selectedValue) {
-          onChange?.(selectedValue);
-          // Do NOT close the popover - let user continue selecting or close manually
+        console.log(
+          "Period selection:",
+          selectedValue,
+          "isSelectingStart:",
+          isSelectingStart
+        );
+
+        if (
+          selectedValue &&
+          typeof selectedValue === "object" &&
+          "from" in selectedValue
+        ) {
+          // Check if we have a complete range already and user clicked a new date
+          if (
+            value &&
+            typeof value === "object" &&
+            "from" in value &&
+            value.from &&
+            value.to
+          ) {
+            // Reset to start new selection
+            const clickedDate = selectedValue.from || selectedValue.to;
+            if (clickedDate) {
+              onChange?.({ from: clickedDate, to: undefined as any });
+              setIsSelectingStart(false); // Next click will be end date
+            }
+          } else {
+            // Normal range selection behavior
+            onChange?.(selectedValue);
+
+            // Update selection state
+            if (selectedValue.from && !selectedValue.to) {
+              setIsSelectingStart(false); // Next selection will be end date
+            } else if (selectedValue.from && selectedValue.to) {
+              setIsSelectingStart(true); // Range complete, next click starts new selection
+            }
+          }
         } else if (!selectedValue) {
           // Handle clear/reset case
           onChange?.(null);
-          // Do NOT close the popover
+          setIsSelectingStart(true);
         }
         // Popover stays open for period selection
       } else {
@@ -122,7 +153,22 @@ export const DateInput = React.forwardRef<HTMLButtonElement, DateInputProps>(
 
     return (
       <>
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover
+          open={open}
+          onOpenChange={(isOpen) => {
+            setOpen(isOpen);
+            if (isOpen && type === "period") {
+              // Reset selection state when opening
+              const hasCompleteRange =
+                value &&
+                typeof value === "object" &&
+                "from" in value &&
+                value.from &&
+                value.to;
+              setIsSelectingStart(!hasCompleteRange);
+            }
+          }}
+        >
           <PopoverTrigger asChild>
             <Button
               ref={ref}
@@ -139,7 +185,11 @@ export const DateInput = React.forwardRef<HTMLButtonElement, DateInputProps>(
               {formatDisplayValue()}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start" onClick={(e) => e.stopPropagation()}>
+          <PopoverContent
+            className="w-auto p-0"
+            align="start"
+            onClick={(e) => e.stopPropagation()}
+          >
             {type === "period" ? (
               <Calendar
                 mode="range"
