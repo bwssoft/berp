@@ -105,6 +105,12 @@ function query(params: Props["searchParams"]): Filter<IPriceTable> {
     });
   }
 
+  if (params.status && params.status !== "Todos") {
+    conditions.push({
+      status: params.status as any, // Status filtering - cast to avoid type issues
+    });
+  }
+
   if (params.start_date || params.end_date) {
     const range: Record<string, Date> = {};
     if (params.start_date) range.$gte = new Date(params.start_date);

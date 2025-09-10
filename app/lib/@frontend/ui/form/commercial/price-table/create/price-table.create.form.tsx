@@ -34,6 +34,8 @@ import { usePublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commer
 import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/app/lib/util";
+import { InactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/inactivate.price-table.dialog";
+import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/use-inactivate.price-table.dialog";
 
 const BRAZILIAN_UF_LIST = [
   { id: "AC", text: "Acre" },
@@ -153,8 +155,16 @@ export function CreatePriceTableForm() {
     setOpen: setOpenCancelDialog,
     openDialog: openCancelPriceTableDialog,
     isLoading: isLoadingCancel,
-    cancelPriceTable,
+    handleCancelPriceTable,
   } = useCancelPriceTableDialog();
+
+  const {
+    open: openInactiveDialog,
+    setOpen: setOpenInactiveDialog,
+    openDialog: openInactivePriceTableDialog,
+    isLoading: isLoadingInactive,
+    handleInactivatePriceTable,
+  } = useInactivatePriceTableDialog();
 
   const {
     open: openPublishDialog,
@@ -229,6 +239,13 @@ export function CreatePriceTableForm() {
             onClick={openCancelPriceTableDialog}
           >
             Cancelar tabela
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={openInactivePriceTableDialog}
+          >
+            Inativar tabela
           </Button>
           <Button
             type="button"
@@ -812,8 +829,15 @@ export function CreatePriceTableForm() {
       <CancelPriceTableDialog
         open={openCancelDialog}
         setOpen={setOpenCancelDialog}
-        confirm={cancelPriceTable}
+        confirm={handleCancelPriceTable}
         isLoading={isLoadingCancel}
+      />
+
+      <InactivatePriceTableDialog
+        open={openInactiveDialog}
+        setOpen={setOpenInactiveDialog}
+        confirm={handleInactivatePriceTable}
+        isLoading={isLoadingInactive}
       />
 
       <PublishPriceTableDialog
