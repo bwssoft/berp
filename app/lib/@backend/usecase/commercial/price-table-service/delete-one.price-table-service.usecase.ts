@@ -33,4 +33,5 @@ class DeleteOnePriceTableServiceUsecase {
   }
 }
 
-export const deleteOnePriceTableServiceUsecase = new DeleteOnePriceTableServiceUsecase();
+export const deleteOnePriceTableServiceUsecase =
+  new DeleteOnePriceTableServiceUsecase();

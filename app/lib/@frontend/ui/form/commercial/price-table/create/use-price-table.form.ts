@@ -6,7 +6,10 @@ import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { createOnePriceTable, validateBillingConditionsPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
+import {
+  createOnePriceTable,
+  validateBillingConditionsPriceTable,
+} from "@/app/lib/@backend/action/commercial/price-table.action";
 import {
   IEquipmentPayment,
   IPriceRange,
@@ -62,23 +65,33 @@ const priceTableSchema = z
 export type CreatePriceTableFormData = z.infer<typeof priceTableSchema>;
 
 export function usePriceTableForm() {
-  type Group = { id: string; conditions: IPriceTableCondition[], priority?: boolean };
+  type Group = {
+    id: string;
+    conditions: IPriceTableCondition[];
+    priority?: boolean;
+  };
 
-  const uid = () => (crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2));
-  const emptyCondition = (): IPriceTableCondition => ({ id: uid(), salesFor: [], billingLimit: "", toBillFor: "" });
+  const uid = () =>
+    crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+  const emptyCondition = (): IPriceTableCondition => ({
+    id: uid(),
+    salesFor: [],
+    billingLimit: "",
+    toBillFor: "",
+  });
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   // state para grupos e condições
   const [groups, setGroups] = useState<Group[]>([
-    { id: uid(), conditions: [emptyCondition()], priority: false }
+    { id: uid(), conditions: [emptyCondition()], priority: false },
   ]);
   const [messageErrorCondition, setMessageErrorCondition] = useState<{
     status: string;
     message: string;
   }>({
     status: "",
-    message: ""
+    message: "",
   });
 
   const form = useForm<CreatePriceTableFormData>({
@@ -203,6 +216,12 @@ export function usePriceTableForm() {
       };
       form.setValue("equipmentWithoutSim", updatedEquipmentWithoutSim);
     }
+
+    // Log the equipment data for debugging
+    console.log(
+      `Equipment ${equipmentModel} (${type}) pricing updated:`,
+      equipmentPayment
+    );
   };
 
   // Handle SIM card price changes - transform to ISimcardPayment format
@@ -240,11 +259,13 @@ export function usePriceTableForm() {
       [accessory]: prices,
     };
     form.setValue("accessories", updatedAccessories);
+
+    // Log the accessory data for debugging
+    console.log(`Accessory ${accessory} pricing updated:`, prices);
   };
 
   // Handle services price changes - transform to IServicePayment format
   const handleServicePriceChange = (services: any[]) => {
-
     // Transform service data to match IServicePayment interface
     const transformedServices: IServicePayment[] = services
       .filter((service: any) => service.service) // Only include services with a selected serviceId
@@ -299,6 +320,74 @@ export function usePriceTableForm() {
       }
     );
 
+    // Add accessories to equipment payment
+    Object.entries(data.accessories || {}).forEach(
+      ([accessoryId, accessoryData]) => {
+        // Transform accessory data to IEquipmentPayment format
+        const accessoryPayment: any = accessoryData;
+
+        // Handle credit payment (pagamento a prazo) for accessories
+        if (
+          accessoryPayment?.useQuantityRange &&
+          accessoryPayment?.priceTiers?.length > 0
+        ) {
+          const priceRange: IPriceRange[] = accessoryPayment.priceTiers
+            .filter((tier: any) => tier.from && tier.pricePerUnit)
+            .map((tier: any) => ({
+              from: Number(tier.from),
+              to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
+              unitPrice: Number(tier.pricePerUnit),
+            }));
+
+          equipmentPayment.push({
+            type: "batch",
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: 0,
+            priceRange,
+          });
+        } else if (accessoryPayment?.singlePrice) {
+          equipmentPayment.push({
+            type: "unit",
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: Number(accessoryPayment.singlePrice),
+            priceRange: [],
+          });
+        }
+
+        // Handle cash payment (pagamento à vista) for accessories
+        if (
+          accessoryPayment?.useCashQuantityRange &&
+          accessoryPayment?.cashPriceTiers?.length > 0
+        ) {
+          const priceRange: IPriceRange[] = accessoryPayment.cashPriceTiers
+            .filter((tier: any) => tier.from && tier.pricePerUnit)
+            .map((tier: any) => ({
+              from: Number(tier.from),
+              to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
+              unitPrice: Number(tier.pricePerUnit),
+            }));
+
+          equipmentPayment.push({
+            type: "batch",
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: 0,
+            priceRange,
+          });
+        } else if (accessoryPayment?.cashPrice) {
+          equipmentPayment.push({
+            type: "unit",
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: Number(accessoryPayment.cashPrice),
+            priceRange: [],
+          });
+        }
+      }
+    );
+
     return {
       name: data.name,
       startDateTime: data.startDateTime,
@@ -318,6 +407,16 @@ export function usePriceTableForm() {
       setLoading(true);
 
       try {
+        // Log the raw form data for debugging
+        console.log("Raw form data:", {
+          name: data.name,
+          equipmentWithSim: data.equipmentWithSim,
+          equipmentWithoutSim: data.equipmentWithoutSim,
+          simCards: data.simCards,
+          accessories: data.accessories,
+          services: data.services,
+        });
+
         // Transform data to match IPriceTable interface exactly
         const priceTablePayload = transformToPriceTablePayload(data, "DRAFT");
 
@@ -350,48 +449,60 @@ export function usePriceTableForm() {
   );
 
   const handleValidationConditions = async () => {
-      try {
-        const result = await validateBillingConditionsPriceTable(groups);
-        console.log("Validation result:", result);
-        setMessageErrorCondition({
-          status: result.status,
-          message: result.messages[0] ?? ""
-        });
-      } catch (error) {
-        console.error("Error creating price table:", error);
-        toast({
-          title: "Erro!",
-          description: "Falha ao criar a tabela de preços!",
-          variant: "error",
-        });
-      }
+    try {
+      const result = await validateBillingConditionsPriceTable(groups);
+      console.log("Validation result:", result);
+      setMessageErrorCondition({
+        status: result.status,
+        message: result.messages[0] ?? "",
+      });
+    } catch (error) {
+      console.error("Error creating price table:", error);
+      toast({
+        title: "Erro!",
+        description: "Falha ao criar a tabela de preços!",
+        variant: "error",
+      });
+    }
   };
 
   // adicionar novo GRUPO
   const addGroup = () =>
-    setGroups(prev => [...prev, { id: uid(), conditions: [emptyCondition()] }]);
+    setGroups((prev) => [
+      ...prev,
+      { id: uid(), conditions: [emptyCondition()] },
+    ]);
 
   // adicionar nova CONDIÇÃO dentro de um grupo
-  const addCondition = (groupId: string, init?: Partial<IPriceTableCondition>) =>
-    setGroups(prev =>
-      prev.map(g =>
+  const addCondition = (
+    groupId: string,
+    init?: Partial<IPriceTableCondition>
+  ) =>
+    setGroups((prev) =>
+      prev.map((g) =>
         g.id === groupId
-          ? { ...g, conditions: [...g.conditions, { ...emptyCondition(), ...init }] }
+          ? {
+              ...g,
+              conditions: [...g.conditions, { ...emptyCondition(), ...init }],
+            }
           : g
       )
-  );
+    );
 
   const removeCondition = (groupId: string, conditionId: string) => {
-    setGroups(prev => {
+    setGroups((prev) => {
       // 1) remove a condição do grupo alvo
-      const updated = prev.map(g =>
+      const updated = prev.map((g) =>
         g.id === groupId
-          ? { ...g, conditions: g.conditions.filter(c => c.id !== conditionId) }
+          ? {
+              ...g,
+              conditions: g.conditions.filter((c) => c.id !== conditionId),
+            }
           : g
       );
 
       // 2) remove grupos que ficaram sem condições
-      let pruned = updated.filter(g => g.conditions.length > 0);
+      let pruned = updated.filter((g) => g.conditions.length > 0);
 
       // 3) se não sobrar nenhum grupo, mantém 1 grupo com 1 condição vazia (coloquei isso pq é obrigatório ter pelo menos 1 condição)
       if (pruned.length === 0) {
@@ -401,7 +512,6 @@ export function usePriceTableForm() {
       return pruned;
     });
   };
-
 
   const handleSaveDraft = async () => {
     const currentData = form.getValues();
@@ -452,18 +562,31 @@ export function usePriceTableForm() {
   type Status = "red" | "yellow" | "green" | "blue";
 
   const STATUS_STYLES: Record<Status, string> = {
-    red:    "bg-red-100 border-l-red-500 text-red-800",
+    red: "bg-red-100 border-l-red-500 text-red-800",
     yellow: "bg-yellow-100 border-l-yellow-500 text-yellow-800",
-    green:  "bg-green-100 border-l-green-500 text-green-800",
-    blue:   "bg-blue-100 border-l-blue-500 text-blue-800",
+    green: "bg-green-100 border-l-green-500 text-green-800",
+    blue: "bg-blue-100 border-l-blue-500 text-blue-800",
   };
 
   const status = (messageErrorCondition.status ?? "red") as Status;
 
   const setGroupPriority = (groupId: string, enabled: boolean) => {
-    setGroups(prev =>
-      prev.map(g => (g.id === groupId ? { ...g, priority: enabled } : g))
+    setGroups((prev) =>
+      prev.map((g) => (g.id === groupId ? { ...g, priority: enabled } : g))
     );
+  };
+
+  // Helper function to get current form values for debugging
+  const getCurrentFormData = () => {
+    const data = form.getValues();
+    return {
+      formData: data,
+      equipmentWithSim: Object.keys(data.equipmentWithSim || {}).length,
+      equipmentWithoutSim: Object.keys(data.equipmentWithoutSim || {}).length,
+      simCards: data.simCards?.length || 0,
+      accessories: Object.keys(data.accessories || {}).length,
+      services: data.services?.length || 0,
+    };
   };
 
   return {
@@ -484,6 +607,7 @@ export function usePriceTableForm() {
     getDefaultStartDateTime,
     getDefaultEndDateTime,
     formatDateTimeLocal,
+    getCurrentFormData,
     // Schema for external validation
     schema: priceTableSchema,
     addCondition,
@@ -495,6 +619,6 @@ export function usePriceTableForm() {
     STATUS_STYLES,
     status,
     removeCondition,
-    setGroupPriority
+    setGroupPriority,
   };
 }
