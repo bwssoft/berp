@@ -1,17 +1,29 @@
 import { useState } from "react";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { useSearchParams } from "next/navigation";
+import { inactivatePriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
 
 export function useInactivatePriceTableDialog() {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const openDialog = () => setOpen(true);
+  const searchParams = useSearchParams();
+  const priceTableId = searchParams.get("id");
 
-  const inactivatePriceTable = async () => {
+  const handleInactivatePriceTable = async () => {
     setIsLoading(true);
     try {
-      // Add your inactivate logic here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      if (!priceTableId) {
+        toast({
+          variant: "error",
+          description: "ID da tabela não encontrado.",
+          title: "Erro",
+        });
+        setIsLoading(false);
+        return;
+      }
+      await inactivatePriceTable(priceTableId);
 
       toast({
         variant: "success",
@@ -36,6 +48,6 @@ export function useInactivatePriceTableDialog() {
     setOpen,
     openDialog,
     isLoading,
-    inactivatePriceTable,
+    handleInactivatePriceTable,
   };
 }
