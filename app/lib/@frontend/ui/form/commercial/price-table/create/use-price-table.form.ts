@@ -36,7 +36,6 @@ const priceTableSchema = z
     }),
     isTemporary: z.boolean().default(false),
     conditionGroupIds: z.array(z.string()).default([]),
-    enabledProductsIds: z.array(z.string()).default([]),
     // Configurações de faturamento
     billingConfig: z
       .object({
@@ -102,7 +101,6 @@ export function usePriceTableForm() {
       endDateTime: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
       isTemporary: false,
       conditionGroupIds: [],
-      enabledProductsIds: [],
       billingConfig: {
         salesFor: "",
         billingLimit: "",
@@ -394,7 +392,6 @@ export function usePriceTableForm() {
       endDateTime: data.endDateTime,
       isTemporary: data.isTemporary,
       conditionGroupIds: data.conditionGroupIds,
-      enabledProductsIds: data.enabledProductsIds,
       status,
       equipmentPayment,
       simcardPayment: data.simCards || [],
