@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { cancelPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
 
 export function useCancelPriceTableDialog() {
   const [open, setOpen] = useState(false);
@@ -9,11 +10,23 @@ export function useCancelPriceTableDialog() {
 
   const openDialog = () => setOpen(true);
 
-  const cancelPriceTable = async () => {
+    const searchParams = useSearchParams();
+    const priceTableId = searchParams.get("id");
+
+  const handleCancelPriceTable = async () => {
     setIsLoading(true);
     try {
-      // Add your cancel logic here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      if (!priceTableId) {
+        toast({
+          variant: "error",
+          description: "ID da tabela não encontrado.",
+          title: "Erro",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      await cancelPriceTable(priceTableId);
 
       toast({
         variant: "success",
@@ -39,6 +52,6 @@ export function useCancelPriceTableDialog() {
     setOpen,
     openDialog,
     isLoading,
-    cancelPriceTable,
+    handleCancelPriceTable,
   };
 }
