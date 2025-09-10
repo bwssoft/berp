@@ -102,7 +102,9 @@ export const columns: ColumnDef<PriceTable>[] = [
   {
     id: "actions",
     header: "AÇÃO",
-    cell: ({ row }) => (
+    cell: ({ row, table }) => {
+      const { restrictEdit } = table.options.meta as { restrictEdit: boolean };
+      return (
       <div className="flex gap-1">
         <Button
           variant="ghost"
@@ -120,15 +122,17 @@ export const columns: ColumnDef<PriceTable>[] = [
         >
           <Copy className="h-4 w-4" />
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          title="Editar"
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
+        {restrictEdit && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            title="Editar"
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+        )}
       </div>
-    ),
+    )},
   },
 ];
