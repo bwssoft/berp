@@ -155,7 +155,7 @@ export function CreatePriceTableForm() {
     setOpen: setOpenCancelDialog,
     openDialog: openCancelPriceTableDialog,
     isLoading: isLoadingCancel,
-    cancelPriceTable,
+    handleCancelPriceTable,
   } = useCancelPriceTableDialog();
 
   const {
@@ -829,7 +829,7 @@ export function CreatePriceTableForm() {
       <CancelPriceTableDialog
         open={openCancelDialog}
         setOpen={setOpenCancelDialog}
-        confirm={cancelPriceTable}
+        confirm={handleCancelPriceTable}
         isLoading={isLoadingCancel}
       />
 
