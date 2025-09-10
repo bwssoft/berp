@@ -1,6 +1,7 @@
 "use client";
 
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { IPriceTable } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 import { Pagination } from "../../../component/pagination";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { columns } from "./price-table.columns";
@@ -19,7 +20,7 @@ import {
 } from "../../../component/table";
 
 interface Props {
-  data: PaginationResult<any>;
+  data: PaginationResult<IPriceTable>;
   currentPage?: number;
 }
 

@@ -3,16 +3,7 @@
 import { Button } from "@/app/lib/@frontend/ui/component";
 import { ColumnDef } from "@tanstack/react-table";
 import { Copy, History, Pencil } from "lucide-react";
-
-interface PriceTable {
-  id: number;
-  name: string;
-  createdDate: string;
-  startDate: string;
-  endDate: string;
-  type: string;
-  status: string;
-}
+import { IPriceTable } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 
 const getStatusDisplayText = (status: string) => {
   switch (status) {
@@ -54,7 +45,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export const columns: ColumnDef<PriceTable>[] = [
+export const columns: ColumnDef<IPriceTable>[] = [
   {
     accessorKey: "name",
     header: "NOME DA TABELA",
@@ -63,24 +54,72 @@ export const columns: ColumnDef<PriceTable>[] = [
     ),
   },
   {
-    accessorKey: "createdDate",
+    accessorKey: "created_at",
     header: "DATA DE CADASTRO",
-    cell: ({ row }) => <div>{row.getValue("createdDate")}</div>,
+    cell: ({ row }) => {
+      const date = row.getValue("created_at") as Date;
+      return (
+        <div>
+          {date
+            ? new Date(date).toLocaleString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-"}
+        </div>
+      );
+    },
   },
   {
-    accessorKey: "startDate",
+    accessorKey: "startDateTime",
     header: "DATA INICIAL",
-    cell: ({ row }) => <div>{row.getValue("startDate")}</div>,
+    cell: ({ row }) => {
+      const date = row.getValue("startDateTime") as Date;
+      return (
+        <div>
+          {date
+            ? new Date(date).toLocaleString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-"}
+        </div>
+      );
+    },
   },
   {
-    accessorKey: "endDate",
+    accessorKey: "endDateTime",
     header: "DATA FINAL",
-    cell: ({ row }) => <div>{row.getValue("endDate")}</div>,
+    cell: ({ row }) => {
+      const date = row.getValue("endDateTime") as Date;
+      return (
+        <div>
+          {date
+            ? new Date(date).toLocaleString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "-"}
+        </div>
+      );
+    },
   },
   {
-    accessorKey: "type",
+    accessorKey: "isTemporary",
     header: "TIPO",
-    cell: ({ row }) => <div>{row.getValue("type")}</div>,
+    cell: ({ row }) => {
+      const isTemporary = row.getValue("isTemporary") as boolean;
+      return <div>{isTemporary ? "Provisória" : "Normal"}</div>;
+    },
   },
   {
     accessorKey: "status",
