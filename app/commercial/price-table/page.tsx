@@ -35,7 +35,9 @@ export default async function PriceTablePage(props: Props) {
   const _page = page ? Number(page) : 1;
 
   const priceTables = await findManyPriceTable(query(rest), _page);
-  const canCreate = await restrictFeatureByProfile("commercial:price-table:create");
+  const canCreate = await restrictFeatureByProfile(
+    "commercial:price-table:create"
+  );
   const canEdit = await restrictFeatureByProfile("commercial:price-table:edit");
 
   return (
@@ -81,9 +83,7 @@ export default async function PriceTablePage(props: Props) {
           <PriceTableTable
             currentPage={_page}
             restrictEdit={canEdit}
-            data={
-              priceTables ?? { docs: [], pages: 0, total: 0, limit: 10 }
-            }
+            data={priceTables ?? { docs: [], pages: 0, total: 0, limit: 10 }}
           />
         </CardContent>
       </Card>
@@ -112,25 +112,47 @@ function query(params: Props["searchParams"]): Filter<IPriceTable> {
     });
   }
 
-  // Handle created_date filter
+  // Handle created_date filter - exact day match
   if (params.created_date) {
+    // Parse date string as local date to avoid timezone issues
+    const [year, month, day] = params.created_date.split("-").map(Number);
+    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
     conditions.push({
-      created_at: new Date(params.created_date),
+      created_at: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
     });
   }
 
-  // Handle activation_date filter
+  // Handle activation_date filter - exact day match with startDateTime
   if (params.activation_date) {
+    // Parse date string as local date to avoid timezone issues
+    const [year, month, day] = params.activation_date.split("-").map(Number);
+    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
     conditions.push({
-      startDateTime: new Date(params.activation_date),
+      startDateTime: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
     });
   }
 
-  // Handle period filter (start_date and end_date)
+  // Handle period filter - startDateTime should be between the range
   if (params.start_date || params.end_date) {
     const range: Record<string, Date> = {};
-    if (params.start_date) range.$gte = new Date(params.start_date);
-    if (params.end_date) range.$lte = new Date(params.end_date);
+    if (params.start_date) {
+      const [year, month, day] = params.start_date.split("-").map(Number);
+      range.$gte = new Date(year, month - 1, day, 0, 0, 0, 0);
+    }
+    if (params.end_date) {
+      const [year, month, day] = params.end_date.split("-").map(Number);
+      range.$lte = new Date(year, month - 1, day, 23, 59, 59, 999);
+    }
     conditions.push({ startDateTime: range });
   }
 
