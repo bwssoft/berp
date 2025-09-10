@@ -22,14 +22,16 @@ import {
 interface Props {
   data: PaginationResult<IPriceTable>;
   currentPage?: number;
+  restrictEdit: boolean;
 }
 
-export function PriceTableTable({ data, currentPage = 1 }: Props) {
+export function PriceTableTable({ data, currentPage = 1, restrictEdit}: Props) {
   const { docs, pages = 1, total = 0, limit = 10 } = data;
   const table = useReactTable({
     data: docs,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    meta: { restrictEdit },
   });
   const { handleParamsChange } = useHandleParamsChange();
 

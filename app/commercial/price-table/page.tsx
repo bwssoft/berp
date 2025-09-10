@@ -1,5 +1,4 @@
-"use client";
-
+import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
 import { IPriceTable } from "@/app/lib/@backend/domain";
 import {
@@ -13,7 +12,6 @@ import {
 import { PriceTableFilterForm } from "@/app/lib/@frontend/ui/form/commercial/price-table/search/search.price-table.form";
 import { PriceTableTable } from "@/app/lib/@frontend/ui/table/commercial/price-table/price-table.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import { useQuery } from "@tanstack/react-query";
 import { Filter } from "mongodb";
 import Link from "next/link";
 
@@ -29,16 +27,15 @@ interface Props {
   };
 }
 
-export default function PriceTablePage(props: Props) {
+export default async function PriceTablePage(props: Props) {
   const {
     searchParams: { page, ...rest },
   } = props;
   const _page = page ? Number(page) : 1;
 
-  const priceTables = useQuery({
-    queryKey: ["price-tables", rest, _page],
-    queryFn: () => findManyPriceTable(query(rest), _page),
-  });
+  const priceTables = await findManyPriceTable(query(rest), _page);
+  const canCreate = await restrictFeatureByProfile("commercial:price-table:create");
+  const canEdit = await restrictFeatureByProfile("commercial:price-table:edit");
 
   return (
     <div className="space-y-4 pt-8">
@@ -49,12 +46,14 @@ export default function PriceTablePage(props: Props) {
             Visualize e gerencie todas as tabelas de preços
           </p>
         </div>
-        <Link href="/commercial/price-table/form/create">
-          <Button>
-            <PlusIcon className="mr-2 h-4 w-4" />
-            Nova Tabela
-          </Button>
-        </Link>
+        {canCreate && (
+          <Link href="/commercial/price-table/form/create">
+            <Button>
+              <PlusIcon className="mr-2 h-4 w-4" />
+              Nova Tabela
+            </Button>
+          </Link>
+        )}
       </div>
 
       <Card>
@@ -80,8 +79,9 @@ export default function PriceTablePage(props: Props) {
         <CardContent>
           <PriceTableTable
             currentPage={_page}
+            restrictEdit={canEdit}
             data={
-              priceTables.data ?? { docs: [], pages: 0, total: 0, limit: 10 }
+              priceTables ?? { docs: [], pages: 0, total: 0, limit: 10 }
             }
           />
         </CardContent>
