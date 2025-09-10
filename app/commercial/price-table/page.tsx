@@ -142,18 +142,57 @@ function query(params: Props["searchParams"]): Filter<IPriceTable> {
     });
   }
 
-  // Handle period filter - startDateTime should be between the range
+  // Handle period filter - show tables where input period covers the table's entire active period
   if (params.start_date || params.end_date) {
-    const range: Record<string, Date> = {};
-    if (params.start_date) {
+    const periodConditions: Record<string, any> = {};
+
+    if (params.start_date && params.end_date) {
+      // Both dates provided - table's period must be within input period
+      const [startYear, startMonth, startDay] = params.start_date
+        .split("-")
+        .map(Number);
+      const [endYear, endMonth, endDay] = params.end_date
+        .split("-")
+        .map(Number);
+
+      const inputStartDate = new Date(
+        startYear,
+        startMonth - 1,
+        startDay,
+        0,
+        0,
+        0,
+        0
+      );
+      const inputEndDate = new Date(
+        endYear,
+        endMonth - 1,
+        endDay,
+        23,
+        59,
+        59,
+        999
+      );
+
+      // Input start date should be <= table's startDateTime
+      // AND input end date should be >= table's endDateTime
+      periodConditions.$and = [
+        { startDateTime: { $gte: inputStartDate } }, // Table starts after or when input starts
+        { endDateTime: { $lte: inputEndDate } }, // Table ends before or when input ends
+      ];
+    } else if (params.start_date) {
+      // Only start date - table should start after this date
       const [year, month, day] = params.start_date.split("-").map(Number);
-      range.$gte = new Date(year, month - 1, day, 0, 0, 0, 0);
-    }
-    if (params.end_date) {
+      const inputStartDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+      periodConditions.startDateTime = { $gte: inputStartDate };
+    } else if (params.end_date) {
+      // Only end date - table should end before this date
       const [year, month, day] = params.end_date.split("-").map(Number);
-      range.$lte = new Date(year, month - 1, day, 23, 59, 59, 999);
+      const inputEndDate = new Date(year, month - 1, day, 23, 59, 59, 999);
+      periodConditions.endDateTime = { $lte: inputEndDate };
     }
-    conditions.push({ startDateTime: range });
+
+    conditions.push(periodConditions);
   }
 
   if (conditions.length === 1) {
