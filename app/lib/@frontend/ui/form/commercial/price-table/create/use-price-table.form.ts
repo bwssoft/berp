@@ -214,6 +214,12 @@ export function usePriceTableForm() {
       };
       form.setValue("equipmentWithoutSim", updatedEquipmentWithoutSim);
     }
+
+    // Log the equipment data for debugging
+    console.log(
+      `Equipment ${equipmentModel} (${type}) pricing updated:`,
+      equipmentPayment
+    );
   };
 
   // Handle SIM card price changes - transform to ISimcardPayment format
@@ -251,6 +257,9 @@ export function usePriceTableForm() {
       [accessory]: prices,
     };
     form.setValue("accessories", updatedAccessories);
+
+    // Log the accessory data for debugging
+    console.log(`Accessory ${accessory} pricing updated:`, prices);
   };
 
   // Handle services price changes - transform to IServicePayment format
@@ -309,6 +318,74 @@ export function usePriceTableForm() {
       }
     );
 
+    // Add accessories to equipment payment
+    Object.entries(data.accessories || {}).forEach(
+      ([accessoryId, accessoryData]) => {
+        // Transform accessory data to IEquipmentPayment format
+        const accessoryPayment: any = accessoryData;
+
+        // Handle credit payment (pagamento a prazo) for accessories
+        if (
+          accessoryPayment?.useQuantityRange &&
+          accessoryPayment?.priceTiers?.length > 0
+        ) {
+          const priceRange: IPriceRange[] = accessoryPayment.priceTiers
+            .filter((tier: any) => tier.from && tier.pricePerUnit)
+            .map((tier: any) => ({
+              from: Number(tier.from),
+              to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
+              unitPrice: Number(tier.pricePerUnit),
+            }));
+
+          equipmentPayment.push({
+            type: "batch",
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: 0,
+            priceRange,
+          });
+        } else if (accessoryPayment?.singlePrice) {
+          equipmentPayment.push({
+            type: "unit",
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: Number(accessoryPayment.singlePrice),
+            priceRange: [],
+          });
+        }
+
+        // Handle cash payment (pagamento à vista) for accessories
+        if (
+          accessoryPayment?.useCashQuantityRange &&
+          accessoryPayment?.cashPriceTiers?.length > 0
+        ) {
+          const priceRange: IPriceRange[] = accessoryPayment.cashPriceTiers
+            .filter((tier: any) => tier.from && tier.pricePerUnit)
+            .map((tier: any) => ({
+              from: Number(tier.from),
+              to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
+              unitPrice: Number(tier.pricePerUnit),
+            }));
+
+          equipmentPayment.push({
+            type: "batch",
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: 0,
+            priceRange,
+          });
+        } else if (accessoryPayment?.cashPrice) {
+          equipmentPayment.push({
+            type: "unit",
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: Number(accessoryPayment.cashPrice),
+            priceRange: [],
+          });
+        }
+      }
+    );
+
     return {
       name: data.name,
       startDateTime: data.startDateTime,
@@ -327,6 +404,16 @@ export function usePriceTableForm() {
       setLoading(true);
 
       try {
+        // Log the raw form data for debugging
+        console.log("Raw form data:", {
+          name: data.name,
+          equipmentWithSim: data.equipmentWithSim,
+          equipmentWithoutSim: data.equipmentWithoutSim,
+          simCards: data.simCards,
+          accessories: data.accessories,
+          services: data.services,
+        });
+
         // Transform data to match IPriceTable interface exactly
         const priceTablePayload = transformToPriceTablePayload(data, "DRAFT");
 
@@ -486,6 +573,19 @@ export function usePriceTableForm() {
     );
   };
 
+  // Helper function to get current form values for debugging
+  const getCurrentFormData = () => {
+    const data = form.getValues();
+    return {
+      formData: data,
+      equipmentWithSim: Object.keys(data.equipmentWithSim || {}).length,
+      equipmentWithoutSim: Object.keys(data.equipmentWithoutSim || {}).length,
+      simCards: data.simCards?.length || 0,
+      accessories: Object.keys(data.accessories || {}).length,
+      services: data.services?.length || 0,
+    };
+  };
+
   return {
     form,
     handleSubmit,
@@ -504,6 +604,7 @@ export function usePriceTableForm() {
     getDefaultStartDateTime,
     getDefaultEndDateTime,
     formatDateTimeLocal,
+    getCurrentFormData,
     // Schema for external validation
     schema: priceTableSchema,
     addCondition,
