@@ -1,5 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { AuditDomain, IPriceTable, IPriceTableRepository } from "../../../domain";
+import {
+  AuditDomain,
+  IPriceTable,
+  IPriceTableRepository,
+} from "../../../domain";
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../../admin/audit";
 import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
@@ -11,7 +15,12 @@ namespace Dto {
   export type Output = {
     success: boolean;
     id?: string;
-    error?: { global?: string; name?: string; startDateTime?: string; endDateTime?: string };
+    error?: {
+      global?: string;
+      name?: string;
+      startDateTime?: string;
+      endDateTime?: string;
+    };
   };
 }
 
@@ -24,37 +33,66 @@ class CreateOnePriceTableUsecase {
 
       // (talvez eu adicione essas validações no form do front tbm, mas to mantendo aq pra garantir)
       if (input.startDateTime < now) {
-        return { success: false, error: { startDateTime: "A data/hora de início não pode estar no passado." } };
+        return {
+          success: false,
+          error: {
+            startDateTime: "A data/hora de início não pode estar no passado.",
+          },
+        };
       }
       if (input.isTemporary) {
         if (!input.endDateTime) {
-          return { success: false, error: { endDateTime: "Para tabela provisória, informe a data/hora de término." } };
+          return {
+            success: false,
+            error: {
+              endDateTime:
+                "Para tabela provisória, informe a data/hora de término.",
+            },
+          };
         }
         if (input.endDateTime <= input.startDateTime) {
-          return { success: false, error: { endDateTime: "Término deve ser maior que o início." } };
+          return {
+            success: false,
+            error: { endDateTime: "Término deve ser maior que o início." },
+          };
         }
       } else if (input.endDateTime && input.endDateTime < input.startDateTime) {
-        return { success: false, error: { endDateTime: "Término não pode ser menor que o início." } };
+        return {
+          success: false,
+          error: { endDateTime: "Término não pode ser menor que o início." },
+        };
       }
 
       // --- unicidade de nome (CI)
       const { docs } = await findManyPriceTableUsecase.execute({});
       const normalizedInputName = normalizeString(input.name?.trim() ?? "");
-      const duplicated = docs.find((t) => normalizeString(t.name) === normalizedInputName);
+      const duplicated = docs.find(
+        (t) => normalizeString(t.name) === normalizedInputName
+      );
       if (duplicated) {
-        return { success: false, error: { global: "Já existe uma Tabela de Preços com este nome.", name: "Nome já está em uso." } };
+        return {
+          success: false,
+          error: {
+            global: "Já existe uma Tabela de Preços com este nome.",
+            name: "Nome já está em uso.",
+          },
+        };
       }
 
       const nowIso = new Date();
       const name = input.name?.trim();
       const priceTable: IPriceTable = {
         id: crypto.randomUUID(),
-        name: name ?? "",          
+        name: name ?? "",
         startDateTime: input.startDateTime,
         endDateTime: input.endDateTime ?? input.startDateTime,
         isTemporary: input.isTemporary,
         conditionGroupIds: input.conditionGroupIds ?? [],
         enabledProductsIds: input.enabledProductsIds ?? [],
+        status: input.status ?? "DRAFT",
+        equipmentPayment: input.equipmentPayment ?? [],
+        simcardPayment: input.simcardPayment ?? [],
+        servicePayment: input.servicePayment ?? [],
         created_at: nowIso,
         updated_at: nowIso,
       };
@@ -77,7 +115,10 @@ class CreateOnePriceTableUsecase {
       return { success: true, id: priceTable.id };
     } catch (err: any) {
       console.error("Falha ao criar Tabela de Preços:", err);
-      return { success: false, error: { global: "Falha ao criar Tabela de Preços." } };
+      return {
+        success: false,
+        error: { global: "Falha ao criar Tabela de Preços." },
+      };
     }
   }
 }

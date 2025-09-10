@@ -144,6 +144,7 @@ export function CreatePriceTableForm() {
     status,
     removeCondition,
     setGroupPriority,
+    getCurrentFormData,
   } = usePriceTableForm();
 
   // Dialog hooks
@@ -228,6 +229,20 @@ export function CreatePriceTableForm() {
             onClick={openCancelPriceTableDialog}
           >
             Cancelar tabela
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="text-gray-600 border-gray-300 hover:bg-gray-50"
+            onClick={() => {
+              const data = getCurrentFormData();
+              console.log("Current form data:", data);
+              alert(
+                `Form contains: ${data.equipmentWithSim} equipment with SIM, ${data.equipmentWithoutSim} equipment without SIM, ${data.simCards} SIM configs, ${data.accessories} accessories, ${data.services} services`
+              );
+            }}
+          >
+            Debug Data
           </Button>
           <Button
             type="submit"
