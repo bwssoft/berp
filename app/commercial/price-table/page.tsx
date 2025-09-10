@@ -94,114 +94,157 @@ export default async function PriceTablePage(props: Props) {
 function query(params: Props["searchParams"]): Filter<IPriceTable> {
   const conditions: Filter<IPriceTable>[] = [];
 
-  if (params.name) {
-    conditions.push({
-      name: { $regex: params.name, $options: "i" },
-    });
+  // Add each filter condition
+  addNameFilter(conditions, params.name);
+  addTypeFilter(conditions, params.type);
+  addStatusFilter(conditions, params.status);
+  addCreatedDateFilter(conditions, params.created_date);
+  addActivationDateFilter(conditions, params.activation_date);
+  addPeriodFilter(conditions, params.start_date, params.end_date);
+
+  return buildFinalQuery(conditions);
+}
+
+function addNameFilter(conditions: Filter<IPriceTable>[], name?: string): void {
+  if (!name) return;
+
+  conditions.push({
+    name: { $regex: name, $options: "i" },
+  });
+}
+
+function addTypeFilter(conditions: Filter<IPriceTable>[], type?: string): void {
+  if (!type || type === "Todos") return;
+
+  conditions.push({
+    isTemporary: type === "Provisória",
+  });
+}
+
+function addStatusFilter(
+  conditions: Filter<IPriceTable>[],
+  status?: string
+): void {
+  if (!status || status === "Todos") return;
+
+  conditions.push({
+    status: status as any,
+  });
+}
+
+function addCreatedDateFilter(
+  conditions: Filter<IPriceTable>[],
+  dateString?: string
+): void {
+  if (!dateString) return;
+
+  const { startOfDay, endOfDay } = parseDateToRange(dateString);
+
+  conditions.push({
+    created_at: {
+      $gte: startOfDay,
+      $lte: endOfDay,
+    },
+  });
+}
+
+function addActivationDateFilter(
+  conditions: Filter<IPriceTable>[],
+  dateString?: string
+): void {
+  if (!dateString) return;
+
+  const { startOfDay, endOfDay } = parseDateToRange(dateString);
+
+  conditions.push({
+    startDateTime: {
+      $gte: startOfDay,
+      $lte: endOfDay,
+    },
+  });
+}
+
+function addPeriodFilter(
+  conditions: Filter<IPriceTable>[],
+  startDate?: string,
+  endDate?: string
+): void {
+  if (!startDate && !endDate) return;
+
+  if (startDate && endDate) {
+    addFullPeriodFilter(conditions, startDate, endDate);
+  } else if (startDate) {
+    addStartDateOnlyFilter(conditions, startDate);
+  } else if (endDate) {
+    addEndDateOnlyFilter(conditions, endDate);
   }
+}
 
-  if (params.type && params.type !== "Todos") {
-    conditions.push({
-      isTemporary: params.type === "Provisória",
-    });
-  }
+function addFullPeriodFilter(
+  conditions: Filter<IPriceTable>[],
+  startDate: string,
+  endDate: string
+): void {
+  const inputStartDate = parseToStartOfDay(startDate);
+  const inputEndDate = parseToEndOfDay(endDate);
 
-  if (params.status && params.status !== "Todos") {
-    conditions.push({
-      status: params.status as any, // Status filtering - cast to avoid type issues
-    });
-  }
+  // Tables must be completely within the input period
+  conditions.push({
+    $and: [
+      { startDateTime: { $gte: inputStartDate } }, // Table starts after input starts
+      { endDateTime: { $lte: inputEndDate } }, // Table ends before input ends
+    ],
+  });
+}
 
-  // Handle created_date filter - exact day match
-  if (params.created_date) {
-    // Parse date string as local date to avoid timezone issues
-    const [year, month, day] = params.created_date.split("-").map(Number);
-    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
-    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+function addStartDateOnlyFilter(
+  conditions: Filter<IPriceTable>[],
+  startDate: string
+): void {
+  const inputStartDate = parseToStartOfDay(startDate);
 
-    conditions.push({
-      created_at: {
-        $gte: startOfDay,
-        $lte: endOfDay,
-      },
-    });
-  }
+  conditions.push({
+    startDateTime: { $gte: inputStartDate },
+  });
+}
 
-  // Handle activation_date filter - exact day match with startDateTime
-  if (params.activation_date) {
-    // Parse date string as local date to avoid timezone issues
-    const [year, month, day] = params.activation_date.split("-").map(Number);
-    const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
-    const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+function addEndDateOnlyFilter(
+  conditions: Filter<IPriceTable>[],
+  endDate: string
+): void {
+  const inputEndDate = parseToEndOfDay(endDate);
 
-    conditions.push({
-      startDateTime: {
-        $gte: startOfDay,
-        $lte: endOfDay,
-      },
-    });
-  }
+  conditions.push({
+    endDateTime: { $lte: inputEndDate },
+  });
+}
 
-  // Handle period filter - show tables where input period covers the table's entire active period
-  if (params.start_date || params.end_date) {
-    const periodConditions: Record<string, any> = {};
+function parseDateToRange(dateString: string): {
+  startOfDay: Date;
+  endOfDay: Date;
+} {
+  const [year, month, day] = dateString.split("-").map(Number);
 
-    if (params.start_date && params.end_date) {
-      // Both dates provided - table's period must be within input period
-      const [startYear, startMonth, startDay] = params.start_date
-        .split("-")
-        .map(Number);
-      const [endYear, endMonth, endDay] = params.end_date
-        .split("-")
-        .map(Number);
+  return {
+    startOfDay: new Date(year, month - 1, day, 0, 0, 0, 0),
+    endOfDay: new Date(year, month - 1, day, 23, 59, 59, 999),
+  };
+}
 
-      const inputStartDate = new Date(
-        startYear,
-        startMonth - 1,
-        startDay,
-        0,
-        0,
-        0,
-        0
-      );
-      const inputEndDate = new Date(
-        endYear,
-        endMonth - 1,
-        endDay,
-        23,
-        59,
-        59,
-        999
-      );
+function parseToStartOfDay(dateString: string): Date {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day, 0, 0, 0, 0);
+}
 
-      // Input start date should be <= table's startDateTime
-      // AND input end date should be >= table's endDateTime
-      periodConditions.$and = [
-        { startDateTime: { $gte: inputStartDate } }, // Table starts after or when input starts
-        { endDateTime: { $lte: inputEndDate } }, // Table ends before or when input ends
-      ];
-    } else if (params.start_date) {
-      // Only start date - table should start after this date
-      const [year, month, day] = params.start_date.split("-").map(Number);
-      const inputStartDate = new Date(year, month - 1, day, 0, 0, 0, 0);
-      periodConditions.startDateTime = { $gte: inputStartDate };
-    } else if (params.end_date) {
-      // Only end date - table should end before this date
-      const [year, month, day] = params.end_date.split("-").map(Number);
-      const inputEndDate = new Date(year, month - 1, day, 23, 59, 59, 999);
-      periodConditions.endDateTime = { $lte: inputEndDate };
-    }
+function parseToEndOfDay(dateString: string): Date {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day, 23, 59, 59, 999);
+}
 
-    conditions.push(periodConditions);
-  }
-
-  if (conditions.length === 1) {
-    return conditions[0];
-  }
-
-  if (conditions.length > 1) {
-    return { $and: conditions };
-  }
-
-  return {};
+function buildFinalQuery(
+  conditions: Filter<IPriceTable>[]
+): Filter<IPriceTable> {
+  if (conditions.length === 0) return {};
+  if (conditions.length === 1) return conditions[0];
+  return { $and: conditions };
 }
