@@ -1,16 +1,38 @@
 "use client";
 
-import { Button } from "@/app/lib/@frontend/ui/component";
-import { CalendarIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Button, DateInput } from "@/app/lib/@frontend/ui/component";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
+import { useState } from "react";
 
 export function PriceTableFilterForm() {
   const { handleParamsChange } = useHandleParamsChange();
+  const [createdDate, setCreatedDate] = useState<Date | null>(null);
+  const [activationDate, setActivationDate] = useState<Date | null>(null);
+  const [activationPeriod, setActivationPeriod] = useState<{
+    from: Date;
+    to: Date;
+  } | null>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const filters = Object.fromEntries(formData.entries());
+
+    // Handle date inputs
+    if (createdDate) {
+      filters.created_date = createdDate.toISOString().split("T")[0];
+    }
+    if (activationDate) {
+      filters.activation_date = activationDate.toISOString().split("T")[0];
+    }
+    if (activationPeriod?.from) {
+      filters.start_date = activationPeriod.from.toISOString().split("T")[0];
+    }
+    if (activationPeriod?.to) {
+      filters.end_date = activationPeriod.to.toISOString().split("T")[0];
+    }
+
     handleParamsChange(filters);
   };
 
@@ -20,6 +42,10 @@ export function PriceTableFilterForm() {
     if (form) {
       form.reset();
     }
+    // Clear date states
+    setCreatedDate(null);
+    setActivationDate(null);
+    setActivationPeriod(null);
     // Clear URL params
     handleParamsChange({});
   };
@@ -72,42 +98,41 @@ export function PriceTableFilterForm() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Data de cadastro
+            Data de criação
           </label>
-          <div className="relative">
-            <input
-              type="date"
-              name="created_date"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
-            />
-            <CalendarIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
-          </div>
+          <DateInput
+            type="date"
+            value={createdDate}
+            onChange={(value) => setCreatedDate(value as Date | null)}
+            placeholder="Selecione a data de criação"
+            name="created_date"
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Data de ativação
           </label>
-          <div className="relative">
-            <input
-              type="date"
-              name="start_date"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
-            />
-            <CalendarIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
-          </div>
+          <DateInput
+            type="date"
+            value={activationDate}
+            onChange={(value) => setActivationDate(value as Date | null)}
+            placeholder="Selecione a data de ativação"
+            name="activation_date"
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Data final
+            Período de ativação
           </label>
-          <div className="relative">
-            <input
-              type="date"
-              name="end_date"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 pr-10"
-            />
-            <CalendarIcon className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
-          </div>
+          <DateInput
+            type="period"
+            value={activationPeriod}
+            onChange={(value) =>
+              setActivationPeriod(value as { from: Date; to: Date } | null)
+            }
+            placeholder="Selecione o período de ativação"
+            name="activation_period"
+          />
         </div>
       </div>
       <div className="flex justify-end gap-2">
