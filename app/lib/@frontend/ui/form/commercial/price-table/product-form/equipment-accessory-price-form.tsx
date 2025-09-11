@@ -24,20 +24,44 @@ interface PriceTier {
 interface EquipmentPriceFormProps {
   equipmentModel: string;
   onPriceChange?: (prices: any) => void;
+  initialData?: {
+    type: "batch" | "unit";
+    unitPrice: number;
+    priceRange: Array<{ from: number; to: number; unitPrice: number }>;
+  };
 }
 
 export function EquipmentAccessoryPriceForm({
   equipmentModel,
   onPriceChange,
+  initialData,
 }: EquipmentPriceFormProps) {
-  const [useQuantityRange, setUseQuantityRange] = useState(false);
+  const [useQuantityRange, setUseQuantityRange] = useState(
+    initialData ? initialData.priceRange.length > 0 : false
+  );
   const [useCashQuantityRange, setUseCashQuantityRange] = useState(false);
-  const [singlePrice, setSinglePrice] = useState("");
+  const [singlePrice, setSinglePrice] = useState(
+    initialData && initialData.priceRange.length === 0
+      ? initialData.unitPrice.toString()
+      : ""
+  );
   const [cashPrice, setCashPrice] = useState("");
-  const [priceTiers, setPriceTiers] = useState<PriceTier[]>([
-    { id: "1", from: "", to: "", pricePerUnit: "" },
-    { id: "2", from: "", to: "", pricePerUnit: "", isLast: true },
-  ]);
+  const [priceTiers, setPriceTiers] = useState<PriceTier[]>(() => {
+    if (initialData && initialData.priceRange.length > 0) {
+      const tiers = initialData.priceRange.map((range, index) => ({
+        id: (index + 1).toString(),
+        from: range.from.toString(),
+        to: range.to.toString(),
+        pricePerUnit: range.unitPrice.toString(),
+        isLast: index === initialData.priceRange.length - 1,
+      }));
+      return tiers;
+    }
+    return [
+      { id: "1", from: "", to: "", pricePerUnit: "" },
+      { id: "2", from: "", to: "", pricePerUnit: "", isLast: true },
+    ];
+  });
   const [cashPriceTiers, setCashPriceTiers] = useState<PriceTier[]>([
     { id: "1", from: "", to: "", pricePerUnit: "" },
     { id: "2", from: "", to: "", pricePerUnit: "", isLast: true },

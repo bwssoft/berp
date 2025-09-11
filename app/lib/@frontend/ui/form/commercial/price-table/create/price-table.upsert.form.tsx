@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueries } from "@tanstack/react-query";
 import {
   Disclosure,
@@ -156,6 +156,9 @@ export function UpsertPriceTableForm({
     removeCondition,
     setGroupPriority,
     getCurrentFormData,
+    existingEquipmentPayment,
+    existingSimcardPayment,
+    existingServicePayment,
   } = usePriceTableForm({ priceTableId, editMode });
 
   // Dialog hooks
@@ -220,6 +223,27 @@ export function UpsertPriceTableForm({
       [accessory]: enabled,
     }));
   };
+
+  // Initialize enabled states based on existing equipment payment data
+  useEffect(() => {
+    if (existingEquipmentPayment && existingEquipmentPayment.length > 0) {
+      const newEnabledEquipmentWithSim: Record<string, boolean> = {};
+      const newEnabledEquipmentWithoutSim: Record<string, boolean> = {};
+      const newEnabledAccessories: Record<string, boolean> = {};
+
+      existingEquipmentPayment.forEach((equipment) => {
+        // For now, we'll assume all existing equipment is "withSim" type
+        // You may need to adjust this logic based on how you differentiate between them
+        newEnabledEquipmentWithSim[equipment.productId] = true;
+        // If it's an accessory (you may need to add logic to differentiate)
+        // newEnabledAccessories[equipment.productId] = true;
+      });
+
+      setEnabledEquipmentWithSim(newEnabledEquipmentWithSim);
+      setEnabledEquipmentWithoutSim(newEnabledEquipmentWithoutSim);
+      setEnabledAccessories(newEnabledAccessories);
+    }
+  }, [existingEquipmentPayment]);
 
   return (
     <div className="space-y-4">
@@ -600,6 +624,9 @@ export function UpsertPriceTableForm({
                             <div className="mt-4">
                               <EquipmentAccessoryPriceForm
                                 equipmentModel={equipment.id}
+                                initialData={existingEquipmentPayment?.find(
+                                  (ep) => ep.productId === equipment.id
+                                )}
                                 onPriceChange={(prices) => {
                                   handleEquipmentPriceChange(
                                     equipment.id,
@@ -702,6 +729,9 @@ export function UpsertPriceTableForm({
                             <div className="mt-4">
                               <EquipmentAccessoryPriceForm
                                 equipmentModel={equipment.id}
+                                initialData={existingEquipmentPayment?.find(
+                                  (ep) => ep.productId === equipment.id
+                                )}
                                 onPriceChange={(prices) => {
                                   handleEquipmentPriceChange(
                                     equipment.id,
@@ -728,7 +758,10 @@ export function UpsertPriceTableForm({
                   <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
                 </DisclosureButton>
                 <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
-                  <SimCardPriceForm onPriceChange={handleSimCardPriceChange} />
+                  <SimCardPriceForm
+                    initialData={existingSimcardPayment}
+                    onPriceChange={handleSimCardPriceChange}
+                  />
                 </DisclosurePanel>
               </Disclosure>
 
@@ -807,6 +840,9 @@ export function UpsertPriceTableForm({
                             <div className="mt-4">
                               <EquipmentAccessoryPriceForm
                                 equipmentModel={accessory.id}
+                                initialData={existingEquipmentPayment?.find(
+                                  (ep) => ep.productId === accessory.id
+                                )}
                                 onPriceChange={(prices) => {
                                   handleAccessoryPriceChange(
                                     accessory.id,
@@ -830,7 +866,10 @@ export function UpsertPriceTableForm({
                   <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
                 </DisclosureButton>
                 <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
-                  <ServicePriceForm onPriceChange={handleServicePriceChange} />
+                  <ServicePriceForm
+                    initialData={existingServicePayment}
+                    onPriceChange={handleServicePriceChange}
+                  />
                 </DisclosurePanel>
               </Disclosure>
             </DisclosurePanel>

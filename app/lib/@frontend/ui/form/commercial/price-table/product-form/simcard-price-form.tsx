@@ -25,6 +25,14 @@ interface SimCardTier {
 
 interface SimCardPriceFormProps {
   onPriceChange?: (prices: any) => void;
+  initialData?: Array<{
+    carriers: string[];
+    dataAmountMb: number;
+    planType: string;
+    provider: string;
+    priceWithoutDevice: number;
+    priceInBundle: number;
+  }>;
 }
 
 const carriersOptions = ["Tim", "Claro", "Vivo"];
@@ -32,19 +40,37 @@ const dataMBOptions = ["10MB", "20MB", "30MB"];
 const typeOptions = ["Compartilhado", "Nao compartilhado"];
 const supplierOptions = ["Arquia Mobile", "Emnify", "Links Field"];
 
-export function SimCardPriceForm({ onPriceChange }: SimCardPriceFormProps) {
-  const [showForm, setShowForm] = useState(false);
-  const [simCardTiers, setSimCardTiers] = useState<SimCardTier[]>([
-    {
-      id: "1",
-      carriers: [],
-      dataMB: "",
-      type: "",
-      supplier: "",
-      priceWithoutEquipment: "",
-      priceInCombo: "",
-    },
-  ]);
+export function SimCardPriceForm({
+  onPriceChange,
+  initialData,
+}: SimCardPriceFormProps) {
+  const [showForm, setShowForm] = useState(
+    !!initialData && initialData.length > 0
+  );
+  const [simCardTiers, setSimCardTiers] = useState<SimCardTier[]>(() => {
+    if (initialData && initialData.length > 0) {
+      return initialData.map((item, index) => ({
+        id: (index + 1).toString(),
+        carriers: item.carriers || [],
+        dataMB: `${item.dataAmountMb}MB`,
+        type: item.planType || "",
+        supplier: item.provider || "",
+        priceWithoutEquipment: item.priceWithoutDevice.toString(),
+        priceInCombo: item.priceInBundle.toString(),
+      }));
+    }
+    return [
+      {
+        id: "1",
+        carriers: [],
+        dataMB: "",
+        type: "",
+        supplier: "",
+        priceWithoutEquipment: "",
+        priceInCombo: "",
+      },
+    ];
+  });
 
   const updateSimCardTier = (
     id: string,

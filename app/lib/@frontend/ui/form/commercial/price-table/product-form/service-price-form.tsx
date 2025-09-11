@@ -23,6 +23,12 @@ interface ServiceTier {
 
 interface ServicePriceFormProps {
   onPriceChange?: (prices: any) => void;
+  initialData?: Array<{
+    serviceId: string;
+    monthlyPrice?: number;
+    yearlyPrice?: number;
+    fixedPrice?: number;
+  }>;
 }
 
 const serviceOptions = [
@@ -35,17 +41,33 @@ const serviceOptions = [
   "Dashboard Personalizado",
 ];
 
-export function ServicePriceForm({ onPriceChange }: ServicePriceFormProps) {
-  const [showForm, setShowForm] = useState(false);
-  const [serviceTiers, setServiceTiers] = useState<ServiceTier[]>([
-    {
-      id: "1",
-      service: "",
-      monthlyPrice: "",
-      annualPrice: "",
-      fixedPrice: "",
-    },
-  ]);
+export function ServicePriceForm({
+  onPriceChange,
+  initialData,
+}: ServicePriceFormProps) {
+  const [showForm, setShowForm] = useState(
+    !!initialData && initialData.length > 0
+  );
+  const [serviceTiers, setServiceTiers] = useState<ServiceTier[]>(() => {
+    if (initialData && initialData.length > 0) {
+      return initialData.map((item, index) => ({
+        id: (index + 1).toString(),
+        service: item.serviceId || "",
+        monthlyPrice: item.monthlyPrice?.toString() || "",
+        annualPrice: item.yearlyPrice?.toString() || "",
+        fixedPrice: item.fixedPrice?.toString() || "",
+      }));
+    }
+    return [
+      {
+        id: "1",
+        service: "",
+        monthlyPrice: "",
+        annualPrice: "",
+        fixedPrice: "",
+      },
+    ];
+  });
 
   const addServiceTier = () => {
     if (!showForm) {

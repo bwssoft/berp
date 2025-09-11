@@ -91,6 +91,18 @@ export function usePriceTableForm({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [loadingPriceTable, setLoadingPriceTable] = useState(!!priceTableId);
+
+  // States for loaded pricing data
+  const [existingEquipmentPayment, setExistingEquipmentPayment] = useState<
+    IEquipmentPayment[]
+  >([]);
+  const [existingSimcardPayment, setExistingSimcardPayment] = useState<
+    ISimcardPayment[]
+  >([]);
+  const [existingServicePayment, setExistingServicePayment] = useState<
+    IServicePayment[]
+  >([]);
+
   // state para grupos e condições
   const [groups, setGroups] = useState<Group[]>([
     { id: uid(), conditions: [emptyCondition()], priority: false },
@@ -141,6 +153,13 @@ export function usePriceTableForm({
         console.log("Fetched price table:", existingPriceTable);
 
         if (existingPriceTable) {
+          // Store existing pricing data in separate states
+          setExistingEquipmentPayment(
+            existingPriceTable.equipmentPayment || []
+          );
+          setExistingSimcardPayment(existingPriceTable.simcardPayment || []);
+          setExistingServicePayment(existingPriceTable.servicePayment || []);
+
           // Reset form with existing data - map to form format
           const formData = {
             name: existingPriceTable.name || "",
@@ -687,5 +706,9 @@ export function usePriceTableForm({
     status,
     removeCondition,
     setGroupPriority,
+    // Existing pricing data for edit mode
+    existingEquipmentPayment,
+    existingSimcardPayment,
+    existingServicePayment,
   };
 }
