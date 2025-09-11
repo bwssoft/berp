@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { BrazilianUF, IPriceTableCondition, IPriceTableConditionGroup } from "../../../domain";
+import { BrazilianUF, IPriceTableConditionGroup } from "../../../domain";
 
 namespace Dto {
   export type GroupWithPriority = IPriceTableConditionGroup & { priorityEnabled?: boolean };
@@ -12,13 +12,6 @@ namespace Dto {
     success: boolean;
     status: "green" | "yellow" | "red";
     messages: string[];
-    details?: {
-      missingStates?: UF[];
-      duplicateKeys?: string[];
-      invalidPriorityGroups?: number[];
-      groupsOnlyLimitedNoUnlimited?: number[];
-      groupsWithMissingCompany?: number[];
-    };
     error?: { global?: string };
   };
 }
@@ -37,59 +30,79 @@ class ValidateBillingConditionsPriceTableUsecase {
         };
       }
 
-      let status: Dto.Output["status"] = "green";
-      const messages: string[] = [];
-      const details: Dto.Output["details"] = {};
-
       // 1) Cobertura de UFs
       const cov = validateCoverage(input.groups);
       if (!cov.ok) {
-        status = "yellow";
-        messages.push("É obrigatório que todos os estados estejam incluídos em condições.");
-        details.missingStates = cov.missing;
+        return {
+          success: true,
+          status: "yellow",
+          messages: [
+            "É obrigatório que todos os estados estejam incluídos em condições."
+          ],
+        }
       }
 
       // 2) Específica com limite exige alguma "sem limite"
       const unl = validateNeedsUnlimited(input.groups);
       if (!unl.ok) {
-        status = "yellow";
-        messages.push("É obrigatório cadastrar ao menos uma condição sem limite de faturamento para estados que foram especificados em condições.");
+        return {
+          success: true,
+          status: "yellow",
+          messages: [
+            "É obrigatório cadastrar ao menos uma condição sem limite de faturamento para estados que foram especificados em condições."
+          ],
+        }
       }
 
       // 3) Empresa obrigatória
       const comp = validateCompanyRequired(input.groups);
       if (!comp.ok) {
-        status = "yellow";
-        messages.push("Em cada condição é obrigatório faturar para uma empresa.");
-        details.groupsWithMissingCompany = comp.groupsIdx;
+        return {
+          success: true,
+          status: "yellow",
+          messages: [
+            "Em cada condição é obrigatório faturar para uma empresa."
+          ],
+        }
       }
 
       // 4) Duplicadas (respeitando exceção por grupo)
       const dups = findDuplicates(input.groups);
       if (dups.length > 0) {
-        status = "yellow";
-        messages.push("Não é possível cadastrar condições duplicadas.");
-        details.duplicateKeys = dups;
+        return {
+          success: true,
+          status: "yellow",
+          messages: [
+            "Não é possível cadastrar condições duplicadas."
+          ],
+        }
       }
 
       // 5) Grupo ALL não pode ser só "com limite"
       const onlyLim = validateGroupOnlyLimitedWhenAll(input.groups);
       if (!onlyLim.ok) {
-        status = "yellow";
-        messages.push("Não é permitido o cadastro apenas de condições com limite de faturamento no mesmo grupo, cadastre ao menos uma condição sem limite.");
-        details.groupsOnlyLimitedNoUnlimited = onlyLim.invalidGroupIdx;
+        return {
+          success: true,
+          status: "yellow",
+          messages: [
+            "Não é permitido o cadastro apenas de condições com limite de faturamento no mesmo grupo, cadastre ao menos uma condição sem limite."
+          ],
+        }
       }
 
       // 6) Prioridade por grupo (quando ligada)
       const prio = validatePriorityGroups(input.groups);
       if (!prio.ok) {
-        status = "yellow";
-        messages.push("Para habilitar a prioridade de faturamento de um grupo é necessário conter limite de faturamento em todos as condições do grupo, com exceção da última que deverá estar sem limite cadastrado.");
-        details.invalidPriorityGroups = prio.invalid;
+        return {
+          success: true,
+          status: "yellow",
+          messages: [
+            "Para habilitar a prioridade de faturamento de um grupo é necessário conter limite de faturamento em todos as condições do grupo, com exceção da última que deverá estar sem limite cadastrado."
+          ],
+        }
       }
 
-      messages.push("Condições validadas com sucesso!");
-      return { success: true, status, messages, details };
+      return { success: true, status: "green", messages: ["Condições validadas com sucesso!"] };
     } catch (err) {
       console.error("Falha na validação de condições de faturamento:", err);
       return { success: false, status: "red", messages: [], error: { global: "Falha ao validar condições." } };
