@@ -87,7 +87,7 @@ class CreateOnePriceTableUsecase {
         startDateTime: input.startDateTime,
         endDateTime: input.endDateTime ?? input.startDateTime,
         isTemporary: input.isTemporary,
-        conditionGroupIds: input.conditionGroupIds ?? [],
+        groups: input.groups || [],
         status: input.status ?? "DRAFT",
         equipmentPayment: input.equipmentPayment ?? [],
         simcardPayment: input.simcardPayment ?? [],
