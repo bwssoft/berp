@@ -23,135 +23,6 @@ namespace Dto {
   };
 }
 
-/* ===================== Helpers ===================== */
-
-const ALL_UFS = [
-  "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
-  "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"
-] as const;
-type UF = typeof ALL_UFS[number];
-
-function parseNumberPTBR(value?: string): number | null {
-  if (!value) return null;
-  const s = value.trim().replace(/\./g, "").replace(",", ".");
-  const n = Number(s);
-  return Number.isFinite(n) ? n : null;
-}
-function isUnlimited(limit?: string): boolean {
-  const n = parseNumberPTBR(limit);
-  return !n || n <= 0;
-}
-function isALL(salesFor?: BrazilianUF[]): boolean {
-  return !salesFor || salesFor.length === 0;
-}
-function statesKey(salesFor?: BrazilianUF[]): string {
-  if (isALL(salesFor)) return "ALL";
-  const arr = Array.from(new Set((salesFor ?? []) as UF[]));
-  arr.sort();
-  return arr.join("|");
-}
-function limitKey(limit?: string): string {
-  return isUnlimited(limit) ? "SEM_LIM" : `LIM:${parseNumberPTBR(limit)}`;
-}
-function billKey(toBillFor?: string): string {
-  return (toBillFor ?? "").trim().toUpperCase();
-}
-
-/* ---- 1) Cobertura dos 27 UFs ---- */
-function validateCoverage(groups: Dto.GroupWithPriority[]) {
-  const conditions = groups.flatMap(g => g.conditions);
-
-  // ALL cobre todo o país
-  if (conditions.some(c => isALL(c.salesFor))) {
-    return { ok: true, missing: [] as UF[] };
-  }
-
-  const covered = new Set<UF>();
-  for (const c of conditions) {
-    (c.salesFor ?? []).forEach(uf => covered.add(uf as UF));
-  }
-  const missing = ALL_UFS.filter(uf => !covered.has(uf));
-  return { ok: missing.length === 0, missing };
-}
-
-/* ---- 2) Específica com limite exige alguma "sem limite" ---- */
-function validateNeedsUnlimited(groups: Dto.GroupWithPriority[]) {
-  const conditions = groups.flatMap(g => g.conditions);
-  const hasSpecificWithLimit = conditions.some(c => !isALL(c.salesFor) && !isUnlimited(c.billingLimit));
-  if (!hasSpecificWithLimit) return { ok: true };
-  const hasAnyUnlimited = conditions.some(c => isUnlimited(c.billingLimit));
-  return { ok: hasAnyUnlimited };
-}
-
-/* ---- 3) Empresa obrigatória em cada condição ---- */
-function validateCompanyRequired(groups: Dto.GroupWithPriority[]) {
-  const groupsIdx: number[] = [];
-  groups.forEach((g, gi) => {
-    const hasMissing = g.conditions.some(c => !c.toBillFor || !c.toBillFor.trim());
-    if (hasMissing) groupsIdx.push(gi);
-  });
-  return { ok: groupsIdx.length === 0, groupsIdx };
-}
-
-/* ---- 4) Duplicadas (com exceção: específico + sem limite dentro do mesmo grupo) ---- */
-function limitKind(limit?: string) {
-  return isUnlimited(limit) ? "SEM_LIM" : "LIM"; // binário
-}
-
-function findDuplicates(groups: Dto.GroupWithPriority[]) {
-  const counts = new Map<string, Map<number, number>>();
-
-  groups.forEach((g, gi) => {
-    g.conditions.forEach(c => {
-      const key = `${statesKey(c.salesFor)}::${billKey(c.toBillFor)}::${limitKind(c.billingLimit)}`;
-      const perGroup = counts.get(key) ?? new Map<number, number>();
-      perGroup.set(gi, (perGroup.get(gi) ?? 0) + 1);
-      counts.set(key, perGroup);
-    });
-  });
-
-  const duplicates: string[] = [];
-  counts.forEach((perGroup) => {
-    if (perGroup.size > 1) { duplicates.push("x"); return; } // aparece em grupos diferentes
-    const [, qty] = Array.from(perGroup.entries())[0];
-    if (qty > 1) duplicates.push("x"); // repete no mesmo grupo
-  });
-  return duplicates;
-}
-
-/* ---- 5) Grupo com todas condições ALL não pode ser só "com limite" ---- */
-function validateGroupOnlyLimitedWhenAll(groups: Dto.GroupWithPriority[]) {
-  const invalidGroupIdx: number[] = [];
-  groups.forEach((g, gi) => {
-    const allAreALL = g.conditions.length > 0 && g.conditions.every(c => isALL(c.salesFor));
-    if (!allAreALL) return;
-    const hasUnlimited = g.conditions.some(c => isUnlimited(c.billingLimit));
-    if (!hasUnlimited) invalidGroupIdx.push(gi);
-  });
-  return { ok: invalidGroupIdx.length === 0, invalidGroupIdx };
-}
-
-/* ---- 6) Prioridade por grupo (quando ligada) ---- */
-function validatePriorityGroups(groups: Dto.GroupWithPriority[]) {
-  const invalid: number[] = [];
-  groups.forEach((g, gi) => {
-    // priorityEnabled é opcional; trate como false quando ausente
-    const priorityEnabled = !!(g as any).priorityEnabled;
-    if (!priorityEnabled) return;
-
-    const list = g.conditions;
-    if (list.length < 2) { invalid.push(gi); return; }
-
-    const allButLastHaveLimit = list.slice(0, -1).every(c => !isUnlimited(c.billingLimit));
-    const lastIsUnlimited = isUnlimited(list[list.length - 1].billingLimit);
-
-    if (!(allButLastHaveLimit && lastIsUnlimited)) invalid.push(gi);
-  });
-  return { ok: invalid.length === 0, invalid };
-}
-
-/* ===================== Usecase ===================== */
-
 class ValidateBillingConditionsPriceTableUsecase {
   async execute(input: Dto.Input): Promise<Dto.Output> {
     try {
@@ -227,3 +98,127 @@ class ValidateBillingConditionsPriceTableUsecase {
 }
 
 export const validateBillingConditionsPriceTableUsecase = singleton(ValidateBillingConditionsPriceTableUsecase);
+
+
+/* ===================== Helpers ===================== */
+
+const ALL_UFS = [
+  "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
+  "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"
+] as const;
+type UF = typeof ALL_UFS[number];
+
+function parseNumberPTBR(value?: string): number | null {
+  if (!value) return null;
+  const s = value.trim().replace(/\./g, "").replace(",", ".");
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+function isUnlimited(limit?: string): boolean {
+  const n = parseNumberPTBR(limit);
+  return !n || n <= 0;
+}
+function isALL(salesFor?: BrazilianUF[]): boolean {
+  return !salesFor || salesFor.length === 0;
+}
+function limitKind(limit?: string) {
+  return isUnlimited(limit) ? "SEM_LIM" : "LIM"; // binário
+}
+function statesKey(salesFor?: BrazilianUF[]): string {
+  if (isALL(salesFor)) return "ALL";
+  const arr = Array.from(new Set((salesFor ?? []) as UF[]));
+  arr.sort();
+  return arr.join("|");
+}
+function billKey(toBillFor?: string): string {
+  return (toBillFor ?? "").trim().toUpperCase();
+}
+
+/* ---- 1) Cobertura dos 27 UFs ---- */
+function validateCoverage(groups: Dto.GroupWithPriority[]) {
+  const conditions = groups.flatMap(g => g.conditions);
+
+  // ALL cobre todo o país
+  if (conditions.some(c => isALL(c.salesFor))) {
+    return { ok: true, missing: [] as UF[] };
+  }
+
+  const covered = new Set<UF>();
+  for (const c of conditions) {
+    (c.salesFor ?? []).forEach(uf => covered.add(uf as UF));
+  }
+  const missing = ALL_UFS.filter(uf => !covered.has(uf));
+  return { ok: missing.length === 0, missing };
+}
+
+/* ---- 2) Específica com limite exige alguma "sem limite" ---- */
+function validateNeedsUnlimited(groups: Dto.GroupWithPriority[]) {
+  const conditions = groups.flatMap(g => g.conditions);
+  const hasSpecificWithLimit = conditions.some(c => !isALL(c.salesFor) && !isUnlimited(c.billingLimit));
+  if (!hasSpecificWithLimit) return { ok: true };
+  const hasAnyUnlimited = conditions.some(c => isUnlimited(c.billingLimit));
+  return { ok: hasAnyUnlimited };
+}
+
+/* ---- 3) Empresa obrigatória em cada condição ---- */
+function validateCompanyRequired(groups: Dto.GroupWithPriority[]) {
+  const groupsIdx: number[] = [];
+  groups.forEach((g, gi) => {
+    const hasMissing = g.conditions.some(c => !c.toBillFor || !c.toBillFor.trim());
+    if (hasMissing) groupsIdx.push(gi);
+  });
+  return { ok: groupsIdx.length === 0, groupsIdx };
+}
+
+/* ---- 4) Duplicadas (com exceção: específico + sem limite dentro do mesmo grupo) ---- */
+function findDuplicates(groups: Dto.GroupWithPriority[]) {
+  const counts = new Map<string, Map<number, number>>();
+
+  groups.forEach((g, gi) => {
+    g.conditions.forEach(c => {
+      const key = `${statesKey(c.salesFor)}::${billKey(c.toBillFor)}::${limitKind(c.billingLimit)}`;
+      const perGroup = counts.get(key) ?? new Map<number, number>();
+      perGroup.set(gi, (perGroup.get(gi) ?? 0) + 1);
+      counts.set(key, perGroup);
+    });
+  });
+
+  const duplicates: string[] = [];
+  counts.forEach((perGroup) => {
+    if (perGroup.size > 1) { duplicates.push("x"); return; } // aparece em grupos diferentes
+    const [, qty] = Array.from(perGroup.entries())[0];
+    if (qty > 1) duplicates.push("x"); // repete no mesmo grupo
+  });
+  return duplicates;
+}
+
+/* ---- 5) Grupo com todas condições ALL não pode ser só "com limite" ---- */
+function validateGroupOnlyLimitedWhenAll(groups: Dto.GroupWithPriority[]) {
+  const invalidGroupIdx: number[] = [];
+  groups.forEach((g, gi) => {
+    const allAreALL = g.conditions.length > 0 && g.conditions.every(c => isALL(c.salesFor));
+    if (!allAreALL) return;
+    const hasUnlimited = g.conditions.some(c => isUnlimited(c.billingLimit));
+    if (!hasUnlimited) invalidGroupIdx.push(gi);
+  });
+  return { ok: invalidGroupIdx.length === 0, invalidGroupIdx };
+}
+
+/* ---- 6) Prioridade por grupo (quando ligada) ---- */
+function validatePriorityGroups(groups: Dto.GroupWithPriority[]) {
+  const invalid: number[] = [];
+  groups.forEach((g, gi) => {
+    // priorityEnabled é opcional; trate como false quando ausente
+    const priorityEnabled = !!(g as any).priorityEnabled;
+    if (!priorityEnabled) return;
+
+    const list = g.conditions;
+    if (list.length < 2) { invalid.push(gi); return; }
+
+    const allButLastHaveLimit = list.slice(0, -1).every(c => !isUnlimited(c.billingLimit));
+    const lastIsUnlimited = isUnlimited(list[list.length - 1].billingLimit);
+
+    if (!(allButLastHaveLimit && lastIsUnlimited)) invalid.push(gi);
+  });
+  return { ok: invalid.length === 0, invalid };
+}
