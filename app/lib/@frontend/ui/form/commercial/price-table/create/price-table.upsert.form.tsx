@@ -624,9 +624,14 @@ export function UpsertPriceTableForm({
                             <div className="mt-4">
                               <EquipmentAccessoryPriceForm
                                 equipmentModel={equipment.id}
-                                initialData={existingEquipmentPayment?.find(
-                                  (ep) => ep.productId === equipment.id
-                                )}
+                                initialData={{
+                                  creditPayment: existingEquipmentPayment?.find(
+                                    (ep) => ep.productId === equipment.id && ep.paymentType === "credit"
+                                  ),
+                                  upfrontPayment: existingEquipmentPayment?.find(
+                                    (ep) => ep.productId === equipment.id && ep.paymentType === "upfront"
+                                  ),
+                                }}
                                 onPriceChange={(prices) => {
                                   handleEquipmentPriceChange(
                                     equipment.id,
@@ -729,9 +734,14 @@ export function UpsertPriceTableForm({
                             <div className="mt-4">
                               <EquipmentAccessoryPriceForm
                                 equipmentModel={equipment.id}
-                                initialData={existingEquipmentPayment?.find(
-                                  (ep) => ep.productId === equipment.id
-                                )}
+                                initialData={{
+                                  creditPayment: existingEquipmentPayment?.find(
+                                    (ep) => ep.productId === equipment.id && ep.paymentType === "credit"
+                                  ),
+                                  upfrontPayment: existingEquipmentPayment?.find(
+                                    (ep) => ep.productId === equipment.id && ep.paymentType === "upfront"
+                                  ),
+                                }}
                                 onPriceChange={(prices) => {
                                   handleEquipmentPriceChange(
                                     equipment.id,
@@ -840,9 +850,14 @@ export function UpsertPriceTableForm({
                             <div className="mt-4">
                               <EquipmentAccessoryPriceForm
                                 equipmentModel={accessory.id}
-                                initialData={existingEquipmentPayment?.find(
-                                  (ep) => ep.productId === accessory.id
-                                )}
+                                initialData={{
+                                  creditPayment: existingEquipmentPayment?.find(
+                                    (ep) => ep.productId === accessory.id && ep.paymentType === "credit"
+                                  ),
+                                  upfrontPayment: existingEquipmentPayment?.find(
+                                    (ep) => ep.productId === accessory.id && ep.paymentType === "upfront"
+                                  ),
+                                }}
                                 onPriceChange={(prices) => {
                                   handleAccessoryPriceChange(
                                     accessory.id,

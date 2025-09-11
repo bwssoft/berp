@@ -29,6 +29,7 @@ export interface IPriceRange {
 
 export interface IEquipmentPayment {
   type: "batch" | "unit";
+  paymentType: "credit" | "upfront";
   productId: string; // ref: Product.id
   productName: string; // ref: Product.name
   unitPrice: number;

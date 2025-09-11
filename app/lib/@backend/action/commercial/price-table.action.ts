@@ -20,7 +20,8 @@ export async function findManyPriceTable(
 }
 
 export const findOnePriceTable = async (filter: Filter<IPriceTable>) => {
-  return await findOnePriceTableUsecase.execute(filter);
+  const result = await findOnePriceTableUsecase.execute(filter);
+  return result;
 };
 
 export async function createOnePriceTable(
@@ -29,9 +30,7 @@ export async function createOnePriceTable(
   return await createOnePriceTableUsecase.execute(input);
 }
 
-export async function updateOnePriceTable(
-  input: IPriceTable
-) {
+export async function updateOnePriceTable(input: IPriceTable) {
   return await updateOnePriceTableUsecase.execute(input);
 }
 
@@ -45,6 +44,8 @@ export const cancelPriceTable = async (id: string) => {
   return result;
 };
 
-export const validateBillingConditionsPriceTable = async (groups: Array<IPriceTableConditionGroup & { priorityEnabled?: boolean }>) => {
+export const validateBillingConditionsPriceTable = async (
+  groups: Array<IPriceTableConditionGroup & { priorityEnabled?: boolean }>
+) => {
   return await validateBillingConditionsPriceTableUsecase.execute({ groups });
-}
+};

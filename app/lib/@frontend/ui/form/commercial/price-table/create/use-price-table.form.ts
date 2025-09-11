@@ -140,17 +140,12 @@ export function usePriceTableForm({
   useEffect(() => {
     if (!editMode || !priceTableId) return;
 
-    console.log("Loading price table for ID:", priceTableId);
-
     const loadPriceTable = async () => {
       try {
         setLoadingPriceTable(true);
-        console.log("Fetching price table...");
         const existingPriceTable = await findOnePriceTable({
           id: priceTableId,
         });
-
-        console.log("Fetched price table:", existingPriceTable);
 
         if (existingPriceTable) {
           // Store existing pricing data in separate states
@@ -159,6 +154,91 @@ export function usePriceTableForm({
           );
           setExistingSimcardPayment(existingPriceTable.simcardPayment || []);
           setExistingServicePayment(existingPriceTable.servicePayment || []);
+
+          const equipmentWithSim: Record<string, any> = {};
+          const equipmentWithoutSim: Record<string, any> = {};
+          const accessories: Record<string, any> = {};
+
+          (existingPriceTable.equipmentPayment || []).forEach((payment) => {
+            const isAccessory = payment.productId?.startsWith("ACC") || false; // Update this logic as needed
+
+            if (isAccessory) {
+              if (!accessories[payment.productId]) {
+                accessories[payment.productId] = {};
+              }
+
+              if (payment.paymentType === "credit") {
+                if (payment.type === "batch" && payment.priceRange.length > 0) {
+                  accessories[payment.productId].useQuantityRange = true;
+                  accessories[payment.productId].priceTiers =
+                    payment.priceRange.map((range, index) => ({
+                      id: (index + 1).toString(),
+                      from: range.from.toString(),
+                      to:
+                        range.to === Number.MAX_SAFE_INTEGER
+                          ? ""
+                          : range.to.toString(),
+                      pricePerUnit: range.unitPrice.toString(),
+                      isLast: range.to === Number.MAX_SAFE_INTEGER,
+                    }));
+                } else {
+                  accessories[payment.productId].useQuantityRange = false;
+                  accessories[payment.productId].singlePrice =
+                    payment.unitPrice.toString();
+                }
+              } else if (payment.paymentType === "upfront") {
+                // This is "pagamento à vista" - upfront payment
+                if (payment.type === "batch" && payment.priceRange.length > 0) {
+                  accessories[payment.productId].useCashQuantityRange = true;
+                  accessories[payment.productId].cashPriceTiers =
+                    payment.priceRange.map((range, index) => ({
+                      id: (index + 1).toString(),
+                      from: range.from.toString(),
+                      to:
+                        range.to === Number.MAX_SAFE_INTEGER
+                          ? ""
+                          : range.to.toString(),
+                      pricePerUnit: range.unitPrice.toString(),
+                      isLast: range.to === Number.MAX_SAFE_INTEGER,
+                    }));
+                } else {
+                  accessories[payment.productId].useCashQuantityRange = false;
+                  accessories[payment.productId].cashPrice =
+                    payment.unitPrice.toString();
+                }
+              }
+            } else {
+              // Handle equipment - for now, assume all equipment is "withSim" category
+              // You may need to adjust this logic based on your actual categorization
+              const equipmentCategory = equipmentWithSim; // or determine based on productId/productName
+
+              if (!equipmentCategory[payment.productId]) {
+                equipmentCategory[payment.productId] = {};
+              }
+
+              if (payment.paymentType === "credit") {
+                // This goes to "onDemand" (a prazo)
+                equipmentCategory[payment.productId].onDemand = {
+                  type: payment.type,
+                  paymentType: payment.paymentType,
+                  productId: payment.productId,
+                  productName: payment.productName,
+                  unitPrice: payment.unitPrice,
+                  priceRange: payment.priceRange,
+                };
+              } else if (payment.paymentType === "upfront") {
+                // This goes to "onSight" (à vista)
+                equipmentCategory[payment.productId].onSight = {
+                  type: payment.type,
+                  paymentType: payment.paymentType,
+                  productId: payment.productId,
+                  productName: payment.productName,
+                  unitPrice: payment.unitPrice,
+                  priceRange: payment.priceRange,
+                };
+              }
+            }
+          });
 
           // Reset form with existing data - map to form format
           const formData = {
@@ -176,15 +256,14 @@ export function usePriceTableForm({
               billingLimit: "",
               billTo: "",
             },
-            // For now, initialize with empty objects - these need to be mapped from the different structure
-            equipmentWithSim: {},
-            equipmentWithoutSim: {},
+            // Use transformed data structures
+            equipmentWithSim,
+            equipmentWithoutSim,
             simCards: existingPriceTable.simcardPayment || [],
-            accessories: {},
+            accessories,
             services: existingPriceTable.servicePayment || [],
           };
 
-          console.log("Resetting form with data:", formData);
           form.reset(formData);
         }
       } catch (error) {
@@ -244,6 +323,7 @@ export function usePriceTableForm({
 
       equipmentPayment.onDemand = {
         type: "batch",
+        paymentType: "credit", // a prazo = credit
         productId: equipmentModel, // Use equipment model as productId for now
         productName: equipmentModel, // Use equipment model as productName for now
         unitPrice: 0, // Not used for batch pricing
@@ -253,6 +333,7 @@ export function usePriceTableForm({
       // Unit pricing
       equipmentPayment.onDemand = {
         type: "unit",
+        paymentType: "credit", // a prazo = credit
         productId: equipmentModel, // Use equipment model as productId for now
         productName: equipmentModel, // Use equipment model as productName for now
         unitPrice: Number(prices.singlePrice),
@@ -273,6 +354,7 @@ export function usePriceTableForm({
 
       equipmentPayment.onSight = {
         type: "batch",
+        paymentType: "upfront", // à vista = upfront
         productId: equipmentModel, // Use equipment model as productId for now
         productName: equipmentModel, // Use equipment model as productName for now
         unitPrice: 0, // Not used for batch pricing
@@ -282,6 +364,7 @@ export function usePriceTableForm({
       // Unit pricing
       equipmentPayment.onSight = {
         type: "unit",
+        paymentType: "upfront", // à vista = upfront
         productId: equipmentModel, // Use equipment model as productId for now
         productName: equipmentModel, // Use equipment model as productName for now
         unitPrice: Number(prices.cashPrice),
@@ -302,12 +385,6 @@ export function usePriceTableForm({
       };
       form.setValue("equipmentWithoutSim", updatedEquipmentWithoutSim);
     }
-
-    // Log the equipment data for debugging
-    console.log(
-      `Equipment ${equipmentModel} (${type}) pricing updated:`,
-      equipmentPayment
-    );
   };
 
   // Handle SIM card price changes - transform to ISimcardPayment format
@@ -332,9 +409,6 @@ export function usePriceTableForm({
         })) || [];
 
     form.setValue("simCards", simcardPayments);
-
-    // Log the transformed data for debugging
-    console.log("SIM Card payment data:", simcardPayments);
   };
 
   // Handle accessories price changes
@@ -345,9 +419,6 @@ export function usePriceTableForm({
       [accessory]: prices,
     };
     form.setValue("accessories", updatedAccessories);
-
-    // Log the accessory data for debugging
-    console.log(`Accessory ${accessory} pricing updated:`, prices);
   };
 
   // Handle services price changes - transform to IServicePayment format
@@ -370,8 +441,6 @@ export function usePriceTableForm({
 
     // Update the form data
     form.setValue("services", transformedServices);
-
-    console.log("Transformed services data:", transformedServices);
   };
 
   // Helper function to transform form data to IPriceTable payload
@@ -386,10 +455,16 @@ export function usePriceTableForm({
     Object.entries(data.equipmentWithSim || {}).forEach(
       ([productId, payment]) => {
         if (payment?.onSight) {
-          equipmentPayment.push(payment.onSight);
+          equipmentPayment.push({
+            ...payment.onSight,
+            paymentType: "upfront" as const, // à vista = upfront
+          });
         }
         if (payment?.onDemand) {
-          equipmentPayment.push(payment.onDemand);
+          equipmentPayment.push({
+            ...payment.onDemand,
+            paymentType: "credit" as const, // a prazo = credit
+          });
         }
       }
     );
@@ -398,10 +473,16 @@ export function usePriceTableForm({
     Object.entries(data.equipmentWithoutSim || {}).forEach(
       ([productId, payment]) => {
         if (payment?.onSight) {
-          equipmentPayment.push(payment.onSight);
+          equipmentPayment.push({
+            ...payment.onSight,
+            paymentType: "upfront" as const, // à vista = upfront
+          });
         }
         if (payment?.onDemand) {
-          equipmentPayment.push(payment.onDemand);
+          equipmentPayment.push({
+            ...payment.onDemand,
+            paymentType: "credit" as const, // a prazo = credit
+          });
         }
       }
     );
@@ -426,7 +507,8 @@ export function usePriceTableForm({
             }));
 
           equipmentPayment.push({
-            type: "batch",
+            type: "batch" as const,
+            paymentType: "credit" as const, // a prazo = credit
             productId: accessoryId,
             productName: accessoryId,
             unitPrice: 0,
@@ -434,7 +516,8 @@ export function usePriceTableForm({
           });
         } else if (accessoryPayment?.singlePrice) {
           equipmentPayment.push({
-            type: "unit",
+            type: "unit" as const,
+            paymentType: "credit" as const, // a prazo = credit
             productId: accessoryId,
             productName: accessoryId,
             unitPrice: Number(accessoryPayment.singlePrice),
@@ -456,7 +539,8 @@ export function usePriceTableForm({
             }));
 
           equipmentPayment.push({
-            type: "batch",
+            type: "batch" as const,
+            paymentType: "upfront" as const, // à vista = upfront
             productId: accessoryId,
             productName: accessoryId,
             unitPrice: 0,
@@ -464,7 +548,8 @@ export function usePriceTableForm({
           });
         } else if (accessoryPayment?.cashPrice) {
           equipmentPayment.push({
-            type: "unit",
+            type: "unit" as const,
+            paymentType: "upfront" as const, // à vista = upfront
             productId: accessoryId,
             productName: accessoryId,
             unitPrice: Number(accessoryPayment.cashPrice),
@@ -492,39 +577,47 @@ export function usePriceTableForm({
       setLoading(true);
 
       try {
-        // Log the raw form data for debugging
-        console.log("Raw form data:", {
-          name: data.name,
-          equipmentWithSim: data.equipmentWithSim,
-          equipmentWithoutSim: data.equipmentWithoutSim,
-          simCards: data.simCards,
-          accessories: data.accessories,
-          services: data.services,
-        });
-
         // Transform data to match IPriceTable interface exactly
         const priceTablePayload = transformToPriceTablePayload(data, "DRAFT");
 
-        // Log the payload for debugging
-        console.log(
-          "Price Table Payload:",
-          JSON.stringify(priceTablePayload, null, 2)
-        );
-
         // Call the actual API action
-        await createOnePriceTable(priceTablePayload);
+        const result = await createOnePriceTable(priceTablePayload);
 
-        toast({
-          title: "Sucesso!",
-          description: "Tabela de preços criada com sucesso!",
-          variant: "success",
-        });
-        router.push("/commercial/price-table");
+        // Check if the creation was successful
+        if (result?.success) {
+          toast({
+            title: "Sucesso!",
+            description: "Tabela de preços criada com sucesso!",
+            variant: "success",
+          });
+          router.push("/commercial/price-table");
+        } else {
+          // Handle validation errors from the backend
+          const errorMsg =
+            result?.error?.global || "Falha ao criar a tabela de preços!";
+          toast({
+            title: "Erro de Validação!",
+            description: errorMsg,
+            variant: "error",
+          });
+
+          // Set form errors if available
+          if (result?.error?.name) {
+            form.setError("name", { message: result.error.name });
+          }
+          if (result?.error?.startDateTime) {
+            form.setError("startDateTime", {
+              message: result.error.startDateTime,
+            });
+          }
+          if (result?.error?.endDateTime) {
+            form.setError("endDateTime", { message: result.error.endDateTime });
+          }
+        }
       } catch (error) {
-        console.error("Error creating price table:", error);
         toast({
           title: "Erro!",
-          description: "Falha ao criar a tabela de preços!",
+          description: "Falha inesperada ao criar a tabela de preços!",
           variant: "error",
         });
       } finally {
@@ -536,13 +629,11 @@ export function usePriceTableForm({
   const handleValidationConditions = async () => {
     try {
       const result = await validateBillingConditionsPriceTable(groups);
-      console.log("Validation result:", result);
       setMessageErrorCondition({
         status: result.status,
         message: result.messages[0] ?? "",
       });
     } catch (error) {
-      console.error("Error creating price table:", error);
       toast({
         title: "Erro!",
         description: "Falha ao criar a tabela de preços!",
@@ -605,21 +696,30 @@ export function usePriceTableForm({
       // Create payload for draft save
       const draftPayload = transformToPriceTablePayload(currentData, "DRAFT");
 
-      console.log("Draft Payload:", JSON.stringify(draftPayload, null, 2));
-
       // Call the actual API action
-      await createOnePriceTable(draftPayload);
+      const result = await createOnePriceTable(draftPayload);
 
-      toast({
-        title: "Rascunho salvo!",
-        description: "Suas alterações foram salvas como rascunho.",
-        variant: "success",
-      });
+      // Check if the save was successful
+      if (result?.success) {
+        toast({
+          title: "Rascunho salvo!",
+          description: "Suas alterações foram salvas como rascunho.",
+          variant: "success",
+        });
+      } else {
+        // Handle validation errors from the backend
+        const errorMsg = result?.error?.global || "Falha ao salvar rascunho.";
+
+        toast({
+          title: "Erro de Validação!",
+          description: errorMsg,
+          variant: "error",
+        });
+      }
     } catch (error) {
-      console.error("Error saving draft:", error);
       toast({
         title: "Erro!",
-        description: "Falha ao salvar rascunho.",
+        description: "Falha inesperada ao salvar rascunho.",
         variant: "error",
       });
     }
