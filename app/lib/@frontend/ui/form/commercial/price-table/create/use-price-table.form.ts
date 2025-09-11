@@ -94,14 +94,35 @@ const formatDateTimeLocal = (date: Date) => {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-const createPriceRange = (tiers: any[]): IPriceRange[] =>
-  tiers
-    .filter((tier) => tier.from && tier.pricePerUnit)
-    .map((tier) => ({
+const createPriceRange = (tiers: any[]): IPriceRange[] => {
+  if (!tiers || !Array.isArray(tiers)) {
+    console.warn("❌ Invalid tiers provided to createPriceRange:", tiers);
+    return [];
+  }
+
+  const filtered = tiers.filter((tier) => {
+    const hasFrom =
+      tier?.from !== undefined && tier?.from !== null && tier?.from !== "";
+    const hasPricePerUnit =
+      tier?.pricePerUnit !== undefined &&
+      tier?.pricePerUnit !== null &&
+      tier?.pricePerUnit !== "";
+
+    return hasFrom && hasPricePerUnit;
+  });
+
+  const mapped = filtered.map((tier) => {
+    const priceRange = {
       from: Number(tier.from),
-      to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
+      to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to || 0),
       unitPrice: Number(tier.pricePerUnit),
-    }));
+    };
+
+    return priceRange;
+  });
+
+  return mapped;
+};
 
 export function usePriceTableForm({
   priceTableId,
@@ -265,10 +286,14 @@ export function usePriceTableForm({
   ) => {
     const priceRange =
       type === "batch"
-        ? createPriceRange(prices.priceTiers || prices.cashPriceTiers || [])
+        ? createPriceRange(
+            paymentType === "upfront"
+              ? prices.cashPriceTiers || []
+              : prices.priceTiers || []
+          )
         : [];
 
-    return {
+    const result = {
       type,
       paymentType,
       productId: equipmentModel,
@@ -279,8 +304,9 @@ export function usePriceTableForm({
           : 0,
       priceRange,
     };
-  };
 
+    return result;
+  };
   const handleEquipmentPriceChange = (
     equipmentModel: string,
     prices: any,
@@ -387,16 +413,18 @@ export function usePriceTableForm({
   ) => {
     Object.entries(equipment).forEach(([productId, payment]) => {
       if (payment?.onSight) {
-        equipmentPayment.push({
+        const onSightPayment = {
           ...payment.onSight,
           paymentType: "upfront" as const,
-        });
+        };
+        equipmentPayment.push(onSightPayment);
       }
       if (payment?.onDemand) {
-        equipmentPayment.push({
+        const onDemandPayment = {
           ...payment.onDemand,
           paymentType: "credit" as const,
-        });
+        };
+        equipmentPayment.push(onDemandPayment);
       }
     });
   };

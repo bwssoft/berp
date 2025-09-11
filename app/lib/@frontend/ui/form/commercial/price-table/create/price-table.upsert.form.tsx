@@ -138,9 +138,7 @@ export function UpsertPriceTableForm({
   const {
     form,
     handleSubmit,
-    handleSaveDraft,
     loading,
-    loadingPriceTable,
     handleEquipmentPriceChange,
     handleSimCardPriceChange,
     handleAccessoryPriceChange,
@@ -155,7 +153,6 @@ export function UpsertPriceTableForm({
     status,
     removeCondition,
     setGroupPriority,
-    getCurrentFormData,
     existingEquipmentPayment,
     existingSimcardPayment,
     existingServicePayment,
