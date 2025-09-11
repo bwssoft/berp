@@ -76,13 +76,6 @@ export const DateInput = React.forwardRef<HTMLButtonElement, DateInputProps>(
       selectedValue: Date | { from: Date; to: Date } | undefined
     ) => {
       if (type === "period") {
-        console.log(
-          "Period selection:",
-          selectedValue,
-          "isSelectingStart:",
-          isSelectingStart
-        );
-
         if (
           selectedValue &&
           typeof selectedValue === "object" &&

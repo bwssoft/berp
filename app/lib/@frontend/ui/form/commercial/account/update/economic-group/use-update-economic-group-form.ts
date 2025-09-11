@@ -377,10 +377,6 @@ export function useUpdateEconomicGroupForm(
                     { id: oldHoldingAccount.id },
                     { economicGroupId: "" }
                   );
-
-                  console.log(
-                    `Disconnected old holding account ${existingHolding.name} (${existingHolding.taxId}) from economic group`
-                  );
                 }
 
                 // Connect the new holding account (if it exists in the database)
@@ -392,10 +388,6 @@ export function useUpdateEconomicGroupForm(
                   await updateOneAccount(
                     { id: newHoldingAccount.id },
                     { economicGroupId: economicGroupId }
-                  );
-
-                  console.log(
-                    `Connected new holding account ${holding.name} (${holding.taxId}) to economic group ${economicGroupId}`
                   );
                 }
               } catch (error) {
@@ -417,10 +409,6 @@ export function useUpdateEconomicGroupForm(
                   { id: oldHoldingAccount.id },
                   { economicGroupId: "" }
                 );
-
-                console.log(
-                  `Disconnected removed holding account ${existingHolding.name} (${existingHolding.taxId}) from economic group`
-                );
               }
             } catch (error) {
               console.warn(
@@ -439,10 +427,6 @@ export function useUpdateEconomicGroupForm(
                 await updateOneAccount(
                   { id: newHoldingAccount.id },
                   { economicGroupId: economicGroupId }
-                );
-
-                console.log(
-                  `Connected new holding account ${holding.name} (${holding.taxId}) to economic group ${economicGroupId}`
                 );
               }
             } catch (error) {
@@ -476,10 +460,6 @@ export function useUpdateEconomicGroupForm(
                     { id: accountToDisconnect.id },
                     { economicGroupId: "" }
                   );
-
-                  console.log(
-                    `Disconnected account ${removedAccount.name} (${removedAccount.taxId}) from economic group`
-                  );
                 }
               }
             } catch (error) {
@@ -512,10 +492,6 @@ export function useUpdateEconomicGroupForm(
                   await updateOneAccount(
                     { id: accountToConnect.id },
                     { economicGroupId: economicGroupId }
-                  );
-
-                  console.log(
-                    `Connected account ${addedAccount.name} (${addedAccount.taxId}) to economic group ${economicGroupId}`
                   );
                 }
               }
@@ -558,10 +534,6 @@ export function useUpdateEconomicGroupForm(
                   { id: holdingAccount.id },
                   { economicGroupId: economicGroupResult.data.id }
                 );
-
-                console.log(
-                  `Connected holding account ${holding.name} (${holding.taxId}) to new economic group ${economicGroupResult.data.id}`
-                );
               }
             } catch (error) {
               console.warn(
@@ -584,10 +556,6 @@ export function useUpdateEconomicGroupForm(
                   await updateOneAccount(
                     { id: accountToConnect.id },
                     { economicGroupId: economicGroupResult.data.id }
-                  );
-
-                  console.log(
-                    `Connected controlled account ${controlledAccount.name} (${controlledAccount.taxId}) to new economic group ${economicGroupResult.data.id}`
                   );
                 }
               }
@@ -663,9 +631,6 @@ export function useUpdateEconomicGroupForm(
               avatarUrl: "",
             },
           });
-          console.log(
-            "Economic group update historical entry created successfully"
-          );
         } catch (error) {
           console.warn(
             "Failed to create economic group update historical entry:",
