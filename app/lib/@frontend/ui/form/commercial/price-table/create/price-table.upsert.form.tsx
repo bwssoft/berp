@@ -16,6 +16,7 @@ import {
   Button,
   Checkbox,
   Combobox,
+  DateInput,
   Input,
   Toggle,
 } from "../../../../component";
@@ -144,8 +145,6 @@ export function UpsertPriceTableForm({
     handleSimCardPriceChange,
     handleAccessoryPriceChange,
     handleServicePriceChange,
-    getDefaultStartDateTime,
-    getDefaultEndDateTime,
     addCondition,
     addGroup,
     groups,
@@ -286,26 +285,44 @@ export function UpsertPriceTableForm({
                   error={form.formState.errors.name?.message}
                 />
                 <div className="flex gap-4">
-                  <Input
-                    label="Data de início"
-                    type="datetime-local"
-                    required
-                    {...form.register("startDateTime", {
-                      setValueAs: (value) => new Date(value),
-                    })}
-                    defaultValue={getDefaultStartDateTime()}
-                    error={form.formState.errors.startDateTime?.message}
-                  />
-                  <Input
-                    label="Data de fim"
-                    type="datetime-local"
-                    required
-                    {...form.register("endDateTime", {
-                      setValueAs: (value) => new Date(value),
-                    })}
-                    defaultValue={getDefaultEndDateTime()}
-                    error={form.formState.errors.endDateTime?.message}
-                  />
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+                      Data de início <span className="text-red-500">*</span>
+                    </label>
+                    <DateInput
+                      type="date"
+                      value={form.watch("startDateTime")}
+                      onChange={(date) => {
+                        form.setValue("startDateTime", date as Date);
+                      }}
+                      placeholder="Selecione a data de início"
+                      className="w-full"
+                    />
+                    {form.formState.errors.startDateTime?.message && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {form.formState.errors.startDateTime?.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+                      Data de fim <span className="text-red-500">*</span>
+                    </label>
+                    <DateInput
+                      type="date"
+                      value={form.watch("endDateTime")}
+                      onChange={(date) => {
+                        form.setValue("endDateTime", date as Date);
+                      }}
+                      placeholder="Selecione a data de fim"
+                      className="w-full"
+                    />
+                    {form.formState.errors.endDateTime?.message && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {form.formState.errors.endDateTime?.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 

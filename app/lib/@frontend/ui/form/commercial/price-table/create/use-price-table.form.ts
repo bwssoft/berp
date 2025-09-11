@@ -17,7 +17,6 @@ import {
   ISimcardPayment,
   IServicePayment,
   StatusPriceTable,
-  IPriceTable,
 } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 import { IPriceTableCondition } from "@/app/lib/@backend/domain/commercial/entity/price-table-condition.definition";
 
