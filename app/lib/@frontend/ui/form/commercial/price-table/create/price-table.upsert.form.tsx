@@ -36,6 +36,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/app/lib/util";
 import { InactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/inactivate.price-table.dialog";
 import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/use-inactivate.price-table.dialog";
+import { IPriceTable } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 
 const BRAZILIAN_UF_LIST = [
   { id: "AC", text: "Acre" },
@@ -78,7 +79,15 @@ const TO_BILL_FOR_OPTIONS = [
   { id: "14.334.132/0001-64", text: "WFC - 14.334.132/0001-64" },
 ];
 
-export function CreatePriceTableForm() {
+interface UpsertPriceTableFormProps {
+  priceTableId?: string;
+  editMode?: boolean;
+}
+
+export function UpsertPriceTableForm({
+  priceTableId,
+  editMode = false,
+}: UpsertPriceTableFormProps = {}) {
   // Use TanStack Query to fetch products
   const [equipmentQuery, accessoriesQuery] = useQueries({
     queries: [
@@ -130,6 +139,7 @@ export function CreatePriceTableForm() {
     handleSubmit,
     handleSaveDraft,
     loading,
+    loadingPriceTable,
     handleEquipmentPriceChange,
     handleSimCardPriceChange,
     handleAccessoryPriceChange,
@@ -147,7 +157,7 @@ export function CreatePriceTableForm() {
     removeCondition,
     setGroupPriority,
     getCurrentFormData,
-  } = usePriceTableForm();
+  } = usePriceTableForm({ priceTableId, editMode });
 
   // Dialog hooks
   const {
@@ -246,20 +256,6 @@ export function CreatePriceTableForm() {
             onClick={openInactivePriceTableDialog}
           >
             Inativar tabela
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="text-gray-600 border-gray-300 hover:bg-gray-50"
-            onClick={() => {
-              const data = getCurrentFormData();
-              console.log("Current form data:", data);
-              alert(
-                `Form contains: ${data.equipmentWithSim} equipment with SIM, ${data.equipmentWithoutSim} equipment without SIM, ${data.simCards} SIM configs, ${data.accessories} accessories, ${data.services} services`
-              );
-            }}
-          >
-            Debug Data
           </Button>
           <Button
             type="submit"

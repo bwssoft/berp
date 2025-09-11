@@ -4,7 +4,7 @@ import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/p
 import { IPriceTable } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 import { Pagination } from "../../../component/pagination";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
-import { columns } from "./price-table.columns";
+import { createPriceTableColumns } from "./price-table.columns";
 import {
   flexRender,
   getCoreRowModel,
@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../component/table";
+import { useRouter } from "next/navigation";
 
 interface Props {
   data: PaginationResult<IPriceTable>;
@@ -25,8 +26,23 @@ interface Props {
   restrictEdit: boolean;
 }
 
-export function PriceTableTable({ data, currentPage = 1, restrictEdit}: Props) {
+export function PriceTableTable({
+  data,
+  currentPage = 1,
+  restrictEdit,
+}: Props) {
   const { docs, pages = 1, total = 0, limit = 10 } = data;
+  const router = useRouter();
+
+  const handleEditPriceTable = (priceTable: IPriceTable) => {
+    // Navigate directly with just the ID
+    router.push(`/commercial/price-table/form/edit/${priceTable.id}`);
+  };
+
+  const columns = createPriceTableColumns({
+    onEditPriceTable: handleEditPriceTable,
+  });
+
   const table = useReactTable({
     data: docs,
     columns,

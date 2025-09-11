@@ -3,12 +3,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import {
   createOnePriceTable,
   validateBillingConditionsPriceTable,
+  findOnePriceTable,
 } from "@/app/lib/@backend/action/commercial/price-table.action";
 import {
   IEquipmentPayment,
@@ -16,6 +17,7 @@ import {
   ISimcardPayment,
   IServicePayment,
   StatusPriceTable,
+  IPriceTable,
 } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 import { IPriceTableCondition } from "@/app/lib/@backend/domain/commercial/entity/price-table-condition.definition";
 
@@ -63,7 +65,15 @@ const priceTableSchema = z
 
 export type CreatePriceTableFormData = z.infer<typeof priceTableSchema>;
 
-export function usePriceTableForm() {
+interface UsePriceTableFormProps {
+  priceTableId?: string;
+  editMode?: boolean;
+}
+
+export function usePriceTableForm({
+  priceTableId,
+  editMode = false,
+}: UsePriceTableFormProps = {}) {
   type Group = {
     id: string;
     conditions: IPriceTableCondition[];
@@ -81,6 +91,7 @@ export function usePriceTableForm() {
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [loadingPriceTable, setLoadingPriceTable] = useState(!!priceTableId);
   // state para grupos e condições
   const [groups, setGroups] = useState<Group[]>([
     { id: uid(), conditions: [emptyCondition()], priority: false },
@@ -113,6 +124,65 @@ export function usePriceTableForm() {
       services: [],
     },
   });
+
+  // Load existing price table data for edit mode
+  useEffect(() => {
+    if (!editMode || !priceTableId) return;
+
+    console.log("Loading price table for ID:", priceTableId);
+
+    const loadPriceTable = async () => {
+      try {
+        setLoadingPriceTable(true);
+        console.log("Fetching price table...");
+        const existingPriceTable = await findOnePriceTable({
+          id: priceTableId,
+        });
+
+        console.log("Fetched price table:", existingPriceTable);
+
+        if (existingPriceTable) {
+          // Reset form with existing data - map to form format
+          const formData = {
+            name: existingPriceTable.name || "",
+            startDateTime: existingPriceTable.startDateTime
+              ? new Date(existingPriceTable.startDateTime)
+              : new Date(),
+            endDateTime: existingPriceTable.endDateTime
+              ? new Date(existingPriceTable.endDateTime)
+              : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+            isTemporary: existingPriceTable.isTemporary ?? false,
+            conditionGroupIds: existingPriceTable.conditionGroupIds || [],
+            billingConfig: {
+              salesFor: "",
+              billingLimit: "",
+              billTo: "",
+            },
+            // For now, initialize with empty objects - these need to be mapped from the different structure
+            equipmentWithSim: {},
+            equipmentWithoutSim: {},
+            simCards: existingPriceTable.simcardPayment || [],
+            accessories: {},
+            services: existingPriceTable.servicePayment || [],
+          };
+
+          console.log("Resetting form with data:", formData);
+          form.reset(formData);
+        }
+      } catch (error) {
+        console.error("Error loading price table:", error);
+        toast({
+          variant: "error",
+          title: "Erro",
+          description: "Não foi possível carregar os dados da tabela de preço.",
+        });
+      } finally {
+        setLoadingPriceTable(false);
+      }
+    };
+
+    loadPriceTable();
+  }, [editMode, priceTableId, form]);
 
   // Helper function to format date for datetime-local input
   const formatDateTimeLocal = (date: Date) => {
@@ -592,6 +662,7 @@ export function usePriceTableForm() {
     handleSaveDraft,
     handleCancel,
     loading,
+    loadingPriceTable,
     validateForm,
     getFormErrors,
     isFormDirty,
