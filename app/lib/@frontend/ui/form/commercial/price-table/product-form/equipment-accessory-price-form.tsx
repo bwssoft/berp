@@ -274,19 +274,7 @@ export function EquipmentAccessoryPriceForm({
                   : "Faixa de quantidade"
               }
             />
-            <Label className="text-sm font-medium">
-              Faixa de quantidade
-              {initialData?.creditPayment?.type === "batch" && (
-                <span className="text-xs text-gray-500 ml-1">
-                  (obrigatório para tipo lote)
-                </span>
-              )}
-            </Label>
-            <div className="text-xs text-blue-500">
-              Debug: useQuantityRange={useQuantityRange.toString()}, type=
-              {initialData?.creditPayment?.type}, disabled=
-              {initialData?.creditPayment?.type === "batch" ? "true" : "false"}
-            </div>
+            <Label className="text-sm font-medium">Faixa de quantidade</Label>
           </div>
 
           {useQuantityRange ? (
@@ -407,19 +395,7 @@ export function EquipmentAccessoryPriceForm({
                   : "Faixa de quantidade"
               }
             />
-            <Label className="text-sm font-medium">
-              Faixa de quantidade
-              {initialData?.upfrontPayment?.type === "batch" && (
-                <span className="text-xs text-gray-500 ml-1">
-                  (obrigatório para tipo lote)
-                </span>
-              )}
-            </Label>
-            <div className="text-xs text-blue-500">
-              Debug Cash: useCashQuantityRange={useCashQuantityRange.toString()}
-              , type={initialData?.upfrontPayment?.type}, disabled=
-              {initialData?.upfrontPayment?.type === "batch" ? "true" : "false"}
-            </div>
+            <Label className="text-sm font-medium">Faixa de quantidade</Label>
           </div>
 
           {useCashQuantityRange ? (

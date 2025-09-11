@@ -626,11 +626,16 @@ export function UpsertPriceTableForm({
                                 equipmentModel={equipment.id}
                                 initialData={{
                                   creditPayment: existingEquipmentPayment?.find(
-                                    (ep) => ep.productId === equipment.id && ep.paymentType === "credit"
+                                    (ep) =>
+                                      ep.productId === equipment.id &&
+                                      ep.paymentType === "credit"
                                   ),
-                                  upfrontPayment: existingEquipmentPayment?.find(
-                                    (ep) => ep.productId === equipment.id && ep.paymentType === "upfront"
-                                  ),
+                                  upfrontPayment:
+                                    existingEquipmentPayment?.find(
+                                      (ep) =>
+                                        ep.productId === equipment.id &&
+                                        ep.paymentType === "upfront"
+                                    ),
                                 }}
                                 onPriceChange={(prices) => {
                                   handleEquipmentPriceChange(
@@ -736,11 +741,16 @@ export function UpsertPriceTableForm({
                                 equipmentModel={equipment.id}
                                 initialData={{
                                   creditPayment: existingEquipmentPayment?.find(
-                                    (ep) => ep.productId === equipment.id && ep.paymentType === "credit"
+                                    (ep) =>
+                                      ep.productId === equipment.id &&
+                                      ep.paymentType === "credit"
                                   ),
-                                  upfrontPayment: existingEquipmentPayment?.find(
-                                    (ep) => ep.productId === equipment.id && ep.paymentType === "upfront"
-                                  ),
+                                  upfrontPayment:
+                                    existingEquipmentPayment?.find(
+                                      (ep) =>
+                                        ep.productId === equipment.id &&
+                                        ep.paymentType === "upfront"
+                                    ),
                                 }}
                                 onPriceChange={(prices) => {
                                   handleEquipmentPriceChange(
@@ -852,11 +862,16 @@ export function UpsertPriceTableForm({
                                 equipmentModel={accessory.id}
                                 initialData={{
                                   creditPayment: existingEquipmentPayment?.find(
-                                    (ep) => ep.productId === accessory.id && ep.paymentType === "credit"
+                                    (ep) =>
+                                      ep.productId === accessory.id &&
+                                      ep.paymentType === "credit"
                                   ),
-                                  upfrontPayment: existingEquipmentPayment?.find(
-                                    (ep) => ep.productId === accessory.id && ep.paymentType === "upfront"
-                                  ),
+                                  upfrontPayment:
+                                    existingEquipmentPayment?.find(
+                                      (ep) =>
+                                        ep.productId === accessory.id &&
+                                        ep.paymentType === "upfront"
+                                    ),
                                 }}
                                 onPriceChange={(prices) => {
                                   handleAccessoryPriceChange(
