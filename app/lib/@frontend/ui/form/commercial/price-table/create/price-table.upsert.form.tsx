@@ -186,7 +186,6 @@ export function UpsertPriceTableForm({
     publishPriceTable,
   } = usePublishPriceTableDialog();
 
-  // State to track which equipment models are toggled on
   const [enabledEquipmentWithSim, setEnabledEquipmentWithSim] = useState<
     Record<string, boolean>
   >({});
@@ -224,7 +223,6 @@ export function UpsertPriceTableForm({
     }));
   };
 
-  // Initialize enabled states based on existing equipment payment data
   useEffect(() => {
     if (existingEquipmentPayment && existingEquipmentPayment.length > 0) {
       const newEnabledEquipmentWithSim: Record<string, boolean> = {};
@@ -232,11 +230,7 @@ export function UpsertPriceTableForm({
       const newEnabledAccessories: Record<string, boolean> = {};
 
       existingEquipmentPayment.forEach((equipment) => {
-        // For now, we'll assume all existing equipment is "withSim" type
-        // You may need to adjust this logic based on how you differentiate between them
         newEnabledEquipmentWithSim[equipment.productId] = true;
-        // If it's an accessory (you may need to add logic to differentiate)
-        // newEnabledAccessories[equipment.productId] = true;
       });
 
       setEnabledEquipmentWithSim(newEnabledEquipmentWithSim);
