@@ -1,17 +1,20 @@
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { cancelPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
 
-export function useCancelPriceTableDialog() {
+interface UseCancelPriceTableDialogProps {
+  priceTableId?: string;
+}
+
+export function useCancelPriceTableDialog({
+  priceTableId,
+}: UseCancelPriceTableDialogProps = {}) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const openDialog = () => setOpen(true);
-
-    const searchParams = useSearchParams();
-    const priceTableId = searchParams.get("id");
 
   const handleCancelPriceTable = async () => {
     setIsLoading(true);

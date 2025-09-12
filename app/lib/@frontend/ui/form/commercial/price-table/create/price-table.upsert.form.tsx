@@ -156,6 +156,8 @@ export function UpsertPriceTableForm({
     existingEquipmentPayment,
     existingSimcardPayment,
     existingServicePayment,
+    priceTableStatus,
+    priceTableName,
     getCurrentFormData,
     control,
   } = usePriceTableForm({ priceTableId, editMode });
@@ -167,7 +169,7 @@ export function UpsertPriceTableForm({
     openDialog: openCancelPriceTableDialog,
     isLoading: isLoadingCancel,
     handleCancelPriceTable,
-  } = useCancelPriceTableDialog();
+  } = useCancelPriceTableDialog({ priceTableId });
 
   const {
     open: openInactiveDialog,
@@ -175,7 +177,13 @@ export function UpsertPriceTableForm({
     openDialog: openInactivePriceTableDialog,
     isLoading: isLoadingInactive,
     handleInactivatePriceTable,
-  } = useInactivatePriceTableDialog();
+  } = useInactivatePriceTableDialog({
+    priceTableId,
+    onSuccess: () => {
+      // Redirect to list page after successful inactivation
+      window.location.href = "/commercial/price-table";
+    },
+  });
 
   const {
     open: openPublishDialog,
@@ -183,7 +191,14 @@ export function UpsertPriceTableForm({
     openDialog: openPublishPriceTableDialog,
     isLoading: isLoadingPublish,
     publishPriceTable,
-  } = usePublishPriceTableDialog();
+  } = usePublishPriceTableDialog({
+    priceTableId,
+    onSuccess: () => {
+      // Update the status in the form after successful publish
+      // This will trigger button re-rendering
+      window.location.reload(); // Simple way to refresh the state
+    },
+  });
 
   const [enabledEquipmentWithSim, setEnabledEquipmentWithSim] = useState<
     Record<string, boolean>
@@ -238,49 +253,123 @@ export function UpsertPriceTableForm({
     }
   }, [existingEquipmentPayment]);
 
+  // Helper function to check if price table has required payment data for publishing
+  const hasRequiredPaymentData = () => {
+    return (
+      (existingEquipmentPayment && existingEquipmentPayment.length > 0) ||
+      (existingSimcardPayment && existingSimcardPayment.length > 0) ||
+      (existingServicePayment && existingServicePayment.length > 0)
+    );
+  };
+
+  // Helper function to get status badge
+  const getStatusBadge = (status: string | null) => {
+    if (!status) return null;
+
+    const statusColors = {
+      DRAFT: "bg-gray-100 text-gray-800",
+      ACTIVE: "bg-green-100 text-green-800",
+      INACTIVE: "bg-red-100 text-red-800",
+      CANCELLED: "bg-red-100 text-red-800",
+      AWAITING_PUBLICATION: "bg-yellow-100 text-yellow-800",
+    };
+
+    const statusLabels = {
+      DRAFT: "Rascunho",
+      ACTIVE: "Ativo",
+      INACTIVE: "Inativo",
+      CANCELLED: "Cancelado",
+      AWAITING_PUBLICATION: "Aguardando Publicação",
+    };
+
+    const colorClass =
+      statusColors[status as keyof typeof statusColors] ||
+      "bg-gray-100 text-gray-800";
+    const label = statusLabels[status as keyof typeof statusLabels] || status;
+
+    return (
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}
+      >
+        {label}
+      </span>
+    );
+  };
+
+  // Determine button visibility based on state
+  const isCreatingNew = !editMode || !priceTableId;
+  const isDraft = priceTableStatus === "DRAFT" || priceTableStatus === null;
+  const isActive = priceTableStatus === "ACTIVE";
+
   return (
     <div className="space-y-4">
       {/* Header with title and buttons */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Tabela de Preços
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Tabela de Preços
+          </h1>
+          {editMode && priceTableName && (
+            <div className="flex items-center gap-2">
+              <span className="text-lg text-gray-600">-</span>
+              <span className="text-lg text-gray-700">{priceTableName}</span>
+              {getStatusBadge(priceTableStatus)}
+            </div>
+          )}
+        </div>
         <div className="flex gap-2">
-          <Button
-            type="button"
-            className="bg-green-600 hover:bg-green-700"
-            onClick={openPublishPriceTableDialog}
-          >
-            Publicar
-          </Button>
+          {/* Publicar button - only show for DRAFT with required payment data */}
+          {isDraft && hasRequiredPaymentData() && (
+            <Button
+              type="button"
+              className="bg-green-600 hover:bg-green-700"
+              onClick={openPublishPriceTableDialog}
+            >
+              Publicar
+            </Button>
+          )}
+
+          {/* Voltar button - always show */}
           <Link href="/commercial/price-table">
             <Button type="button" variant="outline">
               Voltar
             </Button>
           </Link>
-          <Button
-            type="button"
-            variant="outline"
-            className="text-red-600 border-red-300 hover:bg-red-50"
-            onClick={openCancelPriceTableDialog}
-          >
-            Cancelar tabela
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={openInactivePriceTableDialog}
-          >
-            Inativar tabela
-          </Button>
-          <Button
-            type="submit"
-            form="price-table-form"
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-500"
-          >
-            {loading ? "Salvando..." : "Salvar"}
-          </Button>
+
+          {/* Cancelar button - only show for DRAFT when editing */}
+          {isDraft && !isCreatingNew && (
+            <Button
+              type="button"
+              variant="outline"
+              className="text-red-600 border-red-300 hover:bg-red-50"
+              onClick={openCancelPriceTableDialog}
+            >
+              Cancelar tabela
+            </Button>
+          )}
+
+          {/* Inativar button - only show for ACTIVE */}
+          {isActive && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={openInactivePriceTableDialog}
+            >
+              Inativar tabela
+            </Button>
+          )}
+
+          {/* Salvar button - show for creating new or editing DRAFT */}
+          {(isCreatingNew || isDraft) && (
+            <Button
+              type="submit"
+              form="price-table-form"
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-500"
+            >
+              {loading ? "Salvando..." : "Salvar"}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -366,73 +455,104 @@ export function UpsertPriceTableForm({
                     className="space-y-2 rounded-lg border p-3"
                   >
                     {group.conditions.map((cond, ci) => (
-                      <div key={cond.id} className="flex gap-2 items-end">
+                      <div key={cond.id} className="flex gap-2 items-start">
                         {/* Vendas para (multi) */}
-                        <Controller
-                          control={control}
-                          name={`groups.${gi}.conditions.${ci}.salesFor`}
-                          render={({ field }) => (
-                            <Combobox
-                              label="Vendas para"
-                              placeholder="Selecione"
-                              data={BRAZILIAN_UF_LIST}
-                              value={BRAZILIAN_UF_LIST.filter((uf) =>
-                                (field.value ?? []).includes(
-                                  uf.id as BrazilianUF
-                                )
-                              )}
-                              onChange={(v) =>
-                                field.onChange(
-                                  v.map((it) => it.id as BrazilianUF)
-                                )
-                              }
-                              keyExtractor={(e) => e.id}
-                              displayValueGetter={(e) => e.text}
-                            />
-                          )}
-                        />
+                        <div className="flex-1">
+                          <Controller
+                            control={control}
+                            name={`groups.${gi}.conditions.${ci}.salesFor`}
+                            render={({ field, fieldState }) => (
+                              <div>
+                                <Combobox
+                                  label="Vendas para"
+                                  placeholder="Selecione"
+                                  data={BRAZILIAN_UF_LIST}
+                                  value={BRAZILIAN_UF_LIST.filter((uf) =>
+                                    (field.value ?? []).includes(
+                                      uf.id as BrazilianUF
+                                    )
+                                  )}
+                                  onChange={(v) =>
+                                    field.onChange(
+                                      v.map((it) => it.id as BrazilianUF)
+                                    )
+                                  }
+                                  keyExtractor={(e) => e.id}
+                                  displayValueGetter={(e) => e.text}
+                                />
+                                {fieldState.error?.message && (
+                                  <p className="mt-1 text-sm text-red-600">
+                                    {fieldState.error.message}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          />
+                        </div>
 
                         {/* Limite de faturamento */}
-                        <Controller
-                          control={control}
-                          name={`groups.${gi}.conditions.${ci}.billingLimit`}
-                          render={({ field }) => (
-                            <Input
-                              label="Limite de faturamento"
-                              value={field.value ?? ""}
-                              onChange={(e) => field.onChange(e.target.value)}
-                            />
-                          )}
-                        />
+                        <div className="flex-1">
+                          <Controller
+                            control={control}
+                            name={`groups.${gi}.conditions.${ci}.billingLimit`}
+                            render={({ field, fieldState }) => (
+                              <div>
+                                <Input
+                                  label="Limite de faturamento"
+                                  value={field.value ?? ""}
+                                  onChange={(e) =>
+                                    field.onChange(e.target.value)
+                                  }
+                                />
+                                {fieldState.error?.message && (
+                                  <p className="mt-1 text-sm text-red-600">
+                                    {fieldState.error.message}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          />
+                        </div>
 
                         {/* Faturar para (single) */}
-                        <Controller
-                          control={control}
-                          name={`groups.${gi}.conditions.${ci}.toBillFor`}
-                          render={({ field }) => (
-                            <Combobox
-                              label="Faturar para"
-                              placeholder="Selecione"
-                              data={TO_BILL_FOR_OPTIONS}
-                              value={
-                                field.value
-                                  ? [
-                                      {
-                                        id: field.value,
-                                        text:
-                                          TO_BILL_FOR_OPTIONS.find(
-                                            (o) => o.id === field.value
-                                          )?.text ?? field.value,
-                                      },
-                                    ]
-                                  : []
-                              }
-                              onChange={(v) => field.onChange(v[0]?.id ?? "")}
-                              keyExtractor={(o) => o.id}
-                              displayValueGetter={(o) => o.text}
-                            />
-                          )}
-                        />
+                        <div className="flex-1">
+                          <Controller
+                            control={control}
+                            name={`groups.${gi}.conditions.${ci}.toBillFor`}
+                            render={({ field, fieldState }) => (
+                              <div>
+                                <Combobox
+                                  label="Faturar para"
+                                  placeholder="Selecione"
+                                  data={TO_BILL_FOR_OPTIONS}
+                                  value={
+                                    field.value
+                                      ? [
+                                          {
+                                            id: field.value,
+                                            text:
+                                              TO_BILL_FOR_OPTIONS.find(
+                                                (o) => o.id === field.value
+                                              )?.text ?? field.value,
+                                          },
+                                        ]
+                                      : []
+                                  }
+                                  onChange={(v) =>
+                                    field.onChange(v[0]?.id ?? "")
+                                  }
+                                  keyExtractor={(o) => o.id}
+                                  displayValueGetter={(o) => o.text}
+                                />
+                                {fieldState.error?.message && (
+                                  <p className="mt-1 text-sm text-red-600">
+                                    {fieldState.error.message}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          />
+                        </div>
 
                         <Button
                           variant="outline"
@@ -511,6 +631,36 @@ export function UpsertPriceTableForm({
                   </p>
                 </div>
               )}
+
+              {/* Form validation errors */}
+              {form.formState.errors.groups?.message && (
+                <div className="flex items-center gap-2 py-4 rounded-md px-4 border-l-4 bg-red-100 border-l-red-500 text-red-800">
+                  <XCircleIcon className="text-red-600 h-6 w-6" />
+                  <p className="font-medium text-sm text-red-700">
+                    {form.formState.errors.groups?.message}
+                  </p>
+                </div>
+              )}
+
+              {/* Display errors for individual groups */}
+              {form.formState.errors.groups &&
+                Array.isArray(form.formState.errors.groups) &&
+                form.formState.errors.groups.map(
+                  (groupError, index) =>
+                    groupError && (
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 py-4 rounded-md px-4 border-l-4 bg-red-100 border-l-red-500 text-red-800"
+                      >
+                        <XCircleIcon className="text-red-600 h-6 w-6" />
+                        <p className="font-medium text-sm text-red-700">
+                          Grupo {index + 1}:{" "}
+                          {groupError.conditions?.message ||
+                            "Erro de validação"}
+                        </p>
+                      </div>
+                    )
+                )}
             </DisclosurePanel>
           </div>
         </Disclosure>

@@ -15,8 +15,6 @@ const getStatusDisplayText = (status: string) => {
       return "Cancelada";
     case "AWAITING_PUBLICATION":
       return "Aguardando Publicação";
-    case "SCHEDULED_FOR_PUBLICATION":
-      return "Tabela Programada para Publicação";
     case "DRAFT":
       return "Rascunho";
     default:

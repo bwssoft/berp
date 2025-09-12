@@ -1,30 +1,58 @@
 import { useState } from "react";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
+import { publishPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
 
-export function usePublishPriceTableDialog() {
+interface UsePublishPriceTableDialogProps {
+  priceTableId?: string;
+  onSuccess?: () => void;
+}
+
+export function usePublishPriceTableDialog({
+  priceTableId,
+  onSuccess,
+}: UsePublishPriceTableDialogProps = {}) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const openDialog = () => setOpen(true);
 
-  const publishPriceTable = async () => {
+  const publishPriceTableAction = async () => {
+    if (!priceTableId) {
+      toast({
+        variant: "error",
+        title: "Erro",
+        description: "ID da tabela não encontrado.",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Add your publish logic here
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      const result = await publishPriceTable(priceTableId);
 
-      toast({
-        variant: "success",
-        description: "Tabela publicada com sucesso!",
-        title: "Sucesso",
-      });
+      if (result?.success) {
+        toast({
+          variant: "success",
+          title: "Sucesso",
+          description: "Tabela publicada com sucesso!",
+        });
 
-      setOpen(false);
+        setOpen(false);
+        onSuccess?.();
+      } else {
+        toast({
+          variant: "error",
+          title: "Erro",
+          description:
+            result?.error?.global ||
+            "Erro ao publicar tabela. Tente novamente.",
+        });
+      }
     } catch (error) {
       toast({
         variant: "error",
-        description: "Erro ao publicar tabela. Tente novamente.",
         title: "Erro",
+        description: "Erro ao publicar tabela. Tente novamente.",
       });
     } finally {
       setIsLoading(false);
@@ -36,6 +64,6 @@ export function usePublishPriceTableDialog() {
     setOpen,
     openDialog,
     isLoading,
-    publishPriceTable,
+    publishPriceTable: publishPriceTableAction,
   };
 }
