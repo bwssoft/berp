@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
 import { Button, DateInput } from "@/app/lib/@frontend/ui/component";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
@@ -7,6 +8,8 @@ import { useState } from "react";
 
 export function PriceTableFilterForm() {
   const { handleParamsChange } = useHandleParamsChange();
+  const router = useRouter();
+  const pathname = usePathname();
   const [createdDate, setCreatedDate] = useState<Date | null>(null);
   const [activationDate, setActivationDate] = useState<Date | null>(null);
   const [activationPeriod, setActivationPeriod] = useState<{
@@ -46,8 +49,8 @@ export function PriceTableFilterForm() {
     setCreatedDate(null);
     setActivationDate(null);
     setActivationPeriod(null);
-    // Clear URL params
-    handleParamsChange({});
+    // Navigate to the page without any query parameters to show all data
+    router.replace(pathname);
   };
 
   return (

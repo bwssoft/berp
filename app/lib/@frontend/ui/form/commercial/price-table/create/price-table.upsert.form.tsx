@@ -37,6 +37,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/app/lib/util";
 import { InactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/inactivate.price-table.dialog";
 import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/use-inactivate.price-table.dialog";
+import { Controller } from "react-hook-form";
 
 const BRAZILIAN_UF_LIST = [
   { id: "AC", text: "Acre" },
@@ -155,6 +156,8 @@ export function UpsertPriceTableForm({
     existingEquipmentPayment,
     existingSimcardPayment,
     existingServicePayment,
+    getCurrentFormData,
+    control,
   } = usePriceTableForm({ priceTableId, editMode });
 
   // Dialog hooks
@@ -362,92 +365,77 @@ export function UpsertPriceTableForm({
                     key={group.id}
                     className="space-y-2 rounded-lg border p-3"
                   >
-                    {group.conditions.map((cond) => (
+                    {group.conditions.map((cond, ci) => (
                       <div key={cond.id} className="flex gap-2 items-end">
-                        <Combobox
-                          label="Vendas para"
-                          placeholder="Selecione"
-                          data={BRAZILIAN_UF_LIST}
-                          value={BRAZILIAN_UF_LIST.filter((uf) =>
-                            cond.salesFor.includes(uf.id as BrazilianUF)
+                        {/* Vendas para (multi) */}
+                        <Controller
+                          control={control}
+                          name={`groups.${gi}.conditions.${ci}.salesFor`}
+                          render={({ field }) => (
+                            <Combobox
+                              label="Vendas para"
+                              placeholder="Selecione"
+                              data={BRAZILIAN_UF_LIST}
+                              value={BRAZILIAN_UF_LIST.filter((uf) =>
+                                (field.value ?? []).includes(
+                                  uf.id as BrazilianUF
+                                )
+                              )}
+                              onChange={(v) =>
+                                field.onChange(
+                                  v.map((it) => it.id as BrazilianUF)
+                                )
+                              }
+                              keyExtractor={(e) => e.id}
+                              displayValueGetter={(e) => e.text}
+                            />
                           )}
-                          onChange={(v: { id: string; text: string }[]) =>
-                            setGroups((prev) =>
-                              prev.map((g) =>
-                                g.id === group.id
-                                  ? {
-                                      ...g,
-                                      conditions: g.conditions.map((c) =>
-                                        c.id === cond.id
-                                          ? {
-                                              ...c,
-                                              salesFor: v.map(
-                                                (item) => item.id
-                                              ) as BrazilianUF[],
-                                            }
-                                          : c
-                                      ),
-                                    }
-                                  : g
-                              )
-                            )
-                          }
-                          keyExtractor={(e) => e.id}
-                          displayValueGetter={(e) => e.text}
                         />
-                        <Input
-                          label="Limite de faturamento"
-                          value={cond.billingLimit}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setGroups((prev) =>
-                              prev.map((g) =>
-                                g.id === group.id
-                                  ? {
-                                      ...g,
-                                      conditions: g.conditions.map((c) =>
-                                        c.id === cond.id
-                                          ? {
-                                              ...c,
-                                              billingLimit: e.target.value,
-                                            }
-                                          : c
-                                      ),
-                                    }
-                                  : g
-                              )
-                            )
-                          }
+
+                        {/* Limite de faturamento */}
+                        <Controller
+                          control={control}
+                          name={`groups.${gi}.conditions.${ci}.billingLimit`}
+                          render={({ field }) => (
+                            <Input
+                              label="Limite de faturamento"
+                              value={field.value ?? ""}
+                              onChange={(e) => field.onChange(e.target.value)}
+                            />
+                          )}
                         />
-                        <Combobox
-                          label="Faturar para"
-                          placeholder="Selecione"
-                          data={TO_BILL_FOR_OPTIONS.map((option) => option.id)}
-                          value={cond.toBillFor ? [cond.toBillFor] : []}
-                          onChange={(v: string[]) =>
-                            setGroups((prev) =>
-                              prev.map((g) =>
-                                g.id === group.id
-                                  ? {
-                                      ...g,
-                                      conditions: g.conditions.map((c) =>
-                                        c.id === cond.id
-                                          ? { ...c, toBillFor: v[0] ?? "" }
-                                          : c
-                                      ),
-                                    }
-                                  : g
-                              )
-                            )
-                          }
-                          keyExtractor={(id) => id}
-                          displayValueGetter={(id) =>
-                            TO_BILL_FOR_OPTIONS.find(
-                              (option) => option.id === id
-                            )?.text ?? id
-                          }
+
+                        {/* Faturar para (single) */}
+                        <Controller
+                          control={control}
+                          name={`groups.${gi}.conditions.${ci}.toBillFor`}
+                          render={({ field }) => (
+                            <Combobox
+                              label="Faturar para"
+                              placeholder="Selecione"
+                              data={TO_BILL_FOR_OPTIONS}
+                              value={
+                                field.value
+                                  ? [
+                                      {
+                                        id: field.value,
+                                        text:
+                                          TO_BILL_FOR_OPTIONS.find(
+                                            (o) => o.id === field.value
+                                          )?.text ?? field.value,
+                                      },
+                                    ]
+                                  : []
+                              }
+                              onChange={(v) => field.onChange(v[0]?.id ?? "")}
+                              keyExtractor={(o) => o.id}
+                              displayValueGetter={(o) => o.text}
+                            />
+                          )}
                         />
+
                         <Button
-                          variant={"outline"}
+                          variant="outline"
                           type="button"
                           onClick={() => removeCondition(group.id, cond.id)}
                           title="Remover condição"
@@ -465,12 +453,17 @@ export function UpsertPriceTableForm({
                       >
                         Nova condição
                       </Button>
-                      <Checkbox
-                        checked={group.priority || false}
-                        onChange={() =>
-                          setGroupPriority(group.id, !group.priority!)
-                        }
-                        label="Habilitar prioridade"
+
+                      <Controller
+                        control={control}
+                        name={`groups.${gi}.priority`}
+                        render={({ field }) => (
+                          <Checkbox
+                            checked={!!field.value}
+                            onChange={() => field.onChange(!field.value)}
+                            label="Habilitar prioridade"
+                          />
+                        )}
                       />
                     </div>
                   </div>

@@ -1,3 +1,5 @@
+import { IPriceTableConditionGroup } from "./price-table-condition.definition";
+
 export type StatusPriceTable =
   | "ACTIVE"
   | "INACTIVE"
@@ -13,8 +15,8 @@ export interface IPriceTable {
   status?: StatusPriceTable;
   endDateTime: Date;
   isTemporary: boolean; // tabela provisoria // tabela normal
-  conditionGroupIds: string[];
   enabledProductsIds?: string[];
+  groups: IPriceTableConditionGroup[];
   equipmentPayment?: IEquipmentPayment[];
   simcardPayment?: ISimcardPayment[];
   servicePayment?: IServicePayment[];
