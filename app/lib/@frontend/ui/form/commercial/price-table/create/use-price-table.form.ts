@@ -254,12 +254,6 @@ export function usePriceTableForm() {
       };
       form.setValue("equipmentWithoutSim", updatedEquipmentWithoutSim);
     }
-
-    // Log the equipment data for debugging
-    console.log(
-      `Equipment ${equipmentModel} (${type}) pricing updated:`,
-      equipmentPayment
-    );
   };
 
   // Handle SIM card price changes - transform to ISimcardPayment format
@@ -284,9 +278,6 @@ export function usePriceTableForm() {
         })) || [];
 
     form.setValue("simCards", simcardPayments);
-
-    // Log the transformed data for debugging
-    console.log("SIM Card payment data:", simcardPayments);
   };
 
   // Handle accessories price changes
@@ -297,14 +288,9 @@ export function usePriceTableForm() {
       [accessory]: prices,
     };
     form.setValue("accessories", updatedAccessories);
-
-    // Log the accessory data for debugging
-    console.log(`Accessory ${accessory} pricing updated:`, prices);
   };
 
-  // Handle services price changes - transform to IServicePayment format
   const handleServicePriceChange = (services: any[]) => {
-    // Transform service data to match IServicePayment interface
     const transformedServices: IServicePayment[] = services
       .filter((service: any) => service.service) // Only include services with a selected serviceId
       .map((service: any) => ({
@@ -322,8 +308,6 @@ export function usePriceTableForm() {
 
     // Update the form data
     form.setValue("services", transformedServices);
-
-    console.log("Transformed services data:", transformedServices);
   };
 
   // Helper function to transform form data to IPriceTable payload
@@ -444,24 +428,8 @@ export function usePriceTableForm() {
       setLoading(true);
 
       try {
-        // Log the raw form data for debugging
-        console.log("Raw form data:", {
-          name: data.name,
-          equipmentWithSim: data.equipmentWithSim,
-          equipmentWithoutSim: data.equipmentWithoutSim,
-          simCards: data.simCards,
-          accessories: data.accessories,
-          services: data.services,
-        });
-
         // Transform data to match IPriceTable interface exactly
         const priceTablePayload = transformToPriceTablePayload(data, "DRAFT");
-
-        // Log the payload for debugging
-        console.log(
-          "Price Table Payload:",
-          JSON.stringify(priceTablePayload, null, 2)
-        );
 
         // Call the actual API action
         await createOnePriceTable(priceTablePayload);
@@ -556,8 +524,6 @@ export function usePriceTableForm() {
     try {
       // Create payload for draft save
       const draftPayload = transformToPriceTablePayload(currentData, "DRAFT");
-
-      console.log("Draft Payload:", JSON.stringify(draftPayload, null, 2));
 
       // Call the actual API action
       await createOnePriceTable(draftPayload);
