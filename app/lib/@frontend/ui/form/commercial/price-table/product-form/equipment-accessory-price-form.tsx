@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Button,
   Input,
@@ -24,24 +24,111 @@ interface PriceTier {
 interface EquipmentPriceFormProps {
   equipmentModel: string;
   onPriceChange?: (prices: any) => void;
+  initialData?: {
+    creditPayment?: {
+      type: "batch" | "unit";
+      paymentType: "credit" | "upfront";
+      unitPrice: number;
+      priceRange: Array<{ from: number; to: number; unitPrice: number }>;
+    };
+    upfrontPayment?: {
+      type: "batch" | "unit";
+      paymentType: "credit" | "upfront";
+      unitPrice: number;
+      priceRange: Array<{ from: number; to: number; unitPrice: number }>;
+    };
+  };
 }
 
 export function EquipmentAccessoryPriceForm({
   equipmentModel,
   onPriceChange,
+  initialData,
 }: EquipmentPriceFormProps) {
-  const [useQuantityRange, setUseQuantityRange] = useState(false);
-  const [useCashQuantityRange, setUseCashQuantityRange] = useState(false);
-  const [singlePrice, setSinglePrice] = useState("");
-  const [cashPrice, setCashPrice] = useState("");
-  const [priceTiers, setPriceTiers] = useState<PriceTier[]>([
-    { id: "1", from: "", to: "", pricePerUnit: "" },
-    { id: "2", from: "", to: "", pricePerUnit: "", isLast: true },
-  ]);
-  const [cashPriceTiers, setCashPriceTiers] = useState<PriceTier[]>([
-    { id: "1", from: "", to: "", pricePerUnit: "" },
-    { id: "2", from: "", to: "", pricePerUnit: "", isLast: true },
-  ]);
+  const [useQuantityRange, setUseQuantityRange] = useState(
+    initialData?.creditPayment
+      ? initialData.creditPayment.type === "batch" ||
+          initialData.creditPayment.priceRange.length > 0
+      : false
+  );
+  const [useCashQuantityRange, setUseCashQuantityRange] = useState(
+    // For batch type, cash payment should also use quantity ranges by default
+    initialData?.upfrontPayment
+      ? initialData.upfrontPayment.type === "batch"
+      : false
+  );
+  const [singlePrice, setSinglePrice] = useState(
+    initialData?.creditPayment &&
+      initialData.creditPayment.type === "unit" &&
+      initialData.creditPayment.priceRange.length === 0
+      ? initialData.creditPayment.unitPrice.toString()
+      : ""
+  );
+  const [cashPrice, setCashPrice] = useState(
+    initialData?.upfrontPayment &&
+      initialData.upfrontPayment.type === "unit" &&
+      initialData.upfrontPayment.priceRange.length === 0
+      ? initialData.upfrontPayment.unitPrice.toString()
+      : ""
+  );
+  const [priceTiers, setPriceTiers] = useState<PriceTier[]>(() => {
+    if (
+      initialData?.creditPayment &&
+      initialData.creditPayment.priceRange.length > 0
+    ) {
+      // Map existing price range data to tier format
+      const tiers = initialData.creditPayment.priceRange.map(
+        (range, index) => ({
+          id: (index + 1).toString(),
+          from: range.from.toString(),
+          to: range.to.toString(),
+          pricePerUnit: range.unitPrice.toString(),
+          isLast: index === initialData.creditPayment!.priceRange.length - 1,
+        })
+      );
+      return tiers;
+    } else if (
+      initialData?.creditPayment &&
+      initialData.creditPayment.type === "batch"
+    ) {
+      // If type is batch but no existing price ranges, start with default tiers
+      return [
+        { id: "1", from: "", to: "", pricePerUnit: "" },
+        { id: "2", from: "", to: "", pricePerUnit: "", isLast: true },
+      ];
+    }
+    return [
+      { id: "1", from: "", to: "", pricePerUnit: "" },
+      { id: "2", from: "", to: "", pricePerUnit: "", isLast: true },
+    ];
+  });
+  const [cashPriceTiers, setCashPriceTiers] = useState<PriceTier[]>(() => {
+    if (
+      initialData?.upfrontPayment &&
+      initialData.upfrontPayment.priceRange.length > 0
+    ) {
+      return initialData.upfrontPayment.priceRange.map((range, index) => ({
+        id: (index + 1).toString(),
+        from: range.from.toString(),
+        to: range.to.toString(),
+        pricePerUnit: range.unitPrice.toString(),
+        isLast: index === initialData.upfrontPayment!.priceRange.length - 1,
+      }));
+    } else if (
+      initialData?.upfrontPayment &&
+      initialData.upfrontPayment.type === "batch"
+    ) {
+      return [
+        { id: "1", from: "", to: "", pricePerUnit: "" },
+        { id: "2", from: "", to: "", pricePerUnit: "", isLast: true },
+      ];
+    }
+
+    return [
+      { id: "1", from: "", to: "", pricePerUnit: "" },
+      { id: "2", from: "", to: "", pricePerUnit: "", isLast: true },
+    ];
+  });
 
   const addPriceTier = () => {
     // Remove isLast from current last tier and add new regular tier
@@ -130,7 +217,7 @@ export function EquipmentAccessoryPriceForm({
   };
 
   // Notify parent component when prices change
-  const handlePriceChange = () => {
+  const handlePriceChange = useCallback(() => {
     if (onPriceChange) {
       onPriceChange({
         equipmentModel,
@@ -142,7 +229,23 @@ export function EquipmentAccessoryPriceForm({
         cashPriceTiers: useCashQuantityRange ? cashPriceTiers : [],
       });
     }
-  };
+  }, [
+    onPriceChange,
+    equipmentModel,
+    useQuantityRange,
+    useCashQuantityRange,
+    singlePrice,
+    cashPrice,
+    priceTiers,
+    cashPriceTiers,
+  ]);
+
+  // Initialize with existing data on mount
+  useEffect(() => {
+    if (initialData) {
+      handlePriceChange();
+    }
+  }, [initialData, handlePriceChange]);
 
   return (
     <div className="space-y-6 border border-gray-200 rounded-lg p-4">
@@ -159,11 +262,17 @@ export function EquipmentAccessoryPriceForm({
             <Toggle
               value={useQuantityRange}
               onChange={(checked) => {
+                if (initialData?.creditPayment?.type === "batch" && !checked)
+                  return;
                 setUseQuantityRange(checked);
                 handlePriceChange();
               }}
-              disabled={false}
-              title={() => "Faixa de quantidade"}
+              disabled={initialData?.creditPayment?.type === "batch"}
+              title={() =>
+                initialData?.creditPayment?.type === "batch"
+                  ? "Faixa de quantidade (obrigatório para tipo lote)"
+                  : "Faixa de quantidade"
+              }
             />
             <Label className="text-sm font-medium">Faixa de quantidade</Label>
           </div>
@@ -274,11 +383,17 @@ export function EquipmentAccessoryPriceForm({
             <Toggle
               value={useCashQuantityRange}
               onChange={(checked) => {
+                if (initialData?.upfrontPayment?.type === "batch" && !checked)
+                  return;
                 setUseCashQuantityRange(checked);
                 handlePriceChange();
               }}
-              disabled={false}
-              title={() => "Faixa de quantidade"}
+              disabled={initialData?.upfrontPayment?.type === "batch"}
+              title={() =>
+                initialData?.upfrontPayment?.type === "batch"
+                  ? "Faixa de quantidade (obrigatório para tipo lote)"
+                  : "Faixa de quantidade"
+              }
             />
             <Label className="text-sm font-medium">Faixa de quantidade</Label>
           </div>

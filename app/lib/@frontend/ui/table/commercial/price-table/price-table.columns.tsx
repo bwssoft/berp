@@ -45,7 +45,13 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export const columns: ColumnDef<IPriceTable>[] = [
+interface ColumnsProps {
+  onEditPriceTable?: (priceTable: IPriceTable) => void;
+}
+
+export const createPriceTableColumns = ({
+  onEditPriceTable,
+}: ColumnsProps = {}): ColumnDef<IPriceTable>[] => [
   {
     accessorKey: "name",
     header: "NOME DA TABELA",
@@ -144,34 +150,39 @@ export const columns: ColumnDef<IPriceTable>[] = [
     cell: ({ row, table }) => {
       const { restrictEdit } = table.options.meta as { restrictEdit: boolean };
       return (
-      <div className="flex gap-1">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          title="Histórico"
-        >
-          <History className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-          title="Clonar tabela"
-        >
-          <Copy className="h-4 w-4" />
-        </Button>
-        {restrictEdit && (
+        <div className="flex gap-1">
           <Button
             variant="ghost"
             size="sm"
             className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            title="Editar"
+            title="Histórico"
           >
-            <Pencil className="h-4 w-4" />
+            <History className="h-4 w-4" />
           </Button>
-        )}
-      </div>
-    )},
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            title="Clonar tabela"
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+          {restrictEdit && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              title="Editar"
+              onClick={() => onEditPriceTable?.(row.original)}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      );
+    },
   },
 ];
+
+// For backward compatibility, export default columns without handlers
+export const columns = createPriceTableColumns();

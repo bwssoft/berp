@@ -3,12 +3,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import {
   createOnePriceTable,
+  updateOnePriceTable,
   validateBillingConditionsPriceTable,
+  findOnePriceTable,
 } from "@/app/lib/@backend/action/commercial/price-table.action";
 import {
   IEquipmentPayment,
@@ -21,8 +23,33 @@ import { IPriceTableCondition } from "@/app/lib/@backend/domain/commercial/entit
 
 /** UFs do Brasil */
 export const BRAZILIAN_UF_ENUM = z.enum([
-  "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
-  "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MT",
+  "MS",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SP",
+  "SE",
+  "TO",
 ] as const);
 export type BrazilianUF = z.infer<typeof BRAZILIAN_UF_ENUM>;
 
@@ -31,10 +58,10 @@ const PTBR_MONEY_REGEX = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{2})?$/;
 const priceTableConditionSchema = z.object({
   id: z.string().min(1),
   /** UFs atendidas por esta condição */
-  salesFor: z.array(BRAZILIAN_UF_ENUM)
-    .min(1, "Selecione ao menos 1 UF"),
+  salesFor: z.array(BRAZILIAN_UF_ENUM).min(1, "Selecione ao menos 1 UF"),
   /** Limite de faturamento (string pt-BR) */
-  billingLimit: z.string()
+  billingLimit: z
+    .string()
     .trim()
     .optional()
     .refine(
@@ -51,7 +78,8 @@ const priceTableConditionGroupSchema = z.object({
   /** Ativa prioridade no grupo */
   priority: z.boolean().optional(),
   /** Lista de condições */
-  conditions: z.array(priceTableConditionSchema)
+  conditions: z
+    .array(priceTableConditionSchema)
     .min(1, "Adicione pelo menos uma condição"),
 });
 
@@ -82,64 +110,147 @@ const priceTableSchema = z
         billTo: z.string().optional(),
       })
       .optional(),
-    // Dados de preços dos produtos com tipos específicos
-    equipmentWithSim: z.record(z.any()).default({}), // Record<string, IEquipmentPayment>
-    equipmentWithoutSim: z.record(z.any()).default({}), // Record<string, IEquipmentPayment>
+    equipmentWithSim: z.record(z.any()).default({}),
+    equipmentWithoutSim: z.record(z.any()).default({}),
     simCards: z.array(z.any()).default([]),
     accessories: z.record(z.any()).default({}),
     services: z.array(z.any()).default([]),
   })
-  .refine(
-    (data) => {
-      return data.endDateTime > data.startDateTime;
-    },
-    {
-      message: "Data de fim deve ser posterior à data de início",
-      path: ["endDateTime"],
-    }
-  );
+  .refine((data) => data.endDateTime > data.startDateTime, {
+    message: "Data de fim deve ser posterior à data de início",
+    path: ["endDateTime"],
+  });
 
 export type CreatePriceTableFormData = z.infer<typeof priceTableSchema>;
 
-export function usePriceTableForm() {
-  type Group = {
-    id: string;
-    conditions: IPriceTableCondition[];
-    priority?: boolean;
-  };
+interface UsePriceTableFormProps {
+  priceTableId?: string;
+  editMode?: boolean;
+}
 
-  const uid = () =>
-    crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
-  const emptyCondition = (): IPriceTableCondition => ({
-    id: uid(),
-    salesFor: [],
-    billingLimit: "",
-    toBillFor: "",
+type Group = {
+  id: string;
+  conditions: IPriceTableCondition[];
+  priority?: boolean;
+};
+
+type Status = "red" | "yellow" | "green" | "blue";
+
+const STATUS_STYLES: Record<Status, string> = {
+  red: "bg-red-100 border-l-red-500 text-red-800",
+  yellow: "bg-yellow-100 border-l-yellow-500 text-yellow-800",
+  green: "bg-green-100 border-l-green-500 text-green-800",
+  blue: "bg-blue-100 border-l-blue-500 text-blue-800",
+};
+
+const uid = () => crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+
+const createEmptyCondition = (): IPriceTableCondition => ({
+  id: uid(),
+  salesFor: [],
+  billingLimit: "",
+  toBillFor: "",
+});
+
+const formatDateTimeLocal = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
+const getDefaultStartDateTime = () => {
+  const now = new Date();
+  // Always use current time to avoid validation issues with past times
+  return now;
+};
+
+const ensureFutureStartDate = (startDateTime: Date) => {
+  const now = new Date();
+  const oneMinuteFromNow = new Date(now.getTime() + 60000); // Add 1 minute
+
+  // If the start date is in the past or very close to now, use one minute from now
+  if (startDateTime <= now) {
+    return oneMinuteFromNow;
+  }
+
+  return startDateTime;
+};
+
+const createPriceRange = (tiers: any[]): IPriceRange[] => {
+  if (!tiers || !Array.isArray(tiers)) {
+    console.warn("❌ Invalid tiers provided to createPriceRange:", tiers);
+    return [];
+  }
+
+  const filtered = tiers.filter((tier) => {
+    const hasFrom =
+      tier?.from !== undefined && tier?.from !== null && tier?.from !== "";
+    const hasPricePerUnit =
+      tier?.pricePerUnit !== undefined &&
+      tier?.pricePerUnit !== null &&
+      tier?.pricePerUnit !== "";
+
+    return hasFrom && hasPricePerUnit;
   });
 
+  const mapped = filtered.map((tier) => {
+    const priceRange = {
+      from: Number(tier.from),
+      to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to || 0),
+      unitPrice: Number(tier.pricePerUnit),
+    };
+
+    return priceRange;
+  });
+
+  return mapped;
+};
+
+export function usePriceTableForm({
+  priceTableId,
+  editMode = false,
+}: UsePriceTableFormProps = {}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  // state para grupos e condições
+  const [loadingPriceTable, setLoadingPriceTable] = useState(!!priceTableId);
+
+  const [existingEquipmentPayment, setExistingEquipmentPayment] = useState<
+    IEquipmentPayment[]
+  >([]);
+  const [existingSimcardPayment, setExistingSimcardPayment] = useState<
+    ISimcardPayment[]
+  >([]);
+  const [existingServicePayment, setExistingServicePayment] = useState<
+    IServicePayment[]
+  >([]);
+
   const [groups, setGroups] = useState<Group[]>([
-    { id: uid(), conditions: [emptyCondition()], priority: false },
+    { id: uid(), conditions: [createEmptyCondition()], priority: false },
   ]);
+
   const [messageErrorCondition, setMessageErrorCondition] = useState<{
     status: string;
     message: string;
-  }>({
-    status: "",
-    message: "",
-  });
+  }>({ status: "", message: "" });
 
   const form = useForm<CreatePriceTableFormData>({
     resolver: zodResolver(priceTableSchema),
     defaultValues: {
       name: "",
-      startDateTime: new Date(),
-      endDateTime: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
+      startDateTime: getDefaultStartDateTime(),
+      endDateTime: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       isTemporary: false,
       groups: [
-        { id: "", conditions: [{ id: "", salesFor: [], toBillFor: "", billingLimit: "" }], priority: false }
+        {
+          id: "",
+          conditions: [
+            { id: "", salesFor: [], toBillFor: "", billingLimit: "" },
+          ],
+          priority: false,
+        },
       ],
       billingConfig: {
         salesFor: "",
@@ -154,111 +265,196 @@ export function usePriceTableForm() {
     },
   });
 
-  // Helper function to format date for datetime-local input
-  const formatDateTimeLocal = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  const processExistingPaymentData = (
+    equipmentPayment: IEquipmentPayment[]
+  ) => {
+    const equipmentWithSim: Record<string, any> = {};
+    const equipmentWithoutSim: Record<string, any> = {};
+    const accessories: Record<string, any> = {};
+
+    equipmentPayment.forEach((payment) => {
+      const isAccessory = payment.productId?.startsWith("ACC") || false;
+      const targetCategory = isAccessory ? accessories : equipmentWithSim;
+
+      if (!targetCategory[payment.productId]) {
+        targetCategory[payment.productId] = {};
+      }
+
+      const paymentKey =
+        payment.paymentType === "credit" ? "onDemand" : "onSight";
+
+      if (isAccessory) {
+        const priceKey =
+          payment.paymentType === "credit" ? "singlePrice" : "cashPrice";
+        const rangeKey =
+          payment.paymentType === "credit"
+            ? "useQuantityRange"
+            : "useCashQuantityRange";
+        const tiersKey =
+          payment.paymentType === "credit" ? "priceTiers" : "cashPriceTiers";
+
+        if (payment.type === "batch" && payment.priceRange.length > 0) {
+          targetCategory[payment.productId][rangeKey] = true;
+          targetCategory[payment.productId][tiersKey] = payment.priceRange.map(
+            (range, index) => ({
+              id: (index + 1).toString(),
+              from: range.from.toString(),
+              to:
+                range.to === Number.MAX_SAFE_INTEGER ? "" : range.to.toString(),
+              pricePerUnit: range.unitPrice.toString(),
+              isLast: range.to === Number.MAX_SAFE_INTEGER,
+            })
+          );
+        } else {
+          targetCategory[payment.productId][rangeKey] = false;
+          targetCategory[payment.productId][priceKey] =
+            payment.unitPrice.toString();
+        }
+      } else {
+        targetCategory[payment.productId][paymentKey] = payment;
+      }
+    });
+
+    return { equipmentWithSim, equipmentWithoutSim, accessories };
   };
 
-  // Get formatted default values for datetime inputs
-  const getDefaultStartDateTime = () => formatDateTimeLocal(new Date());
-  const getDefaultEndDateTime = () =>
-    formatDateTimeLocal(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000));
+  useEffect(() => {
+    if (!editMode || !priceTableId) return;
 
-  // Handle equipment price changes - transform to IEquipmentPayment format
+    const loadPriceTable = async () => {
+      try {
+        setLoadingPriceTable(true);
+        const existingPriceTable = await findOnePriceTable({
+          id: priceTableId,
+        });
+
+        if (existingPriceTable) {
+          setExistingEquipmentPayment(
+            existingPriceTable.equipmentPayment || []
+          );
+          setExistingSimcardPayment(existingPriceTable.simcardPayment || []);
+          setExistingServicePayment(existingPriceTable.servicePayment || []);
+
+          const { equipmentWithSim, equipmentWithoutSim, accessories } =
+            processExistingPaymentData(
+              existingPriceTable.equipmentPayment || []
+            );
+
+          const formData = {
+            name: existingPriceTable.name || "",
+            startDateTime: existingPriceTable.startDateTime
+              ? new Date(existingPriceTable.startDateTime)
+              : new Date(),
+            endDateTime: existingPriceTable.endDateTime
+              ? new Date(existingPriceTable.endDateTime)
+              : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+            isTemporary: existingPriceTable.isTemporary ?? false,
+            billingConfig: { salesFor: "", billingLimit: "", billTo: "" },
+            equipmentWithSim,
+            equipmentWithoutSim,
+            simCards: existingPriceTable.simcardPayment || [],
+            accessories,
+            services: existingPriceTable.servicePayment || [],
+          };
+
+          form.reset(formData);
+        }
+      } catch (error) {
+        console.error("Error loading price table:", error);
+        toast({
+          variant: "error",
+          title: "Erro",
+          description: "Não foi possível carregar os dados da tabela de preço.",
+        });
+      } finally {
+        setLoadingPriceTable(false);
+      }
+    };
+
+    loadPriceTable();
+  }, [editMode, priceTableId, form]);
+
+  const createEquipmentPayment = (
+    equipmentModel: string,
+    prices: any,
+    paymentType: "credit" | "upfront",
+    type: "batch" | "unit"
+  ) => {
+    const priceRange =
+      type === "batch"
+        ? createPriceRange(
+            paymentType === "upfront"
+              ? prices.cashPriceTiers || []
+              : prices.priceTiers || []
+          )
+        : [];
+
+    const result = {
+      type,
+      paymentType,
+      productId: equipmentModel,
+      productName: equipmentModel,
+      unitPrice:
+        type === "unit"
+          ? Number(prices.singlePrice || prices.cashPrice || 0)
+          : 0,
+      priceRange,
+    };
+
+    return result;
+  };
   const handleEquipmentPriceChange = (
     equipmentModel: string,
     prices: any,
     type: "withSim" | "withoutSim"
   ) => {
     const currentData = form.getValues();
-
-    // Transform the data to IEquipmentPayment format
     const equipmentPayment: {
       onSight?: IEquipmentPayment;
       onDemand?: IEquipmentPayment;
     } = {};
 
-    // Handle credit payment (pagamento a prazo)
     if (prices.useQuantityRange && prices.priceTiers?.length > 0) {
-      // Batch pricing with quantity ranges
-      const priceRange: IPriceRange[] = prices.priceTiers
-        .filter((tier: any) => tier.from && tier.pricePerUnit)
-        .map((tier: any) => ({
-          from: Number(tier.from),
-          to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
-          unitPrice: Number(tier.pricePerUnit),
-        }));
-
-      equipmentPayment.onDemand = {
-        type: "batch",
-        productId: equipmentModel, // Use equipment model as productId for now
-        productName: equipmentModel, // Use equipment model as productName for now
-        unitPrice: 0, // Not used for batch pricing
-        priceRange,
-      };
+      equipmentPayment.onDemand = createEquipmentPayment(
+        equipmentModel,
+        prices,
+        "credit",
+        "batch"
+      );
     } else if (prices.singlePrice) {
-      // Unit pricing
-      equipmentPayment.onDemand = {
-        type: "unit",
-        productId: equipmentModel, // Use equipment model as productId for now
-        productName: equipmentModel, // Use equipment model as productName for now
-        unitPrice: Number(prices.singlePrice),
-        priceRange: [],
-      };
+      equipmentPayment.onDemand = createEquipmentPayment(
+        equipmentModel,
+        prices,
+        "credit",
+        "unit"
+      );
     }
 
-    // Handle cash payment (pagamento à vista)
     if (prices.useCashQuantityRange && prices.cashPriceTiers?.length > 0) {
-      // Batch pricing with quantity ranges
-      const priceRange: IPriceRange[] = prices.cashPriceTiers
-        .filter((tier: any) => tier.from && tier.pricePerUnit)
-        .map((tier: any) => ({
-          from: Number(tier.from),
-          to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
-          unitPrice: Number(tier.pricePerUnit),
-        }));
-
-      equipmentPayment.onSight = {
-        type: "batch",
-        productId: equipmentModel, // Use equipment model as productId for now
-        productName: equipmentModel, // Use equipment model as productName for now
-        unitPrice: 0, // Not used for batch pricing
-        priceRange,
-      };
+      equipmentPayment.onSight = createEquipmentPayment(
+        equipmentModel,
+        prices,
+        "upfront",
+        "batch"
+      );
     } else if (prices.cashPrice) {
-      // Unit pricing
-      equipmentPayment.onSight = {
-        type: "unit",
-        productId: equipmentModel, // Use equipment model as productId for now
-        productName: equipmentModel, // Use equipment model as productName for now
-        unitPrice: Number(prices.cashPrice),
-        priceRange: [],
-      };
+      equipmentPayment.onSight = createEquipmentPayment(
+        equipmentModel,
+        prices,
+        "upfront",
+        "unit"
+      );
     }
 
-    if (type === "withSim") {
-      const updatedEquipmentWithSim = {
-        ...currentData.equipmentWithSim,
-        [equipmentModel]: equipmentPayment,
-      };
-      form.setValue("equipmentWithSim", updatedEquipmentWithSim);
-    } else {
-      const updatedEquipmentWithoutSim = {
-        ...currentData.equipmentWithoutSim,
-        [equipmentModel]: equipmentPayment,
-      };
-      form.setValue("equipmentWithoutSim", updatedEquipmentWithoutSim);
-    }
+    const targetKey =
+      type === "withSim" ? "equipmentWithSim" : "equipmentWithoutSim";
+    form.setValue(targetKey, {
+      ...currentData[targetKey],
+      [equipmentModel]: equipmentPayment,
+    });
   };
 
-  // Handle SIM card price changes - transform to ISimcardPayment format
   const handleSimCardPriceChange = (prices: any) => {
-    // Transform simCardTiers to ISimcardPayment format
     const simcardPayments: ISimcardPayment[] =
       prices.simCardTiers
         ?.filter(
@@ -270,7 +466,7 @@ export function usePriceTableForm() {
         )
         .map((tier: any) => ({
           carriers: tier.carriers,
-          dataAmountMb: Number(tier.dataMB.replace("MB", "")), // Convert "10MB" to 10
+          dataAmountMb: Number(tier.dataMB.replace("MB", "")),
           planType: tier.type,
           provider: tier.supplier,
           priceWithoutDevice: Number(tier.priceWithoutEquipment) || 0,
@@ -280,137 +476,113 @@ export function usePriceTableForm() {
     form.setValue("simCards", simcardPayments);
   };
 
-  // Handle accessories price changes
   const handleAccessoryPriceChange = (accessory: string, prices: any) => {
     const currentData = form.getValues();
-    const updatedAccessories = {
+    form.setValue("accessories", {
       ...currentData.accessories,
       [accessory]: prices,
-    };
-    form.setValue("accessories", updatedAccessories);
+    });
   };
 
   const handleServicePriceChange = (services: any[]) => {
     const transformedServices: IServicePayment[] = services
-      .filter((service: any) => service.service) // Only include services with a selected serviceId
-      .map((service: any) => ({
-        serviceId: service.service || "", // The selected service acts as serviceId
+      .filter((service) => service.service)
+      .map((service) => ({
+        serviceId: service.service || "",
         monthlyPrice: service.monthlyPrice
           ? parseFloat(service.monthlyPrice)
           : undefined,
         yearlyPrice: service.annualPrice
           ? parseFloat(service.annualPrice)
-          : undefined, // Map annualPrice to yearlyPrice
+          : undefined,
         fixedPrice: service.fixedPrice
           ? parseFloat(service.fixedPrice)
           : undefined,
       }));
 
-    // Update the form data
     form.setValue("services", transformedServices);
   };
 
-  // Helper function to transform form data to IPriceTable payload
+  const processEquipmentData = (
+    equipment: Record<string, any>,
+    equipmentPayment: IEquipmentPayment[]
+  ) => {
+    Object.entries(equipment).forEach(([productId, payment]) => {
+      if (payment?.onSight) {
+        const onSightPayment = {
+          ...payment.onSight,
+          paymentType: "upfront" as const,
+        };
+        equipmentPayment.push(onSightPayment);
+      }
+      if (payment?.onDemand) {
+        const onDemandPayment = {
+          ...payment.onDemand,
+          paymentType: "credit" as const,
+        };
+        equipmentPayment.push(onDemandPayment);
+      }
+    });
+  };
+
+  const processAccessoryData = (
+    accessories: Record<string, any>,
+    equipmentPayment: IEquipmentPayment[]
+  ) => {
+    Object.entries(accessories).forEach(([accessoryId, accessoryData]) => {
+      const accessoryPayment: any = accessoryData;
+
+      const addPayment = (
+        paymentType: "credit" | "upfront",
+        useRange: string,
+        tiers: string,
+        singlePrice: string
+      ) => {
+        if (
+          accessoryPayment?.[useRange] &&
+          accessoryPayment?.[tiers]?.length > 0
+        ) {
+          equipmentPayment.push({
+            type: "batch",
+            paymentType,
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: 0,
+            priceRange: createPriceRange(accessoryPayment[tiers]),
+          });
+        } else if (accessoryPayment?.[singlePrice]) {
+          equipmentPayment.push({
+            type: "unit",
+            paymentType,
+            productId: accessoryId,
+            productName: accessoryId,
+            unitPrice: Number(accessoryPayment[singlePrice]),
+            priceRange: [],
+          });
+        }
+      };
+
+      addPayment("credit", "useQuantityRange", "priceTiers", "singlePrice");
+      addPayment(
+        "upfront",
+        "useCashQuantityRange",
+        "cashPriceTiers",
+        "cashPrice"
+      );
+    });
+  };
+
   const transformToPriceTablePayload = (
     data: CreatePriceTableFormData,
     status: StatusPriceTable = "DRAFT"
   ) => {
-    // Transform equipment data from nested objects to arrays
     const equipmentPayment: IEquipmentPayment[] = [];
 
-    // Add equipment with SIM
-    Object.entries(data.equipmentWithSim || {}).forEach(
-      ([productId, payment]) => {
-        if (payment?.onSight) {
-          equipmentPayment.push(payment.onSight);
-        }
-        if (payment?.onDemand) {
-          equipmentPayment.push(payment.onDemand);
-        }
-      }
-    );
+    processEquipmentData(data.equipmentWithSim || {}, equipmentPayment);
+    processEquipmentData(data.equipmentWithoutSim || {}, equipmentPayment);
+    processAccessoryData(data.accessories || {}, equipmentPayment);
 
-    // Add equipment without SIM
-    Object.entries(data.equipmentWithoutSim || {}).forEach(
-      ([productId, payment]) => {
-        if (payment?.onSight) {
-          equipmentPayment.push(payment.onSight);
-        }
-        if (payment?.onDemand) {
-          equipmentPayment.push(payment.onDemand);
-        }
-      }
-    );
-
-    // Add accessories to equipment payment
-    Object.entries(data.accessories || {}).forEach(
-      ([accessoryId, accessoryData]) => {
-        // Transform accessory data to IEquipmentPayment format
-        const accessoryPayment: any = accessoryData;
-
-        // Handle credit payment (pagamento a prazo) for accessories
-        if (
-          accessoryPayment?.useQuantityRange &&
-          accessoryPayment?.priceTiers?.length > 0
-        ) {
-          const priceRange: IPriceRange[] = accessoryPayment.priceTiers
-            .filter((tier: any) => tier.from && tier.pricePerUnit)
-            .map((tier: any) => ({
-              from: Number(tier.from),
-              to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
-              unitPrice: Number(tier.pricePerUnit),
-            }));
-
-          equipmentPayment.push({
-            type: "batch",
-            productId: accessoryId,
-            productName: accessoryId,
-            unitPrice: 0,
-            priceRange,
-          });
-        } else if (accessoryPayment?.singlePrice) {
-          equipmentPayment.push({
-            type: "unit",
-            productId: accessoryId,
-            productName: accessoryId,
-            unitPrice: Number(accessoryPayment.singlePrice),
-            priceRange: [],
-          });
-        }
-
-        // Handle cash payment (pagamento à vista) for accessories
-        if (
-          accessoryPayment?.useCashQuantityRange &&
-          accessoryPayment?.cashPriceTiers?.length > 0
-        ) {
-          const priceRange: IPriceRange[] = accessoryPayment.cashPriceTiers
-            .filter((tier: any) => tier.from && tier.pricePerUnit)
-            .map((tier: any) => ({
-              from: Number(tier.from),
-              to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to),
-              unitPrice: Number(tier.pricePerUnit),
-            }));
-
-          equipmentPayment.push({
-            type: "batch",
-            productId: accessoryId,
-            productName: accessoryId,
-            unitPrice: 0,
-            priceRange,
-          });
-        } else if (accessoryPayment?.cashPrice) {
-          equipmentPayment.push({
-            type: "unit",
-            productId: accessoryId,
-            productName: accessoryId,
-            unitPrice: Number(accessoryPayment.cashPrice),
-            priceRange: [],
-          });
-        }
-      }
-    );
-
-    return {
+    const payload = {
       name: data.name,
       startDateTime: data.startDateTime,
       endDateTime: data.endDateTime,
@@ -421,64 +593,120 @@ export function usePriceTableForm() {
       servicePayment: data.services || [],
       groups: data.groups || [],
     };
+
+    // Include ID when in edit mode
+    if (editMode && priceTableId) {
+      return { ...payload, id: priceTableId };
+    }
+
+    return payload;
+  };
+
+  const handleFormSubmission = async (
+    data: CreatePriceTableFormData,
+    status: StatusPriceTable = "DRAFT"
+  ) => {
+    try {
+      const payload = transformToPriceTablePayload(data, status);
+
+      // Use appropriate action based on edit mode
+      const result = editMode
+        ? await updateOnePriceTable(payload)
+        : await createOnePriceTable(payload);
+
+      if (result?.success) {
+        const message = editMode
+          ? status === "DRAFT"
+            ? "Alterações salvas!"
+            : "Tabela de preços atualizada com sucesso!"
+          : status === "DRAFT"
+            ? "Rascunho salvo!"
+            : "Tabela de preços criada com sucesso!";
+
+        const description = editMode
+          ? status === "DRAFT"
+            ? "Suas alterações foram salvas como rascunho."
+            : "Tabela de preços atualizada com sucesso!"
+          : status === "DRAFT"
+            ? "Suas alterações foram salvas como rascunho."
+            : "Tabela de preços criada com sucesso!";
+
+        toast({ title: message, description, variant: "success" });
+
+        router.push("/commercial/price-table");
+      } else {
+        const errorMsg =
+          result?.error?.global || "Falha ao processar a tabela de preços!";
+        toast({
+          title: "Erro de Validação!",
+          description: errorMsg,
+          variant: "error",
+        });
+
+        ["name", "startDateTime", "endDateTime"].forEach((field) => {
+          if (result?.error && field in result.error) {
+            form.setError(field as keyof CreatePriceTableFormData, {
+              message: (result.error as any)[field],
+            });
+          }
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Erro!",
+        description: "Falha inesperada ao processar a tabela de preços!",
+        variant: "error",
+      });
+    }
   };
 
   const handleSubmit = form.handleSubmit(
     async (data: CreatePriceTableFormData) => {
       setLoading(true);
-
       try {
-        // Transform data to match IPriceTable interface exactly
-        const priceTablePayload = transformToPriceTablePayload(data, "DRAFT");
-
-        // Call the actual API action
-        await createOnePriceTable(priceTablePayload);
-
-        toast({
-          title: "Sucesso!",
-          description: "Tabela de preços criada com sucesso!",
-          variant: "success",
-        });
-        router.push("/commercial/price-table");
-      } catch (error) {
-        console.error("Error creating price table:", error);
-        toast({
-          title: "Erro!",
-          description: "Falha ao criar a tabela de preços!",
-          variant: "error",
-        });
+        // Ensure start date is always in the future to avoid validation errors
+        const adjustedData = {
+          ...data,
+          startDateTime: ensureFutureStartDate(data.startDateTime),
+        };
+        await handleFormSubmission(adjustedData, "DRAFT");
       } finally {
         setLoading(false);
       }
     }
   );
 
+  const handleSaveDraft = async () => {
+    const currentData = form.getValues();
+    // Ensure start date is always in the future to avoid validation errors
+    const adjustedData = {
+      ...currentData,
+      startDateTime: ensureFutureStartDate(currentData.startDateTime),
+    };
+    await handleFormSubmission(adjustedData, "DRAFT");
+  };
+
   const handleValidationConditions = async () => {
     try {
-      const result = await validateBillingConditionsPriceTable(form.getValues().groups);
-      console.log("Validation result:", result);
+      const result = await validateBillingConditionsPriceTable(groups);
       setMessageErrorCondition({
         status: result.status,
         message: result.messages[0] ?? "",
       });
     } catch (error) {
-      console.error("Error creating price table:", error);
       toast({
         title: "Erro!",
-        description: "Falha ao criar a tabela de preços!",
+        description: "Falha ao validar as condições!",
         variant: "error",
       });
     }
   };
-  
-  // adicionar novo GRUPO
   const addGroup = () =>
     setGroups((prev) => [
       ...prev,
-      { id: uid(), conditions: [emptyCondition()] },
+      { id: uid(), conditions: [createEmptyCondition()] },
     ]);
 
-  // adicionar nova CONDIÇÃO dentro de um grupo
   const addCondition = (
     groupId: string,
     init?: Partial<IPriceTableCondition>
@@ -488,7 +716,10 @@ export function usePriceTableForm() {
         g.id === groupId
           ? {
               ...g,
-              conditions: [...g.conditions, { ...emptyCondition(), ...init }],
+              conditions: [
+                ...g.conditions,
+                { ...createEmptyCondition(), ...init },
+              ],
             }
           : g
       )
@@ -496,7 +727,6 @@ export function usePriceTableForm() {
 
   const removeCondition = (groupId: string, conditionId: string) => {
     setGroups((prev) => {
-      // 1) remove a condição do grupo alvo
       const updated = prev.map((g) =>
         g.id === groupId
           ? {
@@ -506,41 +736,14 @@ export function usePriceTableForm() {
           : g
       );
 
-      // 2) remove grupos que ficaram sem condições
       let pruned = updated.filter((g) => g.conditions.length > 0);
 
-      // 3) se não sobrar nenhum grupo, mantém 1 grupo com 1 condição vazia (coloquei isso pq é obrigatório ter pelo menos 1 condição)
       if (pruned.length === 0) {
-        pruned = [{ id: uid(), conditions: [emptyCondition()] }];
+        pruned = [{ id: uid(), conditions: [createEmptyCondition()] }];
       }
 
       return pruned;
     });
-  };
-
-  const handleSaveDraft = async () => {
-    const currentData = form.getValues();
-
-    try {
-      // Create payload for draft save
-      const draftPayload = transformToPriceTablePayload(currentData, "DRAFT");
-
-      // Call the actual API action
-      await createOnePriceTable(draftPayload);
-
-      toast({
-        title: "Rascunho salvo!",
-        description: "Suas alterações foram salvas como rascunho.",
-        variant: "success",
-      });
-    } catch (error) {
-      console.error("Error saving draft:", error);
-      toast({
-        title: "Erro!",
-        description: "Falha ao salvar rascunho.",
-        variant: "error",
-      });
-    }
   };
 
   const handleCancel = () => {
@@ -579,7 +782,6 @@ export function usePriceTableForm() {
     );
   };
 
-  // Helper function to get current form values for debugging
   const getCurrentFormData = () => {
     const data = form.getValues();
     return {
@@ -596,22 +798,22 @@ export function usePriceTableForm() {
     form,
     handleSubmit,
     handleSaveDraft,
-    handleCancel,
+    handleCancel: () => router.push("/commercial/price-table"),
     loading,
-    validateForm,
-    getFormErrors,
-    isFormDirty,
-    // Price change handlers
+    loadingPriceTable,
+    validateForm: () => form.trigger(),
+    getFormErrors: () => form.formState.errors,
+    isFormDirty: () => form.formState.isDirty,
     handleEquipmentPriceChange,
     handleSimCardPriceChange,
     handleAccessoryPriceChange,
     handleServicePriceChange,
-    // Helper functions
-    getDefaultStartDateTime,
-    getDefaultEndDateTime,
+    getDefaultStartDateTime: () =>
+      formatDateTimeLocal(getDefaultStartDateTime()),
+    getDefaultEndDateTime: () =>
+      formatDateTimeLocal(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)),
     formatDateTimeLocal,
     getCurrentFormData,
-    // Schema for external validation
     schema: priceTableSchema,
     addCondition,
     addGroup,
@@ -623,7 +825,9 @@ export function usePriceTableForm() {
     status,
     removeCondition,
     setGroupPriority,
-    control: form.control
+    existingEquipmentPayment,
+    existingSimcardPayment,
+    existingServicePayment,
+    control: form.control,
   };
 }
-

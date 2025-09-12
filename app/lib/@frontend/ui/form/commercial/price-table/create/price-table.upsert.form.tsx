@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueries } from "@tanstack/react-query";
 import {
   Disclosure,
@@ -16,6 +16,7 @@ import {
   Button,
   Checkbox,
   Combobox,
+  DateInput,
   Input,
   Toggle,
 } from "../../../../component";
@@ -79,7 +80,15 @@ const TO_BILL_FOR_OPTIONS = [
   { id: "14.334.132/0001-64", text: "WFC - 14.334.132/0001-64" },
 ];
 
-export function CreatePriceTableForm() {
+interface UpsertPriceTableFormProps {
+  priceTableId?: string;
+  editMode?: boolean;
+}
+
+export function UpsertPriceTableForm({
+  priceTableId,
+  editMode = false,
+}: UpsertPriceTableFormProps = {}) {
   // Use TanStack Query to fetch products
   const [equipmentQuery, accessoriesQuery] = useQueries({
     queries: [
@@ -129,14 +138,11 @@ export function CreatePriceTableForm() {
   const {
     form,
     handleSubmit,
-    handleSaveDraft,
     loading,
     handleEquipmentPriceChange,
     handleSimCardPriceChange,
     handleAccessoryPriceChange,
     handleServicePriceChange,
-    getDefaultStartDateTime,
-    getDefaultEndDateTime,
     addCondition,
     addGroup,
     groups,
@@ -147,9 +153,12 @@ export function CreatePriceTableForm() {
     status,
     removeCondition,
     setGroupPriority,
+    existingEquipmentPayment,
+    existingSimcardPayment,
+    existingServicePayment,
     getCurrentFormData,
-    control
-  } = usePriceTableForm();
+    control,
+  } = usePriceTableForm({ priceTableId, editMode });
 
   // Dialog hooks
   const {
@@ -176,7 +185,6 @@ export function CreatePriceTableForm() {
     publishPriceTable,
   } = usePublishPriceTableDialog();
 
-  // State to track which equipment models are toggled on
   const [enabledEquipmentWithSim, setEnabledEquipmentWithSim] = useState<
     Record<string, boolean>
   >({});
@@ -214,6 +222,22 @@ export function CreatePriceTableForm() {
     }));
   };
 
+  useEffect(() => {
+    if (existingEquipmentPayment && existingEquipmentPayment.length > 0) {
+      const newEnabledEquipmentWithSim: Record<string, boolean> = {};
+      const newEnabledEquipmentWithoutSim: Record<string, boolean> = {};
+      const newEnabledAccessories: Record<string, boolean> = {};
+
+      existingEquipmentPayment.forEach((equipment) => {
+        newEnabledEquipmentWithSim[equipment.productId] = true;
+      });
+
+      setEnabledEquipmentWithSim(newEnabledEquipmentWithSim);
+      setEnabledEquipmentWithoutSim(newEnabledEquipmentWithoutSim);
+      setEnabledAccessories(newEnabledAccessories);
+    }
+  }, [existingEquipmentPayment]);
+
   return (
     <div className="space-y-4">
       {/* Header with title and buttons */}
@@ -250,20 +274,6 @@ export function CreatePriceTableForm() {
             Inativar tabela
           </Button>
           <Button
-            type="button"
-            variant="outline"
-            className="text-gray-600 border-gray-300 hover:bg-gray-50"
-            onClick={() => {
-              const data = getCurrentFormData();
-              console.log("Current form data:", data);
-              alert(
-                `Form contains: ${data.equipmentWithSim} equipment with SIM, ${data.equipmentWithoutSim} equipment without SIM, ${data.simCards} SIM configs, ${data.accessories} accessories, ${data.services} services`
-              );
-            }}
-          >
-            Debug Data
-          </Button>
-          <Button
             type="submit"
             form="price-table-form"
             disabled={loading}
@@ -292,26 +302,44 @@ export function CreatePriceTableForm() {
                   error={form.formState.errors.name?.message}
                 />
                 <div className="flex gap-4">
-                  <Input
-                    label="Data de início"
-                    type="datetime-local"
-                    required
-                    {...form.register("startDateTime", {
-                      setValueAs: (value) => new Date(value),
-                    })}
-                    defaultValue={getDefaultStartDateTime()}
-                    error={form.formState.errors.startDateTime?.message}
-                  />
-                  <Input
-                    label="Data de fim"
-                    type="datetime-local"
-                    required
-                    {...form.register("endDateTime", {
-                      setValueAs: (value) => new Date(value),
-                    })}
-                    defaultValue={getDefaultEndDateTime()}
-                    error={form.formState.errors.endDateTime?.message}
-                  />
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+                      Data de início <span className="text-red-500">*</span>
+                    </label>
+                    <DateInput
+                      type="date"
+                      value={form.watch("startDateTime")}
+                      onChange={(date) => {
+                        form.setValue("startDateTime", date as Date);
+                      }}
+                      placeholder="Selecione a data de início"
+                      className="w-full"
+                    />
+                    {form.formState.errors.startDateTime?.message && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {form.formState.errors.startDateTime?.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+                      Data de fim <span className="text-red-500">*</span>
+                    </label>
+                    <DateInput
+                      type="date"
+                      value={form.watch("endDateTime")}
+                      onChange={(date) => {
+                        form.setValue("endDateTime", date as Date);
+                      }}
+                      placeholder="Selecione a data de fim"
+                      className="w-full"
+                    />
+                    {form.formState.errors.endDateTime?.message && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {form.formState.errors.endDateTime?.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -333,7 +361,10 @@ export function CreatePriceTableForm() {
                 </h3>
 
                 {groups.map((group, gi) => (
-                  <div key={group.id} className="space-y-2 rounded-lg border p-3">
+                  <div
+                    key={group.id}
+                    className="space-y-2 rounded-lg border p-3"
+                  >
                     {group.conditions.map((cond, ci) => (
                       <div key={cond.id} className="flex gap-2 items-end">
                         {/* Vendas para (multi) */}
@@ -346,9 +377,15 @@ export function CreatePriceTableForm() {
                               placeholder="Selecione"
                               data={BRAZILIAN_UF_LIST}
                               value={BRAZILIAN_UF_LIST.filter((uf) =>
-                                (field.value ?? []).includes(uf.id as BrazilianUF)
+                                (field.value ?? []).includes(
+                                  uf.id as BrazilianUF
+                                )
                               )}
-                              onChange={(v) => field.onChange(v.map(it => it.id as BrazilianUF))}
+                              onChange={(v) =>
+                                field.onChange(
+                                  v.map((it) => it.id as BrazilianUF)
+                                )
+                              }
                               keyExtractor={(e) => e.id}
                               displayValueGetter={(e) => e.text}
                             />
@@ -377,7 +414,19 @@ export function CreatePriceTableForm() {
                               label="Faturar para"
                               placeholder="Selecione"
                               data={TO_BILL_FOR_OPTIONS}
-                              value={field.value ? [{ id: field.value, text: TO_BILL_FOR_OPTIONS.find(o => o.id === field.value)?.text ?? field.value }] : []}
+                              value={
+                                field.value
+                                  ? [
+                                      {
+                                        id: field.value,
+                                        text:
+                                          TO_BILL_FOR_OPTIONS.find(
+                                            (o) => o.id === field.value
+                                          )?.text ?? field.value,
+                                      },
+                                    ]
+                                  : []
+                              }
                               onChange={(v) => field.onChange(v[0]?.id ?? "")}
                               keyExtractor={(o) => o.id}
                               displayValueGetter={(o) => o.text}
@@ -397,7 +446,11 @@ export function CreatePriceTableForm() {
                     ))}
 
                     <div className="flex gap-2 items-center mt-2">
-                      <Button className="bg-purple-600 w-fit" type="button" onClick={() => addCondition(group.id)}>
+                      <Button
+                        className="bg-purple-600 w-fit"
+                        type="button"
+                        onClick={() => addCondition(group.id)}
+                      >
                         Nova condição
                       </Button>
 
@@ -554,6 +607,19 @@ export function CreatePriceTableForm() {
                             <div className="mt-4">
                               <EquipmentAccessoryPriceForm
                                 equipmentModel={equipment.id}
+                                initialData={{
+                                  creditPayment: existingEquipmentPayment?.find(
+                                    (ep) =>
+                                      ep.productId === equipment.id &&
+                                      ep.paymentType === "credit"
+                                  ),
+                                  upfrontPayment:
+                                    existingEquipmentPayment?.find(
+                                      (ep) =>
+                                        ep.productId === equipment.id &&
+                                        ep.paymentType === "upfront"
+                                    ),
+                                }}
                                 onPriceChange={(prices) => {
                                   handleEquipmentPriceChange(
                                     equipment.id,
@@ -656,6 +722,19 @@ export function CreatePriceTableForm() {
                             <div className="mt-4">
                               <EquipmentAccessoryPriceForm
                                 equipmentModel={equipment.id}
+                                initialData={{
+                                  creditPayment: existingEquipmentPayment?.find(
+                                    (ep) =>
+                                      ep.productId === equipment.id &&
+                                      ep.paymentType === "credit"
+                                  ),
+                                  upfrontPayment:
+                                    existingEquipmentPayment?.find(
+                                      (ep) =>
+                                        ep.productId === equipment.id &&
+                                        ep.paymentType === "upfront"
+                                    ),
+                                }}
                                 onPriceChange={(prices) => {
                                   handleEquipmentPriceChange(
                                     equipment.id,
@@ -682,7 +761,10 @@ export function CreatePriceTableForm() {
                   <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
                 </DisclosureButton>
                 <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
-                  <SimCardPriceForm onPriceChange={handleSimCardPriceChange} />
+                  <SimCardPriceForm
+                    initialData={existingSimcardPayment}
+                    onPriceChange={handleSimCardPriceChange}
+                  />
                 </DisclosurePanel>
               </Disclosure>
 
@@ -761,6 +843,19 @@ export function CreatePriceTableForm() {
                             <div className="mt-4">
                               <EquipmentAccessoryPriceForm
                                 equipmentModel={accessory.id}
+                                initialData={{
+                                  creditPayment: existingEquipmentPayment?.find(
+                                    (ep) =>
+                                      ep.productId === accessory.id &&
+                                      ep.paymentType === "credit"
+                                  ),
+                                  upfrontPayment:
+                                    existingEquipmentPayment?.find(
+                                      (ep) =>
+                                        ep.productId === accessory.id &&
+                                        ep.paymentType === "upfront"
+                                    ),
+                                }}
                                 onPriceChange={(prices) => {
                                   handleAccessoryPriceChange(
                                     accessory.id,
@@ -784,7 +879,10 @@ export function CreatePriceTableForm() {
                   <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
                 </DisclosureButton>
                 <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
-                  <ServicePriceForm onPriceChange={handleServicePriceChange} />
+                  <ServicePriceForm
+                    initialData={existingServicePayment}
+                    onPriceChange={handleServicePriceChange}
+                  />
                 </DisclosurePanel>
               </Disclosure>
             </DisclosurePanel>
