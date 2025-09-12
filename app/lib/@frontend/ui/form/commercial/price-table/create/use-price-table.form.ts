@@ -19,6 +19,42 @@ import {
 } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 import { IPriceTableCondition } from "@/app/lib/@backend/domain/commercial/entity/price-table-condition.definition";
 
+/** UFs do Brasil */
+export const BRAZILIAN_UF_ENUM = z.enum([
+  "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
+  "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
+] as const);
+export type BrazilianUF = z.infer<typeof BRAZILIAN_UF_ENUM>;
+
+const PTBR_MONEY_REGEX = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{2})?$/;
+/** Condição por grupo */
+const priceTableConditionSchema = z.object({
+  id: z.string().min(1),
+  /** UFs atendidas por esta condição */
+  salesFor: z.array(BRAZILIAN_UF_ENUM)
+    .min(1, "Selecione ao menos 1 UF"),
+  /** Limite de faturamento (string pt-BR) */
+  billingLimit: z.string()
+    .trim()
+    .optional()
+    .refine(
+      (v) => !v || PTBR_MONEY_REGEX.test(v),
+      "Informe um valor válido (ex.: 1.234,56)"
+    ),
+  /** Quem será faturado (id/opção) */
+  toBillFor: z.string().min(1, "Selecione quem faturar"),
+});
+
+/** Grupo de condições */
+const priceTableConditionGroupSchema = z.object({
+  id: z.string().min(1),
+  /** Ativa prioridade no grupo */
+  priority: z.boolean().optional(),
+  /** Lista de condições */
+  conditions: z.array(priceTableConditionSchema)
+    .min(1, "Adicione pelo menos uma condição"),
+});
+
 // Schema de validação com Zod baseado no IPriceTable
 const priceTableSchema = z
   .object({
@@ -35,7 +71,9 @@ const priceTableSchema = z
       invalid_type_error: "Data inválida",
     }),
     isTemporary: z.boolean().default(false),
-    conditionGroupIds: z.array(z.string()).default([]),
+
+    groups: z.array(priceTableConditionGroupSchema).default([]),
+
     // Configurações de faturamento
     billingConfig: z
       .object({
@@ -100,7 +138,9 @@ export function usePriceTableForm() {
       startDateTime: new Date(),
       endDateTime: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
       isTemporary: false,
-      conditionGroupIds: [],
+      groups: [
+        { id: "", conditions: [{ id: "", salesFor: [], toBillFor: "", billingLimit: "" }], priority: false }
+      ],
       billingConfig: {
         salesFor: "",
         billingLimit: "",
@@ -375,11 +415,11 @@ export function usePriceTableForm() {
       startDateTime: data.startDateTime,
       endDateTime: data.endDateTime,
       isTemporary: data.isTemporary,
-      conditionGroupIds: data.conditionGroupIds,
       status,
       equipmentPayment,
       simcardPayment: data.simCards || [],
       servicePayment: data.services || [],
+      groups: data.groups || [],
     };
   };
 
@@ -415,7 +455,8 @@ export function usePriceTableForm() {
 
   const handleValidationConditions = async () => {
     try {
-      const result = await validateBillingConditionsPriceTable(groups);
+      const result = await validateBillingConditionsPriceTable(form.getValues().groups);
+      console.log("Validation result:", result);
       setMessageErrorCondition({
         status: result.status,
         message: result.messages[0] ?? "",
@@ -429,7 +470,7 @@ export function usePriceTableForm() {
       });
     }
   };
-
+  
   // adicionar novo GRUPO
   const addGroup = () =>
     setGroups((prev) => [
@@ -582,5 +623,7 @@ export function usePriceTableForm() {
     status,
     removeCondition,
     setGroupPriority,
+    control: form.control
   };
 }
+

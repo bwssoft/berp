@@ -101,7 +101,7 @@ class UpdateOnePriceTableUsecase {
             //se editar e salvar enquanto status for Aguardando Publicação, voltar o status para Rascunho.
             status:
               input.status == "AWAITING_PUBLICATION" ? "DRAFT" : input.status,
-            conditionGroupIds: input.conditionGroupIds,
+            groups: input.groups,
             equipmentPayment: input.equipmentPayment,
             simcardPayment: input.simcardPayment,
             servicePayment: input.servicePayment,
