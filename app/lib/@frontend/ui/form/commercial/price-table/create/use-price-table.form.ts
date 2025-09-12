@@ -765,13 +765,12 @@ export function usePriceTableForm({
     return form.formState.isDirty;
   };
 
-  type Status = "red" | "yellow" | "green" | "blue";
+  type Status = "red" | "yellow" | "green";
 
   const STATUS_STYLES: Record<Status, string> = {
     red: "bg-red-100 border-l-red-500 text-red-800",
     yellow: "bg-yellow-100 border-l-yellow-500 text-yellow-800",
     green: "bg-green-100 border-l-green-500 text-green-800",
-    blue: "bg-blue-100 border-l-blue-500 text-blue-800",
   };
 
   const status = (messageErrorCondition.status ?? "red") as Status;

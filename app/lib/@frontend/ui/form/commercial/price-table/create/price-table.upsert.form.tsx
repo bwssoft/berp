@@ -7,15 +7,11 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import {
-  CheckCircleIcon,
   ChevronDownIcon,
-  ExclamationTriangleIcon,
-  XCircleIcon,
 } from "@heroicons/react/20/solid";
 import {
   Button,
   Checkbox,
-  Combobox,
   DateInput,
   Input,
   Toggle,
@@ -25,7 +21,6 @@ import {
   SimCardPriceForm,
   ServicePriceForm,
 } from "../product-form";
-import { BrazilianUF } from "@/app/lib/@backend/domain";
 import { usePriceTableForm } from "./use-price-table.form";
 import Link from "next/link";
 import { CancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/cancel.price-table.dialog";
@@ -33,11 +28,10 @@ import { PublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercia
 import { useCancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/use-cancel.price-table.dialog";
 import { usePublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/use-publish.price-table.dialog";
 import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { TrashIcon } from "@heroicons/react/24/outline";
-import { cn } from "@/app/lib/util";
 import { InactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/inactivate.price-table.dialog";
 import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/use-inactivate.price-table.dialog";
-import { Controller } from "react-hook-form";
+import { BillingConditionsSection } from "../conditions-form/conditions.form";
+import { StatusBanner } from "../../../../component/status-banner";
 
 const BRAZILIAN_UF_LIST = [
   { id: "AC", text: "Acre" },
@@ -355,120 +349,15 @@ export function UpsertPriceTableForm({
               </div>
 
               {/* Configurações de faturamento */}
-              <div className="space-y-3">
-                <h3 className="font-semibold text-sm">
-                  Configurações de Faturamento
-                </h3>
-
-                {groups.map((group, gi) => (
-                  <div
-                    key={group.id}
-                    className="space-y-2 rounded-lg border p-3"
-                  >
-                    {group.conditions.map((cond, ci) => (
-                      <div key={cond.id} className="flex gap-2 items-end">
-                        {/* Vendas para (multi) */}
-                        <Controller
-                          control={control}
-                          name={`groups.${gi}.conditions.${ci}.salesFor`}
-                          render={({ field }) => (
-                            <Combobox
-                              label="Vendas para"
-                              placeholder="Selecione"
-                              data={BRAZILIAN_UF_LIST}
-                              value={BRAZILIAN_UF_LIST.filter((uf) =>
-                                (field.value ?? []).includes(
-                                  uf.id as BrazilianUF
-                                )
-                              )}
-                              onChange={(v) =>
-                                field.onChange(
-                                  v.map((it) => it.id as BrazilianUF)
-                                )
-                              }
-                              keyExtractor={(e) => e.id}
-                              displayValueGetter={(e) => e.text}
-                            />
-                          )}
-                        />
-
-                        {/* Limite de faturamento */}
-                        <Controller
-                          control={control}
-                          name={`groups.${gi}.conditions.${ci}.billingLimit`}
-                          render={({ field }) => (
-                            <Input
-                              label="Limite de faturamento"
-                              value={field.value ?? ""}
-                              onChange={(e) => field.onChange(e.target.value)}
-                            />
-                          )}
-                        />
-
-                        {/* Faturar para (single) */}
-                        <Controller
-                          control={control}
-                          name={`groups.${gi}.conditions.${ci}.toBillFor`}
-                          render={({ field }) => (
-                            <Combobox
-                              label="Faturar para"
-                              placeholder="Selecione"
-                              data={TO_BILL_FOR_OPTIONS}
-                              value={
-                                field.value
-                                  ? [
-                                      {
-                                        id: field.value,
-                                        text:
-                                          TO_BILL_FOR_OPTIONS.find(
-                                            (o) => o.id === field.value
-                                          )?.text ?? field.value,
-                                      },
-                                    ]
-                                  : []
-                              }
-                              onChange={(v) => field.onChange(v[0]?.id ?? "")}
-                              keyExtractor={(o) => o.id}
-                              displayValueGetter={(o) => o.text}
-                            />
-                          )}
-                        />
-
-                        <Button
-                          variant="outline"
-                          type="button"
-                          onClick={() => removeCondition(group.id, cond.id)}
-                          title="Remover condição"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-
-                    <div className="flex gap-2 items-center mt-2">
-                      <Button
-                        className="bg-purple-600 w-fit"
-                        type="button"
-                        onClick={() => addCondition(group.id)}
-                      >
-                        Nova condição
-                      </Button>
-
-                      <Controller
-                        control={control}
-                        name={`groups.${gi}.priority`}
-                        render={({ field }) => (
-                          <Checkbox
-                            checked={!!field.value}
-                            onChange={() => field.onChange(!field.value)}
-                            label="Habilitar prioridade"
-                          />
-                        )}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <BillingConditionsSection
+                groups={groups}
+                control={control}
+                ufList={BRAZILIAN_UF_LIST}
+                billToOptions={TO_BILL_FOR_OPTIONS}
+                addCondition={addCondition}
+                removeCondition={removeCondition}
+                setGroupPriority={setGroupPriority}
+              />
 
               {/* Botões para condições */}
               <div className="flex gap-4">
@@ -487,29 +376,14 @@ export function UpsertPriceTableForm({
                   Validar condições
                 </Button>
               </div>
+
               {/* mensagens de erro ou sucesso na validação das condições */}
               {messageErrorCondition.status && (
-                <div
-                  className={cn(
-                    "flex items-center gap-2 py-4 rounded-md px-4 border-l-4",
-                    STATUS_STYLES[status]
-                  )}
-                >
-                  {messageErrorCondition.status == "green" && (
-                    <CheckCircleIcon className="text-[#3cd59d] h-6 w-6" />
-                  )}
-                  {messageErrorCondition.status == "yellow" && (
-                    <ExclamationTriangleIcon className="text-[#fcc73e] h-6 w-6" />
-                  )}
-                  {messageErrorCondition.status == "red" && (
-                    <XCircleIcon className="text-[#f87272] h-6 w-6" />
-                  )}
-                  <p
-                    className={`font-medium text-sm ${messageErrorCondition.status == "red" && "text-[#ad4444]"} ${messageErrorCondition.status == "yellow" && "text-[#b77f58]"} ${messageErrorCondition.status == "green" && "text-[#6cb39d]"}`}
-                  >
-                    {messageErrorCondition.message}
-                  </p>
-                </div>
+                <StatusBanner
+                  status={status}
+                  message={messageErrorCondition.message} 
+                  statusStyles={STATUS_STYLES}
+                />
               )}
             </DisclosurePanel>
           </div>
