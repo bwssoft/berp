@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import {
   createOnePriceTable,
+  updateOnePriceTable,
   validateBillingConditionsPriceTable,
   findOnePriceTable,
 } from "@/app/lib/@backend/action/commercial/price-table.action";
@@ -94,6 +95,24 @@ const formatDateTimeLocal = (date: Date) => {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
+const getDefaultStartDateTime = () => {
+  const now = new Date();
+  // Always use current time to avoid validation issues with past times
+  return now;
+};
+
+const ensureFutureStartDate = (startDateTime: Date) => {
+  const now = new Date();
+  const oneMinuteFromNow = new Date(now.getTime() + 60000); // Add 1 minute
+
+  // If the start date is in the past or very close to now, use one minute from now
+  if (startDateTime <= now) {
+    return oneMinuteFromNow;
+  }
+
+  return startDateTime;
+};
+
 const createPriceRange = (tiers: any[]): IPriceRange[] => {
   if (!tiers || !Array.isArray(tiers)) {
     console.warn("❌ Invalid tiers provided to createPriceRange:", tiers);
@@ -155,7 +174,7 @@ export function usePriceTableForm({
     resolver: zodResolver(priceTableSchema),
     defaultValues: {
       name: "",
-      startDateTime: new Date(),
+      startDateTime: getDefaultStartDateTime(),
       endDateTime: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       isTemporary: false,
       conditionGroupIds: [],
@@ -486,7 +505,7 @@ export function usePriceTableForm({
     processEquipmentData(data.equipmentWithoutSim || {}, equipmentPayment);
     processAccessoryData(data.accessories || {}, equipmentPayment);
 
-    return {
+    const payload = {
       name: data.name,
       startDateTime: data.startDateTime,
       endDateTime: data.endDateTime,
@@ -497,6 +516,13 @@ export function usePriceTableForm({
       simcardPayment: data.simCards || [],
       servicePayment: data.services || [],
     };
+
+    // Include ID when in edit mode
+    if (editMode && priceTableId) {
+      return { ...payload, id: priceTableId };
+    }
+
+    return payload;
   };
 
   const handleFormSubmission = async (
@@ -505,15 +531,26 @@ export function usePriceTableForm({
   ) => {
     try {
       const payload = transformToPriceTablePayload(data, status);
-      const result = await createOnePriceTable(payload);
+
+      // Use appropriate action based on edit mode
+      const result = editMode
+        ? await updateOnePriceTable(payload)
+        : await createOnePriceTable(payload);
 
       if (result?.success) {
-        const message =
-          status === "DRAFT"
+        const message = editMode
+          ? status === "DRAFT"
+            ? "Alterações salvas!"
+            : "Tabela de preços atualizada com sucesso!"
+          : status === "DRAFT"
             ? "Rascunho salvo!"
             : "Tabela de preços criada com sucesso!";
-        const description =
-          status === "DRAFT"
+
+        const description = editMode
+          ? status === "DRAFT"
+            ? "Suas alterações foram salvas como rascunho."
+            : "Tabela de preços atualizada com sucesso!"
+          : status === "DRAFT"
             ? "Suas alterações foram salvas como rascunho."
             : "Tabela de preços criada com sucesso!";
 
@@ -550,7 +587,12 @@ export function usePriceTableForm({
     async (data: CreatePriceTableFormData) => {
       setLoading(true);
       try {
-        await handleFormSubmission(data, "DRAFT");
+        // Ensure start date is always in the future to avoid validation errors
+        const adjustedData = {
+          ...data,
+          startDateTime: ensureFutureStartDate(data.startDateTime),
+        };
+        await handleFormSubmission(adjustedData, "DRAFT");
       } finally {
         setLoading(false);
       }
@@ -559,7 +601,12 @@ export function usePriceTableForm({
 
   const handleSaveDraft = async () => {
     const currentData = form.getValues();
-    await handleFormSubmission(currentData, "DRAFT");
+    // Ensure start date is always in the future to avoid validation errors
+    const adjustedData = {
+      ...currentData,
+      startDateTime: ensureFutureStartDate(currentData.startDateTime),
+    };
+    await handleFormSubmission(adjustedData, "DRAFT");
   };
 
   const handleValidationConditions = async () => {
@@ -657,7 +704,8 @@ export function usePriceTableForm({
     handleSimCardPriceChange,
     handleAccessoryPriceChange,
     handleServicePriceChange,
-    getDefaultStartDateTime: () => formatDateTimeLocal(new Date()),
+    getDefaultStartDateTime: () =>
+      formatDateTimeLocal(getDefaultStartDateTime()),
     getDefaultEndDateTime: () =>
       formatDateTimeLocal(new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)),
     formatDateTimeLocal,

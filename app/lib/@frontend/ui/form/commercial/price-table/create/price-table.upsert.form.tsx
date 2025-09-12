@@ -37,7 +37,6 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/app/lib/util";
 import { InactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/inactivate.price-table.dialog";
 import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/use-inactivate.price-table.dialog";
-import { IPriceTable } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 
 const BRAZILIAN_UF_LIST = [
   { id: "AC", text: "Acre" },
