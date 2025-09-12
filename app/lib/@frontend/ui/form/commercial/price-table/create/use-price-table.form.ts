@@ -519,9 +519,7 @@ export function usePriceTableForm({
 
         toast({ title: message, description, variant: "success" });
 
-        if (status !== "DRAFT") {
-          router.push("/commercial/price-table");
-        }
+        router.push("/commercial/price-table");
       } else {
         const errorMsg =
           result?.error?.global || "Falha ao processar a tabela de preços!";
