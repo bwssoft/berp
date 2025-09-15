@@ -640,6 +640,17 @@ export function usePriceTableForm({
         // Update price table status in state after successful save
         setPriceTableStatus(status);
 
+        // Update payment data states after successful save
+        if (payload.equipmentPayment) {
+          setExistingEquipmentPayment(payload.equipmentPayment);
+        }
+        if (payload.simcardPayment) {
+          setExistingSimcardPayment(payload.simcardPayment);
+        }
+        if (payload.servicePayment) {
+          setExistingServicePayment(payload.servicePayment);
+        }
+
         const message = editMode
           ? status === "DRAFT"
             ? "Alterações salvas!"

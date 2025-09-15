@@ -253,13 +253,49 @@ export function UpsertPriceTableForm({
     }
   }, [existingEquipmentPayment]);
 
+  // Watch form payment data to make button visibility reactive
+  const watchedEquipmentWithSim = form.watch("equipmentWithSim");
+  const watchedEquipmentWithoutSim = form.watch("equipmentWithoutSim");
+  const watchedAccessories = form.watch("accessories");
+  const watchedSimCards = form.watch("simCards");
+  const watchedServices = form.watch("services");
+
   // Helper function to check if price table has required payment data for publishing
   const hasRequiredPaymentData = () => {
-    return (
+    // Check existing payment states (from database)
+    const hasExistingPayments = 
       (existingEquipmentPayment && existingEquipmentPayment.length > 0) ||
       (existingSimcardPayment && existingSimcardPayment.length > 0) ||
-      (existingServicePayment && existingServicePayment.length > 0)
-    );
+      (existingServicePayment && existingServicePayment.length > 0);
+
+    // Also check current form data for new payments being added
+    const hasFormPayments = 
+      (watchedEquipmentWithSim && Object.keys(watchedEquipmentWithSim).length > 0) ||
+      (watchedEquipmentWithoutSim && Object.keys(watchedEquipmentWithoutSim).length > 0) ||
+      (watchedAccessories && Object.keys(watchedAccessories).length > 0) ||
+      (watchedSimCards && watchedSimCards.length > 0) ||
+      (watchedServices && watchedServices.length > 0);
+
+    const result = hasExistingPayments || hasFormPayments;
+    
+    // Debug logging to help verify the behavior
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Payment data check:', {
+        hasExistingPayments,
+        hasFormPayments,
+        result,
+        existingEquipmentCount: existingEquipmentPayment?.length || 0,
+        existingSimcardCount: existingSimcardPayment?.length || 0,
+        existingServiceCount: existingServicePayment?.length || 0,
+        formEquipmentWithSimCount: watchedEquipmentWithSim ? Object.keys(watchedEquipmentWithSim).length : 0,
+        formEquipmentWithoutSimCount: watchedEquipmentWithoutSim ? Object.keys(watchedEquipmentWithoutSim).length : 0,
+        formAccessoriesCount: watchedAccessories ? Object.keys(watchedAccessories).length : 0,
+        formSimCardsCount: watchedSimCards?.length || 0,
+        formServicesCount: watchedServices?.length || 0
+      });
+    }
+
+    return result;
   };
 
   // Helper function to get status badge
