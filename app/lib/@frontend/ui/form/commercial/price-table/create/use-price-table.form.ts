@@ -227,6 +227,11 @@ export function usePriceTableForm({
     IServicePayment[]
   >([]);
 
+  const [priceTableStatus, setPriceTableStatus] =
+    useState<StatusPriceTable | null>(null);
+
+  const [priceTableName, setPriceTableName] = useState<string>("");
+
   const [groups, setGroups] = useState<Group[]>([
     { id: uid(), conditions: [createEmptyCondition()], priority: false },
   ]);
@@ -329,6 +334,8 @@ export function usePriceTableForm({
         });
 
         if (existingPriceTable) {
+          setPriceTableStatus(existingPriceTable.status || null);
+          setPriceTableName(existingPriceTable.name || "");
           setExistingEquipmentPayment(
             existingPriceTable.equipmentPayment || []
           );
@@ -373,6 +380,21 @@ export function usePriceTableForm({
 
     loadPriceTable();
   }, [editMode, priceTableId, form]);
+
+  // Watch for name changes in the form and update the priceTableName state
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "name" && value.name !== undefined) {
+        setPriceTableName(value.name);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  // Synchronize local groups state with form groups field
+  useEffect(() => {
+    form.setValue("groups", groups);
+  }, [groups, form]);
 
   const createEquipmentPayment = (
     equipmentModel: string,
@@ -615,6 +637,20 @@ export function usePriceTableForm({
         : await createOnePriceTable(payload);
 
       if (result?.success) {
+        // Update price table status in state after successful save
+        setPriceTableStatus(status);
+
+        // Update payment data states after successful save
+        if (payload.equipmentPayment) {
+          setExistingEquipmentPayment(payload.equipmentPayment);
+        }
+        if (payload.simcardPayment) {
+          setExistingSimcardPayment(payload.simcardPayment);
+        }
+        if (payload.servicePayment) {
+          setExistingServicePayment(payload.servicePayment);
+        }
+
         const message = editMode
           ? status === "DRAFT"
             ? "Alterações salvas!"
@@ -633,7 +669,12 @@ export function usePriceTableForm({
 
         toast({ title: message, description, variant: "success" });
 
-        router.push("/commercial/price-table");
+        // If creating new, navigate to edit mode with the new ID
+        // If editing, stay on the same page
+        if (!editMode && "id" in result && result.id) {
+          router.push(`/commercial/price-table/form/edit/${result.id}`);
+        }
+        // If already in edit mode, just stay on the page (no navigation)
       } else {
         const errorMsg =
           result?.error?.global || "Falha ao processar a tabela de preços!";
@@ -660,7 +701,35 @@ export function usePriceTableForm({
     }
   };
 
-  const handleSubmit = form.handleSubmit(
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    setLoading(true);
+    try {
+      // For draft saves, we don't need strict validation - get values directly
+      const currentData = form.getValues();
+
+      // Ensure start date is always in the future to avoid validation issues
+      const adjustedData = {
+        ...currentData,
+        startDateTime: ensureFutureStartDate(currentData.startDateTime),
+      };
+      await handleFormSubmission(adjustedData, "DRAFT");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    const currentData = form.getValues();
+    // Ensure start date is always in the future to avoid validation errors
+    const adjustedData = {
+      ...currentData,
+      startDateTime: ensureFutureStartDate(currentData.startDateTime),
+    };
+    await handleFormSubmission(adjustedData, "DRAFT");
+  };
+
+  const handleValidatedSubmit = form.handleSubmit(
     async (data: CreatePriceTableFormData) => {
       setLoading(true);
       try {
@@ -675,16 +744,6 @@ export function usePriceTableForm({
       }
     }
   );
-
-  const handleSaveDraft = async () => {
-    const currentData = form.getValues();
-    // Ensure start date is always in the future to avoid validation errors
-    const adjustedData = {
-      ...currentData,
-      startDateTime: ensureFutureStartDate(currentData.startDateTime),
-    };
-    await handleFormSubmission(adjustedData, "DRAFT");
-  };
 
   const handleValidationConditions = async () => {
     try {
@@ -797,6 +856,7 @@ export function usePriceTableForm({
   return {
     form,
     handleSubmit,
+    handleValidatedSubmit,
     handleSaveDraft,
     handleCancel: () => router.push("/commercial/price-table"),
     loading,
@@ -828,6 +888,8 @@ export function usePriceTableForm({
     existingEquipmentPayment,
     existingSimcardPayment,
     existingServicePayment,
+    priceTableStatus,
+    priceTableName,
     control: form.control,
   };
 }

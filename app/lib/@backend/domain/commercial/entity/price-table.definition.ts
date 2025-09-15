@@ -5,7 +5,6 @@ export type StatusPriceTable =
   | "INACTIVE"
   | "CANCELLED"
   | "AWAITING_PUBLICATION"
-  | "SCHEDULED_FOR_PUBLICATION"
   | "DRAFT";
 
 export interface IPriceTable {
@@ -14,8 +13,7 @@ export interface IPriceTable {
   startDateTime: Date;
   status?: StatusPriceTable;
   endDateTime: Date;
-  isTemporary: boolean; // tabela provisoria // tabela normal
-  enabledProductsIds?: string[];
+  isTemporary: boolean;
   groups: IPriceTableConditionGroup[];
   equipmentPayment?: IEquipmentPayment[];
   simcardPayment?: ISimcardPayment[];

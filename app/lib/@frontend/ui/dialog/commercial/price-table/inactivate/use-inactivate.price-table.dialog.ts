@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { useSearchParams } from "next/navigation";
 import { inactivatePriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
 
-export function useInactivatePriceTableDialog() {
+interface UseInactivatePriceTableDialogProps {
+  priceTableId?: string;
+  onSuccess?: () => void;
+}
+
+export function useInactivatePriceTableDialog({
+  priceTableId,
+  onSuccess,
+}: UseInactivatePriceTableDialogProps = {}) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const openDialog = () => setOpen(true);
-  const searchParams = useSearchParams();
-  const priceTableId = searchParams.get("id");
 
   const handleInactivatePriceTable = async () => {
     setIsLoading(true);
@@ -32,6 +37,7 @@ export function useInactivatePriceTableDialog() {
       });
 
       setOpen(false);
+      onSuccess?.();
     } catch (error) {
       toast({
         variant: "error",
