@@ -1,6 +1,27 @@
 import { useState } from "react";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { publishPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
+import {
+  publishPriceTable,
+  updateOnePriceTable,
+  findOnePriceTable,
+} from "@/app/lib/@backend/action/commercial/price-table.action";
+
+interface UsePublishPriceTableDialogProps {
+  priceTableId?: string;
+  onSuccess?: () => void;
+}
+
+const ensureFutureStartDate = (startDateTime: Date) => {
+  const now = new Date();
+  const oneMinuteFromNow = new Date(now.getTime() + 60000); // Add 1 minute
+
+  // If the start date is in the past or very close to now, use one minute from now
+  if (startDateTime <= now) {
+    return oneMinuteFromNow;
+  }
+
+  return startDateTime;
+};
 
 interface UsePublishPriceTableDialogProps {
   priceTableId?: string;
@@ -28,6 +49,29 @@ export function usePublishPriceTableDialog({
 
     setIsLoading(true);
     try {
+      const priceTableData = await findOnePriceTable({ id: priceTableId });
+
+      if (priceTableData) {
+        const originalStartDate = new Date(priceTableData.startDateTime);
+        const adjustedStartDate = ensureFutureStartDate(originalStartDate);
+
+        if (adjustedStartDate.getTime() !== originalStartDate.getTime()) {
+          const updateResult = await updateOnePriceTable({
+            ...priceTableData,
+            startDateTime: adjustedStartDate,
+          });
+
+          if (!updateResult?.success) {
+            toast({
+              variant: "error",
+              title: "Erro",
+              description: "Erro ao ajustar data de início. Tente novamente.",
+            });
+            return;
+          }
+        }
+      }
+
       const result = await publishPriceTable(priceTableId);
 
       if (result?.success) {
