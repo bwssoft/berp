@@ -227,10 +227,6 @@ export function usePriceTableForm({
     IServicePayment[]
   >([]);
 
-  const [groups, setGroups] = useState<Group[]>([
-    { id: uid(), conditions: [createEmptyCondition()], priority: false },
-  ]);
-
   const [messageErrorCondition, setMessageErrorCondition] = useState<{
     status: string;
     message: string;
@@ -688,7 +684,7 @@ export function usePriceTableForm({
 
   const handleValidationConditions = async () => {
     try {
-      const result = await validateBillingConditionsPriceTable(groups);
+      const result = await validateBillingConditionsPriceTable(form.getValues().groups || []);
       setMessageErrorCondition({
         status: result.status,
         message: result.messages[0] ?? "",
@@ -700,50 +696,6 @@ export function usePriceTableForm({
         variant: "error",
       });
     }
-  };
-  const addGroup = () =>
-    setGroups((prev) => [
-      ...prev,
-      { id: uid(), conditions: [createEmptyCondition()] },
-    ]);
-
-  const addCondition = (
-    groupId: string,
-    init?: Partial<IPriceTableCondition>
-  ) =>
-    setGroups((prev) =>
-      prev.map((g) =>
-        g.id === groupId
-          ? {
-              ...g,
-              conditions: [
-                ...g.conditions,
-                { ...createEmptyCondition(), ...init },
-              ],
-            }
-          : g
-      )
-    );
-
-  const removeCondition = (groupId: string, conditionId: string) => {
-    setGroups((prev) => {
-      const updated = prev.map((g) =>
-        g.id === groupId
-          ? {
-              ...g,
-              conditions: g.conditions.filter((c) => c.id !== conditionId),
-            }
-          : g
-      );
-
-      let pruned = updated.filter((g) => g.conditions.length > 0);
-
-      if (pruned.length === 0) {
-        pruned = [{ id: uid(), conditions: [createEmptyCondition()] }];
-      }
-
-      return pruned;
-    });
   };
 
   const handleCancel = () => {
@@ -774,12 +726,6 @@ export function usePriceTableForm({
   };
 
   const status = (messageErrorCondition.status ?? "red") as Status;
-
-  const setGroupPriority = (groupId: string, enabled: boolean) => {
-    setGroups((prev) =>
-      prev.map((g) => (g.id === groupId ? { ...g, priority: enabled } : g))
-    );
-  };
 
   const getCurrentFormData = () => {
     const data = form.getValues();
@@ -814,19 +760,53 @@ export function usePriceTableForm({
     formatDateTimeLocal,
     getCurrentFormData,
     schema: priceTableSchema,
-    addCondition,
-    addGroup,
-    groups,
-    setGroups,
     handleValidationConditions,
     messageErrorCondition,
     STATUS_STYLES,
     status,
-    removeCondition,
-    setGroupPriority,
     existingEquipmentPayment,
     existingSimcardPayment,
     existingServicePayment,
-    control: form.control,
   };
 }
+
+export const BRAZILIAN_UF_LIST = [
+  { id: "AC", text: "Acre" },
+  { id: "AL", text: "Alagoas" },
+  { id: "AP", text: "Amapá" },
+  { id: "AM", text: "Amazonas" },
+  { id: "BA", text: "Bahia" },
+  { id: "CE", text: "Ceará" },
+  { id: "DF", text: "Distrito Federal" },
+  { id: "ES", text: "Espírito Santo" },
+  { id: "GO", text: "Goiás" },
+  { id: "MA", text: "Maranhão" },
+  { id: "MT", text: "Mato Grosso" },
+  { id: "MS", text: "Mato Grosso do Sul" },
+  { id: "MG", text: "Minas Gerais" },
+  { id: "PA", text: "Pará" },
+  { id: "PB", text: "Paraíba" },
+  { id: "PR", text: "Paraná" },
+  { id: "PE", text: "Pernambuco" },
+  { id: "PI", text: "Piauí" },
+  { id: "RJ", text: "Rio de Janeiro" },
+  { id: "RN", text: "Rio Grande do Norte" },
+  { id: "RS", text: "Rio Grande do Sul" },
+  { id: "RO", text: "Rondônia" },
+  { id: "RR", text: "Roraima" },
+  { id: "SC", text: "Santa Catarina" },
+  { id: "SP", text: "São Paulo" },
+  { id: "SE", text: "Sergipe" },
+  { id: "TO", text: "Tocantins" },
+];
+
+export const TO_BILL_FOR_OPTIONS = [
+  { id: "20.618.574/0002-16", text: "BWS - 20.618.574/0002-16" },
+  { id: "41.459.104/0001-46", text: "HYBRID - 41.459.104/0001-46 (MATRIZ)" },
+  { id: "41.459.104/0002-27", text: "HYBRID - 41.459.104/0002-27 (FILIAL MG)" },
+  { id: "34.984.723/0001-94", text: "ICB - 34.984.723/0001-94 (MATRIZ)" },
+  { id: "34.984.723/0002-75", text: "ICB - 34.984.723/0002-75 (FILIAL SP)" },
+  { id: "34.984.723/0003-56", text: "ICB 34.984.723/0003-56 (FILIAL MG)" },
+  { id: "31.941.680/0001-71", text: "MGC - 31.941.680/0001-71" },
+  { id: "14.334.132/0001-64", text: "WFC - 14.334.132/0001-64" },
+];
