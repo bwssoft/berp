@@ -9,6 +9,7 @@ import { inactivatePriceTableUsecase } from "../../usecase/commercial/price-tabl
 import { updateOnePriceTableUsecase } from "../../usecase/commercial/price-table/update-one.price-table.usecase";
 import { cancelPriceTableUsecase } from "../../usecase/commercial/price-table/cancel.price-table.usecase";
 import { validateBillingConditionsPriceTableUsecase } from "../../usecase/commercial/price-table/validate-billing-conditions.usecase";
+import { publishPriceTableUsecase } from "../../usecase/commercial/price-table/publish.price-table.usecase";
 
 export async function findManyPriceTable(
   filter: Filter<IPriceTable> = {},
@@ -48,4 +49,9 @@ export const validateBillingConditionsPriceTable = async (
   groups: Array<IPriceTableConditionGroup & { priorityEnabled?: boolean }>
 ) => {
   return await validateBillingConditionsPriceTableUsecase.execute({ groups });
+};
+
+export const publishPriceTable = async (id: string) => {
+  const result = await publishPriceTableUsecase.execute({ id });
+  return result;
 };

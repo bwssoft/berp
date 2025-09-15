@@ -104,6 +104,10 @@ export function UpsertPriceTableForm({
     existingEquipmentPayment,
     existingSimcardPayment,
     existingServicePayment,
+    priceTableStatus,
+    priceTableName,
+    getCurrentFormData,
+    control,
   } = usePriceTableForm({ priceTableId, editMode });
 
   // Dialog hooks
@@ -113,7 +117,7 @@ export function UpsertPriceTableForm({
     openDialog: openCancelPriceTableDialog,
     isLoading: isLoadingCancel,
     handleCancelPriceTable,
-  } = useCancelPriceTableDialog();
+  } = useCancelPriceTableDialog({ priceTableId });
 
   const {
     open: openInactiveDialog,
@@ -121,7 +125,13 @@ export function UpsertPriceTableForm({
     openDialog: openInactivePriceTableDialog,
     isLoading: isLoadingInactive,
     handleInactivatePriceTable,
-  } = useInactivatePriceTableDialog();
+  } = useInactivatePriceTableDialog({
+    priceTableId,
+    onSuccess: () => {
+      // Redirect to list page after successful inactivation
+      window.location.href = "/commercial/price-table";
+    },
+  });
 
   const {
     open: openPublishDialog,
@@ -129,7 +139,14 @@ export function UpsertPriceTableForm({
     openDialog: openPublishPriceTableDialog,
     isLoading: isLoadingPublish,
     publishPriceTable,
-  } = usePublishPriceTableDialog();
+  } = usePublishPriceTableDialog({
+    priceTableId,
+    onSuccess: () => {
+      // Update the status in the form after successful publish
+      // This will trigger button re-rendering
+      window.location.reload(); // Simple way to refresh the state
+    },
+  });
 
   const [enabledEquipmentWithSim, setEnabledEquipmentWithSim] = useState<
     Record<string, boolean>
@@ -184,49 +201,142 @@ export function UpsertPriceTableForm({
     }
   }, [existingEquipmentPayment]);
 
+  // Watch form payment data to make button visibility reactive
+  const watchedEquipmentWithSim = form.watch("equipmentWithSim");
+  const watchedEquipmentWithoutSim = form.watch("equipmentWithoutSim");
+  const watchedAccessories = form.watch("accessories");
+  const watchedSimCards = form.watch("simCards");
+  const watchedServices = form.watch("services");
+
+  // Helper function to check if price table has required payment data for publishing
+  const hasRequiredPaymentData = () => {
+    const hasExistingPayments =
+      (existingEquipmentPayment && existingEquipmentPayment.length > 0) ||
+      (existingSimcardPayment && existingSimcardPayment.length > 0) ||
+      (existingServicePayment && existingServicePayment.length > 0);
+
+    const hasFormPayments =
+      (watchedEquipmentWithSim &&
+        Object.keys(watchedEquipmentWithSim).length > 0) ||
+      (watchedEquipmentWithoutSim &&
+        Object.keys(watchedEquipmentWithoutSim).length > 0) ||
+      (watchedAccessories && Object.keys(watchedAccessories).length > 0) ||
+      (watchedSimCards && watchedSimCards.length > 0) ||
+      (watchedServices && watchedServices.length > 0);
+
+    const result = hasExistingPayments || hasFormPayments;
+
+    return result;
+  };
+
+  // Helper function to get status badge
+  const getStatusBadge = (status: string | null) => {
+    if (!status) return null;
+
+    const statusColors = {
+      DRAFT: "bg-gray-100 text-gray-800",
+      ACTIVE: "bg-green-100 text-green-800",
+      INACTIVE: "bg-red-100 text-red-800",
+      CANCELLED: "bg-red-100 text-red-800",
+      AWAITING_PUBLICATION: "bg-yellow-100 text-yellow-800",
+    };
+
+    const statusLabels = {
+      DRAFT: "Rascunho",
+      ACTIVE: "Ativo",
+      INACTIVE: "Inativo",
+      CANCELLED: "Cancelado",
+      AWAITING_PUBLICATION: "Aguardando Publicação",
+    };
+
+    const colorClass =
+      statusColors[status as keyof typeof statusColors] ||
+      "bg-gray-100 text-gray-800";
+    const label = statusLabels[status as keyof typeof statusLabels] || status;
+
+    return (
+      <span
+        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}
+      >
+        {label}
+      </span>
+    );
+  };
+
+  // Determine button visibility based on state
+  const isCreatingNew = !editMode || !priceTableId;
+  const isDraft = priceTableStatus === "DRAFT" || priceTableStatus === null;
+  const isActive = priceTableStatus === "ACTIVE";
+
   return (
     <div className="space-y-4">
       {/* Header with title and buttons */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Tabela de Preços
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Tabela de Preços
+          </h1>
+          {editMode && priceTableName && (
+            <div className="flex items-center gap-2">
+              <span className="text-lg text-gray-600">-</span>
+              <span className="text-lg text-gray-700">{priceTableName}</span>
+              {getStatusBadge(priceTableStatus)}
+            </div>
+          )}
+        </div>
         <div className="flex gap-2">
-          <Button
-            type="button"
-            className="bg-green-600 hover:bg-green-700"
-            onClick={openPublishPriceTableDialog}
-          >
-            Publicar
-          </Button>
+          {/* Publicar button - only show for DRAFT with required payment data */}
+          {isDraft && hasRequiredPaymentData() && (
+            <Button
+              type="button"
+              className="bg-green-600 hover:bg-green-700"
+              onClick={openPublishPriceTableDialog}
+            >
+              Publicar
+            </Button>
+          )}
+
+          {/* Voltar button - always show */}
           <Link href="/commercial/price-table">
             <Button type="button" variant="outline">
               Voltar
             </Button>
           </Link>
-          <Button
-            type="button"
-            variant="outline"
-            className="text-red-600 border-red-300 hover:bg-red-50"
-            onClick={openCancelPriceTableDialog}
-          >
-            Cancelar tabela
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={openInactivePriceTableDialog}
-          >
-            Inativar tabela
-          </Button>
-          <Button
-            type="submit"
-            form="price-table-form"
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-500"
-          >
-            {loading ? "Salvando..." : "Salvar"}
-          </Button>
+
+          {/* Cancelar button - only show for DRAFT when editing */}
+          {isDraft && !isCreatingNew && (
+            <Button
+              type="button"
+              variant="outline"
+              className="text-red-600 border-red-300 hover:bg-red-50"
+              onClick={openCancelPriceTableDialog}
+            >
+              Cancelar tabela
+            </Button>
+          )}
+
+          {/* Inativar button - only show for ACTIVE */}
+          {isActive && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={openInactivePriceTableDialog}
+            >
+              Inativar tabela
+            </Button>
+          )}
+
+          {/* Salvar button - show for creating new or editing DRAFT */}
+          {(isCreatingNew || isDraft) && (
+            <Button
+              type="submit"
+              form="price-table-form"
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-500"
+            >
+              {loading ? "Salvando..." : "Salvar"}
+            </Button>
+          )}
         </div>
       </div>
 
