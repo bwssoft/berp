@@ -274,7 +274,7 @@ export const columns: ColumnDef<IAudit>[] = [
                 return `campo '${nomeCampo}'`;
               }
 
-              return `campo '${nomeCampo}' de '${before}' para '${after}'`;
+              return `campo '${nomeCampo}' de '${Array.isArray(before) ? before.map(i => i.name): before}' para '${Array.isArray(after) ? after.map(i => i.name): after}'`;
             };
 
             if (type === "update" && metadata && metadata.length > 0) {
@@ -287,7 +287,6 @@ export const columns: ColumnDef<IAudit>[] = [
                 .join("; ");
 
               const plural = metadata.length > 1 ? "alterados" : "alterado";
-
               return `Usuário '${label}' teve ${camposAlterados} ${plural}`;
             }
 
