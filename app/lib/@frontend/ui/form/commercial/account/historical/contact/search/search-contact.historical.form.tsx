@@ -20,13 +20,10 @@ import { Controller } from "react-hook-form";
 import { maskPhone } from "@/app/lib/util/format-phone";
 import { WhatsappIcon } from "@/app/lib/@frontend/svg/whatsapp-icon";
 import { useState } from "react";
+import { ContactListItem } from "@/app/lib/@frontend/ui/modal/comercial/historical/contact/search/types";
 
 type ContactAccountFormProps = {
-  contacts: {
-    name: string;
-    contacts: IContact[];
-    documentValue: string;
-  }[];
+  contacts: ContactListItem[];
   isLoading?: boolean;
   closeModal: () => void;
   selectContact: ContactSelection;
@@ -171,98 +168,126 @@ export function SearchContactHistoricalAccountForm({
           </div>
         ) : (
           /* Contact Disclosures */
-          contactData?.map((company) => (
+          contactData?.map((contact) => (
             <div
-              key={company.documentValue}
+              key={contact.contactId}
               className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden"
             >
               <Disclosure>
                 {({ open }) => {
-                  const isOpen = openDisclosure === company.documentValue;
+                  const isOpen = openDisclosure === contact.contactId;
                   return (
                     <>
-                      <DisclosureButton 
+                      <DisclosureButton
                         className="flex justify-between w-full px-6 py-4 text-base font-semibold text-left text-gray-800 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-150 transition-all duration-200"
                         onClick={() => {
                           if (isOpen) {
                             setOpenDisclosure(null);
                           } else {
-                            setOpenDisclosure(company.documentValue);
+                            setOpenDisclosure(contact.contactId);
                           }
                         }}
                       >
-                        <span className="text-base">{company.name}</span>
+                        <div className="flex flex-col items-start">
+                          <div className="flex items-center gap-2">
+                            <span className="text-base font-semibold">
+                              {contact.contactName}
+                            </span>
+                            {contact.contactFor &&
+                              contact.contactFor.length > 0 && (
+                                <div className="flex gap-1">
+                                  {contact.contactFor.map((type, index) => (
+                                    <span
+                                      key={index}
+                                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                    >
+                                      {type}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                            {contact.positionOrRelation && (
+                              <span>{contact.positionOrRelation}</span>
+                            )}
+                            {contact.department && (
+                              <>
+                                {contact.positionOrRelation && <span>•</span>}
+                                <span>{contact.department}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
                         <ChevronUpIcon
                           className={`${isOpen ? "rotate-180 transform" : ""} w-6 h-6 text-blue-600 transition-transform duration-200`}
                         />
                       </DisclosureButton>
                       {isOpen && (
-                        <DisclosurePanel 
-                          static 
+                        <DisclosurePanel
+                          static
                           className="px-6 py-4 bg-white max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
                         >
                           <div className="space-y-3">
-                        {company.contacts.map((c) =>
-                          c.contactItems.map((ci) => (
-                            <div
-                              key={ci.id}
-                              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-150"
-                            >
-                              <div className="flex flex-col">
-                                <span className="text-sm font-medium text-gray-700">
-                                  {ci.type}
-                                </span>
-                                <span className="text-sm text-gray-600">
-                                  {ci.contact}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div className="flex items-center gap-2">
-                                  {ci.type.includes("Telefone") && (
-                                    <PhoneIcon className="w-5 h-5 text-blue-600" />
-                                  )}
-                                  {ci.type === "Email" && (
-                                    <EnvelopeIcon className="w-5 h-5 text-green-600" />
-                                  )}
-                                  {ci.type === "Celular" && (
-                                    <WhatsappIcon classname="w-5 h-5 text-green-600" />
-                                  )}
-                                  <Checkbox
-                                    checked={isSelected(ci.id, ci.type)}
-                                    onChange={() =>
-                                      toggleSelection(
-                                        ci.id,
-                                        company.name,
-                                        ci.type,
-                                        ci.contact,
-                                        ci.type
-                                      )
-                                    }
-                                  />
+                            {contact.contactItems.map((ci) => (
+                              <div
+                                key={ci.id}
+                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-150"
+                              >
+                                <div className="flex flex-col">
+                                  <span className="text-sm font-medium text-gray-700">
+                                    {ci.type}
+                                  </span>
+                                  <span className="text-sm text-gray-600">
+                                    {ci.contact}
+                                  </span>
                                 </div>
-                                {ci.type === "Celular" && (
+                                <div className="flex items-center gap-2">
                                   <div className="flex items-center gap-2">
-                                    <PhoneIcon className="w-5 h-5 text-green-600" />
+                                    {ci.type.includes("Telefone") && (
+                                      <PhoneIcon className="w-5 h-5 text-blue-600" />
+                                    )}
+                                    {ci.type === "Email" && (
+                                      <EnvelopeIcon className="w-5 h-5 text-green-600" />
+                                    )}
+                                    {ci.type === "Celular" && (
+                                      <WhatsappIcon classname="w-5 h-5 text-green-600" />
+                                    )}
                                     <Checkbox
-                                      checked={isSelected(ci.id, "Whatsapp")}
+                                      checked={isSelected(ci.id, ci.type)}
                                       onChange={() =>
                                         toggleSelection(
                                           ci.id,
-                                          company.name,
+                                          contact.contactName,
                                           ci.type,
                                           ci.contact,
-                                          "Whatsapp"
+                                          ci.type
                                         )
                                       }
                                     />
                                   </div>
-                                )}
+                                  {ci.type === "Celular" && (
+                                    <div className="flex items-center gap-2">
+                                      <PhoneIcon className="w-5 h-5 text-green-600" />
+                                      <Checkbox
+                                        checked={isSelected(ci.id, "Whatsapp")}
+                                        onChange={() =>
+                                          toggleSelection(
+                                            ci.id,
+                                            contact.contactName,
+                                            ci.type,
+                                            ci.contact,
+                                            "Whatsapp"
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </DisclosurePanel>
+                            ))}
+                          </div>
+                        </DisclosurePanel>
                       )}
                     </>
                   );
