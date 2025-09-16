@@ -117,7 +117,7 @@ export function UpdateOneUserForm({ user }: Props) {
                     checked={field.value}
                     onChange={field.onChange}
                     onBlur={field.onBlur}
-                    disabled={isLocked || !isActive}
+                    disabled={!isActive}
                     name={field.name}
                     label="Usuário externo"
                   />
@@ -141,7 +141,7 @@ export function UpdateOneUserForm({ user }: Props) {
                     value={field.value}
                     keyExtractor={(item) => item.id}
                     displayValueGetter={(item) => item.name}
-                    disabled={isLocked || !isActive}
+                    disabled={!isActive}
                   />
                 )}
               />
@@ -151,7 +151,7 @@ export function UpdateOneUserForm({ user }: Props) {
               label="CPF"
               {...register("cpf")}
               error={errors.cpf?.message}
-              disabled={isLocked || !isActive}
+              disabled={ !isActive}
               placeholder="Digite o CPF"
             />
 
@@ -159,7 +159,7 @@ export function UpdateOneUserForm({ user }: Props) {
               label="Nome Completo"
               {...register("name")}
               error={errors.name?.message}
-              disabled={isLocked || !isActive}
+              disabled={ !isActive}
               placeholder="Digite o nome completo"
             />
 
@@ -168,7 +168,7 @@ export function UpdateOneUserForm({ user }: Props) {
               type="email"
               {...register("email")}
               error={errors.email?.message}
-              disabled={isLocked || !isActive}
+              disabled={ !isActive}
               placeholder="Digite o Email"
             />
 
@@ -176,7 +176,7 @@ export function UpdateOneUserForm({ user }: Props) {
               label="Usuário"
               {...register("username")}
               error={errors.username?.message}
-              disabled={isLocked || !isActive}
+              disabled={ !isActive}
               placeholder="Digite o nome de Usuário"
             />
           </div>
@@ -186,7 +186,7 @@ export function UpdateOneUserForm({ user }: Props) {
               name="image"
               render={({ field }) => (
                 <FileUpload
-                  disabled={isLocked || !isActive}
+                  disabled={ !isActive}
                   label="Imagem de perfil"
                   handleFile={field.onChange}
                   multiple={false}
