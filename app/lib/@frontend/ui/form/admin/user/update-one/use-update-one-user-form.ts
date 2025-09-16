@@ -81,7 +81,7 @@ export function useUpdateOneUserForm(user: IUser) {
 
   const profiles =
     searchTerm.length > 0
-      ? (searchedProfiles.data ?? [])
+      ? (searchedProfiles.data?.filter((p) => p.active) ?? [])
       : (initialProfiles.data?.filter((p) => p.active) ?? []);
 
   const router = useRouter();
