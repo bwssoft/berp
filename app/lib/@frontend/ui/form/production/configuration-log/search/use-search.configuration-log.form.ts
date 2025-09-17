@@ -61,7 +61,9 @@ export const useConfigurationLogSearchForm = ({
   const exportMutation = useMutation({
     mutationKey: ["export-configuration-log"],
     mutationFn: async (filter: Filter<IConfigurationLog>) => {
-      const url = await exportConfigurationLog(filter);
+      const url = await exportConfigurationLog({
+        ...filter,
+      });
       window.location.href = url;
     },
     onSuccess: () => {
