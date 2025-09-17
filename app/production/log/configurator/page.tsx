@@ -18,18 +18,20 @@ import { Plus } from "lucide-react";
 import { Filter } from "mongodb";
 import Link from "next/link";
 
+export interface ConfiguratorPageSearchParams {
+  query?: string;
+  equipment?: string;
+  technology?: string;
+  profile?: string;
+  status?: string[];
+  user?: string;
+  client?: string;
+  from?: Date;
+  to?: Date;
+}
+
 interface Props {
-  searchParams: {
-    query?: string;
-    equipment?: string;
-    technology?: string;
-    profile?: string;
-    status?: string[];
-    user?: string;
-    client?: string;
-    start_date?: Date;
-    end_date?: Date;
-  };
+  searchParams: ConfiguratorPageSearchParams;
 }
 
 export default async function Example({ searchParams }: Props) {
@@ -122,7 +124,10 @@ export default async function Example({ searchParams }: Props) {
             Visualize e gerencie todos os registros de configuração
           </CardDescription>
 
-          <ConfigurationLogSearchForm filter={<></>} />
+          <ConfigurationLogSearchForm
+            searchParams={searchParams}
+            filter={filter}
+          />
         </CardHeader>
         <CardContent className="p-0">
           <ConfigurationLogTable data={configurationLog} />
@@ -197,10 +202,10 @@ function query(props: Props["searchParams"]): Filter<IConfigurationLog> {
     conditions.push({ status: { $in: statusBooleans } });
   }
 
-  if (props.start_date || props.end_date) {
+  if (props.from || props.to) {
     const dateFilter: { $gte?: Date; $lte?: Date } = {};
-    if (props.start_date) dateFilter.$gte = props.start_date;
-    if (props.end_date) dateFilter.$lte = props.end_date;
+    if (props.from) dateFilter.$gte = new Date(props.from);
+    if (props.to) dateFilter.$lte = new Date(props.to);
     conditions.push({ created_at: dateFilter });
   }
 
