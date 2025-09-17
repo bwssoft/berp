@@ -18,18 +18,19 @@ import { Plus } from "lucide-react";
 import { Filter } from "mongodb";
 import Link from "next/link";
 
+export interface ConfiguratorPageSearchParams {
+  query?: string;
+  from?: Date;
+  to?: Date;
+  user?: string;
+  client?: string;
+  iccid?: string;
+  status?: string;
+  profile?: string;
+}
+
 interface Props {
-  searchParams: {
-    query?: string;
-    equipment?: string;
-    technology?: string;
-    profile?: string;
-    status?: string[];
-    user?: string;
-    client?: string;
-    start_date?: Date;
-    end_date?: Date;
-  };
+  searchParams: ConfiguratorPageSearchParams;
 }
 
 export default async function Example({ searchParams }: Props) {
@@ -121,6 +122,11 @@ export default async function Example({ searchParams }: Props) {
           <CardDescription>
             Visualize e gerencie todos os registros de configuração
           </CardDescription>
+
+          <ConfigurationLogSearchForm
+            searchParams={searchParams}
+            filter={filter}
+          />
         </CardHeader>
         <CardContent className="p-0">
           <ConfigurationLogTable data={configurationLog} />
@@ -151,32 +157,19 @@ function query(props: Props["searchParams"]): Filter<IConfigurationLog> {
     });
   }
 
-  // Filtros específicos...
-  if (props.equipment) {
-    const eqRegex = { $regex: props.equipment, $options: "i" };
-    conditions.push({
-      $or: [
-        { "equipment.imei": eqRegex },
-        { "equipment.serial": eqRegex },
-        { "equipment.iccid": eqRegex },
-        { "equipment.firmware": eqRegex },
-      ],
-    });
+  if (props.iccid) {
+    const eqRegex = { $regex: props.iccid, $options: "i" };
+    conditions.push({ "equipment.iccid": eqRegex });
   }
 
   if (props.profile) {
     const eqRegex = { $regex: props.profile, $options: "i" };
-    conditions.push({ "profile.name": eqRegex });
+    conditions.push({ "desired_profile.name": eqRegex });
   }
 
   if (props.user) {
     const eqRegex = { $regex: props.user, $options: "i" };
     conditions.push({ "user.name": eqRegex });
-  }
-
-  if (props.technology) {
-    const eqRegex = { $regex: props.technology, $options: "i" };
-    conditions.push({ "technology.system_name": eqRegex });
   }
 
   if (props.client) {
@@ -190,15 +183,15 @@ function query(props: Props["searchParams"]): Filter<IConfigurationLog> {
     });
   }
 
-  if (props.status) {
-    const statusBooleans = props.status.map((s) => s === "true");
-    conditions.push({ status: { $in: statusBooleans } });
+  if (props.status !== undefined) {
+    const statusBooleans = props.status === "success";
+    conditions.push({ status: statusBooleans });
   }
 
-  if (props.start_date || props.end_date) {
+  if (props.from || props.to) {
     const dateFilter: { $gte?: Date; $lte?: Date } = {};
-    if (props.start_date) dateFilter.$gte = props.start_date;
-    if (props.end_date) dateFilter.$lte = props.end_date;
+    if (props.from) dateFilter.$gte = new Date(props.from);
+    if (props.to) dateFilter.$lte = new Date(props.to);
     conditions.push({ created_at: dateFilter });
   }
 
