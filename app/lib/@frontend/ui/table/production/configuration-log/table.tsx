@@ -27,7 +27,7 @@ export function ConfigurationLogTable({ data }: Props) {
   });
 
   return (
-    <div className="rounded-md border w-full">
+    <div className="border-t w-full">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
