@@ -9,6 +9,7 @@ import { LoaderIcon, RefreshCcwIcon, SearchIcon } from "lucide-react";
 import { DateRangeInput } from "../../../../component/date-range-input";
 import { Controller } from "react-hook-form";
 import { ConfiguratorPageSearchParams } from "@/app/production/log/configurator/page";
+import React from "react";
 
 interface Props {
   filter: Filter<IConfigurationLog>;
@@ -19,7 +20,7 @@ export function ConfigurationLogSearchForm({ filter, searchParams }: Props) {
   const {
     searchForm,
     handleSubmit,
-    handleExport,
+    exportMutation,
     isPending,
     handleReset,
     shouldShowResetButton,
@@ -91,11 +92,21 @@ export function ConfigurationLogSearchForm({ filter, searchParams }: Props) {
       </form>
       <Button
         variant="outline"
+        disabled={exportMutation.isPending}
         type="button"
         title="Exporte os dados filtrados"
-        onClick={() => handleExport(filter)}
+        onClick={() => exportMutation.mutate(filter)}
       >
-        <ArrowDownTrayIcon className="size-5" /> Exportar
+        {exportMutation.isPending ? (
+          <React.Fragment>
+            <LoaderIcon className="animate-spin" size={12} />
+            Exportando dados, aguarde...
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <ArrowDownTrayIcon className="size-5" /> Exportar
+          </React.Fragment>
+        )}
       </Button>
     </div>
   );

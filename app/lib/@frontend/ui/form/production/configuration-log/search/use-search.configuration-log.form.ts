@@ -1,8 +1,10 @@
 import { exportConfigurationLog } from "@/app/lib/@backend/action/production/configuration-log.action";
 import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
+import { useToast } from "@/app/lib/@frontend/hook/use-toast";
 import { ConfiguratorPageSearchParams } from "@/app/production/log/configurator/page";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Filter } from "mongodb";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -27,6 +29,7 @@ interface UseConfigurationLogSearchFormProps {
 export const useConfigurationLogSearchForm = ({
   searchParams,
 }: UseConfigurationLogSearchFormProps) => {
+  const { toast } = useToast();
   const { handleParamsChange, handleResetParams } = useHandleParamsChange();
 
   const [isPending, startTransition] = React.useTransition();
@@ -47,10 +50,26 @@ export const useConfigurationLogSearchForm = ({
     handleFailedSubmit
   );
 
-  const handleExport = async (filter: Filter<IConfigurationLog>) => {
-    const url = await exportConfigurationLog(filter);
-    window.location.href = url;
-  };
+  const exportMutation = useMutation({
+    mutationKey: ["export-configuration-log"],
+    mutationFn: async (filter: Filter<IConfigurationLog>) => {
+      const url = await exportConfigurationLog(filter);
+      window.location.href = url;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Dados exportados com sucesso!",
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao exportar dados",
+        description: error.message,
+        variant: "error",
+      });
+    },
+  });
 
   function handleSucceededSubmit(data: SearchConfigurationLogFormData) {
     startTransition(() => {
@@ -92,7 +111,7 @@ export const useConfigurationLogSearchForm = ({
   return {
     isPending,
     searchForm,
-    handleExport,
+    exportMutation,
     handleSubmit,
     handleReset,
     shouldShowResetButton,
