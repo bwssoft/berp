@@ -3,91 +3,64 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { IAccount, IContact } from "@/app/lib/@backend/domain";
-import {
-  findManyAccount,
-  findOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
-import { findOneAccountEconomicGroup } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
+import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import { ContactListItem } from "./types";
 
-const PAGE_SIZE = 10;
-const currentPage = 1;
+const transformContactToListItem = (contact: IContact): ContactListItem => ({
+  contactId: contact.id,
+  contactName: contact.name,
+  positionOrRelation: contact.positionOrRelation || "",
+  department: contact.department || "",
+  contactFor: contact.contactFor || [],
+  contactItems: contact.contactItems || [],
+  originType: contact.originType || "local",
+});
+
+const processAccountContacts = async (
+  account: IAccount
+): Promise<ContactListItem[]> => {
+  if (!account.id) {
+    return [];
+  }
+
+  try {
+    const accountContacts = await findManyContact({ accountId: account.id });
+
+    if (!accountContacts?.length) {
+      return [];
+    }
+
+    return accountContacts.map((contact) =>
+      transformContactToListItem(contact)
+    );
+  } catch (error) {
+    console.error(`Error fetching contacts for account ${account.id}:`, error);
+    return [];
+  }
+};
 
 export function useSearchContactHistoricalModal(accountId?: string) {
   const [open, setOpen] = useState(false);
   const [accountData, setAccountData] = useState<IAccount | null>();
 
   const { data: contactsByCompany, isLoading: accountLoading } = useQuery({
-    queryKey: ["contactsByCompany", accountId, currentPage],
-    queryFn: async () => {
+    queryKey: ["contactsByCompany", accountId],
+    queryFn: async (): Promise<ContactListItem[]> => {
       if (!accountId) return [];
 
-      const account = await findOneAccount({ id: accountId });
-      setAccountData(account);
+      try {
+        const account = await findOneAccount({ id: accountId });
+        if (!account) return [];
 
-      const empresas: {
-        name: string;
-        contacts: IContact[];
-        documentValue: string;
-      }[] = [];
+        setAccountData(account);
 
-      const documentosInseridos = new Set<string>();
-
-      const addEmpresa = async (empresa: IAccount) => {
-        const docValue = empresa.document?.value;
-        if (
-          docValue &&
-          !documentosInseridos.has(docValue) &&
-          empresa.fantasy_name &&
-          empresa.id
-        ) {
-          // Fetch contacts for this account
-          const accountContacts = await findManyContact({
-            accountId: empresa.id,
-          });
-
-          if (accountContacts && accountContacts.length > 0) {
-            documentosInseridos.add(docValue);
-            empresas.push({
-              name: empresa.fantasy_name,
-              documentValue: docValue,
-              contacts: accountContacts,
-            });
-          }
-        }
-      };
-
-      if (account) {
-        await addEmpresa(account);
-
-        // Check if account has economic group data
-        if (account.economicGroupId) {
-          try {
-            const economicGroupData = await findOneAccountEconomicGroup({
-              id: account.economicGroupId,
-            });
-
-            if (economicGroupData?.economic_group_holding?.name) {
-              const grupo = await findManyAccount(
-                {
-                  economicGroupId: account.economicGroupId,
-                },
-                currentPage,
-                PAGE_SIZE
-              );
-
-              // Process each account in the economic group
-              for (const groupAccount of grupo.docs) {
-                await addEmpresa(groupAccount);
-              }
-            }
-          } catch (error) {
-            console.error("Error fetching economic group data:", error);
-          }
-        }
+        const mainAccountContacts = await processAccountContacts(account);
+        return mainAccountContacts;
+      } catch (error) {
+        console.error("Error fetching contacts:", error);
+        return [];
       }
-
-      return empresas;
     },
     enabled: !!accountId,
   });
