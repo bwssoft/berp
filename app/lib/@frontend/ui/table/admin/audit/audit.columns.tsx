@@ -119,7 +119,7 @@ function formatScalar(v: unknown, field?: string) {
     }).format(v);
   }
   if (Array.isArray(v)) {
-    // Handle profile array specifically
+    // perfil como array de objetos
     if (
       field === "profile" &&
       v.length > 0 &&
@@ -132,27 +132,19 @@ function formatScalar(v: unknown, field?: string) {
   }
   if (v == null) return "";
 
-  // Handle objects specifically
   if (typeof v === "object" && v !== null) {
-    // Handle image object
     if (field === "image" && "key" in v) {
       return (v as any).key || "";
     }
-
-    // Handle profile objects (single profile)
     if (field === "profile" && "name" in v) {
       return (v as any).name || "";
     }
-
-    // For other objects, try to extract meaningful information
     if ("name" in v) {
-      return (v as any).name;
+      return (v as any).name as string;
     }
     if ("id" in v && "name" in v) {
-      return (v as any).name;
+      return (v as any).name as string;
     }
-
-    // Fallback: return empty string instead of [object Object]
     return "";
   }
 
@@ -217,7 +209,49 @@ export const columns: ColumnDef<IAudit>[] = [
       }
 
       const label = action.split("'")[1] ?? "registro";
+      const hasLocked = metadata.some((m) => m.field === "locked_control_code");
 
+      // ===== Updates genéricos (sem permissões) — formatação idêntica ao caso padrão =====
+      if (type === "update" && metadata.length > 0 && !hasLocked) {
+        return (
+          <div className="space-y-2">
+            {metadata.map((m, i) => {
+              const field = m.field;
+              const pretty = fieldLabel[field] ?? field;
+
+              const before = formatScalar(m.before, field);
+              const after = formatScalar(m.after, field);
+
+              const renderValue = (value: string) => {
+                if (pretty === "perfil") {
+                  return (
+                    <span className="font-medium flex flex-wrap">
+                      {value.split(",").map((part, idx, arr) => (
+                        <span key={idx}>
+                          {part.trim()}
+                          {idx < arr.length - 1 && `,\u00A0`}
+                        </span>
+                      ))}
+                    </span>
+                  );
+                }
+                return <span className="font-medium break-words">{value}</span>;
+              };
+
+              return (
+                <div key={i} className="text-sm w-[20vw]">
+                  <span className="mr-1 font-bold">{`Campo '${pretty}' de`}</span>
+                  {renderValue(before)}
+                  <span className="mx-1 font-bold">para</span>
+                  {renderValue(after)}
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+
+      // ===== Caso especial: permissões (chips) =====
       return (
         <div className="space-y-2">
           {metadata.map((m, i) => {
@@ -225,10 +259,7 @@ export const columns: ColumnDef<IAudit>[] = [
             const pretty = fieldLabel[field] ?? field;
 
             if (field === "locked_control_code") {
-              const { added, removed, beforeAll, prevAll } = diffLists(
-                m.before,
-                m.after
-              );
+              const { added, removed } = diffLists(m.before, m.after);
               const addedMap = added.map((code) => ({
                 code,
                 label: translatePermission(code),
@@ -261,35 +292,7 @@ export const columns: ColumnDef<IAudit>[] = [
               );
             }
 
-            const sensitiveFields = new Set(["password", "temporary_password"]);
-
-            const formatChange = (
-              field: string,
-              before: string,
-              after: string
-            ) => {
-              const nomeCampo = fieldLabel[field] ?? field;
-
-              if (sensitiveFields.has(field)) {
-                return `campo '${nomeCampo}'`;
-              }
-
-              return `campo '${nomeCampo}' de '${Array.isArray(before) ? before.map(i => i.name): before}' para '${Array.isArray(after) ? after.map(i => i.name): after}'`;
-            };
-
-            if (type === "update" && metadata && metadata.length > 0) {
-              const label = action.split("'")[1] ?? "usuário";
-
-              const camposAlterados = metadata
-                .map(({ field, before, after }) =>
-                  formatChange(field, before, after)
-                )
-                .join("; ");
-
-              const plural = metadata.length > 1 ? "alterados" : "alterado";
-              return `Usuário '${label}' teve ${camposAlterados} ${plural}`;
-            }
-
+            // ===== Caso padrão (quando não é permissões) =====
             const before = formatScalar(m.before, field);
             const after = formatScalar(m.after, field);
 
@@ -306,7 +309,6 @@ export const columns: ColumnDef<IAudit>[] = [
                   </span>
                 );
               }
-
               return <span className="font-medium break-words">{value}</span>;
             };
 

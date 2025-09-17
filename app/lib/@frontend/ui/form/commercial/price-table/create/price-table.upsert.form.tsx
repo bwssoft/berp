@@ -6,9 +6,7 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import {
-  ChevronDownIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import {
   Button,
   Checkbox,
@@ -21,7 +19,11 @@ import {
   SimCardPriceForm,
   ServicePriceForm,
 } from "../product-form";
-import { BRAZILIAN_UF_LIST, TO_BILL_FOR_OPTIONS, usePriceTableForm } from "./use-price-table.form";
+import {
+  BRAZILIAN_UF_LIST,
+  TO_BILL_FOR_OPTIONS,
+  usePriceTableForm,
+} from "./use-price-table.form";
 import Link from "next/link";
 import { CancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/cancel.price-table.dialog";
 import { PublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/publish.price-table.dialog";
@@ -106,7 +108,6 @@ export function UpsertPriceTableForm({
     existingServicePayment,
     priceTableStatus,
     priceTableName,
-    getCurrentFormData,
   } = usePriceTableForm({ priceTableId, editMode });
 
   // Dialog hooks
@@ -421,7 +422,7 @@ export function UpsertPriceTableForm({
                 {messageErrorCondition.status && (
                   <StatusBanner
                     status={status}
-                    message={messageErrorCondition.message} 
+                    message={messageErrorCondition.message}
                     statusStyles={STATUS_STYLES}
                   />
                 )}
@@ -441,7 +442,9 @@ export function UpsertPriceTableForm({
                 {/* Venda com SIM Card */}
                 <Disclosure>
                   <DisclosureButton className="border border-gray-200 rounded-md w-full p-3 group flex justify-between items-center gap-2 bg-gray-50">
-                    <h3 className="font-semibold text-sm">Venda com SIM Card</h3>
+                    <h3 className="font-semibold text-sm">
+                      Venda com SIM Card
+                    </h3>
                     <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
                   </DisclosureButton>
                   <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
@@ -467,7 +470,8 @@ export function UpsertPriceTableForm({
                       ) : equipmentModels.length === 0 ? (
                         <div className="text-center py-4">
                           <p className="text-sm text-gray-500">
-                            Nenhum equipamento encontrado com categoria TABLE-RAST
+                            Nenhum equipamento encontrado com categoria
+                            TABLE-RAST
                           </p>
                         </div>
                       ) : (
@@ -480,7 +484,8 @@ export function UpsertPriceTableForm({
                                 </h4>
                                 <Toggle
                                   value={
-                                    enabledEquipmentWithSim[equipment.id] || false
+                                    enabledEquipmentWithSim[equipment.id] ||
+                                    false
                                   }
                                   onChange={(enabled) =>
                                     handleEquipmentToggle(
@@ -501,7 +506,8 @@ export function UpsertPriceTableForm({
                                 </h4>
                                 <Toggle
                                   value={
-                                    enabledEquipmentWithSim[equipment.id] || false
+                                    enabledEquipmentWithSim[equipment.id] ||
+                                    false
                                   }
                                   onChange={(enabled) =>
                                     handleEquipmentToggle(
@@ -522,11 +528,12 @@ export function UpsertPriceTableForm({
                                 <EquipmentAccessoryPriceForm
                                   equipmentModel={equipment.id}
                                   initialData={{
-                                    creditPayment: existingEquipmentPayment?.find(
-                                      (ep) =>
-                                        ep.productId === equipment.id &&
-                                        ep.paymentType === "credit"
-                                    ),
+                                    creditPayment:
+                                      existingEquipmentPayment?.find(
+                                        (ep) =>
+                                          ep.productId === equipment.id &&
+                                          ep.paymentType === "credit"
+                                      ),
                                     upfrontPayment:
                                       existingEquipmentPayment?.find(
                                         (ep) =>
@@ -554,7 +561,9 @@ export function UpsertPriceTableForm({
                 {/* Venda sem SIM Card */}
                 <Disclosure>
                   <DisclosureButton className="border border-gray-200 rounded-md w-full p-3 group flex justify-between items-center gap-2 bg-gray-50">
-                    <h3 className="font-semibold text-sm">Venda sem SIM Card</h3>
+                    <h3 className="font-semibold text-sm">
+                      Venda sem SIM Card
+                    </h3>
                     <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
                   </DisclosureButton>
                   <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
@@ -580,7 +589,8 @@ export function UpsertPriceTableForm({
                       ) : equipmentModels.length === 0 ? (
                         <div className="text-center py-4">
                           <p className="text-sm text-gray-500">
-                            Nenhum equipamento encontrado com categoria TABLE-RAST
+                            Nenhum equipamento encontrado com categoria
+                            TABLE-RAST
                           </p>
                         </div>
                       ) : (
@@ -637,11 +647,12 @@ export function UpsertPriceTableForm({
                                 <EquipmentAccessoryPriceForm
                                   equipmentModel={equipment.id}
                                   initialData={{
-                                    creditPayment: existingEquipmentPayment?.find(
-                                      (ep) =>
-                                        ep.productId === equipment.id &&
-                                        ep.paymentType === "credit"
-                                    ),
+                                    creditPayment:
+                                      existingEquipmentPayment?.find(
+                                        (ep) =>
+                                          ep.productId === equipment.id &&
+                                          ep.paymentType === "credit"
+                                      ),
                                     upfrontPayment:
                                       existingEquipmentPayment?.find(
                                         (ep) =>
@@ -685,7 +696,9 @@ export function UpsertPriceTableForm({
                 {/* Venda de Acessórios */}
                 <Disclosure>
                   <DisclosureButton className="border border-gray-200 rounded-md w-full p-3 group flex justify-between items-center gap-2 bg-gray-50">
-                    <h3 className="font-semibold text-sm">Venda de Acessórios</h3>
+                    <h3 className="font-semibold text-sm">
+                      Venda de Acessórios
+                    </h3>
                     <ChevronDownIcon className="w-5 group-data-[open]:rotate-180 text-right" />
                   </DisclosureButton>
                   <DisclosurePanel className="origin-top transition duration-200 ease-out data-[closed]:-translate-y-6 data-[closed]:opacity-0 mt-2">
@@ -711,7 +724,8 @@ export function UpsertPriceTableForm({
                       ) : accessoriesItems.length === 0 ? (
                         <div className="text-center py-4">
                           <p className="text-sm text-gray-500">
-                            Nenhum acessório encontrado com categoria TABLE-ACESS
+                            Nenhum acessório encontrado com categoria
+                            TABLE-ACESS
                           </p>
                         </div>
                       ) : (
@@ -758,11 +772,12 @@ export function UpsertPriceTableForm({
                                 <EquipmentAccessoryPriceForm
                                   equipmentModel={accessory.id}
                                   initialData={{
-                                    creditPayment: existingEquipmentPayment?.find(
-                                      (ep) =>
-                                        ep.productId === accessory.id &&
-                                        ep.paymentType === "credit"
-                                    ),
+                                    creditPayment:
+                                      existingEquipmentPayment?.find(
+                                        (ep) =>
+                                          ep.productId === accessory.id &&
+                                          ep.paymentType === "credit"
+                                      ),
                                     upfrontPayment:
                                       existingEquipmentPayment?.find(
                                         (ep) =>
