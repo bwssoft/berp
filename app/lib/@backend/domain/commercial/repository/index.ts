@@ -13,3 +13,5 @@ export * from "./account.economic-group.repository";
 export * from "./historical.repository";
 export * from "./account-attachment.object.repository";
 export * from "./account-attachment.repository";
+export * from "./price-table.repository";
+export * from "./price-table-service.repository";

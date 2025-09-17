@@ -34,6 +34,7 @@ export function useActiveUserDialog({
       });
 
       qc.invalidateQueries({ queryKey: ["findOneUser", userId] });
+      qc.invalidateQueries({ queryKey: ["findManyUserAudit", userId] });
       onSuccess?.();
       setOpen(false);
     } catch (err) {
