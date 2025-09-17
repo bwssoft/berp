@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { IUser } from "@/app/lib/@backend/domain";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
@@ -81,7 +81,7 @@ export function useUpdateOneUserForm(user: IUser) {
 
   const profiles =
     searchTerm.length > 0
-      ? (searchedProfiles.data ?? [])
+      ? (searchedProfiles.data?.filter((p) => p.active) ?? [])
       : (initialProfiles.data?.filter((p) => p.active) ?? []);
 
   const router = useRouter();
@@ -97,6 +97,8 @@ export function useUpdateOneUserForm(user: IUser) {
     resolver: zodResolver(updateSchema),
     defaultValues: user,
   });
+
+  const qc = useQueryClient();
 
   const handleSubmit = hookSubmit(async (data) => {
     const formData = new FormData();
@@ -126,7 +128,7 @@ export function useUpdateOneUserForm(user: IUser) {
       if (session?.user?.id === data.id) {
         await refreshUserData();
       }
-
+      qc.invalidateQueries({ queryKey: ["findManyUserAudit", data.id] });
       router.push("/admin/user");
     } else if (error) {
       Object.entries(error).forEach(([key, message]) => {

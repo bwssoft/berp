@@ -12,3 +12,6 @@ export * from "./product.definition";
 export * from "./address.definition";
 export * from "./historical.definition";
 export * from "./account-attachment.definition";
+export * from "./price-table.definition";
+export * from "./price-table-service.definition";
+export * from "./price-table-condition.definition";

@@ -1,10 +1,9 @@
 "use client";
 
 import {
-  BriefcaseIcon,
-  CubeIcon,
   DocumentTextIcon,
   UserGroupIcon,
+  CurrencyDollarIcon,
 } from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
 import { GridList } from "../lib/@frontend/ui/component";
 import { useAuth } from "../lib/@frontend/context";
@@ -39,6 +38,15 @@ const actions = [
     iconForeground: "text-blue-700",
     iconBackground: "bg-blue-50",
     description: "Crie, edite e acompanhe produtos.",
+  },
+  {
+    title: "Tabela de Preços",
+    href: "/commercial/price-table",
+    code: "commercial:price-table:view",
+    icon: CurrencyDollarIcon,
+    iconForeground: "text-green-700",
+    iconBackground: "bg-green-50",
+    description: "Gerencie tabelas de preços e valores comerciais.",
   },
 ];
 

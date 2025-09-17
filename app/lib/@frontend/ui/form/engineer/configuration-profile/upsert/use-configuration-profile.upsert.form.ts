@@ -291,6 +291,8 @@ export type TechnologySystemName =
 const schema = z.object({
   id: z.string().optional(),
   client_id: z.string().optional(),
+  manual_client: z.string().optional(),
+  manual_client_register: z.boolean().default(true),
   technology_id: z.string(),
   name: z.string().min(1),
   type: z.nativeEnum(EType),
@@ -324,11 +326,11 @@ type ProfileName = {
 };
 
 export interface Props {
-  clients: IClient[];
+  clients?: IClient[] | null;
   technologies: ITechnology[];
   defaultValues?: {
     configurationProfile: IConfigurationProfile;
-    client: IClient;
+    client: IClient | null;
     technology: ITechnology;
   };
 }
@@ -348,6 +350,7 @@ export function useConfigurationProfileUpsertForm(props: Props) {
           keep_alive: 60,
         },
       },
+      manual_client_register: true,
     },
     shouldUnregister: true,
   });
@@ -451,6 +454,16 @@ export function useConfigurationProfileUpsertForm(props: Props) {
     }
   };
 
+  const handleChangeClient = (clientName: string) => {
+    setName((prev) => {
+      const state = Object.assign(prev, {
+        document: clientName,
+      });
+      form.setValue("name", formatConfigurationProfileName(state));
+      return state;
+    });
+  };
+
   const technology_id = form.watch("technology_id");
 
   const technology = useMemo(() => {
@@ -465,7 +478,9 @@ export function useConfigurationProfileUpsertForm(props: Props) {
         defaultValues.technology.name.system as TechnologySystemName
       );
       handleChangeName({
-        document: defaultValues.client.document.value,
+        document:
+          defaultValues.client?.document?.value ??
+          defaultValues.configurationProfile.manual_client,
         technology: defaultValues.technology.name.brand,
         type: defaultValues.configurationProfile.type,
       });
@@ -479,5 +494,6 @@ export function useConfigurationProfileUpsertForm(props: Props) {
     handleChangeName,
     technology,
     handleChangeTechnology,
+    handleChangeClient,
   };
 }

@@ -62,6 +62,16 @@ export const columns: ColumnDef<Row>[] = [
     ),
   },
   {
+    header: "Nome do perfil",
+    accessorKey: "desired_profile",
+    cell: ({ row }) => <p>{row.original.desired_profile.name}</p>,
+  },
+  {
+    header: "Usuário",
+    accessorKey: "user",
+    cell: ({ row }) => <p>{row.original.user.name}</p>,
+  },
+  {
     header: "Data",
     accessorKey: "created_at",
     cell: ({ row }) => <p>{row.original.created_at.toLocaleString()}</p>,

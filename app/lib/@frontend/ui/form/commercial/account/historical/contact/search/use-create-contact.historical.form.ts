@@ -10,13 +10,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { unmaskPhoneNumber } from "@/app/lib/util/mask-phone-number";
+import { ContactListItem } from "@/app/lib/@frontend/ui/modal/comercial/historical/contact/search/types";
 
 interface Props {
-  contacts?: {
-    name: string;
-    contacts: IContact[];
-    documentValue: string;
-  }[];
+  contacts?: ContactListItem[];
   accountData?: IAccount;
   selectContact: ContactSelection | undefined;
   setSelectContact: (
@@ -108,7 +105,7 @@ export function useSearchContactHistoricalAccount({
   useEffect(() => {
     if (contacts && contacts.length > 0) {
       const onlyWithContacts = contacts.filter(
-        (company) => company.contacts && company.contacts.length > 0
+        (contact) => contact.contactItems && contact.contactItems.length > 0
       );
       setContactData(onlyWithContacts);
     }

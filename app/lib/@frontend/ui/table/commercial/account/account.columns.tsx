@@ -24,7 +24,7 @@ export const columns: ColumnDef<IAccountWithPermissions>[] = [
       row.original.document.type === "cpf" ? (
         <span>{row.original.name}</span>
       ) : (
-        <span>{row.original.fantasy_name || row.original.social_name}</span>
+        <span>{row.original.social_name || row.original.fantasy_name}</span>
       ),
   },
   {

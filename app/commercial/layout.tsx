@@ -8,6 +8,7 @@ import {
   DocumentTextIcon,
   TagIcon,
   UserGroupIcon,
+  CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../lib/@frontend/context";
 import { Package } from "lucide-react";
@@ -54,5 +55,11 @@ const navigation = [
         icon: TagIcon, // Ícone clássico de categorização
       },
     ],
+  },
+  {
+    name: "Tabela de Preços",
+    pathname: "/commercial/price-table",
+    code: "commercial:price-table:view",
+    icon: CurrencyDollarIcon,
   },
 ];
