@@ -107,7 +107,6 @@ export function UpsertPriceTableForm({
     priceTableStatus,
     priceTableName,
     getCurrentFormData,
-    control,
   } = usePriceTableForm({ priceTableId, editMode });
 
   // Dialog hooks
