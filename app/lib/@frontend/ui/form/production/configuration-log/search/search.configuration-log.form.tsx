@@ -5,17 +5,25 @@ import { Button, Input } from "../../../../component";
 import { Filter } from "mongodb";
 import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import { LoaderIcon, SearchIcon } from "lucide-react";
+import { LoaderIcon, RefreshCcwIcon, SearchIcon } from "lucide-react";
 import { DateRangeInput } from "../../../../component/date-range-input";
 import { Controller } from "react-hook-form";
+import { ConfiguratorPageSearchParams } from "@/app/production/log/configurator/page";
 
 interface Props {
   filter: Filter<IConfigurationLog>;
+  searchParams: ConfiguratorPageSearchParams;
 }
-export function ConfigurationLogSearchForm(props: Props) {
-  const { filter } = props;
-  const { searchForm, handleSubmit, handleExport, isPending } =
-    useConfigurationLogSearchForm();
+
+export function ConfigurationLogSearchForm({ filter, searchParams }: Props) {
+  const {
+    searchForm,
+    handleSubmit,
+    handleExport,
+    isPending,
+    handleReset,
+    shouldShowResetButton,
+  } = useConfigurationLogSearchForm({ searchParams });
 
   return (
     <div className="w-full flex justify-between items-end pt-3">
@@ -64,6 +72,22 @@ export function ConfigurationLogSearchForm(props: Props) {
             <SearchIcon size={12} />
           )}
         </Button>
+
+        {shouldShowResetButton && (
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            onClick={handleReset}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <LoaderIcon className="animate-spin" size={12} />
+            ) : (
+              <RefreshCcwIcon size={12} />
+            )}
+          </Button>
+        )}
       </form>
       <Button
         variant="outline"
