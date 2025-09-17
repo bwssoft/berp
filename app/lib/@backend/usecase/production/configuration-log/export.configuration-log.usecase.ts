@@ -62,7 +62,24 @@ class ExportConfigurationLogUsecase {
     ]);
 
     // 4. Itera sobre o cursor e adiciona linhas
-    const cursor = await this.repository.findCursor(arg);
+    const cursor = await this.repository.aggregate<IConfigurationLog>([
+      {
+        $match: arg,
+      },
+      {
+        $setWindowFields: {
+          partitionBy: {
+            user_id: "$user.id",
+            equipment_imei: "$equipment.imei",
+          },
+          sortBy: { created_at: -1 },
+          output: { rank: { $rank: {} } },
+        },
+      },
+      { $match: { rank: 1 } },
+      { $unset: "rank" },
+      { $sort: { created_at: 1 } },
+    ]);
     cursor.batchSize(1000);
 
     for await (const doc of cursor) {
@@ -71,7 +88,9 @@ class ExportConfigurationLogUsecase {
           doc.status ? "Sucesso" : "Falha",
           doc.user.name,
           doc.desired_profile.name,
-          doc.created_at.toLocaleString(),
+          new Date(doc.created_at).toLocaleString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+          }),
           doc.equipment.serial,
           doc.equipment.imei,
           doc.equipment.iccid ?? "--",
