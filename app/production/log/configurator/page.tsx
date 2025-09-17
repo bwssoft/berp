@@ -20,14 +20,13 @@ import Link from "next/link";
 
 export interface ConfiguratorPageSearchParams {
   query?: string;
-  equipment?: string;
-  technology?: string;
-  profile?: string;
-  status?: string[];
-  user?: string;
-  client?: string;
   from?: Date;
   to?: Date;
+  user?: string;
+  client?: string;
+  iccid?: string;
+  status?: string;
+  profile?: string;
 }
 
 interface Props {
@@ -158,32 +157,19 @@ function query(props: Props["searchParams"]): Filter<IConfigurationLog> {
     });
   }
 
-  // Filtros específicos...
-  if (props.equipment) {
-    const eqRegex = { $regex: props.equipment, $options: "i" };
-    conditions.push({
-      $or: [
-        { "equipment.imei": eqRegex },
-        { "equipment.serial": eqRegex },
-        { "equipment.iccid": eqRegex },
-        { "equipment.firmware": eqRegex },
-      ],
-    });
+  if (props.iccid) {
+    const eqRegex = { $regex: props.iccid, $options: "i" };
+    conditions.push({ "equipment.iccid": eqRegex });
   }
 
   if (props.profile) {
     const eqRegex = { $regex: props.profile, $options: "i" };
-    conditions.push({ "profile.name": eqRegex });
+    conditions.push({ "desired_profile.name": eqRegex });
   }
 
   if (props.user) {
     const eqRegex = { $regex: props.user, $options: "i" };
     conditions.push({ "user.name": eqRegex });
-  }
-
-  if (props.technology) {
-    const eqRegex = { $regex: props.technology, $options: "i" };
-    conditions.push({ "technology.system_name": eqRegex });
   }
 
   if (props.client) {
@@ -197,9 +183,9 @@ function query(props: Props["searchParams"]): Filter<IConfigurationLog> {
     });
   }
 
-  if (props.status) {
-    const statusBooleans = props.status.map((s) => s === "true");
-    conditions.push({ status: { $in: statusBooleans } });
+  if (props.status !== undefined) {
+    const statusBooleans = props.status === "success";
+    conditions.push({ status: statusBooleans });
   }
 
   if (props.from || props.to) {

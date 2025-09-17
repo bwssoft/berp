@@ -1,5 +1,6 @@
 import { exportConfigurationLog } from "@/app/lib/@backend/action/production/configuration-log.action";
 import { IConfigurationLog } from "@/app/lib/@backend/domain";
+import { useDisclosure } from "@/app/lib/@frontend/hook/use-disclosure";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { useToast } from "@/app/lib/@frontend/hook/use-toast";
 import { ConfiguratorPageSearchParams } from "@/app/production/log/configurator/page";
@@ -18,6 +19,11 @@ const schema = z.object({
       to: z.date().optional(),
     })
     .optional(),
+  profile: z.string().optional(),
+  user: z.string().optional(),
+  client: z.string().optional(),
+  iccid: z.string().optional(),
+  status: z.string().optional(),
 });
 
 type SearchConfigurationLogFormData = z.infer<typeof schema>;
@@ -31,6 +37,8 @@ export const useConfigurationLogSearchForm = ({
 }: UseConfigurationLogSearchFormProps) => {
   const { toast } = useToast();
   const { handleParamsChange, handleResetParams } = useHandleParamsChange();
+
+  const filterDisclosure = useDisclosure();
 
   const [isPending, startTransition] = React.useTransition();
 
@@ -72,12 +80,19 @@ export const useConfigurationLogSearchForm = ({
   });
 
   function handleSucceededSubmit(data: SearchConfigurationLogFormData) {
+    console.log("submitted");
     startTransition(() => {
       handleParamsChange({
         query: data.query,
         from: data.created_at?.from?.toISOString(),
         to: data.created_at?.to?.toISOString(),
+        iccid: data.iccid,
+        status: data.status,
+        profile: data.profile,
+        user: data.user,
       });
+
+      if (filterDisclosure.isOpen) filterDisclosure.onClose();
     });
   }
 
@@ -115,5 +130,6 @@ export const useConfigurationLogSearchForm = ({
     handleSubmit,
     handleReset,
     shouldShowResetButton,
+    filterDisclosure,
   };
 };

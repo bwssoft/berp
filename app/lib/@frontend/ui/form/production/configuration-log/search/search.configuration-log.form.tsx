@@ -1,11 +1,29 @@
 "use client";
 
 import { useConfigurationLogSearchForm } from "./use-search.configuration-log.form";
-import { Button, Input } from "../../../../component";
+import {
+  Button,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../../component";
 import { Filter } from "mongodb";
 import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import { LoaderIcon, RefreshCcwIcon, SearchIcon } from "lucide-react";
+import {
+  FilterIcon,
+  LoaderIcon,
+  RefreshCcwIcon,
+  SearchIcon,
+} from "lucide-react";
 import { DateRangeInput } from "../../../../component/date-range-input";
 import { Controller } from "react-hook-form";
 import { ConfiguratorPageSearchParams } from "@/app/production/log/configurator/page";
@@ -24,14 +42,15 @@ export function ConfigurationLogSearchForm({ filter, searchParams }: Props) {
     isPending,
     handleReset,
     shouldShowResetButton,
+    filterDisclosure,
   } = useConfigurationLogSearchForm({ searchParams });
 
   return (
-    <div className="w-full flex justify-between items-end pt-3">
-      <form
-        onSubmit={handleSubmit}
-        className="flex items-center !justify-normal w-full gap-2"
-      >
+    <form
+      onSubmit={handleSubmit}
+      className="w-full flex justify-between items-end pt-3"
+    >
+      <div className="flex items-center !justify-normal w-full gap-2">
         <Input
           {...searchForm.register("query")}
           placeholder="Serial ou nome do usuário"
@@ -63,6 +82,16 @@ export function ConfigurationLogSearchForm({ filter, searchParams }: Props) {
 
         <Button
           disabled={isPending}
+          type="button"
+          size="icon"
+          variant="outline"
+          onClick={filterDisclosure.onOpen}
+        >
+          <FilterIcon size={12} />
+        </Button>
+
+        <Button
+          disabled={isPending}
           type="submit"
           size="icon"
           variant="outline"
@@ -89,7 +118,7 @@ export function ConfigurationLogSearchForm({ filter, searchParams }: Props) {
             )}
           </Button>
         )}
-      </form>
+      </div>
       <Button
         variant="outline"
         disabled={exportMutation.isPending}
@@ -108,6 +137,75 @@ export function ConfigurationLogSearchForm({ filter, searchParams }: Props) {
           </React.Fragment>
         )}
       </Button>
-    </div>
+
+      <Modal
+        position="center"
+        open={filterDisclosure.isOpen}
+        onClose={filterDisclosure.onClose}
+        title="Filtros adicionais"
+        className="p-0 w-[30rem]"
+        classNameHeader="modal-header"
+        containerClassName="modal-container"
+      >
+        <ModalContent>
+          <ModalBody>
+            <div className="flex flex-col gap-1">
+              <Input
+                label="ICCID"
+                {...searchForm.register("iccid")}
+                containerClassname="!space-y-0"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Status</Label>
+
+              <Controller
+                control={searchForm.control}
+                name="status"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="success">Sucesso</SelectItem>
+                      <SelectItem value="failed">Falha</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Input
+                label="Perfil de configuração"
+                {...searchForm.register("profile")}
+                containerClassname="!space-y-0"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Input
+                label="Usuário"
+                {...searchForm.register("user")}
+                containerClassname="!space-y-0"
+              />
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={() => handleSubmit()} disabled={isPending}>
+              {isPending ? (
+                <React.Fragment>
+                  <LoaderIcon className="animate-spin" size={12} /> Filtrando
+                </React.Fragment>
+              ) : (
+                <span>Filtrar</span>
+              )}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </form>
   );
 }
