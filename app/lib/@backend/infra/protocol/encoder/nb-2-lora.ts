@@ -56,10 +56,11 @@ export class BwsNb2LoraEncoder {
     return `WCE=${input}\r\n`;
   }
 
-  static sleep(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCS=${input}\r\n`;
-  }
+  // TODO: Samuel mandou retirar esse comando por enquanto
+  // static sleep(input: number): string | undefined {
+  //   if (!input || typeof input !== "number") return undefined;
+  //   return `WCS=${input}\r\n`;
+  // }
 
   static keep_alive(input: number): string | undefined {
     if (!input || typeof input !== "number") return undefined;
