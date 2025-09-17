@@ -121,6 +121,8 @@ export default async function Example({ searchParams }: Props) {
           <CardDescription>
             Visualize e gerencie todos os registros de configuração
           </CardDescription>
+
+          <ConfigurationLogSearchForm filter={<></>} />
         </CardHeader>
         <CardContent className="p-0">
           <ConfigurationLogTable data={configurationLog} />
