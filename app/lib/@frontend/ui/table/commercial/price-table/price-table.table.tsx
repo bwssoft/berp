@@ -24,12 +24,14 @@ interface Props {
   data: PaginationResult<IPriceTable>;
   currentPage?: number;
   restrictEdit: boolean;
+  restrictClone: boolean;
 }
 
 export function PriceTableTable({
   data,
   currentPage = 1,
   restrictEdit,
+  restrictClone,
 }: Props) {
   const { docs, pages = 1, total = 0, limit = 10 } = data;
   const router = useRouter();
@@ -39,15 +41,20 @@ export function PriceTableTable({
     router.push(`/commercial/price-table/form/edit/${priceTable.id}`);
   };
 
+  const handleClonePriceTable = (priceTable: IPriceTable) => {
+    router.push(`/commercial/price-table/form/clone/${priceTable.id}`);
+  };
+
   const columns = createPriceTableColumns({
     onEditPriceTable: handleEditPriceTable,
+    onClonePriceTable: handleClonePriceTable,
   });
 
   const table = useReactTable({
     data: docs,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    meta: { restrictEdit },
+    meta: { restrictEdit, restrictClone },
   });
   const { handleParamsChange } = useHandleParamsChange();
 

@@ -45,10 +45,12 @@ const getStatusColor = (status: string) => {
 
 interface ColumnsProps {
   onEditPriceTable?: (priceTable: IPriceTable) => void;
+  onClonePriceTable?: (priceTable: IPriceTable) => void;
 }
 
 export const createPriceTableColumns = ({
   onEditPriceTable,
+  onClonePriceTable,
 }: ColumnsProps = {}): ColumnDef<IPriceTable>[] => [
   {
     accessorKey: "name",
@@ -146,7 +148,10 @@ export const createPriceTableColumns = ({
     id: "actions",
     header: "AÇÃO",
     cell: ({ row, table }) => {
-      const { restrictEdit } = table.options.meta as { restrictEdit: boolean };
+      const { restrictEdit, restrictClone } = table.options.meta as {
+        restrictEdit: boolean;
+        restrictClone: boolean;
+      };
       return (
         <div className="flex gap-1">
           <Button
@@ -157,14 +162,17 @@ export const createPriceTableColumns = ({
           >
             <History className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            title="Clonar tabela"
-          >
-            <Copy className="h-4 w-4" />
-          </Button>
+          {restrictClone && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              title="Clonar tabela"
+              onClick={() => onClonePriceTable?.(row.original)}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          )}
           {restrictEdit && (
             <Button
               variant="ghost"
