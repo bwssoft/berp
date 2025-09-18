@@ -55,3 +55,29 @@ export const publishPriceTable = async (id: string) => {
   const result = await publishPriceTableUsecase.execute({ id });
   return result;
 };
+
+export const clonePriceTable = async (id: string) => {
+  // Buscar tabela original
+  const originalTable = await findOnePriceTableUsecase.execute({ id });
+
+  if (!originalTable) {
+    throw new Error("Tabela de preços não encontrada");
+  }
+
+  // Criar nova tabela com dados clonados
+  const clonedTable: Omit<IPriceTable, "id" | "created_at" | "updated_at"> = {
+    name: `${originalTable.name} (Cópia)`,
+    startDateTime: new Date(), // Data atual para startDateTime
+    endDateTime: new Date(), // Data atual para endDateTime - será ajustada no frontend
+    isTemporary: originalTable.isTemporary,
+    status: "DRAFT", // Status inicial como rascunho conforme regra
+    groups: originalTable.groups,
+    equipmentPayment: originalTable.equipmentPayment,
+    simcardPayment: originalTable.simcardPayment,
+    servicePayment: originalTable.servicePayment,
+  };
+
+  const result = await createOnePriceTableUsecase.execute(clonedTable);
+
+  return result;
+};
