@@ -358,6 +358,7 @@ export function usePriceTableForm({
             isTemporary: existingPriceTable.isTemporary ?? false,
             billingConfig: { salesFor: "", billingLimit: "", billTo: "" },
             equipmentWithSim,
+            groups: existingPriceTable.groups || [],
             equipmentWithoutSim,
             simCards: existingPriceTable.simcardPayment || [],
             accessories,
@@ -795,6 +796,7 @@ export function usePriceTableForm({
     return {
       formData: data,
       equipmentWithSim: Object.keys(data.equipmentWithSim || {}).length,
+      groups: data.groups?.length || 0,
       equipmentWithoutSim: Object.keys(data.equipmentWithoutSim || {}).length,
       simCards: data.simCards?.length || 0,
       accessories: Object.keys(data.accessories || {}).length,
