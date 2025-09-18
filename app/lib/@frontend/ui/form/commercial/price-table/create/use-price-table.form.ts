@@ -102,11 +102,11 @@ const priceTableSchema = z
 
     groups: z.array(priceTableConditionGroupSchema).default([]),
 
-    // Configurações de faturamento
+    // Configurações de faturamento - billTo é opcional, validação será feita nas condições individuais
     billingConfig: z.object({
       salesFor: z.string().optional(),
       billingLimit: z.string().optional(),
-      billTo: z.string().min(1, "Selecione quem faturar"),
+      billTo: z.string().optional(),
     }),
     equipmentWithSim: z.record(z.any()).default({}),
     equipmentWithoutSim: z.record(z.any()).default({}),
@@ -117,7 +117,24 @@ const priceTableSchema = z
   .refine((data) => data.endDateTime > data.startDateTime, {
     message: "Data de fim deve ser posterior à data de início",
     path: ["endDateTime"],
-  });
+  })
+  .refine(
+    (data) => {
+      // Ensure there's at least one group with at least one condition that has toBillFor
+      const hasValidBillingCondition = data.groups.some((group) =>
+        group.conditions.some(
+          (condition) =>
+            condition.toBillFor && condition.toBillFor.trim().length > 0
+        )
+      );
+      return hasValidBillingCondition;
+    },
+    {
+      message:
+        "Pelo menos uma condição deve ter o campo 'Faturar para' preenchido",
+      path: ["groups"],
+    }
+  );
 
 export type CreatePriceTableFormData = z.infer<typeof priceTableSchema>;
 
@@ -729,13 +746,23 @@ export function usePriceTableForm({
     setLoading(true);
 
     try {
-      // Always validate required fields before saving
       const isValid = await form.trigger();
 
       if (!isValid) {
+        const errors = form.formState.errors;
+        let errorMessage = "Preencha todos os campos obrigatórios.";
+
+        if (errors.name || errors.startDateTime || errors.endDateTime) {
+          errorMessage =
+            "Preencha os campos obrigatórios: nome, data de início e data de fim.";
+        } else if (errors.groups) {
+          errorMessage =
+            "Preencha todos os campos obrigatórios nas condições de faturamento.";
+        }
+
         toast({
           title: "Campos obrigatórios",
-          description: "Preencha todos os campos obrigatórios antes de salvar.",
+          description: errorMessage,
           variant: "error",
         });
         return;
