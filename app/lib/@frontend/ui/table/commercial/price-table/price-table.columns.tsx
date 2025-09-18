@@ -46,11 +46,13 @@ const getStatusColor = (status: string) => {
 interface ColumnsProps {
   onEditPriceTable?: (priceTable: IPriceTable) => void;
   onClonePriceTable?: (priceTable: IPriceTable) => void;
+  onViewHistory?: (priceTable: IPriceTable) => void;
 }
 
 export const createPriceTableColumns = ({
   onEditPriceTable,
   onClonePriceTable,
+  onViewHistory,
 }: ColumnsProps = {}): ColumnDef<IPriceTable>[] => [
   {
     accessorKey: "name",
@@ -159,6 +161,7 @@ export const createPriceTableColumns = ({
             size="sm"
             className="rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             title="Histórico"
+            onClick={() => onViewHistory?.(row.original)}
           >
             <History className="h-4 w-4" />
           </Button>
