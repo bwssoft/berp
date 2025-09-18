@@ -89,6 +89,8 @@ class FindManyConfigurationProfileUsecase {
           user_id: 1,
           technology_id: 1,
           validation: 1,
+          manual_client: 1,
+          manual_client_register: 1,
           technology: { $first: "$technology" },
           client: { $first: "$client" },
         },

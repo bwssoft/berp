@@ -126,7 +126,10 @@ export default function ConfigurationProfilesTable({
                   </TableCell>
                   <TableCell>
                     <span className="text-sm">
-                      {profile.client.trade_name ?? profile.client.company_name}
+                      {profile.client
+                        ? (profile.client?.trade_name ??
+                          profile.client?.company_name)
+                        : (profile.manual_client ?? "--")}
                     </span>
                   </TableCell>
                   <TableCell>

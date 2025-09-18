@@ -8,8 +8,6 @@
   }
 }
 
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -66,7 +64,19 @@
   }
 }
 
+@layer components {
+  .modal {
+    @apply !flex !flex-col !h-screen !gap-0 !p-0;
+  }
 
+  .modal-container {
+    @apply !overflow-y-hidden !h-full;
+  }
+
+  .modal-header {
+    @apply !pb-4 !mx-6 !mt-6;
+  }
+}
 
 @layer base {
   * {
