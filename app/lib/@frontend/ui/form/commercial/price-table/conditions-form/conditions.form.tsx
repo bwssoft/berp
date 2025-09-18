@@ -92,9 +92,6 @@ function GroupFields({
                   displayValueGetter={(e) => e.text}
                   error={error?.message}
                 />
-                {error && (
-                  <p className="mt-1 text-sm text-red-600">{error.message}</p>
-                )}
               </div>
             )}
           />
@@ -145,9 +142,6 @@ function GroupFields({
                   displayValueGetter={(o) => o.text}
                   error={error?.message}
                 />
-                {error && (
-                  <p className="mt-1 text-sm text-red-600">{error.message}</p>
-                )}
               </div>
             )}
           />
