@@ -56,7 +56,7 @@ export class BwsNb2LoraEncoder {
     return `WCE=${input}\r\n`;
   }
 
-  // TODO: Samuel mandou retirar esse comando por enquanto
+  // TODO: Samuel pediu pra retirar esse comando por enquanto
   // static sleep(input: number): string | undefined {
   //   if (!input || typeof input !== "number") return undefined;
   //   return `WCS=${input}\r\n`;
@@ -137,7 +137,8 @@ export class BwsNb2LoraEncoder {
       data_transmission_on: BwsNb2LoraEncoder.data_transmission_on,
       data_transmission_off: BwsNb2LoraEncoder.data_transmission_off,
       data_transmission_event: BwsNb2LoraEncoder.data_transmission_event,
-      sleep: BwsNb2LoraEncoder.sleep,
+      // TODO: Samuel pediu pra retirar esse comando por enquanto
+      // sleep: BwsNb2LoraEncoder.sleep,
       keep_alive: BwsNb2LoraEncoder.keep_alive,
       ip_primary: BwsNb2LoraEncoder.ip_primary,
       ip_secondary: BwsNb2LoraEncoder.ip_secondary,
