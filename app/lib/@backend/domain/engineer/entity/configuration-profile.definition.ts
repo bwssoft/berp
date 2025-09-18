@@ -20,6 +20,8 @@ export interface IConfigurationProfile<
   validation: Validation;
   technology_id: string;
   client_id?: string;
+  manual_client?: string;
+  manual_client_register?: boolean;
 }
 
 export interface Config<Specific> {
