@@ -12,8 +12,13 @@ type Props = {
   onValidate?: () => void;
 };
 
-export function BillingConditionsSection({ ufList, billToOptions, onValidate }: Props) {
-    const {appendGroup, groupFields, createEmptyCondition, uid} = useConditionsForm();
+export function BillingConditionsSection({
+  ufList,
+  billToOptions,
+  onValidate,
+}: Props) {
+  const { appendGroup, groupFields, createEmptyCondition, uid } =
+    useConditionsForm();
 
   return (
     <div className="space-y-3">
@@ -27,7 +32,7 @@ export function BillingConditionsSection({ ufList, billToOptions, onValidate }: 
           billToOptions={billToOptions}
         />
       ))}
-            <div className="flex gap-4">
+      <div className="flex gap-4">
         <Button
           type="button"
           className="bg-blue-600"
@@ -43,11 +48,7 @@ export function BillingConditionsSection({ ufList, billToOptions, onValidate }: 
         </Button>
 
         {onValidate && (
-          <Button
-            type="button"
-            className="bg-green-600"
-            onClick={onValidate}
-          >
+          <Button type="button" className="bg-green-600" onClick={onValidate}>
             Validar condições
           </Button>
         )}
@@ -65,8 +66,8 @@ function GroupFields({
   ufList: { id: string; text: string }[];
   billToOptions: { id: string; text: string }[];
 }) {
-    const { condFields, control, removeCond, appendCond, createEmptyCondition } = useConditionsForm(gi);
-
+  const { condFields, control, removeCond, appendCond, createEmptyCondition } =
+    useConditionsForm(gi);
 
   return (
     <div className="space-y-2 rounded-lg border p-3">
@@ -75,20 +76,26 @@ function GroupFields({
           <Controller
             control={control}
             name={`groups.${gi}.conditions.${ci}.salesFor`}
-            render={({ field }) => (
-              <Combobox
-                label="Vendas para"
-                placeholder="Selecione"
-                data={ufList}
-                value={ufList.filter((uf) =>
-                  (field.value ?? []).includes(uf.id as BrazilianUF)
+            render={({ field, fieldState: { error } }) => (
+              <div className="w-full">
+                <Combobox
+                  label="Vendas para *"
+                  placeholder="Selecione"
+                  data={ufList}
+                  value={ufList.filter((uf) =>
+                    (field.value ?? []).includes(uf.id as BrazilianUF)
+                  )}
+                  onChange={(v: { id: string; text: string }[]) =>
+                    field.onChange(v.map((it) => it.id as BrazilianUF))
+                  }
+                  keyExtractor={(e) => e.id}
+                  displayValueGetter={(e) => e.text}
+                  error={error?.message}
+                />
+                {error && (
+                  <p className="mt-1 text-sm text-red-600">{error.message}</p>
                 )}
-                onChange={(v: { id: string; text: string }[]) =>
-                  field.onChange(v.map((it) => it.id as BrazilianUF))
-                }
-                keyExtractor={(e) => e.id}
-                displayValueGetter={(e) => e.text}
-              />
+              </div>
             )}
           />
 
@@ -96,12 +103,16 @@ function GroupFields({
           <Controller
             control={control}
             name={`groups.${gi}.conditions.${ci}.billingLimit`}
-            render={({ field }) => (
-              <Input
-                label="Limite de faturamento"
-                value={field.value ?? ""}
-                onChange={(e) => field.onChange(e.target.value)}
-              />
+            render={({ field, fieldState: { error } }) => (
+              <div className="w-full">
+                <Input
+                  label="Limite de faturamento"
+                  value={field.value ?? ""}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  placeholder="Ex: 1.234,56"
+                  error={error?.message}
+                />
+              </div>
             )}
           />
 
@@ -109,27 +120,35 @@ function GroupFields({
           <Controller
             control={control}
             name={`groups.${gi}.conditions.${ci}.toBillFor`}
-            render={({ field }) => (
-              <Combobox
-                label="Faturar para"
-                placeholder="Selecione"
-                data={billToOptions}
-                value={
-                  field.value
-                    ? [
-                        {
-                          id: field.value,
-                          text:
-                            billToOptions.find((o) => o.id === field.value)
-                              ?.text ?? field.value,
-                        },
-                      ]
-                    : []
-                }
-                onChange={(v: { id: string; text: string }[]) => field.onChange(v[0]?.id ?? "")}
-                keyExtractor={(o) => o.id}
-                displayValueGetter={(o) => o.text}
-              />
+            render={({ field, fieldState: { error } }) => (
+              <div className="w-full">
+                <Combobox
+                  label="Faturar para *"
+                  placeholder="Selecione"
+                  data={billToOptions}
+                  value={
+                    field.value
+                      ? [
+                          {
+                            id: field.value,
+                            text:
+                              billToOptions.find((o) => o.id === field.value)
+                                ?.text ?? field.value,
+                          },
+                        ]
+                      : []
+                  }
+                  onChange={(v: { id: string; text: string }[]) =>
+                    field.onChange(v[0]?.id ?? "")
+                  }
+                  keyExtractor={(o) => o.id}
+                  displayValueGetter={(o) => o.text}
+                  error={error?.message}
+                />
+                {error && (
+                  <p className="mt-1 text-sm text-red-600">{error.message}</p>
+                )}
+              </div>
             )}
           />
 

@@ -103,13 +103,11 @@ const priceTableSchema = z
     groups: z.array(priceTableConditionGroupSchema).default([]),
 
     // Configurações de faturamento
-    billingConfig: z
-      .object({
-        salesFor: z.string().optional(),
-        billingLimit: z.string().optional(),
-        billTo: z.string().optional(),
-      })
-      .optional(),
+    billingConfig: z.object({
+      salesFor: z.string().optional(),
+      billingLimit: z.string().optional(),
+      billTo: z.string().min(1, "Selecione quem faturar"),
+    }),
     equipmentWithSim: z.record(z.any()).default({}),
     equipmentWithoutSim: z.record(z.any()).default({}),
     simCards: z.array(z.any()).default([]),
@@ -728,46 +726,31 @@ export function usePriceTableForm({
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     setLoading(true);
-    try {
-      // For draft saves, we don't need strict validation - get values directly
-      const currentData = form.getValues();
 
-      // Ensure start date is always in the future to avoid validation issues
+    try {
+      // Always validate required fields before saving
+      const isValid = await form.trigger();
+
+      if (!isValid) {
+        toast({
+          title: "Campos obrigatórios",
+          description: "Preencha todos os campos obrigatórios antes de salvar.",
+          variant: "error",
+        });
+        return;
+      }
+
+      const currentData = form.getValues();
       const adjustedData = {
         ...currentData,
         startDateTime: ensureFutureStartDate(currentData.startDateTime),
       };
+
       await handleFormSubmission(adjustedData, "DRAFT");
     } finally {
       setLoading(false);
     }
   };
-
-  const handleSaveDraft = async () => {
-    const currentData = form.getValues();
-    // Ensure start date is always in the future to avoid validation errors
-    const adjustedData = {
-      ...currentData,
-      startDateTime: ensureFutureStartDate(currentData.startDateTime),
-    };
-    await handleFormSubmission(adjustedData, "DRAFT");
-  };
-
-  const handleValidatedSubmit = form.handleSubmit(
-    async (data: CreatePriceTableFormData) => {
-      setLoading(true);
-      try {
-        // Ensure start date is always in the future to avoid validation errors
-        const adjustedData = {
-          ...data,
-          startDateTime: ensureFutureStartDate(data.startDateTime),
-        };
-        await handleFormSubmission(adjustedData, "DRAFT");
-      } finally {
-        setLoading(false);
-      }
-    }
-  );
 
   const handleValidationConditions = async () => {
     try {
@@ -785,25 +768,6 @@ export function usePriceTableForm({
         variant: "error",
       });
     }
-  };
-
-  const handleCancel = () => {
-    router.push("/commercial/price-table");
-  };
-
-  // Helper function to validate current form state
-  const validateForm = () => {
-    return form.trigger();
-  };
-
-  // Helper function to get form errors
-  const getFormErrors = () => {
-    return form.formState.errors;
-  };
-
-  // Helper function to check if form is dirty
-  const isFormDirty = () => {
-    return form.formState.isDirty;
   };
 
   type Status = "red" | "yellow" | "green";
@@ -831,8 +795,6 @@ export function usePriceTableForm({
   return {
     form,
     handleSubmit,
-    handleValidatedSubmit,
-    handleSaveDraft,
     handleCancel: () => router.push("/commercial/price-table"),
     loading,
     loadingPriceTable,
