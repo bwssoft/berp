@@ -72,7 +72,7 @@ function GroupFields({
   return (
     <div className="space-y-2 rounded-lg border p-3">
       {condFields.map((c, ci) => (
-        <div key={c.id} className="flex gap-2 items-end">
+        <div key={c.id} className="grid grid-cols-4 gap-2 items-start">
           <Controller
             control={control}
             name={`groups.${gi}.conditions.${ci}.salesFor`}
@@ -146,21 +146,24 @@ function GroupFields({
             )}
           />
 
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => {
-              if (condFields.length <= 1) {
-                removeCond(0);
-                appendCond(createEmptyCondition());
-              } else {
-                removeCond(ci);
-              }
-            }}
-            title="Remover condição"
-          >
-            <TrashIcon className="h-4 w-4" />
-          </Button>
+          <div className="flex items-start pt-7">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => {
+                if (condFields.length <= 1) {
+                  removeCond(0);
+                  appendCond(createEmptyCondition());
+                } else {
+                  removeCond(ci);
+                }
+              }}
+              title="Remover condição"
+              className="h-10"
+            >
+              <TrashIcon className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       ))}
 
