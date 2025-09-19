@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { publishPriceTableUsecase } from "@/app/lib/@backend/usecase/commercial/price-table/publish.price-table.usecase";
-import { activatePriceTableUsecase } from "../../../usecase/commercial/price-table/active.price-table.usecase";
+import { activatePriceTableUsecase } from "@/app/lib/@backend/usecase/commercial/price-table/active.price-table.usecase";
 
 export const runtime = "nodejs";
 
@@ -14,12 +14,18 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ ok: false, error: "invalid json" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, error: "invalid json" },
+      { status: 400 }
+    );
   }
 
   const { id } = (body ?? {}) as { id?: string };
   if (!id) {
-    return NextResponse.json({ ok: false, error: "missing id" }, { status: 400 });
+    return NextResponse.json(
+      { ok: false, error: "missing id" },
+      { status: 400 }
+    );
   }
 
   const out = await activatePriceTableUsecase.execute({ id });
