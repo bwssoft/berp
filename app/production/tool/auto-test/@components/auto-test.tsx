@@ -14,7 +14,7 @@ interface Props {
 export function AutoTestPanel(props: Props) {
   const { technology } = props;
 
-  const { identified, autoTest, test, requestPort, progress } = useAutoTest({
+  const { detected, autoTest, test, requestPort, progress } = useAutoTest({
     technology,
   });
 
@@ -54,7 +54,7 @@ export function AutoTestPanel(props: Props) {
           <div className="mt-6">
             {technology && (
               <DevicesDetectedTable
-                data={identified}
+                data={detected}
                 model={Device.Model[technology.name.system as Device.Model]}
               />
             )}
