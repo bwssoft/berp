@@ -70,7 +70,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
   const redirectToCheck = (configurationLog: IConfigurationLog[]) => {
     router.push(
-      `/production/tool/check-configuration?technology_id=${technology!.id}&${configurationLog.map(({ id }) => `configuration_log_id[]=${id}`).join("&")}&auto_checking=true`
+      `/production/tool/check-configuration?technology_id=${technology!.id}&${configurationLog.map(({ id }) => `configuration_log_id=${id}`).join("&")}&auto_checking=true`
     );
   };
 
