@@ -7,6 +7,6 @@ export interface CancelResponse {
 }
 
 export interface CancelResponse__Output {
-  'success'?: (boolean);
-  'message'?: (string);
+  'success': (boolean);
+  'message': (string);
 }

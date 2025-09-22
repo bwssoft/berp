@@ -10,7 +10,7 @@ import {
   CancelScheduleParams,
 } from "../../../domain/@shared/gateway/price-table-scheduler.gateway.interface";
 import { ProtoGrpcType } from "./@base/price-table-scheduler";
-import { SchedulerServiceClient } from "./@base/scheduler/SchedulerService";
+import { ServiceClient } from "./@base/price_scheduler/Service";
 
 const PROTO_PATH = path.join(
   process.cwd(),
@@ -24,7 +24,7 @@ const CRT_PATH = path.join(
 // Load proto definition
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
-  longs: String,
+  longs: Number,
   enums: String,
   defaults: true,
   oneofs: true,
@@ -33,58 +33,37 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const proto = grpc.loadPackageDefinition(
   packageDefinition
 ) as unknown as ProtoGrpcType;
-const PriceTableSchedulerService = proto.scheduler.SchedulerService;
+const PriceTableSchedulerService = proto.price_scheduler.Service;
 
 class PriceTableSchedulerGateway implements IPriceTableSchedulerGateway {
-  private client: SchedulerServiceClient;
+  private client: ServiceClient;
 
   constructor() {
     this.client = new PriceTableSchedulerService(
       process.env.PRICE_TABLE_SCHEDULER_GRPC_URL!,
-      grpc.credentials.createSsl(fs.readFileSync(CRT_PATH))
+      // grpc.credentials.createSsl(fs.readFileSync(CRT_PATH))
+      grpc.credentials.createInsecure()
     );
   }
 
   async publish(input: PublishInput): Promise<void> {
     const { priceTableId, deliver_at, action } = input;
 
-    const deliveryDate = new Date(deliver_at);
-    const actionName =
-      action === PublishInputActionEnum.start ? "activation" : "inactivation";
-
-    console.log(
-      `Scheduling ${actionName} for price table ${priceTableId} at ${deliveryDate}`
-    );
-
     try {
       // gRPC call implementation
       await this.schedulePublish(input);
-
-      console.info(
-        `✅ Price table ${actionName} scheduled successfully for ${priceTableId}`
-      );
     } catch (error) {
-      console.error(`❌ Error scheduling price table ${actionName}:`, error);
-      throw new Error(`Failed to schedule price table ${actionName}`);
+      console.error(`❌ Error scheduling price table:`, error);
+      throw new Error(`Failed to schedule price table`);
     }
   }
 
   async cancelSchedule(input: CancelScheduleParams): Promise<void> {
     const { priceTableId, action } = input;
 
-    const actionName =
-      action === PublishInputActionEnum.start ? "activation" : "inactivation";
-    console.log(
-      `Cancelling ${actionName} schedule for price table ${priceTableId}`
-    );
-
     try {
       // gRPC call implementation
       await this.cancelPublish(input);
-
-      console.info(
-        `✅ ${actionName} schedule cancelled successfully for ${priceTableId}`
-      );
     } catch (error) {
       console.error("❌ Error cancelling schedule:", error);
       throw new Error("Failed to cancel schedule");
@@ -98,7 +77,6 @@ class PriceTableSchedulerGateway implements IPriceTableSchedulerGateway {
           console.error("gRPC error:", err);
           return reject(new Error("Failed to schedule via gRPC"));
         }
-        console.info("Schedule request sent successfully via gRPC!");
         resolve();
       });
     });
@@ -111,7 +89,6 @@ class PriceTableSchedulerGateway implements IPriceTableSchedulerGateway {
           console.error("gRPC error:", err);
           return reject(new Error("Failed to cancel schedule via gRPC"));
         }
-        console.info("Cancel request sent successfully via gRPC!");
         resolve();
       });
     });

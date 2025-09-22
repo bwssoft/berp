@@ -7,6 +7,6 @@ export interface PublishResponse {
 }
 
 export interface PublishResponse__Output {
-  'success'?: (boolean);
-  'message'?: (string);
+  'success': (boolean);
+  'message': (string);
 }

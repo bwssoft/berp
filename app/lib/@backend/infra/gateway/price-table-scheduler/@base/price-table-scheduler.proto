@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package scheduler;
+package price_scheduler;
 
-service SchedulerService {
-  rpc Publish (PublishInput) returns (PublishResponse);
-  rpc Cancel (CancelInput) returns (CancelResponse);
+service Service {
+  rpc publish (PublishInput) returns (PublishResponse);
+  rpc cancel (CancelInput) returns (CancelResponse);
 }
 
 message PublishInput {

@@ -7,6 +7,8 @@ import {
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../../admin/audit";
 import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
+import { priceTableSchedulerGateway } from "../../../infra/gateway/price-table-scheduler/price-table-scheduler.gateway";
+import { PublishInputActionEnum } from "../../../domain/@shared/gateway/price-table-scheduler.gateway.interface";
 
 namespace Dto {
   export type Input = { id: string };
@@ -23,7 +25,10 @@ class InactivatePriceTableUsecase {
     try {
       const current = await this.repository.findOne({ id: input.id });
       if (!current) {
-        return { success: false, error: { global: "Tabela de preços não encontrada." } };
+        return {
+          success: false,
+          error: { global: "Tabela de preços não encontrada." },
+        };
       }
 
       if (current.status === "INACTIVE") {
@@ -60,7 +65,6 @@ class InactivatePriceTableUsecase {
             { $set: { status: "ACTIVE", updated_at: now } }
           );
         }
-
       } else {
         // 4) Se for NORMAL: apenas marcar como INACTIVE
         const updatedNorm = await this.repository.updateOne(
@@ -97,6 +101,9 @@ class InactivatePriceTableUsecase {
         });
       }
 
+      // Cancel any pending schedules for this price table
+      await this.cancelExistingSchedules(input.id);
+
       return { success: true };
     } catch (err: any) {
       console.error("Erro ao inativar a tabela de preço:", err);
@@ -108,6 +115,27 @@ class InactivatePriceTableUsecase {
       };
     }
   }
+
+  private async cancelExistingSchedules(priceTableId: string): Promise<void> {
+    try {
+      // Cancel both activation and inactivation schedules for this price table
+      await Promise.allSettled([
+        priceTableSchedulerGateway.cancelSchedule({
+          priceTableId,
+          action: PublishInputActionEnum.start,
+        }),
+        priceTableSchedulerGateway.cancelSchedule({
+          priceTableId,
+          action: PublishInputActionEnum.end,
+        }),
+      ]);
+    } catch (error) {
+      console.warn("⚠️ Failed to cancel existing schedules:", error);
+      // Don't throw error, just log it
+    }
+  }
 }
 
-export const inactivatePriceTableUsecase = singleton(InactivatePriceTableUsecase);
+export const inactivatePriceTableUsecase = singleton(
+  InactivatePriceTableUsecase
+);

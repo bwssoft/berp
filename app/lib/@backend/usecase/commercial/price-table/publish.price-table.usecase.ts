@@ -4,6 +4,8 @@ import { priceTableRepository } from "../../../infra/repository/mongodb/commerci
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../../admin/audit";
 import { AuditDomain } from "../../../domain/admin/entity/audit.definition";
+import { priceTableSchedulerGateway } from "../../../infra/gateway/price-table-scheduler/price-table-scheduler.gateway";
+import { PublishInputActionEnum } from "../../../domain/@shared/gateway/price-table-scheduler.gateway.interface";
 
 namespace Dto {
   export type Input = { id: string };
@@ -21,6 +23,9 @@ class PublishPriceTableUsecase {
   repository: IPriceTableRepository = priceTableRepository;
 
   async execute(input: Dto.Input): Promise<Dto.Output> {
+    // Cancel any existing schedules for this price table first
+    await this.cancelExistingSchedules(input.id);
+
     // 1) Carrega a tabela
     const priceTable = await this.repository.findOne({ id: input.id });
     if (!priceTable) {
@@ -120,7 +125,65 @@ class PublishPriceTableUsecase {
       });
     }
 
+    // 5) Schedule activation and inactivation via gateway
+    try {
+      // Ensure priceTable.id exists
+      const priceTableId = priceTable.id;
+      if (!priceTableId) {
+        console.error("❌ Price table ID is missing");
+        return { success: true }; // Continue with success since the status was updated
+      }
+
+      // Schedule activation at start date
+      await priceTableSchedulerGateway.publish({
+        priceTableId,
+        deliver_at: priceTable.startDateTime.getTime(),
+        action: PublishInputActionEnum.start,
+      });
+
+      // Schedule inactivation at end date (if exists)
+      if (priceTable.endDateTime) {
+        await priceTableSchedulerGateway.publish({
+          priceTableId,
+          deliver_at: priceTable.endDateTime.getTime(),
+          action: PublishInputActionEnum.end,
+        });
+      }
+    } catch (schedulerError) {
+      console.error("❌ Failed to schedule price table:", schedulerError);
+
+      // Optionally, you might want to revert the status change if scheduling fails
+      // await this.repository.updateOne(
+      //   { id: input.id },
+      //   { $set: { status: "DRAFT", updated_at: new Date() } }
+      // );
+
+      // For now, we'll log the error but continue (the webhook can still work)
+      console.warn(
+        "⚠️ Price table published but scheduling failed. Manual activation may be needed."
+      );
+    }
+
     return { success: true };
+  }
+
+  private async cancelExistingSchedules(priceTableId: string): Promise<void> {
+    try {
+      // Cancel both activation and inactivation schedules for this price table
+      await Promise.allSettled([
+        priceTableSchedulerGateway.cancelSchedule({
+          priceTableId,
+          action: PublishInputActionEnum.start,
+        }),
+        priceTableSchedulerGateway.cancelSchedule({
+          priceTableId,
+          action: PublishInputActionEnum.end,
+        }),
+      ]);
+    } catch (error) {
+      console.warn("⚠️ Failed to cancel existing schedules:", error);
+      // Don't throw error, just log it - we want to continue with new scheduling
+    }
   }
 }
 

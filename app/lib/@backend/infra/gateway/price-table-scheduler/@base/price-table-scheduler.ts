@@ -1,20 +1,20 @@
 import type * as grpc from '@grpc/grpc-js';
 import type { EnumTypeDefinition, MessageTypeDefinition } from '@grpc/proto-loader';
 
-import type { SchedulerServiceClient as _scheduler_SchedulerServiceClient, SchedulerServiceDefinition as _scheduler_SchedulerServiceDefinition } from './scheduler/SchedulerService';
+import type { ServiceClient as _price_scheduler_ServiceClient, ServiceDefinition as _price_scheduler_ServiceDefinition } from './price_scheduler/Service';
 
 type SubtypeConstructor<Constructor extends new (...args: any) => any, Subtype> = {
   new(...args: ConstructorParameters<Constructor>): Subtype;
 };
 
 export interface ProtoGrpcType {
-  scheduler: {
+  price_scheduler: {
     CancelInput: MessageTypeDefinition
     CancelResponse: MessageTypeDefinition
     PublishInput: MessageTypeDefinition
     PublishInputActionEnum: EnumTypeDefinition
     PublishResponse: MessageTypeDefinition
-    SchedulerService: SubtypeConstructor<typeof grpc.Client, _scheduler_SchedulerServiceClient> & { service: _scheduler_SchedulerServiceDefinition }
+    Service: SubtypeConstructor<typeof grpc.Client, _price_scheduler_ServiceClient> & { service: _price_scheduler_ServiceDefinition }
   }
 }
 
