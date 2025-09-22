@@ -73,7 +73,7 @@ export const useCheckConfiguration = (
   const toggleAutoChecking = (checked: boolean) =>
     setAutoCheckingEnabled(checked);
 
-  // hook that handle interactions with devices
+  // hook that handle interactions with devicess
   const { ports, handleDetection, handleGetConfig, requestPort, isIdentified } =
     useTechnology(technology);
 
@@ -197,10 +197,12 @@ export const useCheckConfiguration = (
 
       if (!isDetecting && ports.length) {
         setIsDetecting(true);
-        const detected = (await handleDetection(ports)).filter((d) => d.response && d.response.serial);
+        const detected = (await handleDetection(ports)).filter(
+          (d) => d.response && d.response.serial
+        );
 
-        setDetected((prev) => {
-          const map = new Map(prev.filter((d) => d.equipment?.serial).map((d) => [d.equipment?.serial, d]));
+        setDetected(() => {
+          const map = new Map();
 
           for (const { port, response } of detected) {
             map.set(response!.serial, {
@@ -210,7 +212,7 @@ export const useCheckConfiguration = (
             });
           }
 
-          return Array.from(new Set(map.values()))
+          return Array.from(new Set(map.values()));
         });
 
         setIsDetecting(false);
