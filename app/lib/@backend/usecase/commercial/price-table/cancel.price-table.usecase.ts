@@ -7,6 +7,8 @@ import {
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../../admin/audit";
 import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
+import { priceTableSchedulerGateway } from "../../../infra/gateway/price-table-scheduler/price-table-scheduler.gateway";
+import { PublishInputActionEnum } from "../../../domain/@shared/gateway/price-table-scheduler.gateway.interface";
 
 namespace Dto {
   export type Input = {
@@ -74,6 +76,9 @@ class CancelPriceTableUsecase {
         };
       }
 
+      // Cancel any pending schedules for this price table
+      await this.cancelExistingSchedules(input.id);
+
       return { success: true };
     } catch (err: any) {
       console.error("Erro ao cancelar tabela de preço:", err);
@@ -83,6 +88,25 @@ class CancelPriceTableUsecase {
           global: err instanceof Error ? err.message : JSON.stringify(err),
         },
       };
+    }
+  }
+
+  private async cancelExistingSchedules(priceTableId: string): Promise<void> {
+    try {
+      // Cancel both activation and inactivation schedules for this price table
+      await Promise.allSettled([
+        priceTableSchedulerGateway.cancelSchedule({
+          priceTableId,
+          action: PublishInputActionEnum.start,
+        }),
+        priceTableSchedulerGateway.cancelSchedule({
+          priceTableId,
+          action: PublishInputActionEnum.end,
+        }),
+      ]);
+    } catch (error) {
+      console.warn("⚠️ Failed to cancel existing schedules:", error);
+      // Don't throw error, just log it
     }
   }
 }
