@@ -102,14 +102,12 @@ const priceTableSchema = z
 
     groups: z.array(priceTableConditionGroupSchema).default([]),
 
-    // Configurações de faturamento
-    billingConfig: z
-      .object({
-        salesFor: z.string().optional(),
-        billingLimit: z.string().optional(),
-        billTo: z.string().optional(),
-      })
-      .optional(),
+    // Configurações de faturamento - billTo é opcional, validação será feita nas condições individuais
+    billingConfig: z.object({
+      salesFor: z.string().optional(),
+      billingLimit: z.string().optional(),
+      billTo: z.string().optional(),
+    }),
     equipmentWithSim: z.record(z.any()).default({}),
     equipmentWithoutSim: z.record(z.any()).default({}),
     simCards: z.array(z.any()).default([]),
@@ -119,13 +117,31 @@ const priceTableSchema = z
   .refine((data) => data.endDateTime > data.startDateTime, {
     message: "Data de fim deve ser posterior à data de início",
     path: ["endDateTime"],
-  });
+  })
+  .refine(
+    (data) => {
+      // Ensure there's at least one group with at least one condition that has toBillFor
+      const hasValidBillingCondition = data.groups.some((group) =>
+        group.conditions.some(
+          (condition) =>
+            condition.toBillFor && condition.toBillFor.trim().length > 0
+        )
+      );
+      return hasValidBillingCondition;
+    },
+    {
+      message:
+        "Pelo menos uma condição deve ter o campo 'Faturar para' preenchido",
+      path: ["groups"],
+    }
+  );
 
 export type CreatePriceTableFormData = z.infer<typeof priceTableSchema>;
 
 interface UsePriceTableFormProps {
   priceTableId?: string;
   editMode?: boolean;
+  cloneMode?: boolean;
 }
 
 type Group = {
@@ -212,6 +228,7 @@ const createPriceRange = (tiers: any[]): IPriceRange[] => {
 export function usePriceTableForm({
   priceTableId,
   editMode = false,
+  cloneMode = false,
 }: UsePriceTableFormProps = {}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -324,7 +341,7 @@ export function usePriceTableForm({
   };
 
   useEffect(() => {
-    if (!editMode || !priceTableId) return;
+    if ((!editMode && !cloneMode) || !priceTableId) return;
 
     const loadPriceTable = async () => {
       try {
@@ -334,8 +351,17 @@ export function usePriceTableForm({
         });
 
         if (existingPriceTable) {
-          setPriceTableStatus(existingPriceTable.status || null);
-          setPriceTableName(existingPriceTable.name || "");
+          // Para editMode, manter o status original; para cloneMode, usar DRAFT
+          setPriceTableStatus(
+            cloneMode ? "DRAFT" : existingPriceTable.status || null
+          );
+
+          // Para cloneMode, adicionar "(Cópia)" ao nome
+          const tableName = cloneMode
+            ? `${existingPriceTable.name} (Cópia)`
+            : existingPriceTable.name || "";
+          setPriceTableName(tableName);
+
           setExistingEquipmentPayment(
             existingPriceTable.equipmentPayment || []
           );
@@ -347,17 +373,27 @@ export function usePriceTableForm({
               existingPriceTable.equipmentPayment || []
             );
 
-          const formData = {
-            name: existingPriceTable.name || "",
-            startDateTime: existingPriceTable.startDateTime
+          // Para cloneMode, deixar datas em branco (usar default)
+          const startDateTime = cloneMode
+            ? getDefaultStartDateTime()
+            : existingPriceTable.startDateTime
               ? new Date(existingPriceTable.startDateTime)
-              : new Date(),
-            endDateTime: existingPriceTable.endDateTime
+              : new Date();
+
+          const endDateTime = cloneMode
+            ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+            : existingPriceTable.endDateTime
               ? new Date(existingPriceTable.endDateTime)
-              : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+              : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+
+          const formData = {
+            name: tableName,
+            startDateTime,
+            endDateTime,
             isTemporary: existingPriceTable.isTemporary ?? false,
             billingConfig: { salesFor: "", billingLimit: "", billTo: "" },
             equipmentWithSim,
+            groups: existingPriceTable.groups || [],
             equipmentWithoutSim,
             simCards: existingPriceTable.simcardPayment || [],
             accessories,
@@ -379,7 +415,7 @@ export function usePriceTableForm({
     };
 
     loadPriceTable();
-  }, [editMode, priceTableId, form]);
+  }, [editMode, cloneMode, priceTableId, form]);
 
   // Watch for name changes in the form and update the priceTableName state
   useEffect(() => {
@@ -616,8 +652,7 @@ export function usePriceTableForm({
       groups: data.groups || [],
     };
 
-    // Include ID when in edit mode
-    if (editMode && priceTableId) {
+    if (editMode && !cloneMode && priceTableId) {
       return { ...payload, id: priceTableId };
     }
 
@@ -631,10 +666,12 @@ export function usePriceTableForm({
     try {
       const payload = transformToPriceTablePayload(data, status);
 
-      // Use appropriate action based on edit mode
-      const result = editMode
-        ? await updateOnePriceTable(payload)
-        : await createOnePriceTable(payload);
+      // Use appropriate action based on edit mode and clone mode
+      // Clone mode should always create, not update
+      const result =
+        editMode && !cloneMode
+          ? await updateOnePriceTable(payload)
+          : await createOnePriceTable(payload);
 
       if (result?.success) {
         // Update price table status in state after successful save
@@ -651,30 +688,33 @@ export function usePriceTableForm({
           setExistingServicePayment(payload.servicePayment);
         }
 
-        const message = editMode
-          ? status === "DRAFT"
-            ? "Alterações salvas!"
-            : "Tabela de preços atualizada com sucesso!"
-          : status === "DRAFT"
-            ? "Rascunho salvo!"
-            : "Tabela de preços criada com sucesso!";
+        const message =
+          editMode && !cloneMode
+            ? status === "DRAFT"
+              ? "Alterações salvas!"
+              : "Tabela de preços atualizada com sucesso!"
+            : cloneMode
+              ? "Tabela clonada com sucesso!"
+              : status === "DRAFT"
+                ? "Rascunho salvo!"
+                : "Tabela de preços criada com sucesso!";
 
-        const description = editMode
-          ? status === "DRAFT"
-            ? "Suas alterações foram salvas como rascunho."
-            : "Tabela de preços atualizada com sucesso!"
-          : status === "DRAFT"
-            ? "Suas alterações foram salvas como rascunho."
-            : "Tabela de preços criada com sucesso!";
+        const description =
+          editMode && !cloneMode
+            ? status === "DRAFT"
+              ? "Suas alterações foram salvas como rascunho."
+              : "Tabela de preços atualizada com sucesso!"
+            : cloneMode
+              ? "Tabela foi clonada e você foi redirecionado para editá-la."
+              : status === "DRAFT"
+                ? "Suas alterações foram salvas como rascunho."
+                : "Tabela de preços criada com sucesso!";
 
         toast({ title: message, description, variant: "success" });
 
-        // If creating new, navigate to edit mode with the new ID
-        // If editing, stay on the same page
-        if (!editMode && "id" in result && result.id) {
+        if ((!editMode || cloneMode) && "id" in result && result.id) {
           router.push(`/commercial/price-table/form/edit/${result.id}`);
         }
-        // If already in edit mode, just stay on the page (no navigation)
       } else {
         const errorMsg =
           result?.error?.global || "Falha ao processar a tabela de preços!";
@@ -704,50 +744,47 @@ export function usePriceTableForm({
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     setLoading(true);
-    try {
-      // For draft saves, we don't need strict validation - get values directly
-      const currentData = form.getValues();
 
-      // Ensure start date is always in the future to avoid validation issues
+    try {
+      const isValid = await form.trigger();
+
+      if (!isValid) {
+        const errors = form.formState.errors;
+        let errorMessage = "Preencha todos os campos obrigatórios.";
+
+        if (errors.name || errors.startDateTime || errors.endDateTime) {
+          errorMessage =
+            "Preencha os campos obrigatórios: nome, data de início e data de fim.";
+        } else if (errors.groups) {
+          errorMessage =
+            "Preencha todos os campos obrigatórios nas condições de faturamento.";
+        }
+
+        toast({
+          title: "Campos obrigatórios",
+          description: errorMessage,
+          variant: "error",
+        });
+        return;
+      }
+
+      const currentData = form.getValues();
       const adjustedData = {
         ...currentData,
         startDateTime: ensureFutureStartDate(currentData.startDateTime),
       };
+
       await handleFormSubmission(adjustedData, "DRAFT");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSaveDraft = async () => {
-    const currentData = form.getValues();
-    // Ensure start date is always in the future to avoid validation errors
-    const adjustedData = {
-      ...currentData,
-      startDateTime: ensureFutureStartDate(currentData.startDateTime),
-    };
-    await handleFormSubmission(adjustedData, "DRAFT");
-  };
-
-  const handleValidatedSubmit = form.handleSubmit(
-    async (data: CreatePriceTableFormData) => {
-      setLoading(true);
-      try {
-        // Ensure start date is always in the future to avoid validation errors
-        const adjustedData = {
-          ...data,
-          startDateTime: ensureFutureStartDate(data.startDateTime),
-        };
-        await handleFormSubmission(adjustedData, "DRAFT");
-      } finally {
-        setLoading(false);
-      }
-    }
-  );
-
   const handleValidationConditions = async () => {
     try {
-      const result = await validateBillingConditionsPriceTable(form.getValues().groups || []);
+      const result = await validateBillingConditionsPriceTable(
+        form.getValues().groups || []
+      );
       setMessageErrorCondition({
         status: result.status,
         message: result.messages[0] ?? "",
@@ -759,25 +796,6 @@ export function usePriceTableForm({
         variant: "error",
       });
     }
-  };
-
-  const handleCancel = () => {
-    router.push("/commercial/price-table");
-  };
-
-  // Helper function to validate current form state
-  const validateForm = () => {
-    return form.trigger();
-  };
-
-  // Helper function to get form errors
-  const getFormErrors = () => {
-    return form.formState.errors;
-  };
-
-  // Helper function to check if form is dirty
-  const isFormDirty = () => {
-    return form.formState.isDirty;
   };
 
   type Status = "red" | "yellow" | "green";
@@ -795,6 +813,7 @@ export function usePriceTableForm({
     return {
       formData: data,
       equipmentWithSim: Object.keys(data.equipmentWithSim || {}).length,
+      groups: data.groups?.length || 0,
       equipmentWithoutSim: Object.keys(data.equipmentWithoutSim || {}).length,
       simCards: data.simCards?.length || 0,
       accessories: Object.keys(data.accessories || {}).length,
@@ -805,8 +824,6 @@ export function usePriceTableForm({
   return {
     form,
     handleSubmit,
-    handleValidatedSubmit,
-    handleSaveDraft,
     handleCancel: () => router.push("/commercial/price-table"),
     loading,
     loadingPriceTable,
