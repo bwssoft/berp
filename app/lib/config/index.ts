@@ -50,5 +50,5 @@ export const config = EnviromentsSchema.parse({
   AWS_S3_ACCESS_KEY: process.env.AWS_S3_ACCESS_KEY,
   AWS_S3_SECRET_KEY: process.env.AWS_S3_SECRET_KEY,
   CNPJA_API_KEY: process.env.CNPJA_API_KEY,
-  PRICE_TABLE_SCHEDULER_API_URL: process.env.PRICE_TABLE_SCHEDULER_API_URL || "",
+  PRICE_TABLE_SCHEDULER_API_URL: process.env.PRICE_TABLE_SCHEDULER_API_URL,
 });
