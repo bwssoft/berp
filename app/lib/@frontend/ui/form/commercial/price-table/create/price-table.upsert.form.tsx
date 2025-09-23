@@ -203,32 +203,13 @@ export function UpsertPriceTableForm({
     }
   }, [existingEquipmentPayment]);
 
-  // Watch form payment data to make button visibility reactive
-  const watchedEquipmentWithSim = form.watch("equipmentWithSim");
-  const watchedEquipmentWithoutSim = form.watch("equipmentWithoutSim");
-  const watchedAccessories = form.watch("accessories");
-  const watchedSimCards = form.watch("simCards");
-  const watchedServices = form.watch("services");
-
-  // Helper function to check if price table has required payment data for publishing
   const hasRequiredPaymentData = () => {
     const hasExistingPayments =
       (existingEquipmentPayment && existingEquipmentPayment.length > 0) ||
       (existingSimcardPayment && existingSimcardPayment.length > 0) ||
       (existingServicePayment && existingServicePayment.length > 0);
 
-    const hasFormPayments =
-      (watchedEquipmentWithSim &&
-        Object.keys(watchedEquipmentWithSim).length > 0) ||
-      (watchedEquipmentWithoutSim &&
-        Object.keys(watchedEquipmentWithoutSim).length > 0) ||
-      (watchedAccessories && Object.keys(watchedAccessories).length > 0) ||
-      (watchedSimCards && watchedSimCards.length > 0) ||
-      (watchedServices && watchedServices.length > 0);
-
-    const result = hasExistingPayments || hasFormPayments;
-
-    return result;
+    return hasExistingPayments;
   };
 
   // Helper function to get status badge
