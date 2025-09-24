@@ -1,97 +1,48 @@
 import { singleton } from "@/app/lib/util";
-import path from "path";
-import * as grpc from "@grpc/grpc-js";
-import * as protoLoader from "@grpc/proto-loader";
-import fs from "fs";
-import {
-  IPriceTableSchedulerGateway,
-  PublishInput,
-  PublishInputActionEnum,
-  CancelScheduleParams,
-} from "../../../domain/@shared/gateway/price-table-scheduler.gateway.interface";
-import { ProtoGrpcType } from "./@base/price-table-scheduler";
-import { ServiceClient } from "./@base/price_scheduler/Service";
+import { config } from "@/app/lib/config";
 
-const PROTO_PATH = path.join(
-  process.cwd(),
-  "./app/lib/@backend/infra/gateway/price-table-scheduler/@base/price-table-scheduler.proto"
-);
-const CRT_PATH = path.join(
-  process.cwd(),
-  "./app/lib/@backend/infra/gateway/price-table-scheduler/@base/ca.crt"
-);
+export interface ScheduleResponse {
+  scheduleIds: string[];
+  arns: string[];
+}
 
-// Load proto definition
-const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
-  keepCase: true,
-  longs: Number,
-  enums: String,
-  defaults: true,
-  oneofs: true,
-});
+export class PriceTableSchedulerGateway {
+  private readonly baseUrl = config.PRICE_TABLE_SCHEDULER_API_URL;
 
-const proto = grpc.loadPackageDefinition(
-  packageDefinition
-) as unknown as ProtoGrpcType;
-const PriceTableSchedulerService = proto.price_scheduler.Service;
-
-class PriceTableSchedulerGateway implements IPriceTableSchedulerGateway {
-  private client: ServiceClient;
-
-  constructor() {
-    this.client = new PriceTableSchedulerService(
-      process.env.PRICE_TABLE_SCHEDULER_GRPC_URL!,
-      // grpc.credentials.createSsl(fs.readFileSync(CRT_PATH))
-      grpc.credentials.createInsecure()
-    );
-  }
-
-  async publish(input: PublishInput): Promise<void> {
-    const { priceTableId, deliver_at, action } = input;
-
-    try {
-      // gRPC call implementation
-      await this.schedulePublish(input);
-    } catch (error) {
-      console.error(`❌ Error scheduling price table:`, error);
-      throw new Error(`Failed to schedule price table`);
-    }
-  }
-
-  async cancelSchedule(input: CancelScheduleParams): Promise<void> {
-    const { priceTableId, action } = input;
-
-    try {
-      // gRPC call implementation
-      await this.cancelPublish(input);
-    } catch (error) {
-      console.error("❌ Error cancelling schedule:", error);
-      throw new Error("Failed to cancel schedule");
-    }
-  }
-
-  private async schedulePublish(input: PublishInput): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.client.publish(input, (err: grpc.ServiceError | null) => {
-        if (err) {
-          console.error("gRPC error:", err);
-          return reject(new Error("Failed to schedule via gRPC"));
-        }
-        resolve();
-      });
+  async createSchedules({
+    priceTableId,
+    startDateTime,
+    endDateTime,
+  }: {
+    priceTableId: string;
+    startDateTime: string;
+    endDateTime: string;
+  }): Promise<ScheduleResponse> {
+    const response = await fetch(`${this.baseUrl}/schedule`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceTableId, startDateTime, endDateTime }),
     });
+    if (!response.ok)
+      throw new Error(`Failed to create schedules: ${response.status}`);
+    return response.json();
   }
 
-  private async cancelPublish(input: CancelScheduleParams): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.client.cancel(input, (err: grpc.ServiceError | null) => {
-        if (err) {
-          console.error("gRPC error:", err);
-          return reject(new Error("Failed to cancel schedule via gRPC"));
-        }
-        resolve();
-      });
+  async deleteSchedule(scheduleId: string): Promise<void> {
+    const response = await fetch(`${this.baseUrl}/schedule/${scheduleId}`, {
+      method: "DELETE",
     });
+    if (response.status === 404) throw new Error("Not Found");
+    if (!response.ok)
+      throw new Error(`Failed to delete schedule: ${response.status}`);
+  }
+
+  async getSchedule(scheduleId: string): Promise<any> {
+    const response = await fetch(`${this.baseUrl}/schedule/${scheduleId}`);
+    if (response.status === 404) throw new Error("Not Found");
+    if (!response.ok)
+      throw new Error(`Failed to get schedule: ${response.status}`);
+    return response.json();
   }
 }
 
