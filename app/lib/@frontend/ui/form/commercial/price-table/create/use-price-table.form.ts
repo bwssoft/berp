@@ -712,7 +712,12 @@ export function usePriceTableForm({
 
         toast({ title: message, description, variant: "success" });
 
-        if ((!editMode || cloneMode) && "id" in result && result.id) {
+        if (
+          (!editMode || cloneMode) &&
+          result.success &&
+          "id" in result &&
+          result.id
+        ) {
           router.push(`/commercial/price-table/form/edit/${result.id}`);
         }
       } else {
