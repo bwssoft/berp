@@ -67,6 +67,7 @@ export const updateOneUser = async (
 export const lockUser = async (data: { id: string; lock: boolean }) => {
   const result = await lockUserUsecase(data);
   revalidatePath(`/admin/user/form/update?id=${data.id}`);
+  revalidatePath(`/admin/user`);
   return result;
 };
 
