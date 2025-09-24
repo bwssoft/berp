@@ -5,7 +5,7 @@ import { activatePriceTableUsecase } from "@/app/lib/@backend/usecase/commercial
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  const secret = req.headers.get("x-webhook-secret");
+  // const secret = req.headers.get("x-webhook-secret");
   // if (secret !== process.env._____) {
   //   return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   // }
@@ -20,15 +20,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { id } = (body ?? {}) as { id?: string };
-  if (!id) {
+  const { priceTableId } = (body ?? {}) as { priceTableId?: string };
+  if (!priceTableId) {
     return NextResponse.json(
-      { ok: false, error: "missing id" },
+      { ok: false, error: "missing priceTableId" },
       { status: 400 }
     );
   }
 
-  const out = await activatePriceTableUsecase.execute({ id });
+  const out = await activatePriceTableUsecase.execute({ id: priceTableId });
   return NextResponse.json(
     { ok: out.success, error: out.error },
     { status: out.success ? 200 : 400 }

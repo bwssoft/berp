@@ -347,7 +347,7 @@ export function UpsertPriceTableForm({
                         Data de início <span className="text-red-500">*</span>
                       </label>
                       <DateInput
-                        type="date"
+                        type="dateTime"
                         value={form.watch("startDateTime")}
                         onChange={(date) => {
                           form.setValue("startDateTime", date as Date);
@@ -366,7 +366,7 @@ export function UpsertPriceTableForm({
                         Data de fim <span className="text-red-500">*</span>
                       </label>
                       <DateInput
-                        type="date"
+                        type="dateTime"
                         value={form.watch("endDateTime")}
                         onChange={(date) => {
                           form.setValue("endDateTime", date as Date);
