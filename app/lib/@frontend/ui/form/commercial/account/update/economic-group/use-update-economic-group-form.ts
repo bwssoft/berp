@@ -162,31 +162,30 @@ export function useUpdateEconomicGroupForm(
   ): Promise<boolean> => {
     try {
       const cleanedTaxId = holdingTaxId.replace(/\D/g, "");
-
-      const validationResult =
-        await validateHoldingEnterpriseNotInAnyGroup(cleanedTaxId);
+      const validationResult = await validateHoldingEnterpriseNotInAnyGroup(cleanedTaxId);
 
       if (!validationResult.isValid && validationResult.conflictingEntry) {
-        const entry = validationResult.conflictingEntry;
+        const { conflictType, name, taxId, holdingName, holdingTaxId } =
+          validationResult.conflictingEntry;
 
-        let errorMessage =
-          "Não é possível selecionar esta empresa como holding:\n\n";
+        const base =
+          "Não é possível selecionar esta empresa como holding.";
 
-        if (entry.conflictType === "holding") {
-          errorMessage += `⚠️ Esta empresa já é holding de outro grupo econômico:\n`;
-          errorMessage += `• ${entry.name} (${entry.taxId}) - já é holding de um grupo existente\n`;
-        } else if (entry.conflictType === "controlled") {
-          errorMessage += `⚠️ Esta empresa já está controlada por outro grupo:\n`;
-          if (entry.holdingName) {
-            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
-          } else {
-            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence a outro grupo econômico\n`;
-          }
+        let description: string;
+
+        if (conflictType === "holding") {
+          description = `${base} Esta empresa já é holding de outro grupo econômico: ${name} (${taxId}).`;
+        } else if (conflictType === "controlled") {
+          description = holdingName
+            ? `${base} Esta empresa já pertence ao grupo da holding ${holdingName} (${holdingTaxId}).`
+            : `${base} Esta empresa já pertence a outro grupo econômico: ${name} (${taxId}).`;
+        } else {
+          description = base;
         }
 
         toast({
-          title: "Conflito de Grupo Econômico",
-          description: errorMessage.trim(),
+          title: "Conflito de Grupo Econômico ⚠️",
+          description,
           variant: "error",
         });
 
