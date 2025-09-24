@@ -24,7 +24,7 @@ namespace Namespace {
 
   export interface Detected {
     port: ISerialPort;
-    equipment: Equipment;
+    equipment?: Equipment | undefined;
     status: "fully_identified" | "partially_identified" | "not_identified";
   }
 
@@ -56,7 +56,7 @@ export const useCheckConfiguration = (
   const [detected, setDetected] = useState<Namespace.Detected[]>([]);
   const detectedKey = useMemo(() => {
     return detected
-      .map((d) => d.equipment.serial ?? "")
+      .map((d) => d.equipment?.serial ?? "")
       .filter((s) => s.length > 0)
       .sort()
       .join("|");
@@ -73,7 +73,7 @@ export const useCheckConfiguration = (
   const toggleAutoChecking = (checked: boolean) =>
     setAutoCheckingEnabled(checked);
 
-  // hook that handle interactions with devices
+  // hook that handle interactions with devicess
   const { ports, handleDetection, handleGetConfig, requestPort, isIdentified } =
     useTechnology(technology);
 
@@ -92,7 +92,7 @@ export const useCheckConfiguration = (
           d
         ): d is typeof d & {
           equipment: { serial: string; firmware: string };
-        } => Boolean(d.equipment.serial && d.equipment.firmware)
+        } => Boolean(d.equipment?.serial && d.equipment?.firmware)
       );
 
       // 2) Puxar configuração atual de todos eles
@@ -197,21 +197,22 @@ export const useCheckConfiguration = (
 
       if (!isDetecting && ports.length) {
         setIsDetecting(true);
-        const identified = await handleDetection(ports);
+        const detected = (await handleDetection(ports)).filter(
+          (d) => d.response && d.response.serial
+        );
 
-        setDetected((prev) => {
-          const newOnes = identified.filter(
-            (id) =>
-              !prev.some((el) => el.equipment.serial === id.response?.serial)
-          );
+        setDetected(() => {
+          const map = new Map();
 
-          const mappedNew = newOnes.map(({ port, response }) => ({
-            port,
-            equipment: response!,
-            status: isIdentified(response),
-          }));
+          for (const { port, response } of detected) {
+            map.set(response!.serial, {
+              port,
+              equipment: response,
+              status: !response ? "not_identified" : isIdentified(response),
+            });
+          }
 
-          return prev.concat(mappedNew);
+          return Array.from(new Set(map.values()));
         });
 
         setIsDetecting(false);

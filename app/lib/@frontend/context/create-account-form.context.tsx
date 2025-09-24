@@ -296,9 +296,11 @@ export function CreateAccountFormProvider({
     resolver: zodResolver(schema),
   });
 
+  const doc = methods.watch("document.value");
+
   // Initialize form with existing account data from flow context
   useEffect(() => {
-    if (localAccount) {
+    if (localAccount && (doc == localAccount.document.value)) {
       // Set the document type first
       setType(localAccount.document.type);
 
@@ -353,7 +355,7 @@ export function CreateAccountFormProvider({
     }
 
     // Initialize economic group data from separate context
-    if (localEconomicGroup) {
+    if (localEconomicGroup && (doc == localAccount?.document.value)) {
       if (localEconomicGroup.economic_group_holding) {
         const holdingData = {
           taxId: localEconomicGroup.economic_group_holding.taxId || "",
