@@ -264,81 +264,81 @@ export const useNB2 = () => {
               transport: port,
               messages,
             });
+
+            const config = {
+              general: {
+                keep_alive: BwsNb2Parser.keep_alive(response.keep_alive),
+                ip_primary: BwsNb2Parser.ip_primary(response.ip_primary),
+                ip_secondary: BwsNb2Parser.ip_secondary(response.ip_secondary),
+                dns_primary: BwsNb2Parser.dns_primary(response.dns_primary),
+                dns_secondary: BwsNb2Parser.dns_secondary(
+                  response.dns_secondary
+                ),
+                apn: BwsNb2Parser.apn(response.apn),
+                data_transmission_on: BwsNb2Parser.data_transmission_on(
+                  response.data_transmission_on
+                ),
+                data_transmission_off: BwsNb2Parser.data_transmission_off(
+                  response.data_transmission_off
+                ),
+              },
+              specific: {
+                data_transmission_event: BwsNb2Parser.data_transmission_event(
+                  response.data_transmission_event
+                ),
+                time_to_sleep: BwsNb2Parser.time_to_sleep(
+                  response.time_to_sleep
+                ),
+                odometer: BwsNb2Parser.odometer(response.odometer),
+                virtual_ignition_12v: BwsNb2Parser.virtual_ignition_12v(
+                  response.virtual_ignition_12v
+                ),
+                virtual_ignition_24v: BwsNb2Parser.virtual_ignition_24v(
+                  response.virtual_ignition_24v
+                ),
+                heading_detection_angle: BwsNb2Parser.heading_detection_angle(
+                  response.heading_detection_angle
+                ),
+                speed_alert_threshold: BwsNb2Parser.speed_alert_threshold(
+                  response.speed_alert_threshold
+                ),
+                accel_threshold_for_ignition_on:
+                  BwsNb2Parser.accel_threshold_for_ignition_on(
+                    response.accel_threshold_for_ignition_on
+                  ),
+                accel_threshold_for_ignition_off:
+                  BwsNb2Parser.accel_threshold_for_ignition_off(
+                    response.accel_threshold_for_ignition_off
+                  ),
+                accel_threshold_for_movement:
+                  BwsNb2Parser.accel_threshold_for_movement(
+                    response.accel_threshold_for_movement
+                  ),
+                harsh_acceleration_threshold:
+                  BwsNb2Parser.harsh_acceleration_threshold(
+                    response.harsh_acceleration_threshold
+                  ),
+                harsh_braking_threshold: BwsNb2Parser.harsh_braking_threshold(
+                  response.harsh_braking_threshold
+                ),
+                full_configuration_table: BwsNb2Parser.full_configuration_table(
+                  response.full_configuration_table
+                ),
+                full_functionality_table: BwsNb2Parser.full_functionality_table(
+                  response.full_functionality_table
+                ),
+                economy_mode: BwsNb2Parser.economy_mode(response.economy_mode),
+                lock_type: BwsNb2Parser.lock_type(response.lock_type),
+              },
+            };
+
+            const check = BwsNb2Parser.check(response);
+            console.log("🚀 ~ useNB2 ~ check:", check);
+
             return {
               port,
               equipment,
-              config: {
-                general: {
-                  keep_alive: BwsNb2Parser.keep_alive(response.keep_alive),
-                  ip_primary: BwsNb2Parser.ip_primary(response.ip_primary),
-                  ip_secondary: BwsNb2Parser.ip_secondary(
-                    response.ip_secondary
-                  ),
-                  dns_primary: BwsNb2Parser.dns_primary(response.dns_primary),
-                  dns_secondary: BwsNb2Parser.dns_secondary(
-                    response.dns_secondary
-                  ),
-                  apn: BwsNb2Parser.apn(response.apn),
-                  data_transmission_on: BwsNb2Parser.data_transmission_on(
-                    response.data_transmission_on
-                  ),
-                  data_transmission_off: BwsNb2Parser.data_transmission_off(
-                    response.data_transmission_off
-                  ),
-                },
-                specific: {
-                  data_transmission_event: BwsNb2Parser.data_transmission_event(
-                    response.data_transmission_event
-                  ),
-                  time_to_sleep: BwsNb2Parser.time_to_sleep(
-                    response.time_to_sleep
-                  ),
-                  odometer: BwsNb2Parser.odometer(response.odometer),
-                  virtual_ignition_12v: BwsNb2Parser.virtual_ignition_12v(
-                    response.virtual_ignition_12v
-                  ),
-                  virtual_ignition_24v: BwsNb2Parser.virtual_ignition_24v(
-                    response.virtual_ignition_24v
-                  ),
-                  heading_detection_angle: BwsNb2Parser.heading_detection_angle(
-                    response.heading_detection_angle
-                  ),
-                  speed_alert_threshold: BwsNb2Parser.speed_alert_threshold(
-                    response.speed_alert_threshold
-                  ),
-                  accel_threshold_for_ignition_on:
-                    BwsNb2Parser.accel_threshold_for_ignition_on(
-                      response.accel_threshold_for_ignition_on
-                    ),
-                  accel_threshold_for_ignition_off:
-                    BwsNb2Parser.accel_threshold_for_ignition_off(
-                      response.accel_threshold_for_ignition_off
-                    ),
-                  accel_threshold_for_movement:
-                    BwsNb2Parser.accel_threshold_for_movement(
-                      response.accel_threshold_for_movement
-                    ),
-                  harsh_acceleration_threshold:
-                    BwsNb2Parser.harsh_acceleration_threshold(
-                      response.harsh_acceleration_threshold
-                    ),
-                  harsh_braking_threshold: BwsNb2Parser.harsh_braking_threshold(
-                    response.harsh_braking_threshold
-                  ),
-                  full_configuration_table:
-                    BwsNb2Parser.full_configuration_table(
-                      response.full_configuration_table
-                    ),
-                  full_functionality_table:
-                    BwsNb2Parser.full_functionality_table(
-                      response.full_functionality_table
-                    ),
-                  economy_mode: BwsNb2Parser.economy_mode(
-                    response.economy_mode
-                  ),
-                  lock_type: BwsNb2Parser.lock_type(response.lock_type),
-                },
-              },
+              config,
               messages: messages.map(({ key, command }) => ({
                 key,
                 request: command,

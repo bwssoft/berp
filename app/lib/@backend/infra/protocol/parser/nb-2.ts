@@ -23,7 +23,83 @@ export namespace BwsNb2 {
   }
 }
 
+const CHECK_KEYS_MAPPER = {
+  ROUT: "OUT", // Saida
+  RFSM: "SDMS", // Modo de economia
+  RODM: "DK", // Odometro
+  RFA: "TDET", // Angulo de curva
+  RCN: "RCN", // Chave ligada - tempo de comunicacao
+  RCW: "RCW", // Chave desligada - tempo de comunicacao
+  RC: "RC", // Tempo de posicao
+};
+
+const CHECK_MAPPER = {
+  apn: {
+    from: "RIAP",
+    to: "APN",
+  },
+  ip_primary: {
+    from: "RIP1",
+    to: "IP1",
+  },
+  ip_secondary: {
+    from: "RIP2",
+    to: "IP2",
+  },
+  dns_primary: {
+    from: "RID1",
+    to: "DNS1",
+  },
+  dns_secondary: {
+    from: "RID2",
+    to: "DNS2",
+  },
+  keep_alive: {
+    from: "RC",
+    to: "TX",
+  },
+  odometer: {
+    from: "RODM",
+    to: "DK",
+  },
+  economy_mode: {
+    from: "RFSM",
+    to: "SDMS",
+  },
+};
+
 export class BwsNb2Parser {
+  static check(input: Record<string, any>) {
+    if (Object.keys(input).length > 0) {
+      const translatedCheck = Object.keys(input).reduce((check, key) => {
+        const checkMapperValue = CHECK_MAPPER[key as keyof typeof CHECK_MAPPER];
+        if (checkMapperValue) {
+          const value = input[key].replace(
+            checkMapperValue.from,
+            checkMapperValue.to
+          );
+          return check + `${value} `;
+        }
+
+        const value = input[key];
+        return check + `${value} `;
+      }, "");
+
+      const nativeCheck = Object.keys(input).reduce((check, key) => {
+        const value = input[key];
+
+        return check + `${value} `;
+      }, "");
+
+      return {
+        translated: translatedCheck,
+        native: nativeCheck,
+      };
+    }
+
+    return "";
+  }
+
   /**
    * Extrai o valor do serial de uma string que contém "RINS=" seguido de um número.
    *
