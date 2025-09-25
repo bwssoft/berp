@@ -84,6 +84,7 @@ export function UpdateOneUserForm({ user }: Props) {
                   variant="secondary"
                   onClick={lockDialog.openDialog}
                   type="button"
+                  disabled={!isActive}
                 >
                   {isLocked ? "Desbloquear Usuário" : "Bloquear Usuário"}
                 </Button>

@@ -4,6 +4,7 @@ import { priceTableRepository } from "../../../infra/repository/mongodb/commerci
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../../admin/audit";
 import { AuditDomain } from "../../../domain/admin/entity/audit.definition";
+import { priceTableSchedulerGateway } from "../../../infra/gateway/price-table-scheduler";
 
 namespace Dto {
   export type Input = { id: string };
@@ -118,6 +119,23 @@ class PublishPriceTableUsecase {
         user: { email, name: userName, id: user_id },
         action: `Tabela de preços '${priceTable.name}' programada para publicação.`,
       });
+    }
+
+    try {
+      const priceTableId = priceTable.id;
+      if (!priceTableId) {
+        console.error("❌ Price table ID is missing");
+        return { success: true };
+      }
+      await priceTableSchedulerGateway.createSchedules({
+        priceTableId,
+        startDateTime: priceTable.startDateTime.toISOString(),
+        endDateTime: priceTable.endDateTime.toISOString(),
+      });
+    } catch (schedulerError) {
+      console.warn(
+        "⚠️ Price table published but scheduling failed. Manual activation may be needed."
+      );
     }
 
     return { success: true };

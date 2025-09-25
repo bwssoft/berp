@@ -11,16 +11,6 @@ const schema = z.object({
     username: z.string(),
     password: z
         .string()
-        .nonempty("É necessário informar a senha")
-        .min(6, "A senha deve ter no mínimo 8 caracteres")
-        .max(32, "A senha deve ter no máximo 32 caracteres")
-        .regex(/[A-Z]/, "A senha deve conter ao menos uma letra maiúscula")
-        .regex(/[a-z]/, "A senha deve conter ao menos uma letra minúscula")
-        .regex(/[0-9]/, "A senha deve conter ao menos um número")
-        .regex(
-            /[!@#$%^&*()_\-+=\[\]{};:'"\\|,.<>\/?`~]/,
-            "A senha deve conter ao menos um caractere especial"
-        ),
 });
 
 type Schema = z.infer<typeof schema>;

@@ -6,13 +6,13 @@ import { ISerialPort } from "@/app/lib/@frontend/hook/use-serial-port";
 import { Device } from "@/app/lib/@backend/domain";
 
 export interface Row {
-  equipment: {
+  equipment?: {
     imei?: string | undefined;
     iccid?: string | undefined;
     firmware?: string | undefined;
     serial?: string | undefined;
     lora_keys?: Partial<Device.Equipment["lora_keys"]>;
-  };
+  } | undefined;
   status: "fully_identified" | "partially_identified" | "not_identified";
   port: ISerialPort;
 }
@@ -66,8 +66,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Serial",
       accessorKey: "serial",
       cell: ({ row }) => (
-        <p title={row.original.equipment.serial}>
-          {row.original.equipment.serial ?? "--"}
+        <p title={row.original.equipment?.serial}>
+          {row.original.equipment?.serial ?? "--"}
         </p>
       ),
     },
@@ -75,8 +75,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Iccid",
       accessorKey: "iccid",
       cell: ({ row }) => (
-        <p title={row.original.equipment.iccid}>
-          {row.original.equipment.iccid ?? "--"}
+        <p title={row.original.equipment?.iccid}>
+          {row.original.equipment?.iccid ?? "--"}
         </p>
       ),
     },
@@ -84,8 +84,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Firmware",
       accessorKey: "firmware",
       cell: ({ row }) => (
-        <p title={row.original.equipment.firmware}>
-          {row.original.equipment.firmware ?? "--"}
+        <p title={row.original.equipment?.firmware}>
+          {row.original.equipment?.firmware ?? "--"}
         </p>
       ),
     },
@@ -95,8 +95,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Serial",
       accessorKey: "serial",
       cell: ({ row }) => (
-        <p title={row.original.equipment.serial}>
-          {row.original.equipment.serial ?? "--"}
+        <p title={row.original.equipment?.serial}>
+          {row.original.equipment?.serial ?? "--"}
         </p>
       ),
     },
@@ -104,8 +104,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Imei",
       accessorKey: "imei",
       cell: ({ row }) => (
-        <p title={row.original.equipment.imei}>
-          {row.original.equipment.imei ?? "--"}
+        <p title={row.original.equipment?.imei}>
+          {row.original.equipment?.imei ?? "--"}
         </p>
       ),
     },
@@ -113,8 +113,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Iccid",
       accessorKey: "iccid",
       cell: ({ row }) => (
-        <p title={row.original.equipment.iccid}>
-          {row.original.equipment.iccid ?? "--"}
+        <p title={row.original.equipment?.iccid}>
+          {row.original.equipment?.iccid ?? "--"}
         </p>
       ),
     },
@@ -122,8 +122,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Firmware",
       accessorKey: "firmware",
       cell: ({ row }) => (
-        <p title={row.original.equipment.firmware}>
-          {row.original.equipment.firmware ?? "--"}
+        <p title={row.original.equipment?.firmware}>
+          {row.original.equipment?.firmware ?? "--"}
         </p>
       ),
     },
@@ -133,8 +133,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Serial",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.serial}>
-          {row.original.equipment.serial ?? "--"}
+        <p title={row.original.equipment?.serial}>
+          {row.original.equipment?.serial ?? "--"}
         </p>
       ),
     },
@@ -142,8 +142,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Firmware",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.firmware}>
-          {row.original.equipment.firmware ?? "--"}
+        <p title={row.original.equipment?.firmware}>
+          {row.original.equipment?.firmware ?? "--"}
         </p>
       ),
     },
@@ -151,8 +151,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Timestamp",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.lora_keys?.timestamp}>
-          {row.original.equipment.lora_keys?.timestamp ?? "--"}
+        <p title={row.original.equipment?.lora_keys?.timestamp}>
+          {row.original.equipment?.lora_keys?.timestamp ?? "--"}
         </p>
       ),
     },
@@ -160,8 +160,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Device EUI",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.lora_keys?.device_eui}>
-          {row.original.equipment.lora_keys?.device_eui ?? "--"}
+        <p title={row.original.equipment?.lora_keys?.device_eui}>
+          {row.original.equipment?.lora_keys?.device_eui ?? "--"}
         </p>
       ),
     },
@@ -171,8 +171,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Serial",
       accessorKey: "serial",
       cell: ({ row }) => (
-        <p title={row.original.equipment.serial}>
-          {row.original.equipment.serial ?? "--"}
+        <p title={row.original.equipment?.serial}>
+          {row.original.equipment?.serial ?? "--"}
         </p>
       ),
     },
@@ -180,8 +180,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Imei",
       accessorKey: "imei",
       cell: ({ row }) => (
-        <p title={row.original.equipment.imei}>
-          {row.original.equipment.imei ?? "--"}
+        <p title={row.original.equipment?.imei}>
+          {row.original.equipment?.imei ?? "--"}
         </p>
       ),
     },
@@ -189,8 +189,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Iccid",
       accessorKey: "iccid",
       cell: ({ row }) => (
-        <p title={row.original.equipment.iccid}>
-          {row.original.equipment.iccid ?? "--"}
+        <p title={row.original.equipment?.iccid}>
+          {row.original.equipment?.iccid ?? "--"}
         </p>
       ),
     },
@@ -198,8 +198,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Device Address",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.lora_keys?.device_address}>
-          {row.original.equipment.lora_keys?.device_address ?? "--"}
+        <p title={row.original.equipment?.lora_keys?.device_address}>
+          {row.original.equipment?.lora_keys?.device_address ?? "--"}
         </p>
       ),
     },
@@ -207,8 +207,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Device EUI",
       accessorKey: "equipment",
       cell: ({ row }) => (
-        <p title={row.original.equipment.lora_keys?.device_eui}>
-          {row.original.equipment.lora_keys?.device_eui ?? "--"}
+        <p title={row.original.equipment?.lora_keys?.device_eui}>
+          {row.original.equipment?.lora_keys?.device_eui ?? "--"}
         </p>
       ),
     },
@@ -216,8 +216,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Firmware",
       accessorKey: "firmware",
       cell: ({ row }) => (
-        <p title={row.original.equipment.firmware}>
-          {row.original.equipment.firmware ?? "--"}
+        <p title={row.original.equipment?.firmware}>
+          {row.original.equipment?.firmware ?? "--"}
         </p>
       ),
     },
@@ -227,8 +227,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Serial",
       accessorKey: "serial",
       cell: ({ row }) => (
-        <p title={row.original.equipment.serial}>
-          {row.original.equipment.serial ?? "--"}
+        <p title={row.original.equipment?.serial}>
+          {row.original.equipment?.serial ?? "--"}
         </p>
       ),
     },
@@ -236,8 +236,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Iccid",
       accessorKey: "iccid",
       cell: ({ row }) => (
-        <p title={row.original.equipment.iccid}>
-          {row.original.equipment.iccid ?? "--"}
+        <p title={row.original.equipment?.iccid}>
+          {row.original.equipment?.iccid ?? "--"}
         </p>
       ),
     },
@@ -245,8 +245,8 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       header: "Firmware",
       accessorKey: "firmware",
       cell: ({ row }) => (
-        <p title={row.original.equipment.firmware}>
-          {row.original.equipment.firmware ?? "--"}
+        <p title={row.original.equipment?.firmware}>
+          {row.original.equipment?.firmware ?? "--"}
         </p>
       ),
     },
