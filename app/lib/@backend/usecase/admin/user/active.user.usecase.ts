@@ -70,7 +70,7 @@ class ActiveUserUsecase {
 
             // Se ativar o usuário, deve resetar a senha
             if (active) {
-                const reset = await resetPasswordUserUsecase.execute({ id });
+                const reset = await resetPasswordUserUsecase.execute({id:input.id });
 
                 if (!reset.success) {
                     return { success: false, error: typeof reset.error === "string" ? reset.error : JSON.stringify(reset.error) };
