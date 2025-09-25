@@ -112,7 +112,7 @@ export function useUpdateOneUserForm(user: IUser) {
       data.id,
       {
         ...data,
-        image: undefined,
+        image: data.image?.length === 0 ? undefined : data.image,
         cpf: removeSpecialCharacters(data.cpf),
       },
       formData

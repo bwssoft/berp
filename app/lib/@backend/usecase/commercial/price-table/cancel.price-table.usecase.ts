@@ -7,8 +7,7 @@ import {
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../../admin/audit";
 import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
-import { priceTableSchedulerGateway } from "../../../infra/gateway/price-table-scheduler/price-table-scheduler.gateway";
-import { PublishInputActionEnum } from "../../../domain/@shared/gateway/price-table-scheduler.gateway.interface";
+import { priceTableSchedulerGateway } from "../../../infra/gateway/price-table-scheduler";
 
 namespace Dto {
   export type Input = {
@@ -93,20 +92,9 @@ class CancelPriceTableUsecase {
 
   private async cancelExistingSchedules(priceTableId: string): Promise<void> {
     try {
-      // Cancel both activation and inactivation schedules for this price table
-      await Promise.allSettled([
-        priceTableSchedulerGateway.cancelSchedule({
-          priceTableId,
-          action: PublishInputActionEnum.start,
-        }),
-        priceTableSchedulerGateway.cancelSchedule({
-          priceTableId,
-          action: PublishInputActionEnum.end,
-        }),
-      ]);
+      await priceTableSchedulerGateway.deleteSchedule(priceTableId);
     } catch (error) {
       console.warn("⚠️ Failed to cancel existing schedules:", error);
-      // Don't throw error, just log it
     }
   }
 }
