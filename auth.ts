@@ -23,7 +23,7 @@ async function getAvatarUrl(imageKey: string | undefined): Promise<string> {
 const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
   jwt: {
-    maxAge: 24 * 60 * 60, // 24 hours in seconds
+    maxAge: 24 * 60 * 60, // 24 horas
   },
   providers: [
     Credentials({
@@ -32,9 +32,7 @@ const { auth, signIn, signOut, handlers } = NextAuth({
           .object({ username: z.string(), password: z.string().min(6) })
           .safeParse(credentials);
 
-        if (!parsedCredentials.success) {
-          return null;
-        }
+        if (!parsedCredentials.success) return null;
 
         const { username, password } = parsedCredentials.data;
 
@@ -45,37 +43,59 @@ const { auth, signIn, signOut, handlers } = NextAuth({
         if (!user || !user.active || user.lock) return null;
 
         const profile = await findOneProfile({ id: user.profile[0].id });
-
         if (!profile) return null;
 
         const passwordsMatch = await bcrypt.compare(password, user.password);
+        if (!passwordsMatch) return null;
 
-        if (passwordsMatch) {
-          const avatarUrl = user.image?.key
-            ? await getAvatarUrl(user.image.key)
-            : "/avatar.webp";
+        const avatarUrl = user.image?.key
+          ? await getAvatarUrl(user.image.key)
+          : "/avatar.webp";
 
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            image: avatarUrl, // Use the image field for the avatar URL
-            username: user.username,
-            cpf: user.cpf,
-            temporary_password: user.temporary_password,
-            profile: user.profile,
-            lock: user.lock,
-            active: user.active,
-            external: user.external,
-            created_at: user.created_at,
-            current_profile: profile,
-          };
-        }
-
-        return null;
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: avatarUrl,
+          username: user.username,
+          cpf: user.cpf,
+          temporary_password: user.temporary_password,
+          profile: user.profile,
+          lock: user.lock,
+          active: user.active,
+          external: user.external,
+          created_at: new Date(user.created_at),
+          current_profile: profile,
+        };
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token }) {
+      if (token?.id) {
+        const dbUser = await findOneUser({ id: token.id });
+
+        if (!dbUser || !dbUser.active || dbUser.lock) {
+          token.active = false;
+        } else {
+          token.active = true;
+        }
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.active = token.active as boolean;
+      }
+
+      if (session.user?.active === false) {
+        session.expires = new Date(0).toISOString() as any;
+      }
+
+      return session;
+    },
+  },
 });
 const { GET, POST } = handlers;
 
