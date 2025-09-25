@@ -60,6 +60,7 @@ export async function validateControlledEnterprisesNotInHolding(
     conflictType: "holding" | "controlled";
     holdingName?: string;
     holdingTaxId?: string;
+    economicGroupId?: string;
   }>;
 }> {
   try {
@@ -86,6 +87,7 @@ export async function validateControlledEnterprisesNotInHolding(
       conflictType: "holding" | "controlled";
       holdingName?: string;
       holdingTaxId?: string;
+      economicGroupId?: string;
     }> = [];
 
     existingGroups.docs.forEach((group) => {
@@ -98,6 +100,7 @@ export async function validateControlledEnterprisesNotInHolding(
           taxId: group.economic_group_holding.taxId,
           name: group.economic_group_holding.name,
           conflictType: "holding",
+          economicGroupId: (group as any).id || undefined,
         });
       }
 
@@ -138,6 +141,7 @@ export async function validateHoldingEnterpriseNotInGroup(
     conflictType: "holding" | "controlled";
     holdingName?: string;
     holdingTaxId?: string;
+    economicGroupId?: string;
   };
 }> {
   try {
@@ -161,6 +165,7 @@ export async function validateHoldingEnterpriseNotInGroup(
           conflictType: "holding" | "controlled";
           holdingName?: string;
           holdingTaxId?: string;
+          economicGroupId?: string;
         }
       | undefined;
 
@@ -178,6 +183,7 @@ export async function validateHoldingEnterpriseNotInGroup(
             conflictType: "controlled",
             holdingName: group.economic_group_holding?.name,
             holdingTaxId: group.economic_group_holding?.taxId,
+            economicGroupId: (group as any).id || undefined,
           };
           break;
         }
@@ -204,6 +210,7 @@ export async function validateHoldingEnterpriseNotInAnyGroup(
     conflictType: "holding" | "controlled";
     holdingName?: string;
     holdingTaxId?: string;
+    economicGroupId?: string;
   };
 }> {
   try {
@@ -231,6 +238,7 @@ export async function validateHoldingEnterpriseNotInAnyGroup(
           conflictType: "holding" | "controlled";
           holdingName?: string;
           holdingTaxId?: string;
+          economicGroupId?: string;
         }
       | undefined;
 
@@ -244,6 +252,7 @@ export async function validateHoldingEnterpriseNotInAnyGroup(
           taxId: group.economic_group_holding.taxId,
           name: group.economic_group_holding.name,
           conflictType: "holding",
+          economicGroupId: (group as any).id || undefined,
         };
         break;
       }
@@ -260,6 +269,7 @@ export async function validateHoldingEnterpriseNotInAnyGroup(
             conflictType: "controlled",
             holdingName: group.economic_group_holding?.name,
             holdingTaxId: group.economic_group_holding?.taxId,
+            economicGroupId: (group as any).id || undefined,
           };
           break;
         }

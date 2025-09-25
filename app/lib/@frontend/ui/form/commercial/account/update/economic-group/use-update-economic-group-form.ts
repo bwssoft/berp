@@ -53,7 +53,8 @@ export function useUpdateEconomicGroupForm(
   isModalOpen: boolean,
   closeModal?: () => void,
   initialHolding?: EconomicGroup,
-  initialControlled?: EconomicGroup[]
+  initialControlled?: EconomicGroup[],
+  economicGroupId?: string
 ) {
   const [dataHolding, setDataHolding] = useState<EconomicGroup[]>([]);
   const [dataControlled, setDataControlled] = useState<EconomicGroup[]>([]);
@@ -173,6 +174,17 @@ export function useUpdateEconomicGroupForm(
           "Não é possível selecionar esta empresa como holding:\n\n";
 
         if (entry.conflictType === "holding") {
+          console.log(
+            "🚀 ~ validateHoldingEnterprise ~ economicGroupId:",
+            economicGroupId
+          );
+          console.log(
+            "🚀 ~ validateHoldingEnterprise ~ entry.economicGroupId:",
+            entry.economicGroupId
+          );
+          if (entry.economicGroupId === economicGroupId) {
+            return true;
+          }
           errorMessage += `⚠️ Esta empresa já é holding de outro grupo econômico:\n`;
           errorMessage += `• ${entry.name} (${entry.taxId}) - já é holding de um grupo existente\n`;
         } else if (entry.conflictType === "controlled") {
