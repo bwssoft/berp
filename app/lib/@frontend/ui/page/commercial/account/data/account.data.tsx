@@ -21,14 +21,10 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import {
-  IAccount,
-  IAddress,
-  IContact,
-  IAccountEconomicGroup,
-} from "@/app/lib/@backend/domain";
+import { IAccount, IAddress, IContact, IAccountEconomicGroup } from "@/app/lib/@backend/domain";
 import {
   CreateContactModal,
+  SearchContactModal,
   UpdateContactModal,
   UpdateEconomicGroupAccountModal,
   useCreateContactModal,
@@ -237,15 +233,22 @@ export function AccountDataPage(props: Props) {
                   {contacts?.length || 0}
                 </Badge>
               </CardTitle>
-              {hasPermissionContacts && (
-                <Button
-                  variant={"ghost"}
-                  className="border px-3 py-3"
-                  onClick={openModalContact}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              )}
+              <div className="flex items-center gap-2">
+                {account.document.type == "cnpj" && account.document.value && (
+                  <SearchContactModal
+                    holdingTaxId={account.document.value!}
+                  />
+                )}
+                {hasPermissionContacts && (
+                  <Button
+                    variant={"ghost"}
+                    className="border px-3 py-3"
+                    onClick={openModalContact}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
@@ -403,7 +406,6 @@ export function AccountDataPage(props: Props) {
         open={updateEconomicGroup}
         economicGroupHolding={economicGroup?.economic_group_holding}
         economicGroupControlled={economicGroup?.economic_group_controlled}
-        economicGroupId={economicGroup?.id}
       />
 
       <AccountDataUpdateModal
