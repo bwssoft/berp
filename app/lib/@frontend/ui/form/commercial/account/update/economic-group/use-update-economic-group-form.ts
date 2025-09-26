@@ -53,7 +53,8 @@ export function useUpdateEconomicGroupForm(
   isModalOpen: boolean,
   closeModal?: () => void,
   initialHolding?: EconomicGroup,
-  initialControlled?: EconomicGroup[]
+  initialControlled?: EconomicGroup[],
+  economicGroupId?: string
 ) {
   const [dataHolding, setDataHolding] = useState<EconomicGroup[]>([]);
   const [dataControlled, setDataControlled] = useState<EconomicGroup[]>([]);
@@ -156,36 +157,39 @@ export function useUpdateEconomicGroupForm(
       setDataHolding(normalized);
     }
   };
-
   const validateHoldingEnterprise = async (
     holdingTaxId: string
   ): Promise<boolean> => {
     try {
       const cleanedTaxId = holdingTaxId.replace(/\D/g, "");
-      const validationResult = await validateHoldingEnterpriseNotInAnyGroup(cleanedTaxId);
+
+      const validationResult =
+        await validateHoldingEnterpriseNotInAnyGroup(cleanedTaxId);
 
       if (!validationResult.isValid && validationResult.conflictingEntry) {
-        const { conflictType, name, taxId, holdingName, holdingTaxId } =
-          validationResult.conflictingEntry;
+        const entry = validationResult.conflictingEntry;
 
-        const base =
-          "Não é possível selecionar esta empresa como holding.";
+        let errorMessage =
+          "Não é possível selecionar esta empresa como holding:\n\n";
 
-        let description: string;
-
-        if (conflictType === "holding") {
-          description = `${base} Esta empresa já é holding de outro grupo econômico: ${name} (${taxId}).`;
-        } else if (conflictType === "controlled") {
-          description = holdingName
-            ? `${base} Esta empresa já pertence ao grupo da holding ${holdingName} (${holdingTaxId}).`
-            : `${base} Esta empresa já pertence a outro grupo econômico: ${name} (${taxId}).`;
-        } else {
-          description = base;
+        if (entry.conflictType === "holding") {
+          if (entry.economicGroupId === economicGroupId) {
+            return true;
+          }
+          errorMessage += `⚠️ Esta empresa já é holding de outro grupo econômico:\n`;
+          errorMessage += `• ${entry.name} (${entry.taxId}) - já é holding de um grupo existente\n`;
+        } else if (entry.conflictType === "controlled") {
+          errorMessage += `⚠️ Esta empresa já está controlada por outro grupo:\n`;
+          if (entry.holdingName) {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
+          } else {
+            errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence a outro grupo econômico\n`;
+          }
         }
 
         toast({
-          title: "Conflito de Grupo Econômico ⚠️",
-          description,
+          title: "Conflito de Grupo Econômico",
+          description: errorMessage.trim(),
           variant: "error",
         });
 
@@ -203,7 +207,6 @@ export function useUpdateEconomicGroupForm(
       return false;
     }
   };
-
   const validateControlledEnterprises = async (
     selectedControlled: EconomicGroup[]
   ): Promise<boolean> => {

@@ -21,7 +21,12 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import { IAccount, IAddress, IContact, IAccountEconomicGroup } from "@/app/lib/@backend/domain";
+import {
+  IAccount,
+  IAddress,
+  IContact,
+  IAccountEconomicGroup,
+} from "@/app/lib/@backend/domain";
 import {
   CreateContactModal,
   UpdateContactModal,
@@ -398,6 +403,7 @@ export function AccountDataPage(props: Props) {
         open={updateEconomicGroup}
         economicGroupHolding={economicGroup?.economic_group_holding}
         economicGroupControlled={economicGroup?.economic_group_controlled}
+        economicGroupId={economicGroup?.id}
       />
 
       <AccountDataUpdateModal

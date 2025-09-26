@@ -145,5 +145,6 @@ export function useAddressUpdateForm({ address, onSubmit }: Props) {
     errors,
     loadingCep,
     isSubmitting,
+    setValue,
   };
 }
