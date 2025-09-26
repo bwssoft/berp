@@ -116,5 +116,6 @@ export function useAddressForm({
     formatCep,
     formatNumber: (v: string) => v.replace(/\D/g, ""),
     isSubmitting,
+    setValue,
   };
 }
