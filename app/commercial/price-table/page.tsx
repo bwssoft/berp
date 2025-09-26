@@ -83,6 +83,7 @@ export default async function PriceTablePage(props: Props) {
           <PriceTableTable
             currentPage={_page}
             restrictEdit={canEdit}
+            restrictClone={canCreate}
             data={priceTables ?? { docs: [], pages: 0, total: 0, limit: 10 }}
           />
         </CardContent>

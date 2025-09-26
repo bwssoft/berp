@@ -23,7 +23,147 @@ export namespace BwsNb2 {
   }
 }
 
+const CHECK_KEYS_MAPPER = {
+  ROUT: "OUT", // Saida
+  RFSM: "SDMS", // Modo de economia
+  RODM: "DK", // Odometro
+  RFA: "TDET", // Angulo de curva
+  RCN: "RCN", // Chave ligada - tempo de comunicacao
+  RCW: "RCW", // Chave desligada - tempo de comunicacao
+  RC: "RC", // Tempo de posicao
+};
+
+const CHECK_MAPPER = {
+  apn: {
+    from: "RIAP",
+    to: "APN",
+  },
+  ip_primary: {
+    from: "RIP1",
+    to: "IP1",
+  },
+  ip_secondary: {
+    from: "RIP2",
+    to: "IP2",
+  },
+  dns_primary: {
+    from: "RID1",
+    to: "DNS1",
+  },
+  dns_secondary: {
+    from: "RID2",
+    to: "DNS2",
+  },
+  keep_alive: {
+    from: "RC",
+    to: "KEEP_ALIVE",
+  },
+  odometer: {
+    from: "RODM",
+    to: "ODOMETER",
+  },
+  economy_mode: {
+    from: "RFSM",
+    to: "ECONOMY_MODE",
+  },
+  data_transmission_on: {
+    from: "RCN",
+    to: "IGNITION_ON",
+  },
+  data_transmission_off: {
+    from: "RCW",
+    to: "IGNITION_OFF",
+  },
+  virtual_ignition_12v: {
+    from: "RIG12",
+    to: "IV12",
+  },
+  virtual_ignition_24v: {
+    from: "RIG24",
+    to: "IV24",
+  },
+  lock_type: {
+    from: "ROUT",
+    to: "OUT",
+  },
+  data_transmission_event: {
+    from: "RCE",
+    to: "RCE"
+  },
+  heading_detection_angle: {
+    from: "RFA",
+    to: "ANGLE"
+  },
+  speed_alert_threshold: {
+    from: "RFV",
+    to: "RFV"
+  },
+  accel_threshold_for_ignition_on: {
+    from: "RFTON",
+    to: "RFTON"
+  },
+  accel_threshold_for_ignition_off: {
+    from: "RFTOF",
+    to: "RFTOF"
+  },
+  accel_threshold_for_movement: {
+    from: "RFAV",
+    to: "RFAV",
+  },
+  harsh_acceleration_threshold: {
+    from: "RFMA",
+    to: "RFMA",
+  },
+  harsh_braking_threshold: {
+    from: "RFMD",
+    to: "RFMD"
+  },
+  full_configuration_table: {
+    from: "RC",
+    to: "POSITION_TIME" 
+  },
+  full_functionality_table: {
+    from: "RF",
+    to: "RF",
+  },
+};
+
 export class BwsNb2Parser {
+  static check(input: Record<string, any>) {
+    if (Object.keys(input).length > 0) {
+      const translatedCheck = Object.keys(input).reduce((check, key) => {
+        const checkMapperValue = CHECK_MAPPER[key as keyof typeof CHECK_MAPPER];
+        if (checkMapperValue) {
+          console.log(`${checkMapperValue.from} para ${checkMapperValue.to}`)
+
+          const value = input[key].replace(
+            checkMapperValue.from,
+            checkMapperValue.to
+          );
+          return check + `${value} `;
+        } else {
+          console.log(`${input[key]} para --`)
+        }
+
+        const value = input[key];
+        return check + `${value} `;
+      }, "");
+
+      const nativeCheck = Object.keys(input).reduce((check, key) => {
+        const value = input[key];
+
+        return check + `${value} `;
+      }, "");
+
+      return {
+        normalized_check: translatedCheck,
+        raw_check: nativeCheck,
+      };
+    }
+
+    return undefined;
+  }
+
   /**
    * Extrai o valor do serial de uma string que contém "RINS=" seguido de um número.
    *

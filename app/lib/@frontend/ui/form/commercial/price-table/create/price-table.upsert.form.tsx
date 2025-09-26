@@ -39,11 +39,13 @@ import { FormProvider } from "react-hook-form";
 interface UpsertPriceTableFormProps {
   priceTableId?: string;
   editMode?: boolean;
+  cloneMode?: boolean;
 }
 
 export function UpsertPriceTableForm({
   priceTableId,
   editMode = false,
+  cloneMode = false,
 }: UpsertPriceTableFormProps = {}) {
   // Use TanStack Query to fetch products
   const [equipmentQuery, accessoriesQuery] = useQueries({
@@ -108,7 +110,7 @@ export function UpsertPriceTableForm({
     existingServicePayment,
     priceTableStatus,
     priceTableName,
-  } = usePriceTableForm({ priceTableId, editMode });
+  } = usePriceTableForm({ priceTableId, editMode, cloneMode });
 
   // Dialog hooks
   const {

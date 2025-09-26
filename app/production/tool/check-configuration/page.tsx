@@ -33,7 +33,13 @@ export default async function Page(props: Props) {
         id: technology_id,
       }),
       configuration_log_id
-        ? findManyConfigurationLog({ id: { $in: configuration_log_id } })
+        ? findManyConfigurationLog({
+            id: {
+              $in: Array.isArray(configuration_log_id)
+                ? configuration_log_id
+                : [configuration_log_id],
+            },
+          })
         : [],
     ]);
 

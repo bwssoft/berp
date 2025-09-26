@@ -28,7 +28,10 @@ class RequestNewPasswordUserUsecase {
                 return { success: false, error: "Não foi possível realizar esta solicitação, entre em contato com o administrador do sistema!" };
             }
 
-            await resetPasswordUserUsecase.execute({ id: user.id });
+            const result = await resetPasswordUserUsecase.execute({ id: user.id });
+            if (!result.success) {
+                return { success: false, error: result.error ? (typeof result.error === 'string' ? result.error : JSON.stringify(result.error)) : "Erro ao resetar a senha." };
+            }
 
             return { success: true };
         } catch (error) {

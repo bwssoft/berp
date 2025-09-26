@@ -12,6 +12,7 @@ import { ISerialPort } from "../../../../../hook/use-serial-port";
 import { useTechnology } from "../../../../../hook/use-technology";
 import { useRouter } from "next/navigation";
 import { createManyConfigurationLog } from "../../../../../../@backend/action/production/configuration-log.action";
+import _ from "lodash";
 
 namespace Namespace {
   export interface UseConfigurationProps {
@@ -22,7 +23,7 @@ namespace Namespace {
 
   export interface Detected {
     port: ISerialPort;
-    equipment: Equipment;
+    equipment?: Equipment | undefined;
     status: "fully_identified" | "partially_identified" | "not_identified";
   }
 
@@ -45,7 +46,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
   const [detected, setDetected] = useState<Namespace.Detected[]>([]);
   const detectedKey = useMemo(() => {
     return detected
-      .map((d) => d.equipment.serial ?? "")
+      .map((d) => d.equipment?.serial ?? "")
       .filter((s) => s.length > 0)
       .sort()
       .join("|");
@@ -69,7 +70,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
   const redirectToCheck = (configurationLog: IConfigurationLog[]) => {
     router.push(
-      `/production/tool/check-configuration?technology_id=${technology!.id}&${configurationLog.map(({ id }) => `configuration_log_id[]=${id}`).join("&")}&auto_checking=true`
+      `/production/tool/check-configuration?technology_id=${technology!.id}&${configurationLog.map(({ id }) => `configuration_log_id=${id}`).join("&")}&auto_checking=true`
     );
   };
 
@@ -95,7 +96,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
           i
         ): i is (typeof detected)[number] & {
           equipment: { serial: string; firmware: string };
-        } => Boolean(i.equipment.serial && i.equipment.firmware)
+        } => Boolean(i.equipment?.serial && i.equipment?.firmware)
       );
 
       const configurationResult = await handleConfiguration(
@@ -168,20 +169,22 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
 
       if (!isDetecting && ports.length) {
         setIsDetecting(true);
-        const detected = await handleDetection(ports);
+        const detected = (await handleDetection(ports)).filter(
+          (d) => d.response && d.response.serial
+        );
 
-        setDetected((prev) => {
-          const map = new Map(prev.map((d) => [d.port, d]));
+        setDetected(() => {
+          const map = new Map();
 
           for (const { port, response } of detected) {
-            map.set(port, {
+            map.set(response!.serial, {
               port,
-              equipment: response!,
-              status: isIdentified(response!),
+              equipment: response,
+              status: !response ? "not_identified" : isIdentified(response),
             });
           }
 
-          return Array.from(map.values());
+          return Array.from(new Set(map.values()));
         });
 
         setIsDetecting(false);
