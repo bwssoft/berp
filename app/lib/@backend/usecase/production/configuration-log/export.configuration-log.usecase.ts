@@ -59,6 +59,7 @@ class ExportConfigurationLogUsecase {
       "ICCID",
       "Tecnologia",
       "Firmware",
+      "Check"
     ]);
 
     // 4. Itera sobre o cursor e adiciona linhas
@@ -96,6 +97,7 @@ class ExportConfigurationLogUsecase {
           doc.equipment.iccid ?? "--",
           doc.technology.system_name,
           doc.equipment.firmware,
+          doc.applied_profile?.check?.normalized_check ?? "--"
         ])
         .commit();
     }

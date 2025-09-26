@@ -24,9 +24,15 @@ export interface IConfigurationProfile<
   manual_client_register?: boolean;
 }
 
+export interface Check {
+  raw_check?: string;
+  normalized_check?: string;
+}
+
 export interface Config<Specific> {
   general?: GeneralConfig;
   specific?: Specific;
+  check?: Check
 }
 
 interface Validation {
