@@ -56,23 +56,23 @@ const CHECK_MAPPER = {
   },
   keep_alive: {
     from: "RC",
-    to: "TX",
+    to: "KEEP_ALIVE",
   },
   odometer: {
     from: "RODM",
-    to: "DK",
+    to: "ODOMETER",
   },
   economy_mode: {
     from: "RFSM",
-    to: "SDMS",
+    to: "ECONOMY_MODE",
   },
   data_transmission_on: {
     from: "RCN",
-    to: "HB",
+    to: "IGNITION_ON",
   },
   data_transmission_off: {
     from: "RCW",
-    to: "SHB",
+    to: "IGNITION_OFF",
   },
   virtual_ignition_12v: {
     from: "RIG12",
@@ -84,7 +84,47 @@ const CHECK_MAPPER = {
   },
   lock_type: {
     from: "ROUT",
-    to: "ENG",
+    to: "OUT",
+  },
+  data_transmission_event: {
+    from: "RCE",
+    to: "RCE"
+  },
+  heading_detection_angle: {
+    from: "RFA",
+    to: "ANGLE"
+  },
+  speed_alert_threshold: {
+    from: "RFV",
+    to: "RFV"
+  },
+  accel_threshold_for_ignition_on: {
+    from: "RFTON",
+    to: "RFTON"
+  },
+  accel_threshold_for_ignition_off: {
+    from: "RFTOF",
+    to: "RFTOF"
+  },
+  accel_threshold_for_movement: {
+    from: "RFAV",
+    to: "RFAV",
+  },
+  harsh_acceleration_threshold: {
+    from: "RFMA",
+    to: "RFMA",
+  },
+  harsh_braking_threshold: {
+    from: "RFMD",
+    to: "RFMD"
+  },
+  full_configuration_table: {
+    from: "RC",
+    to: "POSITION_TIME" 
+  },
+  full_functionality_table: {
+    from: "RF",
+    to: "RF",
   },
 };
 
@@ -101,6 +141,8 @@ export class BwsNb2Parser {
             checkMapperValue.to
           );
           return check + `${value} `;
+        } else {
+          console.log(`${input[key]} para --`)
         }
 
         const value = input[key];
