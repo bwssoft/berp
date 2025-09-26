@@ -55,7 +55,7 @@ const CHECK_MAPPER = {
     to: "DNS2",
   },
   keep_alive: {
-    from: "RC",
+    from: "RCK",
     to: "KEEP_ALIVE",
   },
   odometer: {
