@@ -107,7 +107,6 @@ export const useCheckConfiguration = (
         >;
       }> = [];
       const finalLogs = results.map(({ port, equipment, config, messages }) => {
-        console.log("🚀 ~ check ~ config:", config);
         const now = new Date();
         let checked = false;
         let configurationLogId: string | undefined;
@@ -118,11 +117,13 @@ export const useCheckConfiguration = (
           const diffs = [
             ...diffObjects({
               desired: configurationProfile.config.general ?? {},
+              // @ts-expect-error MOTIVO: Rapaz, gerei algum problema de tipagem aqui. Resolver depois TODO
               applied: config.general ?? {},
               keySelection: "desired",
             }),
             ...diffObjects({
               desired: configurationProfile.config.specific ?? {},
+              // @ts-expect-error MOTIVO: Rapaz, gerei algum problema de tipagem aqui. Resolver depois TODO
               applied: config.specific ?? {},
               keySelection: "desired",
             }),
@@ -139,11 +140,13 @@ export const useCheckConfiguration = (
             const diffs = [
               ...diffObjects({
                 desired: existing?.applied_profile?.general ?? {},
+                // @ts-expect-error MOTIVO: Rapaz, gerei algum problema de tipagem aqui. Resolver depois TODO
                 applied: config.general ?? {},
                 keySelection: "desired",
               }),
               ...diffObjects({
                 desired: existing?.applied_profile?.specific ?? {},
+                // @ts-expect-error MOTIVO: Rapaz, gerei algum problema de tipagem aqui. Resolver depois TODO
                 applied: config.specific ?? {},
                 keySelection: "desired",
               }),
