@@ -66,6 +66,26 @@ const CHECK_MAPPER = {
     from: "RFSM",
     to: "SDMS",
   },
+  data_transmission_on: {
+    from: "RCN",
+    to: "HB",
+  },
+  data_transmission_off: {
+    from: "RCW",
+    to: "SHB",
+  },
+  virtual_ignition_12v: {
+    from: "RIG12",
+    to: "IV12",
+  },
+  virtual_ignition_24v: {
+    from: "RIG24",
+    to: "IV12",
+  },
+  lock_type: {
+    from: "ROUT",
+    to: "ENG",
+  },
 };
 
 export class BwsNb2Parser {
@@ -92,12 +112,12 @@ export class BwsNb2Parser {
       }, "");
 
       return {
-        translated: translatedCheck,
-        native: nativeCheck,
+        normalized_check: translatedCheck,
+        raw_check: nativeCheck,
       };
     }
 
-    return "";
+    return undefined;
   }
 
   /**

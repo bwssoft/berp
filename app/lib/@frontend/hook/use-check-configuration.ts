@@ -107,6 +107,7 @@ export const useCheckConfiguration = (
         >;
       }> = [];
       const finalLogs = results.map(({ port, equipment, config, messages }) => {
+        console.log("🚀 ~ check ~ config:", config);
         const now = new Date();
         let checked = false;
         let configurationLogId: string | undefined;

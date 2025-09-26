@@ -265,6 +265,14 @@ export const useNB2 = () => {
               messages,
             });
 
+            const check = BwsNb2Parser.check(response);
+
+            console.log(
+              "🚀 ~ useNB2 ~ response.full_functionality_table:",
+              response.full_configuration_table,
+              response.full_functionality_table
+            );
+
             const config = {
               general: {
                 keep_alive: BwsNb2Parser.keep_alive(response.keep_alive),
@@ -282,6 +290,7 @@ export const useNB2 = () => {
                   response.data_transmission_off
                 ),
               },
+              check,
               specific: {
                 data_transmission_event: BwsNb2Parser.data_transmission_event(
                   response.data_transmission_event
@@ -331,9 +340,6 @@ export const useNB2 = () => {
                 lock_type: BwsNb2Parser.lock_type(response.lock_type),
               },
             };
-
-            const check = BwsNb2Parser.check(response);
-            console.log("🚀 ~ useNB2 ~ check:", check);
 
             return {
               port,
