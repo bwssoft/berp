@@ -38,9 +38,9 @@ export const ComboboxMultipleSearch = React.forwardRef<
     setQuery(event.target.value);
   }
 
-  if (type !== "multiple") {
-    return null;
-  }
+  // if (type !== "multiple") {
+  //   return null;
+  // }
 
   return (
     <div className="group flex items-center border-b border-b-border px-3">

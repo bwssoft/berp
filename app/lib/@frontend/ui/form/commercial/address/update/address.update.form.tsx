@@ -76,7 +76,7 @@ export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
           displayValueGetter={(c) => c.nome}
           value={selectedCounty}
           type="single"
-          behavior="select"
+          behavior="search"
           placeholder={
             isLoadingCounties
               ? "Carregando municípios…"
@@ -152,7 +152,7 @@ export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
                   displayValueGetter={(u) => u.nome}
                   value={selected}
                   type="single"
-                  behavior="select"
+                  behavior="search"
                   placeholder="Selecione o Estado"
                   onOptionChange={(selected) => {
                     const uf = selected?.[0]?.uf;

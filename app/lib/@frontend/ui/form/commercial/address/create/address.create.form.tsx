@@ -90,7 +90,7 @@ export function AddressCreateForm({
           displayValueGetter={(c) => c.nome}
           value={selectedCounty}
           type="single"
-          behavior="select"
+          behavior="search"
           placeholder={
             isLoadingCounties
               ? "Carregando municípios…"
@@ -188,7 +188,7 @@ export function AddressCreateForm({
                   displayValueGetter={(u) => u.nome}
                   value={selected}
                   type="single"
-                  behavior="select"
+                  behavior="search"
                   placeholder="Selecione o Estado"
                   onOptionChange={(selected) => {
                     const uf = selected?.[0]?.uf;
