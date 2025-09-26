@@ -3,27 +3,19 @@
 import { IUser } from "@/app/lib/@backend/domain";
 import { Checkbox, Combobox, FileUpload, Input } from "../../../../component";
 import { useViewOneUserForm } from "./use-view-one.user.form";
-import { useAuth } from "@/app/lib/@frontend/context";
-import { useEffect, useState } from "react";
-import { getUserAvatarUrlByKey } from "@/app/lib/@backend/action/admin/user.action";
 
 type Props = {
   user: IUser;
 };
 
 export function ViewOneUserForm({ user }: Props) {
-  const { handleChangeProfile, profile } = useViewOneUserForm();
-  const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
-
-  useEffect(() => {
-    (async () => {
-      if (user.id && user.image?.key) {
-        const url = await getUserAvatarUrlByKey(user.id, user.image.key);
-        setAvatarUrl(url);
-      }
-    })();
-  }, []);
-
+  const {
+    handleChangeProfile,
+    profile,
+    avatarUrl,
+    handleFileUpload,
+    handleSubmit,
+  } = useViewOneUserForm(user);
 
   return (
     <form className="w-full bg-white px-4 sm:px-6 lg:px-8 rounded-md pb-6 shadow-sm ring-1 ring-inset ring-gray-900/10">
@@ -52,13 +44,24 @@ export function ViewOneUserForm({ user }: Props) {
           <Input label="Usuário" value={user.username} disabled />
           <FileUpload
             label="Imagem de perfil"
-            handleFile={() => console.log}
+            handleFile={handleFileUpload}
             multiple={false}
             accept={"jpeg, jpg, png"}
             currentImageUrl={avatarUrl}
-            disabled
           />
         </div>
+      </div>
+      <div className="flex gap-2 mt-6 justify-end">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+          onClick={(e) => {
+            e.preventDefault();
+            void handleSubmit();
+          }}
+        >
+          Salvar
+        </button>
       </div>
     </form>
   );
