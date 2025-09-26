@@ -9,6 +9,7 @@ interface EconomicGroupModalProps {
   accountId: string;
   economicGroupHolding?: EconomicGroup;
   economicGroupControlled?: EconomicGroup[];
+  economicGroupId?: string;
 }
 
 export function UpdateEconomicGroupAccountModal({
@@ -17,6 +18,7 @@ export function UpdateEconomicGroupAccountModal({
   onClose,
   economicGroupHolding,
   economicGroupControlled,
+  economicGroupId,
 }: EconomicGroupModalProps) {
   return (
     <Modal
@@ -34,6 +36,7 @@ export function UpdateEconomicGroupAccountModal({
             closeModal={onClose}
             economicGroupHolding={economicGroupHolding}
             economicGroupControlled={economicGroupControlled}
+            economicGroupId={economicGroupId}
           />
         </ModalBody>
       </ModalContent>
