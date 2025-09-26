@@ -42,4 +42,4 @@ export * from "./badge";
 export * from "./empty-state";
 export * from "./date-input";
 export * from "./calendar";
-export * from "../list/commercial/historical/time-line-item";
+export * from "../list/commercial/historical/time-line-table";
