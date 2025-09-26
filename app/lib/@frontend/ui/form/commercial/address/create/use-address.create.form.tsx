@@ -85,6 +85,8 @@ export function useAddressForm({
       | "Residencial"
       | "Fiscal"
     )[];
+    if (defaultValues?.zip_code) return;
+    
     setValue("street", "");
     setValue("number", "");
     setValue("complement", "");
