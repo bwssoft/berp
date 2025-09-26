@@ -134,7 +134,7 @@ export function useSearchContactHistoricalAccount({
   );
 
   useEffect(() => {
-    const { name, type, contact } = otherContactInfo;
+    const { name, type, contact, channel } = otherContactInfo;
 
     const validateAndSelect = async () => {
       if (name && type && contact && !hasAutoSelectedRef.current) {
@@ -143,7 +143,7 @@ export function useSearchContactHistoricalAccount({
 
         if (isValid) {
           const id = "outros-contact";
-          setTempSelectedContact({ id, name, type, contact, channel: type });
+          setTempSelectedContact({ id, name, type, contact, channel });
           hasAutoSelectedRef.current = true;
         }
       } else if (!name || !type || !contact) {

@@ -254,14 +254,14 @@ export function SearchContactHistoricalAccountForm({
                                       <WhatsappIcon classname="w-5 h-5 text-green-600" />
                                     )}
                                     <Checkbox
-                                      checked={isSelected(ci.id, ci.type)}
+                                      checked={isSelected(ci.id, "Whatsapp")}
                                       onChange={() =>
                                         toggleSelection(
                                           ci.id,
                                           contact.contactName,
                                           ci.type,
                                           ci.contact,
-                                          ci.type
+                                          "Whatsapp"
                                         )
                                       }
                                     />
@@ -270,14 +270,14 @@ export function SearchContactHistoricalAccountForm({
                                     <div className="flex items-center gap-2">
                                       <PhoneIcon className="w-5 h-5 text-green-600" />
                                       <Checkbox
-                                        checked={isSelected(ci.id, "Whatsapp")}
+                                        checked={isSelected(ci.id, "Celular")}
                                         onChange={() =>
                                           toggleSelection(
                                             ci.id,
                                             contact.contactName,
                                             ci.type,
                                             ci.contact,
-                                            "Whatsapp"
+                                            "Celular"
                                           )
                                         }
                                       />

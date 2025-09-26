@@ -65,7 +65,7 @@ export function SelectedContactCard({
   const animationClass = showAnimation
     ? "animate-in slide-in-from-top-2 fade-in-0 duration-300"
     : "";
-
+  
   return (
     <div className="mb-4">
       <h3 className="text-sm font-medium text-gray-700 mb-2">
