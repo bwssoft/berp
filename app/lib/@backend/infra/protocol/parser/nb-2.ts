@@ -80,7 +80,7 @@ const CHECK_MAPPER = {
   },
   virtual_ignition_24v: {
     from: "RIG24",
-    to: "IV12",
+    to: "IV24",
   },
   lock_type: {
     from: "ROUT",
@@ -94,6 +94,8 @@ export class BwsNb2Parser {
       const translatedCheck = Object.keys(input).reduce((check, key) => {
         const checkMapperValue = CHECK_MAPPER[key as keyof typeof CHECK_MAPPER];
         if (checkMapperValue) {
+          console.log(`${checkMapperValue.from} para ${checkMapperValue.to}`)
+
           const value = input[key].replace(
             checkMapperValue.from,
             checkMapperValue.to

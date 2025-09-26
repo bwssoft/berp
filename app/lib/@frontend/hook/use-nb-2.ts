@@ -516,6 +516,16 @@ export const useNB2 = () => {
               configurationEntries.every(
                 ([_, value]) => typeof value !== "undefined"
               );
+
+            const readResponse = Object.keys(response).reduce((checkData, key) => {
+              if (key.includes("read_")) {
+                const newKey = key.replace("read_", "")
+                checkData[newKey] = response[key as keyof typeof response]
+              }
+
+              return checkData
+            }, {} as Record<string, any>)
+
             return {
               equipment,
               port,
@@ -542,6 +552,7 @@ export const useNB2 = () => {
                     read_data_transmission_off
                   ),
                 },
+                check: BwsNb2Parser.check(readResponse),
                 specific: {
                   data_transmission_event: BwsNb2Parser.data_transmission_event(
                     read_data_transmission_event
