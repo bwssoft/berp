@@ -54,6 +54,7 @@ export function HistoricalDataPage({ historical, accountId }:Props) {
             closeModal();
           }}
           open={open}
+      
           accountId={accountId}
       />
     </div>

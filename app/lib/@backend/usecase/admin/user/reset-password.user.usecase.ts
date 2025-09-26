@@ -88,8 +88,6 @@ class ResetPasswordUserUsecase {
         password: temporaryPassword,
       });
 
-      
-
       await this.bmessageGateway.html({
         to: user.email,
         subject: "BCube – Reset de senha",
