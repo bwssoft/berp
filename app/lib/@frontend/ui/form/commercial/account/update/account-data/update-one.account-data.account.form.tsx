@@ -91,12 +91,9 @@ export function UpdateAccountDataForm({
 
   return (
     <FormProvider {...methods}>
-      <form
-        className="flex flex-col gap-2"
-        onSubmit={methods.handleSubmit(onSubmit)}
-      >
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
         {accountData?.document.type === "cnpj" && (
-          <div>
+          <div className="flex flex-col gap-2">
             <Input
               value={formatDocumentValue(
                 accountData?.document.value || "",
@@ -136,47 +133,53 @@ export function UpdateAccountDataForm({
               {...register("cnpj.status")}
               error={errors.cnpj?.status?.message}
             />
-            <Controller
-              control={control}
-              name="cnpj.situationIE"
-              render={({ field }: { field: any }) => (
-                <Combobox
-                  type="single"
-                  label="Situação IE"
-                  data={[
-                    { id: "1", text: "Habilitada", status: true },
-                    { id: "2", text: "Não habilitada", status: false },
-                  ]}
-                  value={field.value ? [field.value] : []}
-                  onOptionChange={(selectedItems: any[]) => {
-                    const item = selectedItems[0];
-                    if (item) {
-                      field.onChange(item);
-                    } else {
-                      field.onChange(undefined);
-                    }
-                  }}
-                  error={errors.cnpj?.situationIE?.message}
-                  keyExtractor={(item: any) => item.id}
-                  placeholder="Selecione a situação IE"
-                  displayValueGetter={(item: any) => item.text}
-                  modal={false}
+            <div className="flex gap-2">
+              <div className="w-1/2">
+                <Controller
+                  control={control}
+                  name="cnpj.situationIE"
+                  render={({ field }: { field: any }) => (
+                    <Combobox
+                      type="single"
+                      label="Situação IE"
+                      data={[
+                        { id: "1", text: "Habilitada", status: true },
+                        { id: "2", text: "Não habilitada", status: false },
+                      ]}
+                      value={field.value ? [field.value] : []}
+                      onOptionChange={(selectedItems: any[]) => {
+                        const item = selectedItems[0];
+                        if (item) {
+                          field.onChange(item);
+                        } else {
+                          field.onChange(undefined);
+                        }
+                      }}
+                      error={errors.cnpj?.situationIE?.message}
+                      keyExtractor={(item: any) => item.id}
+                      placeholder="Selecione a situação IE"
+                      displayValueGetter={(item: any) => item.text}
+                      modal={false}
+                    />
+                  )}
                 />
-              )}
-            />
-            <Controller
-              control={control}
-              name="cnpj.typeIE"
-              render={({ field }: { field: any }) => (
-                <Input
-                  label="Tipo IE"
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Digite o tipo IE"
-                  error={errors.cnpj?.typeIE?.message}
+              </div>
+              <div className="w-1/2">
+                <Controller
+                  control={control}
+                  name="cnpj.typeIE"
+                  render={({ field }: { field: any }) => (
+                    <Input
+                      label="Tipo IE"
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Digite o tipo IE"
+                      error={errors.cnpj?.typeIE?.message}
+                    />
+                  )}
                 />
-              )}
-            />
+              </div>
+            </div>
             <Input
               label="Inscrição Municipal"
               placeholder="Digite a inscrição municipal"
@@ -245,7 +248,7 @@ export function UpdateAccountDataForm({
           </div>
         )}
         {accountData?.document.type === "cpf" && (
-          <div>
+          <div className="flex flex-col gap-2">
             <Input
               value={formatDocumentValue(
                 accountData?.document.value || "",
@@ -270,7 +273,7 @@ export function UpdateAccountDataForm({
           </div>
         )}
 
-        <div className="flex gap-4">
+        <div className="flex mt-6 justify-end">
           <Button type="button" variant="ghost" onClick={closeModal}>
             Cancelar
           </Button>
