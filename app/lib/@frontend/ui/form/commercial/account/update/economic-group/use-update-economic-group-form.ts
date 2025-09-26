@@ -157,7 +157,6 @@ export function useUpdateEconomicGroupForm(
       setDataHolding(normalized);
     }
   };
-
   const validateHoldingEnterprise = async (
     holdingTaxId: string
   ): Promise<boolean> => {
@@ -174,14 +173,6 @@ export function useUpdateEconomicGroupForm(
           "Não é possível selecionar esta empresa como holding:\n\n";
 
         if (entry.conflictType === "holding") {
-          console.log(
-            "🚀 ~ validateHoldingEnterprise ~ economicGroupId:",
-            economicGroupId
-          );
-          console.log(
-            "🚀 ~ validateHoldingEnterprise ~ entry.economicGroupId:",
-            entry.economicGroupId
-          );
           if (entry.economicGroupId === economicGroupId) {
             return true;
           }
@@ -216,7 +207,6 @@ export function useUpdateEconomicGroupForm(
       return false;
     }
   };
-
   const validateControlledEnterprises = async (
     selectedControlled: EconomicGroup[]
   ): Promise<boolean> => {
