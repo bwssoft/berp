@@ -121,17 +121,21 @@ export function AccountCard({
                   label="Inscrição Municipal"
                   value={account.municipal_registration}
                 />
-                {/* Campo adicional para preencher o grid se necessário */}
-                {account.status && (
-                  <div className="space-y-1">
-                    <dt className="text-sm font-medium text-muted-foreground">
-                      Situação CNPJ
-                    </dt>
-                    <dd className="flex items-center">
+                {/* Situação CNPJ - sempre exibido para empresas; mostra placeholder se ausente */}
+                <div className="space-y-1">
+                  <dt className="text-sm font-medium text-muted-foreground">
+                    Situação CNPJ
+                  </dt>
+                  <dd className="flex items-center">
+                    {account.status ? (
                       <StatusBadge status={account.status} type="general" />
-                    </dd>
-                  </div>
-                )}
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        ----
+                      </span>
+                    )}
+                  </dd>
+                </div>
                 <InfoField
                   label="Situação IE"
                   value={account.situationIE?.text}

@@ -3,6 +3,8 @@ import { useUpdateAccountForm } from "./use-update-account-data.account.form";
 import { IAccount, ISector } from "@/app/lib/@backend/domain";
 import { PlusIcon } from "lucide-react";
 import { SectorModal, useSectorModal } from "@/app/lib/@frontend/ui/modal";
+import { Combobox } from "@/app/lib/@frontend/ui/component";
+import { Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";
@@ -44,6 +46,7 @@ export function UpdateAccountDataForm({
   const { methods, onSubmit, register, errors, control } = useUpdateAccountForm(
     { accountData, closeModal }
   );
+  console.log("🚀 ~ UpdateAccountDataForm ~ errors:", errors);
   const sectorModal = useSectorModal();
 
   const [canShowSectorButton, setCanShowSectorButton] =
@@ -126,6 +129,53 @@ export function UpdateAccountDataForm({
                 });
               }}
               error={errors.cnpj?.state_registration?.message}
+            />
+            <Input
+              label="Situação CNPJ"
+              placeholder="Digite a situação do CNPJ"
+              {...register("cnpj.status")}
+              error={errors.cnpj?.status?.message}
+            />
+            <Controller
+              control={control}
+              name="cnpj.situationIE"
+              render={({ field }: { field: any }) => (
+                <Combobox
+                  type="single"
+                  label="Situação IE"
+                  data={[
+                    { id: "1", text: "Habilitada", status: true },
+                    { id: "2", text: "Não habilitada", status: false },
+                  ]}
+                  value={field.value ? [field.value] : []}
+                  onOptionChange={(selectedItems: any[]) => {
+                    const item = selectedItems[0];
+                    if (item) {
+                      field.onChange(item);
+                    } else {
+                      field.onChange(undefined);
+                    }
+                  }}
+                  error={errors.cnpj?.situationIE?.message}
+                  keyExtractor={(item: any) => item.id}
+                  placeholder="Selecione a situação IE"
+                  displayValueGetter={(item: any) => item.text}
+                  modal={false}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="cnpj.typeIE"
+              render={({ field }: { field: any }) => (
+                <Input
+                  label="Tipo IE"
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Digite o tipo IE"
+                  error={errors.cnpj?.typeIE?.message}
+                />
+              )}
             />
             <Input
               label="Inscrição Municipal"
