@@ -166,6 +166,7 @@ export const useE3Plus = () => {
               port,
               equipment,
               config: {
+                check: undefined,
                 general: {
                   data_transmission_on,
                   data_transmission_off,
