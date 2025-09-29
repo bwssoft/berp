@@ -300,7 +300,7 @@ export function CreateAccountFormProvider({
 
   // Initialize form with existing account data from flow context
   useEffect(() => {
-    if (localAccount && (doc == localAccount.document.value)) {
+    if (localAccount && doc == localAccount.document.value) {
       // Set the document type first
       setType(localAccount.document.type);
 
@@ -355,7 +355,7 @@ export function CreateAccountFormProvider({
     }
 
     // Initialize economic group data from separate context
-    if (localEconomicGroup && (doc == localAccount?.document.value)) {
+    if (localEconomicGroup && doc == localAccount?.document.value) {
       if (localEconomicGroup.economic_group_holding) {
         const holdingData = {
           taxId: localEconomicGroup.economic_group_holding.taxId || "",
@@ -553,6 +553,7 @@ export function CreateAccountFormProvider({
         // Add the current company being created to controlled companies if not already present
         if (data?.company?.name) {
           const currentCompanyTaxId = cleanedValue.replace(/\D/g, "");
+          const holdingTaxId = holdingData.taxId.replace(/\D/g, "");
 
           // Check if current company is already in the controlled list
           const isCurrentCompanyAlreadyIncluded = economicGroupControlled.some(
@@ -560,7 +561,18 @@ export function CreateAccountFormProvider({
               controlled.taxId.replace(/\D/g, "") === currentCompanyTaxId
           );
 
-          if (!isCurrentCompanyAlreadyIncluded) {
+          const isCurrentCompanyHolding = currentCompanyTaxId === holdingTaxId;
+          console.log("🚀 ~ handleCpfCnpj ~ holdingTaxId:", holdingTaxId);
+          console.log(
+            "🚀 ~ handleCpfCnpj ~ currentCompanyTaxId:",
+            currentCompanyTaxId
+          );
+          console.log(
+            "🚀 ~ handleCpfCnpj ~ isCurrentCompanyHolding:",
+            isCurrentCompanyHolding
+          );
+
+          if (!isCurrentCompanyAlreadyIncluded && !isCurrentCompanyHolding) {
             const currentCompanyData = {
               taxId: cleanedValue,
               company: {
@@ -710,51 +722,68 @@ export function CreateAccountFormProvider({
     });
 
     try {
+      const selectedHoldingTaxId = item.taxId.replace(/\D/g, "");
+
       // Search for existing economic group with this holding
       const existingEconomicGroup = await findOneAccountEconomicGroup({
         "economic_group_holding.taxId": item.taxId,
       });
 
       if (existingEconomicGroup) {
-        // Found existing economic group, populate controlled companies and disable fields
         let controlledData: ICnpjaResponse[] = [];
         let controlledFormData: { name: string; taxId: string }[] = [];
 
-        // Add existing controlled companies
-        if (existingEconomicGroup.economic_group_controlled) {
-          const existingControlled =
-            existingEconomicGroup.economic_group_controlled.map(
-              (controlled) => ({
-                taxId: controlled.taxId,
-                company: {
-                  name: controlled.name,
-                },
-              })
-            ) as ICnpjaResponse[];
-
-          controlledData = [...existingControlled];
-          controlledFormData = [
-            ...existingEconomicGroup.economic_group_controlled,
-          ];
-        }
-
-        // Add the current company being created to controlled companies if not already present
         const currentCompany = methods.getValues("cnpj");
         const currentDocument = methods.getValues("document");
+        const currentCompanyTaxId = currentDocument?.value
+          ? currentDocument.value.replace(/\D/g, "")
+          : "";
 
-        if (currentCompany?.social_name && currentDocument?.value) {
-          const currentCompanyTaxId = currentDocument.value.replace(/\D/g, "");
+        const existingHoldingTaxId =
+          existingEconomicGroup.economic_group_holding?.taxId?.replace(
+            /\D/g,
+            ""
+          ) || selectedHoldingTaxId;
 
-          // Check if current company is already in the controlled list
+        const normalizedExistingControlled = (
+          existingEconomicGroup.economic_group_controlled || []
+        )
+          .filter((controlled) => !!controlled?.taxId)
+          .filter(
+            (controlled) =>
+              controlled.taxId.replace(/\D/g, "") !== existingHoldingTaxId
+          );
+
+        if (normalizedExistingControlled.length > 0) {
+          const existingControlled = normalizedExistingControlled.map(
+            (controlled) => ({
+              taxId: controlled.taxId,
+              company: {
+                name: controlled.name,
+              },
+            })
+          ) as ICnpjaResponse[];
+
+          controlledData = [...existingControlled];
+          controlledFormData = [...normalizedExistingControlled];
+        }
+
+        const shouldAddCurrentCompany =
+          currentCompany?.social_name &&
+          currentCompanyTaxId &&
+          currentCompanyTaxId !== existingHoldingTaxId &&
+          currentCompanyTaxId !== selectedHoldingTaxId;
+
+        if (shouldAddCurrentCompany) {
           const isCurrentCompanyAlreadyIncluded =
-            existingEconomicGroup.economic_group_controlled?.some(
+            normalizedExistingControlled.some(
               (controlled) =>
                 controlled.taxId.replace(/\D/g, "") === currentCompanyTaxId
-            ) || false;
+            );
 
           if (!isCurrentCompanyAlreadyIncluded) {
             const currentCompanyData = {
-              taxId: currentDocument.value,
+              taxId: currentDocument!.value,
               company: {
                 name: currentCompany.social_name,
               },
@@ -762,7 +791,7 @@ export function CreateAccountFormProvider({
 
             const currentCompanyFormData = {
               name: currentCompany.social_name,
-              taxId: currentDocument.value,
+              taxId: currentDocument!.value,
             };
 
             controlledData.push(currentCompanyData);
