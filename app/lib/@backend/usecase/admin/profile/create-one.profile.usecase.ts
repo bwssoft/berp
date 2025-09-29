@@ -31,7 +31,7 @@ class CreateOneProfileUsecase {
       const _input = Object.assign(input, {
         created_at: new Date(),
         id: crypto.randomUUID(),
-        locked_control_code: controls.map(({ code }) => code),
+        locked_control_code: [],
       });
       await this.repository.create(_input);
 
