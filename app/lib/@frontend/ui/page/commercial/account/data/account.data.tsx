@@ -404,6 +404,7 @@ export function AccountDataPage(props: Props) {
         accountId={account.id!}
         onClose={closeUpdateEconomicGroup}
         open={updateEconomicGroup}
+        economicGroupId={economicGroup?.id ?? account.economicGroupId}
         economicGroupHolding={economicGroup?.economic_group_holding}
         economicGroupControlled={economicGroup?.economic_group_controlled}
       />
