@@ -55,7 +55,7 @@ const CHECK_MAPPER = {
     to: "DNS2",
   },
   keep_alive: {
-    from: "RC",
+    from: "RCK",
     to: "KEEP_ALIVE",
   },
   odometer: {
@@ -134,15 +134,11 @@ export class BwsNb2Parser {
       const translatedCheck = Object.keys(input).reduce((check, key) => {
         const checkMapperValue = CHECK_MAPPER[key as keyof typeof CHECK_MAPPER];
         if (checkMapperValue) {
-          console.log(`${checkMapperValue.from} para ${checkMapperValue.to}`)
-
           const value = input[key].replace(
             checkMapperValue.from,
             checkMapperValue.to
           );
           return check + `${value} `;
-        } else {
-          console.log(`${input[key]} para --`)
         }
 
         const value = input[key];
