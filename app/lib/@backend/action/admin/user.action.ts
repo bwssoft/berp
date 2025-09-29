@@ -61,6 +61,7 @@ export const updateOneUser = async (
 ) => {
   const result = await updateOneUserUsecase.execute({ id }, data, formData);
   revalidatePath(`/admin/user/form/update?id=${id}`);
+  revalidatePath(`/admin/user`);
   return result;
 };
 
