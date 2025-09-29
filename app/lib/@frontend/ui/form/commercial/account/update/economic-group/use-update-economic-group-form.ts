@@ -16,14 +16,14 @@ import {
   validateControlledEnterprisesNotInHolding,
 } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { EconomicGroup } from "@/app/lib/@backend/domain";
+import { EconomicGroup, IAccount } from "@/app/lib/@backend/domain";
 import { useAuth } from "@/app/lib/@frontend/context";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { debounce } from "lodash";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -64,6 +64,52 @@ export function useUpdateEconomicGroupForm(
 
   const [selectedHolding, setSelectedHolding] = useState<EconomicGroup[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [accountEconomicGroupEntry, setAccountEconomicGroupEntry] =
+    useState<EconomicGroup | null>(null);
+  const [selectedHoldingGroupId, setSelectedHoldingGroupId] =
+    useState<string | null>(null);
+  const hasEstablishedHolding = useRef(false);
+  const autopopulatedControlledTaxIdsRef = useRef<Set<string>>(new Set());
+
+  const buildAccountEntryFromAccount = useCallback((account?: IAccount | null) => {
+    if (!account?.document?.value) {
+      return null;
+    }
+
+    const sanitizedTaxId = account.document.value.replace(/\D/g, "");
+    if (!sanitizedTaxId) {
+      return null;
+    }
+
+    const accountName =
+      account.name ||
+      account.fantasy_name ||
+      account.social_name ||
+      account.document.value;
+
+    return {
+      name: accountName,
+      taxId: sanitizedTaxId,
+    };
+  }, []);
+
+  const ensureAccountEntry = useCallback(async () => {
+    if (accountEconomicGroupEntry) {
+      return accountEconomicGroupEntry;
+    }
+
+    try {
+      const account = (await findOneAccount({ id: accountId })) as IAccount | null;
+      const entry = buildAccountEntryFromAccount(account);
+      if (entry) {
+        setAccountEconomicGroupEntry(entry);
+      }
+      return entry;
+    } catch (error) {
+      console.error("Failed to load account entry for economic group:", error);
+      return null;
+    }
+  }, [accountEconomicGroupEntry, accountId, buildAccountEntryFromAccount]);
 
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -96,8 +142,16 @@ export function useUpdateEconomicGroupForm(
         setIsLoading(true);
         try {
           // First get the account to find the economicGroupId
-          const accountData = await findOneAccount({ id: accountId });
+          const accountData = (await findOneAccount({
+            id: accountId,
+          })) as IAccount | null;
+          const accountEntry = buildAccountEntryFromAccount(accountData);
+          if (accountEntry) {
+            setAccountEconomicGroupEntry((current) => current ?? accountEntry);
+          }
+
           const economicGroupId = accountData?.economicGroupId;
+          setSelectedHoldingGroupId(economicGroupId ?? null);
 
           if (economicGroupId) {
             // Then fetch the economic group data using the ID
@@ -124,7 +178,145 @@ export function useUpdateEconomicGroupForm(
 
       fetchData();
     }
-  }, [isModalOpen, accountId, setValue, initialHolding, initialControlled]);
+  }, [
+    isModalOpen,
+    accountId,
+    setValue,
+    initialHolding,
+    initialControlled,
+    buildAccountEntryFromAccount,
+  ]);
+
+  useEffect(() => {
+    if (selectedHolding.length === 0) {
+      if (hasEstablishedHolding.current) {
+        setSelectedHoldingGroupId(null);
+        setSelectedControlled([]);
+        setDataControlled([]);
+        setValue("economic_group.economic_group_controlled", []);
+        setValue("economic_group.economic_group_holding", undefined);
+        autopopulatedControlledTaxIdsRef.current = new Set();
+      }
+      return;
+    }
+
+    hasEstablishedHolding.current = true;
+
+    let cancelled = false;
+
+    const synchronizeHoldingGroup = async () => {
+      const holding = selectedHolding[0];
+      const holdingTaxId = holding?.taxId;
+
+      if (!holdingTaxId) {
+        setSelectedHoldingGroupId(null);
+        return;
+      }
+
+      const cleanedHoldingTaxId = holdingTaxId.replace(/\D/g, "");
+      if (!cleanedHoldingTaxId) {
+        setSelectedHoldingGroupId(null);
+        autopopulatedControlledTaxIdsRef.current = new Set();
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const [existingEconomicGroup, accountEntry] = await Promise.all([
+          findOneAccountEconomicGroup({
+            "economic_group_holding.taxId": cleanedHoldingTaxId,
+          }),
+          ensureAccountEntry(),
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        const existingGroupId =
+          (existingEconomicGroup as any)?.id ||
+          (existingEconomicGroup as any)?._id ||
+          null;
+
+        setSelectedHoldingGroupId(existingGroupId ?? null);
+
+        autopopulatedControlledTaxIdsRef.current = new Set();
+
+        const shouldAdoptExistingControlled =
+          !!existingEconomicGroup &&
+          existingGroupId &&
+          existingGroupId !== economicGroupId;
+
+        if (shouldAdoptExistingControlled) {
+          const dedup = new Map<string, EconomicGroup>();
+
+          const registerEntry = (entry?: EconomicGroup | null) => {
+            if (!entry) {
+              return;
+            }
+
+            const cleanTaxId = entry.taxId?.replace(/\D/g, "");
+            if (!cleanTaxId || cleanTaxId === cleanedHoldingTaxId) {
+              return;
+            }
+
+            const normalizedName = entry.name?.trim() || cleanTaxId;
+            dedup.set(cleanTaxId, {
+              name: normalizedName,
+              taxId: cleanTaxId,
+            });
+          };
+
+          existingEconomicGroup?.economic_group_controlled?.forEach((company) => {
+            registerEntry({
+              name: company?.name ?? "",
+              taxId: company?.taxId ?? "",
+            });
+          });
+
+          registerEntry(accountEntry);
+
+          const normalizedControlled = Array.from(dedup.values());
+
+          if (normalizedControlled.length > 0) {
+            setSelectedControlled(normalizedControlled);
+            setValue(
+              "economic_group.economic_group_controlled",
+              normalizedControlled
+            );
+            setDataControlled(normalizedControlled);
+
+            const sanitizedSet = new Set<string>();
+            normalizedControlled.forEach((item) => {
+              const cleanTaxId = item.taxId.replace(/\D/g, "");
+              if (cleanTaxId) {
+                sanitizedSet.add(cleanTaxId);
+              }
+            });
+            autopopulatedControlledTaxIdsRef.current = sanitizedSet;
+          }
+        }
+      } catch (error) {
+        console.error(
+          "Failed to synchronize holding economic group:",
+          error
+        );
+        if (!cancelled) {
+          setSelectedHoldingGroupId(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    synchronizeHoldingGroup();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedHolding, economicGroupId, ensureAccountEntry, setValue]);
 
   const handleCnpjOrName = async (
     value: string,
@@ -162,6 +354,7 @@ export function useUpdateEconomicGroupForm(
   ): Promise<boolean> => {
     try {
       const cleanedTaxId = holdingTaxId.replace(/\D/g, "");
+      setSelectedHoldingGroupId(null);
 
       const validationResult =
         await validateHoldingEnterpriseNotInAnyGroup(cleanedTaxId);
@@ -169,16 +362,15 @@ export function useUpdateEconomicGroupForm(
       if (!validationResult.isValid && validationResult.conflictingEntry) {
         const entry = validationResult.conflictingEntry;
 
+        if (entry.conflictType === "holding") {
+          setSelectedHoldingGroupId(entry.economicGroupId ?? null);
+          return true;
+        }
+
         let errorMessage =
           "Não é possível selecionar esta empresa como holding:\n\n";
 
-        if (entry.conflictType === "holding") {
-          if (entry.economicGroupId === economicGroupId) {
-            return true;
-          }
-          errorMessage += `⚠️ Esta empresa já é holding de outro grupo econômico:\n`;
-          errorMessage += `• ${entry.name} (${entry.taxId}) - já é holding de um grupo existente\n`;
-        } else if (entry.conflictType === "controlled") {
+        if (entry.conflictType === "controlled") {
           errorMessage += `⚠️ Esta empresa já está controlada por outro grupo:\n`;
           if (entry.holdingName) {
             errorMessage += `• ${entry.name} (${entry.taxId}) - já pertence ao grupo da holding ${entry.holdingName} (${entry.holdingTaxId})\n`;
@@ -238,11 +430,65 @@ export function useUpdateEconomicGroupForm(
         await validateControlledEnterprisesNotInHolding(controlledTaxIds);
 
       if (!validationResult.isValid && validationResult.conflictingEntries) {
-        // Group conflicts by type for better error messages
-        const holdingConflicts = validationResult.conflictingEntries.filter(
-          (entry) => entry.conflictType === "holding"
+        const currentHoldingTaxId = selectedHolding.length
+          ? selectedHolding[0]?.taxId?.replace(/\D/g, "")
+          : undefined;
+
+        // Allow conflicts that belong to the same holding we are targeting
+        // or companies already associated with that holding.
+        const conflictsToReport = validationResult.conflictingEntries.filter(
+          (entry) => {
+            if (entry.conflictType === "controlled") {
+              const conflictHoldingTaxId = entry.holdingTaxId?.replace(
+                /\D/g,
+                ""
+              );
+              const conflictControlledTaxId = entry.taxId?.replace(/\D/g, "");
+
+              if (
+                currentHoldingTaxId &&
+                conflictHoldingTaxId &&
+                conflictHoldingTaxId === currentHoldingTaxId
+              ) {
+                return false;
+              }
+
+              if (
+                conflictControlledTaxId &&
+                autopopulatedControlledTaxIdsRef.current.has(
+                  conflictControlledTaxId
+                )
+              ) {
+                return false;
+              }
+            }
+
+            if (entry.conflictType === "holding") {
+              const entryGroupId = entry.economicGroupId?.toString();
+              const targetedGroupId = selectedHoldingGroupId?.toString();
+
+              if (
+                entryGroupId &&
+                targetedGroupId &&
+                entryGroupId === targetedGroupId
+              ) {
+                return false;
+              }
+            }
+
+            return true;
+          }
         );
-        const controlledConflicts = validationResult.conflictingEntries.filter(
+
+        if (conflictsToReport.length === 0) {
+          return true;
+        }
+
+      // Group conflicts by type for better error messages
+      const holdingConflicts = conflictsToReport.filter(
+        (entry) => entry.conflictType === "holding"
+      );
+      const controlledConflicts = conflictsToReport.filter(
           (entry) => entry.conflictType === "controlled"
         );
 
@@ -301,12 +547,89 @@ export function useUpdateEconomicGroupForm(
     const holding = formData.economic_group.economic_group_holding;
     const controlled = formData.economic_group.economic_group_controlled || [];
 
-    // Validate holding if provided
-    if (holding) {
-      const isHoldingValid = await validateHoldingEnterprise(holding.taxId);
-      if (!isHoldingValid) {
-        return; // Stop if holding validation fails
+    const handleSubmitWithoutHolding = async () => {
+      try {
+        const accountData = (await findOneAccount({
+          id: accountId,
+        })) as IAccount | null;
+
+        const sanitizeTaxId = (value?: string | null) =>
+          value ? value.replace(/\D/g, "") : "";
+
+        const currentEconomicGroupId = accountData?.economicGroupId ?? null;
+        const accountTaxId = sanitizeTaxId(accountData?.document?.value);
+
+        if (currentEconomicGroupId) {
+          try {
+            const currentGroup = await findOneAccountEconomicGroup({
+              id: currentEconomicGroupId,
+            });
+
+            if (currentGroup?.economic_group_controlled?.length) {
+              const filteredControlled = currentGroup.economic_group_controlled.filter(
+                (company) => sanitizeTaxId(company?.taxId) !== accountTaxId
+              );
+
+              await updateOneAccountEconomicGroup(
+                { id: currentEconomicGroupId },
+                { economic_group_controlled: filteredControlled }
+              );
+            }
+          } catch (error) {
+            console.warn(
+              "Failed to update previous economic group while clearing holding:",
+              error
+            );
+          }
+        }
+
+        await updateOneAccount({ id: accountId }, { economicGroupId: "" });
+
+        setSelectedHolding([]);
+        setSelectedControlled([]);
+        setDataControlled([]);
+        setSelectedHoldingGroupId(null);
+        setValue("economic_group.economic_group_holding", undefined);
+        setValue("economic_group.economic_group_controlled", []);
+        hasEstablishedHolding.current = false;
+        autopopulatedControlledTaxIdsRef.current = new Set();
+
+        queryClient.invalidateQueries({
+          queryKey: ["findOneAccount", accountId],
+        });
+
+        if (currentEconomicGroupId) {
+          queryClient.invalidateQueries({
+            queryKey: ["findOneAccountEconomicGroup", currentEconomicGroupId],
+          });
+        }
+
+        toast({
+          title: "Sucesso!",
+          description: "Conta desvinculada do grupo econômico.",
+          variant: "success",
+        });
+
+        closeModal?.();
+      } catch (error) {
+        console.error("Failed to detach account from economic group:", error);
+        toast({
+          title: "Erro!",
+          description: "Falha ao desvincular o grupo econômico.",
+          variant: "error",
+        });
       }
+    };
+
+    if (!holding) {
+      await handleSubmitWithoutHolding();
+      return;
+    }
+
+    // Validate holding if provided
+    const isHoldingValid = await validateHoldingEnterprise(holding.taxId);
+    if (!isHoldingValid) {
+      return; // Stop if holding validation fails
     }
 
     // Only validate controlled enterprises that are new additions
@@ -329,261 +652,338 @@ export function useUpdateEconomicGroupForm(
       }
     }
 
-    if (!holding) {
-      toast({
-        title: "Erro!",
-        description: "Holding inválida ou não encontrada!",
-        variant: "error",
-      });
-      return;
-    }
-
     try {
-      // First get the account to find the economicGroupId
-      const accountData = await findOneAccount({ id: accountId });
-      const economicGroupId = accountData?.economicGroupId;
+      const accountData = (await findOneAccount({
+        id: accountId,
+      })) as IAccount | null;
+      const currentEconomicGroupId = accountData?.economicGroupId ?? null;
 
-      const economicGroupPayload = {
-        economic_group_holding: holding,
-        economic_group_controlled: controlled,
+      const sanitizeTaxId = (value?: string | null) =>
+        value ? value.replace(/\D/g, "") : "";
+
+      const normalizedHolding: EconomicGroup = {
+        name: holding.name?.trim() || sanitizeTaxId(holding.taxId),
+        taxId: sanitizeTaxId(holding.taxId),
+      };
+
+      const normalizedControlledMap = new Map<string, EconomicGroup>();
+
+      const registerControlled = (entry?: EconomicGroup | null) => {
+        if (!entry) {
+          return;
+        }
+
+        const cleanTaxId = sanitizeTaxId(entry.taxId);
+        if (!cleanTaxId || cleanTaxId === normalizedHolding.taxId) {
+          return;
+        }
+
+        const normalizedName = entry.name?.trim() || cleanTaxId;
+        normalizedControlledMap.set(cleanTaxId, {
+          name: normalizedName,
+          taxId: cleanTaxId,
+        });
+      };
+
+      controlled.forEach(registerControlled);
+
+      const accountEntry =
+        buildAccountEntryFromAccount(accountData) || accountEconomicGroupEntry;
+
+      if (accountEntry) {
+        registerControlled(accountEntry);
+      }
+
+      let normalizedControlled = Array.from(normalizedControlledMap.values());
+
+      let targetEconomicGroupId =
+        selectedHoldingGroupId || currentEconomicGroupId || null;
+
+      let targetEconomicGroup =
+        targetEconomicGroupId && targetEconomicGroupId !== ""
+          ? await findOneAccountEconomicGroup({ id: targetEconomicGroupId })
+          : null;
+
+      if (!targetEconomicGroup && normalizedHolding.taxId) {
+        targetEconomicGroup = await findOneAccountEconomicGroup({
+          "economic_group_holding.taxId": normalizedHolding.taxId,
+        });
+
+        if (targetEconomicGroup?.id) {
+          targetEconomicGroupId = targetEconomicGroup.id;
+          setSelectedHoldingGroupId(targetEconomicGroup.id);
+        }
+      }
+
+      if (targetEconomicGroupId && !targetEconomicGroup) {
+        targetEconomicGroupId = null;
+      }
+
+      const connectAccountToGroup = async (
+        taxId: string | undefined | null,
+        groupId: string
+      ) => {
+        const cleanTaxId = sanitizeTaxId(taxId);
+        if (!cleanTaxId) {
+          return;
+        }
+
+        try {
+          const accountToConnect = await findOneAccount({
+            "document.value": cleanTaxId,
+          });
+
+          if (accountToConnect?.id) {
+            await updateOneAccount(
+              { id: accountToConnect.id },
+              { economicGroupId: groupId }
+            );
+          }
+        } catch (error) {
+          console.warn(
+            "Failed to connect account to economic group:",
+            cleanTaxId,
+            error
+          );
+        }
+      };
+
+      const disconnectAccountFromGroup = async (
+        taxId: string | undefined | null
+      ) => {
+        const cleanTaxId = sanitizeTaxId(taxId);
+        if (!cleanTaxId) {
+          return;
+        }
+
+        try {
+          const accountToDisconnect = await findOneAccount({
+            "document.value": cleanTaxId,
+          });
+
+          if (accountToDisconnect?.id) {
+            await updateOneAccount(
+              { id: accountToDisconnect.id },
+              { economicGroupId: "" }
+            );
+          }
+        } catch (error) {
+          console.warn(
+            "Failed to disconnect account from economic group:",
+            cleanTaxId,
+            error
+          );
+        }
       };
 
       let economicGroupResult;
 
-      if (economicGroupId) {
-        // Get existing economic group to compare for disconnections
-        const existingEconomicGroup = await findOneAccountEconomicGroup({
-          id: economicGroupId,
+      if (!targetEconomicGroupId) {
+        economicGroupResult = await createOneAccountEconomicGroup({
+          economic_group_holding: normalizedHolding,
+          economic_group_controlled: normalizedControlled,
         });
 
-        if (existingEconomicGroup) {
-          const existingHolding = existingEconomicGroup.economic_group_holding;
+        if (!economicGroupResult.success || !economicGroupResult.data?.id) {
+          throw new Error("Falha ao criar grupo econômico.");
+        }
 
-          if (existingHolding && holding) {
-            const existingHoldingTaxId = existingHolding.taxId?.replace(
-              /\D/g,
-              ""
+        targetEconomicGroupId = economicGroupResult.data.id;
+        setSelectedHoldingGroupId(targetEconomicGroupId);
+
+        await connectAccountToGroup(
+          normalizedHolding.taxId,
+          targetEconomicGroupId
+        );
+
+        for (const company of normalizedControlled) {
+          await connectAccountToGroup(company.taxId, targetEconomicGroupId);
+        }
+
+        if (accountId) {
+          await updateOneAccount(
+            { id: accountId },
+            { economicGroupId: targetEconomicGroupId }
+          );
+        }
+      } else {
+        const targetGroupData =
+          targetEconomicGroup ||
+          (await findOneAccountEconomicGroup({ id: targetEconomicGroupId }));
+
+        if (!targetGroupData) {
+          throw new Error("Grupo econômico alvo não encontrado.");
+        }
+
+        if (
+          currentEconomicGroupId &&
+          currentEconomicGroupId !== targetEconomicGroupId
+        ) {
+          const sanitizedAccountTaxId = sanitizeTaxId(
+            accountData?.document?.value
+          );
+
+          if (sanitizedAccountTaxId) {
+            try {
+              const previousGroup = await findOneAccountEconomicGroup({
+                id: currentEconomicGroupId,
+              });
+
+              if (previousGroup?.economic_group_controlled) {
+                const filteredControlled =
+                  previousGroup.economic_group_controlled.filter(
+                    (company) =>
+                      sanitizeTaxId(company?.taxId) !== sanitizedAccountTaxId
+                  );
+
+                if (
+                  filteredControlled.length !==
+                  previousGroup.economic_group_controlled.length
+                ) {
+                  await updateOneAccountEconomicGroup(
+                    { id: currentEconomicGroupId },
+                    { economic_group_controlled: filteredControlled }
+                  );
+                }
+              }
+            } catch (error) {
+              console.warn(
+                "Failed to remove account from previous economic group:",
+                error
+              );
+            }
+          }
+        }
+
+        const existingHolding = targetGroupData.economic_group_holding;
+        const existingHoldingTaxId = sanitizeTaxId(existingHolding?.taxId);
+        const newHoldingTaxId = normalizedHolding.taxId;
+
+        if (existingHoldingTaxId && newHoldingTaxId) {
+          if (existingHoldingTaxId !== newHoldingTaxId) {
+            await disconnectAccountFromGroup(existingHoldingTaxId);
+            await connectAccountToGroup(
+              newHoldingTaxId,
+              targetEconomicGroupId
             );
-            const newHoldingTaxId = holding.taxId?.replace(/\D/g, "");
-
-            // If holding has changed, disconnect the old one and connect the new one
-            if (existingHoldingTaxId !== newHoldingTaxId) {
-              try {
-                // Disconnect the old holding account
-                const oldHoldingAccount = await findOneAccount({
-                  "document.value": existingHoldingTaxId,
-                });
-
-                if (oldHoldingAccount?.id) {
-                  await updateOneAccount(
-                    { id: oldHoldingAccount.id },
-                    { economicGroupId: "" }
-                  );
-                }
-
-                // Connect the new holding account (if it exists in the database)
-                const newHoldingAccount = await findOneAccount({
-                  "document.value": newHoldingTaxId,
-                });
-
-                if (newHoldingAccount?.id) {
-                  await updateOneAccount(
-                    { id: newHoldingAccount.id },
-                    { economicGroupId: economicGroupId }
-                  );
-                }
-              } catch (error) {
-                console.warn(
-                  "Failed to update holding account connections:",
-                  error
-                );
-              }
-            }
-          } else if (existingHolding && !holding) {
-            // If holding was removed, disconnect the old holding
-            try {
-              const oldHoldingAccount = await findOneAccount({
-                "document.value": existingHolding.taxId?.replace(/\D/g, ""),
-              });
-
-              if (oldHoldingAccount?.id) {
-                await updateOneAccount(
-                  { id: oldHoldingAccount.id },
-                  { economicGroupId: "" }
-                );
-              }
-            } catch (error) {
-              console.warn(
-                "Failed to disconnect removed holding account:",
-                error
-              );
-            }
-          } else if (!existingHolding && holding) {
-            // If holding was added, connect the new holding
-            try {
-              const newHoldingAccount = await findOneAccount({
-                "document.value": holding.taxId?.replace(/\D/g, ""),
-              });
-
-              if (newHoldingAccount?.id) {
-                await updateOneAccount(
-                  { id: newHoldingAccount.id },
-                  { economicGroupId: economicGroupId }
-                );
-              }
-            } catch (error) {
-              console.warn("Failed to connect new holding account:", error);
-            }
           }
-
-          const existingControlled =
-            existingEconomicGroup.economic_group_controlled || [];
-          const newControlledTaxIds = controlled.map((company) =>
-            company.taxId.replace(/\D/g, "")
+        } else if (!existingHoldingTaxId && newHoldingTaxId) {
+          await connectAccountToGroup(
+            newHoldingTaxId,
+            targetEconomicGroupId
           );
+        } else if (existingHoldingTaxId && !newHoldingTaxId) {
+          await disconnectAccountFromGroup(existingHoldingTaxId);
+        }
 
-          // Find companies that were removed from the controlled list
-          const removedAccounts = existingControlled.filter((company) => {
-            const cleanTaxId = company.taxId.replace(/\D/g, "");
-            return !newControlledTaxIds.includes(cleanTaxId);
+        const existingControlled =
+          targetGroupData.economic_group_controlled || [];
+
+        if (
+          normalizedControlled.length === 0 &&
+          existingControlled.length > 0 &&
+          (currentEconomicGroupId === null ||
+            currentEconomicGroupId !== targetEconomicGroupId)
+        ) {
+          existingControlled.forEach((company) => {
+            registerControlled({
+              name: company?.name ?? "",
+              taxId: company?.taxId ?? "",
+            });
           });
 
-          // Disconnect removed accounts from economic group
-          if (removedAccounts.length > 0) {
-            try {
-              for (const removedAccount of removedAccounts) {
-                // Find account by taxId first, then update by ID
-                const accountToDisconnect = await findOneAccount({
-                  "document.value": removedAccount.taxId,
-                });
-
-                if (accountToDisconnect?.id) {
-                  await updateOneAccount(
-                    { id: accountToDisconnect.id },
-                    { economicGroupId: "" }
-                  );
-                }
-              }
-            } catch (error) {
-              console.warn(
-                "Failed to disconnect some accounts from economic group:",
-                error
-              );
-            }
+          if (accountEntry) {
+            registerControlled(accountEntry);
           }
 
-          // Find companies that were added to the controlled list
-          const existingControlledTaxIds = existingControlled.map((company) =>
-            company.taxId.replace(/\D/g, "")
-          );
-          const addedAccounts = controlled.filter((company) => {
-            const cleanTaxId = company.taxId.replace(/\D/g, "");
-            return !existingControlledTaxIds.includes(cleanTaxId);
+          normalizedControlled = Array.from(normalizedControlledMap.values());
+
+          const sanitizedSet = new Set<string>();
+          normalizedControlled.forEach((item) => {
+            const cleanTaxId = item.taxId.replace(/\D/g, "");
+            if (cleanTaxId) {
+              sanitizedSet.add(cleanTaxId);
+            }
           });
+          autopopulatedControlledTaxIdsRef.current = sanitizedSet;
+        }
 
-          // Connect newly added accounts to economic group
-          if (addedAccounts.length > 0) {
-            try {
-              for (const addedAccount of addedAccounts) {
-                // Find account by taxId first, then update by ID
-                const accountToConnect = await findOneAccount({
-                  "document.value": addedAccount.taxId,
-                });
+        const existingControlledSanitized = existingControlled.map((company) => ({
+          name: company?.name ?? "",
+          taxId: sanitizeTaxId(company?.taxId),
+        }));
 
-                if (accountToConnect?.id) {
-                  await updateOneAccount(
-                    { id: accountToConnect.id },
-                    { economicGroupId: economicGroupId }
-                  );
-                }
-              }
-            } catch (error) {
-              console.warn(
-                "Failed to connect some accounts to economic group:",
-                error
-              );
-            }
-          }
+        const existingControlledTaxIds = existingControlledSanitized.map(
+          (company) => company.taxId
+        );
+
+        const newControlledTaxIds = normalizedControlled.map(
+          (company) => company.taxId
+        );
+
+        const removedAccounts = existingControlledSanitized.filter(
+          (company) =>
+            company.taxId && !newControlledTaxIds.includes(company.taxId)
+        );
+
+        const addedAccounts = normalizedControlled.filter(
+          (company) =>
+            company.taxId && !existingControlledTaxIds.includes(company.taxId)
+        );
+
+        for (const removed of removedAccounts) {
+          await disconnectAccountFromGroup(removed.taxId);
+        }
+
+        for (const added of addedAccounts) {
+          await connectAccountToGroup(added.taxId, targetEconomicGroupId);
         }
 
         economicGroupResult = await updateOneAccountEconomicGroup(
-          { id: economicGroupId },
+          { id: targetEconomicGroupId },
           {
-            economic_group_holding: holding,
-            economic_group_controlled: controlled,
+            economic_group_holding: normalizedHolding,
+            economic_group_controlled: normalizedControlled,
           }
         );
-      } else {
-        economicGroupResult =
-          await createOneAccountEconomicGroup(economicGroupPayload);
 
-        if (economicGroupResult.success && economicGroupResult.data?.id) {
-          // Connect the main account to the economic group
+        if (!economicGroupResult.success) {
+          throw new Error("Falha ao atualizar grupo econômico.");
+        }
+
+        setSelectedHoldingGroupId(targetEconomicGroupId);
+
+        if (accountId) {
           await updateOneAccount(
             { id: accountId },
-            { economicGroupId: economicGroupResult.data.id }
+            { economicGroupId: targetEconomicGroupId }
           );
-
-          // Connect the holding account to the economic group (if it exists in the database)
-          if (holding) {
-            try {
-              const holdingAccount = await findOneAccount({
-                "document.value": holding.taxId?.replace(/\D/g, ""),
-              });
-
-              if (holdingAccount?.id) {
-                await updateOneAccount(
-                  { id: holdingAccount.id },
-                  { economicGroupId: economicGroupResult.data.id }
-                );
-              }
-            } catch (error) {
-              console.warn(
-                "Failed to connect holding account to new economic group:",
-                error
-              );
-            }
-          }
-
-          // Connect all controlled accounts to the economic group
-          if (controlled.length > 0) {
-            try {
-              for (const controlledAccount of controlled) {
-                // Find account by taxId first, then update by ID
-                const accountToConnect = await findOneAccount({
-                  "document.value": controlledAccount.taxId,
-                });
-
-                if (accountToConnect?.id) {
-                  await updateOneAccount(
-                    { id: accountToConnect.id },
-                    { economicGroupId: economicGroupResult.data.id }
-                  );
-                }
-              }
-            } catch (error) {
-              console.warn(
-                "Failed to connect some controlled accounts to new economic group:",
-                error
-              );
-            }
-          }
         }
       }
 
-      // Invalidate relevant queries
+      const effectiveEconomicGroupId =
+        targetEconomicGroupId || economicGroupResult?.data?.id || null;
+
       queryClient.invalidateQueries({
         queryKey: ["findOneAccount", accountId],
       });
 
-      queryClient.invalidateQueries({
-        queryKey: [
-          "findOneAccountEconomicGroup",
-          economicGroupId || economicGroupResult.data?.id,
-        ],
-      });
+      if (
+        currentEconomicGroupId &&
+        currentEconomicGroupId !== effectiveEconomicGroupId
+      ) {
+        queryClient.invalidateQueries({
+          queryKey: ["findOneAccountEconomicGroup", currentEconomicGroupId],
+        });
+      }
 
-      if (economicGroupResult.success) {
+      if (effectiveEconomicGroupId) {
+        queryClient.invalidateQueries({
+          queryKey: ["findOneAccountEconomicGroup", effectiveEconomicGroupId],
+        });
+      }
+
+      if (economicGroupResult?.success) {
         try {
           let historicalTitle = "Grupos econômicos atualizados.";
 
