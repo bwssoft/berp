@@ -4,14 +4,16 @@ import React from "react";
 import { Modal, ModalBody, ModalContent, Button } from "../../../../component";
 import { SearchContactAccountForm } from "../../../../form/commercial/account/contact";
 import { useSearchContactModal } from "./use-search-contact.comercial.modal";
+import { IAccountEconomicGroup } from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
 
 interface ContactModalProps {
-  holdingTaxId?: string;
+  economicGroup?: IAccountEconomicGroup;
+  holdingTaxId: string
 }
 
-export function SearchContactModal({ holdingTaxId }: ContactModalProps) {
+export function SearchContactModal({ economicGroup, holdingTaxId }: ContactModalProps) {
   const { closeModal, openModal, open, contactsByCompany, isLoading } =
-    useSearchContactModal(holdingTaxId);
+    useSearchContactModal(economicGroup, holdingTaxId);
 
   if (contactsByCompany.length === 0) return null;
 
