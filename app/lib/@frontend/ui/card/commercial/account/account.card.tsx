@@ -152,7 +152,7 @@ export function AccountCard({
                     account.document.type
                   )}
                 />
-                <InfoField label="RG/CIN" value={account.rg} />
+                <InfoField label="RG" value={account.rg} />
                 {account.status && (
                   <div className="space-y-1">
                     <dt className="text-sm font-medium text-muted-foreground">
