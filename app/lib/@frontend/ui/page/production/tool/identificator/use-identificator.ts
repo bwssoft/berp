@@ -184,8 +184,8 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
         setIsDetecting(true);
         const detected = (await handleDetection(ports)).filter((d) => d.response && d.response.serial);
 
-        setDetected((prev) => {
-          const map = new Map(prev.filter((d) => d.equipment?.serial).map((d) => [d.equipment?.serial, d]));
+        setDetected(() => {
+          const map = new Map();
 
           for (const { port, response } of detected) {
             map.set(response!.serial, {
