@@ -2,93 +2,78 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { IAccount, IContact } from "@/app/lib/@backend/domain";
+import { IAccount, IAccountEconomicGroup, IContact } from "@/app/lib/@backend/domain";
 import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { findOneAccountEconomicGroup } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
 
-export function useSearchContactModal(holdingTaxId?: string) {
+const clean = (v?: string) => (v ?? "").replace(/\D/g, "");
+
+export function useSearchContactModal(
+  economicGroup?: IAccountEconomicGroup,
+  holdingTaxId?: string,
+) {
   const [open, setOpen] = useState(false);
 
   const { data: queryResult, isLoading: accountLoading } = useQuery({
-    queryKey: ["findAccountsByHoldingTaxId", holdingTaxId, "v2"],
-    queryFn: async () => {
-      if (!holdingTaxId) return { docs: [], contactsByCompany: [] };
-
-      // Find economic groups that contain this holding taxId
-      const economicGroup = await findOneAccountEconomicGroup({
-        "economic_group_holding.taxId": holdingTaxId,
-      });
-
-      let groupCompanies: IAccount[] = [];
-      let companiesWithContacts: {
-        name: string;
-        contacts: IContact[];
-        documentValue: string;
-      }[] = [];
-
-      if (economicGroup) {
-        const accountsByEconomicGroup = await findManyAccount({
-          economicGroupId: economicGroup.id,
-        });
-
-        const contactsByAccountId = await findManyContact({
-          accountId: { $in: accountsByEconomicGroup.docs.map((acc) => acc.id) },
-        });
-
-        groupCompanies = accountsByEconomicGroup.docs;
-
-        // Map accounts with their contacts
-        companiesWithContacts = accountsByEconomicGroup.docs
-          .map((account) => {
-            // Find contacts for this account
-            const accountContacts = contactsByAccountId.filter(
-              (contact: IContact) => contact.accountId === account.id
-            );
-
-            // Only include companies that have contacts
-            if (accountContacts.length > 0) {
-              return {
-                name:
-                  account.social_name ||
-                  account.fantasy_name ||
-                  "Empresa sem nome",
-                documentValue: account.document?.value || "",
-                contacts: accountContacts,
-              };
-            }
-            return null;
-          })
-          .filter(Boolean) as {
-          name: string;
-          contacts: IContact[];
-          documentValue: string;
-        }[];
-      }
-
-      return { docs: groupCompanies, contactsByCompany: companiesWithContacts };
-    },
-    enabled: !!holdingTaxId,
+    queryKey: [
+      "findAccountsByHoldingTaxId",
+      clean(economicGroup?.economic_group_holding?.taxId),
+      clean(holdingTaxId),
+      "only-controlled-v1",
+    ],
+    enabled: !!economicGroup && !!holdingTaxId,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
-    staleTime: 0,
-    gcTime: 0, // Don't cache the result
+    queryFn: async () => {
+      if (!economicGroup || !holdingTaxId) {
+        return { docs: [], contactsByCompany: [] as { name: string; documentValue: string; contacts: IContact[] }[] };
+      }
+
+      const holdingCnpj = clean(holdingTaxId);
+
+      // 1) Todas as contas do grupo
+      const accountsByEconomicGroup = await findManyAccount({ economicGroupId: economicGroup.id });
+
+      // 2) Filtros: remover CONTA ATUAL
+      const controlledAccounts: IAccount[] = accountsByEconomicGroup.docs.filter((acc) => {
+        const accCnpj = clean(acc.document?.value);
+        const isHolding = accCnpj === holdingCnpj;
+        return !isHolding;
+      });
+
+      if (controlledAccounts.length === 0) {
+        return { docs: [], contactsByCompany: [] };
+      }
+
+      // 3) Buscar contatos só das controladas filtradas
+      const contacts: IContact[] = await findManyContact({
+        accountId: { $in: controlledAccounts.map((a) => a.id) },
+      });
+
+      // 4) Montar apenas empresas que têm contato
+      const companiesWithContacts =
+        controlledAccounts
+          .map((account) => {
+            const accountContacts = contacts.filter((c) => c.accountId === account.id);
+            if (accountContacts.length === 0) return null;
+            return {
+              name: account.social_name || account.fantasy_name || "Empresa sem nome",
+              documentValue: account.document?.value || "",
+              contacts: accountContacts,
+            };
+          })
+          .filter(Boolean) as { name: string; documentValue: string; contacts: IContact[] }[];
+
+      return { docs: controlledAccounts, contactsByCompany: companiesWithContacts };
+    },
   });
 
   const contactsByCompany = (queryResult as any)?.contactsByCompany || [];
 
-  function openModal() {
-    setOpen(true);
-  }
-
-  function closeModal() {
-    setOpen(false);
-  }
-
   return {
     open,
-    openModal,
-    closeModal,
+    openModal: () => setOpen(true),
+    closeModal: () => setOpen(false),
     contactsByCompany,
     isLoading: accountLoading,
   };

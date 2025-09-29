@@ -234,9 +234,10 @@ export function AccountDataPage(props: Props) {
                 </Badge>
               </CardTitle>
               <div className="flex items-center gap-2">
-                {account.document.type == "cnpj" && account.document.value && (
+                {account.document.type == "cnpj" && account.document.value && economicGroup && (
                   <SearchContactModal
-                    holdingTaxId={account.document.value!}
+                    holdingTaxId={account.document.value}
+                    economicGroup={economicGroup}
                   />
                 )}
                 {hasPermissionContacts && (
