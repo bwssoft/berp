@@ -6,6 +6,7 @@ import HolyLoader from "holy-loader";
 import { AuthProvider } from "../context";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
+import { Session403Guard } from "./session-403-guard";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +22,7 @@ export function Root(props: Props) {
     <html lang="en" className="h-full">
       <ReactQueryClientProvider>
         <SessionProvider>
+          <Session403Guard />
           <AuthProvider session={session}>
             <HolyLoader
               color="linear-gradient(to right, #FFB80E, #FF1BD4, #0FAAEC)"
