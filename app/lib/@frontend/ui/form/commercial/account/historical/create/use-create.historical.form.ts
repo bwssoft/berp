@@ -73,7 +73,7 @@ export function useCreateHistoricalForm({
       });
 
       queryClient.invalidateQueries({
-        queryKey: [accountId, "historical"],
+        queryKey: ["historical", accountId],
       });
     } finally {
       setIsLoading(false);

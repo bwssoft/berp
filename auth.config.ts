@@ -56,7 +56,7 @@ export const authConfig: NextAuthConfig = {
       }
 
       if (user) {
-        if ((user as any).blocked || (user as any).active === false) {
+        if (user.lock || user.active === false) {
           return null; // força logout se bloqueado/inativo
         }
 
@@ -73,10 +73,7 @@ export const authConfig: NextAuthConfig = {
       }
 
       if (trigger === "update" && session) {
-        if (
-          (session.user as any).blocked ||
-          (session.user as any).active === false
-        ) {
+        if (session.user.blocked || session.user.active === false) {
           return null;
         }
 
