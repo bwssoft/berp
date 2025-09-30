@@ -26,7 +26,7 @@ export function PageFooterButtons({ id, addresses, accounts }: Props) {
         variant: "success",
       });
 
-      router.push("/commercial");
+      router.push("/commercial/account");
     } catch (error) {
       console.error("Error canceling flow:", error);
       toast({

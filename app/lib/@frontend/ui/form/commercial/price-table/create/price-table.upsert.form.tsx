@@ -39,11 +39,13 @@ import { FormProvider } from "react-hook-form";
 interface UpsertPriceTableFormProps {
   priceTableId?: string;
   editMode?: boolean;
+  cloneMode?: boolean;
 }
 
 export function UpsertPriceTableForm({
   priceTableId,
   editMode = false,
+  cloneMode = false,
 }: UpsertPriceTableFormProps = {}) {
   // Use TanStack Query to fetch products
   const [equipmentQuery, accessoriesQuery] = useQueries({
@@ -108,7 +110,7 @@ export function UpsertPriceTableForm({
     existingServicePayment,
     priceTableStatus,
     priceTableName,
-  } = usePriceTableForm({ priceTableId, editMode });
+  } = usePriceTableForm({ priceTableId, editMode, cloneMode });
 
   // Dialog hooks
   const {
@@ -201,32 +203,13 @@ export function UpsertPriceTableForm({
     }
   }, [existingEquipmentPayment]);
 
-  // Watch form payment data to make button visibility reactive
-  const watchedEquipmentWithSim = form.watch("equipmentWithSim");
-  const watchedEquipmentWithoutSim = form.watch("equipmentWithoutSim");
-  const watchedAccessories = form.watch("accessories");
-  const watchedSimCards = form.watch("simCards");
-  const watchedServices = form.watch("services");
-
-  // Helper function to check if price table has required payment data for publishing
   const hasRequiredPaymentData = () => {
     const hasExistingPayments =
       (existingEquipmentPayment && existingEquipmentPayment.length > 0) ||
       (existingSimcardPayment && existingSimcardPayment.length > 0) ||
       (existingServicePayment && existingServicePayment.length > 0);
 
-    const hasFormPayments =
-      (watchedEquipmentWithSim &&
-        Object.keys(watchedEquipmentWithSim).length > 0) ||
-      (watchedEquipmentWithoutSim &&
-        Object.keys(watchedEquipmentWithoutSim).length > 0) ||
-      (watchedAccessories && Object.keys(watchedAccessories).length > 0) ||
-      (watchedSimCards && watchedSimCards.length > 0) ||
-      (watchedServices && watchedServices.length > 0);
-
-    const result = hasExistingPayments || hasFormPayments;
-
-    return result;
+    return hasExistingPayments;
   };
 
   // Helper function to get status badge
@@ -364,7 +347,7 @@ export function UpsertPriceTableForm({
                         Data de início <span className="text-red-500">*</span>
                       </label>
                       <DateInput
-                        type="date"
+                        type="dateTime"
                         value={form.watch("startDateTime")}
                         onChange={(date) => {
                           form.setValue("startDateTime", date as Date);
@@ -383,7 +366,7 @@ export function UpsertPriceTableForm({
                         Data de fim <span className="text-red-500">*</span>
                       </label>
                       <DateInput
-                        type="date"
+                        type="dateTime"
                         value={form.watch("endDateTime")}
                         onChange={(date) => {
                           form.setValue("endDateTime", date as Date);

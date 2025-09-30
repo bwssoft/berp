@@ -83,6 +83,7 @@ export function CheckConfigurationPanel(props: Props) {
         </CardHeader>
         <CardContent className="ml-11">
           <TechnologyAndConfigurationProfileSearchForm
+            configurationLog={configurationLog}
             configurationProfile={configurationProfile}
             technology={technology}
           />

@@ -7,6 +7,7 @@ import {
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../../admin/audit";
 import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
+import { priceTableSchedulerGateway } from "../../../infra/gateway/price-table-scheduler";
 
 namespace Dto {
   export type Input = {
@@ -74,6 +75,9 @@ class CancelPriceTableUsecase {
         };
       }
 
+      // Cancel any pending schedules for this price table
+      await this.cancelExistingSchedules(input.id);
+
       return { success: true };
     } catch (err: any) {
       console.error("Erro ao cancelar tabela de preço:", err);
@@ -83,6 +87,14 @@ class CancelPriceTableUsecase {
           global: err instanceof Error ? err.message : JSON.stringify(err),
         },
       };
+    }
+  }
+
+  private async cancelExistingSchedules(priceTableId: string): Promise<void> {
+    try {
+      await priceTableSchedulerGateway.deleteSchedule(priceTableId);
+    } catch (error) {
+      console.warn("⚠️ Failed to cancel existing schedules:", error);
     }
   }
 }

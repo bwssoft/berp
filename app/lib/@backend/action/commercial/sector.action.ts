@@ -8,13 +8,20 @@ import { updateOneSectorUsecase } from "../../usecase/commercial/sector/update-o
 import { revalidatePath } from "next/cache";
 import { PaginationResult } from "../../domain/@shared/repository/pagination.interface";
 import { deleteOneSectorUsecase } from "../../usecase/commercial/sector/delete-one.sector";
+import { AppError } from "@/app/lib/util/app-error";
 
 type CreateSectorInput = Omit<ISector, "id" | "created_at" | "updated_at">;
-
 export async function createOneSector(data: CreateSectorInput) {
-  const sector = await createOneSectorUsecase.execute(data);
-  revalidatePath("/commercial/account/form/create", "page");
-  return sector;
+  try {
+    const sector = await createOneSectorUsecase.execute(data);
+    revalidatePath("/commercial/account/form/create", "page");
+    return sector;
+  } catch (err) {
+    if (err instanceof AppError) {
+      return { error: err.message, code: err.code };
+    }
+    return { error: "Erro inesperado.", code: "UNKNOWN" };
+  }
 }
 
 export async function updateOneSector(

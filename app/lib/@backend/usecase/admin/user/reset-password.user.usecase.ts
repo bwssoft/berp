@@ -70,15 +70,17 @@ class ResetPasswordUserUsecase {
       }
 
       const session = await auth();
-      const { name, id, email } = session?.user!;
-
-      await createOneAuditUsecase.execute<IUser, IUser>({
-          before: oldUser,
-          after,
-          domain: AuditDomain.user,
-          user: { name, id, email },
-          action: `Usuário '${after.name}' teve a senha redefinida.`,
-      });
+      if(session) {
+        const { name, id, email } = session?.user!;
+  
+        await createOneAuditUsecase.execute<IUser, IUser>({
+            before: oldUser,
+            after,
+            domain: AuditDomain.user,
+            user: { name, id, email },
+            action: `Usuário '${after.name}' teve a senha redefinida.`,
+        });
+      }
 
       const html = await formatResetPasswordEmail({
         name: user.name,

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { CreateAnnexModal } from "../../../../modal/comercial/account-attachments/create/annex/annex.create.commercial.modal";
 import { AccountAttachmentsTable } from "../../../../table/commercial/account/accountAttachments/table";
 import { IAccountAttachment } from "@/app/lib/@backend/domain/commercial/entity/account-attachment.definition";
@@ -8,26 +8,27 @@ import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/p
 
 interface Props {
   attachments: PaginationResult<IAccountAttachment>;
-  accountId: string
-  hasPermission: boolean
+  accountId: string;
+  hasPermission: boolean;
+  currentPage?: number;
 }
 
-export function AttachmentsDataPage({ attachments, accountId, hasPermission }: Props) {
-  const {
-    open,
-    closeModal,
-    openModal
-  } = useCreateAnnexModal();
+export function AttachmentsDataPage({
+  attachments,
+  accountId,
+  hasPermission,
+  currentPage,
+}: Props) {
+  const { open, closeModal, openModal } = useCreateAnnexModal();
 
   return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
-      <SearchAttachmentsForm 
-        openModal={openModal} 
-      />
+      <SearchAttachmentsForm openModal={openModal} />
       <div className="col-span-2">
         <AccountAttachmentsTable
           data={attachments}
           hasPermission={hasPermission}
+          currentPage={currentPage}
         />
       </div>
       <CreateAnnexModal
@@ -36,5 +37,5 @@ export function AttachmentsDataPage({ attachments, accountId, hasPermission }: P
         closeModal={closeModal}
       />
     </div>
-  )
+  );
 }

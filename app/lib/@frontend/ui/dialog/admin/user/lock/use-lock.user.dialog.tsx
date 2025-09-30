@@ -31,6 +31,7 @@ export function useLockUserDialog({ userId, willLock, onSuccess }: Params) {
 
       qc.invalidateQueries({ queryKey: ["findOneUser", userId] });
       qc.invalidateQueries({ queryKey: ["findManyUserAudit", userId] });
+      qc.invalidateQueries({ queryKey: ["findManyUser"] });
       onSuccess?.();
       setOpen(false);
     } catch (err) {

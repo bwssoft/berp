@@ -12,6 +12,7 @@ interface Props {
   isModalOpen: boolean;
   economicGroupHolding?: EconomicGroup;
   economicGroupControlled?: EconomicGroup[];
+  economicGroupId?: string;
 }
 
 export function EconomicGroupAccountForm({
@@ -20,6 +21,7 @@ export function EconomicGroupAccountForm({
   isModalOpen,
   economicGroupHolding,
   economicGroupControlled,
+  economicGroupId,
 }: Props) {
   const {
     control,
@@ -39,7 +41,8 @@ export function EconomicGroupAccountForm({
     isModalOpen,
     closeModal,
     economicGroupHolding,
-    economicGroupControlled
+    economicGroupControlled,
+    economicGroupId
   );
 
   return (

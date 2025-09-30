@@ -71,10 +71,32 @@ export function useAddressForm({
   });
 
   const zip = useWatch({ control, name: "zip_code" });
+  const watchedType = useWatch({ control, name: "type" }) as
+    | string[]
+    | undefined;
   const [loadingCep, setLoadingCep] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function fetchViaCep(cep: string) {
+    const preservedType = (watchedType ?? []) as (
+      | "Comercial"
+      | "Entrega"
+      | "Faturamento"
+      | "Residencial"
+      | "Fiscal"
+    )[];
+    if (defaultValues?.zip_code) return;
+    
+    setValue("street", "");
+    setValue("number", "");
+    setValue("complement", "");
+    setValue("district", "");
+    setValue("state", "");
+    setValue("city", "");
+    setValue("reference_point", "");
+    setValue("default_address", false);
+    setValue("type", preservedType);
+
     setLoadingCep(true);
     try {
       const data = await viaCepGateway.findByCep(cep);
@@ -116,5 +138,6 @@ export function useAddressForm({
     formatCep,
     formatNumber: (v: string) => v.replace(/\D/g, ""),
     isSubmitting,
+    setValue,
   };
 }
