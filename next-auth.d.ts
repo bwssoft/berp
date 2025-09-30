@@ -13,6 +13,7 @@ declare module "next-auth" {
       temporary_password: boolean;
       image?: { key: string };
       avatarUrl?: string;
+      active: boolean;
     };
   }
 
@@ -25,5 +26,13 @@ declare module "next-auth" {
     current_profile: IProfile;
     temporary_password: boolean;
     image?: { key: string };
+    active: boolean;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    active: boolean;
   }
 }

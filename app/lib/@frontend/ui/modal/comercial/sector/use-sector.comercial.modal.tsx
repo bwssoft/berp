@@ -136,24 +136,37 @@ export function useSectorModal() {
 
   const addSector = useCallback(
     async ({ name }: SectorForm) => {
-      try {
-        await createOneSector({ name, active: true });
+      const result = await createOneSector({ name, active: true });
 
-        await fetchSectors(currentPage);
-        reset();
-
-        toast({
-          title: "Setor criado com sucesso!",
-          variant: "success",
-        });
-      } catch (error) {
-        toast({
-          title: "Erro ao criar setor",
-          description:
-            error instanceof Error ? error.message : "Erro desconhecido",
-          variant: "error",
-        });
+      if ("error" in result) {
+        switch (result.code) {
+          case "DUPLICATED_SECTOR":
+            toast({
+              title: "Erro",
+              description: "Já existe um setor com esse nome.",
+              variant: "error",
+            });
+            break;
+          case "SIMILAR_SECTOR":
+            toast({
+              title: "Erro",
+              description: result.error,
+              variant: "error",
+            });
+            break;
+          default:
+            toast({
+              title: "Erro inesperado",
+              description: result.error,
+              variant: "error",
+            });
+        }
+        return;
       }
+
+      await fetchSectors(currentPage);
+      reset();
+      toast({ title: "Setor criado com sucesso!", variant: "success" });
     },
     [currentPage, fetchSectors, reset]
   );

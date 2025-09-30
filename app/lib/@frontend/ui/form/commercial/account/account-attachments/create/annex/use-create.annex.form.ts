@@ -5,7 +5,7 @@ import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { createAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.action";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { useAuth } from "@/app/lib/@frontend/context";
 
@@ -31,7 +31,7 @@ export function useCreateAnnexForm({
 }: CreateAnnexFormProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { user } = useAuth();
-  const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -89,6 +89,11 @@ export function useCreateAnnexForm({
           },
           file: fileData,
         });
+
+        queryClient.invalidateQueries({
+          queryKey: ["attachments", accountId],
+        });
+
         closeModal();
       } else {
         toast({
