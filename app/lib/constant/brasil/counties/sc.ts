@@ -1,4 +1,4 @@
-import type { UF_CODES } from "../../../../../consts/uf";
+import type { UF_CODES } from "../uf";
 
 export type County = { nome: string; ibge: number; uf: UF_CODES };
 

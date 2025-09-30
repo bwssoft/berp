@@ -1,4 +1,4 @@
-import type { UF_CODES } from "../../../../../consts/uf";
+import type { UF_CODES } from "../uf";
 import type { County } from "./sp";
 
 export type { County };

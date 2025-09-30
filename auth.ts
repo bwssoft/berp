@@ -76,6 +76,32 @@ const { auth, signIn, signOut, handlers } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token }) {
+      if (token?.id) {
+        const dbUser = await findOneUser({ id: token.id });
+
+        if (!dbUser || !dbUser.active || dbUser.lock) {
+          token.active = false;
+        } else {
+          token.active = true;
+        }
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.active = token.active as boolean;
+      }
+
+      if (session.user?.active === false) {
+        session.expires = new Date(0).toISOString() as any;
+      }
+
+      return session;
+    },
+  },
 });
 const { GET, POST } = handlers;
 
