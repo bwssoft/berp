@@ -27,6 +27,7 @@ declare module "next-auth" {
     temporary_password: boolean;
     image?: { key: string };
     active: boolean;
+    lock: boolean;
   }
 }
 
