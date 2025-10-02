@@ -36,9 +36,8 @@ export function useCancelPriceTableDialog({
         description: "Tabela cancelada com sucesso!",
         title: "Sucesso",
       });
-
-      router.push("/commercial/price-table");
       setOpen(false);
+      window.location.reload();
     } catch (error) {
       toast({
         variant: "error",
