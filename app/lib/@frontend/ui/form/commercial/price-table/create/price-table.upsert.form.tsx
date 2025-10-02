@@ -7,13 +7,7 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import {
-  Button,
-  Checkbox,
-  DateInput,
-  Input,
-  Toggle,
-} from "../../../../component";
+import { Button, DateInput, Input, Toggle } from "../../../../component";
 import {
   EquipmentAccessoryPriceForm,
   SimCardPriceForm,
@@ -47,7 +41,6 @@ export function UpsertPriceTableForm({
   editMode = false,
   cloneMode = false,
 }: UpsertPriceTableFormProps = {}) {
-  // Use TanStack Query to fetch products
   const [equipmentQuery, accessoriesQuery] = useQueries({
     queries: [
       {
@@ -58,10 +51,7 @@ export function UpsertPriceTableForm({
               active: true,
               "category.code": "TABLE-RAST",
             },
-            limit: 100,
           }),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        retry: 2, // Retry failed requests 2 times
       },
       {
         queryKey: ["products", "accessories", "TABLE-ACESS"],
@@ -71,28 +61,22 @@ export function UpsertPriceTableForm({
               active: true,
               "category.code": "TABLE-ACESS",
             },
-            limit: 100,
           }),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        retry: 2, // Retry failed requests 2 times
       },
     ],
   });
 
-  // Extract data and loading states
   const equipmentModels = equipmentQuery.data?.docs || [];
   const accessoriesItems = accessoriesQuery.data?.docs || [];
   const loadingProducts =
     equipmentQuery.isLoading || accessoriesQuery.isLoading;
   const hasError = equipmentQuery.isError || accessoriesQuery.isError;
 
-  // Helper function to refetch all product data
   const refetchProducts = () => {
     equipmentQuery.refetch();
     accessoriesQuery.refetch();
   };
 
-  // Use the price table form hook
   const {
     form,
     handleSubmit,
@@ -106,13 +90,13 @@ export function UpsertPriceTableForm({
     STATUS_STYLES,
     status,
     existingEquipmentPayment,
+    existingEquipmentSimcardPayment,
     existingSimcardPayment,
     existingServicePayment,
     priceTableStatus,
     priceTableName,
   } = usePriceTableForm({ priceTableId, editMode, cloneMode });
 
-  // Dialog hooks
   const {
     open: openCancelDialog,
     setOpen: setOpenCancelDialog,
@@ -130,7 +114,6 @@ export function UpsertPriceTableForm({
   } = useInactivatePriceTableDialog({
     priceTableId,
     onSuccess: () => {
-      // Redirect to list page after successful inactivation
       window.location.href = "/commercial/price-table";
     },
   });
@@ -144,9 +127,7 @@ export function UpsertPriceTableForm({
   } = usePublishPriceTableDialog({
     priceTableId,
     onSuccess: () => {
-      // Update the status in the form after successful publish
-      // This will trigger button re-rendering
-      window.location.reload(); // Simple way to refresh the state
+      window.location.reload();
     },
   });
 
@@ -160,7 +141,6 @@ export function UpsertPriceTableForm({
     Record<string, boolean>
   >({});
 
-  // Handle equipment toggle
   const handleEquipmentToggle = (
     equipment: string,
     enabled: boolean,
@@ -179,7 +159,6 @@ export function UpsertPriceTableForm({
     }
   };
 
-  // Handle accessories toggle
   const handleAccessoryToggle = (accessory: string, enabled: boolean) => {
     setEnabledAccessories((prev) => ({
       ...prev,
@@ -188,24 +167,41 @@ export function UpsertPriceTableForm({
   };
 
   useEffect(() => {
-    if (existingEquipmentPayment && existingEquipmentPayment.length > 0) {
-      const newEnabledEquipmentWithSim: Record<string, boolean> = {};
-      const newEnabledEquipmentWithoutSim: Record<string, boolean> = {};
-      const newEnabledAccessories: Record<string, boolean> = {};
+    const newEnabledEquipmentWithSim: Record<string, boolean> = {};
+    const newEnabledEquipmentWithoutSim: Record<string, boolean> = {};
+    const newEnabledAccessories: Record<string, boolean> = {};
 
-      existingEquipmentPayment.forEach((equipment) => {
+    // Initialize equipment WITH SIM card toggles
+    if (
+      existingEquipmentSimcardPayment &&
+      existingEquipmentSimcardPayment.length > 0
+    ) {
+      existingEquipmentSimcardPayment.forEach((equipment) => {
         newEnabledEquipmentWithSim[equipment.productId] = true;
       });
-
-      setEnabledEquipmentWithSim(newEnabledEquipmentWithSim);
-      setEnabledEquipmentWithoutSim(newEnabledEquipmentWithoutSim);
-      setEnabledAccessories(newEnabledAccessories);
     }
-  }, [existingEquipmentPayment]);
+
+    if (existingEquipmentPayment && existingEquipmentPayment.length > 0) {
+      existingEquipmentPayment.forEach((equipment) => {
+        const isAccessory = equipment.productId?.startsWith("ACC") || false;
+        if (isAccessory) {
+          newEnabledAccessories[equipment.productId] = true;
+        } else {
+          newEnabledEquipmentWithoutSim[equipment.productId] = true;
+        }
+      });
+    }
+
+    setEnabledEquipmentWithSim(newEnabledEquipmentWithSim);
+    setEnabledEquipmentWithoutSim(newEnabledEquipmentWithoutSim);
+    setEnabledAccessories(newEnabledAccessories);
+  }, [existingEquipmentPayment, existingEquipmentSimcardPayment]);
 
   const hasRequiredPaymentData = () => {
     const hasExistingPayments =
       (existingEquipmentPayment && existingEquipmentPayment.length > 0) ||
+      (existingEquipmentSimcardPayment &&
+        existingEquipmentSimcardPayment.length > 0) ||
       (existingSimcardPayment && existingSimcardPayment.length > 0) ||
       (existingServicePayment && existingServicePayment.length > 0);
 
@@ -512,13 +508,13 @@ export function UpsertPriceTableForm({
                                   equipmentModel={equipment.id}
                                   initialData={{
                                     creditPayment:
-                                      existingEquipmentPayment?.find(
+                                      existingEquipmentSimcardPayment?.find(
                                         (ep) =>
                                           ep.productId === equipment.id &&
                                           ep.paymentType === "credit"
                                       ),
                                     upfrontPayment:
-                                      existingEquipmentPayment?.find(
+                                      existingEquipmentSimcardPayment?.find(
                                         (ep) =>
                                           ep.productId === equipment.id &&
                                           ep.paymentType === "upfront"
