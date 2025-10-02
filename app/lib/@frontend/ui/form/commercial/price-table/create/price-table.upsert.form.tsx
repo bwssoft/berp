@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
 import {
   Disclosure,
@@ -66,8 +66,14 @@ export function UpsertPriceTableForm({
     ],
   });
 
-  const equipmentModels = equipmentQuery.data?.docs || [];
-  const accessoriesItems = accessoriesQuery.data?.docs || [];
+  const equipmentModels = useMemo(
+    () => equipmentQuery.data?.docs || [],
+    [equipmentQuery.data?.docs]
+  );
+  const accessoriesItems = useMemo(
+    () => accessoriesQuery.data?.docs || [],
+    [accessoriesQuery.data?.docs]
+  );
   const loadingProducts =
     equipmentQuery.isLoading || accessoriesQuery.isLoading;
   const hasError = equipmentQuery.isError || accessoriesQuery.isError;
@@ -170,6 +176,7 @@ export function UpsertPriceTableForm({
     const newEnabledEquipmentWithSim: Record<string, boolean> = {};
     const newEnabledEquipmentWithoutSim: Record<string, boolean> = {};
     const newEnabledAccessories: Record<string, boolean> = {};
+    const accessoryIds = new Set(accessoriesItems.map((acc) => acc.id));
 
     // Initialize equipment WITH SIM card toggles
     if (
@@ -183,7 +190,7 @@ export function UpsertPriceTableForm({
 
     if (existingEquipmentPayment && existingEquipmentPayment.length > 0) {
       existingEquipmentPayment.forEach((equipment) => {
-        const isAccessory = equipment.productId?.startsWith("ACC") || false;
+        const isAccessory = accessoryIds.has(equipment.productId);
         if (isAccessory) {
           newEnabledAccessories[equipment.productId] = true;
         } else {
@@ -195,7 +202,11 @@ export function UpsertPriceTableForm({
     setEnabledEquipmentWithSim(newEnabledEquipmentWithSim);
     setEnabledEquipmentWithoutSim(newEnabledEquipmentWithoutSim);
     setEnabledAccessories(newEnabledAccessories);
-  }, [existingEquipmentPayment, existingEquipmentSimcardPayment]);
+  }, [
+    existingEquipmentPayment,
+    existingEquipmentSimcardPayment,
+    accessoriesItems,
+  ]);
 
   const hasRequiredPaymentData = () => {
     const hasExistingPayments =
