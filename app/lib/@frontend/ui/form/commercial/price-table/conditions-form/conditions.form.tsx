@@ -123,6 +123,7 @@ function GroupFields({
                   label="Faturar para *"
                   placeholder="Selecione"
                   data={billToOptions}
+                  withTooltip
                   value={
                     field.value
                       ? [
