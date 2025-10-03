@@ -265,6 +265,9 @@ export function UpsertPriceTableForm({
             <div className="flex items-center gap-2">
               <span className="text-lg text-gray-600">-</span>
               <span className="text-lg text-gray-700">{priceTableName}</span>
+              <span className="text-lg text-gray-600">-</span>
+              <span className="text-lg text-gray-700">{priceTableId}</span>
+
               {getStatusBadge(priceTableStatus)}
             </div>
           )}
@@ -324,6 +327,14 @@ export function UpsertPriceTableForm({
           )}
         </div>
       </div>
+
+      {editMode && priceTableName && (
+        <div className="flex items-center gap-2">
+          {priceTableId && (
+            <span className="text-sm text-gray-500">ID: {priceTableId}</span>
+          )}
+        </div>
+      )}
 
       <FormProvider {...form}>
         <form id="price-table-form" onSubmit={handleSubmit}>
