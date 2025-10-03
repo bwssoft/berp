@@ -375,22 +375,26 @@ export function UpsertPriceTableForm({
                       )}
                     </div>
                     <div className="flex-1">
-                      <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
-                        Data de fim <span className="text-red-500">*</span>
-                      </label>
-                      <DateInput
-                        type="dateTime"
-                        value={form.watch("endDateTime")}
-                        onChange={(date) => {
-                          form.setValue("endDateTime", date as Date);
-                        }}
-                        placeholder="Selecione a data de fim"
-                        className="w-full"
-                      />
-                      {form.formState.errors.endDateTime?.message && (
-                        <p className="mt-1 text-sm text-red-600">
-                          {form.formState.errors.endDateTime?.message}
-                        </p>
+                      {form.watch("isTemporary") && (
+                        <>
+                          <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+                            Data de fim <span className="text-red-500">*</span>
+                          </label>
+                          <DateInput
+                            type="dateTime"
+                            value={form.watch("endDateTime")}
+                            onChange={(date) => {
+                              form.setValue("endDateTime", date as Date);
+                            }}
+                            placeholder="Selecione a data de fim"
+                            className="w-full"
+                          />
+                          {form.formState.errors.endDateTime?.message && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {form.formState.errors.endDateTime?.message}
+                            </p>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
