@@ -263,6 +263,9 @@ export function UpsertPriceTableForm({
             <div className="flex items-center gap-2">
               <span className="text-lg text-gray-600">-</span>
               <span className="text-lg text-gray-700">{priceTableName}</span>
+              <span className="text-lg text-gray-600">-</span>
+              <span className="text-lg text-gray-700">{priceTableId}</span>
+
               {getStatusBadge(priceTableStatus)}
             </div>
           )}
