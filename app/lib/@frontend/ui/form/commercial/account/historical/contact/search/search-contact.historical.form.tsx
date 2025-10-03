@@ -243,44 +243,79 @@ export function SearchContactHistoricalAccountForm({
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <div className="flex items-center gap-2">
-                                    {ci.type.includes("Telefone") && (
-                                      <PhoneIcon className="w-5 h-5 text-blue-600" />
-                                    )}
-                                    {ci.type === "Email" && (
-                                      <EnvelopeIcon className="w-5 h-5 text-green-600" />
-                                    )}
-                                    {ci.type === "Celular" && (
-                                      <WhatsappIcon classname="w-5 h-5 text-green-600" />
-                                    )}
-                                    <Checkbox
-                                      checked={isSelected(ci.id, ci.type)}
-                                      onChange={() =>
-                                        toggleSelection(
-                                          ci.id,
-                                          contact.contactName,
-                                          ci.type,
-                                          ci.contact,
-                                          ci.type
-                                        )
-                                      }
-                                    />
-                                  </div>
-                                  {ci.type === "Celular" && (
+                                  {/* Primary channel choices */}
+                                  {ci.type === "Email" && (
                                     <div className="flex items-center gap-2">
-                                      <PhoneIcon className="w-5 h-5 text-green-600" />
+                                      <EnvelopeIcon className="w-5 h-5 text-green-600" />
                                       <Checkbox
-                                        checked={isSelected(ci.id, "Whatsapp")}
+                                        checked={isSelected(ci.id, "Email")}
                                         onChange={() =>
                                           toggleSelection(
                                             ci.id,
                                             contact.contactName,
                                             ci.type,
                                             ci.contact,
-                                            "Whatsapp"
+                                            "Email"
                                           )
                                         }
                                       />
+                                    </div>
+                                  )}
+
+                                  {ci.type.includes("Telefone") && (
+                                    <div className="flex items-center gap-2">
+                                      <PhoneIcon className="w-5 h-5 text-blue-600" />
+                                      <Checkbox
+                                        checked={isSelected(ci.id, "Telefone")}
+                                        onChange={() =>
+                                          toggleSelection(
+                                            ci.id,
+                                            contact.contactName,
+                                            ci.type,
+                                            ci.contact,
+                                            "Telefone"
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  )}
+
+                                  {ci.type === "Celular" && (
+                                    <div className="flex items-center gap-2">
+                                      <div className="flex items-center gap-2">
+                                        <WhatsappIcon classname="w-5 h-5 text-green-600" />
+                                        <Checkbox
+                                          checked={isSelected(
+                                            ci.id,
+                                            "Whatsapp"
+                                          )}
+                                          onChange={() =>
+                                            toggleSelection(
+                                              ci.id,
+                                              contact.contactName,
+                                              ci.type,
+                                              ci.contact,
+                                              "Whatsapp"
+                                            )
+                                          }
+                                        />
+                                      </div>
+
+                                      <div className="flex items-center gap-2">
+                                        <PhoneIcon className="w-5 h-5 text-green-600" />
+                                        <Checkbox
+                                          checked={isSelected(ci.id, "Celular")}
+                                          onChange={() =>
+                                            toggleSelection(
+                                              ci.id,
+                                              contact.contactName,
+                                              ci.type,
+                                              ci.contact,
+                                              "Celular"
+                                            )
+                                          }
+                                        />
+                                      </div>
                                     </div>
                                   )}
                                 </div>

@@ -19,6 +19,9 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     accessorKey: "document",
     cell: ({ row }) => {
       const { original } = row;
+      if( original.lock) {
+        return <Badge variant="outline">Bloqueado</Badge>
+      }
       return (
         <Badge variant="outline">{original.active ? "Ativo" : "Inativo"}</Badge>
       );

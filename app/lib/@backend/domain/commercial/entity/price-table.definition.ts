@@ -5,7 +5,8 @@ export type StatusPriceTable =
   | "INACTIVE"
   | "CANCELLED"
   | "AWAITING_PUBLICATION"
-  | "DRAFT";
+  | "DRAFT"
+  | "PAUSED";
 
 export interface IPriceTable {
   id?: string;

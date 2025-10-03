@@ -24,6 +24,7 @@ import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/addr
 import { IAccount, IAddress, IContact, IAccountEconomicGroup } from "@/app/lib/@backend/domain";
 import {
   CreateContactModal,
+  SearchContactModal,
   UpdateContactModal,
   UpdateEconomicGroupAccountModal,
   useCreateContactModal,
@@ -232,15 +233,23 @@ export function AccountDataPage(props: Props) {
                   {contacts?.length || 0}
                 </Badge>
               </CardTitle>
-              {hasPermissionContacts && (
-                <Button
-                  variant={"ghost"}
-                  className="border px-3 py-3"
-                  onClick={openModalContact}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              )}
+              <div className="flex items-center gap-2">
+                {account.document.type == "cnpj" && account.document.value && economicGroup && (
+                  <SearchContactModal
+                    holdingTaxId={account.document.value}
+                    economicGroup={economicGroup}
+                  />
+                )}
+                {hasPermissionContacts && (
+                  <Button
+                    variant={"ghost"}
+                    className="border px-3 py-3"
+                    onClick={openModalContact}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
@@ -396,6 +405,7 @@ export function AccountDataPage(props: Props) {
         accountId={account.id!}
         onClose={closeUpdateEconomicGroup}
         open={updateEconomicGroup}
+        economicGroupId={economicGroup?.id ?? account.economicGroupId}
         economicGroupHolding={economicGroup?.economic_group_holding}
         economicGroupControlled={economicGroup?.economic_group_controlled}
       />

@@ -54,6 +54,15 @@ const schema = z
       .object({
         social_name: z.string().min(1, "Razão social é obrigatória"),
         fantasy_name: z.string().optional(),
+        status: z.string().optional(),
+        situationIE: z
+          .object({
+            id: z.string().optional(),
+            status: z.boolean().nullable().optional(),
+            text: z.string().optional(),
+          })
+          .optional(),
+        typeIE: z.string().optional(),
         state_registration: z
           .string()
           .max(14, "Inscrição Estadual deve ter no máximo 14 dígitos")
@@ -199,10 +208,13 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
         ? {
             cnpj: {
               sector: sectorData,
-              social_name: accountData?.social_name,
-              fantasy_name: accountData?.fantasy_name,
-              municipal_registration: accountData?.municipal_registration,
-              state_registration: accountData?.state_registration,
+              social_name: accountData?.social_name ?? "",
+              fantasy_name: accountData?.fantasy_name ?? "",
+              municipal_registration: accountData?.municipal_registration ?? "",
+              state_registration: accountData?.state_registration ?? "",
+              status: accountData?.status ?? "",
+              situationIE: accountData.situationIE ?? undefined,
+              typeIE: accountData?.typeIE ?? "",
             },
           }
         : {
@@ -237,6 +249,22 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
             fantasy_name: data.cnpj?.fantasy_name,
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
+            status: data.cnpj?.status,
+            ...(data.cnpj?.situationIE && data.cnpj.situationIE.id
+              ? {
+                  situationIE: {
+                    id: String(data.cnpj.situationIE.id),
+                    // coerce null -> false to satisfy zod boolean expectation
+                    status:
+                      data.cnpj.situationIE.status === null ||
+                      data.cnpj.situationIE.status === undefined
+                        ? false
+                        : Boolean(data.cnpj.situationIE.status),
+                    text: data.cnpj.situationIE.text ?? "",
+                  },
+                }
+              : {}),
+            typeIE: data.cnpj?.typeIE,
             ...(data.cnpj?.economic_group_holding?.name &&
             data.cnpj?.economic_group_holding?.taxId
               ? {

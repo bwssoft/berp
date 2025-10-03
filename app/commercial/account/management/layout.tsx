@@ -93,8 +93,8 @@ export default function AccountManagementLayout({
         <div className="px-4 pt-4">
           <h1 className="text-2xl font-semibold text-gray-900">
             {account.document.type === "cpf"
-              ? `${account.name} - ${account.document.value}`
-              : `${account.social_name} - ${account.document.value}`}
+              ? `Conta - ${account.name}`
+              : `Conta - ${account.social_name}`}
           </h1>
         </div>
       )}

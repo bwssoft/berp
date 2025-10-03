@@ -15,7 +15,6 @@ export const authConfig: NextAuthConfig = {
     maxAge: 24 * 60 * 60, // 24 hours in seconds
   },
   callbacks: {
-    // Callback para autorização: determina se o usuário pode acessar uma rota específica
     authorized({ auth, request: { nextUrl } }) {
       const isAuthenticated = !!auth?.user;
       const path = nextUrl.pathname;
@@ -29,7 +28,6 @@ export const authConfig: NextAuthConfig = {
       if (auth?.user?.temporary_password) {
         const isOnSetPassword = path.startsWith("/set-password");
 
-        // Se não está no /set-password, redireciona
         if (!isOnSetPassword) {
           return NextResponse.redirect(
             new URL("/set-password", nextUrl.origin)
@@ -39,29 +37,29 @@ export const authConfig: NextAuthConfig = {
         return true;
       }
 
-      // Permite acesso livre em rotas não protegidas
       if (isOnUnprotectedRoute) return true;
-      // Em rotas protegidas, só permite acesso se o usuário estiver autenticado
       if (isOnProtectedRoute) return isAuthenticated;
 
-      // Permite acesso por padrão se não se encaixar nos casos acima
       return true;
     },
-    // Callback para manipulação do token JWT
+
     jwt({ user, token, trigger, session }) {
-      // Check if token is expired (24 hours = 86400 seconds)
       const now = Math.floor(Date.now() / 1000);
+
+      // Se expirou -> invalida
       if (token.exp && now >= token.exp) {
-        return null; // Force token invalidation
+        return null;
       }
 
-      // Set token expiration time if not already set
       if (!token.exp) {
-        token.exp = now + 24 * 60 * 60; // 24 hours from now
+        token.exp = now + 24 * 60 * 60;
       }
 
-      // Caso a autenticação inicial tenha ocorrido, atualiza o token com os dados do usuário
       if (user) {
+        if (user.lock || user.active === false) {
+          return null; // força logout se bloqueado/inativo
+        }
+
         token = Object.assign(token, {
           id: user.id,
           profile: user.profile,
@@ -69,23 +67,39 @@ export const authConfig: NextAuthConfig = {
           temporary_password: user.temporary_password,
           name: user.name,
           avatarUrl: user.image || "/avatar.webp",
-          exp: now + 24 * 60 * 60, // Reset expiration on new login (24 hours)
+          exp: now + 24 * 60 * 60,
+          lastActivity: now,
         });
       }
-      // Caso o token esteja sendo atualizado via trigger ("update") e haja dados de sessão,
-      // atualiza os campos necessários do token diretamente
+
       if (trigger === "update" && session) {
+        if (session.user.blocked || session.user.active === false) {
+          return null;
+        }
+
         token = Object.assign(token, {
           id: session.user.id,
           profile: session.user.profile,
           current_profile: session.user.current_profile,
           temporary_password: session.user.temporary_password,
           name: session.user.name,
+          lastActivity: now,
         });
       }
+
+      // Se passou 30 min sem atividade -> desloga
+      if (
+        token.lastActivity &&
+        now - (token.lastActivity as number) > 30 * 60
+      ) {
+        return null;
+      }
+
+      token.lastActivity = now;
+
       return token;
     },
-    // Callback para formatação da sessão enviada ao client
+
     session({ session, token }) {
       session.user.id = String(token.id);
       session.user.profile = token.profile as { id: string; name: string }[];
@@ -97,6 +111,5 @@ export const authConfig: NextAuthConfig = {
       return session;
     },
   },
-  // Caso você precise adicionar providers, coloque-os aqui
   providers: [],
 } satisfies NextAuthConfig;
