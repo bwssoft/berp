@@ -237,6 +237,8 @@ export function usePriceTableForm({
   const [existingEquipmentPayment, setExistingEquipmentPayment] = useState<
     IEquipmentPayment[]
   >([]);
+  const [existingEquipmentSimcardPayment, setExistingEquipmentSimcardPayment] =
+    useState<IEquipmentPayment[]>([]);
   const [existingSimcardPayment, setExistingSimcardPayment] = useState<
     ISimcardPayment[]
   >([]);
@@ -296,6 +298,8 @@ export function usePriceTableForm({
 
     equipmentPayment.forEach((payment) => {
       const isAccessory = payment.productId?.startsWith("ACC") || false;
+      // All non-accessory items in this array go to either equipmentWithSim or equipmentWithoutSim
+      // depending on which array this function is called with
       const targetCategory = isAccessory ? accessories : equipmentWithSim;
 
       if (!targetCategory[payment.productId]) {
@@ -365,13 +369,20 @@ export function usePriceTableForm({
           setExistingEquipmentPayment(
             existingPriceTable.equipmentPayment || []
           );
+          setExistingEquipmentSimcardPayment(
+            existingPriceTable.equipmentSimcardPayment || []
+          );
           setExistingSimcardPayment(existingPriceTable.simcardPayment || []);
           setExistingServicePayment(existingPriceTable.servicePayment || []);
 
-          const { equipmentWithSim, equipmentWithoutSim, accessories } =
+          const { equipmentWithoutSim, accessories } =
             processExistingPaymentData(
               existingPriceTable.equipmentPayment || []
             );
+
+          const { equipmentWithSim } = processExistingPaymentData(
+            existingPriceTable.equipmentSimcardPayment || []
+          );
 
           // Para cloneMode, deixar datas em branco (usar default)
           const startDateTime = cloneMode
@@ -635,9 +646,12 @@ export function usePriceTableForm({
     status: StatusPriceTable = "DRAFT"
   ) => {
     const equipmentPayment: IEquipmentPayment[] = [];
+    const equipmentSimcardPayment: IEquipmentPayment[] = [];
 
-    processEquipmentData(data.equipmentWithSim || {}, equipmentPayment);
     processEquipmentData(data.equipmentWithoutSim || {}, equipmentPayment);
+
+    processEquipmentData(data.equipmentWithSim || {}, equipmentSimcardPayment);
+
     processAccessoryData(data.accessories || {}, equipmentPayment);
 
     const payload = {
@@ -647,6 +661,7 @@ export function usePriceTableForm({
       isTemporary: data.isTemporary,
       status,
       equipmentPayment,
+      equipmentSimcardPayment,
       simcardPayment: data.simCards || [],
       servicePayment: data.services || [],
       groups: data.groups || [],
@@ -680,6 +695,9 @@ export function usePriceTableForm({
         // Update payment data states after successful save
         if (payload.equipmentPayment) {
           setExistingEquipmentPayment(payload.equipmentPayment);
+        }
+        if (payload.equipmentSimcardPayment) {
+          setExistingEquipmentSimcardPayment(payload.equipmentSimcardPayment);
         }
         if (payload.simcardPayment) {
           setExistingSimcardPayment(payload.simcardPayment);
@@ -851,6 +869,7 @@ export function usePriceTableForm({
     STATUS_STYLES,
     status,
     existingEquipmentPayment,
+    existingEquipmentSimcardPayment,
     existingSimcardPayment,
     existingServicePayment,
     priceTableStatus,

@@ -21,6 +21,7 @@ import {
 import { useRouter } from "next/navigation";
 import { AuditPriceTableModal } from "../../../modal/comercial/price-table/audit.price-table.modal";
 import { useAuditPriceTableModal } from "../../../modal/comercial/price-table/use-audit.price-table.modal";
+import { useMemo } from "react";
 
 interface Props {
   data: PaginationResult<IPriceTable>;
@@ -58,14 +59,33 @@ export function PriceTableTable({
     onViewHistory: handleViewHistory,
   });
 
+  const isActive = (t: IPriceTable) =>
+    (t as any).status === "ACTIVE"
+
+  const sortedDocs = useMemo(() => {
+    const copy = [...docs];
+
+    copy.sort((a, b) => {
+      const aAct = isActive(a) ? 1 : 0;
+      const bAct = isActive(b) ? 1 : 0;
+      if (aAct !== bAct) return bAct - aAct;
+
+      const aUpd = (a as any).created_at ? new Date((a as any).created_at).getTime() : 0;
+      const bUpd = (b as any).created_at ? new Date((b as any).created_at).getTime() : 0;
+      return bUpd - aUpd;
+    });
+
+    return copy;
+  }, [docs]);
+
   const table = useReactTable({
-    data: docs,
+    data: sortedDocs,
     columns,
     getCoreRowModel: getCoreRowModel(),
     meta: { restrictEdit, restrictClone },
   });
   const { handleParamsChange } = useHandleParamsChange();
-
+ 
   return (
     <>
       <div className="w-full">
