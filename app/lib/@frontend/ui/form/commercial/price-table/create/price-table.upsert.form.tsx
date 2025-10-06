@@ -29,6 +29,8 @@ import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/pri
 import { BillingConditionsSection } from "../conditions-form/conditions.form";
 import { StatusBanner } from "../../../../component/status-banner";
 import { FormProvider } from "react-hook-form";
+import { Tooltip, TooltipProvider } from "@radix-ui/react-tooltip";
+import { TooltipContent, TooltipTrigger } from "../../../../component/tooltip";
 
 interface UpsertPriceTableFormProps {
   priceTableId?: string;
@@ -270,6 +272,9 @@ export function UpsertPriceTableForm({
             <div className="flex items-center gap-2">
               <span className="text-lg text-gray-600">-</span>
               <span className="text-lg text-gray-700">{priceTableName}</span>
+              <span className="text-lg text-gray-600">-</span>
+              <span className="text-lg text-gray-700">{priceTableId}</span>
+
               {getStatusBadge(priceTableStatus)}
             </div>
           )}
@@ -330,6 +335,14 @@ export function UpsertPriceTableForm({
         </div>
       </div>
 
+      {editMode && priceTableName && (
+        <div className="flex items-center gap-2">
+          {priceTableId && (
+            <span className="text-sm text-gray-500">ID: {priceTableId}</span>
+          )}
+        </div>
+      )}
+
       <FormProvider {...form}>
         <form id="price-table-form" onSubmit={handleSubmit}>
           <Disclosure>
@@ -389,18 +402,30 @@ export function UpsertPriceTableForm({
                     </div>
                   </div>
                 </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          {...form.register("isTemporary")}
+                          className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
 
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    {...form.register("isTemporary")}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label className="text-sm font-medium text-gray-700">
-                    Tabela provisória?
-                  </label>
-                </div>
-
+                        <label className="text-sm font-medium text-gray-700">
+                          Tabela provisória?
+                        </label>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="flex w-1/6">
+                      Se acionado, habilita a tabela de forma temporária, ou
+                      seja, apenas ficará em vigor até a data e hora de término
+                      informados no momento do cadastro. Após terminado o
+                      período da tabela provisória, a última tabela não
+                      provisória, volta a valer
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 {/* Configurações de faturamento */}
                 <BillingConditionsSection
                   ufList={BRAZILIAN_UF_LIST}

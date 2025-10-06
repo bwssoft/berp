@@ -93,6 +93,7 @@ export type ComboboxProps<T> = {
    * Na tela de /admin/user/profile essa prop faz o componente se perder nas referências
    */
   modal?: boolean;
+  withTooltip?: boolean
 
   /**
    * Disables local filtering of options based on search query.
@@ -108,6 +109,7 @@ export function Combobox<TData>({
   data,
   defaultValue = [],
   value,
+  withTooltip = false,
   behavior = "select",
   multiple = true,
   loadingRequestChange,
@@ -335,7 +337,7 @@ export function Combobox<TData>({
             onCloseAutoFocus={onCloseAutoFocus}
           >
             <ComboboxMultipleSearch />
-            <ComboboxContent />
+            <ComboboxContent withTooltip={withTooltip} />
             <ComboboxEmpty />
             <ComboboxLoading />
             {showOptionsButton && <ComboboxViewToggle />}

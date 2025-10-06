@@ -315,6 +315,7 @@ export const useNB2Lora = () => {
               equipment,
               config: {
                 general: {},
+                check: undefined,
                 specific: {
                   odometer: BwsNb2LoraParser.odometer(response.odometer),
                   data_transmission_sleep:
