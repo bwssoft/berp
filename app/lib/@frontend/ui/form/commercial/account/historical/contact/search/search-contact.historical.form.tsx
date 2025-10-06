@@ -116,6 +116,7 @@ export function SearchContactHistoricalAccountForm({
                       "Email",
                       "Telefone Residencial",
                       "Telefone Comercial",
+                      "Whatsapp",
                     ]}
                     error={errors.type?.message}
                     value={otherContactInfo.type ? [otherContactInfo.type] : []}
@@ -151,7 +152,11 @@ export function SearchContactHistoricalAccountForm({
                     onChange={async (e) => {
                       let val = e.target.value;
                       const t = otherContactInfo.type;
-                      if (t === "Celular" || t.includes("Telefone")) {
+                      if (
+                        t === "Celular" ||
+                        t === "Whatsapp" ||
+                        t.includes("Telefone")
+                      ) {
                         val = maskPhone(val);
                       }
                       setOtherContactInfo((prev) => ({
@@ -254,8 +259,7 @@ export function SearchContactHistoricalAccountForm({
                                             ci.id,
                                             contact.contactName,
                                             ci.type,
-                                            ci.contact,
-                                            "Email"
+                                            ci.contact
                                           )
                                         }
                                       />
@@ -272,8 +276,7 @@ export function SearchContactHistoricalAccountForm({
                                             ci.id,
                                             contact.contactName,
                                             ci.type,
-                                            ci.contact,
-                                            "Telefone"
+                                            ci.contact
                                           )
                                         }
                                       />
@@ -293,9 +296,8 @@ export function SearchContactHistoricalAccountForm({
                                             toggleSelection(
                                               ci.id,
                                               contact.contactName,
-                                              ci.type,
-                                              ci.contact,
-                                              "Whatsapp"
+                                              "Whatsapp",
+                                              ci.contact
                                             )
                                           }
                                         />
@@ -310,8 +312,7 @@ export function SearchContactHistoricalAccountForm({
                                               ci.id,
                                               contact.contactName,
                                               ci.type,
-                                              ci.contact,
-                                              "Celular"
+                                              ci.contact
                                             )
                                           }
                                         />
@@ -352,7 +353,6 @@ export function SearchContactHistoricalAccountForm({
               name: "",
               type: "",
               contact: "",
-              channel: "",
             })
           }
         >

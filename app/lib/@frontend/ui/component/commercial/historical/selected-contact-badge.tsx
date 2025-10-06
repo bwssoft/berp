@@ -21,8 +21,8 @@ export function SelectedContactBadge({
     return null;
   }
 
-  const getContactIcon = (type: string, channel: string) => {
-    if (channel === "Whatsapp") {
+  const getContactIcon = (type: string) => {
+    if (type === "Whatsapp") {
       return <WhatsappIcon classname="w-3 h-3 text-green-600" />;
     }
 
@@ -37,15 +37,15 @@ export function SelectedContactBadge({
     return <PhoneIcon className="w-3 h-3 text-gray-600" />;
   };
 
-  const getChannelLabel = (type: string, channel: string) => {
-    if (channel === "Whatsapp") {
+  const getChannelLabel = (type: string) => {
+    if (type === "Whatsapp") {
       return "WhatsApp";
     }
     return type;
   };
 
-  const getBadgeColor = (type: string, channel: string) => {
-    if (channel === "Whatsapp") {
+  const getBadgeColor = (type: string) => {
+    if (type === "Whatsapp") {
       return "bg-green-50 text-green-700 border-green-200";
     }
 
@@ -62,13 +62,13 @@ export function SelectedContactBadge({
 
   return (
     <div
-      className={`inline-flex items-center space-x-2 px-3 py-2 rounded-full border text-sm font-medium ${getBadgeColor(selectContact.type, selectContact.channel)} mb-2`}
+      className={`inline-flex items-center space-x-2 px-3 py-2 rounded-full border text-sm font-medium ${getBadgeColor(selectContact.type)} mb-2`}
     >
       <div className="flex items-center space-x-1.5">
-        {getContactIcon(selectContact.type, selectContact.channel)}
+        {getContactIcon(selectContact.type)}
         <span className="truncate max-w-32">{selectContact.name}</span>
         <span className="text-xs opacity-75">
-          ({getChannelLabel(selectContact.type, selectContact.channel)})
+          ({getChannelLabel(selectContact.type)})
         </span>
       </div>
 
