@@ -8,6 +8,13 @@ const fieldLabel: Record<string, string> = {
   active: "status",
   external: "usuário externo",
   locked_control_code: "permissões",
+  startDateTime: "Data inicial",
+  endDateTime: "Data final",
+  equipmentPayment: "Pagamento de equipamentos",
+  equipmentSimcardPayment: "Pagamento de equipamentos",
+  updated_at: "Atualizado em",
+  created_at: "Criado em",
+  servicePayment: "Serviço de pagamento",
 };
 
 const PERMISSION_LABELS: Record<string, string> = {
@@ -212,12 +219,11 @@ export const columns: ColumnDef<IAudit>[] = [
       const hasLocked = metadata.some((m) => m.field === "locked_control_code");
 
       // detecta se houve solicitação de reset (senha temporária = "sim") neste update
-      const isTempReset =
-        metadata.some(
-          (m) =>
-            m.field === "temporary_password" &&
-            formatScalar(m.after, "temporary_password") === "sim"
-        );
+      const isTempReset = metadata.some(
+        (m) =>
+          m.field === "temporary_password" &&
+          formatScalar(m.after, "temporary_password") === "sim"
+      );
 
       // ===== Updates genéricos (sem permissões) — formatação idêntica ao caso padrão =====
       if (type === "update" && metadata.length > 0 && !hasLocked) {
@@ -257,37 +263,37 @@ export const columns: ColumnDef<IAudit>[] = [
                 }
                 if (after === "não") {
                   return (
-                    <div key={i} className="text-sm w-[20vw]"> 
+                    <div key={i} className="text-sm w-[20vw]">
                       Usuário <span className="font-bold">desbloqueado</span>
                     </div>
                   );
                 }
               }
 
-              if (field === "password" ) {
+              if (field === "password") {
                 if (isTempReset) return null;
                 return (
                   <div key={i} className="text-sm w-[20vw]">
                     Senha alterada.
                   </div>
-                )
+                );
               }
 
-              if (field === "image" ) {
+              if (field === "image") {
                 if (isTempReset) return null;
                 return (
                   <div key={i} className="text-sm w-[20vw]">
                     Imagem alterada.
                   </div>
-                )
+                );
               }
 
-              if (field === "temporary_password" && after == "sim" ) {
-               return (
-                <div key={i} className="text-sm w-[20vw]">
-                  Reset de senha solicitado.
-                </div>
-               )
+              if (field === "temporary_password" && after == "sim") {
+                return (
+                  <div key={i} className="text-sm w-[20vw]">
+                    Reset de senha solicitado.
+                  </div>
+                );
               }
 
               // quando for info de active, mostrar "Usuário ativado" ou "Usuário inativado"
@@ -311,7 +317,9 @@ export const columns: ColumnDef<IAudit>[] = [
               return (
                 <div key={i} className="text-sm w-[20vw]">
                   <span className="mr-1 font-bold break-all">{`Campo '${pretty}' de`}</span>
-                  <span className=" max-w-[20ch] whitespace-normal break-words">{renderValue(before)}</span>
+                  <span className=" max-w-[20ch] whitespace-normal break-words">
+                    {renderValue(before)}
+                  </span>
                   <span className="mx-1 font-bold">para</span>
                   {renderValue(after)}
                 </div>

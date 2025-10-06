@@ -1,101 +1,154 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { Button, DateInput } from "@/app/lib/@frontend/ui/component";
+import { useForm } from "react-hook-form";
+import { useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Button,
+  DateInput,
+  Input,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/app/lib/@frontend/ui/component";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
-import { useState } from "react";
+
+type FilterFormData = {
+  name?: string;
+  type?: string;
+  status?: string;
+  created_date?: Date | null;
+  activation_date?: Date | null;
+  activation_period?: { from: Date; to: Date } | null;
+};
+
+const DEFAULTS: FilterFormData = {
+  name: "",
+  type: "Todos",
+  status: "Todos",
+  created_date: null,
+  activation_date: null,
+  activation_period: null,
+};
 
 export function PriceTableFilterForm() {
-  const { handleParamsChange } = useHandleParamsChange();
+  const form = useForm<FilterFormData>({ defaultValues: DEFAULTS });
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const pathname = usePathname();
-  const [createdDate, setCreatedDate] = useState<Date | null>(null);
-  const [activationDate, setActivationDate] = useState<Date | null>(null);
-  const [activationPeriod, setActivationPeriod] = useState<{
-    from: Date;
-    to: Date;
-  } | null>(null);
+  const searchParams = useSearchParams();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const filters = Object.fromEntries(formData.entries());
+  function onSubmit(data: FilterFormData) {
+    const params = new URLSearchParams(searchParams.toString());
 
-    // Handle date inputs
-    if (createdDate) {
-      filters.created_date = createdDate.toISOString().split("T")[0];
-    }
-    if (activationDate) {
-      filters.activation_date = activationDate.toISOString().split("T")[0];
-    }
-    if (activationPeriod?.from) {
-      filters.start_date = activationPeriod.from.toISOString().split("T")[0];
-    }
-    if (activationPeriod?.to) {
-      filters.end_date = activationPeriod.to.toISOString().split("T")[0];
+    data.name ? params.set("name", data.name) : params.delete("name");
+    data.type && data.type !== "Todos"
+      ? params.set("type", data.type)
+      : params.delete("type");
+    data.status && data.status !== "Todos"
+      ? params.set("status", data.status)
+      : params.delete("status");
+
+    if (data.created_date) {
+      params.set("created_date", data.created_date.toISOString().split("T")[0]);
+    } else {
+      params.delete("created_date");
     }
 
-    handleParamsChange(filters);
-  };
-
-  const handleClear = () => {
-    // Clear all form fields
-    const form = document.querySelector("form") as HTMLFormElement;
-    if (form) {
-      form.reset();
+    if (data.activation_date) {
+      params.set(
+        "activation_date",
+        data.activation_date.toISOString().split("T")[0]
+      );
+    } else {
+      params.delete("activation_date");
     }
-    // Clear date states
-    setCreatedDate(null);
-    setActivationDate(null);
-    setActivationPeriod(null);
-    // Navigate to the page without any query parameters to show all data
-    router.replace(pathname);
-  };
+
+    if (data.activation_period?.from) {
+      params.set(
+        "start_date",
+        data.activation_period.from.toISOString().split("T")[0]
+      );
+    } else {
+      params.delete("start_date");
+    }
+
+    if (data.activation_period?.to) {
+      params.set(
+        "end_date",
+        data.activation_period.to.toISOString().split("T")[0]
+      );
+    } else {
+      params.delete("end_date");
+    }
+
+    params.delete("page");
+    startTransition(() => {
+      router.push(`?${params.toString()}`);
+    });
+  }
+
+  function handleClear() {
+    form.reset(DEFAULTS);
+    startTransition(() => {
+      router.push("?");
+    });
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={form.handleSubmit(onSubmit)}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Nome da tabela
           </label>
-          <input
-            type="text"
-            name="name"
+          <Input
+            {...form.register("name")}
             placeholder="Digite a Razão Social ou Nome Fantasia"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Tipo de tabela
           </label>
-          <select
-            name="type"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          <Select
+            onValueChange={(v) => form.setValue("type", v)}
+            value={form.watch("type") ?? "Todos"}
           >
-            <option value="">Todos</option>
-            <option value="Normal">Normal</option>
-            <option value="Provisória">Provisória</option>
-          </select>
+            <SelectTrigger>
+              <SelectValue placeholder="Todos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Todos">Todos</SelectItem>
+              <SelectItem value="Normal">Normal</SelectItem>
+              <SelectItem value="Provisória">Provisória</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Status da tabela
           </label>
-          <select
-            name="status"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          <Select
+            onValueChange={(v) => form.setValue("status", v)}
+            value={form.watch("status") ?? "Todos"}
           >
-            <option value="">Todos</option>
-            <option value="ACTIVE">Ativa</option>
-            <option value="INACTIVE">Inativa</option>
-            <option value="DRAFT">Rascunho</option>
-            <option value="Em Pausa">Em Pausa</option>
-            <option value="CANCELLED">Cancelada</option>
-            <option value="AWAITING_PUBLICATION">Aguardando Publicação</option>
-          </select>
+            <SelectTrigger>
+              <SelectValue placeholder="Todos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Todos">Todos</SelectItem>
+              <SelectItem value="ACTIVE">Ativa</SelectItem>
+              <SelectItem value="INACTIVE">Inativa</SelectItem>
+              <SelectItem value="DRAFT">Rascunho</SelectItem>
+              <SelectItem value="Em Pausa">Em Pausa</SelectItem>
+              <SelectItem value="CANCELLED">Cancelada</SelectItem>
+              <SelectItem value="AWAITING_PUBLICATION">
+                Aguardando Publicação
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -105,8 +158,10 @@ export function PriceTableFilterForm() {
           </label>
           <DateInput
             type="date"
-            value={createdDate}
-            onChange={(value) => setCreatedDate(value as Date | null)}
+            value={form.watch("created_date")}
+            onChange={(value) =>
+              form.setValue("created_date", value as Date | null)
+            }
             placeholder="Selecione a data de criação"
             name="created_date"
           />
@@ -117,8 +172,10 @@ export function PriceTableFilterForm() {
           </label>
           <DateInput
             type="date"
-            value={activationDate}
-            onChange={(value) => setActivationDate(value as Date | null)}
+            value={form.watch("activation_date")}
+            onChange={(value) =>
+              form.setValue("activation_date", value as Date | null)
+            }
             placeholder="Selecione a data de ativação"
             name="activation_date"
           />
@@ -129,9 +186,12 @@ export function PriceTableFilterForm() {
           </label>
           <DateInput
             type="period"
-            value={activationPeriod}
+            value={form.watch("activation_period")}
             onChange={(value) =>
-              setActivationPeriod(value as { from: Date; to: Date } | null)
+              form.setValue(
+                "activation_period",
+                value as { from: Date; to: Date } | null
+              )
             }
             placeholder="Selecione o período de ativação"
             name="activation_period"
@@ -144,13 +204,14 @@ export function PriceTableFilterForm() {
           variant="outline"
           className="border-gray-300"
           onClick={handleClear}
+          disabled={isPending}
         >
           <div className="w-4 h-4 bg-gray-400 rounded-full mr-2"></div>
           Limpar
         </Button>
-        <Button type="submit">
+        <Button type="submit" disabled={isPending}>
           <MagnifyingGlassIcon className="mr-2 h-4 w-4" />
-          Pesquisar
+          {isPending ? "Buscando..." : "Pesquisar"}
         </Button>
       </div>
     </form>
