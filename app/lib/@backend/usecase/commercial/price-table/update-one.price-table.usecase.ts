@@ -103,6 +103,7 @@ class UpdateOnePriceTableUsecase {
               input.status == "AWAITING_PUBLICATION" ? "DRAFT" : input.status,
             groups: input.groups,
             equipmentPayment: input.equipmentPayment,
+            equipmentSimcardPayment: input.equipmentSimcardPayment,
             simcardPayment: input.simcardPayment,
             servicePayment: input.servicePayment,
             updated_at: updatedAt,

@@ -90,6 +90,7 @@ class CreateOnePriceTableUsecase {
         groups: input.groups || [],
         status: input.status ?? "DRAFT",
         equipmentPayment: input.equipmentPayment ?? [],
+        equipmentSimcardPayment: input.equipmentSimcardPayment ?? [],
         simcardPayment: input.simcardPayment ?? [],
         servicePayment: input.servicePayment ?? [],
         created_at: nowIso,

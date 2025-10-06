@@ -1,10 +1,18 @@
 "use client";
 
+import React from "react";
 import { useCombobox } from ".";
 import { ComboboxItem } from "./combobox-item";
 
-export const ComboboxContent = () => {
+type ComboboxContentProps = {
+  withTooltip?: boolean;
+};
+
+export const ComboboxContent: React.FC<ComboboxContentProps> = ({
+  withTooltip,
+}) => {
   const { behavior, options, optionsSource } = useCombobox();
+
   return (
     <div className="app-scrollbar-nested z-[500] h-full overflow-y-auto p-1">
       <ul className="space-y-0.5">
@@ -19,7 +27,7 @@ export const ComboboxContent = () => {
 
         {options?.map((option) => (
         
-          <ComboboxItem key={option.id} option={option} />
+          <ComboboxItem key={option.id} option={option} withTooltip={withTooltip} />
         ))}
       </ul>
     </div>
