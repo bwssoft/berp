@@ -770,7 +770,6 @@ export function usePriceTableForm({
 
     try {
       const isValid = await form.trigger();
-
       if (!isValid) {
         const errors = form.formState.errors;
         let errorMessage = "Preencha todos os campos obrigatórios.";
@@ -786,6 +785,26 @@ export function usePriceTableForm({
         toast({
           title: "Campos obrigatórios",
           description: errorMessage,
+          variant: "error",
+        });
+        return;
+      }
+
+      const validationResult = await validateBillingConditionsPriceTable(
+        form.getValues().groups || []
+      );
+
+      setMessageErrorCondition({
+        status: validationResult.status,
+        message: validationResult.messages[0] ?? "",
+      });
+
+      if (validationResult.status !== "green") {
+        toast({
+          title: "Erro de Validação!",
+          description:
+            validationResult.messages[0] ??
+            "Condições de faturamento inválidas, ajuste antes de salvar.",
           variant: "error",
         });
         return;
