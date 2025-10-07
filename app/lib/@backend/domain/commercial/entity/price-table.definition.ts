@@ -17,6 +17,7 @@ export interface IPriceTable {
   isTemporary: boolean;
   groups: IPriceTableConditionGroup[];
   equipmentPayment?: IEquipmentPayment[];
+  equipmentSimcardPayment?: IEquipmentPayment[];
   simcardPayment?: ISimcardPayment[];
   servicePayment?: IServicePayment[];
   created_at?: Date;
