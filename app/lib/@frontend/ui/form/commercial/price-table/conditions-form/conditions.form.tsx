@@ -1,10 +1,12 @@
 "use client";
 
-import { Controller } from "react-hook-form";
+import { useMemo } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import { Button, Checkbox, Combobox, Input } from "../../../../component";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useConditionsForm } from "./use-conditions.form";
 import { BrazilianUF } from "../create/use-price-table.form";
+import type { CreatePriceTableFormData } from "../create/use-price-table.form";
 
 type Props = {
   ufList: { id: string; text: string }[];
@@ -68,6 +70,42 @@ function GroupFields({
 }) {
   const { condFields, control, removeCond, appendCond, createEmptyCondition } =
     useConditionsForm(gi);
+  const groups = useWatch({
+    control,
+    name: "groups",
+  }) as CreatePriceTableFormData["groups"];
+
+  const filteredUfList = useMemo(() => {
+    if (!groups) {
+      return ufList;
+    }
+
+    const selectedInCurrentGroup = new Set<BrazilianUF>();
+    const selectedInOtherGroups = new Set<BrazilianUF>();
+
+    groups.forEach((group, groupIndex) => {
+      group?.conditions?.forEach((condition) => {
+        condition?.salesFor?.forEach((uf) => {
+          if (groupIndex === gi) {
+            selectedInCurrentGroup.add(uf);
+          } else {
+            selectedInOtherGroups.add(uf);
+          }
+        });
+      });
+    });
+
+    if (!selectedInOtherGroups.size) {
+      return ufList;
+    }
+
+    return ufList.filter((uf) => {
+      const ufId = uf.id as BrazilianUF;
+      return (
+        selectedInCurrentGroup.has(ufId) || !selectedInOtherGroups.has(ufId)
+      );
+    });
+  }, [gi, groups, ufList]);
 
   return (
     <div className="space-y-2 rounded-lg border p-3">
@@ -81,7 +119,7 @@ function GroupFields({
                 <Combobox
                   label="Vendas para"
                   placeholder="Selecione"
-                  data={ufList}
+                  data={filteredUfList}
                   value={ufList.filter((uf) =>
                     (field.value ?? []).includes(uf.id as BrazilianUF)
                   )}
