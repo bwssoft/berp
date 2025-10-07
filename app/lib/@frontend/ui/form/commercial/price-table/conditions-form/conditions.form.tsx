@@ -79,7 +79,7 @@ function GroupFields({
             render={({ field, fieldState: { error } }) => (
               <div className="w-full">
                 <Combobox
-                  label="Vendas para *"
+                  label="Vendas para"
                   placeholder="Selecione"
                   data={ufList}
                   value={ufList.filter((uf) =>

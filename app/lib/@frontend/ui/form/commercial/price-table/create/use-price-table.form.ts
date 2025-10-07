@@ -58,7 +58,7 @@ const PTBR_MONEY_REGEX = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{2})?$/;
 const priceTableConditionSchema = z.object({
   id: z.string().min(1),
   /** UFs atendidas por esta condição */
-  salesFor: z.array(BRAZILIAN_UF_ENUM).min(1, "Selecione ao menos 1 UF"),
+  salesFor: z.array(BRAZILIAN_UF_ENUM).optional(),
   /** Limite de faturamento (string pt-BR) */
   billingLimit: z
     .string()
