@@ -23,8 +23,8 @@ export function SelectedContactCard({
     return null;
   }
 
-  const getContactIcon = (type: string, channel: string) => {
-    if (channel === "Whatsapp") {
+  const getContactIcon = (type: string) => {
+    if (type === "Whatsapp") {
       return <WhatsappIcon classname="w-4 h-4 text-green-600" />;
     }
 
@@ -39,15 +39,15 @@ export function SelectedContactCard({
     return <PhoneIcon className="w-4 h-4 text-gray-600" />;
   };
 
-  const getChannelLabel = (type: string, channel: string) => {
-    if (channel === "Whatsapp") {
+  const getChannelLabel = (type: string) => {
+    if (type === "Whatsapp") {
       return "WhatsApp";
     }
     return type;
   };
 
-  const getBadgeColor = (type: string, channel: string) => {
-    if (channel === "Whatsapp") {
+  const getBadgeColor = (type: string) => {
+    if (type === "Whatsapp") {
       return "bg-green-100 text-green-800";
     }
 
@@ -65,7 +65,7 @@ export function SelectedContactCard({
   const animationClass = showAnimation
     ? "animate-in slide-in-from-top-2 fade-in-0 duration-300"
     : "";
-  
+
   return (
     <div className="mb-4">
       <h3 className="text-sm font-medium text-gray-700 mb-2">
@@ -77,7 +77,7 @@ export function SelectedContactCard({
         <div className="flex items-center space-x-3">
           <div className="flex-shrink-0">
             <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-              {getContactIcon(selectContact.type, selectContact.channel)}
+              {getContactIcon(selectContact.type)}
             </div>
           </div>
 
@@ -87,9 +87,9 @@ export function SelectedContactCard({
                 {selectContact.name}
               </p>
               <span
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getBadgeColor(selectContact.type, selectContact.channel)}`}
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getBadgeColor(selectContact.type)}`}
               >
-                {getChannelLabel(selectContact.type, selectContact.channel)}
+                {getChannelLabel(selectContact.type)}
               </span>
             </div>
             <p className="text-sm text-gray-500 truncate">
