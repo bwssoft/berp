@@ -29,7 +29,7 @@ export function BillingConditionsSection({
 
       {groupFields.map((g, gi) => (
         <GroupFields
-          key={g.id}
+          key={g.rhfId}
           gi={gi}
           ufList={ufList}
           billToOptions={billToOptions}
@@ -69,70 +69,52 @@ function GroupFields({
   ufList: { id: string; text: string }[];
   billToOptions: { id: string; text: string }[];
 }) {
-  const { condFields, control, removeCond, appendCond, createEmptyCondition } =
-    useConditionsForm(gi);
-  const groups = useWatch({
+  const {
+    groupFields,
+    removeGroup,
+    condFields,
+    appendCond,
+    removeCond,
     control,
-    name: "groups",
-  }) as CreatePriceTableFormData["groups"];
+    createEmptyCondition,
+    getUfOptionsFor,
+    isUfDisabled,
+  } = useConditionsForm(gi);
 
-  const filteredUfList = useMemo(() => {
-    if (!groups) {
-      return ufList;
-    }
-
-    const selectedInCurrentGroup = new Set<BrazilianUF>();
-    const selectedInOtherGroups = new Set<BrazilianUF>();
-
-    groups.forEach((group, groupIndex) => {
-      group?.conditions?.forEach((condition) => {
-        condition?.salesFor?.forEach((uf) => {
-          if (groupIndex === gi) {
-            selectedInCurrentGroup.add(uf);
-          } else {
-            selectedInOtherGroups.add(uf);
-          }
-        });
-      });
-    });
-
-    if (!selectedInOtherGroups.size) {
-      return ufList;
-    }
-
-    return ufList.filter((uf) => {
-      const ufId = uf.id as BrazilianUF;
-      return (
-        selectedInCurrentGroup.has(ufId) || !selectedInOtherGroups.has(ufId)
-      );
-    });
-  }, [gi, groups, ufList]);
+  const groupsCount = groupFields.length;
 
   return (
     <div className="space-y-2 rounded-lg border p-3">
       {condFields.map((c, ci) => (
-        <div key={c.id} className="grid grid-cols-4 gap-2 items-start">
+        <div key={c.rhfId} className="grid grid-cols-4 gap-2 items-start">
+          {/* Vendas para (multi) */}
           <Controller
             control={control}
             name={`groups.${gi}.conditions.${ci}.salesFor`}
-            render={({ field, fieldState: { error } }) => (
-              <div className="w-full">
-                <Combobox
-                  label="Vendas para"
-                  placeholder="Selecione"
-                  data={filteredUfList}
-                  value={ufList.filter((uf) =>
-                    (field.value ?? []).includes(uf.id as BrazilianUF)
-                  )}
-                  onChange={(v: { id: string; text: string }[]) =>
-                    field.onChange(v.map((it) => it.id as BrazilianUF))
-                  }
-                  keyExtractor={(e) => e.id}
-                  displayValueGetter={(e) => e.text}
-                  error={error?.message}
-                />
-              </div>
-            )}
+            render={({ field, fieldState: { error } }) => {
+              const options = getUfOptionsFor(ufList, field.value);
+              return (
+                <div className="w-full">
+                  <Combobox
+                    label="Vendas para"
+                    placeholder="Selecione"
+                    data={options}
+                    // itemPropsGetter={(opt) => ({
+                    //   disabled: isUfDisabled(opt.id, field.value),
+                    // })}
+                    value={options.filter((uf) =>
+                      (field.value ?? []).includes(uf.id as BrazilianUF)
+                    )}
+                    onChange={(v: { id: string; text: string }[]) =>
+                      field.onChange(v.map((it) => it.id as BrazilianUF))
+                    }
+                    keyExtractor={(e) => e.id}
+                    displayValueGetter={(e) => e.text}
+                    error={error?.message}
+                  />
+                </div>
+              );
+            }}
           />
 
           {/* Limite de faturamento */}
@@ -202,20 +184,31 @@ function GroupFields({
             )}
           />
 
+          {/* Lixeira (remover condição/grupo com fallback) */}
           <div className="flex items-start pt-7">
             <Button
               variant="outline"
               type="button"
-              onClick={() => {
-                if (condFields.length <= 1) {
-                  removeCond(0);
-                  appendCond(createEmptyCondition());
-                } else {
-                  removeCond(ci);
-                }
-              }}
               title="Remover condição"
               className="h-10"
+              onClick={() => {
+                if (condFields.length > 1) {
+                  // remove só a condição
+                  removeCond(ci);
+                  return;
+                }
+
+                // é a única condição do grupo
+                if (groupsCount > 1) {
+                  // existem outros grupos → remove o grupo inteiro
+                  removeGroup(gi);
+                  return;
+                }
+
+                // único grupo e única condição → reseta a linha
+                removeCond(0);
+                appendCond(createEmptyCondition());
+              }}
             >
               <TrashIcon className="h-4 w-4" />
             </Button>
