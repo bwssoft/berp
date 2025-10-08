@@ -8,7 +8,7 @@ export default function CreateAccountLayout({
   children,
 }: CreateAccountLayoutProps) {
   return (
-    <CreateAccountFlowProvider resetOnMount={false}>
+    <CreateAccountFlowProvider resetOnMount={true}>
       {children}
     </CreateAccountFlowProvider>
   );
