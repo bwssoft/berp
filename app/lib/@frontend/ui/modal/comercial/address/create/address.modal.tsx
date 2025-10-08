@@ -3,8 +3,8 @@
 import React from "react";
 import { Modal, ModalBody, ModalContent } from "../../../component";
 
-import { AddressCreateForm } from "../../../form/commercial/address/create/address.create.form";
-import { AddressFormSchema } from "../../../form/commercial/address/update";
+import { AddressCreateForm } from "../../../../form/commercial/address/create/address.create.form";
+import { AddressFormSchema } from "../../../../form/commercial/address/update";
 
 interface AddressProps {
   open: any;

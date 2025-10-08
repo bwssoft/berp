@@ -21,7 +21,12 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import { IAccount, IAddress, IContact, IAccountEconomicGroup } from "@/app/lib/@backend/domain";
+import {
+  IAccount,
+  IAddress,
+  IContact,
+  IAccountEconomicGroup,
+} from "@/app/lib/@backend/domain";
 import {
   CreateContactModal,
   SearchContactModal,
@@ -32,9 +37,9 @@ import {
 } from "../../../../modal";
 import { useState } from "react";
 import { useAddressUpdateModal } from "../../../../modal/comercial/address/update/use-address.update.modal";
-import { useAddressModal } from "../../../../modal/comercial/address/use-address.modal";
+import { useAddressModal } from "../../../../modal/comercial/address/create/use-address.modal";
 import { AddressUpdateModal } from "../../../../modal/comercial/address/update";
-import { CreateAddressModal } from "../../../../modal/comercial/address";
+import { CreateAddressModal } from "../../../../modal/comercial/address/create";
 import { AddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/delete.address";
 import { useAddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/use-delete.address";
 import { DeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/delete.contact.dialog";
@@ -234,12 +239,14 @@ export function AccountDataPage(props: Props) {
                 </Badge>
               </CardTitle>
               <div className="flex items-center gap-2">
-                {account.document.type == "cnpj" && account.document.value && economicGroup && (
-                  <SearchContactModal
-                    holdingTaxId={account.document.value}
-                    economicGroup={economicGroup}
-                  />
-                )}
+                {account.document.type == "cnpj" &&
+                  account.document.value &&
+                  economicGroup && (
+                    <SearchContactModal
+                      holdingTaxId={account.document.value}
+                      economicGroup={economicGroup}
+                    />
+                  )}
                 {hasPermissionContacts && (
                   <Button
                     variant={"ghost"}
