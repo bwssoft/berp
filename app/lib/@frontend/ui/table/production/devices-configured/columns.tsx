@@ -5,7 +5,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
 import { Device } from "@/app/lib/@backend/domain";
 import Link from "next/link";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
 export interface Row {

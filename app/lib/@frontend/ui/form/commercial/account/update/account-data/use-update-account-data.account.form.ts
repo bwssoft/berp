@@ -11,7 +11,8 @@ import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useQueryClient } from "@tanstack/react-query";
 
 const schema = z

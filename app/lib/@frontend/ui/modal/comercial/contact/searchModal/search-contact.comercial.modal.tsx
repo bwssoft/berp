@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import { Modal, ModalBody, ModalContent, Button } from "../../../../component";
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+import { Button } from '@/frontend/ui/component/button';
+
 import { SearchContactAccountForm } from "../../../../form/commercial/account/contact";
 import { useSearchContactModal } from "./use-search-contact.comercial.modal";
 import { IAccountEconomicGroup } from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";

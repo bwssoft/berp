@@ -15,7 +15,8 @@ import { useSearchParams } from "next/navigation";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { TooltipProvider } from "../../../component/tooltip";
 
 const PAGE_SIZE = 10;

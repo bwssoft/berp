@@ -60,7 +60,6 @@ const priceTableConditionSchema = z.object({
   id: z.string().min(1),
   /** UFs atendidas por esta condição */
   salesFor: z.array(BRAZILIAN_UF_ENUM).optional(),
-  salesFor: z.array(BRAZILIAN_UF_ENUM).optional(),
   /** Limite de faturamento (string pt-BR) */
   billingLimit: z
     .string()

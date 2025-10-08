@@ -1,4 +1,5 @@
-import { ClientCreateForm } from "@/app/lib/@frontend/ui/component";
+import { ClientCreateForm } from '@/frontend/ui/form/commercial/client/create/client.create.form';
+
 
 export default async function Page() {
   return (

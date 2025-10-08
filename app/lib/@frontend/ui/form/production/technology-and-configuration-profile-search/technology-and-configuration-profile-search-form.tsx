@@ -6,14 +6,9 @@ import {
   ITechnology,
 } from "@/app/lib/@backend/domain";
 import { useTechnologyAndConfigurationProfileForm } from "./use-technology-and-configuration-profile-search";
-import {
-  Combobox,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../component";
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 import { Label } from "../../../component/label";
 import { Controller } from "react-hook-form";
 import { Loader2Icon, LoaderIcon } from "lucide-react";

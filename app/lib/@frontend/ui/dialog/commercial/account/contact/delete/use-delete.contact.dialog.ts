@@ -10,7 +10,8 @@ import {
   updateOneAccount,
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { useSearchParams } from "next/navigation";
-import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
+import { useCreateAccountFlow } from '@/frontend/context/create-account-flow.context';
+
 import { useAuth } from "@/app/lib/@frontend/context/auth.context";
 
 export function useDeleteContactDialog() {

@@ -2,7 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { IAccount } from "@/app/lib/@backend/domain";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";

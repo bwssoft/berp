@@ -26,7 +26,8 @@ import {
   validateControlledEnterprisesNotInHolding,
   validateHoldingEnterpriseNotInGroup,
 } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import {
   useCreateAccountFlow,
   LocalAccount,

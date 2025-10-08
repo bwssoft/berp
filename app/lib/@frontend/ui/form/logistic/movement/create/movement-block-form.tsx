@@ -24,10 +24,12 @@ import {
 } from "@dnd-kit/sortable";
 import type { IBase, IItem } from "@/app/lib/@backend/domain";
 import { MovementRowForm } from "./movement.row.form";
-import { SortableItem } from "../../../../component";
+import { SortableItem } from '@/frontend/ui/component/sortable-item';
+
 import type { MovementBlock } from "./use-create.movement.form";
 import { useFormContext } from "react-hook-form";
-import { Badge } from "@/app/lib/@frontend/ui/component";
+import { Badge } from '@/frontend/ui/component/badge';
+
 
 interface MovementBlockFormProps {
   blockIndex: number;

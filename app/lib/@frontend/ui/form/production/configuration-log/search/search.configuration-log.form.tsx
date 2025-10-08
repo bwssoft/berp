@@ -1,20 +1,12 @@
 "use client";
 
 import { useConfigurationLogSearchForm } from "./use-search.configuration-log.form";
-import {
-  Button,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Label } from '@/frontend/ui/component/label';
+import { Modal, ModalBody, ModalContent, ModalFooter } from '@/frontend/ui/component/modal';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 import { Filter } from "mongodb";
 import { IConfigurationLog } from "@/app/lib/@backend/domain";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";

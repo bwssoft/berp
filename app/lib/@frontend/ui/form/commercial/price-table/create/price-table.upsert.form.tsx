@@ -7,7 +7,11 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { Button, DateInput, Input, Toggle } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { DateInput } from '@/frontend/ui/component/date-input';
+import { Input } from '@/frontend/ui/component/input';
+import { Toggle } from '@/frontend/ui/component/toggle';
+
 import {
   EquipmentAccessoryPriceForm,
   SimCardPriceForm,

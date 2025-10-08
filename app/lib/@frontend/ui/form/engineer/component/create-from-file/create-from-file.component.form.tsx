@@ -4,7 +4,8 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { commonConstants } from "@/app/lib/constant";
 import { useCreateFromFileComponentForm } from "./use-create-from-file.component.form";
 import { IComponentCategory } from "@/app/lib/@backend/domain";
-import { FileUpload } from "../../../../component";
+import { FileUpload } from '@/frontend/ui/component/input-file';
+
 
 interface Props {
   categories: IComponentCategory[];

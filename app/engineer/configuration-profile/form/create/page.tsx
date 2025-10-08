@@ -1,6 +1,7 @@
 import { findManyClient } from "@/app/lib/@backend/action/commercial/client.action";
 import { findManyTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
-import { ConfigurationProfileUpsertForm } from "@/app/lib/@frontend/ui/form";
+import { ConfigurationProfileUpsertForm } from '@/frontend/ui/form/engineer/configuration-profile/upsert/configuration-profile.upsert.form';
+
 
 export default async function Page() {
   const [clients, technologies] = await Promise.all([

@@ -17,7 +17,8 @@ import {
   fetchCnpjData,
   fetchNameData,
 } from "@/app/lib/@backend/action/cnpja/cnpja.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import {
   useCreateAccountFlow,
   LocalAccount,

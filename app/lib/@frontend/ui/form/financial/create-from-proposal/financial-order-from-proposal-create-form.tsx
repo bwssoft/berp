@@ -11,7 +11,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { IFinancialOrder } from "@/app/lib/@backend/domain";
 import { saleOrderConstants } from "@/app/lib/constant/sale-order";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { createFinancialOrderFromProposal } from "@/app/lib/@backend/action/financial/financial-order.action";
 
 interface Props {

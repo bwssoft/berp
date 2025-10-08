@@ -17,7 +17,8 @@ import {
 } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { EconomicGroup, IAccount } from "@/app/lib/@backend/domain";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";

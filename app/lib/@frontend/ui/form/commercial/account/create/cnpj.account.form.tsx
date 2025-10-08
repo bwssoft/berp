@@ -2,16 +2,11 @@
 
 import { Controller } from "react-hook-form";
 import { useCreateAccountFormContext } from "@/app/lib/@frontend/context/create-account-form.context";
-import {
-  Input,
-  Combobox,
-  Button,
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "../../../../component";
+import { Input } from '@/frontend/ui/component/input';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Button } from '@/frontend/ui/component/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 import { PlusIcon } from "@heroicons/react/24/outline";
 import {
   SectorModal,

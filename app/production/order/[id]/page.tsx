@@ -1,12 +1,8 @@
 "use server";
 
 import { IClient } from "@/app/lib/@backend/domain";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/app/lib/@frontend/ui/component";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/frontend/ui/component/tabs';
+
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import {

@@ -1,12 +1,8 @@
 import { Users } from "lucide-react";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../component";
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+
 import { IAccountEconomicGroup } from "@/app/lib/@backend/domain";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";

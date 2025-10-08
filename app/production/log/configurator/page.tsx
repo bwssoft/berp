@@ -3,7 +3,8 @@ import {
   statsConfigurationLog,
 } from "@/app/lib/@backend/action/production/configuration-log.action";
 import { IConfigurationLog } from "@/app/lib/@backend/domain";
-import { Button } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+
 import {
   Card,
   CardContent,
@@ -12,7 +13,8 @@ import {
   CardDescription,
 } from "@/app/lib/@frontend/ui/component/card";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
-import { ConfigurationLogSearchForm } from "@/app/lib/@frontend/ui/form";
+import { ConfigurationLogSearchForm } from '@/frontend/ui/form/production/configuration-log/search/search.configuration-log.form';
+
 import { ConfigurationLogTable } from "@/app/lib/@frontend/ui/table/production/configuration-log/table";
 import { Plus } from "lucide-react";
 import { Filter } from "mongodb";

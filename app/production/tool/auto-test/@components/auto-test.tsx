@@ -1,7 +1,9 @@
 "use client";
 
 import { Device, ITechnology } from "@/app/lib/@backend/domain";
-import { Button, Spinner } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Spinner } from '@/frontend/ui/component/spinner';
+
 
 import { useAutoTest } from "@/app/lib/@frontend/hook/use-auto-test";
 import { TechnologySearchForm } from "@/app/lib/@frontend/ui/form/production/technology-search";

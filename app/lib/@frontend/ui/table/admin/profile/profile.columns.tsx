@@ -2,7 +2,9 @@
 import { IProfile } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import { ClockIcon, UsersIcon } from "@heroicons/react/24/outline";
-import { Button, Toggle } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Toggle } from '@/frontend/ui/component/toggle';
+
 import React from "react";
 import { Badge } from "../../../component/badge";
 import {

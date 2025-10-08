@@ -1,5 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Button, Toggle } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Toggle } from '@/frontend/ui/component/toggle';
+
 import { ISector } from "@/app/lib/@backend/domain";
 import { TrashIcon } from "@heroicons/react/24/outline";
 

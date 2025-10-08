@@ -1,7 +1,8 @@
 import { IComponentCategory } from "@/app/lib/@backend/domain";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 interface Props {

@@ -1,5 +1,6 @@
 import { findOneFirmwareUpdateLog } from "@/app/lib/@backend/action/production/firmware-update-log.action";
-import { FirmwareUpdateLogDescription } from "@/app/lib/@frontend/ui/description";
+import { FirmwareUpdateLogDescription } from '@/frontend/ui/description/production/firmware-update-log/firmware-update-log.description';
+
 
 interface Props {
   params: Promise<{

@@ -9,13 +9,9 @@ import {
 } from "../../../../component/card";
 import { Clock, Network, Server, Wifi } from "lucide-react";
 import { Badge } from "../../../../component/badge";
-import {
-  Input,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../../../component";
+import { Input } from '@/frontend/ui/component/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/frontend/ui/component/tabs';
+
 import {
   FormControl,
   FormField,

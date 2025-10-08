@@ -7,7 +7,8 @@ import { createAccountAttachment } from "@/app/lib/@backend/action/commercial/ac
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 const schema = z.object({
   name: z.string().min(1, "Nome do anexo é obrigatório"),

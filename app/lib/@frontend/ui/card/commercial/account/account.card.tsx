@@ -1,15 +1,11 @@
 "use client";
 
 import { Building2, DollarSign, Tag, User } from "lucide-react";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  InfoField,
-} from "../../../component";
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+import { InfoField } from '@/frontend/ui/component/info-field';
+
 import { Separator } from "../../../component/separator";
 import { IAccount } from "@/app/lib/@backend/domain";
 import { StatusBadge } from "../../../page/commercial/account/data/account.data";

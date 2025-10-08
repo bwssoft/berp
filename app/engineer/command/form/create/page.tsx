@@ -1,4 +1,5 @@
-import { CommandCreateForm } from "@/app/lib/@frontend/ui/component";
+import { CommandCreateForm } from '@/frontend/ui/form/engineer/command/create/command.create.form';
+
 
 export default async function Page() {
   return (

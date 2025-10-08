@@ -9,7 +9,8 @@ import {
   useProfileLinkedControlModal,
 } from "../../modal";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import { useAuth } from "../../../context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 interface Props {
   controls: PaginationResult<IControl>;

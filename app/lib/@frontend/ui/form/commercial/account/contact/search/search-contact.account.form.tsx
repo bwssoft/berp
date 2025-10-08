@@ -6,7 +6,8 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { Button } from "../../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { useSearchContactAccount } from "./use-search-contact.account";
 import { IAccount, IContact } from "@/app/lib/@backend/domain";
 

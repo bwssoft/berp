@@ -1,5 +1,7 @@
-import { BackButton } from "@/app/lib/@frontend/ui/component";
-import { CreateOneInputCategoryForm } from "@/app/lib/@frontend/ui/form";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
+import { CreateOneInputCategoryForm } from '@/frontend/ui/form/engineer/input-category/create/create.input.category.form';
+
 
 export default async function Page() {
   return (

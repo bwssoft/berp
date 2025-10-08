@@ -1,6 +1,7 @@
 import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
 import { findOneProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
-import { ProductionOrderUpdateForm } from "@/app/lib/@frontend/ui/component";
+import { ProductionOrderUpdateForm } from '@/frontend/ui/form/production/production-order/update/production-order.update.form';
+
 
 interface Props {
   searchParams: { id: string };

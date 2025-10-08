@@ -11,7 +11,8 @@ import {
 } from "@/app/lib/@frontend/ui/component/card";
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
-import { TechnologySearchForm } from "@/app/lib/@frontend/ui/form";
+import { TechnologySearchForm } from '@/frontend/ui/form/production/technology-search/technology-search-form';
+
 import {
   Settings,
   Zap,

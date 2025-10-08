@@ -1,5 +1,6 @@
 import { IControl, IProfile } from "@/app/lib/@backend/domain";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";

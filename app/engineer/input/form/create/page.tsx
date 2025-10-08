@@ -1,6 +1,8 @@
 import { findManyInputCategory } from "@/app/lib/@backend/action/engineer/input/input.category.action";
-import { BackButton } from "@/app/lib/@frontend/ui/component";
-import { CreateOneInputForm } from "@/app/lib/@frontend/ui/form";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
+import { CreateOneInputForm } from '@/frontend/ui/form/engineer/input/create/create.input.form';
+
 
 export default async function Page() {
   const { docs: categories } = await findManyInputCategory({ filter: {} });

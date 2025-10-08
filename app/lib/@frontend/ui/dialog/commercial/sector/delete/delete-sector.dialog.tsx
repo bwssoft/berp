@@ -1,5 +1,6 @@
 "use client";
-import { Button } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { ISector } from "@/app/lib/@backend/domain";
 
 interface SectorDeleteDialogProps {

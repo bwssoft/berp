@@ -6,7 +6,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState } from "react";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useQueryClient } from "@tanstack/react-query";
 
 import { createAccountAttachmentHistorical } from "@/app/lib/@backend/action/commercial/account-attachment.historical.action";

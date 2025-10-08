@@ -1,7 +1,8 @@
 "use client";
 
 import { columns } from "./columns";
-import { DataTable } from "../../../component";
+import { DataTable } from '@/frontend/ui/component/data-table';
+
 import { Device } from "@/app/lib/@backend/domain";
 
 interface Props {

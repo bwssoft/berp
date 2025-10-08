@@ -2,7 +2,8 @@
 
 import { IProfile } from "@/app/lib/@backend/domain";
 import { useChooseProfileForm } from "./use-choose.profile.form";
-import { Combobox } from "../../../../component";
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+
 
 interface Props {
   profile: IProfile | null;

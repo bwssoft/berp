@@ -5,7 +5,8 @@
 // import { months } from "@/app/lib/constant/months";
 // import { IFinancialOrder, IProduct, IProductionOrderLegacy } from "@/app/lib/@backend/domain";
 
-import { BarChart } from "@/app/lib/@frontend/ui/chart";
+import { BarChart } from '@/frontend/ui/chart/bar.chart';
+
 
 // export default async function Page() {
 //   const productionOrders = (await findAllProductionOrderWithProduct()) as unknown as (IProductionOrderLegacy & {

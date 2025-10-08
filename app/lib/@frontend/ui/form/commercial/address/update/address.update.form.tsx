@@ -2,7 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { Button, Checkbox, Input } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Input } from '@/frontend/ui/component/input';
+
 import { Combobox } from "@/app/lib/@frontend/ui/component/combobox";
 import { UF_LIST, type UF_CODES } from "@/app/lib/constant/brasil/uf";
 import {

@@ -6,7 +6,8 @@ import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./item.columns";
 import { Pagination } from "../../../component/pagination";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 const PAGE_SIZE = 10;
 

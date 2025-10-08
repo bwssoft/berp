@@ -7,7 +7,8 @@ import {
   IConfigurationProfile,
   ITechnology,
 } from "@/app/lib/@backend/domain";
-import { Button } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 
 interface Props {
   clients: IClient[];

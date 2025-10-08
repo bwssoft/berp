@@ -2,7 +2,8 @@
 
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { ContactDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/tab/contact/contact.data";
-import { AccountNotFoundState } from "@/app/lib/@frontend/ui/component";
+import { AccountNotFoundState } from '@/frontend/ui/component/empty-state/empty-state';
+
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMemo, useEffect, useState } from "react";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";

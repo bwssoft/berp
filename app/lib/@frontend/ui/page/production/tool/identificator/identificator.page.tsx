@@ -1,19 +1,13 @@
 "use client";
 
 import { Device, ITechnology } from "@/app/lib/@backend/domain";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/lib/@frontend/ui/component";
-import {
-  IdentificationForm,
-  TechnologySearchForm,
-} from "@/app/lib/@frontend/ui/form";
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+
+import { IdentificationForm } from '@/frontend/ui/form/production/identification/identification.form';
+import { TechnologySearchForm } from '@/frontend/ui/form/production/technology-search/technology-search-form';
+
 import { DevicesDetectedTable } from "@/app/lib/@frontend/ui/table/production/devices-detected/table";
 import { DevicesIdentifiedTable } from "@/app/lib/@frontend/ui/table/production/devices-identified/table";
 import { CheckCircle, Plus, Settings, Zap } from "lucide-react";

@@ -1,7 +1,8 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
 import { IComponent } from "@/app/lib/@backend/domain";
-import { BackButton } from "@/app/lib/@frontend/ui/component";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
 import { ComponentTable } from "@/app/lib/@frontend/ui/table/engineer/component/component.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Filter } from "mongodb";

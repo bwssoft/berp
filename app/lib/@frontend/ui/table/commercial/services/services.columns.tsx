@@ -1,5 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { IPriceTableService } from "@/app/lib/@backend/domain";
 import { TrashIcon } from "@heroicons/react/24/outline";
 

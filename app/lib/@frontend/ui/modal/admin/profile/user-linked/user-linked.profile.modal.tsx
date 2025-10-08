@@ -2,7 +2,8 @@
 
 import { Modal, ModalBody, ModalContent } from "../../../../component/modal";
 import { IProfile, IUser } from "@/app/lib/@backend/domain";
-import { ListUserDescription } from "../../../../description";
+import { ListUserDescription } from '@/frontend/ui/description/admin/user/list-user.description';
+
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 interface Props {

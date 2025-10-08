@@ -9,8 +9,10 @@ import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState } from "react";
 import { addressesQueryKey } from "../../../../form/commercial/address/get/useaddress";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useCreateAccountFlow } from '@/frontend/context/create-account-flow.context';
+
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 export function useAddressModal() {
   const [open, setOpen] = useState(false);

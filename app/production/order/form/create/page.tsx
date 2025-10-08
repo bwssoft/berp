@@ -1,5 +1,6 @@
 import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { ProductionOrderCreateForm } from "@/app/lib/@frontend/ui/component";
+import { ProductionOrderCreateForm } from '@/frontend/ui/form/production/production-order/create/production-order.create.form';
+
 
 export default async function Page() {
   const { docs: products } = await findManyProduct({ filter: {} });

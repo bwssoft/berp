@@ -1,13 +1,12 @@
 "use client";
 
 import { Controller } from "react-hook-form";
-import {
-  Button,
-  Checkbox,
-  Combobox,
-  FileUpload,
-  Input,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { FileUpload } from '@/frontend/ui/component/input-file';
+import { Input } from '@/frontend/ui/component/input';
+
 import { useCreateOneUserForm } from "./use-create-one.user.form";
 import { formatCpf } from "@/app/lib/util/format-rg-cpf";
 

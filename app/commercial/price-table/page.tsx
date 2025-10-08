@@ -1,14 +1,9 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
 import { IPriceTable } from "@/app/lib/@backend/domain";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+
 import { PriceTableFilterForm } from "@/app/lib/@frontend/ui/form/commercial/price-table/search/search.price-table.form";
 import { PriceTableTable } from "@/app/lib/@frontend/ui/table/commercial/price-table/price-table.table";
 import { PlusIcon } from "@heroicons/react/20/solid";

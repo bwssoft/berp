@@ -1,13 +1,10 @@
 "use client";
 
 import React from "react";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  Button,
-  SearchContactHistoricalAccountForm,
-} from "../../../../../component";
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+import { Button } from '@/frontend/ui/component/button';
+import { SearchContactHistoricalAccountForm } from '@/frontend/ui/form/commercial/account/historical/contact/search/search-contact.historical.form';
+
 import { useSearchContactHistoricalModal } from "./use-search-contact.historical.form";
 import { PhoneIcon } from "@heroicons/react/24/outline";
 import { ContactSelection } from "@/app/lib/@backend/domain";

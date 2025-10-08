@@ -13,7 +13,8 @@ import { useEffect, useState } from "react";
 import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
 import { updateOneUser } from "@/app/lib/@backend/action/admin/user.action";
 import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useSession } from "next-auth/react";
 
 const updateSchema = z

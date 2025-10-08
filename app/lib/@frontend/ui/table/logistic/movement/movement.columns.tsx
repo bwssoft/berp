@@ -1,7 +1,8 @@
 "use-client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { IMovement, Movement } from "@/app/lib/@backend/domain";
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { Badge } from "../../../component/badge";

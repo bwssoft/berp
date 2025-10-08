@@ -3,7 +3,8 @@ import {
   updateOneUser,
   getUserAvatarUrl,
 } from "@/app/lib/@backend/action/admin/user.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";

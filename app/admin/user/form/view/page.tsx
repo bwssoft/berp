@@ -1,5 +1,6 @@
 import { findOneUser } from "@/app/lib/@backend/action/admin/user.action";
-import { ViewOneUserForm } from "@/app/lib/@frontend/ui/form";
+import { ViewOneUserForm } from '@/frontend/ui/form/admin/user/view-one/view-one.user.form';
+
 
 interface Props {
   searchParams: {

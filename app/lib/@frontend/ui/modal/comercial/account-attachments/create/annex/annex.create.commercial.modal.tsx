@@ -1,12 +1,9 @@
 "use client";
 
-import {
-  CreateAnnexForm,
-  CreateContactAccountForm,
-  Modal,
-  ModalBody,
-  ModalContent,
-} from "@/app/lib/@frontend/ui/component";
+import { CreateAnnexForm } from '@/frontend/ui/form/commercial/account/account-attachments/create/annex/create.annex.form';
+import { CreateContactAccountForm } from '@/frontend/ui/form/commercial/account/contact/create/contact.create.account.form';
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+
 import React from "react";
 import { useCreateAnnexModal } from "./use-annex.create.commercial.modal";
 

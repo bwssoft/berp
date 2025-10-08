@@ -18,7 +18,10 @@ import {
   IProductionOrder,
   ITechnology,
 } from "@/app/lib/@backend/domain";
-import { Button, Combobox, Error } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Error } from '@/frontend/ui/component/error';
+
 import { Controller } from "react-hook-form";
 import { nanoid } from "nanoid";
 import Link from "next/link";

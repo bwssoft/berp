@@ -1,6 +1,8 @@
 "use client";
 
-import { Button, Input } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+
 import { Filter } from "mongodb";
 import { IIdentificationLog } from "@/app/lib/@backend/domain";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";

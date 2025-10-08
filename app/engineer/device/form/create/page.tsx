@@ -1,5 +1,6 @@
 import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { DeviceCreateForm } from "@/app/lib/@frontend/ui/component";
+import { DeviceCreateForm } from '@/frontend/ui/form/engineer/device/create/device.create.form';
+
 
 export default async function Page() {
   const { docs: products } = await findManyProduct({ filter: {} });

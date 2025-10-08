@@ -3,7 +3,8 @@ import {
   statsFirmwareUpdateLog,
 } from "@/app/lib/@backend/action/production/firmware-update-log.action";
 import { IFirmwareUpdateLog } from "@/app/lib/@backend/domain";
-import { Button } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+
 import {
   Card,
   CardContent,

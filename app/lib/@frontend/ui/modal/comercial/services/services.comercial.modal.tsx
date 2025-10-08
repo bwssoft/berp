@@ -1,13 +1,10 @@
 "use client";
 
 import { IPriceTableService } from "@/app/lib/@backend/domain";
-import {
-  Button,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-} from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 

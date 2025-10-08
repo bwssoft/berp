@@ -1,7 +1,8 @@
 "use-client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { IItem, Item } from "@/app/lib/@backend/domain";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";

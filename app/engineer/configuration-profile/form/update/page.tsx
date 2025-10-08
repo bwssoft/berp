@@ -7,7 +7,8 @@ import {
   findManyTechnology,
   findOneTechnology,
 } from "@/app/lib/@backend/action/engineer/technology.action";
-import { ConfigurationProfileUpsertForm } from "@/app/lib/@frontend/ui/form";
+import { ConfigurationProfileUpsertForm } from '@/frontend/ui/form/engineer/configuration-profile/upsert/configuration-profile.upsert.form';
+
 
 interface Props {
   searchParams: {

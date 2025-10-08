@@ -9,7 +9,8 @@ import {
 } from "@/app/lib/@backend/domain";
 import { ProductionOrderPdfTemplate } from "@/app/lib/@frontend/pdf/templates/production-order-pdf-template";
 import { useBuildPdf } from "@/app/lib/@frontend/pdf/use-build-pdf";
-import { Button } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { PrinterIcon } from "@heroicons/react/24/outline";
 
 type PrintProductionOrderProps = {

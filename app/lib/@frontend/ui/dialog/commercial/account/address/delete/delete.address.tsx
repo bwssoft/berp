@@ -1,6 +1,8 @@
 "use client";
 
-import { Dialog, Button } from "@/app/lib/@frontend/ui/component";
+import { Dialog } from '@/frontend/ui/component/dialog';
+import { Button } from '@/frontend/ui/component/button';
+
 import { IAddress } from "@/app/lib/@backend/domain";
 
 interface AddressDeleteDialogProps {

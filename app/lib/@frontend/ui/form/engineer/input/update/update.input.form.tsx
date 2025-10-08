@@ -1,11 +1,10 @@
 "use client";
 
-import {
-  Button,
-  Input,
-  Label,
-  Textarea,
-} from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Label } from '@/frontend/ui/component/label';
+import { Textarea } from '@/frontend/ui/component/text-area';
+
 import {
   Select,
   SelectContent,

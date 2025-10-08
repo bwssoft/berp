@@ -1,13 +1,9 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/lib/@frontend/ui/component";
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+
 
 import {
   AlertCircle,

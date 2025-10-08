@@ -1,4 +1,5 @@
-import { IdentificationLogSearchForm } from "@/app/lib/@frontend/ui/form";
+import { IdentificationLogSearchForm } from '@/frontend/ui/form/production/identification-log/search/search.identification-log.form';
+
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { IIdentificationLog } from "@/app/lib/@backend/domain";

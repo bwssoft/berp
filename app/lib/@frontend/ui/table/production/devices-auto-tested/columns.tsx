@@ -4,7 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
 import Link from "next/link";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { deviceConstants } from "@/app/lib/constant";
 import { Device } from "@/app/lib/@backend/domain";
 

@@ -1,11 +1,15 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useCreateBaseForm } from "./use-create.base.form";
-import { Input, Radio, Textarea } from "../../../../component";
+import { Input } from '@/frontend/ui/component/input';
+import { Radio } from '@/frontend/ui/component/radio';
+import { Textarea } from '@/frontend/ui/component/text-area';
+
 import { Controller } from "react-hook-form";
 import { baseConstants } from "@/app/lib/constant/logistic";
 import { IEnterprise } from "@/app/lib/@backend/domain";
-import { Select } from "../../../../composite";
+import { Select } from '@/frontend/ui/composite/select';
+
 
 interface Props {
   enterprises: IEnterprise[];

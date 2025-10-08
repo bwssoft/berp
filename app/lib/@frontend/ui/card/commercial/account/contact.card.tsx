@@ -3,14 +3,11 @@
 import { IContact } from "@/app/lib/@backend/domain";
 import { LocalContact } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { Phone, Mail, Edit, Star, Trash, Copy } from "lucide-react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
-  Button,
-  Card,
-} from "../../../component";
+import { Avatar, AvatarFallback, AvatarImage } from '@/frontend/ui/component/avatar';
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card } from '@/frontend/ui/component/card';
+
 import { Separator } from "@radix-ui/react-select";
 import {
   Tooltip,

@@ -2,7 +2,8 @@
 
 import { IControl, IProfile } from "@/app/lib/@backend/domain";
 import { useSetLockedProfileForm } from "./use-set-locked.profile.form";
-import { Toggle } from "../../../../component";
+import { Toggle } from '@/frontend/ui/component/toggle';
+
 
 interface Props {
   control: IControl;

@@ -1,11 +1,8 @@
 "use client";
 
 import { IContact } from "@/app/lib/@backend/domain";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-} from "@/app/lib/@frontend/ui/component";
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+
 import { UpdateContactAccountForm } from "@/app/lib/@frontend/ui/form/commercial/account/contact/update";
 import React from "react";
 

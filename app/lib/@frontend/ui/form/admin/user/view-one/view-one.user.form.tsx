@@ -1,7 +1,11 @@
 "use client";
 
 import { IUser } from "@/app/lib/@backend/domain";
-import { Checkbox, Combobox, FileUpload, Input } from "../../../../component";
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { FileUpload } from '@/frontend/ui/component/input-file';
+import { Input } from '@/frontend/ui/component/input';
+
 import { useViewOneUserForm } from "./use-view-one.user.form";
 
 type Props = {

@@ -1,4 +1,5 @@
-import { RequestNewPasswordUserForm } from "@/app/lib/@frontend/ui/form";
+import { RequestNewPasswordUserForm } from '@/frontend/ui/form/admin/user/request-new-password/request-new-password.user.form';
+
 
 export default function Page() {
   return (

@@ -1,6 +1,8 @@
 import { findManyEnterprise } from "@/app/lib/@backend/action/business/enterprise.action";
-import { BackButton } from "@/app/lib/@frontend/ui/component";
-import { CreateOneBaseForm } from "@/app/lib/@frontend/ui/form";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
+import { CreateOneBaseForm } from '@/frontend/ui/form/logistic/base/create/create.base.form';
+
 
 export default async function Page() {
   const { docs: enterprises } = await findManyEnterprise({ filter: {} });

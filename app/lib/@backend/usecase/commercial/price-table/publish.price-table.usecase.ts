@@ -32,6 +32,7 @@ class PublishPriceTableUsecase {
     }
 
     const now = new Date();
+    const endDateTime = priceTable.endDateTime;
     if (priceTable.startDateTime.getTime() < now.getTime()) {
       return {
         success: false,
@@ -45,7 +46,7 @@ class PublishPriceTableUsecase {
     // 3) Regras de conflito
     if (priceTable.isTemporary) {
       // Provisória: sem overlap com provisórias ativas/aguardando
-      if (!priceTable.endDateTime) {
+      if (!endDateTime) {
         return {
           success: false,
           error: { global: "Tabela provisória requer data/hora de término." },
@@ -58,9 +59,9 @@ class PublishPriceTableUsecase {
           return false;
         return overlaps(
           priceTable.startDateTime,
-          priceTable.endDateTime,
+          endDateTime,
           item.startDateTime,
-          item.endDateTime
+          item.endDateTime ?? item.startDateTime
         );
       });
 
@@ -130,7 +131,7 @@ class PublishPriceTableUsecase {
       await priceTableSchedulerGateway.createSchedules({
         priceTableId,
         startDateTime: priceTable.startDateTime.toISOString(),
-        endDateTime: priceTable.endDateTime.toISOString(),
+        endDateTime: (endDateTime ?? priceTable.startDateTime).toISOString(),
       });
     } catch (schedulerError) {
       console.warn(

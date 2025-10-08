@@ -9,7 +9,8 @@ import { isValidCEP } from "@/app/lib/util/is-valid-cep";
 import { IAddress } from "@/app/lib/@backend/domain";
 import { viaCepGateway } from "@/app/lib/@backend/infra/gateway/viacep/viacep.gateway";
 import { formatCep } from "@/app/lib/util/format-cep";
-import { LocalAddress } from "@/app/lib/@frontend/context";
+import { LocalAddress } from '@/frontend/context/create-account-flow.context';
+
 
 const AddressFormSchema = z.object({
   zip_code: z.string().min(8, "CEP obrigatório").refine(isValidCEP, {

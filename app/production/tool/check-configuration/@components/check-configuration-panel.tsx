@@ -16,7 +16,8 @@ import {
 } from "@/app/lib/@frontend/ui/component/card";
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
-import { TechnologyAndConfigurationProfileSearchForm } from "@/app/lib/@frontend/ui/form";
+import { TechnologyAndConfigurationProfileSearchForm } from '@/frontend/ui/form/production/technology-and-configuration-profile-search/technology-and-configuration-profile-search-form';
+
 import {
   Settings,
   Zap,

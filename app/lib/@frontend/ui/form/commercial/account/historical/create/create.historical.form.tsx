@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "@/app/lib/@frontend/ui/component";
-import {
-  SelectedContactCard,
-  SelectedContactBadge,
-} from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+
+import { SelectedContactCard } from '@/frontend/ui/component/commercial/historical/selected-contact-card';
+import { SelectedContactBadge } from '@/frontend/ui/component/commercial/historical/selected-contact-badge';
+
 import { useCreateHistoricalForm } from "./use-create.historical.form";
 import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";

@@ -2,13 +2,9 @@
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { Copy, RotateCcw, Edit, Trash } from "lucide-react";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Badge } from "@bwsoft/badge";
 import {

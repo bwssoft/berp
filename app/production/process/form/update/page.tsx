@@ -1,5 +1,6 @@
 import { findOneProductionProcess } from "@/app/lib/@backend/action/production/production-process.action";
-import { ProductionProcessUpdateForm } from "@/app/lib/@frontend/ui/component";
+import { ProductionProcessUpdateForm } from '@/frontend/ui/form/production/production-process/update/production-process.update.form';
+
 
 interface Props {
   searchParams: { id: string };

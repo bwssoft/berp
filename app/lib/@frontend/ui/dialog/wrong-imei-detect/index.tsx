@@ -1,7 +1,8 @@
 "use client";
 
 import { cn } from "@/app/lib/util";
-import { Dialog } from "../../component";
+import { Dialog } from '@/frontend/ui/component/dialog';
+
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { DialogTitle } from "@headlessui/react";
 import { useRouter } from "next/navigation";

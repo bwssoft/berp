@@ -1,5 +1,6 @@
 import { findOneUser } from "@/app/lib/@backend/action/admin/user.action";
-import { UpdateOneUserForm } from "@/app/lib/@frontend/ui/form";
+import { UpdateOneUserForm } from '@/frontend/ui/form/admin/user/update-one/update-one.user.form';
+
 
 interface Props {
   searchParams: {
