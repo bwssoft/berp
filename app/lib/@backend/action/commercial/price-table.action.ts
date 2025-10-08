@@ -183,11 +183,12 @@ export const clonePriceTable = async (id: string) => {
   const clonedTable: Omit<IPriceTable, "id" | "created_at" | "updated_at"> = {
     name: `${originalTable.name} (Cópia)`,
     startDateTime: new Date(),
-    endDateTime: new Date(),
+    endDateTime: originalTable.isTemporary ? new Date() : undefined,
     isTemporary: originalTable.isTemporary,
     status: "DRAFT",
     groups: originalTable.groups,
     equipmentPayment: originalTable.equipmentPayment,
+    equipmentSimcardPayment: originalTable.equipmentSimcardPayment,
     simcardPayment: originalTable.simcardPayment,
     servicePayment: originalTable.servicePayment,
   };

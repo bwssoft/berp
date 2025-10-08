@@ -18,6 +18,7 @@ import {
   ISimcardPayment,
   IServicePayment,
   StatusPriceTable,
+  IPriceTable,
 } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 import { IPriceTableCondition } from "@/app/lib/@backend/domain/commercial/entity/price-table-condition.definition";
 
@@ -94,10 +95,11 @@ const priceTableSchema = z
       required_error: "Data e hora de início são obrigatórias",
       invalid_type_error: "Data inválida",
     }),
-    endDateTime: z.date({
-      required_error: "Data e hora de fim são obrigatórias",
-      invalid_type_error: "Data inválida",
-    }),
+    endDateTime: z
+      .date({
+        invalid_type_error: "Data inválida",
+      })
+      .optional(),
     isTemporary: z.boolean().default(false),
 
     groups: z.array(priceTableConditionGroupSchema).default([]),
@@ -114,10 +116,22 @@ const priceTableSchema = z
     accessories: z.record(z.any()).default({}),
     services: z.array(z.any()).default([]),
   })
-  .refine((data) => data.endDateTime > data.startDateTime, {
-    message: "Data de fim deve ser posterior à data de início",
-    path: ["endDateTime"],
-  })
+  .refine(
+    (data) => {
+      if (data.isTemporary) {
+        if (!data.endDateTime) {
+          return false;
+        }
+        return data.endDateTime > data.startDateTime;
+      }
+      return true;
+    },
+    {
+      message:
+        "Data de fim é obrigatória e deve ser posterior à data de início para tabelas temporárias",
+      path: ["endDateTime"],
+    }
+  )
   .refine(
     (data) => {
       // Ensure there's at least one group with at least one condition that has toBillFor
@@ -265,7 +279,7 @@ export function usePriceTableForm({
     defaultValues: {
       name: "",
       startDateTime: getDefaultStartDateTime(),
-      endDateTime: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      endDateTime: undefined,
       isTemporary: false,
       groups: [
         {
@@ -391,11 +405,25 @@ export function usePriceTableForm({
               ? new Date(existingPriceTable.startDateTime)
               : new Date();
 
-          const endDateTime = cloneMode
-            ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-            : existingPriceTable.endDateTime
-              ? new Date(existingPriceTable.endDateTime)
-              : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+          let endDateTime: Date | undefined;
+
+          if (cloneMode) {
+            // For clone mode: only set endDateTime if the original table is temporary
+            endDateTime = existingPriceTable.isTemporary
+              ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+              : undefined;
+          } else {
+            // For edit mode: preserve existing logic
+            if (existingPriceTable.isTemporary) {
+              // If it's temporary, use existing endDateTime or set a default
+              endDateTime = existingPriceTable.endDateTime
+                ? new Date(existingPriceTable.endDateTime)
+                : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+            } else {
+              // If it's not temporary, endDateTime should be undefined
+              endDateTime = undefined;
+            }
+          }
 
           const formData = {
             name: tableName,
@@ -433,6 +461,23 @@ export function usePriceTableForm({
     const subscription = form.watch((value, { name }) => {
       if (name === "name" && value.name !== undefined) {
         setPriceTableName(value.name);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  // Watch for isTemporary changes and clear endDateTime when set to false
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "isTemporary" && value.isTemporary !== undefined) {
+        if (!value.isTemporary) {
+          form.setValue("endDateTime", undefined);
+        } else if (value.isTemporary && !value.endDateTime) {
+          form.setValue(
+            "endDateTime",
+            new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+          );
+        }
       }
     });
     return () => subscription.unsubscribe();
@@ -644,7 +689,7 @@ export function usePriceTableForm({
   const transformToPriceTablePayload = (
     data: CreatePriceTableFormData,
     status: StatusPriceTable = "DRAFT"
-  ) => {
+  ): IPriceTable => {
     const equipmentPayment: IEquipmentPayment[] = [];
     const equipmentSimcardPayment: IEquipmentPayment[] = [];
 
@@ -654,10 +699,10 @@ export function usePriceTableForm({
 
     processAccessoryData(data.accessories || {}, equipmentPayment);
 
-    const payload = {
+    const payload: IPriceTable = {
       name: data.name,
       startDateTime: data.startDateTime,
-      endDateTime: data.endDateTime,
+      endDateTime: data.isTemporary ? data.endDateTime : undefined,
       isTemporary: data.isTemporary,
       status,
       equipmentPayment,
@@ -685,8 +730,10 @@ export function usePriceTableForm({
       // Clone mode should always create, not update
       const result =
         editMode && !cloneMode
-          ? await updateOnePriceTable(payload)
-          : await createOnePriceTable(payload);
+          ? await updateOnePriceTable(payload as IPriceTable)
+          : await createOnePriceTable(
+              payload as Omit<IPriceTable, "id" | "created_at" | "updated_at">
+            );
 
       if (result?.success) {
         // Update price table status in state after successful save
