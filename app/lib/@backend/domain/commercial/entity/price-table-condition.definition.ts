@@ -31,7 +31,7 @@ export interface IPriceTableCondition {
   id: string;
   billingLimit?: string;
   toBillFor: string;
-  salesFor: BrazilianUF[];
+  salesFor?: BrazilianUF[];
   priority?: boolean;
 }
 

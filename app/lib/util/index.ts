@@ -2,6 +2,7 @@ export * from "./cn";
 export * from "./fill-missing-dates";
 export * from "./find-by-regex";
 export * from "./format-currency";
+export * from "./format-money-mask";
 export * from "./format-date";
 export * from "./get-hex-color";
 export * from "./get-week-range";
