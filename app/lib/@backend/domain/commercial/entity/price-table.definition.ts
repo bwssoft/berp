@@ -13,7 +13,7 @@ export interface IPriceTable {
   name: string;
   startDateTime: Date;
   status?: StatusPriceTable;
-  endDateTime: Date;
+  endDateTime?: Date;
   isTemporary: boolean;
   groups: IPriceTableConditionGroup[];
   equipmentPayment?: IEquipmentPayment[];

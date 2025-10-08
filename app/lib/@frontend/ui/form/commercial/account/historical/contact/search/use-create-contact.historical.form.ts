@@ -50,13 +50,17 @@ const schema = z
     }
 
     if (
-      ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(
-        contactType
-      )
+      [
+        "Celular",
+        "Whatsapp",
+        "Telefone Residencial",
+        "Telefone Comercial",
+      ].includes(contactType)
     ) {
       const numericValue = unmaskPhoneNumber(data.contact);
       const isCellphone =
-        contactType === "Celular" && numericValue.length !== 11;
+        (contactType === "Celular" || contactType === "Whatsapp") &&
+        numericValue.length !== 11;
       const isLandline =
         (contactType === "Telefone Residencial" ||
           contactType === "Telefone Comercial") &&
@@ -67,8 +71,8 @@ const schema = z
           code: "custom",
           path: ["contact"],
           message:
-            contactType === "Celular"
-              ? "Celular deve ter 11 dígitos (incluindo DDD)"
+            contactType === "Celular" || contactType === "Whatsapp"
+              ? "Celular/WhatsApp deve ter 11 dígitos (incluindo DDD)"
               : "Telefone deve ter 10 dígitos (incluindo DDD)",
         });
       }
@@ -88,7 +92,6 @@ export function useSearchContactHistoricalAccount({
     name: "",
     type: "",
     contact: "",
-    channel: "",
   });
   const hasAutoSelectedRef = useRef(false);
 
@@ -111,22 +114,16 @@ export function useSearchContactHistoricalAccount({
     }
   }, [contacts]);
 
-  const isSelected = (id: string, channel: string) =>
-    tempSelectedContact?.id === id && tempSelectedContact?.channel === channel;
+  const isSelected = (id: string, type: string) =>
+    tempSelectedContact?.id === id && tempSelectedContact?.type === type;
 
   const toggleSelection = useCallback(
-    (
-      id: string,
-      name: string,
-      type: string,
-      contact: string,
-      channel: string
-    ) => {
+    (id: string, name: string, type: string, contact: string) => {
       setTempSelectedContact((prev) => {
-        if (prev?.id === id && prev?.channel === channel) {
+        if (prev?.id === id && prev?.type === type) {
           return undefined;
         } else {
-          return { id, name, type, contact, channel };
+          return { id, name, type, contact };
         }
       });
     },
@@ -134,7 +131,7 @@ export function useSearchContactHistoricalAccount({
   );
 
   useEffect(() => {
-    const { name, type, contact, channel } = otherContactInfo;
+    const { name, type, contact } = otherContactInfo;
 
     const validateAndSelect = async () => {
       if (name && type && contact && !hasAutoSelectedRef.current) {
@@ -143,7 +140,7 @@ export function useSearchContactHistoricalAccount({
 
         if (isValid) {
           const id = "outros-contact";
-          setTempSelectedContact({ id, name, type, contact, channel });
+          setTempSelectedContact({ id, name, type, contact });
           hasAutoSelectedRef.current = true;
         }
       } else if (!name || !type || !contact) {
