@@ -85,7 +85,7 @@ class CreateOnePriceTableUsecase {
         id: crypto.randomUUID(),
         name: name ?? "",
         startDateTime: input.startDateTime,
-        endDateTime: input.endDateTime ?? input.startDateTime,
+        endDateTime: input.isTemporary ? input.endDateTime : undefined,
         isTemporary: input.isTemporary,
         groups: input.groups || [],
         status: input.status ?? "DRAFT",
