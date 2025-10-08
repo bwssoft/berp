@@ -434,12 +434,15 @@ export function UpsertPriceTableForm({
                 />
 
                 {/* mensagens de erro ou sucesso na validação das condições */}
-                {messageErrorCondition.status && (
-                  <StatusBanner
-                    status={status}
-                    message={messageErrorCondition.message}
-                    statusStyles={STATUS_STYLES}
-                  />
+                {messageErrorCondition && messageErrorCondition.message.map(
+                    (item, index) => (
+                    <StatusBanner
+                      key={index}
+                      status={messageErrorCondition.status}
+                      message={item}
+                      statusStyles={STATUS_STYLES}
+                    />
+                )
                 )}
               </DisclosurePanel>
             </div>

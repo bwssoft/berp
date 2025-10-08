@@ -26,7 +26,7 @@ export function BillingConditionsSection({
 
       {groupFields.map((g, gi) => (
         <GroupFields
-          key={g.id}
+          key={g.rhfId}
           gi={gi}
           ufList={ufList}
           billToOptions={billToOptions}
@@ -66,34 +66,52 @@ function GroupFields({
   ufList: { id: string; text: string }[];
   billToOptions: { id: string; text: string }[];
 }) {
-  const { condFields, control, removeCond, appendCond, createEmptyCondition } =
-    useConditionsForm(gi);
+  const {
+    groupFields,
+    removeGroup,
+    condFields,
+    appendCond,
+    removeCond,
+    control,
+    createEmptyCondition,
+    getUfOptionsFor,
+    isUfDisabled,
+  } = useConditionsForm(gi);
+
+  const groupsCount = groupFields.length;
 
   return (
     <div className="space-y-2 rounded-lg border p-3">
       {condFields.map((c, ci) => (
-        <div key={c.id} className="grid grid-cols-4 gap-2 items-start">
+        <div key={c.rhfId} className="grid grid-cols-4 gap-2 items-start">
+          {/* Vendas para (multi) */}
           <Controller
             control={control}
             name={`groups.${gi}.conditions.${ci}.salesFor`}
-            render={({ field, fieldState: { error } }) => (
-              <div className="w-full">
-                <Combobox
-                  label="Vendas para *"
-                  placeholder="Selecione"
-                  data={ufList}
-                  value={ufList.filter((uf) =>
-                    (field.value ?? []).includes(uf.id as BrazilianUF)
-                  )}
-                  onChange={(v: { id: string; text: string }[]) =>
-                    field.onChange(v.map((it) => it.id as BrazilianUF))
-                  }
-                  keyExtractor={(e) => e.id}
-                  displayValueGetter={(e) => e.text}
-                  error={error?.message}
-                />
-              </div>
-            )}
+            render={({ field, fieldState: { error } }) => {
+              const options = getUfOptionsFor(ufList, field.value);
+              return (
+                <div className="w-full">
+                  <Combobox
+                    label="Vendas para"
+                    placeholder="Selecione"
+                    data={options}
+                    // itemPropsGetter={(opt) => ({
+                    //   disabled: isUfDisabled(opt.id, field.value),
+                    // })}
+                    value={options.filter((uf) =>
+                      (field.value ?? []).includes(uf.id as BrazilianUF)
+                    )}
+                    onChange={(v: { id: string; text: string }[]) =>
+                      field.onChange(v.map((it) => it.id as BrazilianUF))
+                    }
+                    keyExtractor={(e) => e.id}
+                    displayValueGetter={(e) => e.text}
+                    error={error?.message}
+                  />
+                </div>
+              );
+            }}
           />
 
           {/* Limite de faturamento */}
@@ -147,20 +165,31 @@ function GroupFields({
             )}
           />
 
+          {/* Lixeira (remover condição/grupo com fallback) */}
           <div className="flex items-start pt-7">
             <Button
               variant="outline"
               type="button"
-              onClick={() => {
-                if (condFields.length <= 1) {
-                  removeCond(0);
-                  appendCond(createEmptyCondition());
-                } else {
-                  removeCond(ci);
-                }
-              }}
               title="Remover condição"
               className="h-10"
+              onClick={() => {
+                if (condFields.length > 1) {
+                  // remove só a condição
+                  removeCond(ci);
+                  return;
+                }
+
+                // é a única condição do grupo
+                if (groupsCount > 1) {
+                  // existem outros grupos → remove o grupo inteiro
+                  removeGroup(gi);
+                  return;
+                }
+
+                // único grupo e única condição → reseta a linha
+                removeCond(0);
+                appendCond(createEmptyCondition());
+              }}
             >
               <TrashIcon className="h-4 w-4" />
             </Button>

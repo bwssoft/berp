@@ -58,7 +58,7 @@ const PTBR_MONEY_REGEX = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{2})?$/;
 const priceTableConditionSchema = z.object({
   id: z.string().min(1),
   /** UFs atendidas por esta condição */
-  salesFor: z.array(BRAZILIAN_UF_ENUM).min(1, "Selecione ao menos 1 UF"),
+  salesFor: z.array(BRAZILIAN_UF_ENUM).optional(),
   /** Limite de faturamento (string pt-BR) */
   billingLimit: z
     .string()
@@ -69,7 +69,7 @@ const priceTableConditionSchema = z.object({
       "Informe um valor válido (ex.: 1.234,56)"
     ),
   /** Quem será faturado (id/opção) */
-  toBillFor: z.string().min(1, "Selecione quem faturar"),
+  toBillFor: z.string().min(1, "Selecione para quem faturar"),
 });
 
 /** Grupo de condições */
@@ -179,15 +179,13 @@ const formatDateTimeLocal = (date: Date) => {
 
 const getDefaultStartDateTime = () => {
   const now = new Date();
-  // Always use current time to avoid validation issues with past times
   return now;
 };
 
 const ensureFutureStartDate = (startDateTime: Date) => {
   const now = new Date();
-  const oneMinuteFromNow = new Date(now.getTime() + 60000); // Add 1 minute
+  const oneMinuteFromNow = new Date(now.getTime() + 60000);
 
-  // If the start date is in the past or very close to now, use one minute from now
   if (startDateTime <= now) {
     return oneMinuteFromNow;
   }
@@ -256,9 +254,9 @@ export function usePriceTableForm({
   ]);
 
   const [messageErrorCondition, setMessageErrorCondition] = useState<{
-    status: string;
-    message: string;
-  }>({ status: "", message: "" });
+    status: Status;
+    message: string[];
+  }>({ status: "red", message: [""] });
 
   const form = useForm<CreatePriceTableFormData>({
     resolver: zodResolver(priceTableSchema),
@@ -355,12 +353,10 @@ export function usePriceTableForm({
         });
 
         if (existingPriceTable) {
-          // Para editMode, manter o status original; para cloneMode, usar DRAFT
           setPriceTableStatus(
             cloneMode ? "DRAFT" : existingPriceTable.status || null
           );
 
-          // Para cloneMode, adicionar "(Cópia)" ao nome
           const tableName = cloneMode
             ? `${existingPriceTable.name} (Cópia)`
             : existingPriceTable.name || "";
@@ -472,6 +468,7 @@ export function usePriceTableForm({
 
     return result;
   };
+
   const handleEquipmentPriceChange = (
     equipmentModel: string,
     prices: any,
@@ -654,6 +651,16 @@ export function usePriceTableForm({
 
     processAccessoryData(data.accessories || {}, equipmentPayment);
 
+    // Ensure groups and conditions have salesFor as array (never undefined)
+    const groups =
+      (data.groups || []).map((group) => ({
+        ...group,
+        conditions: (group.conditions || []).map((condition) => ({
+          ...condition,
+          salesFor: condition.salesFor ?? [],
+        })),
+      })) ?? [];
+
     const payload = {
       name: data.name,
       startDateTime: data.startDateTime,
@@ -664,7 +671,7 @@ export function usePriceTableForm({
       equipmentSimcardPayment,
       simcardPayment: data.simCards || [],
       servicePayment: data.services || [],
-      groups: data.groups || [],
+      groups,
     };
 
     if (editMode && !cloneMode && priceTableId) {
@@ -805,12 +812,17 @@ export function usePriceTableForm({
 
   const handleValidationConditions = async () => {
     try {
-      const result = await validateBillingConditionsPriceTable(
-        form.getValues().groups || []
-      );
+      const groups = (form.getValues().groups || []).map((group: any) => ({
+        ...group,
+        conditions: (group.conditions || []).map((condition: any) => ({
+          ...condition,
+          salesFor: condition.salesFor ?? [],
+        })),
+      }));
+      const result = await validateBillingConditionsPriceTable(groups);
       setMessageErrorCondition({
         status: result.status,
-        message: result.messages[0] ?? "",
+        message: result.messages ?? [],
       });
     } catch (error) {
       toast({
