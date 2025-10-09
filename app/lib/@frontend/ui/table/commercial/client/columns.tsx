@@ -1,5 +1,5 @@
-import { deleteOneClientById } from "@/app/lib/@backend/action/commercial/client.action";
-import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import { deleteOneClientById } from "@/backend/action/commercial/client.action";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
@@ -47,3 +47,4 @@ export const columns: ColumnDef<IClient>[] = [
     },
   },
 ];
+

@@ -11,15 +11,15 @@ import {
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useSearchParams } from "next/navigation";
-import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   findManyAccount,
   findOneAccount,
   updateOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
-import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
+} from "@/backend/action/commercial/account.action";
+import { createOneContact } from "@/backend/action/commercial/contact.action";
 
 // Define the preferred contact interface
 export interface PreferredContact {
@@ -332,3 +332,4 @@ export function useCreateContactAccount(
     isLoading,
   };
 }
+

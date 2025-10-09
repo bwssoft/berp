@@ -1,4 +1,4 @@
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
 import { DeviceCreateForm } from '@/frontend/ui/form/engineer/device/create/device.create.form';
 
 
@@ -22,3 +22,4 @@ export default async function Page() {
     </div>
   );
 }
+

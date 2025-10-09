@@ -1,8 +1,8 @@
 import {
   findManyConfigurationLog,
   statsConfigurationLog,
-} from "@/app/lib/@backend/action/production/configuration-log.action";
-import {IConfigurationLog} from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
+} from "@/backend/action/production/configuration-log.action";
+import {IConfigurationLog} from "@/backend/domain/production/entity/configuration-log.definition";
 import { Button } from '@/frontend/ui/component/button';
 
 import {
@@ -201,3 +201,4 @@ function query(props: Props["searchParams"]): Filter<IConfigurationLog> {
   if (conditions.length > 1) return { $and: conditions };
   return {};
 }
+

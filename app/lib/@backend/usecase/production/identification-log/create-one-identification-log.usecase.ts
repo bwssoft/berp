@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IIdentificationLog from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
-import { identificationLogRepository } from "@/app/lib/@backend/infra";
+import IIdentificationLog from "@/backend/domain/production/entity/identification-log.definition";
+import { identificationLogRepository } from "@/backend/infra";
 import { RemoveFields } from "../../../decorators";
 
 class CreateOneIdentificationLogUsecase {
@@ -26,3 +26,4 @@ class CreateOneIdentificationLogUsecase {
 export const createOneIdentificationLogUsecase = singleton(
   CreateOneIdentificationLogUsecase
 );
+

@@ -1,10 +1,10 @@
 import { Filter } from "mongodb";
 
-import IBase from "@/app/lib/@backend/domain/logistic/entity/base.entity"; // Assumindo que ILogisticBaseRepository existe
+import IBase from "@/backend/domain/logistic/entity/base.entity"; // Assumindo que ILogisticBaseRepository existe
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators"; // Assumindo que este decorator existe
-import { baseRepository } from "@/app/lib/@backend/infra"; // Assumindo que baseRepository existe
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface"; // Assumindo que PaginationResult existe
+import { RemoveMongoId } from "@/backend/decorators"; // Assumindo que este decorator existe
+import { baseRepository } from "@/backend/infra"; // Assumindo que baseRepository existe
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface"; // Assumindo que PaginationResult existe
 
 namespace Dto {
   // Define a interface de entrada para o caso de uso
@@ -38,3 +38,4 @@ class FindManyBaseUsecase {
 
 // Exporta a instância singleton do caso de uso
 export const findManyBaseUsecase = singleton(FindManyBaseUsecase);
+

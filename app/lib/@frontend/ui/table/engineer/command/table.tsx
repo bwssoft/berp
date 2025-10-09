@@ -1,7 +1,7 @@
 "use client";
 //tava reclamando da função cell nas colunas
 
-import {ICommand} from "@/app/lib/@backend/domain/engineer/entity/command.definition";
+import {ICommand} from "@/backend/domain/engineer/entity/command.definition";
 import { columns } from "./columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 
@@ -20,3 +20,4 @@ export function CommandTable(props: Props) {
     />
   );
 }
+

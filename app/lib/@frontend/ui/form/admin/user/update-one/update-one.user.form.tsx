@@ -7,7 +7,7 @@ import { Combobox } from '@/frontend/ui/component/combobox/index';
 import { FileUpload } from '@/frontend/ui/component/input-file';
 
 import { Controller } from "react-hook-form";
-import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { useUpdateOneUserForm } from "./use-update-one-user-form";
 import {
   ActiveUserDialog,
@@ -20,7 +20,7 @@ import {
 import { useAuth } from '@/frontend/context/auth.context';
 
 import { useEffect, useState } from "react";
-import { getUserAvatarUrlByKey } from "@/app/lib/@backend/action/admin/user.action";
+import { getUserAvatarUrlByKey } from "@/backend/action/admin/user.action";
 
 interface Props {
   user: IUser;
@@ -236,3 +236,4 @@ export function UpdateOneUserForm({ user }: Props) {
     </>
   );
 }
+

@@ -1,8 +1,8 @@
-import {ICommand} from "@/app/lib/@backend/domain/engineer/entity/command.definition";
+import {ICommand} from "@/backend/domain/engineer/entity/command.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { deleteOneCommandById } from "@/app/lib/@backend/action/engineer/command/command.action";
+import { deleteOneCommandById } from "@/backend/action/engineer/command/command.action";
 
 export const columns: ColumnDef<ICommand>[] = [
   {
@@ -64,3 +64,4 @@ export const columns: ColumnDef<ICommand>[] = [
     },
   },
 ];
+

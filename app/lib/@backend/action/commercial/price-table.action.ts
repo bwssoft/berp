@@ -1,7 +1,8 @@
 "use server";
 
 import { Filter } from "mongodb";
-import { IPriceTable, IPriceTableConditionGroup } from "../../domain";
+import { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
+import { IPriceTableConditionGroup } from "@/backend/domain/commercial/entity/price-table-condition.definition";
 import { findManyPriceTableUsecase } from "../../usecase/commercial/price-table/find-many.price-table.usecase";
 import { findOnePriceTableUsecase } from "../../usecase/commercial/price-table/find-one.price-table.usecase";
 import { createOnePriceTableUsecase } from "../../usecase/commercial/price-table/create-one.price-table.usecase";

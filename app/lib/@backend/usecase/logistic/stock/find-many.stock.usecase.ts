@@ -1,10 +1,10 @@
 import { Filter } from "mongodb";
 
-import IStock from "@/app/lib/@backend/domain/logistic/entity/stock.entity"; // Assumindo que IStockRepository existe
+import IStock from "@/backend/domain/logistic/entity/stock.entity"; // Assumindo que IStockRepository existe
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators"; // Assumindo que este decorator existe
-import { stockRepository } from "@/app/lib/@backend/infra"; // Assumindo que stockRepository existe
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface"; // Assumindo que PaginationResult existe
+import { RemoveMongoId } from "@/backend/decorators"; // Assumindo que este decorator existe
+import { stockRepository } from "@/backend/infra"; // Assumindo que stockRepository existe
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface"; // Assumindo que PaginationResult existe
 
 namespace Dto {
   // Define a interface de entrada para o caso de uso
@@ -38,3 +38,4 @@ class FindManyStockUsecase {
 
 // Exporta a instância singleton do caso de uso
 export const findManyStockUsecase = singleton(FindManyStockUsecase);
+

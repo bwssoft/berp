@@ -5,9 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/lib/@frontend/ui/component/card";
-import { findManyDevice } from "@/app/lib/@backend/action/engineer/device.action";
-import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import { ITechnology } from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import { findManyDevice } from "@/backend/action/engineer/device.action";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { DeviceActivationTable } from "@/app/lib/@frontend/ui/table/connectivity/device-activation-table/table";
 import { LoraActivationSearchForm } from "@/app/lib/@frontend/ui/form/connectivity/lora-activation/search/search.lora-activation.form";
 
@@ -63,3 +63,4 @@ export async function ActivateList(props: Props) {
     </Card>
   );
 }
+

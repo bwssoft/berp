@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
-import { IAddress } from "@/app/lib/@backend/domain/commercial/entity/address.definition";
+import { IAddress } from "@/backend/domain/commercial/entity/address.definition";
 
 class AddressRepository extends BaseRepository<IAddress> {
     constructor() {
@@ -12,3 +12,4 @@ class AddressRepository extends BaseRepository<IAddress> {
 }
 
 export const addressRepository = singleton(AddressRepository);
+

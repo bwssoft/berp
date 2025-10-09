@@ -1,8 +1,8 @@
 
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { financialOrderRepository } from "@/app/lib/@backend/infra";
+import { RemoveMongoId } from "@/backend/decorators";
+import { financialOrderRepository } from "@/backend/infra";
 
 namespace Dto {
   interface LineItemOutput extends LineItem {
@@ -192,3 +192,4 @@ class FindOneFinancialOrderUsecase {
 export const findOneFinancialOrderUsecase = singleton(
   FindOneFinancialOrderUsecase
 );
+

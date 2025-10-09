@@ -1,6 +1,6 @@
 "use client";
 
-import {IConfigurationProfile} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
+import {IConfigurationProfile} from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
@@ -183,3 +183,4 @@ export default function ConfigurationProfilesTable({
     </div>
   );
 }
+

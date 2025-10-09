@@ -1,6 +1,6 @@
 "use server";
 import { Filter } from "mongodb";
-import { IHistorical } from "../../domain";
+import { IHistorical } from "@/backend/domain/commercial/entity/historical.definition";
 import { createOneHistoricalUsecase } from "../../usecase/commercial/historical/create-one.historical.usecase";
 import { findManyHistoricalUsecase } from "../../usecase/commercial/historical/find-many.historical.usecase";
 import { revalidatePath } from "next/cache";

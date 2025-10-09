@@ -1,6 +1,6 @@
 "use server";
 
-import { IProfile } from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import { IProfile } from "@/backend/domain/admin/entity/profile.definition";
 import { activeProfileUsecase } from "../../usecase/admin/profile/active.profile.usecase";
 import { createOneProfileUsecase } from "../../usecase/admin/profile/create-one.profile.usecase";
 import { findManyProfileUsecase } from "../../usecase/admin/profile/find-many.profile.usecase";
@@ -74,3 +74,4 @@ export async function activeProfile(input: { id: string; active: boolean }) {
     revalidatePath("/admin/control");
     return result;
 }
+

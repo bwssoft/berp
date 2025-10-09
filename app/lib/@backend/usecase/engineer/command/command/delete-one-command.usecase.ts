@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { ICommand } from "@/app/lib/@backend/domain/engineer/entity/command.definition";
-import { ICommandRepository } from "@/app/lib/@backend/domain/engineer/repository/command.repository.interface";
-import { commandRepository } from "@/app/lib/@backend/infra"
+import { ICommand } from "@/backend/domain/engineer/entity/command.definition";
+import { ICommandRepository } from "@/backend/domain/engineer/repository/command.repository";
+import { commandRepository } from "@/backend/infra"
 
 class DeleteOneCommandUsecase {
   repository: ICommandRepository
@@ -16,3 +16,4 @@ class DeleteOneCommandUsecase {
 }
 
 export const deleteOneCommandUsecase = singleton(DeleteOneCommandUsecase)
+

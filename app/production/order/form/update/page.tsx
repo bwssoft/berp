@@ -1,5 +1,5 @@
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { findOneProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
+import { findOneProductionOrder } from "@/backend/action/production/production-order.action";
 import { ProductionOrderUpdateForm } from '@/frontend/ui/form/production/production-order/update/production-order.update.form';
 
 
@@ -48,3 +48,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

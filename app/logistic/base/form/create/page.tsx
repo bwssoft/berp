@@ -1,4 +1,4 @@
-import { findManyEnterprise } from "@/app/lib/@backend/action/business/enterprise.action";
+import { findManyEnterprise } from "@/backend/action/business/enterprise.action";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { CreateOneBaseForm } from '@/frontend/ui/form/logistic/base/create/create.base.form';
@@ -27,3 +27,4 @@ export default async function Page() {
     </div>
   );
 }
+

@@ -1,12 +1,12 @@
 import {
   findManyClient,
   findOneClient,
-} from "@/app/lib/@backend/action/commercial/client.action";
-import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+} from "@/backend/action/commercial/client.action";
+import { findOneConfigurationProfile } from "@/backend/action/engineer/configuration-profile.action";
 import {
   findManyTechnology,
   findOneTechnology,
-} from "@/app/lib/@backend/action/engineer/technology.action";
+} from "@/backend/action/engineer/technology.action";
 import { ConfigurationProfileUpsertForm } from '@/frontend/ui/form/engineer/configuration-profile/upsert/configuration-profile.upsert.form';
 
 
@@ -77,3 +77,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

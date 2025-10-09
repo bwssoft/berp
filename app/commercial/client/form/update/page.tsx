@@ -1,4 +1,4 @@
-import { findOneClient } from "@/app/lib/@backend/action/commercial/client.action";
+import { findOneClient } from "@/backend/action/commercial/client.action";
 import { ClientUpdateForm } from '@/frontend/ui/form/commercial/client/update/client.update.form';
 
 
@@ -43,3 +43,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
 
-import { productCategoryRepository } from "@/app/lib/@backend/infra";
+import { productCategoryRepository } from "@/backend/infra";
 
 class CreateOneProductCategoryUsecase {
   repository: IProductCategoryRepository;
@@ -36,3 +36,4 @@ class CreateOneProductCategoryUsecase {
 export const createOneProductCategoryUsecase = singleton(
   CreateOneProductCategoryUsecase
 );
+

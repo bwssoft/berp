@@ -1,9 +1,11 @@
 
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { accountAttachmentRepository } from "@/app/lib/@backend/infra";
-import { Filter } from "mongodb";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { RemoveMongoId } from "@/backend/decorators";
+import { accountAttachmentRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
+import type { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import type { IAccountAttachment } from "@/backend/domain/commercial/entity/account-attachment.definition";
+import type { IAccountAttachmentRepository } from "@/backend/domain/commercial/repository";
 
 namespace Dto {
   export interface Input {
@@ -24,7 +26,7 @@ class FindManyAccountAttachmentUsecase {
 
   @RemoveMongoId()
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    return await this.repository.findMany(
+    return this.repository.findMany(
       arg.filter ?? {},
       arg.limit,
       arg.page,
@@ -36,3 +38,4 @@ class FindManyAccountAttachmentUsecase {
 export const findManyAccountAttachmentUsecase = singleton(
   FindManyAccountAttachmentUsecase
 );
+

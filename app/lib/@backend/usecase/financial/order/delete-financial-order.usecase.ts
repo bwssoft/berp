@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IFinancialOrderRepository } from "@/app/lib/@backend/domain/financial/repository/financial-order.repository.interface";
-import { financialOrderRepository } from "@/app/lib/@backend/infra";
+import { IFinancialOrderRepository } from "@/backend/domain/financial/repository/financial-order.repository";
+import { financialOrderRepository } from "@/backend/infra";
 
 class DeleteFinancialOrderUsecase {
   financialOrderRepository: IFinancialOrderRepository;

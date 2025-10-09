@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
 
-import { inputCategoryRepository } from "@/app/lib/@backend/infra";
+import { inputCategoryRepository } from "@/backend/infra";
 
 class CreateOneInputCategoryUsecase {
   repository: IInputCategoryRepository;
@@ -36,3 +36,4 @@ class CreateOneInputCategoryUsecase {
 export const createOneInputCategoryUsecase = singleton(
   CreateOneInputCategoryUsecase
 );
+

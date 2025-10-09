@@ -21,8 +21,8 @@ import {
   FormMessage,
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
-import {IInput} from "@/app/lib/@backend/domain/engineer/entity/input.definition";
-import {IInputCategory} from "@/app/lib/@backend/domain/engineer/entity/input.category.definition";
+import {IInput} from "@/backend/domain/engineer/entity/input.definition";
+import {IInputCategory} from "@/backend/domain/engineer/entity/input.category.definition";
 import { useUpdateInputForm } from "./use-update.input.form";
 
 interface Props {
@@ -287,3 +287,4 @@ export function UpdateOneInputForm(props: Props) {
     </Form>
   );
 }
+

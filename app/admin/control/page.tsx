@@ -1,5 +1,5 @@
-import { findManyControl } from "@/app/lib/@backend/action/admin/control.action";
-import { findOneProfile } from "@/app/lib/@backend/action/admin/profile.action";
+import { findManyControl } from "@/backend/action/admin/control.action";
+import { findOneProfile } from "@/backend/action/admin/profile.action";
 import { ChooseProfileForm } from '@/frontend/ui/form/admin/profile/choose/choose.profile.form';
 
 import { ModuleControlList } from "@/app/lib/@frontend/ui/list";
@@ -43,3 +43,4 @@ export default async function Example(props: Props) {
     </div>
   );
 }
+

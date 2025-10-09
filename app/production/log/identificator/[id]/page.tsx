@@ -1,4 +1,4 @@
-import { findOneIdentificationLog } from "@/app/lib/@backend/action/production/identification-log.action";
+import { findOneIdentificationLog } from "@/backend/action/production/identification-log.action";
 import { IdentificationLogDescription } from '@/frontend/ui/description/production/identification-log/identification-log.description';
 
 

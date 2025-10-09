@@ -2,8 +2,8 @@ import { singleton } from "@/app/lib/util";
 
 import { hash } from "bcrypt";
 import { randomInt } from "crypto";
-import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
-import { userRepository } from "@/app/lib/@backend/infra";
+import { IUserRepository } from "@/backend/domain/admin/repository/user.repository";
+import { userRepository } from "@/backend/infra";
 
 namespace Dto {
     export type Input = { id: string; password: string };
@@ -50,3 +50,4 @@ class NewPasswordUserUsecase {
 }
 
 export const newPasswordUserUsecase = singleton(NewPasswordUserUsecase);
+

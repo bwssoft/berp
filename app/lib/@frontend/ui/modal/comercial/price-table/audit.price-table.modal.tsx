@@ -1,9 +1,9 @@
 "use client";
 
-import {IAudit} from "@/app/lib/@backend/domain/admin/entity/audit.definition";
-import {IPriceTable} from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
+import {IAudit} from "@/backend/domain/admin/entity/audit.definition";
+import {IPriceTable} from "@/backend/domain/commercial/entity/price-table.definition";
 import { Modal, ModalBody, ModalContent } from "../../../component/modal";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { AuditTable } from "../../../table/admin/audit/audit.table";
 
 
@@ -46,3 +46,4 @@ export function AuditPriceTableModal({
     </Modal>
   );
 }
+

@@ -3,7 +3,7 @@ import { Badge } from '@/frontend/ui/component/badge';
 import { Button } from '@/frontend/ui/component/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
 
-import {IAccountEconomicGroup} from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
+import {IAccountEconomicGroup} from "@/backend/domain/commercial/entity/account.economic-group.definition";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";
 import { formatLgpdCnpj } from "@/app/lib/util/format-lgpd-cnpj";
@@ -149,3 +149,4 @@ export function EconomicGroupCard({
     </Card>
   );
 }
+

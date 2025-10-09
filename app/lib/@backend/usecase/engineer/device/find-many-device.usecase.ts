@@ -1,6 +1,6 @@
-import { IDevice } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import { IDeviceRepository } from "@/app/lib/@backend/domain/engineer/repository/device.repository.interface";
-import { deviceRepository } from "@/app/lib/@backend/infra";
+import { IDevice } from "@/backend/domain/engineer/entity/device.definition";
+import { IDeviceRepository } from "@/backend/domain/engineer/repository/device.repository";
+import { deviceRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import type { Filter } from "mongodb";
 import { RemoveFields } from "../../../decorators";
@@ -20,3 +20,4 @@ class FindManyDeviceUsecase {
 }
 
 export const findManyDeviceUsecase = singleton(FindManyDeviceUsecase);
+

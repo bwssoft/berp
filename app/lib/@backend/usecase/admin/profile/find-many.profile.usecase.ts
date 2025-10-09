@@ -1,10 +1,10 @@
-import { IProfile } from "@/app/lib/@backend/domain/admin/entity/profile.definition";
-import { IProfileRepository } from "@/app/lib/@backend/domain/admin/repository/profile.repository.interface";
+import { IProfile } from "@/backend/domain/admin/entity/profile.definition";
+import { IProfileRepository } from "@/backend/domain/admin/repository/profile.repository";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { profileRepository } from "@/app/lib/@backend/infra";
+import { RemoveMongoId } from "@/backend/decorators";
+import { profileRepository } from "@/backend/infra";
 import { Filter } from "mongodb";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
     export interface Input {
@@ -35,3 +35,4 @@ class FindManyProfileUsecase {
 }
 
 export const findManyProfileUsecase = singleton(FindManyProfileUsecase);
+

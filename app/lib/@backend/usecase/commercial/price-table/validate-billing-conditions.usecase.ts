@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { BrazilianUF, IPriceTableConditionGroup } from "../../../domain";
+import { BrazilianUF, IPriceTableConditionGroup } from "@/backend/domain/commercial/entity/price-table-condition.definition";
 
 namespace Dto {
   export type GroupWithPriority = IPriceTableConditionGroup & { priorityEnabled?: boolean };

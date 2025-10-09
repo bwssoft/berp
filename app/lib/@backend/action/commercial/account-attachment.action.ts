@@ -1,7 +1,7 @@
 "use server";
 
-import { createAccountAttachmentUsecase } from "@/app/lib/@backend/usecase/commercial/account-attachment/create-account-attachment.usecase";
-import { IAccountAttachment } from "@/app/lib/@backend/domain/commercial/entity/account-attachment.definition";
+import { createAccountAttachmentUsecase } from "@/backend/usecase/commercial/account-attachment/create-account-attachment.usecase";
+import { IAccountAttachment } from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/app/lib/util/get-current-user";
 
@@ -47,3 +47,4 @@ export async function createAccountAttachment(
     return { success: false, error: "Failed to upload attachment" };
   }
 }
+

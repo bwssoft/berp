@@ -1,0 +1,16 @@
+export type { IAddressRepository } from "./repository/address.repository";
+export type { IAccountRepository } from "./repository/account.repository";
+export type { IAccountAttachmentRepository } from "./repository/account-attachment.repository";
+export type { IAccountAttachmentObjectRepository } from "./repository/account-attachment.object.repository";
+export type { IAccountEconomicGroupRepository } from "./repository/account.economic-group.repository";
+export type { IContactRepository } from "./repository/contact.repository";
+export type { IClientRepository } from "./repository/client.repository";
+export type { IHistoricalRepository } from "./repository/historical.repository";
+export type { INegotiationTypeRepository } from "./repository/negotiation-type.repository";
+export type { IPriceTableRepository } from "./repository/price-table.repository";
+export type { IPriceTableServiceRepository } from "./repository/price-table-service.repository";
+export type { IProductRepository } from "./repository/product.repository";
+export type { IProductCategoryRepository } from "./repository/product.category.repository";
+export type { IProposalRepository } from "./repository/proposal.repository";
+export type { IRuleRepository } from "./repository/rule.repository";
+export type { ISectorRepository } from "./repository/sector.repository";

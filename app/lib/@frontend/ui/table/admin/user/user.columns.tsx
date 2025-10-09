@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from '@/frontend/ui/component/button';
 
-import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { ClockIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Badge } from "../../../component/badge";
@@ -98,3 +98,4 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     },
   },
 ];
+

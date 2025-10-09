@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useRouter } from "next/navigation";
-import { requestNewPassword } from "@/app/lib/@backend/action/admin/user.action";
+import { requestNewPassword } from "@/backend/action/admin/user.action";
 
 const schema = z.object({
   email: z.string(),
@@ -48,3 +48,4 @@ export function useRequestNewPasswordUserForm() {
     errors,
   };
 }
+

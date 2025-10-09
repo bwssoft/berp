@@ -1,33 +1,28 @@
-import { Filter } from "mongodb";
-
- // Assumindo que IEnterpriseRepository existe
+import type { Filter } from "mongodb";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators"; // Assumindo que este decorator existe
-import { enterpriseRepository } from "@/app/lib/@backend/infra"; // Assumindo que enterpriseRepository existe
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface"; // Assumindo que PaginationResult existe
+import { RemoveMongoId } from "@/backend/decorators";
+import { enterpriseRepository } from "@/backend/infra";
+import type { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import type { IEnterprise } from "@/backend/domain/business/entity/enterprise.entity";
+import type { IEnterpriseRepository } from "@/backend/domain/business/repositoty/enterprise.repository";
 
 namespace Dto {
-  // Define a interface de entrada para o caso de uso
   export interface Input {
-    filter?: Filter<IEnterprise>; // Filtro opcional para a consulta, usando o tipo Filter do MongoDB
-    page?: number; // Número da página opcional para paginação
-    limit?: number; // Limite de itens por página opcional
-    sort?: Record<string, 1 | -1>; // Objeto opcional para ordenação
+    filter?: Filter<IEnterprise>;
+    page?: number;
+    limit?: number;
+    sort?: Record<string, 1 | -1>;
   }
-  // Define o tipo de saída como um resultado paginado de IEnterprise
+
   export type Output = PaginationResult<IEnterprise>;
 }
 
 class FindManyEnterpriseUsecase {
-  // Injeta a dependência do repositório
   repository: IEnterpriseRepository = enterpriseRepository;
 
-  // Aplica o decorator para remover _id, se necessário
   @RemoveMongoId()
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    // Chama o método findMany do repositório, passando os argumentos de filtro, limite, página e ordenação.
-    // Utiliza o operador de coalescência nula (??) para fornecer um filtro vazio caso nenhum seja passado.
-    return await this.repository.findMany(
+    return this.repository.findMany(
       arg.filter ?? {},
       arg.limit,
       arg.page,
@@ -36,5 +31,4 @@ class FindManyEnterpriseUsecase {
   }
 }
 
-// Exporta a instância singleton do caso de uso
 export const findManyEnterpriseUsecase = singleton(FindManyEnterpriseUsecase);

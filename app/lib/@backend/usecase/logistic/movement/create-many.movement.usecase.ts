@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IMovement from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
-import Movement from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
-import { movementRepository } from "@/app/lib/@backend/infra";
+import IMovement from "@/backend/domain/logistic/entity/movement.entity";
+import Movement from "@/backend/domain/logistic/entity/movement.entity";
+import { movementRepository } from "@/backend/infra";
 import { consolidateStockByMovementUseCase } from "../stock";
 
 class CreateManyMovementUsecase {
@@ -54,3 +54,4 @@ class CreateManyMovementUsecase {
 }
 
 export const createManyMovementUsecase = singleton(CreateManyMovementUsecase);
+

@@ -6,14 +6,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 
-import Item from "@/app/lib/@backend/domain/logistic/entity/item.entity";
-import type IComponent from "@/app/lib/@backend/domain/engineer/entity/component.definition";
-import type IInput from "@/app/lib/@backend/domain/engineer/entity/input.definition";
+import { Item } from "@/backend/domain/logistic/entity/item.entity";
+import type { IComponent } from "@/backend/domain/engineer/entity/component.definition";
+import type { IInput } from "@/backend/domain/engineer/entity/input.definition";
+import type { IProduct } from "@/backend/domain/commercial/entity/product.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { findManyInput } from "@/app/lib/@backend/action/engineer/input/input.action";
-import { createOneItem } from "@/app/lib/@backend/action/logistic/item.action";
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { findManyComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
+import { findManyInput } from "@/backend/action/engineer/input/input.action";
+import { createOneItem } from "@/backend/action/logistic/item.action";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
+import { findManyComponent } from "@/backend/action/engineer/component/component.action";
 
 // Schema aprimorado com validação mais robusta
 export const createItemSchema = z.object({
@@ -226,3 +227,4 @@ export function useCreateOneItemForm() {
     error: productQuery.error || componentQuery.error || inputQuery.error,
   };
 }
+

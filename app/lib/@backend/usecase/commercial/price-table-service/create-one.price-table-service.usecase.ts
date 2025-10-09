@@ -1,5 +1,5 @@
-import { IPriceTableService } from "@/app/lib/@backend/domain/commercial/entity/price-table-service.definition";
-import { priceTableServiceRepository } from "@/app/lib/@backend/infra/repository/mongodb/commercial/price-table-service.repository";
+import { IPriceTableService } from "@/backend/domain/commercial/entity/price-table-service.definition";
+import { priceTableServiceRepository } from "@/backend/infra/mongodb/commercial/price-table-service.repository";
 
 class CreateOnePriceTableServiceUsecase {
   async execute(
@@ -41,3 +41,4 @@ class CreateOnePriceTableServiceUsecase {
 
 export const createOnePriceTableServiceUsecase =
   new CreateOnePriceTableServiceUsecase();
+

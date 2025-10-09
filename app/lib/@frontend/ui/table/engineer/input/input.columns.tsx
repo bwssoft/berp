@@ -1,4 +1,4 @@
-import {IInput} from "@/app/lib/@backend/domain/engineer/entity/input.definition";
+import {IInput} from "@/backend/domain/engineer/entity/input.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { Button } from '@/frontend/ui/component/button';
@@ -69,3 +69,4 @@ export const columns = (props: Props): ColumnDef<IInput>[] => [
     },
   },
 ];
+

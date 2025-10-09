@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 import { maskPhoneNumber } from "@/app/lib/util/mask-phone-number";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,8 +14,8 @@ import {
   findManyAccount,
   findOneAccount,
   updateOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
-import { updateOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
+} from "@/backend/action/commercial/account.action";
+import { updateOneContact } from "@/backend/action/commercial/contact.action";
 import { ContactItem, ContactType } from "../create";
 
 const schema = z
@@ -308,3 +308,4 @@ export function useUpdateContactAccount(
     tempContact,
   };
 }
+

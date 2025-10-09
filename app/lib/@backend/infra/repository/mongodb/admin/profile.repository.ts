@@ -1,4 +1,4 @@
-import { IProfile } from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import { IProfile } from "@/backend/domain/admin/entity/profile.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
@@ -12,3 +12,4 @@ class ProfileRepository extends BaseRepository<IProfile> {
 }
 
 export const profileRepository = singleton(ProfileRepository);
+

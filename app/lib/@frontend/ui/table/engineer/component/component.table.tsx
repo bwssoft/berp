@@ -1,7 +1,7 @@
 "use client";
 
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import {IComponent} from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import {IComponent} from "@/backend/domain/engineer/entity/component.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./component.columns";
 import { Pagination } from "../../../component/pagination";
@@ -47,3 +47,4 @@ export function ComponentTable({ data, currentPage = 1 }: Props) {
     </>
   );
 }
+

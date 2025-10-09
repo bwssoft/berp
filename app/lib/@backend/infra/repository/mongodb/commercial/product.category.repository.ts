@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util";
 import { BaseRepository } from "../@base";
-import { IProductCategory } from "@/app/lib/@backend/domain/commercial/entity/product.category.definition";
+import { IProductCategory } from "@/backend/domain/commercial/entity/product.category.definition";
 
 class IProductCategoryRepository extends BaseRepository<IProductCategory> {
   constructor() {
@@ -12,3 +12,4 @@ class IProductCategoryRepository extends BaseRepository<IProductCategory> {
 }
 
 export const productCategoryRepository = singleton(IProductCategoryRepository);
+

@@ -1,11 +1,11 @@
-import {IControl} from "@/app/lib/@backend/domain/admin/entity/control.definition";
-import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import {IControl} from "@/backend/domain/admin/entity/control.definition";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
 import { useAuth } from '@/frontend/context/auth.context';
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
-import { setLockedControl } from "@/app/lib/@backend/action/admin/profile.action";
+import { setLockedControl } from "@/backend/action/admin/profile.action";
 
 interface Props {
   control: IControl;
@@ -143,3 +143,4 @@ export function useSetLockedProfileForm(props: Props) {
 
   return { handleLocked, isUpdating };
 }
+

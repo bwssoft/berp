@@ -1,4 +1,4 @@
-import { findManyProductCategory } from "@/app/lib/@backend/action/commercial/product/product.category.action";
+import { findManyProductCategory } from "@/backend/action/commercial/product/product.category.action";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { CreateOneProductForm } from '@/frontend/ui/form/commercial/product/create/create.product.form';
@@ -29,3 +29,4 @@ export default async function Page() {
     </div>
   );
 }
+

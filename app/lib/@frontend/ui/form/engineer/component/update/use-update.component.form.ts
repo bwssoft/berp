@@ -1,5 +1,5 @@
-import { updateOneComponentById } from "@/app/lib/@backend/action/engineer/component/component.action";
-import { IComponent, Component } from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import { updateOneComponentById } from "@/backend/action/engineer/component/component.action";
+import { IComponent, Component } from "@/backend/domain/engineer/entity/component.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -177,3 +177,4 @@ export function useUpdateComponentForm(props: Props) {
     handleCancel,
   };
 }
+

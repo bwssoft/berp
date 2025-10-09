@@ -27,7 +27,7 @@ import { CancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial
 import { PublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/publish.price-table.dialog";
 import { useCancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/use-cancel.price-table.dialog";
 import { usePublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/use-publish.price-table.dialog";
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
 import { InactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/inactivate.price-table.dialog";
 import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/use-inactivate.price-table.dialog";
 import { BillingConditionsSection } from "../conditions-form/conditions.form";
@@ -870,3 +870,4 @@ export function UpsertPriceTableForm({
     </div>
   );
 }
+

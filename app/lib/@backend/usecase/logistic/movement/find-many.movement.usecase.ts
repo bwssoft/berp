@@ -1,10 +1,10 @@
 import { Filter } from "mongodb";
 
-import IMovement from "@/app/lib/@backend/domain/logistic/entity/movement.entity"; // Assumindo que IMovementRepository existe
+import IMovement from "@/backend/domain/logistic/entity/movement.entity"; // Assumindo que IMovementRepository existe
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators"; // Assumindo que este decorator existe
-import { movementRepository } from "@/app/lib/@backend/infra"; // Assumindo que movementRepository existe
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface"; // Assumindo que PaginationResult existe
+import { RemoveMongoId } from "@/backend/decorators"; // Assumindo que este decorator existe
+import { movementRepository } from "@/backend/infra"; // Assumindo que movementRepository existe
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface"; // Assumindo que PaginationResult existe
 
 namespace Dto {
   // Define a interface de entrada para o caso de uso
@@ -38,3 +38,4 @@ class FindManyMovementUsecase {
 
 // Exporta a instância singleton do caso de uso
 export const findManyMovementUsecase = singleton(FindManyMovementUsecase);
+

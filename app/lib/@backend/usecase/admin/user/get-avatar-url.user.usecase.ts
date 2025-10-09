@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
-import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
-import { userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/backend/domain/admin/repository/user.repository";
+import { userObjectRepository, userRepository } from "@/backend/infra";
 
 class GetAvatarUrlUserUsecase {
   repository: IUserRepository;
@@ -27,3 +27,4 @@ class GetAvatarUrlUserUsecase {
 }
 
 export const getAvatarUrlUserUsecase = singleton(GetAvatarUrlUserUsecase);
+

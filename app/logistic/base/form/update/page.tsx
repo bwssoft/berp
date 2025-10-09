@@ -1,5 +1,5 @@
-import { findManyEnterprise } from "@/app/lib/@backend/action/business/enterprise.action";
-import { findOneBase } from "@/app/lib/@backend/action/logistic/base.action";
+import { findManyEnterprise } from "@/backend/action/business/enterprise.action";
+import { findOneBase } from "@/backend/action/logistic/base.action";
 import { BackButton } from '@/frontend/ui/component/back-button';
 import { UpdateOneBaseForm } from '@/frontend/ui/form/logistic/base/update/update.base.form';
 
@@ -56,3 +56,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

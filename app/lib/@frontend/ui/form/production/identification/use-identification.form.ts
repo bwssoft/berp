@@ -1,5 +1,5 @@
-import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import { ITechnology } from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { useDebounce } from "@/app/lib/@frontend/hook/use-debounce";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -107,3 +107,4 @@ export function useIdentificationForm(props: {
     handleChangeInput,
   };
 }
+

@@ -3,7 +3,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
-import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import Link from "next/link";
 import { Button } from '@/frontend/ui/component/button';
 
@@ -309,3 +309,4 @@ export function getColumns(type: Device.Model): ColumnDef<Row>[] {
     },
   ];
 }
+

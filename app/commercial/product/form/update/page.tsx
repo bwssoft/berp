@@ -1,5 +1,5 @@
-import { findOneProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { findManyProductCategory } from "@/app/lib/@backend/action/commercial/product/product.category.action";
+import { findOneProduct } from "@/backend/action/commercial/product/product.action";
+import { findManyProductCategory } from "@/backend/action/commercial/product/product.category.action";
 import { BackButton } from '@/frontend/ui/component/back-button';
 import { UpdateOneProductForm } from '@/frontend/ui/form/commercial/product/update/update.product.form';
 
@@ -58,3 +58,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

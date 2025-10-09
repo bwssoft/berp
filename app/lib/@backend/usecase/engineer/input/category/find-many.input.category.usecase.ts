@@ -1,9 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
 import type { Filter } from "mongodb";
-import { inputCategoryRepository } from "@/app/lib/@backend/infra";
+import { inputCategoryRepository } from "@/backend/infra";
 
-import { RemoveFields } from "@/app/lib/@backend/decorators";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { RemoveFields } from "@/backend/decorators";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
   export interface Input {
@@ -35,3 +35,4 @@ class FindManyInputCategoryUsecase {
 export const findManyInputCategoryUsecase = singleton(
   FindManyInputCategoryUsecase
 );
+

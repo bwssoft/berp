@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { OmieEnterpriseEnum } from "../@backend/domain/@shared/gateway/omie.gateway.interface";
+import { OmieEnterpriseEnum } from "@/backend/domain/@shared/gateway/omie.gateway.interface";
 
 const OmieSecretSchema = z.object({
   key: z.string(),

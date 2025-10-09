@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "../../../../component/form";
 import { useGeneralConfigurationProfileForm } from "./use-general.configuration-profile.form";
-import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
 
 interface Props {
   technology: ITechnology | undefined;
@@ -350,3 +350,4 @@ export function GeneralConfigurationProfileForm(props: Props) {
     </Card>
   );
 }
+

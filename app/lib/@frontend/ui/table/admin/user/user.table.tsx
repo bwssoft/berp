@@ -1,7 +1,7 @@
 "use client";
 
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./user.columns";
 import {
@@ -63,3 +63,4 @@ export function UserTable({ data, currentPage = 1 }: Props) {
     </>
   );
 }
+

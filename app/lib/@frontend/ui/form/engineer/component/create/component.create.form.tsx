@@ -22,7 +22,7 @@ import {
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
 import { useCreateComponentForm } from "./use-create.component.form";
-import {IComponentCategory} from "@/app/lib/@backend/domain/engineer/entity/component.category.definition";
+import {IComponentCategory} from "@/backend/domain/engineer/entity/component.category.definition";
 import { commonConstants } from "@/app/lib/constant";
 
 interface Props {
@@ -320,3 +320,4 @@ export function CreateOneComponentForm(props: Props) {
     </Form>
   );
 }
+

@@ -1,6 +1,6 @@
 "use client";
-import { IProduct } from "@/app/lib/@backend/domain/commercial/entity/product.definition";
-import { IDevice } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import { IProduct } from "@/backend/domain/commercial/entity/product.definition";
+import { IDevice } from "@/backend/domain/engineer/entity/device.definition";
 import { useDeviceUpdateForm } from "./use-device-update-form";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 
@@ -82,3 +82,4 @@ export function DeviceUpdateForm(props: Props) {
     </form>
   );
 }
+

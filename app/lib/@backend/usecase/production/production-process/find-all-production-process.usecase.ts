@@ -1,7 +1,7 @@
-import { IProductionProcessRepository } from "@/app/lib/@backend/domain/production/repository/production-process.repository.interface";
-import { productionProcessRepository } from "@/app/lib/@backend/infra";
+import type { IProductionProcessRepository } from "@/backend/domain/production/repository/production-process.repository";
+import { productionProcessRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 class FindAllProductionProcessUsecase {
   repository: IProductionProcessRepository;
@@ -20,3 +20,4 @@ class FindAllProductionProcessUsecase {
 export const findAllProductionProcessUsecase = singleton(
   FindAllProductionProcessUsecase
 );
+

@@ -1,7 +1,7 @@
-import IDevice from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import { deviceRepository } from "@/app/lib/@backend/infra";
+import IDevice from "@/backend/domain/engineer/entity/device.definition";
+import { deviceRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 class FindManyDeviceBySerialUsecase {
   repository: IDeviceRepository;
@@ -49,3 +49,4 @@ class FindManyDeviceBySerialUsecase {
 export const findManyDeviceBySerialUsecase = singleton(
   FindManyDeviceBySerialUsecase
 );
+

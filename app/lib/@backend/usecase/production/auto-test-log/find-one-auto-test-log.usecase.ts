@@ -1,7 +1,7 @@
-import IAutoTestLog from "@/app/lib/@backend/domain/production/entity/auto-test-log.definition";
-import { autoTestLogRepository } from "@/app/lib/@backend/infra";
+import IAutoTestLog from "@/backend/domain/production/entity/auto-test-log.definition";
+import { autoTestLogRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 namespace Dto {
   export interface Input extends Partial<IAutoTestLog> {}
@@ -24,3 +24,4 @@ class FindOneAutoTestLogUsecase {
 }
 
 export const findOneAutoTestLogUsecase = singleton(FindOneAutoTestLogUsecase);
+

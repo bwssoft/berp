@@ -3,12 +3,12 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { deleteOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
+import { deleteOneAddress } from "@/backend/action/commercial/address.action";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
 import {
   findOneAccount,
   updateOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
+} from "@/backend/action/commercial/account.action";
 import { useSearchParams } from "next/navigation";
 import { useCreateAccountFlow } from '@/frontend/context/create-account-flow.context';
 
@@ -122,3 +122,4 @@ export function useAddressDeleteDialog() {
     deleteAddress,
   };
 }
+

@@ -1,5 +1,5 @@
-import {EType} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
-import {IProductionOrder} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
+import {EType} from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import {IProductionOrder} from "@/backend/domain/production/entity/production-order.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
@@ -9,11 +9,11 @@ import { formatConfigurationProfileName } from "../../../engineer/configuration-
 import {
   updateOneProductionOrderById,
   updateOneProductionOrderLineItem,
-} from "@/app/lib/@backend/action/production/production-order.action";
+} from "@/backend/action/production/production-order.action";
 import {
   createOneConfigurationProfile,
   deleteOneConfigurationProfileById,
-} from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+} from "@/backend/action/engineer/configuration-profile.action";
 
 const LineItemSchema = z.object({
   configuration_profile_id: z.string(),
@@ -219,3 +219,4 @@ export function useCreateProductionOrderCreateFromProposal(props: Props) {
     handleDeleteConfigurationProfile,
   };
 }
+

@@ -2,8 +2,8 @@
 
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { serviceColumns } from "./services.columns";
-import {IPriceTableService} from "@/app/lib/@backend/domain/commercial/entity/price-table-service.definition";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import {IPriceTableService} from "@/backend/domain/commercial/entity/price-table-service.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
 import { useSearchParams } from "next/navigation";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
@@ -52,3 +52,4 @@ export function ServiceTable({
     </div>
   );
 }
+

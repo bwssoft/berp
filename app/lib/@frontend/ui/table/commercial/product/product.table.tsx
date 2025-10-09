@@ -1,7 +1,7 @@
 "use client";
 
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./product.columns";
 import { Pagination } from "../../../component/pagination";
@@ -47,3 +47,4 @@ export function ProductTable({ data, currentPage = 1 }: Props) {
     </>
   );
 }
+

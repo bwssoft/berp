@@ -1,11 +1,11 @@
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import {ClientSectorEnum, DocumentValueEnum, IClient, TaxRegime} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
-import {ContactDepartmentEnum, ContactRoleEnum} from "@/app/lib/@backend/domain/commercial/entity/old-contact.definition";
-import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {ClientSectorEnum, DocumentValueEnum, IClient, TaxRegime} from "@/backend/domain/commercial/entity/client.definition";
+import {ContactDepartmentEnum, ContactRoleEnum} from "@/backend/domain/commercial/entity/old-contact.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { updateOneClientById } from "@/app/lib/@backend/action/commercial/client.action";
+import { updateOneClientById } from "@/backend/action/commercial/client.action";
 
 const schema = z.object({
   trade_name: z.string(),
@@ -106,3 +106,4 @@ export function useClientUpdateForm(props: Props) {
     handleRemoveContact,
   };
 }
+

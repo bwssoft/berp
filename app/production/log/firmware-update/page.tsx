@@ -1,8 +1,8 @@
 import {
   findManyFirmwareUpdateLog,
   statsFirmwareUpdateLog,
-} from "@/app/lib/@backend/action/production/firmware-update-log.action";
-import {IFirmwareUpdateLog} from "@/app/lib/@backend/domain/production/entity/firmware-update-log.definition";
+} from "@/backend/action/production/firmware-update-log.action";
+import {IFirmwareUpdateLog} from "@/backend/domain/production/entity/firmware-update-log.definition";
 import { Button } from '@/frontend/ui/component/button';
 
 import {
@@ -170,3 +170,4 @@ function query(props: Props["searchParams"]): Filter<IFirmwareUpdateLog> {
   if (conditions.length > 1) return { $and: conditions };
   return {};
 }
+

@@ -1,12 +1,12 @@
 import { singleton } from "@/app/lib/util/singleton";
 
 import { resetPasswordUserUsecase } from "./reset-password.user.usecase";
-import { userRepository } from "@/app/lib/@backend/infra";
-import { AuditDomain } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
-import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
-import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
+import { userRepository } from "@/backend/infra";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/backend/domain/admin/repository/user.repository";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit";
 
 namespace Dto {
     export type Input = {
@@ -91,3 +91,4 @@ class ActiveUserUsecase {
 }
 
 export const activeUserUsecase = singleton(ActiveUserUsecase);
+

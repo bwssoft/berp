@@ -1,4 +1,4 @@
-import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
+import { IProposal } from "@/backend/domain/commercial/entity/proposal.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
@@ -13,3 +13,4 @@ class ProposalRepository extends BaseRepository<IProposal> {
 }
 
 export const proposalRepository = singleton(ProposalRepository)
+

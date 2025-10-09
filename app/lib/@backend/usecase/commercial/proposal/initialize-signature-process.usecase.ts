@@ -1,9 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProposalObjectRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.object.repository";
-import { IProposalToHtmlDataMapper, proposalToHtmlDataMapper } from "@/app/lib/@backend/domain/commercial/data-mapper/proposal-to-html";
-import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
-import { IProposalRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.repository";
-import { proposalObjectRepository, proposalRepository } from "@/app/lib/@backend/infra";
+import { IProposalObjectRepository } from "@/backend/domain/commercial/repository/proposal.object.repository";
+import { IProposalToHtmlDataMapper, proposalToHtmlDataMapper } from "@/backend/domain/commercial/data-mapper/proposal-to-html";
+import { IProposal } from "@/backend/domain/commercial/entity/proposal.definition";
+import { IProposalRepository } from "@/backend/domain/commercial/repository/proposal.repository";
+import { proposalObjectRepository, proposalRepository } from "@/backend/infra";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "./analyse-proposal-scenario.usecase";
 import { htmlToPdf } from "@/app/lib/util";
 import { nanoid } from "nanoid";

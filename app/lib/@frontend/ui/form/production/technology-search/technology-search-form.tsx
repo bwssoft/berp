@@ -1,6 +1,6 @@
 "use client";
 
-import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
 import { useTechnologySearchForm } from "./use-technology-search-form";
 import { Combobox } from '@/frontend/ui/component/combobox/index';
 
@@ -45,3 +45,4 @@ export function TechnologySearchForm(props: Props) {
     </form>
   );
 }
+

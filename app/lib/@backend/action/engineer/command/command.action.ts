@@ -1,12 +1,12 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { ICommand } from "@/app/lib/@backend/domain/engineer/entity/command.definition";
-import { createOneCommandUsecase } from "@/app/lib/@backend/usecase/engineer/command/command/create-one-command.usecase";
-import { findOneCommandUsecase } from "@/app/lib/@backend/usecase/engineer/command/command/find-one-command.usecase";
-import { deleteOneCommandUsecase } from "@/app/lib/@backend/usecase/engineer/command/command/delete-one-command.usecase";
-import { updateOneCommandUsecase } from "@/app/lib/@backend/usecase/engineer/command/command/update-one-command.usecase";
-import { findAllCommandUsecase } from "@/app/lib/@backend/usecase/engineer/command/command/find-all-command.usecase"
+import { ICommand } from "@/backend/domain/engineer/entity/command.definition";
+import { createOneCommandUsecase } from "@/backend/usecase/engineer/command/command/create-one-command.usecase";
+import { findOneCommandUsecase } from "@/backend/usecase/engineer/command/command/find-one-command.usecase";
+import { deleteOneCommandUsecase } from "@/backend/usecase/engineer/command/command/delete-one-command.usecase";
+import { updateOneCommandUsecase } from "@/backend/usecase/engineer/command/command/update-one-command.usecase";
+import { findAllCommandUsecase } from "@/backend/usecase/engineer/command/command/find-all-command.usecase"
 
 export async function createOneCommand(command: Omit<ICommand, "id" | "created_at">) {
   await createOneCommandUsecase.execute(command)
@@ -33,5 +33,6 @@ export async function deleteOneCommandById(query: { id: string }) {
 export async function findAllCommand(): Promise<ICommand[]> {
   return await findAllCommandUsecase.execute()
 }
+
 
 

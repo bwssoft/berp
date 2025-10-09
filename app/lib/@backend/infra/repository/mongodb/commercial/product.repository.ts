@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProduct } from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import { IProduct } from "@/backend/domain/commercial/entity/product.definition";
 import { BaseRepository } from "../@base";
 
 class ProductRepository extends BaseRepository<IProduct> {
@@ -12,3 +12,4 @@ class ProductRepository extends BaseRepository<IProduct> {
 }
 
 export const productRepository = singleton(ProductRepository);
+

@@ -1,13 +1,11 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import {
-  AuditDomain,
-  IAccountEconomicGroup,
-  IAccountEconomicGroupRepository,
-} from "../../../domain";
-import { accountEconomicGroupRepository } from "../../../infra";
+import { RemoveMongoId } from "@/backend/decorators";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import { IAccountEconomicGroup } from "@/backend/domain/commercial/entity/account.economic-group.definition";
+import { IAccountEconomicGroupRepository } from "@/backend/domain/commercial/repository/account.economic-group.repository";
+import { accountEconomicGroupRepository } from "@/backend/infra";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
 export type DeleteOneAccountEconomicGroupOutput = {
   success: boolean;
@@ -65,3 +63,4 @@ class DeleteOneAccountEconomicGroupUsecase {
 export const deleteOneAccountEconomicGroupUsecase = singleton(
   DeleteOneAccountEconomicGroupUsecase
 );
+

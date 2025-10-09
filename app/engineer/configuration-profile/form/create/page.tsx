@@ -1,5 +1,5 @@
-import { findManyClient } from "@/app/lib/@backend/action/commercial/client.action";
-import { findManyTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { findManyClient } from "@/backend/action/commercial/client.action";
+import { findManyTechnology } from "@/backend/action/engineer/technology.action";
 import { ConfigurationProfileUpsertForm } from '@/frontend/ui/form/engineer/configuration-profile/upsert/configuration-profile.upsert.form';
 
 
@@ -27,3 +27,4 @@ export default async function Page() {
     </div>
   );
 }
+

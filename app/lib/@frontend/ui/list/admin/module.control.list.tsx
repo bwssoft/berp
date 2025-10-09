@@ -1,7 +1,7 @@
 "use client";
 
-import {IControl} from "@/app/lib/@backend/domain/admin/entity/control.definition";
-import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import {IControl} from "@/backend/domain/admin/entity/control.definition";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
 import { cn } from "@/app/lib/util";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
@@ -9,7 +9,7 @@ import {
   ProfileLinkedControlModal,
   useProfileLinkedControlModal,
 } from "../../modal";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { useAuth } from '@/frontend/context/auth.context';
 
 
@@ -94,3 +94,4 @@ export function ModuleControlList(props: Props) {
     </>
   );
 }
+

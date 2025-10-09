@@ -1,7 +1,7 @@
 "use server";
 
 import { Filter } from "mongodb";
-import { IContact } from "../../domain";
+import { IContact } from "@/backend/domain/commercial/entity/contact.definition";
 import { createOneContactUsecase } from "../../usecase/commercial/contact/create-one.contact.usecase";
 import { findManyContactUsecase } from "../../usecase/commercial/contact/find-many.contact.usecase";
 import { findOneContactUsecase } from "../../usecase/commercial/contact/find-one.contact.usecase";

@@ -1,9 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { IContact } from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
-import { IContactRepository } from "@/app/lib/@backend/domain/commercial/repository/contact.repository";
-import { contactRepository } from "@/app/lib/@backend/infra";
+import { RemoveMongoId } from "@/backend/decorators";
+import { IContact } from "@/backend/domain/commercial/entity/contact.definition";
+import { IContactRepository } from "@/backend/domain/commercial/repository/contact.repository";
+import { contactRepository } from "@/backend/infra";
 
 class FindOneContactUsecase {
   repository: IContactRepository;
@@ -19,3 +19,4 @@ class FindOneContactUsecase {
 }
 
 export const findOneContactUsecase = singleton(FindOneContactUsecase);
+

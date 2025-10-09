@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
 
-import { contactRepository, accountRepository } from "@/app/lib/@backend/infra";
+import { contactRepository, accountRepository } from "@/backend/infra";
 
 export type DeleteOutput = {
   success?: { deleted: boolean; contactId: string };
@@ -58,3 +58,4 @@ class DeleteOneContactUsecase {
 }
 
 export const deleteOneContactUsecase = singleton(DeleteOneContactUsecase);
+

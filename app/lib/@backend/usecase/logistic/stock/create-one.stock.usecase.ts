@@ -1,5 +1,5 @@
-import IStock from "@/app/lib/@backend/domain/logistic/entity/stock.entity"; // Assumindo que IStockRepository existe em domain
-import { stockRepository } from "@/app/lib/@backend/infra"; // Assumindo que stockRepository existe em infra
+import IStock from "@/backend/domain/logistic/entity/stock.entity"; // Assumindo que IStockRepository existe em domain
+import { stockRepository } from "@/backend/infra"; // Assumindo que stockRepository existe em infra
 import { singleton } from "@/app/lib/util/singleton";
 import { randomUUID } from "crypto";
 
@@ -37,3 +37,4 @@ class CreateOneStockUsecase {
 
 // Exporta a instância singleton do caso de uso
 export const createOneStockUsecase = singleton(CreateOneStockUsecase);
+

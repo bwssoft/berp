@@ -3,7 +3,7 @@
 import React from "react";
 import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
 
-import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
 import { UpdateAccountDataForm } from "../../../../form/commercial/account/update/account-data/update-one.account-data.account.form";
 
 interface AddressProps {
@@ -41,3 +41,4 @@ export function AccountDataUpdateModal({
     </Modal>
   );
 }
+

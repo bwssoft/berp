@@ -6,8 +6,8 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import {ContactSelection} from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
-import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
+import {ContactSelection} from "@/backend/domain/commercial/entity/historical.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 import { Button } from '@/frontend/ui/component/button';
 import { Checkbox } from '@/frontend/ui/component/checkbox';
 import { Combobox } from '@/frontend/ui/component/combobox/index';
@@ -365,3 +365,4 @@ export function SearchContactHistoricalAccountForm({
     </div>
   );
 }
+

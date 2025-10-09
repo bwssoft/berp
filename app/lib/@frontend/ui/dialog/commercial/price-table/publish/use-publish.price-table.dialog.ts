@@ -4,7 +4,7 @@ import {
   publishPriceTable,
   updateOnePriceTable,
   findOnePriceTable,
-} from "@/app/lib/@backend/action/commercial/price-table.action";
+} from "@/backend/action/commercial/price-table.action";
 
 interface UsePublishPriceTableDialogProps {
   priceTableId?: string;
@@ -111,3 +111,4 @@ export function usePublishPriceTableDialog({
     publishPriceTable: publishPriceTableAction,
   };
 }
+

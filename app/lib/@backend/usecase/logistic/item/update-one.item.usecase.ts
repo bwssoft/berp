@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IItem from "@/app/lib/@backend/domain/logistic/entity/item.entity"; // Assumindo que IItemRepository existe em domain
-import { itemRepository } from "@/app/lib/@backend/infra"; // Assumindo que itemRepository existe em infra
+import IItem from "@/backend/domain/logistic/entity/item.entity"; // Assumindo que IItemRepository existe em domain
+import { itemRepository } from "@/backend/infra"; // Assumindo que itemRepository existe em infra
 
 class UpdateOneItemUsecase {
   repository: IItemRepository;
@@ -23,3 +23,4 @@ class UpdateOneItemUsecase {
 
 // Exporta a instância singleton do caso de uso
 export const updateOneItemUsecase = singleton(UpdateOneItemUsecase);
+

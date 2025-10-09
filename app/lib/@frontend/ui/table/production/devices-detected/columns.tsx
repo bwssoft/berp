@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
 import { ISerialPort } from "@/app/lib/@frontend/hook/use-serial-port";
-import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 
 export interface Row {
   equipment?: {
@@ -256,3 +256,4 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
 export function getColumns(type: Device.Model): ColumnDef<Row>[] {
   return [...commonColumns, ...(columnMap[type] || [])];
 }
+

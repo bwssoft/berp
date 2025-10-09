@@ -1,4 +1,4 @@
-import { findOneConfigurationLog } from "@/app/lib/@backend/action/production/configuration-log.action";
+import { findOneConfigurationLog } from "@/backend/action/production/configuration-log.action";
 import { ConfigurationLogDescription } from '@/frontend/ui/description/production/configuration-log/configuration-log.description';
 
 

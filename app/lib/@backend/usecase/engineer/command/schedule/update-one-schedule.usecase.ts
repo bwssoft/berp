@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { ISchedule } from "@/app/lib/@backend/domain/engineer/entity/command-schedule.definition";
-import { IScheduleRepository } from "@/app/lib/@backend/domain/engineer/repository/command-schedule.repository.interface";
-import { scheduleRepository } from "@/app/lib/@backend/infra"
+import { ISchedule } from "@/backend/domain/engineer/entity/command-schedule.definition";
+import { IScheduleRepository } from "@/backend/domain/engineer/repository/command-schedule.repository";
+import { scheduleRepository } from "@/backend/infra"
 
 class UpdateOneScheduleUsecase {
   repository: IScheduleRepository
@@ -19,3 +19,4 @@ class UpdateOneScheduleUsecase {
 }
 
 export const updateOneScheduleUsecase = singleton(UpdateOneScheduleUsecase)
+

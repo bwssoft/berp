@@ -1,8 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
 
-import { addressRepository } from "@/app/lib/@backend/infra/repository";
+import { addressRepository } from "@/backend/infra";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
 class CreateOneAddressUsecase {
   repository: IAddressRepository;
@@ -38,3 +38,4 @@ class CreateOneAddressUsecase {
 }
 
 export const createOneAddressUsecase = singleton(CreateOneAddressUsecase);
+

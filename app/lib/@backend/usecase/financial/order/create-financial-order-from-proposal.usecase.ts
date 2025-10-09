@@ -1,8 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProposalRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.repository";
-import { IFinancialOrder } from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
-import { IFinancialOrderRepository } from "@/app/lib/@backend/domain/financial/repository/financial-order.repository.interface";
-import { financialOrderRepository, proposalRepository } from "@/app/lib/@backend/infra";
+import { IProposalRepository } from "@/backend/domain/commercial/repository/proposal.repository";
+import { IFinancialOrder } from "@/backend/domain/financial/entity/financial-order.definition";
+import { IFinancialOrderRepository } from "@/backend/domain/financial/repository/financial-order.repository";
+import { financialOrderRepository, proposalRepository } from "@/backend/infra";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "../../commercial/proposal/analyse-proposal-scenario.usecase";
 import { createOneFinancialOrderUsecase } from "./create-one-financial-order.usecase";
 

@@ -1,14 +1,14 @@
 import { useCallback } from "react";
-import { E3Parser } from "../../@backend/infra/protocol/parser/E3";
-import { E3Encoder } from "../../@backend/infra/protocol/encoder/E3";
+import { E3Parser } from "@/backend/infra/protocol/parser/E3";
+import { E3Encoder } from "@/backend/infra/protocol/encoder/E3";
 import { typedObjectEntries } from "../../util";
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
-  Device,
   E3PlusConfig,
   IConfigurationProfile,
-} from "../../@backend/domain";
+} from "@/backend/domain/engineer/entity/configuration-profile.definition";
 
 namespace Namespace {
   interface Equipment {

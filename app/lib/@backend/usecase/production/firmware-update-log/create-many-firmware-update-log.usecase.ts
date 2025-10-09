@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IFirmwareUpdateLog from "@/app/lib/@backend/domain/production/entity/firmware-update-log.definition";
-import { firmwareUpdateLogRepository } from "@/app/lib/@backend/infra";
+import IFirmwareUpdateLog from "@/backend/domain/production/entity/firmware-update-log.definition";
+import { firmwareUpdateLogRepository } from "@/backend/infra";
 import { RemoveFields } from "../../../decorators";
 
 class CreateManyFirmwareUpdateLogUsecase {
@@ -32,3 +32,4 @@ class CreateManyFirmwareUpdateLogUsecase {
 export const createManyFirmwareUpdateLogUsecase = singleton(
   CreateManyFirmwareUpdateLogUsecase
 );
+

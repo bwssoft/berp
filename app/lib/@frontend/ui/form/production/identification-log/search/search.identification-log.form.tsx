@@ -4,7 +4,7 @@ import { Button } from '@/frontend/ui/component/button';
 import { Input } from '@/frontend/ui/component/input';
 
 import { Filter } from "mongodb";
-import {IIdentificationLog} from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
+import {IIdentificationLog} from "@/backend/domain/production/entity/identification-log.definition";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { useIdentificationLogSearchForm } from "./use-search.identification-log.form";
 
@@ -36,3 +36,4 @@ export function IdentificationLogSearchForm(props: Props) {
     </div>
   );
 }
+

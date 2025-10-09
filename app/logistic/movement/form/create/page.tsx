@@ -1,5 +1,5 @@
-import { findManyBase } from "@/app/lib/@backend/action/logistic/base.action";
-import { findManyItem } from "@/app/lib/@backend/action/logistic/item.action";
+import { findManyBase } from "@/backend/action/logistic/base.action";
+import { findManyItem } from "@/backend/action/logistic/item.action";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
@@ -44,3 +44,4 @@ export default async function Page() {
     </div>
   );
 }
+

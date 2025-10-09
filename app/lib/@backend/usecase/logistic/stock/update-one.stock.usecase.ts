@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IStock from "@/app/lib/@backend/domain/logistic/entity/stock.entity"; // Assumindo que IStockRepository existe em domain
-import { stockRepository } from "@/app/lib/@backend/infra"; // Assumindo que stockRepository existe em infra
+import IStock from "@/backend/domain/logistic/entity/stock.entity"; // Assumindo que IStockRepository existe em domain
+import { stockRepository } from "@/backend/infra"; // Assumindo que stockRepository existe em infra
 
 class UpdateOneStockUsecase {
   repository: IStockRepository;
@@ -23,3 +23,4 @@ class UpdateOneStockUsecase {
 
 // Exporta a instância singleton do caso de uso
 export const updateOneStockUsecase = singleton(UpdateOneStockUsecase);
+

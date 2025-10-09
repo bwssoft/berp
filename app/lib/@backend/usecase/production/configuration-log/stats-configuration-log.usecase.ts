@@ -1,7 +1,7 @@
-import { IConfigurationLogRepository } from "@/app/lib/@backend/domain/production/repository/configuration-log.repository.interface";
-import { configurationLogRepository } from "@/app/lib/@backend/infra";
+import { IConfigurationLogRepository } from "@/backend/domain/production/repository/configuration-log.repository";
+import { configurationLogRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 namespace Dto {
   export type Input = {};
@@ -68,3 +68,4 @@ class StatsConfigurationLogUsecase {
 export const statsConfigurationLogUsecase = singleton(
   StatsConfigurationLogUsecase
 );
+

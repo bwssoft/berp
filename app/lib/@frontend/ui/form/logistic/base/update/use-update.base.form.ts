@@ -1,6 +1,6 @@
-import { updateOneBaseById } from "@/app/lib/@backend/action/logistic/base.action";
-import {Base} from "@/app/lib/@backend/domain/logistic/entity/base.entity";
-import {IBase} from "@/app/lib/@backend/domain/logistic/entity/base.entity";
+import { updateOneBaseById } from "@/backend/action/logistic/base.action";
+import {Base} from "@/backend/domain/logistic/entity/base.entity";
+import {IBase} from "@/backend/domain/logistic/entity/base.entity";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -101,3 +101,4 @@ export function useUpdateBaseForm(props: Props) {
     handleCancelUpdate,
   };
 }
+

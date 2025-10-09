@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
 
-import { inputCategoryRepository } from "@/app/lib/@backend/infra";
+import { inputCategoryRepository } from "@/backend/infra";
 
 class DeleteOneInputCategoryUsecase {
   repository: IInputCategoryRepository;
@@ -17,3 +17,4 @@ class DeleteOneInputCategoryUsecase {
 export const deleteOneInputCategoryUsecase = singleton(
   DeleteOneInputCategoryUsecase
 );
+

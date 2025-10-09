@@ -1,10 +1,17 @@
-import IProductionOrderRepository from "@/app/lib/@backend/domain/production/repository/production-order.repository.interface";
-import IProductionProcess from "@/app/lib/@backend/domain/production/entity/production-process.definition";
-import IProductionProcessRepository from "@/app/lib/@backend/domain/production/repository/production-process.repository.interface";
+import type {
+  IProductionOrderLegacy,
+  IProductionOrderStep,
+} from "@/backend/domain/production/entity/production-order.definition";
+import type {
+  IProductionProcess,
+  IProductionProcessStep,
+} from "@/backend/domain/production/entity/production-process.definition";
+import type { IProductionOrderRepository } from "@/backend/domain/production/repository/production-order.repository";
+import type { IProductionProcessRepository } from "@/backend/domain/production/repository/production-process.repository";
 import {
   productionOrderRepository,
   productionProcessRepository,
-} from "@/app/lib/@backend/infra";
+} from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 
 class UpdateOneProductionProcessUsecase {
@@ -92,3 +99,5 @@ class UpdateOneProductionProcessUsecase {
 export const updateOneProductionProcessUsecase = singleton(
   UpdateOneProductionProcessUsecase
 );
+
+

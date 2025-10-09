@@ -9,8 +9,8 @@ import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Button } from '@/frontend/ui/component/button';
 
 import { useSearchContactAccount } from "./use-search-contact.account";
-import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
-import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 
 type ContactAccountFormProps = {
   contacts: {
@@ -89,3 +89,4 @@ export function SearchContactAccountForm({
     </div>
   );
 }
+

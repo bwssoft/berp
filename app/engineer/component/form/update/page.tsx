@@ -1,5 +1,5 @@
-import { findOneComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
-import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component/component.category.action";
+import { findOneComponent } from "@/backend/action/engineer/component/component.action";
+import { findManyComponentCategory } from "@/backend/action/engineer/component/component.category.action";
 import { BackButton } from '@/frontend/ui/component/back-button';
 import { UpdateOneComponentForm } from '@/frontend/ui/form/engineer/component/update/update.component.form';
 
@@ -61,3 +61,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

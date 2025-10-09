@@ -1,9 +1,9 @@
-import ICommand from "@/app/lib/@backend/domain/engineer/entity/command.definition";
-import IDevice from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import ISchedule from "@/app/lib/@backend/domain/engineer/entity/command-schedule.definition";
-import { scheduleRepository } from "@/app/lib/@backend/infra";
+import ICommand from "@/backend/domain/engineer/entity/command.definition";
+import IDevice from "@/backend/domain/engineer/entity/device.definition";
+import ISchedule from "@/backend/domain/engineer/entity/command-schedule.definition";
+import { scheduleRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
+import { RemoveMongoId } from "@/backend/decorators";;
 
 class FindManyPendingScheduleBySerialUsecase {
   repository: IScheduleRepository;
@@ -80,3 +80,4 @@ class FindManyPendingScheduleBySerialUsecase {
 export const findManyPendingScheduleBySerialUsecase = singleton(
   FindManyPendingScheduleBySerialUsecase
 );
+

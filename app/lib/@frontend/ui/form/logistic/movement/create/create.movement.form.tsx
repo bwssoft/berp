@@ -12,8 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/lib/@frontend/ui/component/card";
-import type {IBase} from "@/app/lib/@backend/domain/logistic/entity/base.entity";
-import type {IItem} from "@/app/lib/@backend/domain/logistic/entity/item.entity";
+import type {IBase} from "@/backend/domain/logistic/entity/base.entity";
+import type {IItem} from "@/backend/domain/logistic/entity/item.entity";
 import Link from "next/link";
 
 interface Props {
@@ -134,3 +134,4 @@ export function CreateMovementForm(props: Props) {
     </Form>
   );
 }
+

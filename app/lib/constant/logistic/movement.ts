@@ -1,4 +1,4 @@
-import { Movement } from "../../@backend/domain";
+import { Movement } from "@/backend/domain/logistic/entity/movement.entity";
 
 const type: { [key in Movement.Type]: string } = {
   ENTER: "Entrada",

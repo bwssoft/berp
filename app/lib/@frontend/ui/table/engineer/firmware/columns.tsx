@@ -1,8 +1,8 @@
-import {IFirmware} from "@/app/lib/@backend/domain/engineer/entity/firmware.definition";
+import {IFirmware} from "@/backend/domain/engineer/entity/firmware.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { deleteOneFirmwareById } from "@/app/lib/@backend/action/engineer/firmware/firmware.action";
+import { deleteOneFirmwareById } from "@/backend/action/engineer/firmware/firmware.action";
 
 export const columns: ColumnDef<IFirmware>[] = [
   {
@@ -64,3 +64,4 @@ export const columns: ColumnDef<IFirmware>[] = [
     },
   },
 ];
+

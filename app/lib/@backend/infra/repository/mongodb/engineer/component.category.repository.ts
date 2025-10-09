@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util";
 import { BaseRepository } from "../@base";
-import { IComponentCategory } from "@/app/lib/@backend/domain/engineer/entity/component.category.definition";
+import { IComponentCategory } from "@/backend/domain/engineer/entity/component.category.definition";
 
 class IComponentCategoryRepository extends BaseRepository<IComponentCategory> {
   constructor() {
@@ -14,3 +14,4 @@ class IComponentCategoryRepository extends BaseRepository<IComponentCategory> {
 export const componentCategoryRepository = singleton(
   IComponentCategoryRepository
 );
+

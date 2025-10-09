@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IFinancialOrder } from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
+import { IFinancialOrder } from "@/backend/domain/financial/entity/financial-order.definition";
 import { BaseRepository } from "../@base";
 
 class FinancialOrderRepository extends BaseRepository<IFinancialOrder> {
@@ -13,3 +13,4 @@ class FinancialOrderRepository extends BaseRepository<IFinancialOrder> {
 }
 
 export const financialOrderRepository = singleton(FinancialOrderRepository)
+

@@ -1,5 +1,5 @@
-import { updateOneFinancialOrderFromProposal } from "@/app/lib/@backend/action/financial/financial-order.action";
-import {IFinancialOrder} from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
+import { updateOneFinancialOrderFromProposal } from "@/backend/action/financial/financial-order.action";
+import {IFinancialOrder} from "@/backend/domain/financial/entity/financial-order.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { error } from "console";
@@ -70,3 +70,4 @@ export function useFinancialOrderCreateFromProposal(props: Props) {
 
   return { handleSubmit, register };
 }
+

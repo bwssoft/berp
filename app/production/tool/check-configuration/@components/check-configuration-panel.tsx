@@ -1,9 +1,9 @@
 "use client";
 
-import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import { IConfigurationLog } from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
-import type { IConfigurationProfile } from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
-import type { ITechnology } from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
+import type { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import type { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
   Card,
@@ -253,3 +253,4 @@ export function CheckConfigurationPanel(props: Props) {
     </div>
   );
 }
+

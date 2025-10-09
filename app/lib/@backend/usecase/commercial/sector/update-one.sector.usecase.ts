@@ -1,10 +1,10 @@
 import type { Filter } from "mongodb";
 
-import { sectorRepository } from "@/app/lib/@backend/infra";
+import { sectorRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
-import { ISectorRepository } from "@/app/lib/@backend/domain/commercial/repository/sector.repository";
+import { RemoveMongoId } from "@/backend/decorators";
+import { ISector } from "@/backend/domain/commercial/entity/sector.definition";
+import { ISectorRepository } from "@/backend/domain/commercial/repository/sector.repository";
 
 class UpdateOneSectorUsecase {
     repository: ISectorRepository;
@@ -20,3 +20,4 @@ class UpdateOneSectorUsecase {
 }
 
 export const updateOneSectorUsecase = singleton(UpdateOneSectorUsecase);
+

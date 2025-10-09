@@ -1,14 +1,14 @@
 import { useCallback } from "react";
-import { BwsNb2Lora, BwsNb2LoraParser } from "../../@backend/infra/protocol/parser/nb-2-lora";
-import { BwsNb2LoraEncoder } from "../../@backend/infra/protocol/encoder/nb-2-lora";
+import { BwsNb2Lora, BwsNb2LoraParser } from "@/backend/infra/protocol/parser/nb-2-lora";
+import { BwsNb2LoraEncoder } from "@/backend/infra/protocol/encoder/nb-2-lora";
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
-  Device,
   IConfigurationProfile,
   BwsNb2LoraConfig,
-} from "../../@backend/domain";
+} from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 import { findOneSerial } from "../../@backend/action/engineer/serial.action";
 import { genKeyLorawan } from "../../util/generate-key-lora-wan";

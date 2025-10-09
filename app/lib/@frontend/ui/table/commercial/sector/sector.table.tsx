@@ -2,8 +2,8 @@
 
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { sectorColumns } from "./sector.columns";
-import {ISector} from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import {ISector} from "@/backend/domain/commercial/entity/sector.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
 import { useSearchParams } from "next/navigation";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
@@ -53,3 +53,4 @@ export function SectorTable({
     </div>
   );
 }
+

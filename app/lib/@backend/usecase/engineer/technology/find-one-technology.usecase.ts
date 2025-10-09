@@ -1,8 +1,8 @@
-import { ITechnology } from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
-import { ITechnologyRepository } from "@/app/lib/@backend/domain/engineer/repository/technology.repository.interface";
-import { technologyRepository } from "@/app/lib/@backend/infra";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
+import { ITechnologyRepository } from "@/backend/domain/engineer/repository/technology.repository";
+import { technologyRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 class FindOneTechnologyUsecase {
   repository: ITechnologyRepository;
@@ -18,3 +18,4 @@ class FindOneTechnologyUsecase {
 }
 
 export const findOneTechnologyUsecase = singleton(FindOneTechnologyUsecase);
+

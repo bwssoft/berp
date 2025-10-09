@@ -1,7 +1,7 @@
 "use client";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyAccount } from "@/backend/action/commercial/account.action";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
 import { Button } from '@/frontend/ui/component/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
 
@@ -186,3 +186,4 @@ function query(params: Props["searchParams"]): Filter<IAccount> {
 
   return {};
 }
+

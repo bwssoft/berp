@@ -1,6 +1,10 @@
-import Device from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import IConfigurationProfile from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
-import ITechnology from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { EType } from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import type {
+  IConfigurationProfile,
+} from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import type { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
+import type { IClient } from "@/backend/domain/commercial/entity/client.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
@@ -10,7 +14,7 @@ import { formatConfigurationProfileName } from "../util";
 import {
   createOneConfigurationProfile,
   updateOneConfigurationProfileById,
-} from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+} from "@/backend/action/engineer/configuration-profile.action";
 
 const twoBytesSchema = z.coerce
   .number()
@@ -493,3 +497,4 @@ export function useConfigurationProfileUpsertForm(props: Props) {
     handleChangeClient,
   };
 }
+

@@ -1,9 +1,12 @@
-import IProduct from "@/app/lib/@backend/domain/commercial/entity/product.definition";
-import ITechnology from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
-import { productionOrderRepository } from "@/app/lib/@backend/infra";
+import type { IEnterprise } from "@/backend/domain/business/entity/enterprise.entity";
+import type { IProductCategory } from "@/backend/domain/commercial/entity/product.category.definition";
+import type { IProduct } from "@/backend/domain/commercial/entity/product.definition";
+import type { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
+import type { IProductionOrder } from "@/backend/domain/production/entity/production-order.definition";
+import type { IProductionOrderRepository } from "@/backend/domain/production/repository/production-order.repository";
+import { productionOrderRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { IEnterprise } from "../../../domain/business/entity/enterprise.entity";
+import { RemoveMongoId } from "@/backend/decorators";
 
 namespace Dto {
   export interface Input extends Partial<IProductionOrder> {}
@@ -218,3 +221,4 @@ class FindOneProductionOrderUsecase {
 export const findOneProductionOrderUsecase = singleton(
   FindOneProductionOrderUsecase
 );
+

@@ -1,12 +1,12 @@
 "use server";
 
-import { createOneMovementUsecase } from "@/app/lib/@backend/usecase/logistic/movement/create-one.movement.usecase";
-import { findOneMovementUsecase } from "@/app/lib/@backend/usecase/logistic/movement/find-one.movement.usecase";
-import { updateOneMovementUsecase } from "@/app/lib/@backend/usecase/logistic/movement/update-one.movement.usecase";
-import { findManyMovementUsecase } from "@/app/lib/@backend/usecase/logistic/movement/find-many.movement.usecase";
-import { createManyMovementUsecase } from "@/app/lib/@backend/usecase/logistic/movement/create-many.movement.usecase";
-import { confirmManyMovementUsecase } from "@/app/lib/@backend/usecase/logistic/movement/confirm-many.movement.usecase";
-import { IMovement } from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
+import { createOneMovementUsecase } from "@/backend/usecase/logistic/movement/create-one.movement.usecase";
+import { findOneMovementUsecase } from "@/backend/usecase/logistic/movement/find-one.movement.usecase";
+import { updateOneMovementUsecase } from "@/backend/usecase/logistic/movement/update-one.movement.usecase";
+import { findManyMovementUsecase } from "@/backend/usecase/logistic/movement/find-many.movement.usecase";
+import { createManyMovementUsecase } from "@/backend/usecase/logistic/movement/create-many.movement.usecase";
+import { confirmManyMovementUsecase } from "@/backend/usecase/logistic/movement/confirm-many.movement.usecase";
+import { IMovement } from "@/backend/domain/logistic/entity/movement.entity";
 import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
 
@@ -54,3 +54,4 @@ export async function confirmManyMovement(input: string[]) {
   revalidatePath("/logistic/stock");
   return result;
 }
+

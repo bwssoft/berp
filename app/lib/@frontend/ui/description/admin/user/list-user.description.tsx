@@ -1,9 +1,9 @@
 "use client";
 
-import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { UsersIcon } from "@heroicons/react/24/outline";
 import { Pagination } from "../../../component/pagination";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { useUserLinkedProfileModal } from "../../../modal";
 
 type Props = {
@@ -65,3 +65,4 @@ export function ListUserDescription({
     </div>
   );
 }
+

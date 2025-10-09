@@ -1,4 +1,4 @@
-import { IConfigurationProfile } from "../../engineer";
+import { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { IDeviceLog } from "./device-log.definition";
 
 /**

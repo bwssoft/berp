@@ -1,4 +1,4 @@
-import { IAccount } from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import { IAccount } from "@/backend/domain/commercial/entity/account.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
@@ -12,3 +12,4 @@ class AccountRepository extends BaseRepository<IAccount> {
 }
 
 export const accountRepository = singleton(AccountRepository);
+

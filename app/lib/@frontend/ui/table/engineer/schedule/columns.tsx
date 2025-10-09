@@ -1,9 +1,10 @@
-import ICommand from "@/app/lib/@backend/domain/engineer/entity/command.definition";
-import IDevice from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import ISchedule from "@/app/lib/@backend/domain/engineer/entity/command-schedule.definition";
+import { ICommand } from "@/backend/domain/engineer/entity/command.definition";
+import { IDevice } from "@/backend/domain/engineer/entity/device.definition";
+import { ISchedule } from "@/backend/domain/engineer/entity/command-schedule.definition";
+import { IFirmware } from "@/backend/domain/engineer/entity/firmware.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { deleteOneScheduleById } from "@/app/lib/@backend/action/engineer/command/schedule.action";
+import { deleteOneScheduleById } from "@/backend/action/engineer/command/schedule.action";
 
 export const columns: ColumnDef<
   ISchedule & { device: IDevice; command: ICommand; firmware?: IFirmware }
@@ -93,3 +94,4 @@ export const columns: ColumnDef<
     },
   },
 ];
+

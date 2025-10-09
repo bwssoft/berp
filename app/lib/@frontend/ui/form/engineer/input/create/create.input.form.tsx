@@ -22,7 +22,7 @@ import {
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
 import { useCreateInputForm } from "./use-create.input.form";
-import {IInputCategory} from "@/app/lib/@backend/domain/engineer/entity/input.category.definition";
+import {IInputCategory} from "@/backend/domain/engineer/entity/input.category.definition";
 
 interface Props {
   categories: IInputCategory[];
@@ -285,3 +285,4 @@ export function CreateOneInputForm(props: Props) {
     </Form>
   );
 }
+

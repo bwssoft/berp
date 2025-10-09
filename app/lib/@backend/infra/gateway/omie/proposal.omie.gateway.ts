@@ -1,5 +1,5 @@
-import { singleton } from "@/app/lib/util";
-import { IncluirPedidoVendaProduto } from "./@dto";
+import { singleton } from "@/app/lib/util/singleton";
+import type { IncluirPedidoVendaProduto } from "./@dto/sale-order.dto";
 import { OmieGateway } from "./@base";
 
 class ProposalOmieGateway extends OmieGateway {

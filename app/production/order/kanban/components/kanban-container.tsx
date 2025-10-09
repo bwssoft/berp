@@ -1,9 +1,9 @@
 "use client";
 
-import {IEnterprise} from "@/app/lib/@backend/domain/business/entity/enterprise.entity";
-import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
-import {IProductionOrder} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
-import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {IEnterprise} from "@/backend/domain/business/entity/enterprise.entity";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
+import {IProductionOrder} from "@/backend/domain/production/entity/production-order.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -45,3 +45,4 @@ export const KanbanContainer = (props: Props) => {
     </DndProvider>
   );
 };
+

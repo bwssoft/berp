@@ -7,9 +7,9 @@ import {
 } from "@/app/lib/@frontend/ui/component/tabs";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
-import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
 
 export default function AccountManagementLayout({
   children,
@@ -139,3 +139,4 @@ export default function AccountManagementLayout({
     </div>
   );
 }
+

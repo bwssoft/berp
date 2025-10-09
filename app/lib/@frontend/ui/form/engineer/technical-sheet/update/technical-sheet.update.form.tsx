@@ -1,8 +1,8 @@
 "use client";
-import {IComponent} from "@/app/lib/@backend/domain/engineer/entity/component.definition";
-import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
-import {ITechnicalSheet} from "@/app/lib/@backend/domain/engineer/entity/technical-sheet.definition";
-import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {IComponent} from "@/backend/domain/engineer/entity/component.definition";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
+import {ITechnicalSheet} from "@/backend/domain/engineer/entity/technical-sheet.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { Controller } from "react-hook-form";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { FileUpload } from "@/app/lib/@frontend/ui/component/input-file";
@@ -189,3 +189,4 @@ export function TechnicalSheetUpdateForm({
     </form>
   );
 }
+

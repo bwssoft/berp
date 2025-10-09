@@ -1,5 +1,5 @@
-import { createOneTechnicalSheet } from "@/app/lib/@backend/action/engineer/technical-sheet.action";
-import {IComponent} from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import { createOneTechnicalSheet } from "@/backend/action/engineer/technical-sheet.action";
+import {IComponent} from "@/backend/domain/engineer/entity/component.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -127,3 +127,4 @@ export function useTechnicalSheetCreateForm({
     handleFile,
   };
 }
+

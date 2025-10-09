@@ -1,5 +1,5 @@
-import {EType} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
-import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {EType} from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useState } from "react";
@@ -14,7 +14,7 @@ import {
   e3PlusConfigSchema,
   generalConfigSchema,
 } from "../upsert/use-configuration-profile.upsert.form";
-import { createOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+import { createOneConfigurationProfile } from "@/backend/action/engineer/configuration-profile.action";
 
 // Esquema principal
 const schema = z.object({
@@ -143,3 +143,4 @@ export function useConfigurationProfileCreateFromCrmForm(props: Props) {
     handleClientLinkGeneration,
   };
 }
+

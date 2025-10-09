@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IFinancialOrder } from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
-import { IFinancialOrderRepository } from "@/app/lib/@backend/domain/financial/repository/financial-order.repository.interface";
-import { financialOrderRepository } from "@/app/lib/@backend/infra"
+import { IFinancialOrder } from "@/backend/domain/financial/entity/financial-order.definition";
+import { IFinancialOrderRepository } from "@/backend/domain/financial/repository/financial-order.repository";
+import { financialOrderRepository } from "@/backend/infra"
 import { nanoid } from "nanoid"
 
 class UpdateFinancialOrderFromProposalUsecase {
@@ -37,3 +37,4 @@ class UpdateFinancialOrderFromProposalUsecase {
 }
 
 export const updateFinancialOrderFromProposalUsecase = singleton(UpdateFinancialOrderFromProposalUsecase)
+

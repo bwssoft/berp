@@ -1,8 +1,11 @@
-import AuditMetadata from "@/app/lib/@backend/domain/admin/entity/audit.definition";
-import IAudit from "@/app/lib/@backend/domain/admin/entity/audit.definition";
-import IAuditRepository from "@/app/lib/@backend/domain/admin/repository/audit.repository.interface";
-import AuditType from "@/app/lib/@backend/domain/admin/entity/audit.definition";
-import { auditRepository } from "@/app/lib/@backend/infra/repository/mongodb/admin/audit.repository";
+import {
+  AuditDomain,
+  AuditMetadata,
+  AuditType,
+  type IAudit,
+} from "@/backend/domain/admin/entity/audit.definition";
+import type { IAuditRepository } from "@/backend/domain/admin/repository/audit.repository.interface";
+import { auditRepository } from "@/backend/infra/mongodb/admin/audit.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import isEqual from "lodash/isEqual";
 import { randomUUID } from "crypto";
@@ -74,3 +77,5 @@ class CreateOneAuditUsecase {
 }
 
 export const createOneAuditUsecase = singleton(CreateOneAuditUsecase);
+
+

@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IConfigurationLog from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
-import { configurationLogRepository } from "@/app/lib/@backend/infra";
+import IConfigurationLog from "@/backend/domain/production/entity/configuration-log.definition";
+import { configurationLogRepository } from "@/backend/infra";
 import { RemoveFields } from "../../../decorators";
 
 class CreateManyConfigurationLogUsecase {
@@ -32,3 +32,4 @@ class CreateManyConfigurationLogUsecase {
 export const createManyConfigurationLogUsecase = singleton(
   CreateManyConfigurationLogUsecase
 );
+

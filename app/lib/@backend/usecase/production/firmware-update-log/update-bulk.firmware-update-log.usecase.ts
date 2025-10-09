@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IFirmwareUpdateLog from "@/app/lib/@backend/domain/production/entity/firmware-update-log.definition";
-import { firmwareUpdateLogRepository } from "@/app/lib/@backend/infra";
+import IFirmwareUpdateLog from "@/backend/domain/production/entity/firmware-update-log.definition";
+import { firmwareUpdateLogRepository } from "@/backend/infra";
 
 class UpdateBulkFirmwareUpdateLogUsecase {
   repository: IFirmwareUpdateLogRepository;
@@ -28,3 +28,4 @@ class UpdateBulkFirmwareUpdateLogUsecase {
 export const updateBulkFirmwareUpdateLogUsecase = singleton(
   UpdateBulkFirmwareUpdateLogUsecase
 );
+

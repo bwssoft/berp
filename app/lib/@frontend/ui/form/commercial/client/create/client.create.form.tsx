@@ -16,8 +16,8 @@
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useClientCreateForm } from "./use-client-create-form";
-import {ContactDepartmentEnum, ContactRoleEnum} from "@/app/lib/@backend/domain/commercial/entity/old-contact.definition";
-import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {ContactDepartmentEnum, ContactRoleEnum} from "@/backend/domain/commercial/entity/old-contact.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { clientConstants } from "@/app/lib/constant";
 
 export function ClientCreateForm() {
@@ -371,3 +371,4 @@ export function ClientCreateForm() {
     </form>
   );
 }
+

@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createManyComponentCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/component/category/create-many.category.usecase";
-import { createOneComponentCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/component/category/create-one.category.usecase";
-import { deleteOneComponentCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/component/category/delete-one.category.usecase";
-import { findManyComponentCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/component/category/find-many.category.usecase";
-import { IComponentCategory } from "@/app/lib/@backend/domain/engineer/entity/component.category.definition";
+import { createManyComponentCategoryUsecase } from "@/backend/usecase/engineer/component/category/create-many.category.usecase";
+import { createOneComponentCategoryUsecase } from "@/backend/usecase/engineer/component/category/create-one.category.usecase";
+import { deleteOneComponentCategoryUsecase } from "@/backend/usecase/engineer/component/category/delete-one.category.usecase";
+import { findManyComponentCategoryUsecase } from "@/backend/usecase/engineer/component/category/find-many.category.usecase";
+import { IComponentCategory } from "@/backend/domain/engineer/entity/component.category.definition";
 import { Filter } from "mongodb";
 
 export async function findManyComponentCategory(input: {
@@ -40,3 +40,4 @@ export async function deleteOneComponentCategoryById(params: { id: string }) {
   await deleteOneComponentCategoryUsecase.execute(params);
   revalidatePath("/engineer/component");
 }
+

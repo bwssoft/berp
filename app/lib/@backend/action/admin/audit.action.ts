@@ -1,8 +1,8 @@
 "use server";
 
 import { Filter } from "mongodb";
-import { IAudit } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
-import { findManyAuditUsecase } from "@/app/lib/@backend/usecase/admin/audit/find-many.audit.usecase";
+import { IAudit } from "@/backend/domain/admin/entity/audit.definition";
+import { findManyAuditUsecase } from "@/backend/usecase/admin/audit/find-many.audit.usecase";
 
 export async function findManyAudit(
     filter: Filter<IAudit> = {},
@@ -12,3 +12,4 @@ export async function findManyAudit(
 ) {
     return await findManyAuditUsecase.execute({ filter, page, limit, sort });
 }
+

@@ -1,5 +1,5 @@
-import IMovement from "@/app/lib/@backend/domain/logistic/entity/movement.entity"; // Assumindo que IMovementRepository existe em domain
-import { movementRepository } from "@/app/lib/@backend/infra"; // Assumindo que movementRepository existe em infra
+import IMovement from "@/backend/domain/logistic/entity/movement.entity"; // Assumindo que IMovementRepository existe em domain
+import { movementRepository } from "@/backend/infra"; // Assumindo que movementRepository existe em infra
 import { singleton } from "@/app/lib/util/singleton";
 import { randomUUID } from "crypto";
 import { consolidateStockByMovementUseCase } from "../stock";
@@ -40,3 +40,4 @@ class CreateOneMovementUsecase {
 
 // Exporta a instância singleton do caso de uso
 export const createOneMovementUsecase = singleton(CreateOneMovementUsecase);
+

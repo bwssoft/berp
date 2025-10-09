@@ -13,7 +13,7 @@ import {
   useSectorModal,
 } from "../../../../modal/comercial/sector";
 import { useState } from "react";
-import { deleteOneSector } from "@/app/lib/@backend/action/commercial/sector.action";
+import { deleteOneSector } from "@/backend/action/commercial/sector.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import {
   FormControl,
@@ -24,7 +24,7 @@ import {
 } from "../../../../component/form";
 import { SectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/delete-sector.dialog";
 import { useSectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/use-delete-sector.dialog";
-import {ISector} from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
+import {ISector} from "@/backend/domain/commercial/entity/sector.definition";
 
 export function CNPJAccountForm() {
   const {
@@ -364,3 +364,4 @@ export function CNPJAccountForm() {
     </div>
   );
 }
+

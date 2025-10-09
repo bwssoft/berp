@@ -1,11 +1,11 @@
 "use server";
 
-import { IProduct } from "@/app/lib/@backend/domain/commercial/entity/product.definition";
-import { createOneProductUsecase } from "@/app/lib/@backend/usecase/commercial/product/product/create-one.product.usecase";
-import { deleteOneProductUsecase } from "@/app/lib/@backend/usecase/commercial/product/product/delete-one.product.usecase";
-import { findManyProductUsecase } from "@/app/lib/@backend/usecase/commercial/product/product/find-many.product.usecase";
-import { findOneProductUsecase } from "@/app/lib/@backend/usecase/commercial/product/product/find-one.product.usecase";
-import { updateOneProductUsecase } from "@/app/lib/@backend/usecase/commercial/product/product/update-one.product.usecase";
+import { IProduct } from "@/backend/domain/commercial/entity/product.definition";
+import { createOneProductUsecase } from "@/backend/usecase/commercial/product/product/create-one.product.usecase";
+import { deleteOneProductUsecase } from "@/backend/usecase/commercial/product/product/delete-one.product.usecase";
+import { findManyProductUsecase } from "@/backend/usecase/commercial/product/product/find-many.product.usecase";
+import { findOneProductUsecase } from "@/backend/usecase/commercial/product/product/find-one.product.usecase";
+import { updateOneProductUsecase } from "@/backend/usecase/commercial/product/product/update-one.product.usecase";
 import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
 
@@ -43,3 +43,4 @@ export async function findManyProduct(input: {
 }) {
   return await findManyProductUsecase.execute(input);
 }
+

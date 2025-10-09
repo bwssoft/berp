@@ -14,7 +14,7 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 
 interface Props {
   data: Row[];
@@ -71,3 +71,4 @@ export function DevicesCheckedTable({ data, model }: Props) {
     </div>
   );
 }
+

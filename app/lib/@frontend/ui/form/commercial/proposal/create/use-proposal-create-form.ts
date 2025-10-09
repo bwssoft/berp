@@ -1,7 +1,7 @@
-import { createOneProposal } from '@/app/lib/@backend/action/commercial/proposal.action';
-import {Currency, FreightType} from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
-import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
-import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface';
+import { createOneProposal } from '@/backend/action/commercial/proposal.action';
+import {Currency, FreightType} from "@/backend/domain/commercial/entity/proposal.definition";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
+import { OmieEnterpriseEnum } from '@/backend/domain/@shared/gateway/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -146,3 +146,4 @@ export function useProposalCreateForm() {
     handleChangeClient
   };
 }
+

@@ -1,6 +1,6 @@
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
-import {IPriceTable} from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyPriceTable } from "@/backend/action/commercial/price-table.action";
+import {IPriceTable} from "@/backend/domain/commercial/entity/price-table.definition";
 import { Button } from '@/frontend/ui/component/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
 
@@ -244,3 +244,4 @@ function buildFinalQuery(
   if (conditions.length === 1) return conditions[0];
   return { $and: conditions };
 }
+

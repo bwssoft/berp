@@ -1,6 +1,6 @@
 "use client";
 
-import {IProductionOrderLegacy} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
+import {IProductionOrderLegacy} from "@/backend/domain/production/entity/production-order.definition";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { Checkbox } from "@/app/lib/@frontend/ui/component/checkbox";
 import { useProductionOrderStepsUpdateForm } from "./use-production-order-steps-update-form";
@@ -39,3 +39,4 @@ export function ProductionOrderStepsUpdateForm({
     </form>
   );
 }
+

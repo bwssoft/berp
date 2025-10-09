@@ -1,6 +1,6 @@
-import IDevice from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import IRequestToUpdate from "@/app/lib/@backend/domain/engineer/entity/request-to-update-firmware.definition";
-import { requestToUpdateRepository } from "@/app/lib/@backend/infra";
+import IDevice from "@/backend/domain/engineer/entity/device.definition";
+import IRequestToUpdate from "@/backend/domain/engineer/entity/request-to-update-firmware.definition";
+import { requestToUpdateRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 
 class FindAllRequestToUpdateUsecase {
@@ -64,3 +64,4 @@ class FindAllRequestToUpdateUsecase {
 export const findAllRequestToUpdateUsecase = singleton(
   FindAllRequestToUpdateUsecase
 );
+

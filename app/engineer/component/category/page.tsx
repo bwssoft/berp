@@ -1,6 +1,6 @@
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component/component.category.action";
-import {IComponentCategory} from "@/app/lib/@backend/domain/engineer/entity/component.category.definition";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyComponentCategory } from "@/backend/action/engineer/component/component.category.action";
+import {IComponentCategory} from "@/backend/domain/engineer/entity/component.category.definition";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { ComponentCategoryTable } from "@/app/lib/@frontend/ui/table/engineer/component/component.category.table";
@@ -62,3 +62,4 @@ function query(props: Props["searchParams"]): Filter<IComponentCategory> {
   const conditions: Filter<IComponentCategory>[] = [];
   return {};
 }
+

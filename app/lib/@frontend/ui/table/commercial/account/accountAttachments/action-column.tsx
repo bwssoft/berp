@@ -1,7 +1,7 @@
-import {IAccountAttachment} from "@/app/lib/@backend/domain/commercial/entity/account-attachment.definition";
+import {IAccountAttachment} from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { downloadAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.download.action";
-import { deleteAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.delete.action";
+import { downloadAccountAttachment } from "@/backend/action/commercial/account-attachment.download.action";
+import { deleteAccountAttachment } from "@/backend/action/commercial/account-attachment.delete.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { Button } from '@/frontend/ui/component/button';
 import { Dialog } from '@/frontend/ui/component/dialog';
@@ -151,3 +151,4 @@ export function ActionColumn(props: {
     </td>
   );
 }
+

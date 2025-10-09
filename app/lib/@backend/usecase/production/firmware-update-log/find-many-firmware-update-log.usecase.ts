@@ -1,7 +1,7 @@
-import IFirmwareUpdateLog from "@/app/lib/@backend/domain/production/entity/firmware-update-log.definition";
-import { firmwareUpdateLogRepository } from "@/app/lib/@backend/infra";
+import IFirmwareUpdateLog from "@/backend/domain/production/entity/firmware-update-log.definition";
+import { firmwareUpdateLogRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 import { Filter } from "mongodb";
 
 namespace Dto {
@@ -27,3 +27,4 @@ class FindManyFirmwareUpdateLogUsecase {
 export const findManyFirmwareUpdateLogUsecase = singleton(
   FindManyFirmwareUpdateLogUsecase
 );
+

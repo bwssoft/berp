@@ -1,7 +1,7 @@
 "use client";
 
-import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import { ITechnology } from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { Badge } from '@/frontend/ui/component/badge';
 import { Button } from '@/frontend/ui/component/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
@@ -204,3 +204,4 @@ export function IdentificatorPage(props: Props) {
     </>
   );
 }
+

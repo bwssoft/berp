@@ -1,4 +1,4 @@
-import { IPriceTable } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
+import { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
@@ -12,3 +12,4 @@ class PriceTableRepository extends BaseRepository<IPriceTable> {
 }
 
 export const priceTableRepository = singleton(PriceTableRepository);
+

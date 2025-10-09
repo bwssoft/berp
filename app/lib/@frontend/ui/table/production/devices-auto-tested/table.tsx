@@ -3,7 +3,7 @@
 import { columns } from "./columns";
 import { DataTable } from '@/frontend/ui/component/data-table';
 
-import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 
 interface Props {
   data: {
@@ -33,3 +33,4 @@ export function DevicesAutoTestedTable(props: Props) {
     />
   );
 }
+

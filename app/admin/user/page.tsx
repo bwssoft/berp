@@ -1,6 +1,6 @@
-import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import { findManyUser } from "@/backend/action/admin/user.action";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { SearchUserForm } from "@/app/lib/@frontend/ui/form/admin/user/search-form/search.user.form";
 import { UserTable } from "@/app/lib/@frontend/ui/table/admin/user/user.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
@@ -139,3 +139,4 @@ function query(props: Props["searchParams"]): Filter<IUser> {
   // Retorna um filtro vazio se não houver condições
   return {};
 }
+

@@ -1,10 +1,10 @@
 import type { Filter } from "mongodb";
 
-import { addressRepository } from "@/app/lib/@backend/infra/repository";
+import { addressRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { IAddress } from "@/app/lib/@backend/domain/commercial/entity/address.definition";
-import { IAddressRepository } from "@/app/lib/@backend/domain/commercial/repository/address.repository";
+import { RemoveMongoId } from "@/backend/decorators";
+import { IAddress } from "@/backend/domain/commercial/entity/address.definition";
+import { IAddressRepository } from "@/backend/domain/commercial/repository/address.repository";
 
 class UpdateOneAddressUsecase {
     repository: IAddressRepository;
@@ -20,3 +20,4 @@ class UpdateOneAddressUsecase {
 }
 
 export const updateOneAddressUsecase = singleton(UpdateOneAddressUsecase);
+

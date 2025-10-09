@@ -1,6 +1,6 @@
 "use client";
 
-import {IFinancialOrder} from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
+import {IFinancialOrder} from "@/backend/domain/financial/entity/financial-order.definition";
 import { Button } from '@/frontend/ui/component/button';
 import { DataTable } from '@/frontend/ui/component/data-table';
 

@@ -1,10 +1,10 @@
 import { Filter } from "mongodb";
 
-import { IAudit } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import { IAudit } from "@/backend/domain/admin/entity/audit.definition";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { auditRepository } from "../../../infra/repository/mongodb/admin/audit.repository";
-import { PaginationResult } from "../../../domain/@shared/repository/pagination.interface";
+import { RemoveMongoId } from "@/backend/decorators";
+import { auditRepository } from "@/backend/infra/mongodb/admin/audit.repository";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
         export interface Input {
@@ -31,3 +31,4 @@ class FindManyAuditUsecase {
 }
 
 export const findManyAuditUsecase = singleton(FindManyAuditUsecase);
+

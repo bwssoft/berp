@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IConfigurationProfile from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
-import { configurationProfileRepository } from "@/app/lib/@backend/infra";
+import IConfigurationProfile from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import { configurationProfileRepository } from "@/backend/infra";
 import { auth } from "@/auth";
 
 class CreateOneConfigurationProfileUsecase {
@@ -35,3 +35,4 @@ class CreateOneConfigurationProfileUsecase {
 export const createOneConfigurationProfileUsecase = singleton(
   CreateOneConfigurationProfileUsecase
 );
+

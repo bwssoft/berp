@@ -1,7 +1,7 @@
-import { ICommandRepository } from "@/app/lib/@backend/domain/engineer/repository/command.repository.interface";
-import { commandRepository } from "@/app/lib/@backend/infra";
+import { ICommandRepository } from "@/backend/domain/engineer/repository/command.repository";
+import { commandRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 class FindAllCommandUsecase {
   repository: ICommandRepository;
@@ -18,3 +18,4 @@ class FindAllCommandUsecase {
 }
 
 export const findAllCommandUsecase = singleton(FindAllCommandUsecase);
+

@@ -1,7 +1,7 @@
 "use client";
 
-import {IControl} from "@/app/lib/@backend/domain/admin/entity/control.definition";
-import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import {IControl} from "@/backend/domain/admin/entity/control.definition";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
 import { useSetLockedProfileForm } from "./use-set-locked.profile.form";
 import { Toggle } from '@/frontend/ui/component/toggle';
 
@@ -37,3 +37,4 @@ export function SetLockedProfileForm(props: Props) {
     </form>
   );
 }
+

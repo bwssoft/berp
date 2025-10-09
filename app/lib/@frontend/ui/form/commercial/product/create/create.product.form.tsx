@@ -22,7 +22,7 @@ import {
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
 import { useCreateProductForm } from "./use-create.product.form";
-import {IProductCategory} from "@/app/lib/@backend/domain/commercial/entity/product.category.definition";
+import {IProductCategory} from "@/backend/domain/commercial/entity/product.category.definition";
 
 interface Props {
   categories: IProductCategory[];
@@ -285,3 +285,4 @@ export function CreateOneProductForm(props: Props) {
     </Form>
   );
 }
+

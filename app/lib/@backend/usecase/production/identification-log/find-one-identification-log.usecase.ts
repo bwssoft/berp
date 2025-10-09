@@ -1,7 +1,7 @@
-import IIdentificationLog from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
-import { identificationLogRepository } from "@/app/lib/@backend/infra";
+import IIdentificationLog from "@/backend/domain/production/entity/identification-log.definition";
+import { identificationLogRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 namespace Dto {
   export interface Input extends Partial<IIdentificationLog> {}
@@ -26,3 +26,4 @@ class FindOneIdentificationLogUsecase {
 export const findOneIdentificationLogUsecase = singleton(
   FindOneIdentificationLogUsecase
 );
+

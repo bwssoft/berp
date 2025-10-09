@@ -1,4 +1,4 @@
-import {IAutoTestLog} from "@/app/lib/@backend/domain/production/entity/auto-test-log.definition";
+import {IAutoTestLog} from "@/backend/domain/production/entity/auto-test-log.definition";
 import { getStatusProps } from "@/app/lib/util";
 import React from "react";
 
@@ -163,3 +163,4 @@ export function AutoTestLogDescription({ data }: Props) {
     </div>
   );
 }
+

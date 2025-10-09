@@ -1,5 +1,5 @@
-import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
-import { userRepository } from "@/app/lib/@backend/infra";
+import { IUserRepository } from "@/backend/domain/admin/repository/user.repository";
+import { userRepository } from "@/backend/infra";
 import { resetPasswordUserUsecase } from "./reset-password.user.usecase";
 
 namespace Dto {
@@ -48,3 +48,4 @@ class RequestNewPasswordUserUsecase {
 
 export const requestNewPasswordUserUsecase =
     new RequestNewPasswordUserUsecase();
+

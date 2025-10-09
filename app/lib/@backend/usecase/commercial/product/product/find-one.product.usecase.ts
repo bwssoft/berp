@@ -1,8 +1,8 @@
-import { IProduct } from "@/app/lib/@backend/domain/commercial/entity/product.definition";
-import { IProductRepository } from "@/app/lib/@backend/domain/commercial/repository/product.repository";
-import { productRepository } from "@/app/lib/@backend/infra";
+import { IProduct } from "@/backend/domain/commercial/entity/product.definition";
+import { IProductRepository } from "@/backend/domain/commercial/repository/product.repository";
+import { productRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
+import { RemoveMongoId } from "@/backend/decorators";;
 
 class FindOneProductUsecase {
   repository: IProductRepository;
@@ -18,3 +18,4 @@ class FindOneProductUsecase {
 }
 
 export const findOneProductUsecase = singleton(FindOneProductUsecase);
+

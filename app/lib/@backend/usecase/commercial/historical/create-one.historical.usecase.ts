@@ -1,6 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IHistorical, IHistoricalRepository } from "../../../domain";
-import { historicalRepository } from "../../../infra";
+import { IHistorical } from "@/backend/domain/commercial/entity/historical.definition";
+import { IHistoricalRepository } from "@/backend/domain/commercial/repository/historical.repository";
+import { historicalRepository } from "@/backend/infra";
 
 export type OutputHistorical = {
   success?: IHistorical;

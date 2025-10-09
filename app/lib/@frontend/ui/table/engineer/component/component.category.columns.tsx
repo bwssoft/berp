@@ -1,4 +1,4 @@
-import {IComponentCategory} from "@/app/lib/@backend/domain/engineer/entity/component.category.definition";
+import {IComponentCategory} from "@/backend/domain/engineer/entity/component.category.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { Button } from '@/frontend/ui/component/button';
@@ -58,3 +58,4 @@ export const columns = (props: Props): ColumnDef<IComponentCategory>[] => [
     },
   },
 ];
+

@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from '@/frontend/ui/component/button';
 
-import { IMovement, Movement } from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
+import { IMovement, Movement } from "@/backend/domain/logistic/entity/movement.entity";
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { Badge } from "../../../component/badge";
 import {
@@ -16,7 +16,7 @@ import {
   Package,
   Wrench,
 } from "lucide-react";
-import { confirmManyMovement } from "@/app/lib/@backend/action/logistic/movement.action";
+import { confirmManyMovement } from "@/backend/action/logistic/movement.action";
 
 interface Props {
   restrictFeatureByProfile: (code: string) => boolean;
@@ -214,3 +214,4 @@ const getTypeBadge = (type: string) => {
       return null;
   }
 };
+

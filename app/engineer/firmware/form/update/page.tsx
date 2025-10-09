@@ -1,4 +1,4 @@
-import { findOneFirmware } from "@/app/lib/@backend/action/engineer/firmware/firmware.action";
+import { findOneFirmware } from "@/backend/action/engineer/firmware/firmware.action";
 import { FirmwareUpdateForm } from '@/frontend/ui/form/engineer/firmware/update/firmware.update.form';
 
 
@@ -43,3 +43,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

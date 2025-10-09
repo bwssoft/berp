@@ -1,4 +1,4 @@
-import { Device } from "../@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 
 const model: { [key in Device.Model]: string } = {
   DM_E3: "E3",

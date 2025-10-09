@@ -3,7 +3,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
-import {IFirmwareUpdateLog} from "@/app/lib/@backend/domain/production/entity/firmware-update-log.definition";
+import {IFirmwareUpdateLog} from "@/backend/domain/production/entity/firmware-update-log.definition";
 import Link from "next/link";
 import { Button } from '@/frontend/ui/component/button';
 
@@ -82,3 +82,4 @@ export const columns: ColumnDef<Row>[] = [
     },
   },
 ];
+

@@ -1,7 +1,7 @@
-import IConfigurationLog from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
-import { configurationLogRepository } from "@/app/lib/@backend/infra";
+import IConfigurationLog from "@/backend/domain/production/entity/configuration-log.definition";
+import { configurationLogRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 namespace Dto {
   export interface Input extends Partial<IConfigurationLog> {}
@@ -26,3 +26,4 @@ class FindOneConfigurationLogUsecase {
 export const findOneConfigurationLogUsecase = singleton(
   FindOneConfigurationLogUsecase
 );
+

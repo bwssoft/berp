@@ -3,12 +3,12 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { updateOneProductById } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { updateOneProductById } from "@/backend/action/commercial/product/product.action";
 
 // Schema de validação com Zod
 const componentSchema = z.object({
@@ -175,3 +175,4 @@ export function useUpdateProductForm(props: Props) {
     handleCancelUpdate,
   };
 }
+

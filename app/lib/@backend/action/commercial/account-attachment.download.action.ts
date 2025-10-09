@@ -1,7 +1,7 @@
 "use server";
 
-import { accountAttachmentObjectRepository } from "@/app/lib/@backend/infra/repository/s3/commercial/account-attachment.repository";
-import { accountAttachmentRepository } from "@/app/lib/@backend/infra/repository/mongodb/commercial/account-attachment.repository";
+import { accountAttachmentObjectRepository } from "@/backend/infra/repository/s3/commercial/account-attachment.repository";
+import { accountAttachmentRepository } from "@/backend/infra/repository/mongodb/commercial/account-attachment.repository";
 
 export async function downloadAccountAttachment(id: string) {
   try {
@@ -40,3 +40,4 @@ export async function downloadAccountAttachment(id: string) {
     return { success: false, error: "Failed to download attachment" };
   }
 }
+

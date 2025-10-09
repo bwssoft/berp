@@ -1,4 +1,4 @@
-import { findOneAutoTestLog } from "@/app/lib/@backend/action/production/auto-test-log.action";
+import { findOneAutoTestLog } from "@/backend/action/production/auto-test-log.action";
 import { AutoTestLogDescription } from '@/frontend/ui/description/production/auto-test-log/auto-test-log.description';
 
 

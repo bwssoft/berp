@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { componentCategoryRepository } from "@/app/lib/@backend/infra";
+import { componentCategoryRepository } from "@/backend/infra";
 
 
 class CreateOneComponentCategoryUsecase {
@@ -33,3 +33,4 @@ class CreateOneComponentCategoryUsecase {
 export const createOneComponentCategoryUsecase = singleton(
   CreateOneComponentCategoryUsecase
 );
+

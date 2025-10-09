@@ -1,8 +1,8 @@
-import { ISerial } from "@/app/lib/@backend/domain/engineer/entity/serial.definition";
-import { ISerialRepository } from "@/app/lib/@backend/domain/engineer/repository/serial.repository.interface";
-import { serialRepository } from "@/app/lib/@backend/infra";
+import { ISerial } from "@/backend/domain/engineer/entity/serial.definition";
+import { ISerialRepository } from "@/backend/domain/engineer/repository/serial.repository";
+import { serialRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 class FindOneSerialUsecase {
   repository: ISerialRepository;
@@ -19,3 +19,4 @@ class FindOneSerialUsecase {
 }
 
 export const findOneSerialUsecase = singleton(FindOneSerialUsecase);
+

@@ -1,9 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 import type { Filter } from "mongodb";
-import { IAddressRepository } from "@/app/lib/@backend/domain/commercial";
-import { addressRepository } from "@/app/lib/@backend/infra/repository";
-import { IAddress } from "@/app/lib/@backend/domain/commercial/entity/address.definition";
+import { IAddressRepository } from "@/backend/domain/commercial";
+import { addressRepository } from "@/backend/infra";
+import { IAddress } from "@/backend/domain/commercial/entity/address.definition";
 
 class FindManyAddressUsecase {
     repository: IAddressRepository;
@@ -20,3 +20,4 @@ class FindManyAddressUsecase {
 }
 
 export const findManyAddressUsecase = singleton(FindManyAddressUsecase);
+

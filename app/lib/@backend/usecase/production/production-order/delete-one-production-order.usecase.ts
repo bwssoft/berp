@@ -1,8 +1,8 @@
-import IProductionOrder from "@/app/lib/@backend/domain/production/entity/production-order.definition";
-import IProductionOrderRepository from "@/app/lib/@backend/domain/production/repository/production-order.repository.interface";
+import type { IProductionOrder } from "@/backend/domain/production/entity/production-order.definition";
+import type { IProductionOrderRepository } from "@/backend/domain/production/repository/production-order.repository";
 import {
   productionOrderRepository,
-} from "@/app/lib/@backend/infra";
+} from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 
 class DeleteOneProductionOrderUsecase {
@@ -26,3 +26,5 @@ class DeleteOneProductionOrderUsecase {
 export const deleteOneProductionOrderUsecase = singleton(
   DeleteOneProductionOrderUsecase
 );
+
+

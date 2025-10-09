@@ -1,8 +1,8 @@
 // app/api/firmware-update-log/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import type {IFirmwareUpdateLog} from "@/app/lib/@backend/domain/production/entity/firmware-update-log.definition";
-import { createManyFirmwareUpdateLogUsecase } from "@/app/lib/@backend/usecase/production/firmware-update-log/create-many-firmware-update-log.usecase";
+import type {IFirmwareUpdateLog} from "@/backend/domain/production/entity/firmware-update-log.definition";
+import { createManyFirmwareUpdateLogUsecase } from "@/backend/usecase/production/firmware-update-log/create-many-firmware-update-log.usecase";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -26,3 +26,4 @@ export async function POST(req: NextRequest) {
   const result = await createManyFirmwareUpdateLogUsecase.execute(data);
   return NextResponse.json(result);
 }
+

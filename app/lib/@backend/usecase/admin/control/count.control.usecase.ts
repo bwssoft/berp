@@ -1,8 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IControl } from "@/app/lib/@backend/domain/admin/entity/control.definition";
-import { IControlRepository } from "@/app/lib/@backend/domain/admin/repository/control.repository.interface";
-import { controlRepository } from "@/app/lib/@backend/infra";
-import { Filter } from "mongodb";
+import type { IControl } from "@/backend/domain/admin/entity/control.definition";
+import type { IControlRepository } from "@/backend/domain/admin/repository/control.repository.interface";
+import { controlRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
 
 class CountControlUsecase {
   repository: IControlRepository;
@@ -12,7 +12,7 @@ class CountControlUsecase {
   }
 
   async execute(input: Filter<IControl>) {
-    return await this.repository.count(input);
+    return this.repository.count(input);
   }
 }
 

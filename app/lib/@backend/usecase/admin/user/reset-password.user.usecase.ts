@@ -6,13 +6,13 @@ import {
 
 import { hash } from "bcrypt";
 import { randomInt } from "crypto";
-import { AuditDomain } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
-import { IBMessageGateway } from "@/app/lib/@backend/domain/@shared/gateway/bmessage.gateway.interface";
-import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
-import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
-import { userRepository, bmessageGateway } from "@/app/lib/@backend/infra";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import { IBMessageGateway } from "@/backend/domain/@shared/gateway/bmessage.gateway.interface";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/backend/domain/admin/repository/user.repository";
+import { userRepository, bmessageGateway } from "@/backend/infra";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit";
 
 namespace Dto {
   export type Input = {
@@ -109,3 +109,4 @@ class ResetPasswordUserUsecase {
 }
 
 export const resetPasswordUserUsecase = singleton(ResetPasswordUserUsecase);
+

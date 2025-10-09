@@ -1,12 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  AuditDomain,
-  IPriceTable,
-  IPriceTableRepository,
-} from "../../../domain";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
+import { IPriceTableRepository } from "@/backend/domain/commercial/repository/price-table.repository";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
-import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
+import { priceTableRepository } from "@/backend/infra/mongodb/commercial/price-table.repository";
 import { normalizeString } from "@/app/lib/util/normalize-string";
 import { findManyPriceTableUsecase } from "./find-many.price-table.usecase";
 

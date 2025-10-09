@@ -1,10 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IPriceTableRepository } from "../../../domain/commercial/repository/price-table.repository";
-import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
+import { IPriceTableRepository } from "@/backend/domain/commercial/repository/price-table.repository";
+import { priceTableRepository } from "@/backend/infra/mongodb/commercial/price-table.repository";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
-import { AuditDomain } from "../../../domain/admin/entity/audit.definition";
-import { priceTableSchedulerGateway } from "../../../infra/gateway/price-table-scheduler";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import { priceTableSchedulerGateway } from "@/backend/infra/gateway/price-table-scheduler";
 
 namespace Dto {
   export type Input = { id: string };

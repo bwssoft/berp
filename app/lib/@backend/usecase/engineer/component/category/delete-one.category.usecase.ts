@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { componentCategoryRepository } from "@/app/lib/@backend/infra";
+import { componentCategoryRepository } from "@/backend/infra";
 
 
 class DeleteOneComponentCategoryUsecase {
@@ -17,3 +17,4 @@ class DeleteOneComponentCategoryUsecase {
 export const deleteOneComponentCategoryUsecase = singleton(
   DeleteOneComponentCategoryUsecase
 );
+

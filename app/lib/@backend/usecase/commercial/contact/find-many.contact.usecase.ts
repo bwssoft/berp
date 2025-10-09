@@ -1,8 +1,8 @@
 
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { contactRepository } from "@/app/lib/@backend/infra";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { RemoveMongoId } from "@/backend/decorators";
+import { contactRepository } from "@/backend/infra";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import type { Filter } from "mongodb";
 
 namespace Dto {
@@ -30,3 +30,4 @@ class FindManyContactUsecase {
 }
 
 export const findManyContactUsecase = singleton(FindManyContactUsecase);
+

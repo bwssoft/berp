@@ -1,6 +1,6 @@
 "use client";
 
-import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { Checkbox } from '@/frontend/ui/component/checkbox';
 import { Combobox } from '@/frontend/ui/component/combobox/index';
 import { FileUpload } from '@/frontend/ui/component/input-file';
@@ -70,3 +70,4 @@ export function ViewOneUserForm({ user }: Props) {
     </form>
   );
 }
+

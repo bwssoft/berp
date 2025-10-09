@@ -1,8 +1,8 @@
 import type { Filter } from "mongodb";
 
-import { accountRepository, contactRepository } from "@/app/lib/@backend/infra";
+import { accountRepository, contactRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 class UpdateOneContactUsecase {
   repository: IContactRepository;
@@ -56,3 +56,4 @@ class UpdateOneContactUsecase {
 }
 
 export const updateOneContactUsecase = singleton(UpdateOneContactUsecase);
+

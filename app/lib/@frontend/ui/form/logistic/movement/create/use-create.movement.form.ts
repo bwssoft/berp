@@ -3,11 +3,11 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { IMovement, Movement } from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
-import { Item } from "@/app/lib/@backend/domain/logistic/entity/item.entity";
-import { Base } from "@/app/lib/@backend/domain/logistic/entity/base.entity";
+import { IMovement, Movement } from "@/backend/domain/logistic/entity/movement.entity";
+import { Item } from "@/backend/domain/logistic/entity/item.entity";
+import { Base } from "@/backend/domain/logistic/entity/base.entity";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { createManyMovement } from "@/app/lib/@backend/action/logistic/movement.action";
+import { createManyMovement } from "@/backend/action/logistic/movement.action";
 
 const movementSchema = z.object({
   id: z.string().default(() => crypto.randomUUID()),
@@ -332,3 +332,4 @@ export function useCreateMovementForm() {
     schema: movementFormSchema,
   };
 }
+

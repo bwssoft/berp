@@ -1,4 +1,4 @@
-import { findOneCommand } from "@/app/lib/@backend/action/engineer/command/command.action";
+import { findOneCommand } from "@/backend/action/engineer/command/command.action";
 import { CommandUpdateForm } from '@/frontend/ui/form/engineer/command/update/command.update.form';
 
 
@@ -43,3 +43,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

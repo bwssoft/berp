@@ -27,8 +27,8 @@ import { Textarea } from '@/frontend/ui/component/text-area';
 import { Badge } from '@/frontend/ui/component/badge';
 
 import type { CreateMovementFormData } from "./use-create.movement.form";
-import type {IBase} from "@/app/lib/@backend/domain/logistic/entity/base.entity";
-import type {IItem} from "@/app/lib/@backend/domain/logistic/entity/item.entity";
+import type {IBase} from "@/backend/domain/logistic/entity/base.entity";
+import type {IItem} from "@/backend/domain/logistic/entity/item.entity";
 import { movementConstants } from "@/app/lib/constant/logistic";
 
 interface MovementRowFormProps {
@@ -345,3 +345,4 @@ export function MovementRowForm({
     </div>
   );
 }
+

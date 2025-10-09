@@ -1,10 +1,10 @@
-import { IAccount } from "@/app/lib/@backend/domain/commercial/entity/account.definition";
-import { IAccountRepository } from "@/app/lib/@backend/domain/commercial/repository/account.repository";
+import { IAccount } from "@/backend/domain/commercial/entity/account.definition";
+import { IAccountRepository } from "@/backend/domain/commercial/repository/account.repository";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { accountRepository } from "@/app/lib/@backend/infra";
+import { RemoveMongoId } from "@/backend/decorators";
+import { accountRepository } from "@/backend/infra";
 import { Filter } from "mongodb";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
   export interface Input {
@@ -35,3 +35,4 @@ class FindManyAccountUsecase {
 }
 
 export const findManyAccountUsecase = singleton(FindManyAccountUsecase);
+

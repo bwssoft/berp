@@ -2,9 +2,9 @@ import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import {ClientSectorEnum, DocumentValueEnum, TaxRegime} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
-import {ContactDepartmentEnum, ContactRoleEnum} from "@/app/lib/@backend/domain/commercial/entity/old-contact.definition";
-import { createOneClient } from '@/app/lib/@backend/action/commercial/client.action';
+import {ClientSectorEnum, DocumentValueEnum, TaxRegime} from "@/backend/domain/commercial/entity/client.definition";
+import {ContactDepartmentEnum, ContactRoleEnum} from "@/backend/domain/commercial/entity/old-contact.definition";
+import { createOneClient } from '@/backend/action/commercial/client.action';
 
 const schema = z.object({
   trade_name: z.string(),
@@ -93,3 +93,4 @@ export function useClientCreateForm() {
     handleRemoveContact
   };
 }
+

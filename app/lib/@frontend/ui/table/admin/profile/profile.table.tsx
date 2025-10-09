@@ -1,5 +1,5 @@
 "use client";
-import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
 import { columns } from "./profile.columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { ActiveProfileDialog, useActiveProfileDialog } from "../../../dialog";
@@ -13,7 +13,7 @@ import {
 } from "../../../modal/admin/profile/audit-profile";
 import { useSearchParams } from "next/navigation";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
 import { useAuth } from '@/frontend/context/auth.context';
 
@@ -99,3 +99,4 @@ export function ProfileTable(props: Props) {
     </>
   );
 }
+

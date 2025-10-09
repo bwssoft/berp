@@ -3,11 +3,11 @@
 import {
   findOneProductionOrder,
   updateOneProductionOrderById,
-} from "@/app/lib/@backend/action/production/production-order.action";
-import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
-import {IProductionOrder, EProductionOrderStage} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
-import {IEnterprise} from "@/app/lib/@backend/domain/business/entity/enterprise.entity";
-import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+} from "@/backend/action/production/production-order.action";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
+import {IProductionOrder, EProductionOrderStage} from "@/backend/domain/production/entity/production-order.definition";
+import {IEnterprise} from "@/backend/domain/business/entity/enterprise.entity";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
 import { ArrowUpRightIcon } from "@heroicons/react/24/solid";
@@ -249,3 +249,4 @@ export const Kanban: React.FC<KanbanProps> = ({
     </div>
   );
 };
+

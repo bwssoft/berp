@@ -1,5 +1,5 @@
-import IAutoTestLogRepository from "@/app/lib/@backend/domain/production/repository/auto-test-log.repository.interface";
-import IAutoTestLog from "@/app/lib/@backend/domain/production/entity/auto-test-log.definition";
+import type { IAutoTestLog } from "@/backend/domain/production/entity/auto-test-log.definition";
+import type { IAutoTestLogRepository } from "@/backend/domain/production/repository/auto-test-log.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
@@ -16,3 +16,5 @@ class AutoTestLogRepository
 }
 
 export const autoTestLogRepository = singleton(AutoTestLogRepository);
+
+

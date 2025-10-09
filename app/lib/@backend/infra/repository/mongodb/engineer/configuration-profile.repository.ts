@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IConfigurationProfile } from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
+import { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { BaseRepository } from "../@base";
 
 class ConfigurationProfile extends BaseRepository<IConfigurationProfile> {
@@ -12,3 +12,4 @@ class ConfigurationProfile extends BaseRepository<IConfigurationProfile> {
 }
 
 export const configurationProfileRepository = singleton(ConfigurationProfile)
+

@@ -1,6 +1,6 @@
 "use client";
 
-import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
 import { SetLockedProfileForm } from '@/frontend/ui/form/admin/profile/set-locked/set-locked.profile.form';
 
 import { ControlTree } from "@/app/lib/util";
@@ -177,3 +177,4 @@ const renderControlTree = (
     </Disclosure>
   );
 };
+

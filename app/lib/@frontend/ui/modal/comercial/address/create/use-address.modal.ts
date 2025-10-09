@@ -3,8 +3,8 @@
 import {
   createOneAddress,
   deleteOneAddress,
-} from "@/app/lib/@backend/action/commercial/address.action";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
+} from "@/backend/action/commercial/address.action";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState } from "react";
 import { addressesQueryKey } from "../../../../form/commercial/address/get/useaddress";
@@ -108,3 +108,4 @@ export function useAddressModal() {
     createAddressLocally,
   };
 }
+

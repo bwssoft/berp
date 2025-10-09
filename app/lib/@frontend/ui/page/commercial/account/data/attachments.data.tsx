@@ -1,10 +1,10 @@
 "use client";
 import { CreateAnnexModal } from "../../../../modal/comercial/account-attachments/create/annex/annex.create.commercial.modal";
 import { AccountAttachmentsTable } from "../../../../table/commercial/account/accountAttachments/table";
-import { IAccountAttachment } from "@/app/lib/@backend/domain/commercial/entity/account-attachment.definition";
+import { IAccountAttachment } from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { useCreateAnnexModal } from "../../../../modal/comercial/account-attachments/create/annex/use-annex.create.commercial.modal";
 import { SearchAttachmentsForm } from "../../../../form/commercial/account/account-attachments/search/search-attachments.annex.form";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 interface Props {
   attachments: PaginationResult<IAccountAttachment>;
@@ -39,3 +39,4 @@ export function AttachmentsDataPage({
     </div>
   );
 }
+

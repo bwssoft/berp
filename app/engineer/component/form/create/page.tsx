@@ -1,4 +1,4 @@
-import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component/component.category.action";
+import { findManyComponentCategory } from "@/backend/action/engineer/component/component.category.action";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { CreateOneComponentForm } from '@/frontend/ui/form/engineer/component/create/component.create.form';
@@ -29,3 +29,4 @@ export default async function Page() {
     </div>
   );
 }
+

@@ -7,8 +7,8 @@ import { Textarea } from '@/frontend/ui/component/text-area';
 
 import { Controller } from "react-hook-form";
 import { baseConstants } from "@/app/lib/constant/logistic";
-import {IBase} from "@/app/lib/@backend/domain/logistic/entity/base.entity";
-import {IEnterprise} from "@/app/lib/@backend/domain/business/entity/enterprise.entity";
+import {IBase} from "@/backend/domain/logistic/entity/base.entity";
+import {IEnterprise} from "@/backend/domain/business/entity/enterprise.entity";
 import { Select } from '@/frontend/ui/composite/select';
 
 
@@ -109,3 +109,4 @@ export function UpdateOneBaseForm(props: Props) {
     </form>
   );
 }
+

@@ -1,5 +1,6 @@
-import IDevice from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import IRequestToUpdate from "@/app/lib/@backend/domain/engineer/entity/request-to-update-firmware.definition";
+import type { IDevice } from "@/backend/domain/engineer/entity/device.definition";
+import type { IRequestToUpdate } from "@/backend/domain/engineer/entity/request-to-update-firmware.definition";
+import type { IFirmware } from "@/backend/domain/engineer/entity/firmware.definition";
 import { ColumnDef } from "@tanstack/react-table";
 
 type Type = IRequestToUpdate & {

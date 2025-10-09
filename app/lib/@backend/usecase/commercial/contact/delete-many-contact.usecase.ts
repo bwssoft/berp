@@ -3,7 +3,7 @@ import { singleton } from "@/app/lib/util/singleton";
 import {
   contactRepository,
   accountRepository,
-} from "@/app/lib/@backend/infra/repository";
+} from "@/backend/infra";
 
 export type DeleteManyContactOutput = {
   success?: {
@@ -74,3 +74,4 @@ class DeleteManyContactUsecase {
 }
 
 export const deleteManyContactUsecase = singleton(DeleteManyContactUsecase);
+

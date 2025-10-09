@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
-import { sectorRepository } from "../../../infra/repository";
+import { ISector } from "@/backend/domain/commercial/entity/sector.definition";
+import { sectorRepository } from "@/backend/infra";
 import { findManySectorUsecase } from "./find-many.sector.usecase";
 import { normalizeString } from "@/app/lib/util/normalize-string";
 import { AppError } from "@/app/lib/util/app-error";
@@ -44,3 +44,4 @@ class CreateOneSectorUsecase {
 }
 
 export const createOneSectorUsecase = singleton(CreateOneSectorUsecase);
+

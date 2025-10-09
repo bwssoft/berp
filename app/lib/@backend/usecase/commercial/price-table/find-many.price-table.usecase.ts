@@ -1,9 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 import type { Filter } from "mongodb";
-import { IPriceTableRepository, IPriceTable } from "@/app/lib/@backend/domain/commercial";
-import { PaginationResult } from "../../../domain/@shared/repository/pagination.interface";
-import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
+import { IPriceTableRepository, IPriceTable } from "@/backend/domain/commercial";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import { priceTableRepository } from "@/backend/infra/mongodb/commercial/price-table.repository";
 
 namespace Dto {
     export interface Input {
@@ -33,3 +33,4 @@ class FindManyPriceTableUsecase {
 }
 
 export const findManyPriceTableUsecase = singleton(FindManyPriceTableUsecase);
+

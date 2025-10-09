@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IConfigurationLog from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
-import { configurationLogRepository } from "@/app/lib/@backend/infra";
+import IConfigurationLog from "@/backend/domain/production/entity/configuration-log.definition";
+import { configurationLogRepository } from "@/backend/infra";
 
 class UpdateBulkConfigurationLogUsecase {
   repository: IConfigurationLogRepository;
@@ -28,3 +28,4 @@ class UpdateBulkConfigurationLogUsecase {
 export const updateBulkConfigurationLogUsecase = singleton(
   UpdateBulkConfigurationLogUsecase
 );
+

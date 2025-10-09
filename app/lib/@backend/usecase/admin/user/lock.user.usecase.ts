@@ -1,9 +1,9 @@
 import { Filter } from "mongodb";
-import { userRepository } from "@/app/lib/@backend/infra";
-import { AuditDomain } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
-import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
-import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
-import { createOneAuditUsecase } from "../audit";
+import { userRepository } from "@/backend/infra";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/backend/domain/admin/repository/user.repository";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit";
 import { auth } from "@/auth";
 
 namespace Dto {
@@ -59,3 +59,4 @@ export const lockUserUsecase = async (
         };
     }
 };
+

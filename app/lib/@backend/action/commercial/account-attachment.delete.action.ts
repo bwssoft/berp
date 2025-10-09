@@ -1,11 +1,11 @@
 "use server";
 
-import { accountAttachmentObjectRepository } from "@/app/lib/@backend/infra/repository/s3/commercial/account-attachment.repository";
-import { accountAttachmentRepository } from "@/app/lib/@backend/infra/repository/mongodb/commercial/account-attachment.repository";
+import { accountAttachmentObjectRepository } from "@/backend/infra/repository/s3/commercial/account-attachment.repository";
+import { accountAttachmentRepository } from "@/backend/infra/repository/mongodb/commercial/account-attachment.repository";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "@/app/lib/@backend/usecase/admin/audit/create-one.audit.usecase";
-import { AuditDomain } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
 
 export async function deleteAccountAttachment(id: string) {
   try {
@@ -52,3 +52,4 @@ export async function deleteAccountAttachment(id: string) {
     return { success: false, error: "Failed to delete attachment" };
   }
 }
+

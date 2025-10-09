@@ -1,6 +1,6 @@
-import IProductionOrder from "@/app/lib/@backend/domain/production/entity/production-order.definition";
-import IProductionOrderRepository from "@/app/lib/@backend/domain/production/repository/production-order.repository.interface";
-import { productionOrderRepository } from "@/app/lib/@backend/infra";
+import type { IProductionOrder } from "@/backend/domain/production/entity/production-order.definition";
+import type { IProductionOrderRepository } from "@/backend/domain/production/repository/production-order.repository";
+import { productionOrderRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { UpdateFilter } from "mongodb";
 
@@ -22,3 +22,5 @@ class UpdateOneProductionOrderUsecase {
 export const updateOneProductionOrderUsecase = singleton(
   UpdateOneProductionOrderUsecase
 );
+
+

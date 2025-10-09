@@ -14,18 +14,18 @@ import { useRouter } from "next/navigation";
 import { debounce } from "lodash";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
-import {ICnpjaResponse} from "@/app/lib/@backend/domain/@shared/gateway/cnpja.gateway.interface";
-import { accountExists } from "@/app/lib/@backend/action/commercial/account.action";
+import {ICnpjaResponse} from "@/backend/domain/@shared/gateway/cnpja.gateway.interface";
+import { accountExists } from "@/backend/action/commercial/account.action";
 import {
   fetcCnpjRegistrationData,
   fetchCnpjData,
   fetchNameData,
-} from "@/app/lib/@backend/action/cnpja/cnpja.action";
+} from "@/backend/action/cnpja/cnpja.action";
 import {
   findOneAccountEconomicGroup,
   validateControlledEnterprisesNotInHolding,
   validateHoldingEnterpriseNotInGroup,
-} from "@/app/lib/@backend/action/commercial/account.economic-group.action";
+} from "@/backend/action/commercial/account.economic-group.action";
 import { useAuth } from '@/frontend/context/auth.context';
 
 import {
@@ -544,12 +544,14 @@ export function CreateAccountFormProvider({
           taxId: holdingData.taxId,
         });
 
-        const controlledData = economicGroupControlled.map((controlled) => ({
-          taxId: controlled.taxId,
-          company: {
-            name: controlled.name,
-          },
-        })) as ICnpjaResponse[];
+        const controlledData = economicGroupControlled.map(
+          (controlled: { name: string; taxId: string }) => ({
+            taxId: controlled.taxId,
+            company: {
+              name: controlled.name,
+            },
+          })
+        ) as ICnpjaResponse[];
 
         // Add the current company being created to controlled companies if not already present
         if (data?.company?.name) {
@@ -558,7 +560,7 @@ export function CreateAccountFormProvider({
 
           // Check if current company is already in the controlled list
           const isCurrentCompanyAlreadyIncluded = economicGroupControlled.some(
-            (controlled) =>
+            (controlled: { taxId: string }) =>
               controlled.taxId.replace(/\D/g, "") === currentCompanyTaxId
           );
 
@@ -1093,3 +1095,4 @@ export function useCreateAccountFormContext() {
   }
   return context;
 }
+

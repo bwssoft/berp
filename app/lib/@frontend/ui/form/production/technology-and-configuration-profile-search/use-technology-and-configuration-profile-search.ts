@@ -1,11 +1,11 @@
 import {
   findManyConfigurationProfile,
   findOneConfigurationProfile,
-} from "@/app/lib/@backend/action/engineer/configuration-profile.action";
-import { findManyTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
-import {IConfigurationLog} from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
-import {IConfigurationProfile} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
-import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+} from "@/backend/action/engineer/configuration-profile.action";
+import { findManyTechnology } from "@/backend/action/engineer/technology.action";
+import {IConfigurationLog} from "@/backend/domain/production/entity/configuration-log.definition";
+import {IConfigurationProfile} from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -127,3 +127,4 @@ export const useTechnologyAndConfigurationProfileForm = ({
     handleChangeConfigurationProfile,
   };
 };
+

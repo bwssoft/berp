@@ -1,5 +1,5 @@
-import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { UsersIcon } from "@heroicons/react/24/outline";
 
 type Props = {
@@ -48,3 +48,4 @@ export function ListProfileDescription({ profiles, isLoading }: Props) {
     </div>
   );
 }
+

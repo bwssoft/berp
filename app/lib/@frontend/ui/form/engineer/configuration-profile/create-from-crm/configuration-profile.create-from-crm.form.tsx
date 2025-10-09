@@ -2,8 +2,8 @@
 
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { useConfigurationProfileCreateFromCrmForm } from "./use-configuration-profile.create-from-crm.form";
-import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
-import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
 import { Button } from '@/frontend/ui/component/button';
 
 import { ShareIcon } from "@heroicons/react/24/outline";
@@ -366,3 +366,4 @@ export function ConfigurationProfileCreateFromCrmForm(props: Props) {
     </form>
   );
 }
+

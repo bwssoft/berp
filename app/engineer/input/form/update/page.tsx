@@ -1,5 +1,5 @@
-import { findOneInput } from "@/app/lib/@backend/action/engineer/input/input.action";
-import { findManyInputCategory } from "@/app/lib/@backend/action/engineer/input/input.category.action";
+import { findOneInput } from "@/backend/action/engineer/input/input.action";
+import { findManyInputCategory } from "@/backend/action/engineer/input/input.category.action";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { UpdateOneInputForm } from '@/frontend/ui/form/engineer/input/update/update.input.form';
@@ -59,3 +59,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

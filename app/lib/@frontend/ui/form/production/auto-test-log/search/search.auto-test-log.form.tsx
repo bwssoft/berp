@@ -5,7 +5,7 @@ import { Button } from '@/frontend/ui/component/button';
 import { Input } from '@/frontend/ui/component/input';
 
 import { Filter } from "mongodb";
-import {IAutoTestLog} from "@/app/lib/@backend/domain/production/entity/auto-test-log.definition";
+import {IAutoTestLog} from "@/backend/domain/production/entity/auto-test-log.definition";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 
 interface Props {
@@ -36,3 +36,4 @@ export function AutoTestLogSearchForm(props: Props) {
     </div>
   );
 }
+

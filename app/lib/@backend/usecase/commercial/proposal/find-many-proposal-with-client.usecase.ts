@@ -1,9 +1,9 @@
-import { IClient } from "@/app/lib/@backend/domain/commercial/entity/client.definition";
-import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
-import { IProposalRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.repository";
-import { proposalRepository } from "@/app/lib/@backend/infra";
+import { IClient } from "@/backend/domain/commercial/entity/client.definition";
+import { IProposal } from "@/backend/domain/commercial/entity/proposal.definition";
+import { IProposalRepository } from "@/backend/domain/commercial/repository/proposal.repository";
+import { proposalRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
+import { RemoveMongoId } from "@/backend/decorators";;
 
 namespace Dto {
   export interface Input extends Partial<IProposal> { }
@@ -55,3 +55,4 @@ class FindManyProposalWithClientUsecase {
 }
 
 export const findManyProposalWithClientUsecase = singleton(FindManyProposalWithClientUsecase);
+

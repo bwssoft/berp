@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
 import { Button } from '@/frontend/ui/component/button';
 
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
@@ -108,3 +108,4 @@ export const columns: ColumnDef<IAccountWithPermissions>[] = [
     },
   },
 ];
+

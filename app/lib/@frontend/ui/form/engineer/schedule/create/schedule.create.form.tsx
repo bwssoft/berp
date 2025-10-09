@@ -1,7 +1,7 @@
 "use client";
-import { ICommand } from "@/app/lib/@backend/domain/engineer/entity/command.definition";
-import { IDevice } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import { IFirmware } from "@/app/lib/@backend/domain/engineer/entity/firmware.definition";
+import { ICommand } from "@/backend/domain/engineer/entity/command.definition";
+import { IDevice } from "@/backend/domain/engineer/entity/device.definition";
+import { IFirmware } from "@/backend/domain/engineer/entity/firmware.definition";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useScheduleCreateForm } from "./use-schedule-create-form";
 import { Radio } from "@/app/lib/@frontend/ui/component/radio";
@@ -374,3 +374,4 @@ export function ScheduleCreateForm(props: Props) {
     </form>
   );
 }
+

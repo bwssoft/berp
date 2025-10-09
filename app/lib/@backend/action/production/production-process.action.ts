@@ -1,12 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { IProductionProcess } from "@/app/lib/@backend/domain/production/entity/production-process.definition";
-import { createOneProductionProcessUsecase } from "@/app/lib/@backend/usecase/production/production-process/create-one-production-process.usecase";
-import { findOneProductionProcessUsecase } from "@/app/lib/@backend/usecase/production/production-process/find-one-production-process.usecase";
-import { updateOneProductionProcessUsecase } from "@/app/lib/@backend/usecase/production/production-process/update-one-production-process.usecase";
-import { deleteOneProductionProcessUsecase } from "@/app/lib/@backend/usecase/production/production-process/delete-one-production-process.usecase";
-import { findAllProductionProcessUsecase } from "@/app/lib/@backend/usecase/production/production-process/find-all-production-process.usecase";
+import { IProductionProcess } from "@/backend/domain/production/entity/production-process.definition";
+import { createOneProductionProcessUsecase } from "@/backend/usecase/production/production-process/create-one-production-process.usecase";
+import { findOneProductionProcessUsecase } from "@/backend/usecase/production/production-process/find-one-production-process.usecase";
+import { updateOneProductionProcessUsecase } from "@/backend/usecase/production/production-process/update-one-production-process.usecase";
+import { deleteOneProductionProcessUsecase } from "@/backend/usecase/production/production-process/delete-one-production-process.usecase";
+import { findAllProductionProcessUsecase } from "@/backend/usecase/production/production-process/find-all-production-process.usecase";
 
 
 export async function createOneProductionProcess(
@@ -42,3 +42,4 @@ export async function findAllProductionProcess(): Promise<
 > {
   return await findAllProductionProcessUsecase.execute();
 }
+

@@ -1,4 +1,4 @@
-import { findManyInputCategory } from "@/app/lib/@backend/action/engineer/input/input.category.action";
+import { findManyInputCategory } from "@/backend/action/engineer/input/input.category.action";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { CreateOneInputForm } from '@/frontend/ui/form/engineer/input/create/create.input.form';
@@ -29,3 +29,4 @@ export default async function Page() {
     </div>
   );
 }
+

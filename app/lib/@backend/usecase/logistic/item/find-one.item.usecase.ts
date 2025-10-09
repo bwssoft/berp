@@ -1,9 +1,9 @@
 import { Filter } from "mongodb";
 
-import IItem from "@/app/lib/@backend/domain/logistic/entity/item.entity"; // Assumindo que IItemRepository existe
+import IItem from "@/backend/domain/logistic/entity/item.entity"; // Assumindo que IItemRepository existe
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators"; // Assumindo que este decorator existe
-import { itemRepository } from "@/app/lib/@backend/infra"; // Assumindo que itemRepository existe
+import { RemoveMongoId } from "@/backend/decorators"; // Assumindo que este decorator existe
+import { itemRepository } from "@/backend/infra"; // Assumindo que itemRepository existe
 
 namespace Dto {
   // Define a interface de entrada para o caso de uso
@@ -29,3 +29,4 @@ class FindOneItemUsecase {
 
 // Exporta a instância singleton do caso de uso
 export const findOneItemUsecase = singleton(FindOneItemUsecase);
+

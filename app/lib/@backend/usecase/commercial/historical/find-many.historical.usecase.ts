@@ -1,10 +1,10 @@
-import { IHistorical } from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
-import { IHistoricalRepository } from "@/app/lib/@backend/domain/commercial/repository/historical.repository";
+import { IHistorical } from "@/backend/domain/commercial/entity/historical.definition";
+import { IHistoricalRepository } from "@/backend/domain/commercial/repository/historical.repository";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { historicalRepository } from "@/app/lib/@backend/infra";
+import { RemoveMongoId } from "@/backend/decorators";
+import { historicalRepository } from "@/backend/infra";
 import { Filter } from "mongodb";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
   export interface Input {
@@ -35,3 +35,4 @@ class FindManyHistoricalUsecase {
 }
 
 export const findManyHistoricalUsecase = singleton(FindManyHistoricalUsecase);
+

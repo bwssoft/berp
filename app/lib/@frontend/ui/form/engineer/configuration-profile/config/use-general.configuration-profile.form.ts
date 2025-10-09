@@ -1,5 +1,5 @@
-import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
-import { ITechnology } from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import { ConfigurationProfileSchema } from "../upsert/use-configuration-profile.upsert.form";
@@ -42,3 +42,4 @@ export function useGeneralConfigurationProfileForm() {
     handleChangeServerOption,
   };
 }
+

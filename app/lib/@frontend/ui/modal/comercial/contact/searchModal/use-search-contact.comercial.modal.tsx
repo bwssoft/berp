@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
-import {IAccountEconomicGroup} from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
-import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
-import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {IAccountEconomicGroup} from "@/backend/domain/commercial/entity/account.economic-group.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
+import { findManyAccount } from "@/backend/action/commercial/account.action";
+import { findManyContact } from "@/backend/action/commercial/contact.action";
 
 const clean = (v?: string) => (v ?? "").replace(/\D/g, "");
 
@@ -80,3 +80,4 @@ export function useSearchContactModal(
     isLoading: accountLoading,
   };
 }
+

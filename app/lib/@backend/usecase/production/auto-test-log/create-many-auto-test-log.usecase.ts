@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IAutoTestLog from "@/app/lib/@backend/domain/production/entity/auto-test-log.definition";
-import { autoTestLogRepository } from "@/app/lib/@backend/infra";
+import IAutoTestLog from "@/backend/domain/production/entity/auto-test-log.definition";
+import { autoTestLogRepository } from "@/backend/infra";
 
 class CreateManyAutoTestLogUsecase {
   repository: IAutoTestLogRepository;
@@ -32,3 +32,4 @@ class CreateManyAutoTestLogUsecase {
 export const createManyAutoTestLogUsecase = singleton(
   CreateManyAutoTestLogUsecase
 );
+

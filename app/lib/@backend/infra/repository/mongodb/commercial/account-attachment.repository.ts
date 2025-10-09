@@ -1,4 +1,4 @@
-import { IAccountAttachment } from "@/app/lib/@backend/domain/commercial/entity/account-attachment.definition";
+import { IAccountAttachment } from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
@@ -14,3 +14,4 @@ class AccountAttachmentRepository extends BaseRepository<IAccountAttachment> {
 export const accountAttachmentRepository = singleton(
   AccountAttachmentRepository
 );
+

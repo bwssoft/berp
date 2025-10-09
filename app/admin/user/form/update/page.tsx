@@ -1,4 +1,4 @@
-import { findOneUser } from "@/app/lib/@backend/action/admin/user.action";
+import { findOneUser } from "@/backend/action/admin/user.action";
 import { UpdateOneUserForm } from '@/frontend/ui/form/admin/user/update-one/update-one.user.form';
 
 
@@ -48,3 +48,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

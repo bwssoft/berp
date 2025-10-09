@@ -17,11 +17,11 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
-import {IAddress} from "@/app/lib/@backend/domain/commercial/entity/address.definition";
-import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
-import {IAccountEconomicGroup} from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
-import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {IAddress} from "@/backend/domain/commercial/entity/address.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
+import {IAccountEconomicGroup} from "@/backend/domain/commercial/entity/account.economic-group.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import {
   CreateContactModal,
   SearchContactModal,
@@ -42,7 +42,7 @@ import { useDeleteContactDialog } from "../../../../dialog/commercial/account/co
 import { useEconomicGroupUpdateModal } from "../../../../modal/comercial/economic-group/update/use-economic-group.update.modal";
 import { useAccountDataUpdateModal } from "../../../../modal/comercial/account/update/use-account-data.update.modal";
 import { AccountDataUpdateModal } from "../../../../modal/comercial/account/update/account-data.update.modal";
-import { refreshOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { refreshOneAccount } from "@/backend/action/commercial/account.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -495,3 +495,4 @@ export function StatusBadge({ status, type = "general" }: StatusBadgeProps) {
     </Badge>
   );
 }
+

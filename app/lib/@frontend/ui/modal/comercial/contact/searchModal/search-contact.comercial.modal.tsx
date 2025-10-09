@@ -6,7 +6,7 @@ import { Button } from '@/frontend/ui/component/button';
 
 import { SearchContactAccountForm } from "../../../../form/commercial/account/contact";
 import { useSearchContactModal } from "./use-search-contact.comercial.modal";
-import { IAccountEconomicGroup } from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
+import { IAccountEconomicGroup } from "@/backend/domain/commercial/entity/account.economic-group.definition";
 
 interface ContactModalProps {
   economicGroup?: IAccountEconomicGroup;
@@ -49,3 +49,4 @@ export function SearchContactModal({ economicGroup, holdingTaxId }: ContactModal
     </>
   );
 }
+

@@ -22,8 +22,8 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type {IBase} from "@/app/lib/@backend/domain/logistic/entity/base.entity";
-import type {IItem} from "@/app/lib/@backend/domain/logistic/entity/item.entity";
+import type {IBase} from "@/backend/domain/logistic/entity/base.entity";
+import type {IItem} from "@/backend/domain/logistic/entity/item.entity";
 import { MovementRowForm } from "./movement.row.form";
 import { SortableItem } from '@/frontend/ui/component/sortable-item';
 
@@ -221,3 +221,4 @@ export function MovementBlockForm({
     </Card>
   );
 }
+

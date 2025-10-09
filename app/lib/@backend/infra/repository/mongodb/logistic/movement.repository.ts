@@ -1,5 +1,5 @@
-import { IMovement } from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
-import { IMovementRepository } from "@/app/lib/@backend/domain/logistic/repository/movement.repository.interface";
+import type { IMovement } from "@/backend/domain/logistic/entity/movement.entity";
+import type { IMovementRepository } from "@/backend/domain/logistic/repository/movement.repository.interface";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
@@ -16,3 +16,4 @@ class MovementRepository
 }
 
 export const movementRepository = singleton(MovementRepository);
+

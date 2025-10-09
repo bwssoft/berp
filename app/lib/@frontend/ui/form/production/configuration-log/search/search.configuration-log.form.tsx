@@ -8,7 +8,7 @@ import { Modal, ModalBody, ModalContent, ModalFooter } from '@/frontend/ui/compo
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
 
 import { Filter } from "mongodb";
-import {IConfigurationLog} from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
+import {IConfigurationLog} from "@/backend/domain/production/entity/configuration-log.definition";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import {
   FilterIcon,
@@ -201,3 +201,4 @@ export function ConfigurationLogSearchForm({ filter, searchParams }: Props) {
     </form>
   );
 }
+

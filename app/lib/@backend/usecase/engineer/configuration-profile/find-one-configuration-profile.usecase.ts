@@ -1,7 +1,7 @@
-import IConfigurationProfile from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
-import { configurationProfileRepository, deviceRepository } from "@/app/lib/@backend/infra";
+import IConfigurationProfile from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import { configurationProfileRepository, deviceRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 class FindOneConfigurationProfileUsecase {
   repository: IConfigurationProfileRepository;
@@ -18,3 +18,4 @@ class FindOneConfigurationProfileUsecase {
 }
 
 export const findOneConfigurationProfileUsecase = singleton(FindOneConfigurationProfileUsecase);
+

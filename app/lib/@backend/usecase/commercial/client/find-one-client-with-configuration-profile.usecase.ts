@@ -1,7 +1,7 @@
-import IConfigurationProfile from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
-import { clientRepository } from "@/app/lib/@backend/infra";
+import IConfigurationProfile from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import { clientRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 import { Filter } from "mongodb";
 
 namespace Dto {
@@ -58,3 +58,4 @@ class FindOneClientWithConfigurationProfileUsecase {
 export const findOneClientWithConfigurationProfileUsecase = singleton(
   FindOneClientWithConfigurationProfileUsecase
 );
+

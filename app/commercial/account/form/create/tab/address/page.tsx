@@ -7,7 +7,7 @@ import { AccountNotFoundState } from '@/frontend/ui/component/empty-state/empty-
 import { PageFooterButtons } from "./page-footer-buttons";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMemo, useEffect, useState } from "react";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -75,3 +75,4 @@ export default function Page() {
     </div>
   );
 }
+

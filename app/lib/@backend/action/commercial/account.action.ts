@@ -1,7 +1,7 @@
 "use server";
 
 import { Filter } from "mongodb";
-import { IAccount } from "../../domain";
+import { IAccount } from "@/backend/domain/commercial/entity/account.definition";
 import { createOneAccountUsecase } from "../../usecase/commercial/account/create-one.account.usecase";
 import { findManyAccountUsecase } from "../../usecase/commercial/account/find-many.account.usecase";
 import { findOneAccountUsecase } from "../../usecase/commercial/account/find-one.account.usecase";
