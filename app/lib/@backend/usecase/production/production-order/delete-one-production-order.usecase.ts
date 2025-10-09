@@ -1,7 +1,5 @@
-import {
-  IProductionOrder,
-  IProductionOrderRepository,
-} from "@/app/lib/@backend/domain";
+import IProductionOrder from "@/app/lib/@backend/domain/production/entity/production-order.definition";
+import IProductionOrderRepository from "@/app/lib/@backend/domain/production/repository/production-order.repository.interface";
 import {
   productionOrderRepository,
 } from "@/app/lib/@backend/infra";

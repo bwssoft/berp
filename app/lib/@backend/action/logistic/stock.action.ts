@@ -1,12 +1,10 @@
 "use server";
 
-import {
-  createOneStockUsecase,
-  findOneStockUsecase,
-  updateOneStockUsecase,
-  findManyStockUsecase,
-} from "@/app/lib/@backend/usecase";
-import { IStock } from "@/app/lib/@backend/domain";
+import { createOneStockUsecase } from "@/app/lib/@backend/usecase/logistic/stock/create-one.stock.usecase";
+import { findOneStockUsecase } from "@/app/lib/@backend/usecase/logistic/stock/find-one.stock.usecase";
+import { updateOneStockUsecase } from "@/app/lib/@backend/usecase/logistic/stock/update-one.stock.usecase";
+import { findManyStockUsecase } from "@/app/lib/@backend/usecase/logistic/stock/find-many.stock.usecase";
+import { IStock } from "@/app/lib/@backend/domain/logistic/entity/stock.entity";
 import { Filter } from "mongodb";
 
 export async function createOneStock(input: Omit<IStock, "id" | "created_at">) {

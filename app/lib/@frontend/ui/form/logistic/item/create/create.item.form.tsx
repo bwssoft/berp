@@ -30,7 +30,7 @@ import {
   Package,
   Cpu,
 } from "lucide-react";
-import { Item } from "@/app/lib/@backend/domain";
+import {Item} from "@/app/lib/@backend/domain/logistic/entity/item.entity";
 import { useCreateOneItemForm } from "./use-create.item.form";
 import { cn } from "@/app/lib/util";
 import {

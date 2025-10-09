@@ -16,7 +16,8 @@ import {
   validateControlledEnterprisesNotInHolding,
 } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { EconomicGroup, IAccount } from "@/app/lib/@backend/domain";
+import {EconomicGroup} from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
 import { useAuth } from '@/frontend/context/auth.context';
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";

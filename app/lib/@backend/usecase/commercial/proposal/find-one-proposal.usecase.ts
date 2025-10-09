@@ -1,4 +1,5 @@
-import { IProposal, IProposalRepository } from "@/app/lib/@backend/domain";
+import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
+import { IProposalRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.repository";
 import { proposalRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { IAccount, IAccountEconomicGroup, IContact } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import {IAccountEconomicGroup} from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
 

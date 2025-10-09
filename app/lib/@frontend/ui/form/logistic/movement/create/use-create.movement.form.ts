@@ -3,7 +3,9 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Base, IMovement, Item, Movement } from "@/app/lib/@backend/domain";
+import { IMovement, Movement } from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
+import { Item } from "@/app/lib/@backend/domain/logistic/entity/item.entity";
+import { Base } from "@/app/lib/@backend/domain/logistic/entity/base.entity";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { createManyMovement } from "@/app/lib/@backend/action/logistic/movement.action";
 

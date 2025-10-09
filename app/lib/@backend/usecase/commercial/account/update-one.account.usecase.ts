@@ -1,5 +1,6 @@
 import type { Filter } from "mongodb";
-import { IAccount, IAccountRepository } from "@/app/lib/@backend/domain";
+import { IAccount } from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import { IAccountRepository } from "@/app/lib/@backend/domain/commercial/repository/account.repository";
 import { accountRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

@@ -2,7 +2,9 @@ import { singleton } from "@/app/lib/util/singleton";
 
 import { resetPasswordUserUsecase } from "./reset-password.user.usecase";
 import { userRepository } from "@/app/lib/@backend/infra";
-import { AuditDomain, IUser, IUserRepository } from "@/app/lib/@backend/domain";
+import { AuditDomain } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../audit";
 

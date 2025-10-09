@@ -1,5 +1,5 @@
 "use client";
-import { IProduct } from "@/app/lib/@backend/domain";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useDeviceCreateForm } from "./use-device-create-form";
 

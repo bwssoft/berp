@@ -3,7 +3,7 @@
 import { downloadAccountAttachmentHistorical } from "@/app/lib/@backend/action/commercial/account-attachment-historical.download.action";
 import { deleteAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.delete.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { ContactSelection } from "@/app/lib/@backend/domain";
+import {ContactSelection} from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
 import { useAuth } from '@/frontend/context/auth.context';
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";

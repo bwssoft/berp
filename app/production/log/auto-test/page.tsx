@@ -1,5 +1,5 @@
 import { findManyAutoTestLog } from "@/app/lib/@backend/action/production/auto-test-log.action";
-import { IAutoTestLog } from "@/app/lib/@backend/domain";
+import {IAutoTestLog} from "@/app/lib/@backend/domain/production/entity/auto-test-log.definition";
 import { AutoTestLogSearchForm } from '@/frontend/ui/form/production/auto-test-log/search/search.auto-test-log.form';
 
 import { DevicesAutoTestedTable } from "@/app/lib/@frontend/ui/table/production/devices-auto-tested/table";

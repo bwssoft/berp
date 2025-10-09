@@ -1,4 +1,4 @@
-import { IProfile } from "@/app/lib/@backend/domain";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { UsersIcon } from "@heroicons/react/24/outline";
 

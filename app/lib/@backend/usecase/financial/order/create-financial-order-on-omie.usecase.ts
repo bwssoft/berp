@@ -1,5 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IClientRepository, IProductRepository, IProposalOmiegateway, IProposalRepository } from "@/app/lib/@backend/domain";
+import { IProposalOmiegateway } from "@/app/lib/@backend/domain/commercial/gateway/proposal.gateway";
+import { IClientRepository } from "@/app/lib/@backend/domain/commercial/repository/client.repository";
+import { IProductRepository } from "@/app/lib/@backend/domain/commercial/repository/product.repository";
+import { IProposalRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.repository";
 import { clientRepository, productRepository, proposalOmieGateway, proposalRepository, } from "@/app/lib/@backend/infra";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "../../commercial/proposal/analyse-proposal-scenario.usecase";
 import { nanoid } from "nanoid";

@@ -1,7 +1,7 @@
 "use client";
 
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import { IProductCategory } from "@/app/lib/@backend/domain";
+import {IProductCategory} from "@/app/lib/@backend/domain/commercial/entity/product.category.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./product.category.columns";
 import { Pagination } from "../../../component/pagination";

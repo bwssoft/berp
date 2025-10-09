@@ -3,7 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from '@/frontend/ui/component/button';
 
-import { IItem, Item } from "@/app/lib/@backend/domain";
+import {IItem} from "@/app/lib/@backend/domain/logistic/entity/item.entity";
+import {Item} from "@/app/lib/@backend/domain/logistic/entity/item.entity";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Badge } from "../../../component/badge";

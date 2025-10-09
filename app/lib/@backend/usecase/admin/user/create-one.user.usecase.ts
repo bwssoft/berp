@@ -3,12 +3,8 @@ import {
   generateRandomPassword,
   singleton,
 } from "@/app/lib/util";
-import {
-  AuditDomain,
-  IBMessageGateway,
-  IUser,
-  IUserRepository,
-} from "@/app/lib/@backend/domain";
+import IUser from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import IUserRepository from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
 import { bmessageGateway, userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
 import { randomInt } from "crypto";
 import { hash } from "bcrypt";

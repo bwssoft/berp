@@ -1,5 +1,5 @@
 import { updateOneInputById } from "@/app/lib/@backend/action/engineer/input/input.action";
-import { IInput } from "@/app/lib/@backend/domain";
+import {IInput} from "@/app/lib/@backend/domain/engineer/entity/input.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";

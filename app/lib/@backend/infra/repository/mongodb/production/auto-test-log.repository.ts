@@ -1,7 +1,5 @@
-import {
-  IAutoTestLogRepository,
-  IAutoTestLog,
-} from "@/app/lib/@backend/domain";
+import IAutoTestLogRepository from "@/app/lib/@backend/domain/production/repository/auto-test-log.repository.interface";
+import IAutoTestLog from "@/app/lib/@backend/domain/production/entity/auto-test-log.definition";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 

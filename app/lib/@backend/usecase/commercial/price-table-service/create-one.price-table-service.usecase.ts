@@ -1,4 +1,4 @@
-import { IPriceTableService } from "@/app/lib/@backend/domain";
+import { IPriceTableService } from "@/app/lib/@backend/domain/commercial/entity/price-table-service.definition";
 import { priceTableServiceRepository } from "@/app/lib/@backend/infra/repository/mongodb/commercial/price-table-service.repository";
 
 class CreateOnePriceTableServiceUsecase {

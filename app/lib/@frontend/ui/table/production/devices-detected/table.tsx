@@ -14,7 +14,7 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
-import { Device } from "@/app/lib/@backend/domain";
+import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
 
 interface Props {
   data: Row[];

@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { IProduct } from "@/app/lib/@backend/domain";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
 import { useProductionOrderCreateForm } from "./use-production-order-create-form";
 import { productionOrderConstants } from "@/app/lib/constant";
 

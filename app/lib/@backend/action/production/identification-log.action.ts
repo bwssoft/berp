@@ -1,12 +1,10 @@
 "use server";
 
-import { IIdentificationLog } from "@/app/lib/@backend/domain";
-import {
-  createOneIdentificationLogUsecase,
-  findManyIdentificationLogUsecase,
-  findOneIdentificationLogUsecase,
-  exportIdentificationLogUsecase,
-} from "@/app/lib/@backend/usecase";
+import { IIdentificationLog } from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
+import { createOneIdentificationLogUsecase } from "@/app/lib/@backend/usecase/production/identification-log/create-one-identification-log.usecase";
+import { findManyIdentificationLogUsecase } from "@/app/lib/@backend/usecase/production/identification-log/find-many-identification-log.usecase";
+import { findOneIdentificationLogUsecase } from "@/app/lib/@backend/usecase/production/identification-log/find-one-identification-log.usecase";
+import { exportIdentificationLogUsecase } from "@/app/lib/@backend/usecase/production/identification-log/export.identification-log.usecase";
 import { auth } from "@/auth";
 import { Filter } from "mongodb";
 

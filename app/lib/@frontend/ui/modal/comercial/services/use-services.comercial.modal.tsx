@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { IPriceTableService } from "@/app/lib/@backend/domain";
+import {IPriceTableService} from "@/app/lib/@backend/domain/commercial/entity/price-table-service.definition";
 import {
   createOnePriceTableService,
   findManyPriceTableService,

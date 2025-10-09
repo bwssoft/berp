@@ -1,9 +1,6 @@
-import {
-  ICommand,
-  IDevice,
-  IFirmware,
-  ISchedule,
-} from "@/app/lib/@backend/domain";
+import ICommand from "@/app/lib/@backend/domain/engineer/entity/command.definition";
+import IDevice from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import ISchedule from "@/app/lib/@backend/domain/engineer/entity/command-schedule.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { deleteOneScheduleById } from "@/app/lib/@backend/action/engineer/command/schedule.action";

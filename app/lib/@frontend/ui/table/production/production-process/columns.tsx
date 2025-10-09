@@ -1,5 +1,5 @@
 import { deleteOneProductionProcessById } from "@/app/lib/@backend/action/production/production-process.action";
-import { IProductionProcess } from "@/app/lib/@backend/domain";
+import {IProductionProcess} from "@/app/lib/@backend/domain/production/entity/production-process.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 

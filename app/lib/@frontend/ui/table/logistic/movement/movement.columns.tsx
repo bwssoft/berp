@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from '@/frontend/ui/component/button';
 
-import { IMovement, Movement } from "@/app/lib/@backend/domain";
+import { IMovement, Movement } from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
 import { CheckIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { Badge } from "../../../component/badge";
 import {

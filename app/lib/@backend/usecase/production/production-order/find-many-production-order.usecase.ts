@@ -1,8 +1,4 @@
-import {
-  IProduct,
-  IProductionOrder,
-  IProductionOrderRepository,
-} from "@/app/lib/@backend/domain";
+import IProduct from "@/app/lib/@backend/domain/commercial/entity/product.definition";
 import { productionOrderRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

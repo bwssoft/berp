@@ -1,5 +1,5 @@
 import { updateOneProductionProcessById } from "@/app/lib/@backend/action/production/production-process.action";
-import { IProductionProcess } from "@/app/lib/@backend/domain";
+import {IProductionProcess} from "@/app/lib/@backend/domain/production/entity/production-process.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";

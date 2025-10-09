@@ -1,4 +1,4 @@
-import { IProposal } from "@/app/lib/@backend/domain";
+import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

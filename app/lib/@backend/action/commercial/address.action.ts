@@ -1,11 +1,9 @@
 "use server";
 
-import { IAddress } from "@/app/lib/@backend/domain";
-import {
-  createOneAddressUsecase,
-  findManyAddressUsecase,
-  findOneAddressUsecase,
-} from "@/app/lib/@backend/usecase";
+import { IAddress } from "@/app/lib/@backend/domain/commercial/entity/address.definition";
+import { createOneAddressUsecase } from "@/app/lib/@backend/usecase/commercial/address/create-one.address.usecase";
+import { findManyAddressUsecase } from "@/app/lib/@backend/usecase/commercial/address/find-many.address.usecase";
+import { findOneAddressUsecase } from "@/app/lib/@backend/usecase/commercial/address/find-one.address.usecase";
 import { Filter } from "mongodb";
 import { viaCepGateway } from "../../infra/gateway/viacep/viacep.gateway";
 import { updateOneAddressUsecase } from "../../usecase/commercial/address/update-one.address.usecase";

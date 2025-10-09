@@ -1,10 +1,5 @@
-import {
-  IProduct,
-  IProductCategory,
-  IProductionOrder,
-  IProductionOrderRepository,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
+import IProduct from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import ITechnology from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
 import { productionOrderRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

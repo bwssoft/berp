@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { IUser } from "@/app/lib/@backend/domain";
+import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useRouter } from "next/navigation";
 import { userConstants } from "@/app/lib/constant";

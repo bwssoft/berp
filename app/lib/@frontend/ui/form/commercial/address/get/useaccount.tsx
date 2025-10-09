@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IAccount } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
 import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 
 export function useAccount(id: string) {

@@ -12,7 +12,7 @@ import {
   loadCountiesByUF,
   type County,
 } from "@/app/lib/constant/brasil/counties";
-import { IAddress } from "@/app/lib/@backend/domain";
+import {IAddress} from "@/app/lib/@backend/domain/commercial/entity/address.definition";
 import { useAddressUpdateForm } from "./use-address.update.form";
 import { Loader2 } from "lucide-react";
 

@@ -1,4 +1,4 @@
-import type { IIdentificationLog } from "@/app/lib/@backend/domain";
+import type {IIdentificationLog} from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
 import { cn, getStatusProps } from "@/app/lib/util";
 import {
   Card,

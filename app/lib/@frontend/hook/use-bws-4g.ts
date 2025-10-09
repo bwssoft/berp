@@ -1,9 +1,6 @@
 import { useCallback } from "react";
-import {
-  Bws4g,
-  Bws4GEncoder,
-  Bws4gParser,
-} from "../../@backend/infra/protocol";
+import { Bws4g, Bws4gParser } from "../../@backend/infra/protocol/parser/bws-4g";
+import { Bws4GEncoder } from "../../@backend/infra/protocol/encoder/bws-4g";
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";

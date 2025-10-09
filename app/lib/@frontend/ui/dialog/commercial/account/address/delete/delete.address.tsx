@@ -3,7 +3,7 @@
 import { Dialog } from '@/frontend/ui/component/dialog';
 import { Button } from '@/frontend/ui/component/button';
 
-import { IAddress } from "@/app/lib/@backend/domain";
+import {IAddress} from "@/app/lib/@backend/domain/commercial/entity/address.definition";
 
 interface AddressDeleteDialogProps {
     address?: IAddress;

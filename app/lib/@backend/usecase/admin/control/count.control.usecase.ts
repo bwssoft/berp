@@ -1,5 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IControl, IControlRepository } from "@/app/lib/@backend/domain";
+import { IControl } from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import { IControlRepository } from "@/app/lib/@backend/domain/admin/repository/control.repository.interface";
 import { controlRepository } from "@/app/lib/@backend/infra";
 import { Filter } from "mongodb";
 

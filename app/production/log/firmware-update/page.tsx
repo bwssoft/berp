@@ -2,7 +2,7 @@ import {
   findManyFirmwareUpdateLog,
   statsFirmwareUpdateLog,
 } from "@/app/lib/@backend/action/production/firmware-update-log.action";
-import { IFirmwareUpdateLog } from "@/app/lib/@backend/domain";
+import {IFirmwareUpdateLog} from "@/app/lib/@backend/domain/production/entity/firmware-update-log.definition";
 import { Button } from '@/frontend/ui/component/button';
 
 import {

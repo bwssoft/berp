@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { debounce } from "lodash";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
-import { ICnpjaResponse } from "@/app/lib/@backend/domain";
+import {ICnpjaResponse} from "@/app/lib/@backend/domain/@shared/gateway/cnpja.gateway.interface";
 import { accountExists } from "@/app/lib/@backend/action/commercial/account.action";
 import {
   fetcCnpjRegistrationData,

@@ -1,4 +1,4 @@
-import { IInputCategory } from "@/app/lib/@backend/domain";
+import {IInputCategory} from "@/app/lib/@backend/domain/engineer/entity/input.category.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { Button } from '@/frontend/ui/component/button';

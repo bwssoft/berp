@@ -1,7 +1,7 @@
 "use client";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { IAccount } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
 import { Button } from '@/frontend/ui/component/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
 

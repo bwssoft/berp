@@ -1,4 +1,4 @@
-import { IConfigurationProfileRepository } from "@/app/lib/@backend/domain";
+import { IConfigurationProfileRepository } from "@/app/lib/@backend/domain/engineer/repository/configuration-profile.repository.interface";
 import { configurationProfileRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

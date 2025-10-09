@@ -1,5 +1,6 @@
 import { usePathname } from "next/navigation";
-import { IAddress, IContact } from "@/app/lib/@backend/domain";
+import {IAddress} from "@/app/lib/@backend/domain/commercial/entity/address.definition";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 import {
   LocalAddress,
   LocalContact,

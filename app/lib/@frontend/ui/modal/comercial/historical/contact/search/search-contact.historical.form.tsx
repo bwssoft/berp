@@ -7,7 +7,7 @@ import { SearchContactHistoricalAccountForm } from '@/frontend/ui/form/commercia
 
 import { useSearchContactHistoricalModal } from "./use-search-contact.historical.form";
 import { PhoneIcon } from "@heroicons/react/24/outline";
-import { ContactSelection } from "@/app/lib/@backend/domain";
+import {ContactSelection} from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
 
 interface ContactModalProps {
   accountId?: string;

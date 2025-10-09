@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { E3Encoder, E3Parser } from "../../@backend/infra/protocol";
+import { E3Parser } from "../../@backend/infra/protocol/parser/E3";
+import { E3Encoder } from "../../@backend/infra/protocol/encoder/E3";
 import { typedObjectEntries } from "../../util";
 import { useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";

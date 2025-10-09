@@ -1,5 +1,5 @@
 "use client";
-import { IProfile } from "@/app/lib/@backend/domain";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import { ClockIcon, UsersIcon } from "@heroicons/react/24/outline";
 import { Button } from '@/frontend/ui/component/button';

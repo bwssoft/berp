@@ -17,12 +17,11 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import {
-  IAccount,
-  IAddress,
-  IContact,
-  IAccountEconomicGroup,
-} from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import {IAddress} from "@/app/lib/@backend/domain/commercial/entity/address.definition";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
+import {IAccountEconomicGroup} from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import {
   CreateContactModal,
   SearchContactModal,

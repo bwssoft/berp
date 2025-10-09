@@ -1,4 +1,4 @@
-import { IProductionOrderRepository } from "@/app/lib/@backend/domain";
+import { IProductionOrderRepository } from "@/app/lib/@backend/domain/production/repository/production-order.repository.interface";
 import { productionOrderRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 

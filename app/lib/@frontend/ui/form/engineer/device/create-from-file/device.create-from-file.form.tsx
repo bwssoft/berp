@@ -1,7 +1,7 @@
 "use client";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useDeviceCreateFromFileForm } from "./use-device-create-from-file-form";
-import { IProduct } from "@/app/lib/@backend/domain";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { FileUpload } from "../../../../component/input-file";
 

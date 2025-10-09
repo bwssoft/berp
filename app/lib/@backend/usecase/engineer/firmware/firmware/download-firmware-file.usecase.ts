@@ -1,4 +1,4 @@
-import { IFirmwareRepository } from '@/app/lib/@backend/domain'
+import { IFirmwareRepository } from "@/app/lib/@backend/domain/engineer/repository/firmware.repository.interface";
 import { IFirebaseGateway } from '@/app/lib/@backend/domain/@shared/gateway/firebase.gateway.interface'
 import { firmwareRepository, firebaseGateway } from '@/app/lib/@backend/infra'
 import { singleton } from '@/app/lib/util'

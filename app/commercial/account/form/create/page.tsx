@@ -1,6 +1,6 @@
 import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { IContact } from "@/app/lib/@backend/domain";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 
 import { BackButton } from '@/frontend/ui/component/back-button';
 import { CreateOneAccountForm } from '@/frontend/ui/form/commercial/account/create/create.account.form';

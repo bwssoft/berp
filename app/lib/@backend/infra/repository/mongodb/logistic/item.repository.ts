@@ -1,4 +1,5 @@
-import { IItemRepository, IItem } from "@/app/lib/@backend/domain";
+import { IItem } from "@/app/lib/@backend/domain/logistic/entity/item.entity";
+import { IItemRepository } from "@/app/lib/@backend/domain/logistic/repository/item.repository.interface";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 

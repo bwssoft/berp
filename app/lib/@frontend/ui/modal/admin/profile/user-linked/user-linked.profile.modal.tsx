@@ -1,7 +1,8 @@
 "use client";
 
 import { Modal, ModalBody, ModalContent } from "../../../../component/modal";
-import { IProfile, IUser } from "@/app/lib/@backend/domain";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
 import { ListUserDescription } from '@/frontend/ui/description/admin/user/list-user.description';
 
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";

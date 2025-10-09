@@ -3,7 +3,9 @@
 // import PieChart from "@/app/lib/@frontend/ui/chart/pie.chart";
 // import { productionOrderConstants } from "@/app/lib/constant";
 // import { months } from "@/app/lib/constant/months";
-// import { IFinancialOrder, IProduct, IProductionOrderLegacy } from "@/app/lib/@backend/domain";
+// import {IFinancialOrder} from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import {IProductionOrderLegacy} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
 
 import { BarChart } from '@/frontend/ui/chart/bar.chart';
 

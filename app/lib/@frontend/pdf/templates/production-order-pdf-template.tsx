@@ -1,13 +1,11 @@
 "use client";
-import {
-  IClient,
-  IProduct,
-  IFinancialOrder,
-  saleOrderStageMapping,
-  IProductionOrder,
-  ITechnology,
-  IProductCategory,
-} from "@/app/lib/@backend/domain";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import {IFinancialOrder, saleOrderStageMapping} from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
+import {IProductionOrder} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
+import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import {IProductCategory} from "@/app/lib/@backend/domain/commercial/entity/product.category.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
 import { PageBreak, Tailwind } from "@fileforge/react-print";

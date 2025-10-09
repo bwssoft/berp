@@ -1,9 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IMovement,
-  IMovementRepository,
-  Movement,
-} from "@/app/lib/@backend/domain";
+import IMovement from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
+import Movement from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
 import { movementRepository } from "@/app/lib/@backend/infra";
 import { consolidateStockByMovementUseCase } from "../stock";
 

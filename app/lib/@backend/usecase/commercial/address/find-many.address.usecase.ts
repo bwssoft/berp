@@ -3,7 +3,7 @@ import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import type { Filter } from "mongodb";
 import { IAddressRepository } from "@/app/lib/@backend/domain/commercial";
 import { addressRepository } from "@/app/lib/@backend/infra/repository";
-import { IAddress } from "@/app/lib/@backend/domain";
+import { IAddress } from "@/app/lib/@backend/domain/commercial/entity/address.definition";
 
 class FindManyAddressUsecase {
     repository: IAddressRepository;

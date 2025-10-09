@@ -1,6 +1,6 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { IProduct } from "@/app/lib/@backend/domain";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { ProductTable } from "@/app/lib/@frontend/ui/table/commercial/product/product.table";

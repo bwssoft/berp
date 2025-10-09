@@ -3,7 +3,8 @@ import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/p
 import { Modal, ModalBody, ModalContent } from "../../../component/modal";
 import { ListProfileDescription } from '@/frontend/ui/description/admin/profile/list-profile.description';
 
-import { IControl, IProfile } from "@/app/lib/@backend/domain";
+import {IControl} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
 
 interface Props {
   open: boolean;

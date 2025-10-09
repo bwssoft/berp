@@ -1,13 +1,11 @@
 "use server";
 
-import { IInput } from "@/app/lib/@backend/domain";
-import {
-  createOneInputUsecase,
-  deleteOneInputUsecase,
-  findManyInputUsecase,
-  findOneInputUsecase,
-  updateOneInputUsecase,
-} from "@/app/lib/@backend/usecase";
+import { IInput } from "@/app/lib/@backend/domain/engineer/entity/input.definition";
+import { createOneInputUsecase } from "@/app/lib/@backend/usecase/engineer/input/input/create-one.input.usecase";
+import { deleteOneInputUsecase } from "@/app/lib/@backend/usecase/engineer/input/input/delete-one.input.usecase";
+import { findManyInputUsecase } from "@/app/lib/@backend/usecase/engineer/input/input/find-many.input.usecase";
+import { findOneInputUsecase } from "@/app/lib/@backend/usecase/engineer/input/input/find-one.input.usecase";
+import { updateOneInputUsecase } from "@/app/lib/@backend/usecase/engineer/input/input/update-one.input.usecase";
 import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
 

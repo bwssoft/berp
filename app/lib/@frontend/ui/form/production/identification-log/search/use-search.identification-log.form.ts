@@ -1,5 +1,5 @@
 import { exportIdentificationLog } from "@/app/lib/@backend/action/production/identification-log.action";
-import { IIdentificationLog } from "@/app/lib/@backend/domain";
+import {IIdentificationLog} from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
 import { useDebounce } from "@/app/lib/@frontend/hook/use-debounce";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { Filter } from "mongodb";

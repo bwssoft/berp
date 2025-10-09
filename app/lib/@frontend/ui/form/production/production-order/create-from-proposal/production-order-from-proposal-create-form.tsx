@@ -11,13 +11,12 @@ import {
   LinkIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
-import {
-  IClient,
-  IConfigurationProfile,
-  IProduct,
-  IProductionOrder,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {IConfigurationProfile} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import {IProductionOrder} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
+import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { Button } from '@/frontend/ui/component/button';
 import { Combobox } from '@/frontend/ui/component/combobox/index';
 import { Error } from '@/frontend/ui/component/error';

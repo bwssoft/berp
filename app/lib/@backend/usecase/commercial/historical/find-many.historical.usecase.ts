@@ -1,4 +1,5 @@
-import { IHistorical, IHistoricalRepository } from "@/app/lib/@backend/domain";
+import { IHistorical } from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
+import { IHistoricalRepository } from "@/app/lib/@backend/domain/commercial/repository/historical.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { historicalRepository } from "@/app/lib/@backend/infra";

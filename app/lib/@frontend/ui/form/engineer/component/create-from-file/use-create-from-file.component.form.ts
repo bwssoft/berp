@@ -1,9 +1,6 @@
 import { createManyComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
-import {
-  Component,
-  IComponent,
-  IComponentCategory,
-} from "@/app/lib/@backend/domain";
+import Component from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import IComponent from "@/app/lib/@backend/domain/engineer/entity/component.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { xlsxToJson } from "@/app/lib/util";
 import { getRandomHexColor } from "@/app/lib/util/get-hex-color";

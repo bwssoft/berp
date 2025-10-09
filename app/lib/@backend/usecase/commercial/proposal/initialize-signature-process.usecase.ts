@@ -1,5 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProposal, IProposalObjectRepository, IProposalRepository, IProposalToHtmlDataMapper, proposalToHtmlDataMapper } from "@/app/lib/@backend/domain";
+import { IProposalObjectRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.object.repository";
+import { IProposalToHtmlDataMapper, proposalToHtmlDataMapper } from "@/app/lib/@backend/domain/commercial/data-mapper/proposal-to-html";
+import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
+import { IProposalRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.repository";
 import { proposalObjectRepository, proposalRepository } from "@/app/lib/@backend/infra";
 import { analyseProposalScenarioUsecase, IAnalyseProposalScenarioUsecase } from "./analyse-proposal-scenario.usecase";
 import { htmlToPdf } from "@/app/lib/util";

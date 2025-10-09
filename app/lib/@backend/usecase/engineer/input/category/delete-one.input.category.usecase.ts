@@ -1,8 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IInputCategory,
-  IInputCategoryRepository,
-} from "@/app/lib/@backend/domain";
+
 import { inputCategoryRepository } from "@/app/lib/@backend/infra";
 
 class DeleteOneInputCategoryUsecase {

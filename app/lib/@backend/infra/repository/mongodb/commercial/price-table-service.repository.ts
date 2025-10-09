@@ -1,4 +1,4 @@
-import { IPriceTableService } from "@/app/lib/@backend/domain";
+import { IPriceTableService } from "@/app/lib/@backend/domain/commercial/entity/price-table-service.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

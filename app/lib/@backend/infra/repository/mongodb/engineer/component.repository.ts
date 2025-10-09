@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IComponent } from "@/app/lib/@backend/domain";
+import { IComponent } from "@/app/lib/@backend/domain/engineer/entity/component.definition";
 import { BaseRepository } from "../@base";
 
 class ComponentRepository extends BaseRepository<IComponent> {

@@ -2,7 +2,8 @@ import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { ClientSectorEnum, ContactDepartmentEnum, ContactRoleEnum, DocumentValueEnum, TaxRegime } from '@/app/lib/@backend/domain';
+import {ClientSectorEnum, DocumentValueEnum, TaxRegime} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {ContactDepartmentEnum, ContactRoleEnum} from "@/app/lib/@backend/domain/commercial/entity/old-contact.definition";
 import { createOneClient } from '@/app/lib/@backend/action/commercial/client.action';
 
 const schema = z.object({

@@ -1,4 +1,4 @@
-import { IAccountAttachment } from "@/app/lib/@backend/domain";
+import {IAccountAttachment} from "@/app/lib/@backend/domain/commercial/entity/account-attachment.definition";
 import { ArrowDownTrayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { downloadAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.download.action";
 import { deleteAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.delete.action";

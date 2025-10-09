@@ -1,7 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
 import type { Filter } from "mongodb";
 import { inputRepository } from "@/app/lib/@backend/infra";
-import { IInput, IInputRepository } from "@/app/lib/@backend/domain";
+import { IInput } from "@/app/lib/@backend/domain/engineer/entity/input.definition";
+import { IInputRepository } from "@/app/lib/@backend/domain/engineer/repository/input.repository.interface";
 import { RemoveFields } from "@/app/lib/@backend/decorators";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 

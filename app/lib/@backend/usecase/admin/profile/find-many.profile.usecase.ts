@@ -1,4 +1,5 @@
-import { IProfile, IProfileRepository } from "@/app/lib/@backend/domain";
+import { IProfile } from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import { IProfileRepository } from "@/app/lib/@backend/domain/admin/repository/profile.repository.interface";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { profileRepository } from "@/app/lib/@backend/infra";

@@ -1,4 +1,6 @@
-import { IClient, IProposal, IProposalRepository } from "@/app/lib/@backend/domain";
+import { IClient } from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
+import { IProposalRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.repository";
 import { proposalRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";;

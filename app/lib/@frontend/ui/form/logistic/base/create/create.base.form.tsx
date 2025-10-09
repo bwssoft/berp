@@ -7,7 +7,7 @@ import { Textarea } from '@/frontend/ui/component/text-area';
 
 import { Controller } from "react-hook-form";
 import { baseConstants } from "@/app/lib/constant/logistic";
-import { IEnterprise } from "@/app/lib/@backend/domain";
+import {IEnterprise} from "@/app/lib/@backend/domain/business/entity/enterprise.entity";
 import { Select } from '@/frontend/ui/composite/select';
 
 

@@ -1,4 +1,5 @@
-import { IComponent, IProduct } from "@/app/lib/@backend/domain";
+import {IComponent} from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
 
 export function fillMissingDates(
   data: {

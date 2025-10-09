@@ -1,6 +1,6 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyItem } from "@/app/lib/@backend/action/logistic/item.action";
-import { IItem } from "@/app/lib/@backend/domain";
+import {IItem} from "@/app/lib/@backend/domain/logistic/entity/item.entity";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { ItemTable } from "@/app/lib/@frontend/ui/table/logistic/item/item.table";

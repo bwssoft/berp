@@ -5,7 +5,7 @@ import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
-import { ICnpjaResponse } from "@/app/lib/@backend/domain";
+import {ICnpjaResponse} from "@/app/lib/@backend/domain/@shared/gateway/cnpja.gateway.interface";
 import { accountExists } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 

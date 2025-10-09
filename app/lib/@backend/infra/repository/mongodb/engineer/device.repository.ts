@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IDevice } from "@/app/lib/@backend/domain";
+import { IDevice } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
 import { BaseRepository } from "../@base";
 
 class DeviceRepository extends BaseRepository<IDevice> {

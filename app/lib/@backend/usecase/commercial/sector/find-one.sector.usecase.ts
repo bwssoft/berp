@@ -1,7 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { ISector, ISectorRepository } from "@/app/lib/@backend/domain";
+import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
+import { ISectorRepository } from "@/app/lib/@backend/domain/commercial/repository/sector.repository";
 import { sectorRepository } from "@/app/lib/@backend/infra/repository";
 
 class FindOneSectorUsecase {

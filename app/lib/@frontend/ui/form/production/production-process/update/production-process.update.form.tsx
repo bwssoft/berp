@@ -1,5 +1,5 @@
 "use client";
-import { IProductionProcess } from "@/app/lib/@backend/domain";
+import {IProductionProcess} from "@/app/lib/@backend/domain/production/entity/production-process.definition";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { CheckboxEditable } from "@/app/lib/@frontend/ui/component/checkbox-editable";
 import { useProductionProcessUpdateForm } from "./use-production-process-update-form";

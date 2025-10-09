@@ -1,10 +1,8 @@
 "use client";
 
-import {
-  Device,
-  type IConfigurationProfile,
-  type ITechnology,
-} from "@/app/lib/@backend/domain";
+import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import type { IConfigurationProfile } from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
+import type { ITechnology } from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
   Card,

@@ -1,10 +1,7 @@
-import {
-    AuditDomain,
-    AuditMetadata,
-    IAudit,
-    IAuditRepository,
-    AuditType,
-} from "@/app/lib/@backend/domain";
+import AuditMetadata from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import IAudit from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import IAuditRepository from "@/app/lib/@backend/domain/admin/repository/audit.repository.interface";
+import AuditType from "@/app/lib/@backend/domain/admin/entity/audit.definition";
 import { auditRepository } from "@/app/lib/@backend/infra/repository/mongodb/admin/audit.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import isEqual from "lodash/isEqual";

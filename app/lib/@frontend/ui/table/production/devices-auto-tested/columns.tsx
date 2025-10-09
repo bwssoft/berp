@@ -7,7 +7,7 @@ import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { Button } from '@/frontend/ui/component/button';
 
 import { deviceConstants } from "@/app/lib/constant";
-import { Device } from "@/app/lib/@backend/domain";
+import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
 
 const statuses = {
   progress: "text-gray-500 bg-gray-800/20",

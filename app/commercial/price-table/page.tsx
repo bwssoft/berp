@@ -1,6 +1,6 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
-import { IPriceTable } from "@/app/lib/@backend/domain";
+import {IPriceTable} from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 import { Button } from '@/frontend/ui/component/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
 

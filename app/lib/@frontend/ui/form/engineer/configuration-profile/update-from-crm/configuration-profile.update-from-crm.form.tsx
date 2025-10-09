@@ -2,11 +2,10 @@
 
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { useConfigurationProfileUpdateForm } from "./use-configuration-profile.update-from-crm.form";
-import {
-  IClient,
-  IConfigurationProfile,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {IConfigurationProfile} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
+import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { Button } from '@/frontend/ui/component/button';
 
 

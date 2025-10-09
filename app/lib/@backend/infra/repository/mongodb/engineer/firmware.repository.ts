@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IFirmware } from "@/app/lib/@backend/domain";
+import { IFirmware } from "@/app/lib/@backend/domain/engineer/entity/firmware.definition";
 import { BaseRepository } from "../@base";
 
 class FirmwareRepository extends BaseRepository<IFirmware> {

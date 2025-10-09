@@ -1,9 +1,7 @@
-import {
-  EType,
-  IClient,
-  IConfigurationProfile,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
+import {EType, IConfigurationProfile} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";

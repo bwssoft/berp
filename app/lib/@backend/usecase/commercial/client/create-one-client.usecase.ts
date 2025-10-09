@@ -1,5 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IClient, IClientRepository } from "@/app/lib/@backend/domain"
+import { IClient } from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import { IClientRepository } from "@/app/lib/@backend/domain/commercial/repository/client.repository";
 import { clientRepository } from "@/app/lib/@backend/infra"
 
 class CreateOneClientUsecase {

@@ -6,7 +6,8 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { ContactSelection, IContact } from "@/app/lib/@backend/domain";
+import {ContactSelection} from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 import { Button } from '@/frontend/ui/component/button';
 import { Checkbox } from '@/frontend/ui/component/checkbox';
 import { Combobox } from '@/frontend/ui/component/combobox/index';

@@ -1,4 +1,5 @@
-import { EType, IClient } from "@/app/lib/@backend/domain";
+import {EType} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useState } from "react";

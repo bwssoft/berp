@@ -1,5 +1,6 @@
 import { createOneProposal } from '@/app/lib/@backend/action/commercial/proposal.action';
-import { Currency, FreightType, IClient } from '@/app/lib/@backend/domain';
+import {Currency, FreightType} from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
 import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';

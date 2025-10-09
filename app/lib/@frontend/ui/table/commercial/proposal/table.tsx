@@ -1,7 +1,8 @@
 "use client";
 //tava reclamando da função cell nas colunas
 
-import { IClient, IProposal } from "@/app/lib/@backend/domain";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {IProposal} from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
 import { columns } from "./columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 

@@ -1,7 +1,4 @@
-import {
-  IAccountAttachment,
-  IAccountAttachmentRepository,
-} from "@/app/lib/@backend/domain";
+
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { accountAttachmentRepository } from "@/app/lib/@backend/infra";

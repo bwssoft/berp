@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { IAccount, IContact } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import { ContactListItem } from "./types";

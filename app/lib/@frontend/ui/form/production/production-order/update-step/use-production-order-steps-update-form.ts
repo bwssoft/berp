@@ -1,5 +1,5 @@
 import { updateOneProductionOrderById } from "@/app/lib/@backend/action/production/production-order.action";
-import { IProductionOrderLegacy } from "@/app/lib/@backend/domain";
+import {IProductionOrderLegacy} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";

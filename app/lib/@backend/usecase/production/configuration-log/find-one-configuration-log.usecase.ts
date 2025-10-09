@@ -1,7 +1,4 @@
-import {
-  IConfigurationLog,
-  IConfigurationLogRepository,
-} from "@/app/lib/@backend/domain";
+import IConfigurationLog from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
 import { configurationLogRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

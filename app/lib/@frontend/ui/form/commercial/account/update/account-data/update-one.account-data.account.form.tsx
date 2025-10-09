@@ -1,6 +1,7 @@
 "use client";
 import { useUpdateAccountForm } from "./use-update-account-data.account.form";
-import { IAccount, ISector } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import {ISector} from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
 import { PlusIcon } from "lucide-react";
 import { SectorModal, useSectorModal } from "@/app/lib/@frontend/ui/modal";
 import { Combobox } from '@/frontend/ui/component/combobox/index';

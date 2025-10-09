@@ -3,7 +3,7 @@ import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { deleteOneSector } from "@/app/lib/@backend/action/commercial/sector.action";
-import { ISector } from "@/app/lib/@backend/domain";
+import {ISector} from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
 
 export function useSectorDeleteDialog() {
   const [open, setOpen] = React.useState(false);

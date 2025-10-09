@@ -1,5 +1,5 @@
 "use client";
-import { IHistorical } from "@/app/lib/@backend/domain";
+import {IHistorical} from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
 import {

@@ -12,7 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/lib/@frontend/ui/component/card";
-import type { IBase, IItem } from "@/app/lib/@backend/domain";
+import type {IBase} from "@/app/lib/@backend/domain/logistic/entity/base.entity";
+import type {IItem} from "@/app/lib/@backend/domain/logistic/entity/item.entity";
 import Link from "next/link";
 
 interface Props {

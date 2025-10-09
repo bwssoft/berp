@@ -1,4 +1,4 @@
-import { IAccount } from "@/app/lib/@backend/domain";
+import { IAccount } from "@/app/lib/@backend/domain/commercial/entity/account.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

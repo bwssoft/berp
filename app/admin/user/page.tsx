@@ -1,6 +1,6 @@
 import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { IUser } from "@/app/lib/@backend/domain";
+import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
 import { SearchUserForm } from "@/app/lib/@frontend/ui/form/admin/user/search-form/search.user.form";
 import { UserTable } from "@/app/lib/@frontend/ui/table/admin/user/user.table";
 import { PlusIcon } from "@heroicons/react/20/solid";

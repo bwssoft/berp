@@ -1,6 +1,7 @@
 "use client";
 
-import { IControl, IProfile } from "@/app/lib/@backend/domain";
+import {IControl} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
 import { cn } from "@/app/lib/util";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";

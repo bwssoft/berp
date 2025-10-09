@@ -6,7 +6,10 @@ import {
 
 import { hash } from "bcrypt";
 import { randomInt } from "crypto";
-import { AuditDomain, IBMessageGateway, IUser, IUserRepository } from "@/app/lib/@backend/domain";
+import { AuditDomain } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import { IBMessageGateway } from "@/app/lib/@backend/domain/@shared/gateway/bmessage.gateway.interface";
+import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
 import { userRepository, bmessageGateway } from "@/app/lib/@backend/infra";
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "../audit";

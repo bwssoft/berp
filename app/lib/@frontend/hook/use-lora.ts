@@ -1,9 +1,6 @@
 import { useCallback } from "react";
-import {
-  BwsLora,
-  BwsLoraParser,
-  BwsLoraEncoder,
-} from "../../@backend/infra/protocol";
+import { BwsLora, BwsLoraParser } from "../../@backend/infra/protocol/parser/lora";
+import { BwsLoraEncoder } from "../../@backend/infra/protocol/encoder/lora";
 import { sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";

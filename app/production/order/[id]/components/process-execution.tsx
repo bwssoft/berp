@@ -1,6 +1,6 @@
 "use client";
 
-import { IProduct } from "@/app/lib/@backend/domain";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
 
 type ProcessExecutionProps = {};
 

@@ -4,12 +4,11 @@ import {
   ProposalSchema,
   useProposalCreateForm,
 } from "./use-proposal-create-form";
-import {
-  Currency,
-  IClient,
-  INegotiationType,
-  IProduct,
-} from "@/app/lib/@backend/domain";
+import {Currency} from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {INegotiationType} from "@/app/lib/@backend/domain/commercial/entity/negotiation-type.definition";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { clientConstants } from "@/app/lib/constant";
 import { cn } from "@/app/lib/util";
 import {

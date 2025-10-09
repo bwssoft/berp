@@ -1,5 +1,5 @@
-import { IControl } from "@/app/lib/@backend/domain";
-import { controlRepository } from "@/app/lib/@backend/infra";
+import {IControl} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {controlRepository} from "@/app/lib/@backend/infra/repository/mongodb/admin/control.repository";
 import { buildControlTree } from "@/app/lib/util";
 import { nanoid } from "nanoid";
 

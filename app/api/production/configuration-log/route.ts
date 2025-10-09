@@ -1,8 +1,8 @@
 // app/api/firmware-update-log/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import type { IConfigurationLog } from "@/app/lib/@backend/domain";
-import { createManyConfigurationLogUsecase } from "@/app/lib/@backend/usecase";
+import type {IConfigurationLog} from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
+import {createManyConfigurationLogUsecase} from "@/app/lib/@backend/usecase/production/configuration-log/create-many-configuration-log.usecase";
 
 export async function POST(req: NextRequest) {
   const session = await auth();

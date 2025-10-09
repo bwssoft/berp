@@ -1,9 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IAccountRepository,
-  IContact,
-  IContactRepository,
-} from "@/app/lib/@backend/domain";
+
 import { contactRepository, accountRepository } from "@/app/lib/@backend/infra";
 
 export type DeleteOutput = {

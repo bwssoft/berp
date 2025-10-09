@@ -1,5 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IUser, IUserRepository } from "@/app/lib/@backend/domain";
+import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
 import { userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
 
 class GetAvatarUrlUserUsecase {

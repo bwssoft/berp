@@ -1,4 +1,5 @@
-import { IDevice, IDeviceRepository } from "@/app/lib/@backend/domain";
+import { IDevice } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import { IDeviceRepository } from "@/app/lib/@backend/domain/engineer/repository/device.repository.interface";
 import { deviceRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import type { Filter } from "mongodb";

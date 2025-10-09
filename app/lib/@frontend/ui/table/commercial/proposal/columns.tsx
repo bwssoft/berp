@@ -1,5 +1,6 @@
 import { deleteOneProposalById } from "@/app/lib/@backend/action/commercial/proposal.action";
-import { IClient, IProposal } from "@/app/lib/@backend/domain";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {IProposal} from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 

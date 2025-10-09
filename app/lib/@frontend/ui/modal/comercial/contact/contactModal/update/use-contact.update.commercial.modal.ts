@@ -6,7 +6,7 @@ import {
 } from "@/app/lib/@backend/action/commercial/account.action";
 import { updateOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { IContact } from "@/app/lib/@backend/domain";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";

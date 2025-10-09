@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IMovement, IMovementRepository } from "@/app/lib/@backend/domain"; // Assumindo que IMovementRepository existe em domain
+import IMovement from "@/app/lib/@backend/domain/logistic/entity/movement.entity"; // Assumindo que IMovementRepository existe em domain
 import { movementRepository } from "@/app/lib/@backend/infra"; // Assumindo que movementRepository existe em infra
 
 class UpdateOneMovementUsecase {

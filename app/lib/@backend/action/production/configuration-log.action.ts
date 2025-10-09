@@ -1,13 +1,11 @@
 "use server";
 
-import { IConfigurationLog } from "@/app/lib/@backend/domain";
-import {
-  createManyConfigurationLogUsecase,
-  createOneConfigurationLogUsecase,
-  findManyConfigurationLogUsecase,
-  findOneConfigurationLogUsecase,
-  exportConfigurationLogUsecase,
-} from "@/app/lib/@backend/usecase";
+import { IConfigurationLog } from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
+import { createManyConfigurationLogUsecase } from "@/app/lib/@backend/usecase/production/configuration-log/create-many-configuration-log.usecase";
+import { createOneConfigurationLogUsecase } from "@/app/lib/@backend/usecase/production/configuration-log/create-one-configuration-log.usecase";
+import { findManyConfigurationLogUsecase } from "@/app/lib/@backend/usecase/production/configuration-log/find-many-configuration-log.usecase";
+import { findOneConfigurationLogUsecase } from "@/app/lib/@backend/usecase/production/configuration-log/find-one-configuration-log.usecase";
+import { exportConfigurationLogUsecase } from "@/app/lib/@backend/usecase/production/configuration-log/export.configuration-log.usecase";
 import { auth } from "@/auth";
 import { Filter } from "mongodb";
 import { statsConfigurationLogUsecase } from "../../usecase/production/configuration-log/stats-configuration-log.usecase";

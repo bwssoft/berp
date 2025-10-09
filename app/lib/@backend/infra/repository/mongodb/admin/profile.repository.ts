@@ -1,4 +1,4 @@
-import { IProfile } from "@/app/lib/@backend/domain";
+import { IProfile } from "@/app/lib/@backend/domain/admin/entity/profile.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

@@ -1,11 +1,6 @@
-import {
-  IProductionOrderLegacy,
-  IProductionOrderRepository,
-  IProductionOrderStep,
-  IProductionProcess,
-  IProductionProcessRepository,
-  IProductionProcessStep,
-} from "@/app/lib/@backend/domain";
+import IProductionOrderRepository from "@/app/lib/@backend/domain/production/repository/production-order.repository.interface";
+import IProductionProcess from "@/app/lib/@backend/domain/production/entity/production-process.definition";
+import IProductionProcessRepository from "@/app/lib/@backend/domain/production/repository/production-process.repository.interface";
 import {
   productionOrderRepository,
   productionProcessRepository,

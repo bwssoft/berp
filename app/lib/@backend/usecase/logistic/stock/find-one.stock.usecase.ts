@@ -1,6 +1,6 @@
 import { Filter } from "mongodb";
 
-import { IStock, IStockRepository } from "@/app/lib/@backend/domain"; // Assumindo que IStockRepository existe
+import IStock from "@/app/lib/@backend/domain/logistic/entity/stock.entity"; // Assumindo que IStockRepository existe
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators"; // Assumindo que este decorator existe
 import { stockRepository } from "@/app/lib/@backend/infra"; // Assumindo que stockRepository existe

@@ -1,6 +1,6 @@
 "use client";
 
-import { ContactSelection } from "@/app/lib/@backend/domain";
+import {ContactSelection} from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
 import {
   XMarkIcon,
   EnvelopeIcon,

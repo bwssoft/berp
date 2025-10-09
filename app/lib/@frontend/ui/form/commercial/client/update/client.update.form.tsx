@@ -15,11 +15,9 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import {
-  ContactDepartmentEnum,
-  ContactRoleEnum,
-  IClient,
-} from "@/app/lib/@backend/domain";
+import {ContactDepartmentEnum, ContactRoleEnum} from "@/app/lib/@backend/domain/commercial/entity/old-contact.definition";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { useClientUpdateForm } from "./use-client-update-form";
 import { clientConstants } from "@/app/lib/constant";
 

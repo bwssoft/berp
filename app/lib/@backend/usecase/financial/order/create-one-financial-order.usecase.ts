@@ -1,5 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IFinancialOrder, IFinancialOrderRepository } from "@/app/lib/@backend/domain"
+import { IFinancialOrder } from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
+import { IFinancialOrderRepository } from "@/app/lib/@backend/domain/financial/repository/financial-order.repository.interface";
 import { financialOrderRepository } from "@/app/lib/@backend/infra"
 
 class CreateOneFinancialOrderUsecase {

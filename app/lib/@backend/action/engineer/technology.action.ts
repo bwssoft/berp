@@ -2,10 +2,8 @@
 
 import { Filter } from "mongodb";
 import { ITechnology } from "../../domain";
-import {
-  findManyTechnologyUsecase,
-  findOneTechnologyUsecase,
-} from "../../usecase";
+import { findManyTechnologyUsecase } from "../../usecase/engineer/technology/find-many-technology.usecase";
+import { findOneTechnologyUsecase } from "../../usecase/engineer/technology/find-one-technology.usecase";
 
 export async function findManyTechnology(
   input: Filter<ITechnology>

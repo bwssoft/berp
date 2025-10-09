@@ -1,8 +1,4 @@
-import {
-  IClient,
-  IClientRepository,
-  IConfigurationProfile,
-} from "@/app/lib/@backend/domain";
+import IConfigurationProfile from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
 import { clientRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

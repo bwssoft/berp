@@ -1,4 +1,4 @@
-import { IAutoTestLog } from "@/app/lib/@backend/domain";
+import {IAutoTestLog} from "@/app/lib/@backend/domain/production/entity/auto-test-log.definition";
 import { getStatusProps } from "@/app/lib/util";
 import React from "react";
 

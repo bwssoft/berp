@@ -2,7 +2,7 @@ import {
   findManyConfigurationLog,
   statsConfigurationLog,
 } from "@/app/lib/@backend/action/production/configuration-log.action";
-import { IConfigurationLog } from "@/app/lib/@backend/domain";
+import {IConfigurationLog} from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
 import { Button } from '@/frontend/ui/component/button';
 
 import {

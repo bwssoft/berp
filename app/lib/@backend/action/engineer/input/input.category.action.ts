@@ -1,12 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  createOneInputCategoryUsecase,
-  deleteOneInputCategoryUsecase,
-  findManyInputCategoryUsecase,
-} from "@/app/lib/@backend/usecase";
-import { IInputCategory } from "@/app/lib/@backend/domain";
+import { createOneInputCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/input/category/create-one.input.category.usecase";
+import { deleteOneInputCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/input/category/delete-one.input.category.usecase";
+import { findManyInputCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/input/category/find-many.input.category.usecase";
+import { IInputCategory } from "@/app/lib/@backend/domain/engineer/entity/input.category.definition";
 import { Filter } from "mongodb";
 
 export async function findManyInputCategory(input: {

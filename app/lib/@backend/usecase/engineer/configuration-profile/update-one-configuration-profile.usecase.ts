@@ -1,8 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IConfigurationProfile,
-  IConfigurationProfileRepository,
-} from "@/app/lib/@backend/domain";
+import IConfigurationProfile from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
 import { configurationProfileRepository } from "@/app/lib/@backend/infra";
 
 class UpdateOneConfigurationProfileUsecase {

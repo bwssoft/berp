@@ -1,5 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { ISector, ISectorRepository } from "@/app/lib/@backend/domain";
+import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
+import { ISectorRepository } from "@/app/lib/@backend/domain/commercial/repository/sector.repository";
 import { sectorRepository } from "@/app/lib/@backend/infra/repository";
 
 export type DeleteSectorOutput = {

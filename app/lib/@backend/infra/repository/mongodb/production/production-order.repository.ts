@@ -1,7 +1,5 @@
-import {
-  IProductionOrder,
-  IProductionOrderRepository,
-} from "@/app/lib/@backend/domain";
+import IProductionOrder from "@/app/lib/@backend/domain/production/entity/production-order.definition";
+import IProductionOrderRepository from "@/app/lib/@backend/domain/production/repository/production-order.repository.interface";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 

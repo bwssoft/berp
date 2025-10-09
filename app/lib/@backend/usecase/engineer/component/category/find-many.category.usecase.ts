@@ -1,10 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
 import type { Filter } from "mongodb";
 import { componentCategoryRepository } from "@/app/lib/@backend/infra";
-import {
-  IComponentCategory,
-  IComponentCategoryRepository,
-} from "@/app/lib/@backend/domain";
+
 import { RemoveFields } from "@/app/lib/@backend/decorators";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 

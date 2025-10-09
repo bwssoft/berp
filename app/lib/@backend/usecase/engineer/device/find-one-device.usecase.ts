@@ -1,8 +1,4 @@
-import {
-  IDevice,
-  IDeviceRepository,
-  IProduct,
-} from "@/app/lib/@backend/domain";
+import IDevice from "@/app/lib/@backend/domain/engineer/entity/device.definition";
 import { deviceRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

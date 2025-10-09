@@ -1,7 +1,7 @@
 "use client";
 //tava reclamando da função cell nas colunas
 
-import { IProductionOrder } from "@/app/lib/@backend/domain";
+import {IProductionOrder} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
 import { columns } from "./columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 

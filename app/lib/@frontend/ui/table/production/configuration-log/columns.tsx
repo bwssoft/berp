@@ -3,7 +3,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
-import { Device, IConfigurationLog } from "@/app/lib/@backend/domain";
+import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import { IConfigurationLog } from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
 import Link from "next/link";
 import { Button } from '@/frontend/ui/component/button';
 

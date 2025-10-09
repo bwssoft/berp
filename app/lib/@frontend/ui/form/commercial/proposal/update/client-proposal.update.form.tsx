@@ -4,13 +4,11 @@ import {
   ProposalSchema,
   useProposalUpdateForm,
 } from "./use-client-proposal-update-form";
-import {
-  Currency,
-  IClient,
-  INegotiationType,
-  IProduct,
-  IProposal,
-} from "@/app/lib/@backend/domain";
+import {Currency, IProposal} from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {INegotiationType} from "@/app/lib/@backend/domain/commercial/entity/negotiation-type.definition";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { clientConstants } from "@/app/lib/constant";
 import { cn } from "@/app/lib/util";
 import {

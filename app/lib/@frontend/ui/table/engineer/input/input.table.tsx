@@ -1,7 +1,7 @@
 "use client";
 
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import { IInput } from "@/app/lib/@backend/domain";
+import {IInput} from "@/app/lib/@backend/domain/engineer/entity/input.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./input.columns";
 import { Pagination } from "../../../component/pagination";

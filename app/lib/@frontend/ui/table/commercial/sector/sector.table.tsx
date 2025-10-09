@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { sectorColumns } from "./sector.columns";
-import { ISector } from "@/app/lib/@backend/domain";
+import {ISector} from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
 import { useSearchParams } from "next/navigation";

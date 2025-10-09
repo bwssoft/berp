@@ -1,8 +1,4 @@
-import {
-  AuditDomain,
-  IAccountAttachment,
-  IUser,
-} from "@/app/lib/@backend/domain";
+import IUser from "@/app/lib/@backend/domain/admin/entity/user.definition";
 import {
   IAccountAttachmentRepository,
   IAccountAttachmentObjectRepository,

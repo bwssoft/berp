@@ -1,8 +1,12 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IFinancialOrder } from "@/app/lib/@backend/domain"
-import { createFinancialOrderFromProposalUsecase, deleteFinancialOrderUsecase, findOneFinancialOrderUsecase, createFinancialOrderOnOmieUsecase, updateFinancialOrderFromProposalUsecase } from "@/app/lib/@backend/usecase"
+import { IFinancialOrder } from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
+import { createFinancialOrderFromProposalUsecase } from "@/app/lib/@backend/usecase/financial/order/create-financial-order-from-proposal.usecase";
+import { deleteFinancialOrderUsecase } from "@/app/lib/@backend/usecase/financial/order/delete-financial-order.usecase";
+import { findOneFinancialOrderUsecase } from "@/app/lib/@backend/usecase/financial/order/find-one-financial-order.usecase";
+import { createFinancialOrderOnOmieUsecase } from "@/app/lib/@backend/usecase/financial/order/create-financial-order-on-omie.usecase";
+import { updateFinancialOrderFromProposalUsecase } from "@/app/lib/@backend/usecase/financial/order/update-financial-order-from-proposal.usecase"
 
 export async function findOneFinancialOrder(order: Partial<IFinancialOrder>) {
   return await findOneFinancialOrderUsecase.execute(order)

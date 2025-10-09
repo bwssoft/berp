@@ -1,6 +1,7 @@
 "use client";
 
-import { IControl, IProfile } from "@/app/lib/@backend/domain";
+import {IControl} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
 import { useSetLockedProfileForm } from "./use-set-locked.profile.form";
 import { Toggle } from '@/frontend/ui/component/toggle';
 

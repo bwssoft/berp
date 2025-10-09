@@ -1,4 +1,5 @@
-import { IInput, IInputRepository } from "@/app/lib/@backend/domain";
+import { IInput } from "@/app/lib/@backend/domain/engineer/entity/input.definition";
+import { IInputRepository } from "@/app/lib/@backend/domain/engineer/repository/input.repository.interface";
 import { inputRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

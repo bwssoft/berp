@@ -1,7 +1,7 @@
 "use client";
 //tava reclamando da função cell nas colunas
 
-import { IFirmware } from "@/app/lib/@backend/domain";
+import {IFirmware} from "@/app/lib/@backend/domain/engineer/entity/firmware.definition";
 import { columns } from "./columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { IProfile } from "@/app/lib/@backend/domain";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
 import { useChooseProfileForm } from "./use-choose.profile.form";
 import { Combobox } from '@/frontend/ui/component/combobox/index';
 

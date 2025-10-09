@@ -1,6 +1,6 @@
 "use client";
 
-import { IConfigurationProfile } from "@/app/lib/@backend/domain";
+import {IConfigurationProfile} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {

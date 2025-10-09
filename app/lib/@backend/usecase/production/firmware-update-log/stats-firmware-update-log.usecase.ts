@@ -1,4 +1,4 @@
-import { IFirmwareUpdateLogRepository } from "@/app/lib/@backend/domain";
+import { IFirmwareUpdateLogRepository } from "@/app/lib/@backend/domain/production/repository/firmware-update-log.repository.interface";
 import { firmwareUpdateLogRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

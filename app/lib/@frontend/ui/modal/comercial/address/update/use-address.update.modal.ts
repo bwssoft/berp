@@ -2,7 +2,7 @@
 
 import { updateOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
 import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { IAddress } from "@/app/lib/@backend/domain";
+import {IAddress} from "@/app/lib/@backend/domain/commercial/entity/address.definition";
 import { LocalAddress } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useQueryClient } from "@tanstack/react-query";

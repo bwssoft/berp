@@ -1,10 +1,9 @@
 "use client";
 
-import {
-  IComponentCategory,
-  IProduct,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
+import {IComponentCategory} from "@/app/lib/@backend/domain/engineer/entity/component.category.definition";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { formatDate } from "@/app/lib/util";
 import Link from "next/link";
 

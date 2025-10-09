@@ -1,6 +1,6 @@
 "use client";
 
-import { IProductionOrder } from "@/app/lib/@backend/domain";
+import {IProductionOrder} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
 import { formatDate } from "@/app/lib/util";
 import { productionOrderConstants } from "@/app/lib/constant";
 

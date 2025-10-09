@@ -2,7 +2,7 @@ import { IdentificationLogSearchForm } from '@/frontend/ui/form/production/ident
 
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
-import { IIdentificationLog } from "@/app/lib/@backend/domain";
+import {IIdentificationLog} from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
 import { Filter } from "mongodb";
 import { findManyIdentificationLog } from "@/app/lib/@backend/action/production/identification-log.action";
 import { DevicesIdentifiedTable } from "@/app/lib/@frontend/ui/table/production/devices-identified/table";

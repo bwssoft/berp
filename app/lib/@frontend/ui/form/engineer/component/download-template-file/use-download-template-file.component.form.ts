@@ -1,5 +1,5 @@
 import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component/component.category.action";
-import { IComponentCategory } from "@/app/lib/@backend/domain";
+import {IComponentCategory} from "@/app/lib/@backend/domain/engineer/entity/component.category.definition";
 import ExcelJS from "exceljs";
 
 export function useDownloadComponentTemplateFileForm() {

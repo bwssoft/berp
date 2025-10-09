@@ -24,7 +24,7 @@ import {
 } from "../../../../component/form";
 import { SectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/delete-sector.dialog";
 import { useSectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/use-delete-sector.dialog";
-import { ISector } from "@/app/lib/@backend/domain";
+import {ISector} from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
 
 export function CNPJAccountForm() {
   const {

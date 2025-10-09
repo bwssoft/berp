@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Product } from "@/app/lib/@backend/domain";
+import {Product} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";

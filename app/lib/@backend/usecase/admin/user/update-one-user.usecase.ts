@@ -1,5 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { AuditDomain, IUser, IUserRepository } from "@/app/lib/@backend/domain";
+import { AuditDomain } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
 import { userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
 import { createOneAuditUsecase } from "../audit";
 import { auth } from "@/auth";

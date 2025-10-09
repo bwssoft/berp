@@ -1,6 +1,6 @@
 "use client";
 
-import { IContact } from "@/app/lib/@backend/domain";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 import { LocalContact } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { Phone, Mail, Edit, Star, Trash, Copy } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from '@/frontend/ui/component/avatar';

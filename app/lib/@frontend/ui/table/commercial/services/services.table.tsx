@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { serviceColumns } from "./services.columns";
-import { IPriceTableService } from "@/app/lib/@backend/domain";
+import {IPriceTableService} from "@/app/lib/@backend/domain/commercial/entity/price-table-service.definition";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
 import { useSearchParams } from "next/navigation";

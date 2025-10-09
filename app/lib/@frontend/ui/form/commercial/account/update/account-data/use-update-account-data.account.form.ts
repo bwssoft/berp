@@ -4,7 +4,8 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import {ICnpjaResponse} from "@/app/lib/@backend/domain/@shared/gateway/cnpja.gateway.interface";
 import { updateOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
 import { z } from "zod";
 

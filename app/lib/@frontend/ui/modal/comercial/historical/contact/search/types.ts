@@ -1,4 +1,4 @@
-import { IContact } from "@/app/lib/@backend/domain";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 
 export interface ContactListItem {
   contactId: string;

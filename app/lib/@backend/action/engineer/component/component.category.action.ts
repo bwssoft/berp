@@ -1,13 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  createManyComponentCategoryUsecase,
-  createOneComponentCategoryUsecase,
-  deleteOneComponentCategoryUsecase,
-  findManyComponentCategoryUsecase,
-} from "@/app/lib/@backend/usecase";
-import { IComponentCategory } from "@/app/lib/@backend/domain";
+import { createManyComponentCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/component/category/create-many.category.usecase";
+import { createOneComponentCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/component/category/create-one.category.usecase";
+import { deleteOneComponentCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/component/category/delete-one.category.usecase";
+import { findManyComponentCategoryUsecase } from "@/app/lib/@backend/usecase/engineer/component/category/find-many.category.usecase";
+import { IComponentCategory } from "@/app/lib/@backend/domain/engineer/entity/component.category.definition";
 import { Filter } from "mongodb";
 
 export async function findManyComponentCategory(input: {

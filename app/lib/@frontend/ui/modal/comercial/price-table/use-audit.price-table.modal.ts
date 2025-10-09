@@ -3,7 +3,8 @@
 import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
-import { AuditDomain, IPriceTable } from "@/app/lib/@backend/domain";
+import {AuditDomain} from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import {IPriceTable} from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
 
 const PAGE_SIZE = 10;
 

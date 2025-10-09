@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useEffect } from "react";
-import { ICommand } from "@/app/lib/@backend/domain";
+import {ICommand} from "@/app/lib/@backend/domain/engineer/entity/command.definition";
 import { findByRegex } from "@/app/lib/util";
 import { updateOneCommandById } from "@/app/lib/@backend/action/engineer/command/command.action";
 

@@ -1,4 +1,5 @@
-import { IStock, IStockRepository } from "@/app/lib/@backend/domain";
+import { IStock } from "@/app/lib/@backend/domain/logistic/entity/stock.entity";
+import { IStockRepository } from "@/app/lib/@backend/domain/logistic/repository/stock.repository.interface";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 

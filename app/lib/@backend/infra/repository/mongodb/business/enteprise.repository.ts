@@ -1,4 +1,4 @@
-import { IEnterprise } from "@/app/lib/@backend/domain";
+import { IEnterprise } from "@/app/lib/@backend/domain/business/entity/enterprise.entity";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

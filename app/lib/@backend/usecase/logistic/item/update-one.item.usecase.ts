@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IItem, IItemRepository } from "@/app/lib/@backend/domain"; // Assumindo que IItemRepository existe em domain
+import IItem from "@/app/lib/@backend/domain/logistic/entity/item.entity"; // Assumindo que IItemRepository existe em domain
 import { itemRepository } from "@/app/lib/@backend/infra"; // Assumindo que itemRepository existe em infra
 
 class UpdateOneItemUsecase {

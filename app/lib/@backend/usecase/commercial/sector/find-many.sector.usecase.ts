@@ -3,7 +3,7 @@ import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import type { Filter } from "mongodb";
 import { ISectorRepository } from "@/app/lib/@backend/domain/commercial";
 import { sectorRepository } from "@/app/lib/@backend/infra/repository";
-import { ISector } from "@/app/lib/@backend/domain";
+import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
 import { PaginationResult } from "../../../domain/@shared/repository/pagination.interface";
 
 namespace Dto {

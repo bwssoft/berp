@@ -1,7 +1,4 @@
-import {
-  IIdentificationLog,
-  IIdentificationLogRepository,
-} from "@/app/lib/@backend/domain";
+import IIdentificationLog from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
 import { identificationLogRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

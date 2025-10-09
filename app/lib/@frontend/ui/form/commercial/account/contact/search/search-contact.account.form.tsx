@@ -9,7 +9,8 @@ import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Button } from '@/frontend/ui/component/button';
 
 import { useSearchContactAccount } from "./use-search-contact.account";
-import { IAccount, IContact } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 
 type ContactAccountFormProps = {
   contacts: {

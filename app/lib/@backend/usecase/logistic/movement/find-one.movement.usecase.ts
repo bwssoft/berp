@@ -1,6 +1,6 @@
 import { Filter } from "mongodb";
 
-import { IMovement, IMovementRepository } from "@/app/lib/@backend/domain"; // Assumindo que IMovementRepository existe
+import IMovement from "@/app/lib/@backend/domain/logistic/entity/movement.entity"; // Assumindo que IMovementRepository existe
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators"; // Assumindo que este decorator existe
 import { movementRepository } from "@/app/lib/@backend/infra"; // Assumindo que movementRepository existe

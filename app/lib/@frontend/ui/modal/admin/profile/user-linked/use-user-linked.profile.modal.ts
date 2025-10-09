@@ -1,6 +1,7 @@
 "use client";
 import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
-import { IProfile, IUser } from "@/app/lib/@backend/domain";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";

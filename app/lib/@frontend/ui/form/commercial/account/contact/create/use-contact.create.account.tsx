@@ -11,7 +11,7 @@ import {
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useSearchParams } from "next/navigation";
-import { IContact } from "@/app/lib/@backend/domain";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {

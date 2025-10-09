@@ -1,6 +1,6 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyInputCategory } from "@/app/lib/@backend/action/engineer/input/input.category.action";
-import { IInputCategory } from "@/app/lib/@backend/domain";
+import {IInputCategory} from "@/app/lib/@backend/domain/engineer/entity/input.category.definition";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { InputCategoryTable } from "@/app/lib/@frontend/ui/table/engineer/input/input.category.table";

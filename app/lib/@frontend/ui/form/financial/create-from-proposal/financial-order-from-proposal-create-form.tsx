@@ -9,7 +9,7 @@ import {
   ChevronDownIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { IFinancialOrder } from "@/app/lib/@backend/domain";
+import {IFinancialOrder} from "@/app/lib/@backend/domain/financial/entity/financial-order.definition";
 import { saleOrderConstants } from "@/app/lib/constant/sale-order";
 import { Button } from '@/frontend/ui/component/button';
 

@@ -1,5 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IComponent, IComponentRepository } from "@/app/lib/@backend/domain";
+import { IComponent } from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import { IComponentRepository } from "@/app/lib/@backend/domain/engineer/repository/component.repository.interface";
 import { componentRepository } from "@/app/lib/@backend/infra";
 
 class CreateOneComponentUsecase {

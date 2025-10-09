@@ -5,7 +5,7 @@ import { Button } from '@/frontend/ui/component/button';
 import { Input } from '@/frontend/ui/component/input';
 
 import { useIdentificationForm } from "./use-identification.form";
-import { ITechnology } from "@/app/lib/@backend/domain";
+import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
 
 export function IdentificationForm(props: {
   onSubmit: (

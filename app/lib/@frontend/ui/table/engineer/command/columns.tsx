@@ -1,4 +1,4 @@
-import { ICommand } from "@/app/lib/@backend/domain";
+import {ICommand} from "@/app/lib/@backend/domain/engineer/entity/command.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";

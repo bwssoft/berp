@@ -1,11 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  EProductionOrderPriority,
-  EProductionOrderStage,
-  IFinancialOrderRepository,
-  IProductionOrderRepository,
-  IProposalRepository,
-} from "@/app/lib/@backend/domain";
+import EProductionOrderPriority from "@/app/lib/@backend/domain/production/entity/production-order.definition";
+import EProductionOrderStage from "@/app/lib/@backend/domain/production/entity/production-order.definition";
+import IProductionOrderRepository from "@/app/lib/@backend/domain/production/repository/production-order.repository.interface";
 import {
   financialOrderRepository,
   productionOrderRepository,

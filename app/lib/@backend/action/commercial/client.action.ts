@@ -1,14 +1,12 @@
 "use server";
 
-import { IClient } from "@/app/lib/@backend/domain";
-import {
-  createOneClientUsecase,
-  deleteOneClientUsecase,
-  findManyClientUsecase,
-  findOneClientUsecase,
-  findOneClientWithConfigurationProfileUsecase,
-  updateOneClientUsecase,
-} from "@/app/lib/@backend/usecase";
+import { IClient } from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import { createOneClientUsecase } from "@/app/lib/@backend/usecase/commercial/client/create-one-client.usecase";
+import { deleteOneClientUsecase } from "@/app/lib/@backend/usecase/commercial/client/delete-one-client.usecase";
+import { findManyClientUsecase } from "@/app/lib/@backend/usecase/commercial/client/find-many-client.usecase";
+import { findOneClientUsecase } from "@/app/lib/@backend/usecase/commercial/client/find-one-client.usecase";
+import { findOneClientWithConfigurationProfileUsecase } from "@/app/lib/@backend/usecase/commercial/client/find-one-client-with-configuration-profile.usecase";
+import { updateOneClientUsecase } from "@/app/lib/@backend/usecase/commercial/client/update-one-client.usecase";
 import { Filter } from "mongodb";
 
 export async function createOneClient(

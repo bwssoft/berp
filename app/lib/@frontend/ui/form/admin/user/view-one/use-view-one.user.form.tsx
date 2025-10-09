@@ -8,7 +8,7 @@ import { useAuth } from '@/frontend/context/auth.context';
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { IUser } from "@/app/lib/@backend/domain";
+import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
 
 export function useViewOneUserForm(user?: IUser) {
   const { changeProfile, profile, refreshUserData } = useAuth();

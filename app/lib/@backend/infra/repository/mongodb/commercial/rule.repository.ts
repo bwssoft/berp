@@ -1,4 +1,4 @@
-import { IRule } from "@/app/lib/@backend/domain";
+import { IRule } from "@/app/lib/@backend/domain/commercial/entity/rule.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

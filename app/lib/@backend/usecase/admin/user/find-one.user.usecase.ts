@@ -1,7 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { IUser, IUserRepository } from "@/app/lib/@backend/domain";
+import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
 import { userRepository } from "@/app/lib/@backend/infra";
 
 class FindOneUserUsecase {

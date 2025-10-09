@@ -1,9 +1,5 @@
-import {
-  IDevice,
-  IFirmware,
-  IRequestToUpdate,
-  IRequestToUpdateRepository,
-} from "@/app/lib/@backend/domain";
+import IDevice from "@/app/lib/@backend/domain/engineer/entity/device.definition";
+import IRequestToUpdate from "@/app/lib/@backend/domain/engineer/entity/request-to-update-firmware.definition";
 import { requestToUpdateRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 

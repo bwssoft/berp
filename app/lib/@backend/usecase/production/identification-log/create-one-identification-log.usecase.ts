@@ -1,8 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IIdentificationLog,
-  IIdentificationLogRepository,
-} from "@/app/lib/@backend/domain";
+import IIdentificationLog from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
 import { identificationLogRepository } from "@/app/lib/@backend/infra";
 import { RemoveFields } from "../../../decorators";
 

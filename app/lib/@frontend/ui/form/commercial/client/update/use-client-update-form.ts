@@ -1,12 +1,7 @@
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import {
-  ClientSectorEnum,
-  ContactDepartmentEnum,
-  ContactRoleEnum,
-  DocumentValueEnum,
-  IClient,
-  TaxRegime,
-} from "@/app/lib/@backend/domain";
+import {ClientSectorEnum, DocumentValueEnum, IClient, TaxRegime} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {ContactDepartmentEnum, ContactRoleEnum} from "@/app/lib/@backend/domain/commercial/entity/old-contact.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";

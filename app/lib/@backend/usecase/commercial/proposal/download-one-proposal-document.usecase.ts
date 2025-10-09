@@ -1,7 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { IProposalObjectRepository } from "@/app/lib/@backend/domain/commercial/repository/proposal.object.repository";
 import { proposalObjectRepository } from "@/app/lib/@backend/infra";
-import { IProposal } from "@/app/lib/@backend/domain";
+import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
 import { setContentType } from "@/app/lib/util/get-content-type";
 
 class DownloadOneProposalDocumentUsecase {

@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IBase, ILogisticBaseRepository } from "@/app/lib/@backend/domain"; // Assumindo que ILogisticBaseRepository existe em domain
+import IBase from "@/app/lib/@backend/domain/logistic/entity/base.entity"; // Assumindo que ILogisticBaseRepository existe em domain
 import { baseRepository } from "@/app/lib/@backend/infra"; // Assumindo que baseRepository existe em infra
 
 class UpdateOneBaseUsecase {

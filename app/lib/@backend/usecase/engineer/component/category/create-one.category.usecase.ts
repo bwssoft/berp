@@ -1,9 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { componentCategoryRepository } from "@/app/lib/@backend/infra";
-import {
-  IComponentCategory,
-  IComponentCategoryRepository,
-} from "@/app/lib/@backend/domain";
+
 
 class CreateOneComponentCategoryUsecase {
   repository: IComponentCategoryRepository;

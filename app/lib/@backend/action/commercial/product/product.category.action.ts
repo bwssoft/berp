@@ -1,12 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  createOneProductCategoryUsecase,
-  deleteOneProductCategoryUsecase,
-  findManyProductCategoryUsecase,
-} from "@/app/lib/@backend/usecase";
-import { IProductCategory } from "@/app/lib/@backend/domain";
+import { createOneProductCategoryUsecase } from "@/app/lib/@backend/usecase/commercial/product/category/create-one.product.category.usecase";
+import { deleteOneProductCategoryUsecase } from "@/app/lib/@backend/usecase/commercial/product/category/delete-one.product.category.usecase";
+import { findManyProductCategoryUsecase } from "@/app/lib/@backend/usecase/commercial/product/category/find-many.product.category.usecase";
+import { IProductCategory } from "@/app/lib/@backend/domain/commercial/entity/product.category.definition";
 import { Filter } from "mongodb";
 
 export async function findManyProductCategory(input: {

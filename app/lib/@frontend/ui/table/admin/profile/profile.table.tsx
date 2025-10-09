@@ -1,5 +1,5 @@
 "use client";
-import { IProfile } from "@/app/lib/@backend/domain";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
 import { columns } from "./profile.columns";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { ActiveProfileDialog, useActiveProfileDialog } from "../../../dialog";

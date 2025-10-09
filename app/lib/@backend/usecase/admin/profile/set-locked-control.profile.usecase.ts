@@ -1,5 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { AuditDomain, IProfileRepository } from "@/app/lib/@backend/domain";
+import { AuditDomain } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import { IProfileRepository } from "@/app/lib/@backend/domain/admin/repository/profile.repository.interface";
 import { profileRepository } from "@/app/lib/@backend/infra";
 import { createOneAuditUsecase } from "../audit";
 import { auth } from "@/auth";

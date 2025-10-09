@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IUserRepository } from "@/app/lib/@backend/domain";
+import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
 import { userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
 
 class GetAvatarUrlByKeyUserUsecase {

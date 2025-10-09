@@ -1,4 +1,4 @@
-import { IFirmwareRepository } from "@/app/lib/@backend/domain";
+import { IFirmwareRepository } from "@/app/lib/@backend/domain/engineer/repository/firmware.repository.interface";
 import { firmwareRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

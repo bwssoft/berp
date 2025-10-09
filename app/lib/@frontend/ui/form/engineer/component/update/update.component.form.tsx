@@ -21,7 +21,8 @@ import {
   FormMessage,
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
-import { IComponent, IComponentCategory } from "@/app/lib/@backend/domain";
+import {IComponent} from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import {IComponentCategory} from "@/app/lib/@backend/domain/engineer/entity/component.category.definition";
 import { commonConstants } from "@/app/lib/constant";
 import { useUpdateComponentForm } from "./use-update.component.form";
 

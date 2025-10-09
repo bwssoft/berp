@@ -1,14 +1,12 @@
 "use server";
 
-import { IComponent } from "@/app/lib/@backend/domain";
-import {
-  createManyComponentUsecase,
-  createOneComponentUsecase,
-  deleteOneComponentUsecase,
-  findManyComponentUsecase,
-  findOneComponentUsecase,
-  updateOneComponentUsecase,
-} from "@/app/lib/@backend/usecase";
+import { IComponent } from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import { createManyComponentUsecase } from "@/app/lib/@backend/usecase/engineer/component/component/create-many.component.usecase";
+import { createOneComponentUsecase } from "@/app/lib/@backend/usecase/engineer/component/component/create-one.component.usecase";
+import { deleteOneComponentUsecase } from "@/app/lib/@backend/usecase/engineer/component/component/delete-one.component.usecase";
+import { findManyComponentUsecase } from "@/app/lib/@backend/usecase/engineer/component/component/find-many.component.usecase";
+import { findOneComponentUsecase } from "@/app/lib/@backend/usecase/engineer/component/component/find-one.component.usecase";
+import { updateOneComponentUsecase } from "@/app/lib/@backend/usecase/engineer/component/component/update-one.component.usecase";
 import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
 

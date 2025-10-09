@@ -6,7 +6,7 @@ import { Combobox } from '@/frontend/ui/component/combobox/index';
 
 import { Button } from '@/frontend/ui/component/button';
 
-import { EconomicGroup } from "@/app/lib/@backend/domain";
+import {EconomicGroup} from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
 
 interface Props {
   accountId: string;

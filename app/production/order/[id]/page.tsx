@@ -1,6 +1,6 @@
 "use server";
 
-import { IClient } from "@/app/lib/@backend/domain";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/frontend/ui/component/tabs';
 
 import { XMarkIcon } from "@heroicons/react/24/outline";

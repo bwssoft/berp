@@ -1,4 +1,4 @@
-import { IClient } from "@/app/lib/@backend/domain";
+import { IClient } from "@/app/lib/@backend/domain/commercial/entity/client.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

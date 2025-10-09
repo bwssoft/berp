@@ -1,7 +1,5 @@
-import {
-  ITechnicalSheet,
-  ITechnicalSheetRepository,
-} from "@/app/lib/@backend/domain";
+import ITechnicalSheet from "@/app/lib/@backend/domain/engineer/entity/technical-sheet.definition";
+import ITechnicalSheetRepository from "@/app/lib/@backend/domain/engineer/repository/technical-sheet.repository.interface";
 import { technicalSheetRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";

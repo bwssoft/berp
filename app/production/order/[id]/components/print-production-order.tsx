@@ -1,12 +1,11 @@
 "use client";
 
-import {
-  IClient,
-  IProduct,
-  IProductCategory,
-  IProductionOrder,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
+import {IClient} from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import {IProductCategory} from "@/app/lib/@backend/domain/commercial/entity/product.category.definition";
+import {IProductionOrder} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
+import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
+import {} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { ProductionOrderPdfTemplate } from "@/app/lib/@frontend/pdf/templates/production-order-pdf-template";
 import { useBuildPdf } from "@/app/lib/@frontend/pdf/use-build-pdf";
 import { Button } from '@/frontend/ui/component/button';

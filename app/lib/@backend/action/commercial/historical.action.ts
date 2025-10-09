@@ -1,10 +1,8 @@
 "use server";
 import { Filter } from "mongodb";
 import { IHistorical } from "../../domain";
-import {
-    createOneHistoricalUsecase,
-    findManyHistoricalUsecase,
-} from "../../usecase";
+import { createOneHistoricalUsecase } from "../../usecase/commercial/historical/create-one.historical.usecase";
+import { findManyHistoricalUsecase } from "../../usecase/commercial/historical/find-many.historical.usecase";
 import { revalidatePath } from "next/cache";
 
 export async function createOneHistorical(

@@ -6,7 +6,7 @@ import { CreateAnnexHistoricalModal } from "../../../../modal/comercial/account-
 import { useCreateHistoricalForm } from "../../../../form/commercial/account/historical/create/use-create.historical.form";
 import { useCreateAnnexHistoricalModal } from "../../../../modal/comercial/account-attachments/create/annex-historical/use-annex-historical.create.commercial.modal";
 import { useState } from "react";
-import { IHistorical } from "@/app/lib/@backend/domain";
+import {IHistorical} from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 interface Props {

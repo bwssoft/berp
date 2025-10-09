@@ -1,5 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProposal, IRuleRepository } from "@/app/lib/@backend/domain";
+import { IRuleRepository } from "@/app/lib/@backend/domain/commercial/repository/rule.repository";
+import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
 import { ruleRepository } from "@/app/lib/@backend/infra";
 import {
   IRule,

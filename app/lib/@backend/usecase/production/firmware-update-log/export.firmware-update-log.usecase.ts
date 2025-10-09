@@ -1,7 +1,4 @@
-import {
-  IFirmwareUpdateLog,
-  IFirmwareUpdateLogRepository,
-} from "@/app/lib/@backend/domain";
+import IFirmwareUpdateLog from "@/app/lib/@backend/domain/production/entity/firmware-update-log.definition";
 import {
   firmwareUpdateLogRepository,
   firebaseGateway,

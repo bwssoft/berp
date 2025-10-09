@@ -1,6 +1,6 @@
 "use client";
 
-import { IAudit } from "@/app/lib/@backend/domain";
+import {IAudit} from "@/app/lib/@backend/domain/admin/entity/audit.definition";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { Pagination } from "../../../component/pagination";

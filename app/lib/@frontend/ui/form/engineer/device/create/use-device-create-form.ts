@@ -2,7 +2,7 @@ import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Device } from "@/app/lib/@backend/domain";
+import { Device } from "@/app/lib/@backend/domain/engineer/entity/device.definition";
 import { createOneDevice } from "@/app/lib/@backend/action/engineer/device.action";
 
 const schema = z.object({

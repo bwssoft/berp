@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { IAudit } from "@/app/lib/@backend/domain";
+import {IAudit} from "@/app/lib/@backend/domain/admin/entity/audit.definition";
 
 const fieldLabel: Record<string, string> = {
   name: "nome",

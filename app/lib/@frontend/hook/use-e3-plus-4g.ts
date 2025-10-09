@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { E34GEncoder, E34GParser } from "../../@backend/infra/protocol";
+import { E34GParser } from "../../@backend/infra/protocol/parser/E34G";
+import { E34GEncoder } from "../../@backend/infra/protocol/encoder/E34G";
 import { isIccid, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";

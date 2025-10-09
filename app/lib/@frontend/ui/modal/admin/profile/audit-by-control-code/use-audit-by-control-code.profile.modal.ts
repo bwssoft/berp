@@ -1,6 +1,7 @@
 "use client";
 import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
-import { AuditDomain, AuditType, IControl } from "@/app/lib/@backend/domain";
+import {AuditDomain, AuditType} from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import {IControl} from "@/app/lib/@backend/domain/admin/entity/control.definition";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 

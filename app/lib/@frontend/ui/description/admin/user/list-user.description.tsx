@@ -1,6 +1,6 @@
 "use client";
 
-import { IUser } from "@/app/lib/@backend/domain";
+import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
 import { UsersIcon } from "@heroicons/react/24/outline";
 import { Pagination } from "../../../component/pagination";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";

@@ -22,7 +22,8 @@ import {
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
 import { useUpdateProductForm } from "./use-update.product.form";
-import { IProduct, IProductCategory } from "@/app/lib/@backend/domain";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
+import {IProductCategory} from "@/app/lib/@backend/domain/commercial/entity/product.category.definition";
 
 interface Props {
   categories: IProductCategory[];

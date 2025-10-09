@@ -6,7 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidCEP } from "@/app/lib/util/is-valid-cep";
-import { IAddress } from "@/app/lib/@backend/domain";
+import {IAddress} from "@/app/lib/@backend/domain/commercial/entity/address.definition";
 import { viaCepGateway } from "@/app/lib/@backend/infra/gateway/viacep/viacep.gateway";
 import { formatCep } from "@/app/lib/util/format-cep";
 import { LocalAddress } from '@/frontend/context/create-account-flow.context';

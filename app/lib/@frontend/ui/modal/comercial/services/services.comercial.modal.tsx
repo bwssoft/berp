@@ -1,6 +1,6 @@
 "use client";
 
-import { IPriceTableService } from "@/app/lib/@backend/domain";
+import {IPriceTableService} from "@/app/lib/@backend/domain/commercial/entity/price-table-service.definition";
 import { Button } from '@/frontend/ui/component/button';
 import { Input } from '@/frontend/ui/component/input';
 import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';

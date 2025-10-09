@@ -8,7 +8,7 @@ import { SelectedContactBadge } from '@/frontend/ui/component/commercial/histori
 import { useCreateHistoricalForm } from "./use-create.historical.form";
 import { PaperClipIcon } from "@heroicons/react/24/outline";
 import { SearchContactHistoricalModal } from "@/app/lib/@frontend/ui/modal";
-import { IHistorical } from "@/app/lib/@backend/domain";
+import {IHistorical} from "@/app/lib/@backend/domain/commercial/entity/historical.definition";
 import { SelectedAnnexCard } from "@/app/lib/@frontend/ui/component/commercial/historical/selected-file-card";
 import { Dispatch, SetStateAction } from "react";
 

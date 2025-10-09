@@ -1,7 +1,7 @@
 "use client";
 //tava reclamando da função cell nas colunas
 
-import { IProductionProcess } from "@/app/lib/@backend/domain";
+import {IProductionProcess} from "@/app/lib/@backend/domain/production/entity/production-process.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./columns";
 

@@ -1,4 +1,4 @@
-import { IAudit } from "@/app/lib/@backend/domain";
+import { IAudit } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

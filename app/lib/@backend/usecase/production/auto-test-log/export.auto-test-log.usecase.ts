@@ -1,7 +1,4 @@
-import {
-  IAutoTestLog,
-  IAutoTestLogRepository,
-} from "@/app/lib/@backend/domain";
+import IAutoTestLog from "@/app/lib/@backend/domain/production/entity/auto-test-log.definition";
 import {
   autoTestLogRepository,
   firebaseGateway,

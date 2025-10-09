@@ -1,6 +1,6 @@
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { findManyComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
-import { IComponent } from "@/app/lib/@backend/domain";
+import {IComponent} from "@/app/lib/@backend/domain/engineer/entity/component.definition";
 import { BackButton } from '@/frontend/ui/component/back-button';
 
 import { ComponentTable } from "@/app/lib/@frontend/ui/table/engineer/component/component.table";

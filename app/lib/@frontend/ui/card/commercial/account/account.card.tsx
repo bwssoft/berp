@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/componen
 import { InfoField } from '@/frontend/ui/component/info-field';
 
 import { Separator } from "../../../component/separator";
-import { IAccount } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
 import { StatusBadge } from "../../../page/commercial/account/data/account.data";
 import {
   Tooltip,

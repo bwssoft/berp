@@ -1,7 +1,4 @@
-import {
-  IIdentificationLog,
-  IIdentificationLogRepository,
-} from "@/app/lib/@backend/domain";
+import IIdentificationLog from "@/app/lib/@backend/domain/production/entity/identification-log.definition";
 import {
   identificationLogRepository,
   firebaseGateway,

@@ -1,4 +1,5 @@
-import { ISchedule, IScheduleRepository } from "@/app/lib/@backend/domain";
+import { ISchedule } from "@/app/lib/@backend/domain/engineer/entity/command-schedule.definition";
+import { IScheduleRepository } from "@/app/lib/@backend/domain/engineer/repository/command-schedule.repository.interface";
 import { scheduleRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";;

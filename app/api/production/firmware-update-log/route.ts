@@ -1,7 +1,7 @@
 // app/api/firmware-update-log/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import type { IFirmwareUpdateLog } from "@/app/lib/@backend/domain";
+import type {IFirmwareUpdateLog} from "@/app/lib/@backend/domain/production/entity/firmware-update-log.definition";
 import { createManyFirmwareUpdateLogUsecase } from "@/app/lib/@backend/usecase/production/firmware-update-log/create-many-firmware-update-log.usecase";
 
 export async function POST(req: NextRequest) {

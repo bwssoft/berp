@@ -9,7 +9,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
-import { IAccount } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/app/lib/@backend/domain/commercial/entity/account.definition";
 
 export default function AccountManagementLayout({
   children,

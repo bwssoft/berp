@@ -3,7 +3,8 @@ import type { Filter } from "mongodb";
 import { addressRepository } from "@/app/lib/@backend/infra/repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { IAddress, IAddressRepository } from "@/app/lib/@backend/domain";
+import { IAddress } from "@/app/lib/@backend/domain/commercial/entity/address.definition";
+import { IAddressRepository } from "@/app/lib/@backend/domain/commercial/repository/address.repository";
 
 class UpdateOneAddressUsecase {
     repository: IAddressRepository;

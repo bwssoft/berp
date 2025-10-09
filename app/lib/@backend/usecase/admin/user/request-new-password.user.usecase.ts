@@ -1,4 +1,4 @@
-import { IUserRepository } from "@/app/lib/@backend/domain";
+import { IUserRepository } from "@/app/lib/@backend/domain/admin/repository/user.repository.interface";
 import { userRepository } from "@/app/lib/@backend/infra";
 import { resetPasswordUserUsecase } from "./reset-password.user.usecase";
 

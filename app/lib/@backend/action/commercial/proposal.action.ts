@@ -1,11 +1,15 @@
 "use server"
 
-import { IClient, IProposal } from "@/app/lib/@backend/domain"
-import {
-  createOneProposalUsecase, deleteOneProposalUsecase, findManyProposalWithClientUsecase, updateOneProposalUsecase, findOneProposalUsecase, initializeSignatureProcessUscase,
-  downloadOneProposalDocumentUsecase,
-  cancelSignatureProcessUscase,
-} from "@/app/lib/@backend/usecase"
+import { IClient } from "@/app/lib/@backend/domain/commercial/entity/client.definition";
+import { IProposal } from "@/app/lib/@backend/domain/commercial/entity/proposal.definition";
+import { createOneProposalUsecase } from "@/app/lib/@backend/usecase/commercial/proposal/create-one-proposal.usecase";
+import { deleteOneProposalUsecase } from "@/app/lib/@backend/usecase/commercial/proposal/delete-one-proposal.usecase";
+import { findManyProposalWithClientUsecase } from "@/app/lib/@backend/usecase/commercial/proposal/find-many-proposal-with-client.usecase";
+import { updateOneProposalUsecase } from "@/app/lib/@backend/usecase/commercial/proposal/update-one-proposal.usecase";
+import { findOneProposalUsecase } from "@/app/lib/@backend/usecase/commercial/proposal/find-one-proposal.usecase";
+import { initializeSignatureProcessUscase } from "@/app/lib/@backend/usecase/commercial/proposal/initialize-signature-process.usecase";
+import { downloadOneProposalDocumentUsecase } from "@/app/lib/@backend/usecase/commercial/proposal/download-one-proposal-document.usecase";
+import { cancelSignatureProcessUscase } from "@/app/lib/@backend/usecase/commercial/proposal/cancel-signature-process.usecase"
 import { revalidatePath } from "next/cache"
 
 export async function createOneProposal(client: Omit<IProposal

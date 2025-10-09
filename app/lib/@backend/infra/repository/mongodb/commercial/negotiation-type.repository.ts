@@ -1,4 +1,4 @@
-import { INegotiationType } from "@/app/lib/@backend/domain";
+import { INegotiationType } from "@/app/lib/@backend/domain/commercial/entity/negotiation-type.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

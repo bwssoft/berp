@@ -1,4 +1,5 @@
-import { ISerial, ISerialRepository } from "@/app/lib/@backend/domain";
+import { ISerial } from "@/app/lib/@backend/domain/engineer/entity/serial.definition";
+import { ISerialRepository } from "@/app/lib/@backend/domain/engineer/repository/serial.repository.interface";
 import { serialRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";

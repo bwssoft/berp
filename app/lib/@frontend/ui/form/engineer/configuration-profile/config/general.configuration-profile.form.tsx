@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "../../../../component/form";
 import { useGeneralConfigurationProfileForm } from "./use-general.configuration-profile.form";
-import { ITechnology } from "@/app/lib/@backend/domain";
+import {ITechnology} from "@/app/lib/@backend/domain/engineer/entity/technology.definition";
 
 interface Props {
   technology: ITechnology | undefined;

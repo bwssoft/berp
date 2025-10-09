@@ -6,12 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery } from "@tanstack/react-query";
 
-import {
-  Item,
-  type IProduct,
-  type IComponent,
-  type IInput,
-} from "@/app/lib/@backend/domain";
+import Item from "@/app/lib/@backend/domain/logistic/entity/item.entity";
+import type IComponent from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import type IInput from "@/app/lib/@backend/domain/engineer/entity/input.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { findManyInput } from "@/app/lib/@backend/action/engineer/input/input.action";
 import { createOneItem } from "@/app/lib/@backend/action/logistic/item.action";

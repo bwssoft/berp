@@ -1,4 +1,5 @@
-import { EType, IProductionOrder } from "@/app/lib/@backend/domain";
+import {EType} from "@/app/lib/@backend/domain/engineer/entity/configuration-profile.definition";
+import {IProductionOrder} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";

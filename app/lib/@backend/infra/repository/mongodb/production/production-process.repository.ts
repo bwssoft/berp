@@ -1,8 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-    IProductionProcess,
-    IProductionProcessRepository,
-} from "@/app/lib/@backend/domain";
+import IProductionProcess from "@/app/lib/@backend/domain/production/entity/production-process.definition";
+import IProductionProcessRepository from "@/app/lib/@backend/domain/production/repository/production-process.repository.interface";
 import { BaseRepository } from "../@base";
 
 class ProductionProcessRepository

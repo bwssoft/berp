@@ -1,5 +1,5 @@
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { IProductionOrder } from "@/app/lib/@backend/domain";
+import {IProductionOrder} from "@/app/lib/@backend/domain/production/entity/production-order.definition";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";

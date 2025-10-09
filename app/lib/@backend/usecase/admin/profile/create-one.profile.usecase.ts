@@ -1,8 +1,5 @@
-import {
-  AuditDomain,
-  IProfile,
-  IProfileRepository,
-} from "@/app/lib/@backend/domain";
+import IProfile from "@/app/lib/@backend/domain/admin/entity/profile.definition";
+import IProfileRepository from "@/app/lib/@backend/domain/admin/repository/profile.repository.interface";
 import { profileRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { auth } from "@/auth";

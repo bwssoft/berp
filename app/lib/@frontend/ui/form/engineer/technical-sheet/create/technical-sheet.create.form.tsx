@@ -1,5 +1,6 @@
 "use client";
-import { IComponent, IProduct } from "@/app/lib/@backend/domain";
+import {IComponent} from "@/app/lib/@backend/domain/engineer/entity/component.definition";
+import {IProduct} from "@/app/lib/@backend/domain/commercial/entity/product.definition";
 import { Controller } from "react-hook-form";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { FileUpload } from "@/app/lib/@frontend/ui/component/input-file";

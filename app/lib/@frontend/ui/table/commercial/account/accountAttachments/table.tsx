@@ -1,6 +1,6 @@
 "use client";
 
-import { IAccountAttachment } from "@/app/lib/@backend/domain";
+import {IAccountAttachment} from "@/app/lib/@backend/domain/commercial/entity/account-attachment.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { createColumns } from "./columns";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";

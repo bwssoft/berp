@@ -1,4 +1,5 @@
-import { IControl, IProfile } from "@/app/lib/@backend/domain";
+import {IControl} from "@/app/lib/@backend/domain/admin/entity/control.definition";
+import {IProfile} from "@/app/lib/@backend/domain/admin/entity/profile.definition";
 import { useAuth } from '@/frontend/context/auth.context';
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";

@@ -1,7 +1,7 @@
 "use client";
 
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import { IMovement } from "@/app/lib/@backend/domain";
+import {IMovement} from "@/app/lib/@backend/domain/logistic/entity/movement.entity";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./movement.columns";
 import { Pagination } from "../../../component/pagination";

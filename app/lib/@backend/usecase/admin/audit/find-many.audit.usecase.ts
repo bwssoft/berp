@@ -1,6 +1,6 @@
 import { Filter } from "mongodb";
 
-import { IAudit } from "@/app/lib/@backend/domain";
+import { IAudit } from "@/app/lib/@backend/domain/admin/entity/audit.definition";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { auditRepository } from "../../../infra/repository/mongodb/admin/audit.repository";

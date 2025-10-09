@@ -3,7 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from '@/frontend/ui/component/button';
 
-import { IBase, Base } from "@/app/lib/@backend/domain";
+import {IBase} from "@/app/lib/@backend/domain/logistic/entity/base.entity";
+import {Base} from "@/app/lib/@backend/domain/logistic/entity/base.entity";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { baseConstants } from "@/app/lib/constant/logistic";

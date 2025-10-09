@@ -2,7 +2,8 @@
 
 import React from "react";
 import { Modal, ModalBody, ModalContent } from "../../../component/modal";
-import { IAudit, IUser } from "@/app/lib/@backend/domain";
+import {IAudit} from "@/app/lib/@backend/domain/admin/entity/audit.definition";
+import {IUser} from "@/app/lib/@backend/domain/admin/entity/user.definition";
 import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 import { AuditTable } from "../../../table/admin/audit/audit.table";
 

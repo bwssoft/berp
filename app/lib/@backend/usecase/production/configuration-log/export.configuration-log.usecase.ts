@@ -1,7 +1,4 @@
-import {
-  IConfigurationLog,
-  IConfigurationLogRepository,
-} from "@/app/lib/@backend/domain";
+import IConfigurationLog from "@/app/lib/@backend/domain/production/entity/configuration-log.definition";
 import {
   configurationLogRepository,
   firebaseGateway,

@@ -1,4 +1,4 @@
-import { IProductCategory } from "@/app/lib/@backend/domain";
+import {IProductCategory} from "@/app/lib/@backend/domain/commercial/entity/product.category.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { Button } from '@/frontend/ui/component/button';

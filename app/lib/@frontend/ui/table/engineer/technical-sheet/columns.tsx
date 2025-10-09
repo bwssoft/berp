@@ -1,5 +1,5 @@
 import { deleteOneProductionProcessById } from "@/app/lib/@backend/action/production/production-process.action";
-import { ITechnicalSheet } from "@/app/lib/@backend/domain";
+import {ITechnicalSheet} from "@/app/lib/@backend/domain/engineer/entity/technical-sheet.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 

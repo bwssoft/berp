@@ -13,7 +13,7 @@ import {
   TooltipTrigger,
 } from "../../../component/tooltip";
 import { Separator } from "../../../component/separator";
-import { IAddress } from "@/app/lib/@backend/domain";
+import {IAddress} from "@/app/lib/@backend/domain/commercial/entity/address.definition";
 
 interface AddressCardProps {
   title?: string;

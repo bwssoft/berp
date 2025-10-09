@@ -1,4 +1,4 @@
-import { IAccountEconomicGroup } from "@/app/lib/@backend/domain";
+import { IAccountEconomicGroup } from "@/app/lib/@backend/domain/commercial/entity/account.economic-group.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 

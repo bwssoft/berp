@@ -2,7 +2,7 @@
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState, useEffect } from "react";
-import { IContact } from "@/app/lib/@backend/domain";
+import {IContact} from "@/app/lib/@backend/domain/commercial/entity/contact.definition";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 
 interface Props {
