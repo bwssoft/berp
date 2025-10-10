@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  Button,
   Input,
   Label,
   Card,
@@ -11,15 +10,7 @@ import {
   CardTitle,
   Toggle,
 } from "../../../../component";
-import { Plus, Trash2 } from "lucide-react";
-
-interface PriceTier {
-  id: string;
-  from: string;
-  to: string;
-  pricePerUnit: string;
-  isLast?: boolean;
-}
+import { PriceTier, PriceTierInput } from "./price-tier-input";
 
 interface EquipmentPriceFormProps {
   equipmentModel: string;
@@ -278,82 +269,15 @@ export function EquipmentAccessoryPriceForm({
           </div>
 
           {useQuantityRange ? (
-            <div className="space-y-4">
-              {/* Price Tiers */}
-              {priceTiers.map((tier, index) => (
-                <div
-                  key={tier.id}
-                  className="flex items-end gap-4 p-4 border rounded-lg"
-                >
-                  <div className="flex-1 space-y-2">
-                    <Label className="text-sm">
-                      {tier.isLast ? "A partir de:" : "De:"}
-                    </Label>
-                    <Input
-                      value={tier.from}
-                      onChange={(e) => {
-                        updatePriceTier(tier.id, "from", e.target.value);
-                        handlePriceChange();
-                      }}
-                      placeholder="0"
-                    />
-                  </div>
-
-                  {!tier.isLast && (
-                    <div className="flex-1 space-y-2">
-                      <Label className="text-sm">Até:</Label>
-                      <Input
-                        value={tier.to}
-                        onChange={(e) => {
-                          updatePriceTier(tier.id, "to", e.target.value);
-                          handlePriceChange();
-                        }}
-                        placeholder="0"
-                      />
-                    </div>
-                  )}
-
-                  <div className="flex-1 space-y-2">
-                    <Label className="text-sm">Preço por unidade</Label>
-                    <Input
-                      value={tier.pricePerUnit}
-                      onChange={(e) => {
-                        updatePriceTier(
-                          tier.id,
-                          "pricePerUnit",
-                          e.target.value
-                        );
-                        handlePriceChange();
-                      }}
-                      placeholder="R$ 0,00"
-                    />
-                  </div>
-
-                  {!tier.isLast && priceTiers.length > 2 && (
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => removePriceTier(tier.id)}
-                      className="mb-0"
-                      type="button"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-
-              {/* Add New Tier Button */}
-              <Button
-                variant="outline"
-                onClick={addPriceTier}
-                className="w-full"
-                type="button"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar faixa de quantidade
-              </Button>
-            </div>
+            <PriceTierInput
+              tiers={priceTiers}
+              onAdd={addPriceTier}
+              onRemove={removePriceTier}
+              onUpdate={(id, field, value) => {
+                updatePriceTier(id, field, value);
+                handlePriceChange();
+              }}
+            />
           ) : (
             /* Single Price Input */
             <div className="space-y-2">
@@ -399,82 +323,15 @@ export function EquipmentAccessoryPriceForm({
           </div>
 
           {useCashQuantityRange ? (
-            <div className="space-y-4">
-              {/* Cash Price Tiers */}
-              {cashPriceTiers.map((tier, index) => (
-                <div
-                  key={tier.id}
-                  className="flex items-end gap-4 p-4 border rounded-lg"
-                >
-                  <div className="flex-1 space-y-2">
-                    <Label className="text-sm">
-                      {tier.isLast ? "A partir de:" : "De:"}
-                    </Label>
-                    <Input
-                      value={tier.from}
-                      onChange={(e) => {
-                        updateCashPriceTier(tier.id, "from", e.target.value);
-                        handlePriceChange();
-                      }}
-                      placeholder="0"
-                    />
-                  </div>
-
-                  {!tier.isLast && (
-                    <div className="flex-1 space-y-2">
-                      <Label className="text-sm">Até:</Label>
-                      <Input
-                        value={tier.to}
-                        onChange={(e) => {
-                          updateCashPriceTier(tier.id, "to", e.target.value);
-                          handlePriceChange();
-                        }}
-                        placeholder="0"
-                      />
-                    </div>
-                  )}
-
-                  <div className="flex-1 space-y-2">
-                    <Label className="text-sm">Preço por unidade</Label>
-                    <Input
-                      value={tier.pricePerUnit}
-                      onChange={(e) => {
-                        updateCashPriceTier(
-                          tier.id,
-                          "pricePerUnit",
-                          e.target.value
-                        );
-                        handlePriceChange();
-                      }}
-                      placeholder="R$ 0,00"
-                    />
-                  </div>
-
-                  {!tier.isLast && cashPriceTiers.length > 2 && (
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => removeCashPriceTier(tier.id)}
-                      className="mb-0"
-                      type="button"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-
-              {/* Add New Cash Tier Button */}
-              <Button
-                variant="outline"
-                onClick={addCashPriceTier}
-                className="w-full"
-                type="button"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar faixa de quantidade
-              </Button>
-            </div>
+            <PriceTierInput
+              tiers={cashPriceTiers}
+              onAdd={addCashPriceTier}
+              onRemove={removeCashPriceTier}
+              onUpdate={(id, field, value) => {
+                updateCashPriceTier(id, field, value);
+                handlePriceChange();
+              }}
+            />
           ) : (
             /* Single Cash Price Input */
             <div className="space-y-2">
