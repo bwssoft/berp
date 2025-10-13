@@ -100,6 +100,7 @@ export function usePublishPriceTableDialog({
       });
     } finally {
       setIsLoading(false);
+      setOpen(false);
     }
   };
 
