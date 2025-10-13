@@ -1,9 +1,11 @@
+import type { Filter } from "mongodb";
+
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/backend/decorators";
-import type { Filter } from "mongodb";
-import { IPriceTableRepository, IPriceTable } from "@/backend/domain/commercial";
 import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
-import { priceTableRepository } from "@/backend/infra/mongodb/commercial/price-table.repository";
+import type { IPriceTableRepository } from "@/backend/domain/commercial";
+import type { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
+import { priceTableRepository } from "@/backend/infra";
 
 namespace Dto {
     export interface Input {

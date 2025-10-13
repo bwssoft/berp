@@ -1,8 +1,13 @@
 import type { Filter } from "mongodb";
 
-import { accountRepository, contactRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/backend/decorators";
+import type {
+  IAccountRepository,
+  IContactRepository,
+} from "@/backend/domain/commercial";
+import type { IContact } from "@/backend/domain/commercial/entity/contact.definition";
+import { accountRepository, contactRepository } from "@/backend/infra";
 
 class UpdateOneContactUsecase {
   repository: IContactRepository;

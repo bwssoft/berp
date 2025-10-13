@@ -1,9 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
-
-import {
-  contactRepository,
-  accountRepository,
-} from "@/backend/infra";
+import type { IContact } from "@/backend/domain/commercial/entity/contact.definition";
+import type {
+  IAccountRepository,
+  IContactRepository,
+} from "@/backend/domain/commercial";
+import { contactRepository, accountRepository } from "@/backend/infra";
 
 export type DeleteManyContactOutput = {
   success?: {

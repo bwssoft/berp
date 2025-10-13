@@ -1,7 +1,7 @@
-import { IConfigurationProfileRepository } from "@/backend/domain/engineer/repository/configuration-profile.repository";
-import { configurationProfileRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/backend/decorators";
+import type { IConfigurationProfileRepository } from "@/backend/domain/engineer/repository/configuration-profile.repository.interface";
+import { configurationProfileRepository } from "@/backend/infra";
 
 namespace Dto {
   export type Input = {};

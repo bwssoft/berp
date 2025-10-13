@@ -1,8 +1,8 @@
-import { RemoveMongoId } from "@/backend/decorators";
-import { ICommand } from "@/backend/domain/engineer/entity/command.definition";
-import { ICommandRepository } from "@/backend/domain/engineer/repository/command.repository";
-import { commandRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "@/backend/decorators";
+import type { ICommand } from "@/backend/domain/engineer/entity/command.definition";
+import type { ICommandRepository } from "@/backend/domain/engineer/repository/command.repository.interface";
+import { commandRepository } from "@/backend/infra";
 
 class FindOneCommandUsecase {
   repository: ICommandRepository;

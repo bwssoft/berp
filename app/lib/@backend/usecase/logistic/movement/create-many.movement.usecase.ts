@@ -1,8 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import IMovement from "@/backend/domain/logistic/entity/movement.entity";
-import Movement from "@/backend/domain/logistic/entity/movement.entity";
+import { consolidateStockByMovementUseCase } from "@/backend/usecase/logistic/stock/consolidate-by-movement.stock.usecasse";
+import type { IMovement } from "@/backend/domain/logistic/entity/movement.entity";
+import { Movement } from "@/backend/domain/logistic/entity/movement.entity";
+import type { IMovementRepository } from "@/backend/domain/logistic/repository/movement.repository";
 import { movementRepository } from "@/backend/infra";
-import { consolidateStockByMovementUseCase } from "../stock";
 
 class CreateManyMovementUsecase {
   repository: IMovementRepository;

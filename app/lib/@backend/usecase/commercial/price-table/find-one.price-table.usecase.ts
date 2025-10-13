@@ -1,9 +1,10 @@
+import type { Filter } from "mongodb";
+
 import { singleton } from "@/app/lib/util/singleton";
-import { type Filter } from "mongodb";
 import { RemoveMongoId } from "@/backend/decorators";
-import { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
-import { IPriceTableRepository } from "@/backend/domain/commercial/repository/price-table.repository";
-import { priceTableRepository } from "@/backend/infra/mongodb/commercial/price-table.repository";
+import type { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
+import type { IPriceTableRepository } from "@/backend/domain/commercial";
+import { priceTableRepository } from "@/backend/infra";
 
 class FindOnePriceTableUsecase {
   repository: IPriceTableRepository;

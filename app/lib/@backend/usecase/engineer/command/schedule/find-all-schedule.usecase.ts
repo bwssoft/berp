@@ -1,9 +1,11 @@
-import ICommand from "@/backend/domain/engineer/entity/command.definition";
-import IDevice from "@/backend/domain/engineer/entity/device.definition";
-import ISchedule from "@/backend/domain/engineer/entity/command-schedule.definition";
-import { scheduleRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/backend/decorators";;
+import { RemoveMongoId } from "@/backend/decorators";
+import type { ICommand } from "@/backend/domain/engineer/entity/command.definition";
+import type { IFirmware } from "@/backend/domain/engineer/entity/firmware.definition";
+import type { IDevice } from "@/backend/domain/engineer/entity/device.definition";
+import type { ISchedule } from "@/backend/domain/engineer/entity/command-schedule.definition";
+import type { IScheduleRepository } from "@/backend/domain/engineer/repository/command-schedule.repository.interface";
+import { scheduleRepository } from "@/backend/infra";
 
 class FindAllScheduleUsecase {
   repository: IScheduleRepository;

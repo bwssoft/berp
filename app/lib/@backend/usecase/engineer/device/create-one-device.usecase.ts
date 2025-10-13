@@ -1,23 +1,23 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IDevice } from "@/backend/domain/engineer/entity/device.definition";
-import { IDeviceRepository } from "@/backend/domain/engineer/repository/device.repository";
-import { deviceRepository } from "@/backend/infra"
+
+import { singleton } from "@/app/lib/util/singleton";
+import type { IDevice } from "@/backend/domain/engineer/entity/device.definition";
+import type { IDeviceRepository } from "@/backend/domain/engineer/repository/device.repository.interface";
+import { deviceRepository } from "@/backend/infra";
 
 class CreateOneDeviceUsecase {
-  repository: IDeviceRepository
+  repository: IDeviceRepository;
 
   constructor() {
-    this.repository = deviceRepository
+    this.repository = deviceRepository;
   }
 
   async execute(input: Omit<IDevice, "id" | "created_at">) {
-    const client = Object.assign(input, {
+    const device = Object.assign(input, {
+      id: crypto.randomUUID(),
       created_at: new Date(),
-      id: crypto.randomUUID()
-    })
-    return await this.repository.create(client)
+    });
+    return await this.repository.create(device);
   }
 }
 
-export const createOneDeviceUsecase = singleton(CreateOneDeviceUsecase)
-
+export const createOneDeviceUsecase = singleton(CreateOneDeviceUsecase);

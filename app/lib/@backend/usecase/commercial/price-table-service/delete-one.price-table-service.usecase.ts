@@ -1,4 +1,4 @@
-import { priceTableServiceRepository } from "@/backend/infra/mongodb/commercial/price-table-service.repository";
+import { priceTableServiceRepository } from "@/backend/infra";
 
 class DeleteOnePriceTableServiceUsecase {
   async execute(id: string) {

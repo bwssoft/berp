@@ -1,6 +1,7 @@
-import { singleton } from "@/app/lib/util";
-import { IMovement, Movement } from "@/backend/domain/logistic/entity/movement.entity";
-import { IStockRepository } from "@/backend/domain/logistic/repository/stock.repository";
+import { singleton } from "@/app/lib/util/singleton";
+import type { IMovement } from "@/backend/domain/logistic/entity/movement.entity";
+import { Movement } from "@/backend/domain/logistic/entity/movement.entity";
+import type { IStockRepository } from "@/backend/domain/logistic/repository/stock.repository";
 import { stockRepository } from "@/backend/infra";
 
 class ConsolidateStockByMovementUseCase {

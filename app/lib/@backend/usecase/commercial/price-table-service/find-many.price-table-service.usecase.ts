@@ -1,6 +1,7 @@
-import { Filter } from "mongodb";
-import { IPriceTableService } from "@/backend/domain/commercial/entity/price-table-service.definition";
-import { priceTableServiceRepository } from "@/backend/infra/mongodb/commercial/price-table-service.repository";
+import type { Filter } from "mongodb";
+
+import type { IPriceTableService } from "@/backend/domain/commercial/entity/price-table-service.definition";
+import { priceTableServiceRepository } from "@/backend/infra";
 
 interface Input {
   filter?: Filter<IPriceTableService>;

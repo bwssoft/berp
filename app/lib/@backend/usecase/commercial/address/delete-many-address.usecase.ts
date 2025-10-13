@@ -1,9 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
-
-import {
-  addressRepository,
-  accountRepository,
-} from "@/backend/infra";
+import type { IAddress } from "@/backend/domain/commercial/entity/address.definition";
+import type {
+  IAccountRepository,
+  IAddressRepository,
+} from "@/backend/domain/commercial";
+import { addressRepository, accountRepository } from "@/backend/infra";
 
 export type DeleteManyAddressOutput = {
   success?: {

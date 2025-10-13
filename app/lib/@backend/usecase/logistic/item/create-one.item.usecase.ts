@@ -1,13 +1,12 @@
-import IItem from "@/backend/domain/logistic/entity/item.entity"; // Assumindo que IItemRepository existe em domain
-import { itemRepository } from "@/backend/infra"; // Assumindo que itemRepository existe em infra
+
 import { singleton } from "@/app/lib/util/singleton";
+import type { IItem } from "@/backend/domain/logistic/entity/item.entity";
+import type { IItemRepository } from "@/backend/domain/logistic/repository/item.repository";
+import { itemRepository } from "@/backend/infra";
 import { randomUUID } from "crypto";
 
 namespace Dto {
-  // Input DTO: Omit 'id' and 'created_at' as they are generated
   export type Input = Omit<IItem, "id" | "created_at">;
-
-  // Output DTO: The created IItem object
   export type Output = { success: boolean; error?: { usecase: string } };
 }
 
@@ -15,24 +14,19 @@ class CreateOneItemUsecase {
   private repository: IItemRepository;
 
   constructor() {
-    // Injeta a dependência do repositório
     this.repository = itemRepository;
   }
 
   async execute(input: Dto.Input): Promise<Dto.Output> {
-    // Cria o objeto base com um novo ID e data de criação
     try {
-      const base: IItem = {
+      const item: IItem = {
         ...input,
         id: randomUUID(),
         created_at: new Date(),
       };
 
-      // Chama o método create do repositório
-      await this.repository.create(base);
-      return {
-        success: true,
-      };
+      await this.repository.create(item);
+      return { success: true };
     } catch (err) {
       return {
         success: false,
@@ -44,6 +38,4 @@ class CreateOneItemUsecase {
   }
 }
 
-// Exporta a instância singleton do caso de uso
 export const createOneItemUsecase = singleton(CreateOneItemUsecase);
-

@@ -1,9 +1,10 @@
-import ITechnicalSheet from "@/backend/domain/engineer/entity/technical-sheet.definition";
+
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "@/backend/decorators";
+import type { ITechnicalSheet } from "@/backend/domain/engineer/entity/technical-sheet.definition";
 import type { ITechnicalSheetRepository } from "@/backend/domain/engineer/repository/technical-sheet.repository";
 import { technicalSheetRepository } from "@/backend/infra";
-import { singleton } from "@/app/lib/util/singleton";
-import { type Filter } from "mongodb";
-import { RemoveMongoId } from "@/backend/decorators";
+import type { Filter } from "mongodb";
 
 class FindAllTechnicalSheetUsecase {
   repository: ITechnicalSheetRepository;
@@ -15,12 +16,10 @@ class FindAllTechnicalSheetUsecase {
   @RemoveMongoId()
   async execute(params: Filter<ITechnicalSheet>) {
     const { docs } = await this.repository.findMany(params);
-    return docs
+    return docs;
   }
 }
 
 export const findAllTechnicalSheetUsecase = singleton(
   FindAllTechnicalSheetUsecase
 );
-
-

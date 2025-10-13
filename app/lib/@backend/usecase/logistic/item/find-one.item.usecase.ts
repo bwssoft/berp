@@ -1,32 +1,25 @@
-import { Filter } from "mongodb";
 
-import IItem from "@/backend/domain/logistic/entity/item.entity"; // Assumindo que IItemRepository existe
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/backend/decorators"; // Assumindo que este decorator existe
-import { itemRepository } from "@/backend/infra"; // Assumindo que itemRepository existe
+import { RemoveMongoId } from "@/backend/decorators";
+import type { IItem } from "@/backend/domain/logistic/entity/item.entity";
+import type { IItemRepository } from "@/backend/domain/logistic/repository/item.repository";
+import { itemRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
 
 namespace Dto {
-  // Define a interface de entrada para o caso de uso
   export interface Input {
-    filter?: Filter<IItem>; // Filtro opcional para a consulta, usando o tipo Filter do MongoDB
+    filter?: Filter<IItem>;
   }
-  // Define o tipo de saída como um resultado paginado de IItem
   export type Output = IItem | null;
 }
 
 class FindOneItemUsecase {
-  // Injeta a dependência do repositório
   repository: IItemRepository = itemRepository;
 
-  // Aplica o decorator para remover _id, se necessário
   @RemoveMongoId()
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    // Chama o método findOne do repositório, passando os argumentos de filtro, limite, página e ordenação.
-    // Utiliza o operador de coalescência nula (??) para fornecer um filtro vazio caso nenhum seja passado.
     return await this.repository.findOne(arg.filter ?? {});
   }
 }
 
-// Exporta a instância singleton do caso de uso
 export const findOneItemUsecase = singleton(FindOneItemUsecase);
-

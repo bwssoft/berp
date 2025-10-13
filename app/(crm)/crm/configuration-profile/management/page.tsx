@@ -1,6 +1,6 @@
 import { findOneClientWithConfigurationProfile } from "@/backend/action/commercial/client.action";
 import { findManyConfigurationProfile } from "@/backend/action/engineer/configuration-profile.action";
-import ConfigurationProfileTableCrm from "@/app/lib/@frontend/ui/table/engineer/configuration-profile-crm/table";
+import ConfigurationProfileTableCrm from "@/frontend/ui/table/engineer/configuration-profile-crm/table";
 import Link from "next/link";
 
 interface Props {

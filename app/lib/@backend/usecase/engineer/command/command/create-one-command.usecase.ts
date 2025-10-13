@@ -1,28 +1,25 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { ICommand } from "@/backend/domain/engineer/entity/command.definition";
-import { ICommandRepository } from "@/backend/domain/engineer/repository/command.repository";
-import { commandRepository } from "@/backend/infra"
+import { singleton } from "@/app/lib/util/singleton";
+import type { ICommand } from "@/backend/domain/engineer/entity/command.definition";
+import type { ICommandRepository } from "@/backend/domain/engineer/repository/command.repository.interface";
+import { commandRepository } from "@/backend/infra";
 
 class CreateOneCommandUsecase {
-  repository: ICommandRepository
+  repository: ICommandRepository;
 
   constructor() {
-    this.repository = commandRepository
+    this.repository = commandRepository;
   }
 
   async execute(command: Omit<ICommand, "id" | "created_at">) {
-    const _command = Object.assign(
-      command,
-      {
-        id: crypto.randomUUID(),
-        created_at: new Date()
-      }
-    )
-    await this.repository.create(_command)
+    const _command = Object.assign(command, {
+      id: crypto.randomUUID(),
+      created_at: new Date(),
+    });
+    await this.repository.create(_command);
 
-    return command
+    return command;
   }
 }
 
-export const createOneCommandUsecase = singleton(CreateOneCommandUsecase)
+export const createOneCommandUsecase = singleton(CreateOneCommandUsecase);
 

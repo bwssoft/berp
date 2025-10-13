@@ -1,9 +1,9 @@
-import { Filter } from "mongodb";
+import type { Filter } from "mongodb";
 
-import { IAudit } from "@/backend/domain/admin/entity/audit.definition";
+import type { IAudit } from "@/backend/domain/admin/entity/audit.definition";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/backend/decorators";
-import { auditRepository } from "@/backend/infra/mongodb/admin/audit.repository";
+import { auditRepository } from "@/backend/infra";
 import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {

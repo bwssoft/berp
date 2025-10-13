@@ -1,9 +1,12 @@
 
+import type { Filter } from "mongodb";
+
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/backend/decorators";
-import { contactRepository } from "@/backend/infra";
 import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
-import type { Filter } from "mongodb";
+import type { IContactRepository } from "@/backend/domain/commercial";
+import type { IContact } from "@/backend/domain/commercial/entity/contact.definition";
+import { contactRepository } from "@/backend/infra";
 
 namespace Dto {
   export interface Input {

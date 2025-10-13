@@ -1,5 +1,5 @@
-import { IPriceTableService } from "@/backend/domain/commercial/entity/price-table-service.definition";
-import { priceTableServiceRepository } from "@/backend/infra/mongodb/commercial/price-table-service.repository";
+import type { IPriceTableService } from "@/backend/domain/commercial/entity/price-table-service.definition";
+import { priceTableServiceRepository } from "@/backend/infra";
 
 class CreateOnePriceTableServiceUsecase {
   async execute(

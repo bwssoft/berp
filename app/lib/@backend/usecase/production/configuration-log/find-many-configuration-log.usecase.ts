@@ -1,12 +1,12 @@
-import IConfigurationLog from "@/backend/domain/production/entity/configuration-log.definition";
-import { configurationLogRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/backend/decorators";
-import { Filter } from "mongodb";
+import type { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
+import type { IConfigurationLogRepository } from "@/backend/domain/production/repository/configuration-log.repository";
+import { configurationLogRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
 
 namespace Dto {
   export interface Input extends Filter<IConfigurationLog> {}
-
   export type Output = IConfigurationLog[];
 }
 
@@ -27,4 +27,3 @@ class FindManyConfigurationLogUsecase {
 export const findManyConfigurationLogUsecase = singleton(
   FindManyConfigurationLogUsecase
 );
-

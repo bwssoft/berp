@@ -1,13 +1,14 @@
-import IIdentificationLog from "@/backend/domain/production/entity/identification-log.definition";
+import type { IIdentificationLog } from "@/backend/domain/production/entity/identification-log.definition";
+import type { IIdentificationLogRepository } from "@/backend/domain/production/repository/identification-log.repository";
 import {
   identificationLogRepository,
   firebaseGateway,
 } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
+import type { Filter } from "mongodb";
 import ExcelJS from "exceljs";
 import { PassThrough } from "stream";
-import { IFirebaseGateway } from "@/backend/domain/@shared/gateway";
+import type { IFirebaseGateway } from "@/backend/domain/@shared/gateway/firebase.gateway.interface";
 
 namespace Dto {
   export interface Input extends Filter<IIdentificationLog> {}

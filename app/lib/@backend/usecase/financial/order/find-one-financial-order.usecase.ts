@@ -1,8 +1,14 @@
 
 import { singleton } from "@/app/lib/util/singleton";
-import { type Filter } from "mongodb";
 import { RemoveMongoId } from "@/backend/decorators";
+import type {
+  IFinancialOrder,
+  LineItem,
+  LineItemProcessed,
+} from "@/backend/domain/financial/entity/financial-order.definition";
+import type { IFinancialOrderRepository } from "@/backend/domain/financial/repository/order.repository";
 import { financialOrderRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
 
 namespace Dto {
   interface LineItemOutput extends LineItem {
@@ -36,18 +42,18 @@ class FindOneFinancialOrderUsecase {
     return result;
   }
 
-  pipeline(input: Filter<IFinancialOrder>) {
+  private pipeline(input: Filter<IFinancialOrder>) {
     return [
       { $match: { active: true, ...input } },
       {
-        $unwind: "$line_items_processed", // Desestrutura o array line_items_processed
+        $unwind: "$line_items_processed",
       },
       {
-        $unwind: "$line_items_processed.items", // Desestrutura o array items
+        $unwind: "$line_items_processed.items",
       },
       {
         $lookup: {
-          from: "product", // Coleção de produtos
+          from: "product",
           localField: "line_items_processed.items.product_id",
           foreignField: "id",
           as: "product_details",
@@ -55,7 +61,7 @@ class FindOneFinancialOrderUsecase {
             {
               $project: {
                 _id: 0,
-                name: 1, // Traz apenas o campo 'name'
+                name: 1,
               },
             },
           ],
@@ -70,15 +76,15 @@ class FindOneFinancialOrderUsecase {
       },
       {
         $lookup: {
-          from: "business.enterprise", // Nova coleção
-          localField: "line_items_processed.enterprise_id", // Campo de origem
-          foreignField: "id", // Campo da coleção business.enterprise
+          from: "business.enterprise",
+          localField: "line_items_processed.enterprise_id",
+          foreignField: "id",
           as: "enterprise",
           pipeline: [
             {
               $project: {
                 _id: 0,
-                name: 1, // Traz apenas o campo 'name'
+                name: 1,
               },
             },
           ],
@@ -86,15 +92,15 @@ class FindOneFinancialOrderUsecase {
       },
       {
         $lookup: {
-          from: "commercial-negotiation-type", // Nova coleção
-          localField: "line_items_processed.negotiation_type_id", // Campo de origem
-          foreignField: "id", // Campo da coleção business.enterprise
+          from: "commercial-negotiation-type",
+          localField: "line_items_processed.negotiation_type_id",
+          foreignField: "id",
           as: "negotiation_type",
           pipeline: [
             {
               $project: {
                 _id: 0,
-                label: 1, // Traz apenas o campo 'name'
+                label: 1,
               },
             },
           ],
@@ -103,18 +109,18 @@ class FindOneFinancialOrderUsecase {
       {
         $addFields: {
           "line_items_processed.enterprise": {
-            $arrayElemAt: ["$enterprise", 0], // Pega o primeiro resultado
+            $arrayElemAt: ["$enterprise", 0],
           },
           "line_items_processed.negotiation_type": {
-            $arrayElemAt: ["$negotiation_type", 0], // Pega o primeiro resultado
+            $arrayElemAt: ["$negotiation_type", 0],
           },
         },
       },
       {
         $project: {
           product_details: 0,
-          enterprise: 0, // Remove os campos temporários
-          negotiation_type: 0, // Remove os campos temporários
+          enterprise: 0,
+          negotiation_type: 0,
         },
       },
       {
@@ -192,4 +198,3 @@ class FindOneFinancialOrderUsecase {
 export const findOneFinancialOrderUsecase = singleton(
   FindOneFinancialOrderUsecase
 );
-

@@ -1,12 +1,12 @@
-import IIdentificationLog from "@/backend/domain/production/entity/identification-log.definition";
-import { identificationLogRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { RemoveMongoId } from "@/backend/decorators";
-import { Filter } from "mongodb";
+import type { IIdentificationLog } from "@/backend/domain/production/entity/identification-log.definition";
+import type { IIdentificationLogRepository } from "@/backend/domain/production/repository/identification-log.repository";
+import { identificationLogRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
 
 namespace Dto {
   export interface Input extends Filter<IIdentificationLog> {}
-
   export type Output = IIdentificationLog[];
 }
 
@@ -27,4 +27,3 @@ class FindManyIdentificationLogUsecase {
 export const findManyIdentificationLogUsecase = singleton(
   FindManyIdentificationLogUsecase
 );
-

@@ -1,8 +1,10 @@
-import { singleton } from "@/app/lib/util/singleton";
-import { type Filter } from "mongodb";
-import { RemoveMongoId } from "@/backend/decorators";
+import type { Filter } from "mongodb";
 
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveMongoId } from "@/backend/decorators";
 import { accountEconomicGroupRepository } from "@/backend/infra";
+import type { IAccountEconomicGroup } from "@/backend/domain/commercial/entity/account.economic-group.definition";
+import type { IAccountEconomicGroupRepository } from "@/backend/domain/commercial";
 
 class FindOneAccountEconomicGroupUsecase {
   repository: IAccountEconomicGroupRepository;

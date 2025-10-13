@@ -4,8 +4,8 @@ import {
   AuditType,
   type IAudit,
 } from "@/backend/domain/admin/entity/audit.definition";
-import type { IAuditRepository } from "@/backend/domain/admin/repository/audit.repository.interface";
-import { auditRepository } from "@/backend/infra/mongodb/admin/audit.repository";
+import type { IAuditRepository } from "@/backend/domain/admin/repository/audit.repository";
+import { auditRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import isEqual from "lodash/isEqual";
 import { randomUUID } from "crypto";
