@@ -16,15 +16,25 @@ export class PriceTableSchedulerGateway {
   }: {
     priceTableId: string;
     startDateTime: string;
-    endDateTime: string;
+    endDateTime?: string;
   }): Promise<ScheduleResponse> {
+    let body;
+
+    if (!endDateTime) {
+      body = { priceTableId, startDateTime };
+    } else {
+      body = { priceTableId, startDateTime, endDateTime };
+    }
+
     const response = await fetch(`${this.baseUrl}/schedule`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceTableId, startDateTime, endDateTime }),
+      body: JSON.stringify(body),
     });
+
     if (!response.ok)
       throw new Error(`Failed to create schedules: ${response.status}`);
+
     return response.json();
   }
 

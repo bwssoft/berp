@@ -42,20 +42,14 @@ class PublishPriceTableUsecase {
     // 2) Busca outras tabelas
     const { docs } = await this.repository.findMany({});
 
-    // 3) Regras de conflito
     if (priceTable.isTemporary) {
-      // Provisória: sem overlap com provisórias ativas/aguardando
-      if (!priceTable.endDateTime) {
-        return {
-          success: false,
-          error: { global: "Tabela provisória requer data/hora de término." },
-        };
-      }
       const hasOverlap = docs.some((item) => {
         if (item.id === priceTable.id) return false;
         if (!item.isTemporary) return false;
         if (item.status !== "ACTIVE" && item.status !== "AWAITING_PUBLICATION")
           return false;
+        if (!priceTable.endDateTime || !item.endDateTime) return false;
+
         return overlaps(
           priceTable.startDateTime,
           priceTable.endDateTime,
@@ -127,10 +121,16 @@ class PublishPriceTableUsecase {
         console.error("❌ Price table ID is missing");
         return { success: true };
       }
+      console.log("Scheduling price table publication...", {
+        priceTableId,
+        startDateTime: priceTable.startDateTime.toISOString(),
+        endDateTime: priceTable.endDateTime?.toISOString(),
+      });
+
       await priceTableSchedulerGateway.createSchedules({
         priceTableId,
         startDateTime: priceTable.startDateTime.toISOString(),
-        endDateTime: priceTable.endDateTime.toISOString(),
+        endDateTime: priceTable.endDateTime?.toISOString(),
       });
     } catch (schedulerError) {
       console.warn(
