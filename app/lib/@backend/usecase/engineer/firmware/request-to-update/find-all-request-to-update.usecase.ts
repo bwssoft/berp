@@ -1,11 +1,9 @@
-import {
-  IDevice,
-  IFirmware,
-  IRequestToUpdate,
-  IRequestToUpdateRepository,
-} from "@/app/lib/@backend/domain";
-import { requestToUpdateRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
+import type { IDevice } from "@/backend/domain/engineer/entity/device.definition";
+import type { IFirmware } from "@/backend/domain/engineer/entity/firmware.definition";
+import type { IRequestToUpdate } from "@/backend/domain/engineer/entity/request-to-update-firmware.definition";
+import type { IRequestToUpdateRepository } from "@/backend/domain/engineer/repository/request-to-update-firmware.repository";
+import { requestToUpdateRepository } from "@/backend/infra";
 
 class FindAllRequestToUpdateUsecase {
   repository: IRequestToUpdateRepository;
@@ -23,8 +21,8 @@ class FindAllRequestToUpdateUsecase {
     })[];
   }
 
-  pipeline() {
-    const pipeline = [
+  private pipeline() {
+    return [
       {
         $lookup: {
           from: "device",
@@ -61,7 +59,6 @@ class FindAllRequestToUpdateUsecase {
         },
       },
     ];
-    return pipeline;
   }
 }
 

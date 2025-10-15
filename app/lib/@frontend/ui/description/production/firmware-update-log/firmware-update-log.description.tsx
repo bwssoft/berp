@@ -1,5 +1,5 @@
 import React from "react";
-import { IFirmwareUpdateLog } from "@/app/lib/@backend/domain";
+import {IFirmwareUpdateLog} from "@/backend/domain/production/entity/firmware-update-log.definition";
 import { cn, getStatusProps } from "@/app/lib/util";
 import {
   Card,
@@ -165,3 +165,4 @@ export function FirmwareUpdateLogDescription({ data }: Props) {
     </Card>
   );
 }
+

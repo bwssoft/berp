@@ -1,7 +1,8 @@
 "use client"
-import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
-import { IControl, IProfile } from "@/app/lib/@backend/domain";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { findManyProfile } from "@/backend/action/admin/profile.action";
+import {IControl} from "@/backend/domain/admin/entity/control.definition";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 
@@ -39,3 +40,4 @@ export function useProfileLinkedControlModal() {
     control
   };
 }
+

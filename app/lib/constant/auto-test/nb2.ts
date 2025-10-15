@@ -1,4 +1,4 @@
-import { BwsNb2 } from "../../@backend/infra/protocol";
+import { BwsNb2 } from "@/backend/infra/protocol/parser/nb-2";
 
 const autoTestAnalisys: { [key in keyof BwsNb2.AutoTest]?: string } = {
   ACELC: "ACELC",

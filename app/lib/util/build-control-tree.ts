@@ -1,4 +1,4 @@
-import { IControl } from "../@backend/domain";
+import { IControl } from "@/backend/domain/admin/entity/control.definition";
 
 export type ControlTree = (IControl & { children: ControlTree })[];
 

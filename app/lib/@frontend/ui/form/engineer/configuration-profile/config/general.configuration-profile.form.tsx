@@ -9,13 +9,9 @@ import {
 } from "../../../../component/card";
 import { Clock, Network, Server, Wifi } from "lucide-react";
 import { Badge } from "../../../../component/badge";
-import {
-  Input,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../../../component";
+import { Input } from '@/frontend/ui/component/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/frontend/ui/component/tabs';
+
 import {
   FormControl,
   FormField,
@@ -24,7 +20,7 @@ import {
   FormMessage,
 } from "../../../../component/form";
 import { useGeneralConfigurationProfileForm } from "./use-general.configuration-profile.form";
-import { ITechnology } from "@/app/lib/@backend/domain";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
 
 interface Props {
   technology: ITechnology | undefined;
@@ -354,3 +350,4 @@ export function GeneralConfigurationProfileForm(props: Props) {
     </Card>
   );
 }
+

@@ -1,16 +1,14 @@
-import {
-  IAutoTestLog,
-  IAutoTestLogRepository,
-} from "@/app/lib/@backend/domain";
+import type { IAutoTestLog } from "@/backend/domain/production/entity/auto-test-log.definition";
+import type { IAutoTestLogRepository } from "@/backend/domain/production/repository/auto-test-log.repository";
 import {
   autoTestLogRepository,
   firebaseGateway,
-} from "@/app/lib/@backend/infra";
+} from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
+import type { Filter } from "mongodb";
 import ExcelJS from "exceljs";
 import { PassThrough } from "stream";
-import { IFirebaseGateway } from "@/app/lib/@backend/domain/@shared/gateway";
+import type { IFirebaseGateway } from "@/backend/domain/@shared/gateway/firebase.gateway.interface";
 
 namespace Dto {
   export interface Input extends Filter<IAutoTestLog> {}
@@ -104,3 +102,4 @@ class ExportAutoTestLogUsecase {
 }
 
 export const exportAutoTestLogUsecase = singleton(ExportAutoTestLogUsecase);
+

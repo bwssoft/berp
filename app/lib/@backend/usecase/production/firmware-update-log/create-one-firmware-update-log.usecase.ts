@@ -1,9 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IFirmwareUpdateLog,
-  IFirmwareUpdateLogRepository,
-} from "@/app/lib/@backend/domain";
-import { firmwareUpdateLogRepository } from "@/app/lib/@backend/infra";
+import type { IFirmwareUpdateLog } from "@/backend/domain/production/entity/firmware-update-log.definition";
+import type { IFirmwareUpdateLogRepository } from "@/backend/domain/production/repository/firmware-update-log.repository";
+import { firmwareUpdateLogRepository } from "@/backend/infra";
+import { randomUUID } from "crypto";
 
 class CreateOneFirmwareUpdateLogUsecase {
   repository: IFirmwareUpdateLogRepository;
@@ -13,14 +12,15 @@ class CreateOneFirmwareUpdateLogUsecase {
   }
 
   async execute(input: Omit<IFirmwareUpdateLog, "id" | "created_at">) {
-    const _input = Object.assign(input, {
+    const payload: IFirmwareUpdateLog = {
+      ...input,
+      id: randomUUID(),
       created_at: new Date(),
-      id: crypto.randomUUID(),
-    });
+    };
 
-    await this.repository.create(_input);
+    await this.repository.create(payload);
 
-    return _input;
+    return payload;
   }
 }
 

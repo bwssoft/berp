@@ -1,9 +1,18 @@
 "use client";
 
-import React from "react";
-import { Controller } from "react-hook-form";
-import { Button, Checkbox, Input } from "../../../../component";
-import { IAddress } from "@/app/lib/@backend/domain";
+import React, { useEffect, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Input } from '@/frontend/ui/component/input';
+
+import { Combobox } from "@/app/lib/@frontend/ui/component/combobox";
+import { UF_LIST, type UF_CODES } from "@/app/lib/constant/brasil/uf";
+import {
+  loadCountiesByUF,
+  type County,
+} from "@/app/lib/constant/brasil/counties";
+import {IAddress} from "@/backend/domain/commercial/entity/address.definition";
 import { useAddressUpdateForm } from "./use-address.update.form";
 import { Loader2 } from "lucide-react";
 
@@ -24,6 +33,64 @@ export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
     control,
     isSubmitting,
   } = useAddressUpdateForm({ address, onSubmit });
+  const { setValue } = useAddressUpdateForm({ address, onSubmit });
+
+  const watchedState = useWatch({ control, name: "state" }) as
+    | string
+    | undefined;
+
+  function CityCombobox({
+    state,
+    value,
+    onChange,
+    disabled,
+  }: {
+    state?: string;
+    value?: string;
+    onChange: (v: string) => void;
+    disabled?: boolean;
+  }) {
+    const [counties, setCounties] = useState<County[]>([]);
+    const [isLoadingCounties, setIsLoadingCounties] = useState(false);
+
+    useEffect(() => {
+      if (!state) {
+        setCounties([]);
+        return;
+      }
+      setIsLoadingCounties(true);
+      loadCountiesByUF(state as UF_CODES)
+        .then((list) =>
+          setCounties([...list].sort((a, b) => a.nome.localeCompare(b.nome)))
+        )
+        .finally(() => setIsLoadingCounties(false));
+    }, [state]);
+
+    const selectedCounty = value
+      ? counties.filter((c) => c.nome === value)
+      : [];
+
+    return (
+      <div>
+        <label className="block text-sm font-medium">Município</label>
+        <Combobox
+          data={counties}
+          keyExtractor={(c) => String(c.ibge)}
+          displayValueGetter={(c) => c.nome}
+          value={selectedCounty}
+          type="single"
+          behavior="search"
+          placeholder={
+            isLoadingCounties
+              ? "Carregando municípios…"
+              : "Selecione o Município"
+          }
+          onOptionChange={(selected) => onChange(selected?.[0]?.nome || "")}
+          disabled={disabled || !state || isLoadingCounties}
+        />
+      </div>
+    );
+  }
 
   const checkboxOptions = [
     { label: "Comercial", value: "Comercial" },
@@ -72,17 +139,47 @@ export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
           error={errors.district?.message}
           disabled={loadingCep}
         />
-        <Input
-          label="Estado"
-          {...register("state")}
-          error={errors.state?.message}
-          disabled={loadingCep}
+        <Controller
+          name="state"
+          control={control}
+          render={({ field }) => {
+            const selected = field.value
+              ? UF_LIST.filter((u) => u.uf === field.value)
+              : [];
+            return (
+              <div>
+                <label className="block text-sm font-medium">Estado</label>
+                <Combobox
+                  data={UF_LIST}
+                  keyExtractor={(u) => u.uf}
+                  displayValueGetter={(u) => u.nome}
+                  value={selected}
+                  type="single"
+                  behavior="search"
+                  placeholder="Selecione o Estado"
+                  onOptionChange={(selected) => {
+                    const uf = selected?.[0]?.uf;
+                    field.onChange(uf || "");
+                    setValue("city", "");
+                  }}
+                  disabled={loadingCep}
+                />
+              </div>
+            );
+          }}
         />
-        <Input
-          label="Cidade"
-          {...register("city")}
-          error={errors.city?.message}
-          disabled={loadingCep}
+
+        <Controller
+          name="city"
+          control={control}
+          render={({ field }) => (
+            <CityCombobox
+              state={watchedState}
+              value={field.value}
+              onChange={(v) => field.onChange(v)}
+              disabled={loadingCep}
+            />
+          )}
         />
         <Input
           label="Ponto de Referência"
@@ -151,3 +248,4 @@ export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
     </form>
   );
 }
+

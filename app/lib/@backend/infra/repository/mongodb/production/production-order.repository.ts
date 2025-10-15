@@ -1,7 +1,5 @@
-import {
-  IProductionOrder,
-  IProductionOrderRepository,
-} from "@/app/lib/@backend/domain";
+import type { IProductionOrder } from "@/backend/domain/production/entity/production-order.definition";
+import type { IProductionOrderRepository } from "@/backend/domain/production/repository/production-order.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
@@ -17,3 +15,5 @@ class ProductionOrderRepository
 }
 
 export const productionOrderRepository = singleton(ProductionOrderRepository);
+
+

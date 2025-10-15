@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { BrazilianUF, IPriceTableConditionGroup } from "../../../domain";
+import { BrazilianUF, IPriceTableConditionGroup } from "@/backend/domain/commercial/entity/price-table-condition.definition";
 
 namespace Dto {
   export type GroupWithPriority = IPriceTableConditionGroup & { priorityEnabled?: boolean };
@@ -19,7 +19,9 @@ namespace Dto {
 class ValidateBillingConditionsPriceTableUsecase {
   async execute(input: Dto.Input): Promise<Dto.Output> {
     try {
-      const totalConds = input.groups.reduce((acc, g) => acc + g.conditions.length, 0);
+      const totalConds = input.groups.reduce((acc, g) => acc + (g.conditions?.length ?? 0), 0);
+
+      // 0) Nenhuma condição
       if (totalConds === 0) {
         return {
           success: true,
@@ -30,76 +32,51 @@ class ValidateBillingConditionsPriceTableUsecase {
         };
       }
 
+      const problems: string[] = [];
+
       // 1) Cobertura de UFs
       const cov = validateCoverage(input.groups);
       if (!cov.ok) {
-        return {
-          success: true,
-          status: "yellow",
-          messages: [
-            "É obrigatório que todos os estados estejam incluídos em condições."
-          ],
-        }
+        problems.push("É obrigatório que todos os estados estejam incluídos em condições.");
       }
 
       // 2) Específica com limite exige alguma "sem limite"
       const unl = validateNeedsUnlimited(input.groups);
       if (!unl.ok) {
-        return {
-          success: true,
-          status: "yellow",
-          messages: [
-            "É obrigatório cadastrar ao menos uma condição sem limite de faturamento para estados que foram especificados em condições."
-          ],
-        }
+        problems.push("É obrigatório cadastrar ao menos uma condição sem limite de faturamento para estados que foram especificados em condições.");
       }
 
       // 3) Empresa obrigatória
       const comp = validateCompanyRequired(input.groups);
       if (!comp.ok) {
-        return {
-          success: true,
-          status: "yellow",
-          messages: [
-            "Em cada condição é obrigatório faturar para uma empresa."
-          ],
-        }
+        problems.push("Em cada condição é obrigatório faturar para uma empresa.");
       }
 
-      // 4) Duplicadas (respeitando exceção por grupo)
+      // 4) Duplicadas (global)
       const dups = findDuplicates(input.groups);
       if (dups.length > 0) {
-        return {
-          success: true,
-          status: "yellow",
-          messages: [
-            "Não é possível cadastrar condições duplicadas."
-          ],
-        }
+        problems.push("Não é possível cadastrar condições duplicadas.");
       }
 
       // 5) Grupo ALL não pode ser só "com limite"
+      //    (quando TODAS as condições ativas do grupo são ALL)
       const onlyLim = validateGroupOnlyLimitedWhenAll(input.groups);
       if (!onlyLim.ok) {
-        return {
-          success: true,
-          status: "yellow",
-          messages: [
-            "Não é permitido o cadastro apenas de condições com limite de faturamento no mesmo grupo, cadastre ao menos uma condição sem limite."
-          ],
-        }
+        problems.push("Não é permitido o cadastro apenas de condições com limite de faturamento no mesmo grupo, cadastre ao menos uma condição sem limite.");
       }
 
-      // 6) Prioridade por grupo (quando ligada)
+      // 6) Prioridade por grupo (quando ligada):
       const prio = validatePriorityGroups(input.groups);
       if (!prio.ok) {
+        problems.push("Para habilitar a prioridade de faturamento de um grupo é necessário conter limite de faturamento em todos as condições do grupo, com exceção da última que deverá estar sem limite cadastrado.");
+      }
+
+      if (problems.length > 0) {
         return {
           success: true,
           status: "yellow",
-          messages: [
-            "Para habilitar a prioridade de faturamento de um grupo é necessário conter limite de faturamento em todos as condições do grupo, com exceção da última que deverá estar sem limite cadastrado."
-          ],
-        }
+          messages: [...problems],
+        };
       }
 
       return { success: true, status: "green", messages: ["Condições validadas com sucesso!"] };
@@ -111,7 +88,6 @@ class ValidateBillingConditionsPriceTableUsecase {
 }
 
 export const validateBillingConditionsPriceTableUsecase = singleton(ValidateBillingConditionsPriceTableUsecase);
-
 
 /* ===================== Helpers ===================== */
 
@@ -134,8 +110,10 @@ function isUnlimited(limit?: string): boolean {
 function isALL(salesFor?: BrazilianUF[]): boolean {
   return !salesFor || salesFor.length === 0;
 }
-function limitKind(limit?: string) {
-  return isUnlimited(limit) ? "SEM_LIM" : "LIM"; // binário
+function limitKey(limit?: string) {
+  const n = parseNumberPTBR(limit);
+  if (!n || n <= 0) return "UNL"; // sem limite
+  return String(n);
 }
 function statesKey(salesFor?: BrazilianUF[]): string {
   if (isALL(salesFor)) return "ALL";
@@ -149,7 +127,7 @@ function billKey(toBillFor?: string): string {
 
 /* ---- 1) Cobertura dos 27 UFs ---- */
 function validateCoverage(groups: Dto.GroupWithPriority[]) {
-  const conditions = groups.flatMap(g => g.conditions);
+  const conditions = groups.flatMap(g => g.conditions ?? []);
 
   // ALL cobre todo o país
   if (conditions.some(c => isALL(c.salesFor))) {
@@ -166,7 +144,7 @@ function validateCoverage(groups: Dto.GroupWithPriority[]) {
 
 /* ---- 2) Específica com limite exige alguma "sem limite" ---- */
 function validateNeedsUnlimited(groups: Dto.GroupWithPriority[]) {
-  const conditions = groups.flatMap(g => g.conditions);
+  const conditions = groups.flatMap(g => g.conditions ?? []);
   const hasSpecificWithLimit = conditions.some(c => !isALL(c.salesFor) && !isUnlimited(c.billingLimit));
   if (!hasSpecificWithLimit) return { ok: true };
   const hasAnyUnlimited = conditions.some(c => isUnlimited(c.billingLimit));
@@ -175,57 +153,68 @@ function validateNeedsUnlimited(groups: Dto.GroupWithPriority[]) {
 
 /* ---- 3) Empresa obrigatória em cada condição ---- */
 function validateCompanyRequired(groups: Dto.GroupWithPriority[]) {
-  const groupsIdx: number[] = [];
-  groups.forEach((g, gi) => {
-    const hasMissing = g.conditions.some(c => !c.toBillFor || !c.toBillFor.trim());
-    if (hasMissing) groupsIdx.push(gi);
-  });
-  return { ok: groupsIdx.length === 0, groupsIdx };
+  // considera TODAS as condições; qualquer ausência de empresa reprova
+  const missingSomewhere = groups.some(g =>
+    (g.conditions ?? []).some(c => !(c?.toBillFor && c.toBillFor.trim()))
+  );
+  return { ok: !missingSomewhere };
 }
 
-/* ---- 4) Duplicadas (com exceção: específico + sem limite dentro do mesmo grupo) ---- */
+/* ---- 4) Duplicadas (global) — ignora linhas incompletas e usa VALOR do limite ---- */
 function findDuplicates(groups: Dto.GroupWithPriority[]) {
-  const counts = new Map<string, Map<number, number>>();
+  const isActive = (c: any) => !!(c?.toBillFor && c.toBillFor.trim());
+
+  const map = new Map<string, { groupIndex: number; condIndex: number }[]>();
 
   groups.forEach((g, gi) => {
-    g.conditions.forEach(c => {
-      const key = `${statesKey(c.salesFor)}::${billKey(c.toBillFor)}::${limitKind(c.billingLimit)}`;
-      const perGroup = counts.get(key) ?? new Map<number, number>();
-      perGroup.set(gi, (perGroup.get(gi) ?? 0) + 1);
-      counts.set(key, perGroup);
+    (g.conditions ?? []).forEach((c, ci) => {
+      if (!isActive(c)) return;
+      const key = `${statesKey(c.salesFor)}::${billKey(c.toBillFor)}::${limitKey(c.billingLimit)}`;
+      const arr = map.get(key) ?? [];
+      arr.push({ groupIndex: gi, condIndex: ci });
+      map.set(key, arr);
     });
   });
 
   const duplicates: string[] = [];
-  counts.forEach((perGroup) => {
-    if (perGroup.size > 1) { duplicates.push("x"); return; } // aparece em grupos diferentes
-    const [, qty] = Array.from(perGroup.entries())[0];
-    if (qty > 1) duplicates.push("x"); // repete no mesmo grupo
+  map.forEach((hits, key) => {
+    if (hits.length > 1) duplicates.push(key);
   });
   return duplicates;
 }
 
-/* ---- 5) Grupo com todas condições ALL não pode ser só "com limite" ---- */
+/* ---- 5) Grupo ALL não pode ser só "com limite"
+   Aplica quando TODAS as condições ATIVAS do grupo são ALL.
+   (Condição "ativa" = possui 'toBillFor' preenchido) */
 function validateGroupOnlyLimitedWhenAll(groups: Dto.GroupWithPriority[]) {
   const invalidGroupIdx: number[] = [];
+
+  const isActive = (c: any) => !!(c?.toBillFor && c.toBillFor.trim());
+
   groups.forEach((g, gi) => {
-    const allAreALL = g.conditions.length > 0 && g.conditions.every(c => isALL(c.salesFor));
+    const active = (g.conditions ?? []).filter(isActive);
+    if (active.length === 0) return;
+
+    const allAreALL = active.every(c => isALL(c.salesFor));
     if (!allAreALL) return;
-    const hasUnlimited = g.conditions.some(c => isUnlimited(c.billingLimit));
+
+    const hasUnlimited = active.some(c => isUnlimited(c.billingLimit));
     if (!hasUnlimited) invalidGroupIdx.push(gi);
   });
+
   return { ok: invalidGroupIdx.length === 0, invalidGroupIdx };
 }
 
-/* ---- 6) Prioridade por grupo (quando ligada) ---- */
+/* ---- 6) Prioridade por grupo (quando ligada):
+   Todas com limite > 0, EXCETO a última que deve estar SEM limite ---- */
 function validatePriorityGroups(groups: Dto.GroupWithPriority[]) {
   const invalid: number[] = [];
+
   groups.forEach((g, gi) => {
-    // priorityEnabled é opcional; trate como false quando ausente
-    const priorityEnabled = !!(g as any).priorityEnabled;
+    const priorityEnabled = (g as any).priority === true || (g as any).priorityEnabled === true;
     if (!priorityEnabled) return;
 
-    const list = g.conditions;
+    const list = g.conditions ?? [];
     if (list.length < 2) { invalid.push(gi); return; }
 
     const allButLastHaveLimit = list.slice(0, -1).every(c => !isUnlimited(c.billingLimit));

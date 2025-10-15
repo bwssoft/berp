@@ -1,11 +1,12 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProposal, IRuleRepository } from "@/app/lib/@backend/domain";
-import { ruleRepository } from "@/app/lib/@backend/infra";
+import { IRuleRepository } from "@/backend/domain/commercial/repository/rule.repository";
+import { IProposal } from "@/backend/domain/commercial/entity/proposal.definition";
+import { ruleRepository } from "@/backend/infra";
 import {
   IRule,
   RuleOperator,
   RuleScope,
-} from "@/app/lib/@backend/domain/commercial/entity/rule.definition";
+} from "@/backend/domain/commercial/entity/rule.definition";
 
 type Input = { scenario: Scenario };
 type Output = {
@@ -150,3 +151,4 @@ class AnalyseProposalScenarioUsecase {
 export const analyseProposalScenarioUsecase = singleton(
   AnalyseProposalScenarioUsecase
 );
+

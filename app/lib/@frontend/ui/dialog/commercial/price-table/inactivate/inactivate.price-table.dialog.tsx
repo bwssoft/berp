@@ -21,9 +21,14 @@ export function InactivatePriceTableDialog({
         <h2 className="text-lg font-semibold">Inativar tabela</h2>
 
         <p className="mt-2 text-sm text-gray-600">
-          Você tem certeza que deseja inativar esta tabela de preços? A tabela
-          ficará indisponível para novos pedidos, mas os pedidos existentes
-          continuarão válidos.
+          Ao confirmar esta ação, a tabela será inativada. No caso de tabela do
+          tipo normal será necessário aguardar o cadastro e publicação/ativação
+          de nova tabela para que os preços voltem a aparecer nas propostas caso
+          não tenha uma tabela provisória em vigor. No caso de tabela do tipo
+          provisória, automaticamente a tabela do tipo normal que estiver ‘Em
+          Pausa’ será reativada se houver. Caso não tenha tabela ‘Em Pausa’
+          então será necessário aguardar o cadastro e publicação/ativação de
+          nova tabela para que os preços voltem a aparecer na proposta.
         </p>
 
         <div className="mt-6 flex justify-end gap-2">

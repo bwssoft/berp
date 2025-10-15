@@ -15,3 +15,5 @@ export interface IUser {
   external: boolean;
   created_at: Date;
 }
+
+export default IUser;

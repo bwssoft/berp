@@ -1,4 +1,4 @@
-import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { findOneTechnology } from "@/backend/action/engineer/technology.action";
 import { IdentificatorPage } from "@/app/lib/@frontend/ui/page/production/tool/identificator/identificator.page";
 
 interface Props {
@@ -18,3 +18,4 @@ export default async function Page(props: Props) {
 
   return <IdentificatorPage technology={technology} />;
 }
+

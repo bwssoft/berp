@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { IAccount, IContact } from "@/app/lib/@backend/domain";
-import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import { IAccount } from "@/backend/domain/commercial/entity/account.definition";
+import { IContact } from "@/backend/domain/commercial/entity/contact.definition";
+import { findOneAccount } from "@/backend/action/commercial/account.action";
+import { findManyContact } from "@/backend/action/commercial/contact.action";
 import { ContactListItem } from "./types";
 
 const transformContactToListItem = (contact: IContact): ContactListItem => ({
@@ -25,13 +26,15 @@ const processAccountContacts = async (
   }
 
   try {
-    const accountContacts = await findManyContact({ accountId: account.id });
+    const accountContacts = (await findManyContact({
+      accountId: account.id,
+    })) as IContact[] | undefined;
 
     if (!accountContacts?.length) {
       return [];
     }
 
-    return accountContacts.map((contact) =>
+    return accountContacts.map((contact: IContact) =>
       transformContactToListItem(contact)
     );
   } catch (error) {
@@ -82,3 +85,4 @@ export function useSearchContactHistoricalModal(accountId?: string) {
     isLoading: accountLoading,
   };
 }
+

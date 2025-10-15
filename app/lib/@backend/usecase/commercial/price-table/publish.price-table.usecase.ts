@@ -1,20 +1,47 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IPriceTableRepository } from "../../../domain/commercial/repository/price-table.repository";
-import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import type { IPriceTableRepository } from "@/backend/domain/commercial";
+import {
+  priceTableRepository,
+  priceTableSchedulerGateway,
+} from "@/backend/infra";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
-import { AuditDomain } from "../../../domain/admin/entity/audit.definition";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
 namespace Dto {
   export type Input = { id: string };
   export type Output = {
     success: boolean;
-    error?: { global?: string };
+    error?: {
+      global?: string;
+      fields?: {
+        startDateTime?: string;
+        endDateTime?: string;
+      };
+    };
   };
+}
+
+interface PriceTableDoc {
+  id: string;
+  isTemporary: boolean;
+  status: string;
+  startDateTime: Date;
+  endDateTime?: Date;
 }
 
 function overlaps(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) {
   return aStart.getTime() < bEnd.getTime() && aEnd.getTime() > bStart.getTime();
+}
+
+function isSameMinute(date1: Date, date2: Date): boolean {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate() &&
+    date1.getHours() === date2.getHours() &&
+    date1.getMinutes() === date2.getMinutes()
+  );
 }
 
 class PublishPriceTableUsecase {
@@ -31,89 +58,219 @@ class PublishPriceTableUsecase {
     }
 
     const now = new Date();
+
+    // 2) Validação de data/hora não pode estar no passado
     if (priceTable.startDateTime.getTime() < now.getTime()) {
       return {
         success: false,
-        error: { global: "A data/hora de início não pode estar no passado." },
+        error: {
+          global: "A data/hora de início não pode estar no passado.",
+          fields: { startDateTime: "Data/hora não pode estar no passado" },
+        },
       };
     }
 
-    // 2) Busca outras tabelas
+    const endDateTime = priceTable.endDateTime;
+    if (endDateTime && endDateTime.getTime() < now.getTime()) {
+      return {
+        success: false,
+        error: {
+          global: "A data/hora de término não pode estar no passado.",
+          fields: { endDateTime: "Data/hora não pode estar no passado" },
+        },
+      };
+    }
+
+    // 3) Busca outras tabelas
     const { docs } = await this.repository.findMany({});
 
-    // 3) Regras de conflito
+    // 4) Regras de conflito conforme documento
     if (priceTable.isTemporary) {
-      // Provisória: sem overlap com provisórias ativas/aguardando
-      if (!priceTable.endDateTime) {
+      // ========== TABELA PROVISÓRIA ==========
+      if (!endDateTime) {
         return {
           success: false,
-          error: { global: "Tabela provisória requer data/hora de término." },
+          error: {
+            global: "Tabela provisória requer data/hora de término.",
+            fields: { endDateTime: "Campo obrigatório para tabela provisória" },
+          },
         };
       }
-      const hasOverlap = docs.some((item) => {
+
+      // Verifica conflito com TABELAS NORMAIS (não pode ter o mesmo minuto de início)
+      const normalConflict = docs.some((item) => {
         if (item.id === priceTable.id) return false;
-        if (!item.isTemporary) return false;
-        if (item.status !== "ACTIVE" && item.status !== "AWAITING_PUBLICATION")
+        if (item.isTemporary) return false;
+        if (
+          item.status !== "ACTIVE" &&
+          item.status !== "AWAITING_PUBLICATION"
+        ) {
           return false;
-        return overlaps(
-          priceTable.startDateTime,
-          priceTable.endDateTime,
-          item.startDateTime,
-          item.endDateTime
-        );
+        }
+
+        return isSameMinute(priceTable.startDateTime, item.startDateTime);
       });
 
-      if (hasOverlap) {
+      if (normalConflict) {
         return {
           success: false,
           error: {
             global:
-              "Conflito: já existe tabela provisória ativa ou programada no período informado.",
+              "Uma tabela provisória não pode iniciar no mesmo horário (minuto) de uma tabela normal.",
+            fields: {
+              startDateTime: "Conflito de horário com tabela normal",
+            },
+          },
+        };
+      }
+
+      // Verifica se existe outra tabela provisória ATIVA ou AGUARDANDO PUBLICAÇÃO
+      // que tenha overlap no período (não pode ter nenhum overlap)
+      const provisoryOverlap = docs.find((item) => {
+        if (item.id === priceTable.id) return false;
+        if (!item.isTemporary) return false;
+
+        // Apenas verifica tabelas ativas ou aguardando publicação
+        if (
+          item.status !== "ACTIVE" &&
+          item.status !== "AWAITING_PUBLICATION"
+        ) {
+          return false;
+        }
+
+        const itemEnd = item.endDateTime ?? item.startDateTime;
+        return overlaps(
+          priceTable.startDateTime,
+          endDateTime,
+          item.startDateTime,
+          itemEnd
+        );
+      });
+
+      if (provisoryOverlap) {
+        const conflictEnd =
+          provisoryOverlap.endDateTime ?? provisoryOverlap.startDateTime;
+        const conflictStart = provisoryOverlap.startDateTime;
+
+        return {
+          success: false,
+          error: {
+            global: `Já existe uma tabela provisória no período de ${conflictStart.toLocaleString("pt-BR")} até ${conflictEnd.toLocaleString("pt-BR")}. Você deve agendar antes ou depois deste período.`,
+            fields: {
+              startDateTime: "Conflito de período",
+              endDateTime: "Conflito de período",
+            },
           },
         };
       }
     } else {
-      // Normal: sem outra normal aguardando para o MESMO start
-      const sameStartConflict = docs.some((item) => {
+      // ========== TABELA NORMAL ==========
+
+      // Verifica se existe outra tabela normal AGUARDANDO PUBLICAÇÃO
+      // com o MESMO minuto de início
+      const normalConflict = docs.some((item) => {
         if (item.id === priceTable.id) return false;
         if (item.isTemporary) return false;
         if (item.status !== "AWAITING_PUBLICATION") return false;
-        return (
-          item.startDateTime.getTime() === priceTable.startDateTime.getTime()
-        );
+
+        return isSameMinute(priceTable.startDateTime, item.startDateTime);
       });
 
-      if (sameStartConflict) {
+      if (normalConflict) {
         return {
           success: false,
           error: {
             global:
-              "Conflito: já existe tabela normal programada para a mesma data/hora.",
+              "Já existe uma tabela normal aguardando publicação que será ativada no mesmo horário (minuto). O horário deve ser diferente.",
+            fields: {
+              startDateTime: "Conflito de horário de início",
+            },
+          },
+        };
+      }
+
+      // Verifica se existe alguma tabela PROVISÓRIA que inicia no mesmo minuto
+      const provisoryConflict = docs.some((item) => {
+        if (item.id === priceTable.id) return false;
+        if (!item.isTemporary) return false;
+        if (
+          item.status !== "ACTIVE" &&
+          item.status !== "AWAITING_PUBLICATION"
+        ) {
+          return false;
+        }
+
+        return isSameMinute(priceTable.startDateTime, item.startDateTime);
+      });
+
+      if (provisoryConflict) {
+        return {
+          success: false,
+          error: {
+            global:
+              "Uma tabela normal não pode iniciar no mesmo horário (minuto) de uma tabela provisória.",
+            fields: {
+              startDateTime: "Conflito de horário com tabela provisória",
+            },
           },
         };
       }
     }
 
-    // 4) Atualiza status para "AWAITING_PUBLICATION"
+    // 5) Criar agendamento ANTES de mudar o status
+    try {
+      const priceTableId = priceTable.id;
+      if (!priceTableId) {
+        return {
+          success: false,
+          error: { global: "ID da tabela de preços está ausente." },
+        };
+      }
+
+      await priceTableSchedulerGateway.createSchedules({
+        priceTableId,
+        startDateTime: priceTable.startDateTime.toISOString(),
+        endDateTime:
+          endDateTime?.toISOString() ?? priceTable.startDateTime.toISOString(),
+      });
+    } catch (schedulerError) {
+      console.error("❌ Erro ao criar agendamento:", schedulerError);
+      return {
+        success: false,
+        error: {
+          global:
+            "Falha ao agendar a publicação. Tente novamente ou contate o suporte.",
+        },
+      };
+    }
+
+    // 6) SOMENTE após sucesso do scheduler, atualiza status para "AWAITING_PUBLICATION"
     const updated = await this.repository.updateOne(
       { id: input.id },
       { $set: { status: "AWAITING_PUBLICATION", updated_at: new Date() } }
     );
 
     if (!updated) {
+      // Se falhar ao atualizar, idealmente deveria cancelar o agendamento (colocar aq mama)
+      console.error(
+        "❌ Falha ao atualizar status da tabela após criar agendamento"
+      );
       return {
         success: false,
-        error: { global: "Falha ao programar publicação." },
+        error: {
+          global:
+            "Falha ao programar publicação. O agendamento foi criado mas o status não foi atualizado.",
+        },
       };
     }
 
-    // auditoria
+    // 7) Auditoria
     const session = await auth();
     if (session?.user) {
       const { name: userName, email, id: user_id } = session.user;
       await createOneAuditUsecase.execute({
-        after: priceTable,
-        before: {},
+        after: { ...priceTable, status: "AWAITING_PUBLICATION" },
+        before: priceTable,
         domain: AuditDomain.priceTable,
         user: { email, name: userName, id: user_id },
         action: `Tabela de preços '${priceTable.name}' programada para publicação.`,

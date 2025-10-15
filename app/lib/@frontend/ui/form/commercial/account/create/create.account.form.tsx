@@ -6,7 +6,9 @@ import {
   useCreateAccountFormContext,
 } from "@/app/lib/@frontend/context/create-account-form.context";
 import { DocumentAccountForm } from "./document.account.form";
-import { Button, Form } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Form } from '@/frontend/ui/component/form';
+
 import { CpfAccountForm } from "./cpf.account.form";
 import { CNPJAccountForm } from "./cnpj.account.form";
 import { FakeLoadingButton } from "../../../../component/fake-load-button";

@@ -1,6 +1,8 @@
+
 import { singleton } from "@/app/lib/util/singleton";
-import { ISchedule, IScheduleRepository } from "@/app/lib/@backend/domain";
-import { scheduleRepository } from "@/app/lib/@backend/infra";
+import type { ISchedule } from "@/backend/domain/engineer/entity/command-schedule.definition";
+import type { IScheduleRepository } from "@/backend/domain/engineer/repository/command-schedule.repository.interface";
+import { scheduleRepository } from "@/backend/infra";
 
 class UpdateBulkScheduleUsecase {
   repository: IScheduleRepository;

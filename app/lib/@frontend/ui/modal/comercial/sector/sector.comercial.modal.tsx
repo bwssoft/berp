@@ -1,17 +1,14 @@
 "use client";
 
-import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
-import {
-  Button,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-} from "../../../component";
+import { ISector } from "@/backend/domain/commercial/entity/sector.definition";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import { SectorTable } from "../../../table/commercial/sector/sector.table";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 interface FormValues {
   name: string;
@@ -116,3 +113,4 @@ export function SectorModal({
     </Modal>
   );
 }
+

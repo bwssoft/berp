@@ -1,4 +1,4 @@
-import { E34G } from "../../@backend/infra/protocol";
+import { E34G } from "@/backend/infra/protocol/parser/E34G";
 
 const autoTestAnalisys: { [key in keyof E34G.AutoTest]?: string } = {
   SIMHW: "Iccid",

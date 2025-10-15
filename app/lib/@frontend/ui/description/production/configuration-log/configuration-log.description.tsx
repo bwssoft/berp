@@ -1,5 +1,5 @@
 import React from "react";
-import { IConfigurationLog } from "@/app/lib/@backend/domain";
+import {IConfigurationLog} from "@/backend/domain/production/entity/configuration-log.definition";
 import { cn, getStatusProps } from "@/app/lib/util";
 import {
   Card,
@@ -248,3 +248,4 @@ export function ConfigurationLogDescription({ data }: Props) {
     </Card>
   );
 }
+

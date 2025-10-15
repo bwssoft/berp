@@ -1,17 +1,21 @@
 "use client";
 
 import React from "react";
-import { Modal, ModalBody, ModalContent, Button } from "../../../../component";
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+import { Button } from '@/frontend/ui/component/button';
+
 import { SearchContactAccountForm } from "../../../../form/commercial/account/contact";
 import { useSearchContactModal } from "./use-search-contact.comercial.modal";
+import { IAccountEconomicGroup } from "@/backend/domain/commercial/entity/account.economic-group.definition";
 
 interface ContactModalProps {
-  holdingTaxId?: string;
+  economicGroup?: IAccountEconomicGroup;
+  holdingTaxId: string
 }
 
-export function SearchContactModal({ holdingTaxId }: ContactModalProps) {
+export function SearchContactModal({ economicGroup, holdingTaxId }: ContactModalProps) {
   const { closeModal, openModal, open, contactsByCompany, isLoading } =
-    useSearchContactModal(holdingTaxId);
+    useSearchContactModal(economicGroup, holdingTaxId);
 
   if (contactsByCompany.length === 0) return null;
 
@@ -45,3 +49,4 @@ export function SearchContactModal({ holdingTaxId }: ContactModalProps) {
     </>
   );
 }
+

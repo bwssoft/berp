@@ -1,4 +1,2 @@
-export * from "./bmessage.gateway.interface";
-export * from "./firebase.gateway.interface";
-export * from "./omie.gateway.interface";
-export * from "./cnpja.gateway.interface";
+export type { IBMessageGateway } from "./bmessage.gateway.interface";
+export type { OmieCredentials, OmieCallFunctions } from "./omie.gateway.interface";

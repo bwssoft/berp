@@ -1,10 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 import type { Filter } from "mongodb";
-import { ISectorRepository } from "@/app/lib/@backend/domain/commercial";
-import { sectorRepository } from "@/app/lib/@backend/infra/repository";
-import { ISector } from "@/app/lib/@backend/domain";
-import { PaginationResult } from "../../../domain/@shared/repository/pagination.interface";
+import { ISectorRepository } from "@/backend/domain/commercial";
+import { sectorRepository } from "@/backend/infra";
+import { ISector } from "@/backend/domain/commercial/entity/sector.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
     export interface Input {
@@ -34,3 +34,4 @@ class FindManySectorUsecase {
 }
 
 export const findManySectorUsecase = singleton(FindManySectorUsecase);
+

@@ -1,7 +1,8 @@
 "use client";
-import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
-import { IProfile, IUser } from "@/app/lib/@backend/domain";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { findManyUser } from "@/backend/action/admin/user.action";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 
@@ -52,3 +53,4 @@ export function useUserLinkedProfileModal() {
     handlePageChange
   };
 }
+

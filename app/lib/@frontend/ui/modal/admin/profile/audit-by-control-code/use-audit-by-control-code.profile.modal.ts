@@ -1,6 +1,7 @@
 "use client";
-import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
-import { AuditDomain, AuditType, IControl } from "@/app/lib/@backend/domain";
+import { findManyAudit } from "@/backend/action/admin/audit.action";
+import {AuditDomain, AuditType} from "@/backend/domain/admin/entity/audit.definition";
+import {IControl} from "@/backend/domain/admin/entity/control.definition";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 
@@ -64,3 +65,4 @@ export function useAuditByControlCodeProfileModal() {
     page,
   };
 }
+

@@ -1,7 +1,8 @@
-import { IProduct } from "@/app/lib/@backend/domain";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 interface Props {
@@ -70,3 +71,4 @@ export const columns = (props: Props): ColumnDef<IProduct>[] => [
     },
   },
 ];
+

@@ -1,7 +1,7 @@
-import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+import { findOneConfigurationProfile } from "@/backend/action/engineer/configuration-profile.action";
 import { CheckConfigurationPanel } from "./@components/check-configuration-panel";
-import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
-import { findManyConfigurationLog } from "@/app/lib/@backend/action/production/configuration-log.action";
+import { findOneTechnology } from "@/backend/action/engineer/technology.action";
+import { findManyConfigurationLog } from "@/backend/action/production/configuration-log.action";
 
 interface Props {
   searchParams: {
@@ -33,7 +33,13 @@ export default async function Page(props: Props) {
         id: technology_id,
       }),
       configuration_log_id
-        ? findManyConfigurationLog({ id: { $in: configuration_log_id } })
+        ? findManyConfigurationLog({
+            id: {
+              $in: Array.isArray(configuration_log_id)
+                ? configuration_log_id
+                : [configuration_log_id],
+            },
+          })
         : [],
     ]);
 
@@ -63,3 +69,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

@@ -7,8 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/app/lib/@frontend/hook/use-debounce";
 import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";
-import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
-import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
+import { findManyProfile } from "@/backend/action/admin/profile.action";
+import { findManyUser } from "@/backend/action/admin/user.action";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 
 const schema = z.object({
@@ -180,3 +180,4 @@ export const useSearchUserForm = () => {
         handleSearchProflile,
     };
 };
+

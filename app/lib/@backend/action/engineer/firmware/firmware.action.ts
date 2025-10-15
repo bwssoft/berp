@@ -1,14 +1,12 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IFirmware } from "@/app/lib/@backend/domain"
-import {
-  createOneFirmwareUsecase,
-  findOneFirmwareUsecase,
-  deleteOneFirmwareUsecase,
-  updateOneFirmwareUsecase,
-  findAllFirmwareUsecase
-} from "@/app/lib/@backend/usecase"
+import { IFirmware } from "@/backend/domain/engineer/entity/firmware.definition";
+import { createOneFirmwareUsecase } from "@/backend/usecase/engineer/firmware/firmware/create-one-firmware.usecase";
+import { findOneFirmwareUsecase } from "@/backend/usecase/engineer/firmware/firmware/find-one-firmware.usecase";
+import { deleteOneFirmwareUsecase } from "@/backend/usecase/engineer/firmware/firmware/delete-one-firmware.usecase";
+import { updateOneFirmwareUsecase } from "@/backend/usecase/engineer/firmware/firmware/update-one-firmware.usecase";
+import { findAllFirmwareUsecase } from "@/backend/usecase/engineer/firmware/firmware/find-all-firmware.usecase"
 
 type FirmwareWithoutFile = Omit<IFirmware, "id" | "created_at" | "file">
 export async function createOneFirmware(firmware: FirmwareWithoutFile, formData: FormData) {
@@ -39,5 +37,6 @@ export async function deleteOneFirmwareById(query: { id: string }) {
 export async function findAllFirmware(): Promise<IFirmware[]> {
   return await findAllFirmwareUsecase.execute()
 }
+
 
 

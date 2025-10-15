@@ -1,7 +1,9 @@
 "use client";
 
-import { Layout } from "@/app/lib/@frontend/ui/component";
-import { useAuth } from "../lib/@frontend/context";
+import { Layout } from '@/frontend/layout/layout';
+
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { Activity } from "lucide-react";
 
 export default function ConnectivityLayout({

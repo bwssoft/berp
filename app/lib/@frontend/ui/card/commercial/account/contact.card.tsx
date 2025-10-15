@@ -1,16 +1,13 @@
 "use client";
 
-import { IContact } from "@/app/lib/@backend/domain";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 import { LocalContact } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { Phone, Mail, Edit, Star, Trash, Copy } from "lucide-react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
-  Button,
-  Card,
-} from "../../../component";
+import { Avatar, AvatarFallback, AvatarImage } from '@/frontend/ui/component/avatar';
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card } from '@/frontend/ui/component/card';
+
 import { Separator } from "@radix-ui/react-select";
 import {
   Tooltip,
@@ -21,8 +18,8 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { cn } from "@/app/lib/util/cn";
 import { copyToClipboard } from "@/app/lib/util/copy-to-clipboard";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { fetchCnpjData } from "@/app/lib/@backend/action/cnpja/cnpja.action";
-import { updateOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
+import { fetchCnpjData } from "@/backend/action/cnpja/cnpja.action";
+import { updateOneContact } from "@/backend/action/commercial/contact.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { WhatsappIcon } from "../../../../svg/whatsapp-icon";
 
@@ -356,3 +353,4 @@ export default function ContactCard({
     </>
   );
 }
+

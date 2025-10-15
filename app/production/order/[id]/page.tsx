@@ -1,12 +1,8 @@
 "use server";
 
-import { IClient } from "@/app/lib/@backend/domain";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/app/lib/@frontend/ui/component";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/frontend/ui/component/tabs';
+
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import {
@@ -15,8 +11,8 @@ import {
   ProductsDetails,
 } from "./components";
 import { PrintProductionOrder } from "./components/print-production-order";
-import { findOneProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
-import { findOneClient } from "@/app/lib/@backend/action/commercial/client.action";
+import { findOneProductionOrder } from "@/backend/action/production/production-order.action";
+import { findOneClient } from "@/backend/action/commercial/client.action";
 
 type ProductionOrderViewPageProps = {
   params: { id: string };

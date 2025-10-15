@@ -1,5 +1,5 @@
 "use client";
-import { ICommand } from "@/app/lib/@backend/domain";
+import {ICommand} from "@/backend/domain/engineer/entity/command.definition";
 import { useCommandUpdateForm } from "./use-command-update-form";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 
@@ -142,3 +142,4 @@ export function CommandUpdateForm(props: Props) {
     </form>
   );
 }
+

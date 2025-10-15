@@ -1,4 +1,5 @@
-import { ITechnology, ITechnologyRepository } from "@/app/lib/@backend/domain";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
+import { ITechnologyRepository } from "@/backend/domain/engineer/repository/technology.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
@@ -15,3 +16,4 @@ class TechnologyRepository
 }
 
 export const technologyRepository = singleton(TechnologyRepository);
+

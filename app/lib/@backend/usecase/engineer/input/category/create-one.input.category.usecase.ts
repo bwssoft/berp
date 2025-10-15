@@ -1,9 +1,8 @@
+
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IInputCategory,
-  IInputCategoryRepository,
-} from "@/app/lib/@backend/domain";
-import { inputCategoryRepository } from "@/app/lib/@backend/infra";
+import type { IInputCategory } from "@/backend/domain/engineer/entity/input.category.definition";
+import type { IInputCategoryRepository } from "@/backend/domain/engineer/repository/input.category.repository";
+import { inputCategoryRepository } from "@/backend/infra";
 
 class CreateOneInputCategoryUsecase {
   repository: IInputCategoryRepository;
@@ -16,12 +15,12 @@ class CreateOneInputCategoryUsecase {
     inputCategory: Omit<IInputCategory, "id" | "created_at" | "seq">
   ) {
     try {
-      const _inputCategory = Object.assign(inputCategory, {
-        created_at: new Date(),
+      const payload = Object.assign(inputCategory, {
         id: crypto.randomUUID(),
+        created_at: new Date(),
       });
 
-      await this.repository.create(_inputCategory);
+      await this.repository.create(payload);
       return {
         success: true,
       };

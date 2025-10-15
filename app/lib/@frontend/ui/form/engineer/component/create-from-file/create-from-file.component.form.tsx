@@ -3,8 +3,9 @@ import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { commonConstants } from "@/app/lib/constant";
 import { useCreateFromFileComponentForm } from "./use-create-from-file.component.form";
-import { IComponentCategory } from "@/app/lib/@backend/domain";
-import { FileUpload } from "../../../../component";
+import {IComponentCategory} from "@/backend/domain/engineer/entity/component.category.definition";
+import { FileUpload } from '@/frontend/ui/component/input-file';
+
 
 interface Props {
   categories: IComponentCategory[];
@@ -187,3 +188,4 @@ export function CreateFromFileComponentForm(props: Props) {
     </form>
   );
 }
+

@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/20/solid";
 import React from "react";
 
-type Status = "green" | "yellow" | "red";
+export type Status = "green" | "yellow" | "red";
 
 type Props = {
   status?: Status | null;

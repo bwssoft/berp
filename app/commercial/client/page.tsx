@@ -1,4 +1,4 @@
-import { findManyClient } from "@/app/lib/@backend/action/commercial/client.action";
+import { findManyClient } from "@/backend/action/commercial/client.action";
 import { ClientTable } from "@/app/lib/@frontend/ui/table/commercial/client/table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
@@ -31,3 +31,4 @@ export default async function Example() {
     </div>
   );
 }
+

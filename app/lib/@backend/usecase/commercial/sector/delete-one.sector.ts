@@ -1,6 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { ISector, ISectorRepository } from "@/app/lib/@backend/domain";
-import { sectorRepository } from "@/app/lib/@backend/infra/repository";
+import { ISector } from "@/backend/domain/commercial/entity/sector.definition";
+import { ISectorRepository } from "@/backend/domain/commercial/repository/sector.repository";
+import { sectorRepository } from "@/backend/infra";
 
 export type DeleteSectorOutput = {
     success?: { deleted: boolean; sectorId: string };
@@ -33,3 +34,4 @@ class DeleteOneSectorUsecase {
 }
 
 export const deleteOneSectorUsecase = singleton(DeleteOneSectorUsecase);
+

@@ -1,10 +1,10 @@
-import {
-  Device,
-  EType,
-  IClient,
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { EType } from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import type {
   IConfigurationProfile,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
+} from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import type { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
+import type { IClient } from "@/backend/domain/commercial/entity/client.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
@@ -14,7 +14,7 @@ import { formatConfigurationProfileName } from "../util";
 import {
   createOneConfigurationProfile,
   updateOneConfigurationProfileById,
-} from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+} from "@/backend/action/engineer/configuration-profile.action";
 
 const twoBytesSchema = z.coerce
   .number()
@@ -291,6 +291,8 @@ export type TechnologySystemName =
 const schema = z.object({
   id: z.string().optional(),
   client_id: z.string().optional(),
+  manual_client: z.string().optional(),
+  manual_client_register: z.boolean().default(true),
   technology_id: z.string(),
   name: z.string().min(1),
   type: z.nativeEnum(EType),
@@ -324,11 +326,11 @@ type ProfileName = {
 };
 
 export interface Props {
-  clients: IClient[];
+  clients?: IClient[] | null;
   technologies: ITechnology[];
   defaultValues?: {
     configurationProfile: IConfigurationProfile;
-    client: IClient;
+    client: IClient | null;
     technology: ITechnology;
   };
 }
@@ -348,6 +350,7 @@ export function useConfigurationProfileUpsertForm(props: Props) {
           keep_alive: 60,
         },
       },
+      manual_client_register: true,
     },
     shouldUnregister: true,
   });
@@ -451,6 +454,16 @@ export function useConfigurationProfileUpsertForm(props: Props) {
     }
   };
 
+  const handleChangeClient = (clientName: string) => {
+    setName((prev) => {
+      const state = Object.assign(prev, {
+        document: clientName,
+      });
+      form.setValue("name", formatConfigurationProfileName(state));
+      return state;
+    });
+  };
+
   const technology_id = form.watch("technology_id");
 
   const technology = useMemo(() => {
@@ -465,7 +478,9 @@ export function useConfigurationProfileUpsertForm(props: Props) {
         defaultValues.technology.name.system as TechnologySystemName
       );
       handleChangeName({
-        document: defaultValues.client.document.value,
+        document:
+          defaultValues.client?.document?.value ??
+          defaultValues.configurationProfile.manual_client,
         technology: defaultValues.technology.name.brand,
         type: defaultValues.configurationProfile.type,
       });
@@ -479,5 +494,7 @@ export function useConfigurationProfileUpsertForm(props: Props) {
     handleChangeName,
     technology,
     handleChangeTechnology,
+    handleChangeClient,
   };
 }
+

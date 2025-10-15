@@ -1,5 +1,5 @@
-import { IUser } from "../../admin";
-import { Device } from "../../engineer";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 
 export interface IFirmwareUpdateLog {
   id: string;

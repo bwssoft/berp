@@ -27,13 +27,8 @@ import { Cpu, Settings, Activity, Wifi, Cable, Power, Zap } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { ConfigurationProfileSchema } from "../upsert/use-configuration-profile.upsert.form";
 import { Switch } from "../../../../component/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../../component";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 
 export function SpecificLoRaConfigurationProfileForm() {
   const { control, watch } = useFormContext<ConfigurationProfileSchema>();

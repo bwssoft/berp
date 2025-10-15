@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
 import {
   Disclosure,
@@ -7,13 +7,11 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import {
-  Button,
-  Checkbox,
-  DateInput,
-  Input,
-  Toggle,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { DateInput } from '@/frontend/ui/component/date-input';
+import { Input } from '@/frontend/ui/component/input';
+import { Toggle } from '@/frontend/ui/component/toggle';
+
 import {
   EquipmentAccessoryPriceForm,
   SimCardPriceForm,
@@ -29,23 +27,26 @@ import { CancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial
 import { PublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/publish.price-table.dialog";
 import { useCancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/use-cancel.price-table.dialog";
 import { usePublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/use-publish.price-table.dialog";
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
 import { InactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/inactivate.price-table.dialog";
 import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/use-inactivate.price-table.dialog";
 import { BillingConditionsSection } from "../conditions-form/conditions.form";
 import { StatusBanner } from "../../../../component/status-banner";
 import { FormProvider } from "react-hook-form";
+import { Tooltip, TooltipProvider } from "@radix-ui/react-tooltip";
+import { TooltipContent, TooltipTrigger } from "../../../../component/tooltip";
 
 interface UpsertPriceTableFormProps {
   priceTableId?: string;
   editMode?: boolean;
+  cloneMode?: boolean;
 }
 
 export function UpsertPriceTableForm({
   priceTableId,
   editMode = false,
+  cloneMode = false,
 }: UpsertPriceTableFormProps = {}) {
-  // Use TanStack Query to fetch products
   const [equipmentQuery, accessoriesQuery] = useQueries({
     queries: [
       {
@@ -56,10 +57,7 @@ export function UpsertPriceTableForm({
               active: true,
               "category.code": "TABLE-RAST",
             },
-            limit: 100,
           }),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        retry: 2, // Retry failed requests 2 times
       },
       {
         queryKey: ["products", "accessories", "TABLE-ACESS"],
@@ -69,28 +67,28 @@ export function UpsertPriceTableForm({
               active: true,
               "category.code": "TABLE-ACESS",
             },
-            limit: 100,
           }),
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        retry: 2, // Retry failed requests 2 times
       },
     ],
   });
 
-  // Extract data and loading states
-  const equipmentModels = equipmentQuery.data?.docs || [];
-  const accessoriesItems = accessoriesQuery.data?.docs || [];
+  const equipmentModels = useMemo(
+    () => equipmentQuery.data?.docs || [],
+    [equipmentQuery.data?.docs]
+  );
+  const accessoriesItems = useMemo(
+    () => accessoriesQuery.data?.docs || [],
+    [accessoriesQuery.data?.docs]
+  );
   const loadingProducts =
     equipmentQuery.isLoading || accessoriesQuery.isLoading;
   const hasError = equipmentQuery.isError || accessoriesQuery.isError;
 
-  // Helper function to refetch all product data
   const refetchProducts = () => {
     equipmentQuery.refetch();
     accessoriesQuery.refetch();
   };
 
-  // Use the price table form hook
   const {
     form,
     handleSubmit,
@@ -104,13 +102,13 @@ export function UpsertPriceTableForm({
     STATUS_STYLES,
     status,
     existingEquipmentPayment,
+    existingEquipmentSimcardPayment,
     existingSimcardPayment,
     existingServicePayment,
     priceTableStatus,
     priceTableName,
-  } = usePriceTableForm({ priceTableId, editMode });
+  } = usePriceTableForm({ priceTableId, editMode, cloneMode });
 
-  // Dialog hooks
   const {
     open: openCancelDialog,
     setOpen: setOpenCancelDialog,
@@ -128,7 +126,6 @@ export function UpsertPriceTableForm({
   } = useInactivatePriceTableDialog({
     priceTableId,
     onSuccess: () => {
-      // Redirect to list page after successful inactivation
       window.location.href = "/commercial/price-table";
     },
   });
@@ -139,12 +136,12 @@ export function UpsertPriceTableForm({
     openDialog: openPublishPriceTableDialog,
     isLoading: isLoadingPublish,
     publishPriceTable,
+    fieldErrors,
+    clearFieldError,
   } = usePublishPriceTableDialog({
     priceTableId,
     onSuccess: () => {
-      // Update the status in the form after successful publish
-      // This will trigger button re-rendering
-      window.location.reload(); // Simple way to refresh the state
+      window.location.reload();
     },
   });
 
@@ -158,7 +155,6 @@ export function UpsertPriceTableForm({
     Record<string, boolean>
   >({});
 
-  // Handle equipment toggle
   const handleEquipmentToggle = (
     equipment: string,
     enabled: boolean,
@@ -177,7 +173,6 @@ export function UpsertPriceTableForm({
     }
   };
 
-  // Handle accessories toggle
   const handleAccessoryToggle = (accessory: string, enabled: boolean) => {
     setEnabledAccessories((prev) => ({
       ...prev,
@@ -186,47 +181,50 @@ export function UpsertPriceTableForm({
   };
 
   useEffect(() => {
-    if (existingEquipmentPayment && existingEquipmentPayment.length > 0) {
-      const newEnabledEquipmentWithSim: Record<string, boolean> = {};
-      const newEnabledEquipmentWithoutSim: Record<string, boolean> = {};
-      const newEnabledAccessories: Record<string, boolean> = {};
+    const newEnabledEquipmentWithSim: Record<string, boolean> = {};
+    const newEnabledEquipmentWithoutSim: Record<string, boolean> = {};
+    const newEnabledAccessories: Record<string, boolean> = {};
+    const accessoryIds = new Set(accessoriesItems.map((acc) => acc.id));
 
-      existingEquipmentPayment.forEach((equipment) => {
+    // Initialize equipment WITH SIM card toggles
+    if (
+      existingEquipmentSimcardPayment &&
+      existingEquipmentSimcardPayment.length > 0
+    ) {
+      existingEquipmentSimcardPayment.forEach((equipment) => {
         newEnabledEquipmentWithSim[equipment.productId] = true;
       });
-
-      setEnabledEquipmentWithSim(newEnabledEquipmentWithSim);
-      setEnabledEquipmentWithoutSim(newEnabledEquipmentWithoutSim);
-      setEnabledAccessories(newEnabledAccessories);
     }
-  }, [existingEquipmentPayment]);
 
-  // Watch form payment data to make button visibility reactive
-  const watchedEquipmentWithSim = form.watch("equipmentWithSim");
-  const watchedEquipmentWithoutSim = form.watch("equipmentWithoutSim");
-  const watchedAccessories = form.watch("accessories");
-  const watchedSimCards = form.watch("simCards");
-  const watchedServices = form.watch("services");
+    if (existingEquipmentPayment && existingEquipmentPayment.length > 0) {
+      existingEquipmentPayment.forEach((equipment) => {
+        const isAccessory = accessoryIds.has(equipment.productId);
+        if (isAccessory) {
+          newEnabledAccessories[equipment.productId] = true;
+        } else {
+          newEnabledEquipmentWithoutSim[equipment.productId] = true;
+        }
+      });
+    }
 
-  // Helper function to check if price table has required payment data for publishing
+    setEnabledEquipmentWithSim(newEnabledEquipmentWithSim);
+    setEnabledEquipmentWithoutSim(newEnabledEquipmentWithoutSim);
+    setEnabledAccessories(newEnabledAccessories);
+  }, [
+    existingEquipmentPayment,
+    existingEquipmentSimcardPayment,
+    accessoriesItems,
+  ]);
+
   const hasRequiredPaymentData = () => {
     const hasExistingPayments =
       (existingEquipmentPayment && existingEquipmentPayment.length > 0) ||
+      (existingEquipmentSimcardPayment &&
+        existingEquipmentSimcardPayment.length > 0) ||
       (existingSimcardPayment && existingSimcardPayment.length > 0) ||
       (existingServicePayment && existingServicePayment.length > 0);
 
-    const hasFormPayments =
-      (watchedEquipmentWithSim &&
-        Object.keys(watchedEquipmentWithSim).length > 0) ||
-      (watchedEquipmentWithoutSim &&
-        Object.keys(watchedEquipmentWithoutSim).length > 0) ||
-      (watchedAccessories && Object.keys(watchedAccessories).length > 0) ||
-      (watchedSimCards && watchedSimCards.length > 0) ||
-      (watchedServices && watchedServices.length > 0);
-
-    const result = hasExistingPayments || hasFormPayments;
-
-    return result;
+    return hasExistingPayments;
   };
 
   // Helper function to get status badge
@@ -280,6 +278,9 @@ export function UpsertPriceTableForm({
             <div className="flex items-center gap-2">
               <span className="text-lg text-gray-600">-</span>
               <span className="text-lg text-gray-700">{priceTableName}</span>
+              <span className="text-lg text-gray-600">-</span>
+              <span className="text-lg text-gray-700">{priceTableId}</span>
+
               {getStatusBadge(priceTableStatus)}
             </div>
           )}
@@ -340,6 +341,14 @@ export function UpsertPriceTableForm({
         </div>
       </div>
 
+      {editMode && priceTableName && (
+        <div className="flex items-center gap-2">
+          {priceTableId && (
+            <span className="text-sm text-gray-500">ID: {priceTableId}</span>
+          )}
+        </div>
+      )}
+
       <FormProvider {...form}>
         <form id="price-table-form" onSubmit={handleSubmit}>
           <Disclosure>
@@ -364,53 +373,71 @@ export function UpsertPriceTableForm({
                         Data de início <span className="text-red-500">*</span>
                       </label>
                       <DateInput
-                        type="date"
+                        type="dateTime"
                         value={form.watch("startDateTime")}
                         onChange={(date) => {
                           form.setValue("startDateTime", date as Date);
+                           clearFieldError("startDateTime");
                         }}
                         placeholder="Selecione a data de início"
                         className="w-full"
                       />
-                      {form.formState.errors.startDateTime?.message && (
+                      {(fieldErrors.startDateTime || form.formState.errors.startDateTime?.message) && (
                         <p className="mt-1 text-sm text-red-600">
-                          {form.formState.errors.startDateTime?.message}
+                          {fieldErrors.startDateTime || form.formState.errors.startDateTime?.message}
                         </p>
                       )}
                     </div>
                     <div className="flex-1">
-                      <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
-                        Data de fim <span className="text-red-500">*</span>
-                      </label>
-                      <DateInput
-                        type="date"
-                        value={form.watch("endDateTime")}
-                        onChange={(date) => {
-                          form.setValue("endDateTime", date as Date);
-                        }}
-                        placeholder="Selecione a data de fim"
-                        className="w-full"
-                      />
-                      {form.formState.errors.endDateTime?.message && (
-                        <p className="mt-1 text-sm text-red-600">
-                          {form.formState.errors.endDateTime?.message}
-                        </p>
+                      {form.watch("isTemporary") && (
+                        <>
+                          <label className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+                            Data de fim <span className="text-red-500">*</span>
+                          </label>
+                          <DateInput
+                            type="dateTime"
+                            value={form.watch("endDateTime")}
+                            onChange={(date) => {
+                              form.setValue("endDateTime", date as Date);
+                              clearFieldError("endDateTime");
+                            }}
+                            placeholder="Selecione a data de fim"
+                            className="w-full"
+                          />
+                          {(fieldErrors.endDateTime || form.formState.errors.endDateTime?.message) && (
+                            <p className="mt-1 text-sm text-red-600">
+                              {fieldErrors.endDateTime || form.formState.errors.endDateTime?.message}
+                            </p>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
                 </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          {...form.register("isTemporary")}
+                          className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
 
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    {...form.register("isTemporary")}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label className="text-sm font-medium text-gray-700">
-                    Tabela provisória?
-                  </label>
-                </div>
-
+                        <label className="text-sm font-medium text-gray-700">
+                          Tabela provisória?
+                        </label>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className="flex w-1/6">
+                      Se acionado, habilita a tabela de forma temporária, ou
+                      seja, apenas ficará em vigor até a data e hora de término
+                      informados no momento do cadastro. Após terminado o
+                      período da tabela provisória, a última tabela não
+                      provisória, volta a valer
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 {/* Configurações de faturamento */}
                 <BillingConditionsSection
                   ufList={BRAZILIAN_UF_LIST}
@@ -419,12 +446,15 @@ export function UpsertPriceTableForm({
                 />
 
                 {/* mensagens de erro ou sucesso na validação das condições */}
-                {messageErrorCondition.status && (
-                  <StatusBanner
-                    status={status}
-                    message={messageErrorCondition.message}
-                    statusStyles={STATUS_STYLES}
-                  />
+                {messageErrorCondition && messageErrorCondition.message.map(
+                    (item, index) => (
+                    <StatusBanner
+                      key={index}
+                      status={messageErrorCondition.status}
+                      message={item}
+                      statusStyles={STATUS_STYLES}
+                    />
+                )
                 )}
               </DisclosurePanel>
             </div>
@@ -529,13 +559,13 @@ export function UpsertPriceTableForm({
                                   equipmentModel={equipment.id}
                                   initialData={{
                                     creditPayment:
-                                      existingEquipmentPayment?.find(
+                                      existingEquipmentSimcardPayment?.find(
                                         (ep) =>
                                           ep.productId === equipment.id &&
                                           ep.paymentType === "credit"
                                       ),
                                     upfrontPayment:
-                                      existingEquipmentPayment?.find(
+                                      existingEquipmentSimcardPayment?.find(
                                         (ep) =>
                                           ep.productId === equipment.id &&
                                           ep.paymentType === "upfront"
@@ -844,3 +874,4 @@ export function UpsertPriceTableForm({
     </div>
   );
 }
+

@@ -1,10 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IConfigurationLog,
-  IConfigurationLogRepository,
-} from "@/app/lib/@backend/domain";
-import { configurationLogRepository } from "@/app/lib/@backend/infra";
-import { RemoveFields } from "../../../decorators";
+import { RemoveFields } from "@/backend/decorators";
+import type { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
+import type { IConfigurationLogRepository } from "@/backend/domain/production/repository/configuration-log.repository";
+import { configurationLogRepository } from "@/backend/infra";
+import { randomUUID } from "crypto";
 
 class CreateManyConfigurationLogUsecase {
   repository: IConfigurationLogRepository;
@@ -15,20 +14,16 @@ class CreateManyConfigurationLogUsecase {
 
   @RemoveFields("_id")
   async execute(input: Omit<IConfigurationLog, "id" | "created_at">[]) {
-    const _input: IConfigurationLog[] = [];
-    for (const p in input) {
-      const configuration_log = input[p];
-      _input.push(
-        Object.assign(configuration_log, {
-          created_at: new Date(),
-          id: crypto.randomUUID(),
-        })
-      );
-    }
+    const payload = input.map((log) =>
+      Object.assign(log, {
+        id: randomUUID(),
+        created_at: new Date(),
+      })
+    );
 
-    await this.repository.createMany(_input);
+    await this.repository.createMany(payload);
 
-    return _input;
+    return payload;
   }
 }
 

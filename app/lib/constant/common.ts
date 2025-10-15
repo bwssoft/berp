@@ -1,4 +1,4 @@
-import { Component } from "../@backend/domain";
+import { Component } from "@/backend/domain/engineer/entity/component.definition";
 
 const measure_unit: { [key in Component.Unit]: string } = {
   cm: "Centímetro (cm)",

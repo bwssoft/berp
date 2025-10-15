@@ -1,17 +1,14 @@
 import { useCallback } from "react";
-import {
-  Bws4g,
-  Bws4GEncoder,
-  Bws4gParser,
-} from "../../@backend/infra/protocol";
+import { Bws4g, Bws4gParser } from "@/backend/infra/protocol/parser/bws-4g";
+import { Bws4GEncoder } from "@/backend/infra/protocol/encoder/bws-4g";
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
   Bws4GConfig,
-  Device,
   IConfigurationProfile,
-} from "../../@backend/domain";
+} from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { findOneSerial } from "../../@backend/action/engineer/serial.action";
 
 namespace Namespace {
@@ -111,6 +108,7 @@ export const useBWS4G = () => {
     openTransport: async (transport) => {
       await openPort(transport, {
         baudRate: 115200,
+        stopBits: 1,
       });
     },
     closeTransport: closePort,
@@ -202,6 +200,7 @@ export const useBWS4G = () => {
               port,
               equipment,
               config: {
+                check: undefined,
                 general: {
                   data_transmission_on,
                   data_transmission_off,

@@ -1,17 +1,16 @@
 import {
   findManyClient,
   findOneClient,
-} from "@/app/lib/@backend/action/commercial/client.action";
-import { findAllNegotiationType } from "@/app/lib/@backend/action/commercial/negotiation-type.action";
-import { findOneProposal } from "@/app/lib/@backend/action/commercial/proposal.action";
-import { findManyConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { findOneFinancialOrder } from "@/app/lib/@backend/action/financial/financial-order.action";
-import { findManyProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
-import {
-  ProposalUpdateForm,
-  FinancialOrderFromProposalCreateForm,
-} from "@/app/lib/@frontend/ui/form";
+} from "@/backend/action/commercial/client.action";
+import { findAllNegotiationType } from "@/backend/action/commercial/negotiation-type.action";
+import { findOneProposal } from "@/backend/action/commercial/proposal.action";
+import { findManyConfigurationProfile } from "@/backend/action/engineer/configuration-profile.action";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
+import { findOneFinancialOrder } from "@/backend/action/financial/financial-order.action";
+import { findManyProductionOrder } from "@/backend/action/production/production-order.action";
+import { ProposalUpdateForm } from '@/frontend/ui/form/commercial/proposal/update/client-proposal.update.form';
+import { FinancialOrderFromProposalCreateForm } from '@/frontend/ui/form/financial/create-from-proposal/financial-order-from-proposal-create-form';
+
 import { ProductionOrderFromProposalCreateForm } from "@/app/lib/@frontend/ui/form/production/production-order/create-from-proposal";
 
 interface Props {
@@ -104,3 +103,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

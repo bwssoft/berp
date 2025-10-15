@@ -11,18 +11,20 @@ import {
   LinkIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
-import {
-  IClient,
-  IConfigurationProfile,
-  IProduct,
-  IProductionOrder,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
-import { Button, Combobox, Error } from "../../../../component";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
+import {IConfigurationProfile} from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
+import {IProductionOrder} from "@/backend/domain/production/entity/production-order.definition";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
+import { Button } from '@/frontend/ui/component/button';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Error } from '@/frontend/ui/component/error';
+
 import { Controller } from "react-hook-form";
 import { nanoid } from "nanoid";
 import Link from "next/link";
-import { createProductionOrderFromProposal } from "@/app/lib/@backend/action/production/production-order.action";
+import { createProductionOrderFromProposal } from "@/backend/action/production/production-order.action";
 
 interface ProductionOrderFromProposalCreateFormProps {
   proposal_id: string;
@@ -395,3 +397,4 @@ export function UpdateProductionOrderFromProposalForm(
     </form>
   );
 }
+

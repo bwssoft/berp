@@ -1,8 +1,9 @@
 "use-client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../../../component";
-import { IUser } from "@/app/lib/@backend/domain";
+import { Button } from '@/frontend/ui/component/button';
+
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { ClockIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Badge } from "../../../component/badge";
@@ -19,6 +20,9 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     accessorKey: "document",
     cell: ({ row }) => {
       const { original } = row;
+      if( original.lock) {
+        return <Badge variant="outline">Bloqueado</Badge>
+      }
       return (
         <Badge variant="outline">{original.active ? "Ativo" : "Inativo"}</Badge>
       );
@@ -94,3 +98,4 @@ export const columns = (props: Props): ColumnDef<IUser>[] => [
     },
   },
 ];
+

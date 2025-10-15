@@ -1,13 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
+import type { IContact } from "@/backend/domain/commercial/entity/contact.definition";
+import type {
   IAccountRepository,
-  IContact,
   IContactRepository,
-} from "@/app/lib/@backend/domain";
-import {
-  contactRepository,
-  accountRepository,
-} from "@/app/lib/@backend/infra/repository";
+} from "@/backend/domain/commercial";
+import { contactRepository, accountRepository } from "@/backend/infra";
 
 export type DeleteManyContactOutput = {
   success?: {
@@ -78,3 +75,4 @@ class DeleteManyContactUsecase {
 }
 
 export const deleteManyContactUsecase = singleton(DeleteManyContactUsecase);
+

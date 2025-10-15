@@ -1,10 +1,12 @@
 import { singleton } from "@/app/lib/util/singleton";
 
 import { resetPasswordUserUsecase } from "./reset-password.user.usecase";
-import { userRepository } from "@/app/lib/@backend/infra";
-import { AuditDomain, IUser, IUserRepository } from "@/app/lib/@backend/domain";
+import { userRepository } from "@/backend/infra";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/backend/domain/admin/repository/user.repository";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit";
 
 namespace Dto {
     export type Input = {
@@ -70,7 +72,7 @@ class ActiveUserUsecase {
 
             // Se ativar o usuário, deve resetar a senha
             if (active) {
-                const reset = await resetPasswordUserUsecase.execute({ id });
+                const reset = await resetPasswordUserUsecase.execute({id:input.id });
 
                 if (!reset.success) {
                     return { success: false, error: typeof reset.error === "string" ? reset.error : JSON.stringify(reset.error) };
@@ -89,3 +91,4 @@ class ActiveUserUsecase {
 }
 
 export const activeUserUsecase = singleton(ActiveUserUsecase);
+

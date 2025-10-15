@@ -1,21 +1,20 @@
 "use client";
 import { useUpdateAccountForm } from "./use-update-account-data.account.form";
-import { IAccount, ISector } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {ISector} from "@/backend/domain/commercial/entity/sector.definition";
 import { PlusIcon } from "lucide-react";
 import { SectorModal, useSectorModal } from "@/app/lib/@frontend/ui/modal";
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+
+import { Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
 import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";
 import { formatLgpdCnpj } from "@/app/lib/util/format-lgpd-cnpj";
-import {
-  Button,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 
 import {
   FormControl,
@@ -44,6 +43,7 @@ export function UpdateAccountDataForm({
   const { methods, onSubmit, register, errors, control } = useUpdateAccountForm(
     { accountData, closeModal }
   );
+  console.log("🚀 ~ UpdateAccountDataForm ~ errors:", errors);
   const sectorModal = useSectorModal();
 
   const [canShowSectorButton, setCanShowSectorButton] =
@@ -88,12 +88,9 @@ export function UpdateAccountDataForm({
 
   return (
     <FormProvider {...methods}>
-      <form
-        className="flex flex-col gap-2"
-        onSubmit={methods.handleSubmit(onSubmit)}
-      >
+      <form onSubmit={methods.handleSubmit(onSubmit)}>
         {accountData?.document.type === "cnpj" && (
-          <div>
+          <div className="flex flex-col gap-2">
             <Input
               value={formatDocumentValue(
                 accountData?.document.value || "",
@@ -127,6 +124,59 @@ export function UpdateAccountDataForm({
               }}
               error={errors.cnpj?.state_registration?.message}
             />
+            <Input
+              label="Situação CNPJ"
+              placeholder="Digite a situação do CNPJ"
+              {...register("cnpj.status")}
+              error={errors.cnpj?.status?.message}
+            />
+            <div className="flex gap-2">
+              <div className="w-1/2">
+                <Controller
+                  control={control}
+                  name="cnpj.situationIE"
+                  render={({ field }: { field: any }) => (
+                    <Combobox
+                      type="single"
+                      label="Situação IE"
+                      data={[
+                        { id: "1", text: "Habilitada", status: true },
+                        { id: "2", text: "Não habilitada", status: false },
+                      ]}
+                      value={field.value ? [field.value] : []}
+                      onOptionChange={(selectedItems: any[]) => {
+                        const item = selectedItems[0];
+                        if (item) {
+                          field.onChange(item);
+                        } else {
+                          field.onChange(undefined);
+                        }
+                      }}
+                      error={errors.cnpj?.situationIE?.message}
+                      keyExtractor={(item: any) => item.id}
+                      placeholder="Selecione a situação IE"
+                      displayValueGetter={(item: any) => item.text}
+                      modal={false}
+                    />
+                  )}
+                />
+              </div>
+              <div className="w-1/2">
+                <Controller
+                  control={control}
+                  name="cnpj.typeIE"
+                  render={({ field }: { field: any }) => (
+                    <Input
+                      label="Tipo IE"
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Digite o tipo IE"
+                      error={errors.cnpj?.typeIE?.message}
+                    />
+                  )}
+                />
+              </div>
+            </div>
             <Input
               label="Inscrição Municipal"
               placeholder="Digite a inscrição municipal"
@@ -195,7 +245,7 @@ export function UpdateAccountDataForm({
           </div>
         )}
         {accountData?.document.type === "cpf" && (
-          <div>
+          <div className="flex flex-col gap-2">
             <Input
               value={formatDocumentValue(
                 accountData?.document.value || "",
@@ -220,7 +270,7 @@ export function UpdateAccountDataForm({
           </div>
         )}
 
-        <div className="flex gap-4">
+        <div className="flex mt-6 justify-end">
           <Button type="button" variant="ghost" onClick={closeModal}>
             Cancelar
           </Button>
@@ -236,3 +286,4 @@ export function UpdateAccountDataForm({
     </FormProvider>
   );
 }
+

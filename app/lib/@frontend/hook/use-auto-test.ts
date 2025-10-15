@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { IAutoTestLog, ITechnology } from "../../@backend/domain";
+import { IAutoTestLog } from "@/backend/domain/production/entity/auto-test-log.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
 import { createManyAutoTestLog } from "../../@backend/action/production/auto-test-log.action";
@@ -11,9 +12,9 @@ namespace Namespace {
     technology: ITechnology | null;
   }
 
-  export interface Identified {
+  export interface Detected {
     port: ISerialPort;
-    equipment: Equipment;
+    equipment?: Equipment | undefined;
     status: "fully_identified" | "partially_identified" | "not_identified";
   }
 
@@ -37,7 +38,7 @@ const mapAutoTestResultToLog = (
     analysis?: any;
     status?: boolean;
   },
-  detected: Namespace.Identified[],
+  detected: Namespace.Detected[],
   technology: ITechnology
 ): Omit<IAutoTestLog, "id" | "created_at" | "user"> | undefined => {
   // Verifica campos obrigatórios
@@ -84,8 +85,8 @@ const mapAutoTestResultToLog = (
 
 export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
   const { technology } = props;
-  const [identified, setIdentified] = useState<Namespace.Identified[]>([]);
-  const isIdentifying = useRef(false);
+  const [detected, setDetected] = useState<Namespace.Detected[]>([]);
+  const isIdentifying = useRef<boolean>(false);
 
   const [autoTest, setAutoTest] = useState<Namespace.AutoTest[]>([]);
   const isAutoTesting = useRef(false);
@@ -108,14 +109,14 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
 
       // run auto test devices
       const autoTestResult = await handleAutoTest(
-        identified
-          .filter((i) => i.equipment.serial && i.equipment.firmware)
+        detected
+          .filter((i) => i.equipment?.serial && i.equipment?.firmware)
           .map(({ port }) => port)
       );
 
       // check if each message sent has response
       const result = autoTestResult
-        .map((log) => mapAutoTestResultToLog(log, identified, technology))
+        .map((log) => mapAutoTestResultToLog(log, detected, technology))
         .filter((el): el is NonNullable<typeof el> => el !== undefined);
 
       // save result on database
@@ -137,40 +138,42 @@ export const useAutoTest = (props: Namespace.UseAutoTestProps) => {
       isAutoTesting.current = false;
       setAutoTestProgress(false);
     }
-  }, [handleAutoTest, identified, technology]);
+  }, [handleAutoTest, detected, technology]);
 
-  const detect = useCallback(
-    (ports: ISerialPort[]) => {
-      if (isAutoTesting.current) return;
-      if (isIdentifying.current && ports.length) return;
-      isIdentifying.current = true;
-      setDetectionProgress(true);
-      handleDetection(ports).then((identified) => {
-        setIdentified(
-          identified
-            .filter((el) => el.response !== undefined)
-            .map(({ port, response }) => ({
-              port,
-              equipment: response!,
-              status: isIdentified(response!),
-            }))
-        );
-        setDetectionProgress(false);
-        isIdentifying.current = false;
-      });
-    },
-    [handleDetection]
-  );
-
-  // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
-    const interval = setInterval(() => detect(ports), 5000); // 5000 ms = 5 segundos
+    const interval = setInterval(async () => {
+      if (isAutoTesting.current) return;
+
+      if (!isIdentifying.current && ports.length) {
+        isIdentifying.current = true;
+        const detected = (await handleDetection(ports)).filter((d) => d.response && d.response.serial);
+
+        setDetected((prev) => {
+          const map = new Map(prev.filter((d) => d.equipment?.serial).map((d) => [d.equipment?.serial, d]));
+
+          for (const { port, response } of detected) {
+            map.set(response!.serial, {
+              port,
+              equipment: response,
+              status: !response ? "not_identified" : isIdentified(response),
+            });
+          }
+
+          return Array.from(new Set(map.values()))
+        });
+
+        isIdentifying.current = false;
+      } else if (!isIdentifying.current && !ports.length) {
+        setDetected([]);
+      }
+    }, 5000);
+
     return () => clearInterval(interval);
-  }, [ports, detect]);
+  }, [ports, handleDetection, isAutoTesting.current, isIdentifying.current]);
 
   return {
     autoTest,
-    identified,
+    detected,
     test,
     requestPort,
     progress: {

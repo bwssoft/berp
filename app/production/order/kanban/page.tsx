@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { KanbanContainer } from "./components/kanban-container";
-import { findManyProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
+import { findManyProductionOrder } from "@/backend/action/production/production-order.action";
 
 export const revalidate = 10;
 
@@ -33,3 +33,4 @@ export default async function Example() {
     </div>
   );
 }
+

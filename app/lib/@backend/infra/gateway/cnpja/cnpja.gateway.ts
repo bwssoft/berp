@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util";
-import { ICnpjaResponse, ICnpjaGateway } from "../../../domain";
+import { ICnpjaResponse, ICnpjaGateway } from "@/backend/domain/@shared/gateway/cnpja.gateway.interface";
 import { config } from "@/app/lib/config";
 
 export class CnpjaApiGateway implements ICnpjaGateway {

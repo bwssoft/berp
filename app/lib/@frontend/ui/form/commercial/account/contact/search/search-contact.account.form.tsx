@@ -6,9 +6,11 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { Button } from "../../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { useSearchContactAccount } from "./use-search-contact.account";
-import { IAccount, IContact } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 
 type ContactAccountFormProps = {
   contacts: {
@@ -87,3 +89,4 @@ export function SearchContactAccountForm({
     </div>
   );
 }
+

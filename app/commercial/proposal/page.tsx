@@ -1,4 +1,4 @@
-import { findManyProposal } from "@/app/lib/@backend/action/commercial/proposal.action";
+import { findManyProposal } from "@/backend/action/commercial/proposal.action";
 import { ProposalTable } from "@/app/lib/@frontend/ui/table/commercial/proposal/table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
@@ -31,3 +31,4 @@ export default async function Example() {
     </div>
   );
 }
+

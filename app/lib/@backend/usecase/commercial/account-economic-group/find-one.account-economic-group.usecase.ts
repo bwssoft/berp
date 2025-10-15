@@ -1,11 +1,10 @@
+import type { Filter } from "mongodb";
+
 import { singleton } from "@/app/lib/util/singleton";
-import { type Filter } from "mongodb";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import {
-  IAccountEconomicGroup,
-  IAccountEconomicGroupRepository,
-} from "@/app/lib/@backend/domain";
-import { accountEconomicGroupRepository } from "@/app/lib/@backend/infra";
+import { RemoveMongoId } from "@/backend/decorators";
+import { accountEconomicGroupRepository } from "@/backend/infra";
+import type { IAccountEconomicGroup } from "@/backend/domain/commercial/entity/account.economic-group.definition";
+import type { IAccountEconomicGroupRepository } from "@/backend/domain/commercial";
 
 class FindOneAccountEconomicGroupUsecase {
   repository: IAccountEconomicGroupRepository;
@@ -23,3 +22,4 @@ class FindOneAccountEconomicGroupUsecase {
 export const findOneAccountEconomicGroupUsecase = singleton(
   FindOneAccountEconomicGroupUsecase
 );
+

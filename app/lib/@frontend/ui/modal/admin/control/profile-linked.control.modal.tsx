@@ -1,8 +1,10 @@
 "use client";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { Modal, ModalBody, ModalContent } from "../../../component/modal";
-import { ListProfileDescription } from "../../../description";
-import { IControl, IProfile } from "@/app/lib/@backend/domain";
+import { ListProfileDescription } from '@/frontend/ui/description/admin/profile/list-profile.description';
+
+import {IControl} from "@/backend/domain/admin/entity/control.definition";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
 
 interface Props {
   open: boolean;
@@ -34,3 +36,4 @@ export function ProfileLinkedControlModal({
     </Modal>
   );
 }
+

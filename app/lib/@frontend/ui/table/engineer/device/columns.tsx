@@ -1,4 +1,5 @@
-import { IDevice, IProduct } from "@/app/lib/@backend/domain";
+import { IProduct } from "@/backend/domain/commercial/entity/product.definition";
+import { IDevice } from "@/backend/domain/engineer/entity/device.definition";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 
@@ -47,3 +48,4 @@ export const columns: ColumnDef<Row>[] = [
     },
   },
 ];
+

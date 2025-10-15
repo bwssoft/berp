@@ -1,6 +1,6 @@
 "use client";
 
-import { IClient } from "@/app/lib/@backend/domain";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
 import { formatDate } from "@/app/lib/util";
 
 type ClientDetailsProps = {

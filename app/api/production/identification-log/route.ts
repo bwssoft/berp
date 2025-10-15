@@ -1,8 +1,8 @@
 // app/api/firmware-update-log/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import type { IIdentificationLog } from "@/app/lib/@backend/domain";
-import { createOneIdentificationLogUsecase } from "@/app/lib/@backend/usecase";
+import type {IIdentificationLog} from "@/backend/domain/production/entity/identification-log.definition";
+import {createOneIdentificationLogUsecase} from "@/backend/usecase/production/identification-log/create-one-identification-log.usecase";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -26,3 +26,4 @@ export async function POST(req: NextRequest) {
   const result = await createOneIdentificationLogUsecase.execute(data);
   return NextResponse.json(result);
 }
+

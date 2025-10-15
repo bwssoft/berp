@@ -1,6 +1,7 @@
-import { findManyAutoTestLog } from "@/app/lib/@backend/action/production/auto-test-log.action";
-import { IAutoTestLog } from "@/app/lib/@backend/domain";
-import { AutoTestLogSearchForm } from "@/app/lib/@frontend/ui/form";
+import { findManyAutoTestLog } from "@/backend/action/production/auto-test-log.action";
+import {IAutoTestLog} from "@/backend/domain/production/entity/auto-test-log.definition";
+import { AutoTestLogSearchForm } from '@/frontend/ui/form/production/auto-test-log/search/search.auto-test-log.form';
+
 import { DevicesAutoTestedTable } from "@/app/lib/@frontend/ui/table/production/devices-auto-tested/table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Filter } from "mongodb";
@@ -130,3 +131,4 @@ function query(props: Props["searchParams"]): Filter<IAutoTestLog> {
   // Retorna um filtro vazio se não houver condições
   return {};
 }
+

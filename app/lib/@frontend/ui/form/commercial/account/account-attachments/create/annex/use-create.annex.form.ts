@@ -3,11 +3,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { createAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.action";
+import { createAccountAttachment } from "@/backend/action/commercial/account-attachment.action";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useQueryClient } from "@tanstack/react-query";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 const schema = z.object({
   name: z.string().min(1, "Nome do anexo é obrigatório"),
@@ -31,7 +32,7 @@ export function useCreateAnnexForm({
 }: CreateAnnexFormProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { user } = useAuth();
-  const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -89,6 +90,11 @@ export function useCreateAnnexForm({
           },
           file: fileData,
         });
+
+        queryClient.invalidateQueries({
+          queryKey: ["attachments", accountId],
+        });
+
         closeModal();
       } else {
         toast({
@@ -118,3 +124,4 @@ export function useCreateAnnexForm({
     isUploading,
   };
 }
+

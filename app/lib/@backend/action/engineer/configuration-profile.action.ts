@@ -1,14 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import {
-  createOneConfigurationProfileUsecase,
-  deleteOneConfigurationProfileUsecase,
-  findManyConfigurationProfileUsecase,
-  findOneConfigurationProfileUsecase,
-  updateOneConfigurationProfileUsecase,
-} from "@/app/lib/@backend/usecase";
-import { IConfigurationProfile } from "@/app/lib/@backend/domain";
+import { createOneConfigurationProfileUsecase } from "@/backend/usecase/engineer/configuration-profile/create-one-configuration-profile.usecase";
+import { deleteOneConfigurationProfileUsecase } from "@/backend/usecase/engineer/configuration-profile/delete-one-configuration-profile.usecase";
+import { findManyConfigurationProfileUsecase } from "@/backend/usecase/engineer/configuration-profile/find-many-configuration-profile.usecase";
+import { findOneConfigurationProfileUsecase } from "@/backend/usecase/engineer/configuration-profile/find-one-configuration-profile.usecase";
+import { updateOneConfigurationProfileUsecase } from "@/backend/usecase/engineer/configuration-profile/update-one-configuration-profile.usecase";
+import { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { Filter } from "mongodb";
 import { statsConfigurationProfileUsecase } from "../../usecase/engineer/configuration-profile/stats-configuration-profile.usecase";
 
@@ -56,3 +54,4 @@ export async function findOneConfigurationProfile(
 export async function statsConfigurationProfile() {
   return await statsConfigurationProfileUsecase.execute();
 }
+

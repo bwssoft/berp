@@ -1,15 +1,10 @@
-"use client"
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { IAccount } from "@/app/lib/@backend/domain";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/lib/@frontend/ui/component";
+"use client";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyAccount } from "@/backend/action/commercial/account.action";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+
 import { AccountFilterForm } from "@/app/lib/@frontend/ui/form/commercial/account/search/search.account.form";
 import { AccountTable } from "@/app/lib/@frontend/ui/table/commercial/account/account.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
@@ -38,52 +33,49 @@ export default function Page(props: Props) {
   } = props;
   const _page = page ? Number(page) : 1;
   const accounts = useQuery({
-    queryKey: ["attachments", rest, _page],
+    queryKey: ["accounts", rest, _page],
     queryFn: () => findManyAccount(query(rest), _page),
-  })
+  });
 
   const canCreate = useQuery({
-    queryKey: [
-        "restrictFeatureByProfile",
-        "commercial:accounts:new",
-      ],
-    queryFn: () => restrictFeatureByProfile(
-      "commercial:accounts:new"
-    ),
+    queryKey: ["restrictFeatureByProfile", "commercial:accounts:new"],
+    queryFn: () => restrictFeatureByProfile("commercial:accounts:new"),
     refetchOnMount: true,
   }).data;
 
   const canViewFullLgpd = useQuery({
     queryKey: [
-        "restrictFeatureByProfile",
-        "commercial:accounts:access:lgpd:full",
-      ],
-    queryFn: () => restrictFeatureByProfile(
-      "commercial:accounts:access:lgpd:full"
-    ),
+      "restrictFeatureByProfile",
+      "commercial:accounts:access:lgpd:full",
+    ],
+    queryFn: () =>
+      restrictFeatureByProfile("commercial:accounts:access:lgpd:full"),
     refetchOnMount: true,
   }).data;
 
   const canViewPartialLgpd = useQuery({
     queryKey: [
-        "restrictFeatureByProfile",
-        "commercial:accounts:access:lgpd:partial",
-      ],
-    queryFn: () => restrictFeatureByProfile(
-      "commercial:accounts:access:lgpd:partial"
-    ),
+      "restrictFeatureByProfile",
+      "commercial:accounts:access:lgpd:partial",
+    ],
+    queryFn: () =>
+      restrictFeatureByProfile("commercial:accounts:access:lgpd:partial"),
     refetchOnMount: true,
   }).data;
 
+  // Keep the pagination metadata returned by the query and only map the docs
   const accountsWithPermissions = {
-    ...accounts,
-    docs: accounts.data?.docs?.map((account) => ({
-      ...account,
-      _permissions: {
-        fullLgpdAccess: canViewFullLgpd,
-        partialLgpdAccess: canViewPartialLgpd,
-      },
-    })) ?? [],
+    docs:
+      accounts.data?.docs?.map((account) => ({
+        ...account,
+        _permissions: {
+          fullLgpdAccess: canViewFullLgpd,
+          partialLgpdAccess: canViewPartialLgpd,
+        },
+      })) ?? [],
+    total: accounts.data?.total ?? 0,
+    pages: accounts.data?.pages ?? 1,
+    limit: accounts.data?.limit ?? 10,
   };
 
   return (
@@ -194,3 +186,4 @@ function query(params: Props["searchParams"]): Filter<IAccount> {
 
   return {};
 }
+

@@ -1,7 +1,7 @@
-"use client"
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyAccountAttachments } from "@/app/lib/@backend/action/commercial/account-attachment.find.action";
-import { IAccountAttachment } from "@/app/lib/@backend/domain";
+"use client";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyAccountAttachments } from "@/backend/action/commercial/account-attachment.find.action";
+import {IAccountAttachment} from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { AttachmentsDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/attachments.data";
 import { useQuery } from "@tanstack/react-query";
 import { Filter } from "mongodb";
@@ -14,23 +14,21 @@ interface Props {
   };
 }
 
-export default function Page({
-  searchParams: { id, name, page }
-}: Props) {
+export default function Page({ searchParams: { id, name, page } }: Props) {
   const _page = page?.length && Number(page);
   const accountAttachmentsData = useQuery({
     queryKey: ["attachments", id, name, _page],
     queryFn: () => findManyAccountAttachments(query({ id, name }), _page),
   });
-
   const hasPermissionContacts = useQuery({
     queryKey: [
-        "restrictFeatureByProfile",
-        "commercial:accounts:access:tab:attachments:delete",
-      ],
-    queryFn: () => restrictFeatureByProfile(
-      "commercial:accounts:access:tab:attachments:delete"
-    ),
+      "restrictFeatureByProfile",
+      "commercial:accounts:access:tab:attachments:delete",
+    ],
+    queryFn: () =>
+      restrictFeatureByProfile(
+        "commercial:accounts:access:tab:attachments:delete"
+      ),
     refetchOnMount: true,
   });
 
@@ -39,11 +37,15 @@ export default function Page({
       attachments={accountAttachmentsData.data ?? { docs: [] }}
       accountId={id}
       hasPermission={hasPermissionContacts.data ?? false}
+      currentPage={_page ?? 1}
     />
   );
 }
 
-function query(props: { id: string; name?: string }): Filter<IAccountAttachment> {
+function query(props: {
+  id: string;
+  name?: string;
+}): Filter<IAccountAttachment> {
   const filter: Filter<IAccountAttachment> = {
     accountId: props.id,
   };
@@ -57,3 +59,4 @@ function query(props: { id: string; name?: string }): Filter<IAccountAttachment>
 
   return filter;
 }
+

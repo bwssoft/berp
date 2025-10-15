@@ -1,7 +1,10 @@
 "use client";
 
-import { Device, ITechnology } from "@/app/lib/@backend/domain";
-import { Button, Spinner } from "@/app/lib/@frontend/ui/component";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
+import { Button } from '@/frontend/ui/component/button';
+import { Spinner } from '@/frontend/ui/component/spinner';
+
 
 import { useAutoTest } from "@/app/lib/@frontend/hook/use-auto-test";
 import { TechnologySearchForm } from "@/app/lib/@frontend/ui/form/production/technology-search";
@@ -14,7 +17,7 @@ interface Props {
 export function AutoTestPanel(props: Props) {
   const { technology } = props;
 
-  const { identified, autoTest, test, requestPort, progress } = useAutoTest({
+  const { detected, autoTest, test, requestPort, progress } = useAutoTest({
     technology,
   });
 
@@ -54,7 +57,7 @@ export function AutoTestPanel(props: Props) {
           <div className="mt-6">
             {technology && (
               <DevicesDetectedTable
-                data={identified}
+                data={detected}
                 model={Device.Model[technology.name.system as Device.Model]}
               />
             )}
@@ -101,3 +104,4 @@ export function AutoTestPanel(props: Props) {
     </>
   );
 }
+

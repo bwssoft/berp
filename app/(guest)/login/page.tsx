@@ -1,4 +1,5 @@
-import { LoginUserForm } from "@/app/lib/@frontend/ui/form";
+import { LoginUserForm } from '@/frontend/ui/form/admin/user/login/login.user.form';
+
 
 export default function Page() {
   return (

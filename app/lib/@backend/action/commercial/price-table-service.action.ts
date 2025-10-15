@@ -1,7 +1,7 @@
 "use server";
 
 import { Filter } from "mongodb";
-import { IPriceTableService } from "../../domain";
+import { IPriceTableService } from "@/backend/domain/commercial/entity/price-table-service.definition";
 import { findManyPriceTableServiceUsecase } from "../../usecase/commercial/price-table-service/find-many.price-table-service.usecase";
 import { createOnePriceTableServiceUsecase } from "../../usecase/commercial/price-table-service/create-one.price-table-service.usecase";
 import { deleteOnePriceTableServiceUsecase } from "../../usecase/commercial/price-table-service/delete-one.price-table-service.usecase";

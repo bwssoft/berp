@@ -1,7 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IFirmware, IFirmwareRepository } from "@/app/lib/@backend/domain"
-import { firmwareRepository, firebaseGateway } from "@/app/lib/@backend/infra"
-import { IFirebaseGateway } from "@/app/lib/@backend/domain/@shared/gateway/firebase.gateway.interface"
+import { IFirmware } from "@/backend/domain/engineer/entity/firmware.definition";
+import { IFirmwareRepository } from "@/backend/domain/engineer/repository/firmware.repository";
+import { firmwareRepository, firebaseGateway } from "@/backend/infra"
+import { IFirebaseGateway } from "@/backend/domain/@shared/gateway/firebase.gateway.interface"
 
 class CreateOneFirmwareUsecase {
   repository: IFirmwareRepository
@@ -29,3 +30,4 @@ class CreateOneFirmwareUsecase {
 }
 
 export const createOneFirmwareUsecase = singleton(CreateOneFirmwareUsecase)
+

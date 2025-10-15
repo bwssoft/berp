@@ -3,11 +3,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Component, IComponent } from "@/app/lib/@backend/domain";
+import { IComponent, Component } from "@/backend/domain/engineer/entity/component.definition";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { createOneComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
+import { createOneComponent } from "@/backend/action/engineer/component/component.action";
 
 // Schema de validação com Zod
 const componentSchema = z.object({
@@ -185,3 +185,4 @@ export function useCreateComponentForm() {
     handleCancelCreate,
   };
 }
+

@@ -1,4 +1,5 @@
-import { E34G, BwsNb2 } from "../../../infra/protocol";
+import { E34G } from "@/backend/infra/protocol/parser/E34G";
+import { BwsNb2 } from "@/backend/infra/protocol/parser/nb-2";
 import { IDeviceLog } from "./device-log.definition";
 
 export interface IAutoTestLog extends IDeviceLog {

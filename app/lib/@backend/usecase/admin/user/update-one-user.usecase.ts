@@ -1,7 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { AuditDomain, IUser, IUserRepository } from "@/app/lib/@backend/domain";
-import { userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
-import { createOneAuditUsecase } from "../audit";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
+import { IUserRepository } from "@/backend/domain/admin/repository/user.repository";
+import { userObjectRepository, userRepository } from "@/backend/infra";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit";
 import { auth } from "@/auth";
 
 class UpdateOneUserUsecase {
@@ -142,3 +144,4 @@ class UpdateOneUserUsecase {
 }
 
 export const updateOneUserUsecase = singleton(UpdateOneUserUsecase);
+

@@ -11,15 +11,16 @@ import {
   updateOnePriceTable,
   validateBillingConditionsPriceTable,
   findOnePriceTable,
-} from "@/app/lib/@backend/action/commercial/price-table.action";
+} from "@/backend/action/commercial/price-table.action";
 import {
   IEquipmentPayment,
   IPriceRange,
   ISimcardPayment,
   IServicePayment,
   StatusPriceTable,
-} from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
-import { IPriceTableCondition } from "@/app/lib/@backend/domain/commercial/entity/price-table-condition.definition";
+  IPriceTable,
+} from "@/backend/domain/commercial/entity/price-table.definition";
+import { IPriceTableCondition } from "@/backend/domain/commercial/entity/price-table-condition.definition";
 
 /** UFs do Brasil */
 export const BRAZILIAN_UF_ENUM = z.enum([
@@ -58,7 +59,7 @@ const PTBR_MONEY_REGEX = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{2})?$/;
 const priceTableConditionSchema = z.object({
   id: z.string().min(1),
   /** UFs atendidas por esta condição */
-  salesFor: z.array(BRAZILIAN_UF_ENUM).min(1, "Selecione ao menos 1 UF"),
+  salesFor: z.array(BRAZILIAN_UF_ENUM).optional(),
   /** Limite de faturamento (string pt-BR) */
   billingLimit: z
     .string()
@@ -69,7 +70,7 @@ const priceTableConditionSchema = z.object({
       "Informe um valor válido (ex.: 1.234,56)"
     ),
   /** Quem será faturado (id/opção) */
-  toBillFor: z.string().min(1, "Selecione quem faturar"),
+  toBillFor: z.string().min(1, "Selecione para quem faturar"),
 });
 
 /** Grupo de condições */
@@ -94,38 +95,67 @@ const priceTableSchema = z
       required_error: "Data e hora de início são obrigatórias",
       invalid_type_error: "Data inválida",
     }),
-    endDateTime: z.date({
-      required_error: "Data e hora de fim são obrigatórias",
-      invalid_type_error: "Data inválida",
-    }),
+    endDateTime: z
+      .date({
+        invalid_type_error: "Data inválida",
+      })
+      .optional(),
     isTemporary: z.boolean().default(false),
 
     groups: z.array(priceTableConditionGroupSchema).default([]),
 
-    // Configurações de faturamento
-    billingConfig: z
-      .object({
-        salesFor: z.string().optional(),
-        billingLimit: z.string().optional(),
-        billTo: z.string().optional(),
-      })
-      .optional(),
+    // Configurações de faturamento - billTo é opcional, validação será feita nas condições individuais
+    billingConfig: z.object({
+      salesFor: z.string().optional(),
+      billingLimit: z.string().optional(),
+      billTo: z.string().optional(),
+    }),
     equipmentWithSim: z.record(z.any()).default({}),
     equipmentWithoutSim: z.record(z.any()).default({}),
     simCards: z.array(z.any()).default([]),
     accessories: z.record(z.any()).default({}),
     services: z.array(z.any()).default([]),
   })
-  .refine((data) => data.endDateTime > data.startDateTime, {
-    message: "Data de fim deve ser posterior à data de início",
-    path: ["endDateTime"],
-  });
+  .refine(
+    (data) => {
+      if (data.isTemporary) {
+        if (!data.endDateTime) {
+          return false;
+        }
+        return data.endDateTime > data.startDateTime;
+      }
+      return true;
+    },
+    {
+      message:
+        "Data de fim é obrigatória e deve ser posterior à data de início para tabelas temporárias",
+      path: ["endDateTime"],
+    }
+  )
+  .refine(
+    (data) => {
+      // Ensure there's at least one group with at least one condition that has toBillFor
+      const hasValidBillingCondition = data.groups.some((group) =>
+        group.conditions.some(
+          (condition) =>
+            condition.toBillFor && condition.toBillFor.trim().length > 0
+        )
+      );
+      return hasValidBillingCondition;
+    },
+    {
+      message:
+        "Pelo menos uma condição deve ter o campo 'Faturar para' preenchido",
+      path: ["groups"],
+    }
+  );
 
 export type CreatePriceTableFormData = z.infer<typeof priceTableSchema>;
 
 interface UsePriceTableFormProps {
   priceTableId?: string;
   editMode?: boolean;
+  cloneMode?: boolean;
 }
 
 type Group = {
@@ -163,15 +193,13 @@ const formatDateTimeLocal = (date: Date) => {
 
 const getDefaultStartDateTime = () => {
   const now = new Date();
-  // Always use current time to avoid validation issues with past times
   return now;
 };
 
 const ensureFutureStartDate = (startDateTime: Date) => {
   const now = new Date();
-  const oneMinuteFromNow = new Date(now.getTime() + 60000); // Add 1 minute
+  const oneMinuteFromNow = new Date(now.getTime() + 60000);
 
-  // If the start date is in the past or very close to now, use one minute from now
   if (startDateTime <= now) {
     return oneMinuteFromNow;
   }
@@ -188,19 +216,49 @@ const createPriceRange = (tiers: any[]): IPriceRange[] => {
   const filtered = tiers.filter((tier) => {
     const hasFrom =
       tier?.from !== undefined && tier?.from !== null && tier?.from !== "";
-    const hasPricePerUnit =
-      tier?.pricePerUnit !== undefined &&
-      tier?.pricePerUnit !== null &&
-      tier?.pricePerUnit !== "";
+    const hasUnitPrice =
+      (tier?.unitPrice !== undefined &&
+        tier?.unitPrice !== null &&
+        tier?.unitPrice !== "") ||
+      (tier?.pricePerUnit !== undefined &&
+        tier?.pricePerUnit !== null &&
+        tier?.pricePerUnit !== "");
 
-    return hasFrom && hasPricePerUnit;
+    return hasFrom && hasUnitPrice;
   });
 
   const mapped = filtered.map((tier) => {
+    const from =
+      typeof tier.from === "string" ? Number(tier.from) : Number(tier.from);
+
+    const rawTo =
+      tier?.to !== undefined && tier?.to !== null && tier?.to !== ""
+        ? tier.to
+        : tier?.isLast
+        ? Number.MAX_SAFE_INTEGER
+        : undefined;
+
+    const to =
+      rawTo === undefined
+        ? Number.MAX_SAFE_INTEGER
+        : typeof rawTo === "string"
+        ? Number(rawTo)
+        : Number(rawTo);
+
+    const unitPriceSource =
+      tier?.unitPrice !== undefined && tier?.unitPrice !== null
+        ? tier.unitPrice
+        : tier?.pricePerUnit;
+
+    const unitPrice =
+      typeof unitPriceSource === "string"
+        ? Number(unitPriceSource)
+        : Number(unitPriceSource);
+
     const priceRange = {
-      from: Number(tier.from),
-      to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to || 0),
-      unitPrice: Number(tier.pricePerUnit),
+      from,
+      to,
+      unitPrice,
     };
 
     return priceRange;
@@ -212,6 +270,7 @@ const createPriceRange = (tiers: any[]): IPriceRange[] => {
 export function usePriceTableForm({
   priceTableId,
   editMode = false,
+  cloneMode = false,
 }: UsePriceTableFormProps = {}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -220,6 +279,8 @@ export function usePriceTableForm({
   const [existingEquipmentPayment, setExistingEquipmentPayment] = useState<
     IEquipmentPayment[]
   >([]);
+  const [existingEquipmentSimcardPayment, setExistingEquipmentSimcardPayment] =
+    useState<IEquipmentPayment[]>([]);
   const [existingSimcardPayment, setExistingSimcardPayment] = useState<
     ISimcardPayment[]
   >([]);
@@ -237,16 +298,16 @@ export function usePriceTableForm({
   ]);
 
   const [messageErrorCondition, setMessageErrorCondition] = useState<{
-    status: string;
-    message: string;
-  }>({ status: "", message: "" });
+    status: Status;
+    message: string[];
+  }>({ status: "red", message: [""] });
 
   const form = useForm<CreatePriceTableFormData>({
     resolver: zodResolver(priceTableSchema),
     defaultValues: {
       name: "",
       startDateTime: getDefaultStartDateTime(),
-      endDateTime: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      endDateTime: undefined,
       isTemporary: false,
       groups: [
         {
@@ -279,6 +340,8 @@ export function usePriceTableForm({
 
     equipmentPayment.forEach((payment) => {
       const isAccessory = payment.productId?.startsWith("ACC") || false;
+      // All non-accessory items in this array go to either equipmentWithSim or equipmentWithoutSim
+      // depending on which array this function is called with
       const targetCategory = isAccessory ? accessories : equipmentWithSim;
 
       if (!targetCategory[payment.productId]) {
@@ -301,13 +364,10 @@ export function usePriceTableForm({
         if (payment.type === "batch" && payment.priceRange.length > 0) {
           targetCategory[payment.productId][rangeKey] = true;
           targetCategory[payment.productId][tiersKey] = payment.priceRange.map(
-            (range, index) => ({
-              id: (index + 1).toString(),
-              from: range.from.toString(),
-              to:
-                range.to === Number.MAX_SAFE_INTEGER ? "" : range.to.toString(),
-              pricePerUnit: range.unitPrice.toString(),
-              isLast: range.to === Number.MAX_SAFE_INTEGER,
+            (range) => ({
+              from: range.from,
+              to: range.to,
+              unitPrice: range.unitPrice,
             })
           );
         } else {
@@ -324,7 +384,7 @@ export function usePriceTableForm({
   };
 
   useEffect(() => {
-    if (!editMode || !priceTableId) return;
+    if ((!editMode && !cloneMode) || !priceTableId) return;
 
     const loadPriceTable = async () => {
       try {
@@ -334,30 +394,68 @@ export function usePriceTableForm({
         });
 
         if (existingPriceTable) {
-          setPriceTableStatus(existingPriceTable.status || null);
-          setPriceTableName(existingPriceTable.name || "");
+          setPriceTableStatus(
+            cloneMode ? "DRAFT" : existingPriceTable.status || null
+          );
+
+          const tableName = cloneMode
+            ? `${existingPriceTable.name} (Cópia)`
+            : existingPriceTable.name || "";
+          setPriceTableName(tableName);
+
           setExistingEquipmentPayment(
             existingPriceTable.equipmentPayment || []
+          );
+          setExistingEquipmentSimcardPayment(
+            existingPriceTable.equipmentSimcardPayment || []
           );
           setExistingSimcardPayment(existingPriceTable.simcardPayment || []);
           setExistingServicePayment(existingPriceTable.servicePayment || []);
 
-          const { equipmentWithSim, equipmentWithoutSim, accessories } =
+          const { equipmentWithoutSim, accessories } =
             processExistingPaymentData(
               existingPriceTable.equipmentPayment || []
             );
 
-          const formData = {
-            name: existingPriceTable.name || "",
-            startDateTime: existingPriceTable.startDateTime
+          const { equipmentWithSim } = processExistingPaymentData(
+            existingPriceTable.equipmentSimcardPayment || []
+          );
+
+          // Para cloneMode, deixar datas em branco (usar default)
+          const startDateTime = cloneMode
+            ? getDefaultStartDateTime()
+            : existingPriceTable.startDateTime
               ? new Date(existingPriceTable.startDateTime)
-              : new Date(),
-            endDateTime: existingPriceTable.endDateTime
-              ? new Date(existingPriceTable.endDateTime)
-              : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+              : new Date();
+
+          let endDateTime: Date | undefined;
+
+          if (cloneMode) {
+            // For clone mode: only set endDateTime if the original table is temporary
+            endDateTime = existingPriceTable.isTemporary
+              ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+              : undefined;
+          } else {
+            // For edit mode: preserve existing logic
+            if (existingPriceTable.isTemporary) {
+              // If it's temporary, use existing endDateTime or set a default
+              endDateTime = existingPriceTable.endDateTime
+                ? new Date(existingPriceTable.endDateTime)
+                : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+            } else {
+              // If it's not temporary, endDateTime should be undefined
+              endDateTime = undefined;
+            }
+          }
+
+          const formData = {
+            name: tableName,
+            startDateTime,
+            endDateTime,
             isTemporary: existingPriceTable.isTemporary ?? false,
             billingConfig: { salesFor: "", billingLimit: "", billTo: "" },
             equipmentWithSim,
+            groups: existingPriceTable.groups || [],
             equipmentWithoutSim,
             simCards: existingPriceTable.simcardPayment || [],
             accessories,
@@ -379,13 +477,30 @@ export function usePriceTableForm({
     };
 
     loadPriceTable();
-  }, [editMode, priceTableId, form]);
+  }, [editMode, cloneMode, priceTableId, form]);
 
   // Watch for name changes in the form and update the priceTableName state
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === "name" && value.name !== undefined) {
         setPriceTableName(value.name);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  // Watch for isTemporary changes and clear endDateTime when set to false
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "isTemporary" && value.isTemporary !== undefined) {
+        if (!value.isTemporary) {
+          form.setValue("endDateTime", undefined);
+        } else if (value.isTemporary && !value.endDateTime) {
+          form.setValue(
+            "endDateTime",
+            new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+          );
+        }
       }
     });
     return () => subscription.unsubscribe();
@@ -425,6 +540,7 @@ export function usePriceTableForm({
 
     return result;
   };
+
   const handleEquipmentPriceChange = (
     equipmentModel: string,
     prices: any,
@@ -597,27 +713,40 @@ export function usePriceTableForm({
   const transformToPriceTablePayload = (
     data: CreatePriceTableFormData,
     status: StatusPriceTable = "DRAFT"
-  ) => {
+  ): IPriceTable => {
     const equipmentPayment: IEquipmentPayment[] = [];
+    const equipmentSimcardPayment: IEquipmentPayment[] = [];
 
-    processEquipmentData(data.equipmentWithSim || {}, equipmentPayment);
     processEquipmentData(data.equipmentWithoutSim || {}, equipmentPayment);
+
+    processEquipmentData(data.equipmentWithSim || {}, equipmentSimcardPayment);
+
     processAccessoryData(data.accessories || {}, equipmentPayment);
 
-    const payload = {
+    // Ensure groups and conditions have salesFor as array (never undefined)
+    const groups =
+      (data.groups || []).map((group) => ({
+        ...group,
+        conditions: (group.conditions || []).map((condition) => ({
+          ...condition,
+          salesFor: condition.salesFor ?? [],
+        })),
+      })) ?? [];
+
+    const payload: IPriceTable = {
       name: data.name,
       startDateTime: data.startDateTime,
-      endDateTime: data.endDateTime,
+      endDateTime: data.isTemporary ? data.endDateTime : undefined,
       isTemporary: data.isTemporary,
       status,
       equipmentPayment,
+      equipmentSimcardPayment,
       simcardPayment: data.simCards || [],
       servicePayment: data.services || [],
-      groups: data.groups || [],
+      groups,
     };
 
-    // Include ID when in edit mode
-    if (editMode && priceTableId) {
+    if (editMode && !cloneMode && priceTableId) {
       return { ...payload, id: priceTableId };
     }
 
@@ -631,10 +760,14 @@ export function usePriceTableForm({
     try {
       const payload = transformToPriceTablePayload(data, status);
 
-      // Use appropriate action based on edit mode
-      const result = editMode
-        ? await updateOnePriceTable(payload)
-        : await createOnePriceTable(payload);
+      // Use appropriate action based on edit mode and clone mode
+      // Clone mode should always create, not update
+      const result =
+        editMode && !cloneMode
+          ? await updateOnePriceTable(payload as IPriceTable)
+          : await createOnePriceTable(
+              payload as Omit<IPriceTable, "id" | "created_at" | "updated_at">
+            );
 
       if (result?.success) {
         // Update price table status in state after successful save
@@ -644,6 +777,9 @@ export function usePriceTableForm({
         if (payload.equipmentPayment) {
           setExistingEquipmentPayment(payload.equipmentPayment);
         }
+        if (payload.equipmentSimcardPayment) {
+          setExistingEquipmentSimcardPayment(payload.equipmentSimcardPayment);
+        }
         if (payload.simcardPayment) {
           setExistingSimcardPayment(payload.simcardPayment);
         }
@@ -651,30 +787,38 @@ export function usePriceTableForm({
           setExistingServicePayment(payload.servicePayment);
         }
 
-        const message = editMode
-          ? status === "DRAFT"
-            ? "Alterações salvas!"
-            : "Tabela de preços atualizada com sucesso!"
-          : status === "DRAFT"
-            ? "Rascunho salvo!"
-            : "Tabela de preços criada com sucesso!";
+        const message =
+          editMode && !cloneMode
+            ? status === "DRAFT"
+              ? "Alterações salvas!"
+              : "Tabela de preços atualizada com sucesso!"
+            : cloneMode
+              ? "Tabela clonada com sucesso!"
+              : status === "DRAFT"
+                ? "Rascunho salvo!"
+                : "Tabela de preços criada com sucesso!";
 
-        const description = editMode
-          ? status === "DRAFT"
-            ? "Suas alterações foram salvas como rascunho."
-            : "Tabela de preços atualizada com sucesso!"
-          : status === "DRAFT"
-            ? "Suas alterações foram salvas como rascunho."
-            : "Tabela de preços criada com sucesso!";
+        const description =
+          editMode && !cloneMode
+            ? status === "DRAFT"
+              ? "Suas alterações foram salvas como rascunho."
+              : "Tabela de preços atualizada com sucesso!"
+            : cloneMode
+              ? "Tabela foi clonada e você foi redirecionado para editá-la."
+              : status === "DRAFT"
+                ? "Suas alterações foram salvas como rascunho."
+                : "Tabela de preços criada com sucesso!";
 
         toast({ title: message, description, variant: "success" });
 
-        // If creating new, navigate to edit mode with the new ID
-        // If editing, stay on the same page
-        if (!editMode && "id" in result && result.id) {
+        if (
+          (!editMode || cloneMode) &&
+          result.success &&
+          "id" in result &&
+          result.id
+        ) {
           router.push(`/commercial/price-table/form/edit/${result.id}`);
         }
-        // If already in edit mode, just stay on the page (no navigation)
       } else {
         const errorMsg =
           result?.error?.global || "Falha ao processar a tabela de preços!";
@@ -704,53 +848,74 @@ export function usePriceTableForm({
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     setLoading(true);
-    try {
-      // For draft saves, we don't need strict validation - get values directly
-      const currentData = form.getValues();
 
-      // Ensure start date is always in the future to avoid validation issues
+    try {
+      const isValid = await form.trigger();
+      if (!isValid) {
+        const errors = form.formState.errors;
+        let errorMessage = "Preencha todos os campos obrigatórios.";
+
+        if (errors.name || errors.startDateTime || errors.endDateTime) {
+          errorMessage =
+            "Preencha os campos obrigatórios: nome, data de início e data de fim.";
+        } else if (errors.groups) {
+          errorMessage =
+            "Preencha todos os campos obrigatórios nas condições de faturamento.";
+        }
+
+        toast({
+          title: "Campos obrigatórios",
+          description: errorMessage,
+          variant: "error",
+        });
+        return;
+      }
+
+      const validationResult = await validateBillingConditionsPriceTable(
+        form.getValues().groups || []
+      );
+
+      setMessageErrorCondition({
+        status: validationResult.status,
+        message: validationResult.messages[0] ?? "",
+      });
+
+      if (validationResult.status !== "green") {
+        toast({
+          title: "Erro de Validação!",
+          description:
+            validationResult.messages[0] ??
+            "Condições de faturamento inválidas, ajuste antes de salvar.",
+          variant: "error",
+        });
+        return;
+      }
+
+      const currentData = form.getValues();
       const adjustedData = {
         ...currentData,
         startDateTime: ensureFutureStartDate(currentData.startDateTime),
       };
+
       await handleFormSubmission(adjustedData, "DRAFT");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSaveDraft = async () => {
-    const currentData = form.getValues();
-    // Ensure start date is always in the future to avoid validation errors
-    const adjustedData = {
-      ...currentData,
-      startDateTime: ensureFutureStartDate(currentData.startDateTime),
-    };
-    await handleFormSubmission(adjustedData, "DRAFT");
-  };
-
-  const handleValidatedSubmit = form.handleSubmit(
-    async (data: CreatePriceTableFormData) => {
-      setLoading(true);
-      try {
-        // Ensure start date is always in the future to avoid validation errors
-        const adjustedData = {
-          ...data,
-          startDateTime: ensureFutureStartDate(data.startDateTime),
-        };
-        await handleFormSubmission(adjustedData, "DRAFT");
-      } finally {
-        setLoading(false);
-      }
-    }
-  );
-
   const handleValidationConditions = async () => {
     try {
-      const result = await validateBillingConditionsPriceTable(form.getValues().groups || []);
+      const groups = (form.getValues().groups || []).map((group: any) => ({
+        ...group,
+        conditions: (group.conditions || []).map((condition: any) => ({
+          ...condition,
+          salesFor: condition.salesFor ?? [],
+        })),
+      }));
+      const result = await validateBillingConditionsPriceTable(groups);
       setMessageErrorCondition({
         status: result.status,
-        message: result.messages[0] ?? "",
+        message: result.messages ?? [],
       });
     } catch (error) {
       toast({
@@ -759,25 +924,6 @@ export function usePriceTableForm({
         variant: "error",
       });
     }
-  };
-
-  const handleCancel = () => {
-    router.push("/commercial/price-table");
-  };
-
-  // Helper function to validate current form state
-  const validateForm = () => {
-    return form.trigger();
-  };
-
-  // Helper function to get form errors
-  const getFormErrors = () => {
-    return form.formState.errors;
-  };
-
-  // Helper function to check if form is dirty
-  const isFormDirty = () => {
-    return form.formState.isDirty;
   };
 
   type Status = "red" | "yellow" | "green";
@@ -795,6 +941,7 @@ export function usePriceTableForm({
     return {
       formData: data,
       equipmentWithSim: Object.keys(data.equipmentWithSim || {}).length,
+      groups: data.groups?.length || 0,
       equipmentWithoutSim: Object.keys(data.equipmentWithoutSim || {}).length,
       simCards: data.simCards?.length || 0,
       accessories: Object.keys(data.accessories || {}).length,
@@ -805,8 +952,6 @@ export function usePriceTableForm({
   return {
     form,
     handleSubmit,
-    handleValidatedSubmit,
-    handleSaveDraft,
     handleCancel: () => router.push("/commercial/price-table"),
     loading,
     loadingPriceTable,
@@ -829,6 +974,7 @@ export function usePriceTableForm({
     STATUS_STYLES,
     status,
     existingEquipmentPayment,
+    existingEquipmentSimcardPayment,
     existingSimcardPayment,
     existingServicePayment,
     priceTableStatus,
@@ -876,3 +1022,4 @@ export const TO_BILL_FOR_OPTIONS = [
   { id: "31.941.680/0001-71", text: "MGC - 31.941.680/0001-71" },
   { id: "14.334.132/0001-64", text: "WFC - 14.334.132/0001-64" },
 ];
+

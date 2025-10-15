@@ -1,6 +1,6 @@
 "use server";
 
-import { IFirmwareUpdateLog } from "@/app/lib/@backend/domain";
+import { IFirmwareUpdateLog } from "@/backend/domain/production/entity/firmware-update-log.definition";
 import { auth } from "@/auth";
 import { Filter } from "mongodb";
 import { createOneFirmwareUpdateLogUsecase } from "../../usecase/production/firmware-update-log/create-one-firmware-update-log.usecase";
@@ -71,3 +71,4 @@ export async function updateBulkFirmwareUpdateLog(
 ) {
   await updateBulkFirmwareUpdateLogUsecase.execute(operations);
 }
+

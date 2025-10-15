@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Modal, ModalBody, ModalContent } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+
 import { ActiveLoraForm } from "../../../form/connectivity/lora-activation/activate/active.lora.form";
 
 export function LoraActivationModal() {

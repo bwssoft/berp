@@ -1,7 +1,7 @@
-import { ICommandRepository } from "@/app/lib/@backend/domain";
-import { commandRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
+import type { ICommandRepository } from "@/backend/domain/engineer/repository/command.repository.interface";
+import { commandRepository } from "@/backend/infra";
 
 class FindAllCommandUsecase {
   repository: ICommandRepository;
@@ -13,8 +13,9 @@ class FindAllCommandUsecase {
   @RemoveMongoId()
   async execute() {
     const { docs } = await this.repository.findMany({});
-    return docs
+    return docs;
   }
 }
 
 export const findAllCommandUsecase = singleton(FindAllCommandUsecase);
+

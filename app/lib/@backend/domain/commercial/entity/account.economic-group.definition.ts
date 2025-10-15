@@ -8,3 +8,5 @@ export interface EconomicGroup {
   name: string;
   taxId: string;
 }
+
+export default IAccountEconomicGroup;

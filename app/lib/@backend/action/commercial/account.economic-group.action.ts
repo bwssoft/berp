@@ -2,13 +2,11 @@
 
 import { Filter } from "mongodb";
 import { IAccountEconomicGroup } from "../../domain/commercial/entity/account.economic-group.definition";
-import {
-  createOneAccountEconomicGroupUsecase,
-  findManyAccountEconomicGroupUsecase,
-  findOneAccountEconomicGroupUsecase,
-  updateOneAccountEconomicGroupUsecase,
-  deleteOneAccountEconomicGroupUsecase,
-} from "../../usecase/commercial/account-economic-group";
+import { createOneAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/create-one.account-economic-group.usecase";
+import { findManyAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/find-many.account-economic-group.usecase";
+import { findOneAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/find-one.account-economic-group.usecase";
+import { updateOneAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/update-one.account-economic-group.usecase";
+import { deleteOneAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/delete-one.account-economic-group.usecase";
 import { revalidatePath } from "next/cache";
 
 export async function createOneAccountEconomicGroup(
@@ -60,6 +58,7 @@ export async function validateControlledEnterprisesNotInHolding(
     conflictType: "holding" | "controlled";
     holdingName?: string;
     holdingTaxId?: string;
+    economicGroupId?: string;
   }>;
 }> {
   try {
@@ -86,6 +85,7 @@ export async function validateControlledEnterprisesNotInHolding(
       conflictType: "holding" | "controlled";
       holdingName?: string;
       holdingTaxId?: string;
+      economicGroupId?: string;
     }> = [];
 
     existingGroups.docs.forEach((group) => {
@@ -98,6 +98,7 @@ export async function validateControlledEnterprisesNotInHolding(
           taxId: group.economic_group_holding.taxId,
           name: group.economic_group_holding.name,
           conflictType: "holding",
+          economicGroupId: (group as any).id || undefined,
         });
       }
 
@@ -138,6 +139,7 @@ export async function validateHoldingEnterpriseNotInGroup(
     conflictType: "holding" | "controlled";
     holdingName?: string;
     holdingTaxId?: string;
+    economicGroupId?: string;
   };
 }> {
   try {
@@ -161,6 +163,7 @@ export async function validateHoldingEnterpriseNotInGroup(
           conflictType: "holding" | "controlled";
           holdingName?: string;
           holdingTaxId?: string;
+          economicGroupId?: string;
         }
       | undefined;
 
@@ -178,6 +181,7 @@ export async function validateHoldingEnterpriseNotInGroup(
             conflictType: "controlled",
             holdingName: group.economic_group_holding?.name,
             holdingTaxId: group.economic_group_holding?.taxId,
+            economicGroupId: (group as any).id || undefined,
           };
           break;
         }
@@ -204,6 +208,7 @@ export async function validateHoldingEnterpriseNotInAnyGroup(
     conflictType: "holding" | "controlled";
     holdingName?: string;
     holdingTaxId?: string;
+    economicGroupId?: string;
   };
 }> {
   try {
@@ -231,6 +236,7 @@ export async function validateHoldingEnterpriseNotInAnyGroup(
           conflictType: "holding" | "controlled";
           holdingName?: string;
           holdingTaxId?: string;
+          economicGroupId?: string;
         }
       | undefined;
 
@@ -244,6 +250,7 @@ export async function validateHoldingEnterpriseNotInAnyGroup(
           taxId: group.economic_group_holding.taxId,
           name: group.economic_group_holding.name,
           conflictType: "holding",
+          economicGroupId: (group as any).id || undefined,
         };
         break;
       }
@@ -260,6 +267,7 @@ export async function validateHoldingEnterpriseNotInAnyGroup(
             conflictType: "controlled",
             holdingName: group.economic_group_holding?.name,
             holdingTaxId: group.economic_group_holding?.taxId,
+            economicGroupId: (group as any).id || undefined,
           };
           break;
         }

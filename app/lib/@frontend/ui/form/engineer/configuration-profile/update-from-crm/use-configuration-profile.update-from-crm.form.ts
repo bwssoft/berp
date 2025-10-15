@@ -1,9 +1,7 @@
-import {
-  EType,
-  IClient,
-  IConfigurationProfile,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
+import {EType, IConfigurationProfile} from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -17,7 +15,7 @@ import {
   loraConfigSchema,
   nb2ConfigSchema,
 } from "../upsert/use-configuration-profile.upsert.form";
-import { updateOneConfigurationProfileById } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+import { updateOneConfigurationProfileById } from "@/backend/action/engineer/configuration-profile.action";
 
 // Esquema principal
 const schema = z.object({
@@ -146,3 +144,4 @@ export function useConfigurationProfileUpdateForm(props: Props) {
     handleChangeName,
   };
 }
+

@@ -1,12 +1,10 @@
-import { singleton } from "@/app/lib/util";
-import {
-  AuditDomain,
-  IProfileRepository,
-  IUserRepository,
-} from "../../../domain";
-import { profileRepository, userRepository } from "../../../infra";
+import { singleton } from "@/app/lib/util/singleton";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import type { IProfileRepository } from "@/backend/domain/admin/repository/profile.repository.interface";
+import type { IUserRepository } from "@/backend/domain/admin/repository/user.repository.interface";
+import { profileRepository, userRepository } from "@/backend/infra";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
 namespace Dto {
   export type Input = {

@@ -7,9 +7,9 @@ import {
 } from "@/app/lib/@frontend/ui/component/tabs";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
 import { useQueries, useQueryClient } from "@tanstack/react-query";
-import { IAccount } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
 
 export default function AccountManagementLayout({
   children,
@@ -93,8 +93,8 @@ export default function AccountManagementLayout({
         <div className="px-4 pt-4">
           <h1 className="text-2xl font-semibold text-gray-900">
             {account.document.type === "cpf"
-              ? `${account.name} - ${account.document.value}`
-              : `${account.social_name} - ${account.document.value}`}
+              ? `Conta - ${account.name}`
+              : `Conta - ${account.social_name}`}
           </h1>
         </div>
       )}
@@ -139,3 +139,4 @@ export default function AccountManagementLayout({
     </div>
   );
 }
+

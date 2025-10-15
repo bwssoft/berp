@@ -1,4 +1,4 @@
-import { IComponent } from "../@backend/domain";
+import { IComponent } from "@/backend/domain/engineer/entity/component.definition";
 
 //objeto para mapear o titulo dos cards nos insights dos forms de produto
 interface Merged {

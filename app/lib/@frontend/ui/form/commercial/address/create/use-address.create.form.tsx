@@ -6,7 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidCEP } from "@/app/lib/util/is-valid-cep";
-import { viaCepGateway } from "@/app/lib/@backend/infra/gateway/viacep/viacep.gateway";
+import { viaCepGateway } from "@/backend/infra/gateway/viacep/viacep.gateway";
 import { formatCep } from "@/app/lib/util/format-cep";
 
 const AddressFormSchema = z.object({
@@ -71,10 +71,32 @@ export function useAddressForm({
   });
 
   const zip = useWatch({ control, name: "zip_code" });
+  const watchedType = useWatch({ control, name: "type" }) as
+    | string[]
+    | undefined;
   const [loadingCep, setLoadingCep] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function fetchViaCep(cep: string) {
+    const preservedType = (watchedType ?? []) as (
+      | "Comercial"
+      | "Entrega"
+      | "Faturamento"
+      | "Residencial"
+      | "Fiscal"
+    )[];
+    if (defaultValues?.zip_code) return;
+    
+    setValue("street", "");
+    setValue("number", "");
+    setValue("complement", "");
+    setValue("district", "");
+    setValue("state", "");
+    setValue("city", "");
+    setValue("reference_point", "");
+    setValue("default_address", false);
+    setValue("type", preservedType);
+
     setLoadingCep(true);
     try {
       const data = await viaCepGateway.findByCep(cep);
@@ -116,5 +138,7 @@ export function useAddressForm({
     formatCep,
     formatNumber: (v: string) => v.replace(/\D/g, ""),
     isSubmitting,
+    setValue,
   };
 }
+

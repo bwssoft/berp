@@ -1,7 +1,8 @@
-import { findOneClient } from "@/app/lib/@backend/action/commercial/client.action";
-import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
-import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
-import { ConfigurationProfileUpdateFromProductionOrderForm } from "@/app/lib/@frontend/ui/form";
+import { findOneClient } from "@/backend/action/commercial/client.action";
+import { findOneConfigurationProfile } from "@/backend/action/engineer/configuration-profile.action";
+import { findOneTechnology } from "@/backend/action/engineer/technology.action";
+import { ConfigurationProfileUpdateFromProductionOrderForm } from '@/frontend/ui/form/engineer/configuration-profile/update-from-production-order/configuration-profile.update-from-production-order.form';
+
 
 interface Props {
   searchParams: {
@@ -82,3 +83,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+
