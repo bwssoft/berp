@@ -9,13 +9,16 @@ import {
 interface UsePublishPriceTableDialogProps {
   priceTableId?: string;
   onSuccess?: () => void;
+  onValidationError?: (errors: {
+    startDateTime?: string;
+    endDateTime?: string;
+  }) => void;
 }
 
 const ensureFutureStartDate = (startDateTime: Date) => {
   const now = new Date();
-  const oneMinuteFromNow = new Date(now.getTime() + 60000); // Add 1 minute
+  const oneMinuteFromNow = new Date(now.getTime() + 60000);
 
-  // If the start date is in the past or very close to now, use one minute from now
   if (startDateTime <= now) {
     return oneMinuteFromNow;
   }
@@ -23,19 +26,28 @@ const ensureFutureStartDate = (startDateTime: Date) => {
   return startDateTime;
 };
 
-interface UsePublishPriceTableDialogProps {
-  priceTableId?: string;
-  onSuccess?: () => void;
-}
-
 export function usePublishPriceTableDialog({
   priceTableId,
   onSuccess,
+  onValidationError,
 }: UsePublishPriceTableDialogProps = {}) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{
+    startDateTime?: string;
+    endDateTime?: string;
+  }>({});
 
-  const openDialog = () => setOpen(true);
+  const openDialog = () => {
+    setOpen(true);
+    // Limpa erros ao abrir o dialog
+    setFieldErrors({});
+  };
+
+  const closeDialog = () => {
+    setOpen(false);
+    setFieldErrors({});
+  };
 
   const publishPriceTableAction = async () => {
     if (!priceTableId) {
@@ -46,6 +58,9 @@ export function usePublishPriceTableDialog({
       });
       return;
     }
+
+    // Limpa erros anteriores
+    setFieldErrors({});
 
     setIsLoading(true);
     try {
@@ -81,16 +96,24 @@ export function usePublishPriceTableDialog({
           description: "Tabela publicada com sucesso!",
         });
 
-        setOpen(false);
+        closeDialog();
         onSuccess?.();
       } else {
+        // Exibe toast com erro global
         toast({
           variant: "error",
-          title: "Erro",
+          title: "Erro ao publicar",
           description:
             result?.error?.global ||
             "Erro ao publicar tabela. Tente novamente.",
         });
+
+        // Armazena erros de campo no estado
+        if (result?.error?.fields) {
+          setFieldErrors(result.error.fields);
+          // Notifica o componente pai sobre os erros
+          onValidationError?.(result.error.fields);
+        }
       }
     } catch (error) {
       toast({
@@ -103,11 +126,20 @@ export function usePublishPriceTableDialog({
     }
   };
 
+  const clearFieldError = (field: "startDateTime" | "endDateTime") => {
+    setFieldErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+    }));
+  };
+
   return {
     open,
-    setOpen,
+    setOpen: closeDialog,
     openDialog,
     isLoading,
+    fieldErrors,
+    clearFieldError,
     publishPriceTable: publishPriceTableAction,
   };
 }
