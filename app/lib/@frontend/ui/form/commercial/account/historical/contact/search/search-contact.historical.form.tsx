@@ -6,14 +6,14 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { ContactSelection, IContact } from "@/app/lib/@backend/domain";
-import {
-  Button,
-  Checkbox,
-  Combobox,
-  Input,
-  useSearchContactHistoricalAccount,
-} from "@/app/lib/@frontend/ui/component";
+import {ContactSelection} from "@/backend/domain/commercial/entity/historical.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Input } from '@/frontend/ui/component/input';
+import { useSearchContactHistoricalAccount } from '@/frontend/ui/form/commercial/account/historical/contact/search/use-create-contact.historical.form';
+
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
 
 import { Controller } from "react-hook-form";
@@ -116,6 +116,7 @@ export function SearchContactHistoricalAccountForm({
                       "Email",
                       "Telefone Residencial",
                       "Telefone Comercial",
+                      "Whatsapp",
                     ]}
                     error={errors.type?.message}
                     value={otherContactInfo.type ? [otherContactInfo.type] : []}
@@ -151,7 +152,11 @@ export function SearchContactHistoricalAccountForm({
                     onChange={async (e) => {
                       let val = e.target.value;
                       const t = otherContactInfo.type;
-                      if (t === "Celular" || t.includes("Telefone")) {
+                      if (
+                        t === "Celular" ||
+                        t === "Whatsapp" ||
+                        t.includes("Telefone")
+                      ) {
                         val = maskPhone(val);
                       }
                       setOtherContactInfo((prev) => ({
@@ -243,44 +248,75 @@ export function SearchContactHistoricalAccountForm({
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <div className="flex items-center gap-2">
-                                    {ci.type.includes("Telefone") && (
-                                      <PhoneIcon className="w-5 h-5 text-blue-600" />
-                                    )}
-                                    {ci.type === "Email" && (
-                                      <EnvelopeIcon className="w-5 h-5 text-green-600" />
-                                    )}
-                                    {ci.type === "Celular" && (
-                                      <WhatsappIcon classname="w-5 h-5 text-green-600" />
-                                    )}
-                                    <Checkbox
-                                      checked={isSelected(ci.id, ci.type)}
-                                      onChange={() =>
-                                        toggleSelection(
-                                          ci.id,
-                                          contact.contactName,
-                                          ci.type,
-                                          ci.contact,
-                                          ci.type
-                                        )
-                                      }
-                                    />
-                                  </div>
-                                  {ci.type === "Celular" && (
+                                  {/* Primary channel choices */}
+                                  {ci.type === "Email" && (
                                     <div className="flex items-center gap-2">
-                                      <PhoneIcon className="w-5 h-5 text-green-600" />
+                                      <EnvelopeIcon className="w-5 h-5 text-green-600" />
                                       <Checkbox
-                                        checked={isSelected(ci.id, "Whatsapp")}
+                                        checked={isSelected(ci.id, "Email")}
                                         onChange={() =>
                                           toggleSelection(
                                             ci.id,
                                             contact.contactName,
                                             ci.type,
-                                            ci.contact,
-                                            "Whatsapp"
+                                            ci.contact
                                           )
                                         }
                                       />
+                                    </div>
+                                  )}
+
+                                  {ci.type.includes("Telefone") && (
+                                    <div className="flex items-center gap-2">
+                                      <PhoneIcon className="w-5 h-5 text-blue-600" />
+                                      <Checkbox
+                                        checked={isSelected(ci.id, "Telefone")}
+                                        onChange={() =>
+                                          toggleSelection(
+                                            ci.id,
+                                            contact.contactName,
+                                            ci.type,
+                                            ci.contact
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  )}
+
+                                  {ci.type === "Celular" && (
+                                    <div className="flex items-center gap-2">
+                                      <div className="flex items-center gap-2">
+                                        <WhatsappIcon classname="w-5 h-5 text-green-600" />
+                                        <Checkbox
+                                          checked={isSelected(
+                                            ci.id,
+                                            "Whatsapp"
+                                          )}
+                                          onChange={() =>
+                                            toggleSelection(
+                                              ci.id,
+                                              contact.contactName,
+                                              "Whatsapp",
+                                              ci.contact
+                                            )
+                                          }
+                                        />
+                                      </div>
+
+                                      <div className="flex items-center gap-2">
+                                        <PhoneIcon className="w-5 h-5 text-green-600" />
+                                        <Checkbox
+                                          checked={isSelected(ci.id, "Celular")}
+                                          onChange={() =>
+                                            toggleSelection(
+                                              ci.id,
+                                              contact.contactName,
+                                              ci.type,
+                                              ci.contact
+                                            )
+                                          }
+                                        />
+                                      </div>
                                     </div>
                                   )}
                                 </div>
@@ -317,7 +353,6 @@ export function SearchContactHistoricalAccountForm({
               name: "",
               type: "",
               contact: "",
-              channel: "",
             })
           }
         >
@@ -330,3 +365,4 @@ export function SearchContactHistoricalAccountForm({
     </div>
   );
 }
+

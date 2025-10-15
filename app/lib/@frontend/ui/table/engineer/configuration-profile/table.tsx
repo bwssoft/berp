@@ -1,6 +1,6 @@
 "use client";
 
-import { IConfigurationProfile } from "@/app/lib/@backend/domain";
+import {IConfigurationProfile} from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
@@ -126,7 +126,10 @@ export default function ConfigurationProfilesTable({
                   </TableCell>
                   <TableCell>
                     <span className="text-sm">
-                      {profile.client.trade_name ?? profile.client.company_name}
+                      {profile.client
+                        ? (profile.client?.trade_name ??
+                          profile.client?.company_name)
+                        : (profile.manual_client ?? "--")}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -180,3 +183,4 @@ export default function ConfigurationProfilesTable({
     </div>
   );
 }
+

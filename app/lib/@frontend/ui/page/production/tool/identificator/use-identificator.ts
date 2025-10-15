@@ -1,11 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Device,
-  IIdentificationLog,
-  ITechnology,
-} from "../../../../../../@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { IIdentificationLog } from "@/backend/domain/production/entity/identification-log.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { ISerialPort } from "../../../../../hook/use-serial-port";
 import { useTechnology } from "../../../../../hook/use-technology";
 
@@ -20,13 +18,23 @@ namespace Namespace {
 
   export interface Detected {
     port: ISerialPort;
-    equipment: Equipment;
+    equipment?: Equipment | undefined;
     status: "fully_identified" | "partially_identified" | "not_identified";
   }
 
-  interface Equipment {
-    firmware: string;
+  export interface CurrentEquipment
+    extends Omit<Equipment, "firmware" | "serial"> {
     serial: string;
+    firmware: string;
+  }
+
+  export interface CurrentDetected extends Omit<Detected, "equipment"> {
+    equipment: CurrentEquipment;
+  }
+
+  interface Equipment {
+    firmware?: string;
+    serial?: string;
     imei?: string | undefined;
     iccid?: string | undefined;
     lora_keys?: Partial<Device.Equipment["lora_keys"]>;
@@ -81,12 +89,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
       setIsIdentifying(true);
       const [current] = detected;
 
-      if (
-        !current.equipment ||
-        !current.equipment.firmware ||
-        !current.equipment.serial ||
-        !technology
-      ) {
+      if (!current.equipment || !current.equipment.serial || !technology) {
         toast({
           variant: "error",
           description: "Nenhum equipamento está apto para ser identificado.",
@@ -97,7 +100,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
 
       // run the process
       const result = (await handleIdentification(
-        current,
+        current as Namespace.CurrentDetected,
         id
       )) as Namespace.IdentificationResult;
 
@@ -130,7 +133,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
             },
             {
               equipment: {
-                ...current.equipment,
+                ...(current.equipment as Namespace.CurrentEquipment),
                 ...result.equipment_after,
               },
               simcard: current.equipment?.iccid
@@ -169,43 +172,36 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
   // useEffect used to identify devices when connected via serial ports
   useEffect(() => {
     const interval = setInterval(async () => {
-      setIsDetecting(true);
       if (isIdentifying) return;
-      if (!isIdentifying && ports.length) {
-        setIsIdentifying(true);
-        const identified = await handleDetection(ports);
-        setDetected(
-          identified
-            .filter((el) => el.response !== undefined)
-            .filter(
-              (el) =>
-                typeof el.response.serial === "string" &&
-                typeof el.response.firmware === "string"
-            )
-            .map(({ port, response }) => ({
-              port,
-              equipment: {
-                ...response!,
-                serial: response!.serial as string,
-                firmware: response!.firmware as string,
-              },
-              status: isIdentified({
-                ...response!,
-                serial: response!.serial as string,
-                firmware: response!.firmware as string,
-              }),
-            }))
+
+      if (!isDetecting && ports.length) {
+        setIsDetecting(true);
+        const detected = (await handleDetection(ports)).filter(
+          (d) => d.response && d.response.serial
         );
-        setIsIdentifying(false);
-      } else if (!isIdentifying && !ports.length) {
+
+        setDetected(() => {
+          const map = new Map();
+
+          for (const { port, response } of detected) {
+            map.set(response!.serial, {
+              port,
+              equipment: response,
+              status: !response ? "not_identified" : isIdentified(response),
+            });
+          }
+
+          return Array.from(new Set(map.values()));
+        });
+
+        setIsDetecting(false);
+      } else if (!isDetecting && !ports.length) {
         setDetected([]);
       }
-      setIsDetecting(false);
-    }, 3000); // 3000 ms = 3 segundos
+    }, 5000);
 
-    // Limpeza: limpa o intervalo quando o componente é desmontado ou quando as dependências mudarem
     return () => clearInterval(interval);
-  }, [ports, handleDetection, isIdentifying, isIdentified]);
+  }, [ports, handleDetection, isIdentifying, isDetecting]);
 
   return {
     detected,

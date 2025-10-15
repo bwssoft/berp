@@ -20,11 +20,19 @@ export interface IConfigurationProfile<
   validation: Validation;
   technology_id: string;
   client_id?: string;
+  manual_client?: string;
+  manual_client_register?: boolean;
+}
+
+export interface Check {
+  raw_check?: string;
+  normalized_check?: string;
 }
 
 export interface Config<Specific> {
   general?: GeneralConfig;
   specific?: Specific;
+  check?: Check
 }
 
 interface Validation {

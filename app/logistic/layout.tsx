@@ -1,6 +1,7 @@
 "use client";
 
-import { Layout } from "@/app/lib/@frontend/ui/component";
+import { Layout } from '@/frontend/layout/layout';
+
 import { Warehouse, ArrowLeftRight, Boxes, Package } from "lucide-react";
 
 export default function ProductionLayout({

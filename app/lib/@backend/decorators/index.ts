@@ -1,2 +1,2 @@
-export * from "./remove-mongo-id";
-export * from "./remove-fields";
+export { RemoveFields } from "./remove-fields";
+export { RemoveMongoId } from "./remove-mongo-id";

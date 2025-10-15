@@ -3,16 +3,18 @@
 import {
   findOneAccount,
   updateOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
-import { createOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { IContact } from "@/app/lib/@backend/domain";
+} from "@/backend/action/commercial/account.action";
+import { createOneContact } from "@/backend/action/commercial/contact.action";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { ContactFormSchemaWithOrigin } from "@/app/lib/@frontend/ui/form/commercial/account/contact/create/use-contact.create.account";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useCreateAccountFlow } from '@/frontend/context/create-account-flow.context';
+
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 export function useCreateContactModal() {
   const [open, setOpen] = useState(false);
@@ -173,3 +175,4 @@ export function useCreateContactModal() {
     createContactLocally,
   };
 }
+

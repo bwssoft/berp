@@ -2,7 +2,7 @@
 
 import { signOut } from "@/auth";
 import { redirect } from "next/navigation";
-import { loginUsecase } from "../../usecase";
+import { loginUsecase } from "../../usecase/auth/login.usecase";
 
 export async function authenticate(data: {
   password: string;

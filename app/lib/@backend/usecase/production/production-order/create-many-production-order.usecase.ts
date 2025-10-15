@@ -1,6 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IProductionOrder, IProductionOrderRepository } from "@/app/lib/@backend/domain"
-import { productionOrderRepository } from "@/app/lib/@backend/infra"
+import { IProductionOrder } from "@/backend/domain/production/entity/production-order.definition";
+import { IProductionOrderRepository } from "@/backend/domain/production/repository/production-order.repository";
+import { productionOrderRepository } from "@/backend/infra"
 
 class CreateManyProductionOrderUsecase {
   repository: IProductionOrderRepository
@@ -29,3 +30,4 @@ class CreateManyProductionOrderUsecase {
 }
 
 export const createManyProductionOrderUsecase = singleton(CreateManyProductionOrderUsecase)
+

@@ -1,7 +1,7 @@
-import { IFirmwareRepository } from "@/app/lib/@backend/domain";
-import { firmwareRepository } from "@/app/lib/@backend/infra";
+import { IFirmwareRepository } from "@/backend/domain/engineer/repository/firmware.repository";
+import { firmwareRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 class FindAllFirmwareUsecase {
   repository: IFirmwareRepository;
@@ -18,3 +18,4 @@ class FindAllFirmwareUsecase {
 }
 
 export const findAllFirmwareUsecase = singleton(FindAllFirmwareUsecase);
+

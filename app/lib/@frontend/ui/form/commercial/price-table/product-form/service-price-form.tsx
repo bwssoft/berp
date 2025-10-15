@@ -1,17 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Button,
-  Input,
-  Label,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Combobox,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Label } from '@/frontend/ui/component/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+
 import { Plus, Trash2 } from "lucide-react";
+import {
+  ServiceModal,
+  useServiceModal,
+} from "../../../../modal/comercial/services";
+// import {
+//   ServicesModal,
+//   useSectorModal,
+// } from "../../../../modal/comercial/services";
 
 interface ServiceTier {
   id: string;
@@ -121,6 +125,8 @@ export function ServicePriceForm({
     }
   };
 
+  const serviceModal = useServiceModal();
+
   return (
     <div className="space-y-6 border border-gray-200 rounded-lg p-4">
       <h3 className="font-semibold text-lg text-gray-900">Serviços</h3>
@@ -140,9 +146,12 @@ export function ServicePriceForm({
         /* Service Pricing Form */
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">
-              Configuração de Serviços
-            </CardTitle>
+            <div className="flex items-center justify-between w-full">
+              <CardTitle className="text-base">
+                Configuração de Serviços
+              </CardTitle>
+              <Button onClick={serviceModal.openModal}>Criar Serviço</Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-4">
@@ -252,6 +261,18 @@ export function ServicePriceForm({
           </CardContent>
         </Card>
       )}
+
+      <ServiceModal
+        open={serviceModal.open}
+        closeModal={serviceModal.closeModal}
+        pagination={serviceModal.pagination}
+        setCurrentPage={serviceModal.setCurrentPage}
+        register={serviceModal.register}
+        errors={serviceModal.errors}
+        handleAdd={serviceModal.handleAdd}
+        isPending={serviceModal.isPending}
+        onAskDelete={serviceModal.onAskDelete}
+      />
     </div>
   );
 }

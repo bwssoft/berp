@@ -1,7 +1,8 @@
-import { findManyClient } from "@/app/lib/@backend/action/commercial/client.action";
-import { findAllNegotiationType } from "@/app/lib/@backend/action/commercial/negotiation-type.action";
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { ProposalCreateForm } from "@/app/lib/@frontend/ui/component";
+import { findManyClient } from "@/backend/action/commercial/client.action";
+import { findAllNegotiationType } from "@/backend/action/commercial/negotiation-type.action";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
+import { ProposalCreateForm } from '@/frontend/ui/form/commercial/proposal/create/proposal.create.form';
+
 
 export default async function Page() {
   const [clients, { docs: products }, negotiationType] = await Promise.all([
@@ -31,3 +32,4 @@ export default async function Page() {
     </div>
   );
 }
+

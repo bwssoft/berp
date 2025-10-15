@@ -1,14 +1,13 @@
 "use client";
 
-import {
-  Button,
-  Checkbox,
-  Input,
-  Combobox,
-  FileUpload,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Input } from '@/frontend/ui/component/input';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { FileUpload } from '@/frontend/ui/component/input-file';
+
 import { Controller } from "react-hook-form";
-import { IUser } from "@/app/lib/@backend/domain";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { useUpdateOneUserForm } from "./use-update-one-user-form";
 import {
   ActiveUserDialog,
@@ -18,9 +17,10 @@ import {
   useLockUserDialog,
   useResetPasswordUserDialog,
 } from "../../../../dialog";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useEffect, useState } from "react";
-import { getUserAvatarUrlByKey } from "@/app/lib/@backend/action/admin/user.action";
+import { getUserAvatarUrlByKey } from "@/backend/action/admin/user.action";
 
 interface Props {
   user: IUser;
@@ -84,6 +84,7 @@ export function UpdateOneUserForm({ user }: Props) {
                   variant="secondary"
                   onClick={lockDialog.openDialog}
                   type="button"
+                  disabled={!isActive}
                 >
                   {isLocked ? "Desbloquear Usuário" : "Bloquear Usuário"}
                 </Button>
@@ -235,3 +236,4 @@ export function UpdateOneUserForm({ user }: Props) {
     </>
   );
 }
+

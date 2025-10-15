@@ -1,15 +1,12 @@
-import {
-  IIdentificationLog,
-  IIdentificationLogRepository,
-} from "@/app/lib/@backend/domain";
-import { identificationLogRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { Filter } from "mongodb";
+import { RemoveMongoId } from "@/backend/decorators";
+import type { IIdentificationLog } from "@/backend/domain/production/entity/identification-log.definition";
+import type { IIdentificationLogRepository } from "@/backend/domain/production/repository/identification-log.repository";
+import { identificationLogRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
 
 namespace Dto {
   export interface Input extends Filter<IIdentificationLog> {}
-
   export type Output = IIdentificationLog[];
 }
 

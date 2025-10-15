@@ -1,7 +1,7 @@
 "use client";
 
-import { IAudit } from "@/app/lib/@backend/domain";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import {IAudit} from "@/backend/domain/admin/entity/audit.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { Pagination } from "../../../component/pagination";
 import { Spinner } from "../../../component/spinner";
@@ -63,3 +63,4 @@ export function AuditTable({
     </div>
   );
 }
+

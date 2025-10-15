@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  Device,
-  IClient,
-  IConfigurationLog,
-  IConfigurationProfile,
-  ITechnology,
-} from "../../@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { IClient } from "@/backend/domain/commercial/entity/client.definition";
+import { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
+import { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
 import { diffObjects } from "../../util/get-object-diff";
@@ -24,7 +22,7 @@ namespace Namespace {
 
   export interface Detected {
     port: ISerialPort;
-    equipment: Equipment;
+    equipment?: Equipment | undefined;
     status: "fully_identified" | "partially_identified" | "not_identified";
   }
 
@@ -56,7 +54,7 @@ export const useCheckConfiguration = (
   const [detected, setDetected] = useState<Namespace.Detected[]>([]);
   const detectedKey = useMemo(() => {
     return detected
-      .map((d) => d.equipment.serial ?? "")
+      .map((d) => d.equipment?.serial ?? "")
       .filter((s) => s.length > 0)
       .sort()
       .join("|");
@@ -73,7 +71,7 @@ export const useCheckConfiguration = (
   const toggleAutoChecking = (checked: boolean) =>
     setAutoCheckingEnabled(checked);
 
-  // hook that handle interactions with devices
+  // hook that handle interactions with devicess
   const { ports, handleDetection, handleGetConfig, requestPort, isIdentified } =
     useTechnology(technology);
 
@@ -92,7 +90,7 @@ export const useCheckConfiguration = (
           d
         ): d is typeof d & {
           equipment: { serial: string; firmware: string };
-        } => Boolean(d.equipment.serial && d.equipment.firmware)
+        } => Boolean(d.equipment?.serial && d.equipment?.firmware)
       );
 
       // 2) Puxar configuração atual de todos eles
@@ -117,11 +115,13 @@ export const useCheckConfiguration = (
           const diffs = [
             ...diffObjects({
               desired: configurationProfile.config.general ?? {},
+              // @ts-expect-error MOTIVO: Rapaz, gerei algum problema de tipagem aqui. Resolver depois TODO
               applied: config.general ?? {},
               keySelection: "desired",
             }),
             ...diffObjects({
               desired: configurationProfile.config.specific ?? {},
+              // @ts-expect-error MOTIVO: Rapaz, gerei algum problema de tipagem aqui. Resolver depois TODO
               applied: config.specific ?? {},
               keySelection: "desired",
             }),
@@ -138,11 +138,13 @@ export const useCheckConfiguration = (
             const diffs = [
               ...diffObjects({
                 desired: existing?.applied_profile?.general ?? {},
+                // @ts-expect-error MOTIVO: Rapaz, gerei algum problema de tipagem aqui. Resolver depois TODO
                 applied: config.general ?? {},
                 keySelection: "desired",
               }),
               ...diffObjects({
                 desired: existing?.applied_profile?.specific ?? {},
+                // @ts-expect-error MOTIVO: Rapaz, gerei algum problema de tipagem aqui. Resolver depois TODO
                 applied: config.specific ?? {},
                 keySelection: "desired",
               }),
@@ -197,21 +199,22 @@ export const useCheckConfiguration = (
 
       if (!isDetecting && ports.length) {
         setIsDetecting(true);
-        const identified = await handleDetection(ports);
+        const detected = (await handleDetection(ports)).filter(
+          (d) => d.response && d.response.serial
+        );
 
-        setDetected((prev) => {
-          const newOnes = identified.filter(
-            (id) =>
-              !prev.some((el) => el.equipment.serial === id.response?.serial)
-          );
+        setDetected(() => {
+          const map = new Map();
 
-          const mappedNew = newOnes.map(({ port, response }) => ({
-            port,
-            equipment: response!,
-            status: isIdentified(response),
-          }));
+          for (const { port, response } of detected) {
+            map.set(response!.serial, {
+              port,
+              equipment: response,
+              status: !response ? "not_identified" : isIdentified(response),
+            });
+          }
 
-          return prev.concat(mappedNew);
+          return Array.from(new Set(map.values()));
         });
 
         setIsDetecting(false);

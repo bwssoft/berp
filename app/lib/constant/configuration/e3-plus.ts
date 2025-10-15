@@ -1,4 +1,4 @@
-import { IConfigurationProfile } from "../../@backend/domain";
+import { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
 
 const functions = [
   {

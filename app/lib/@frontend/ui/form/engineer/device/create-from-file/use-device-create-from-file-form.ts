@@ -3,7 +3,7 @@ import { xlsxToJson } from "@/app/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { IProduct } from "@/app/lib/@backend/domain";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
 
 const schema = z.object({
   devices: z.array(
@@ -100,3 +100,4 @@ export function useDeviceCreateFromFileForm(props: Props) {
     handleFile,
   };
 }
+

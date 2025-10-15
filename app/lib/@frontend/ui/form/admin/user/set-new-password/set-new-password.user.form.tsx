@@ -1,6 +1,8 @@
 "use client";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { Button, PasswordInput } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { PasswordInput } from '@/frontend/ui/component/input-password';
+
 import { useSetNewPasswordUserForm } from "./use-set-new-password.user.form";
 
 export function SetNewPasswordUserForm({ userId }: { userId: string }) {

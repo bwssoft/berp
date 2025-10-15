@@ -5,17 +5,19 @@ export type StatusPriceTable =
   | "INACTIVE"
   | "CANCELLED"
   | "AWAITING_PUBLICATION"
-  | "DRAFT";
+  | "DRAFT"
+  | "PAUSED";
 
 export interface IPriceTable {
   id?: string;
   name: string;
   startDateTime: Date;
   status?: StatusPriceTable;
-  endDateTime: Date;
+  endDateTime?: Date;
   isTemporary: boolean;
   groups: IPriceTableConditionGroup[];
   equipmentPayment?: IEquipmentPayment[];
+  equipmentSimcardPayment?: IEquipmentPayment[];
   simcardPayment?: ISimcardPayment[];
   servicePayment?: IServicePayment[];
   created_at?: Date;

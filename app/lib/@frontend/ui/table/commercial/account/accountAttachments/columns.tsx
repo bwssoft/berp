@@ -1,6 +1,6 @@
 "use client";
 
-import { IAccountAttachment } from "@/app/lib/@backend/domain";
+import {IAccountAttachment} from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { ActionColumn } from "./action-column";
@@ -48,3 +48,4 @@ export const createColumns = (
     },
   },
 ];
+

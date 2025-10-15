@@ -4,14 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
+import { ISector } from "@/backend/domain/commercial/entity/sector.definition";
 import {
   createOneSector,
   findManySector,
   updateOneSector,
-} from "@/app/lib/@backend/action/commercial/sector.action";
+} from "@/backend/action/commercial/sector.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 const SectorSchema = z.object({ name: z.string().trim().min(1) });
 type SectorForm = z.infer<typeof SectorSchema>;
@@ -136,24 +136,37 @@ export function useSectorModal() {
 
   const addSector = useCallback(
     async ({ name }: SectorForm) => {
-      try {
-        await createOneSector({ name, active: true });
+      const result = await createOneSector({ name, active: true });
 
-        await fetchSectors(currentPage);
-        reset();
-
-        toast({
-          title: "Setor criado com sucesso!",
-          variant: "success",
-        });
-      } catch (error) {
-        toast({
-          title: "Erro ao criar setor",
-          description:
-            error instanceof Error ? error.message : "Erro desconhecido",
-          variant: "error",
-        });
+      if ("error" in result) {
+        switch (result.code) {
+          case "DUPLICATED_SECTOR":
+            toast({
+              title: "Erro",
+              description: "Já existe um setor com esse nome.",
+              variant: "error",
+            });
+            break;
+          case "SIMILAR_SECTOR":
+            toast({
+              title: "Erro",
+              description: result.error,
+              variant: "error",
+            });
+            break;
+          default:
+            toast({
+              title: "Erro inesperado",
+              description: result.error,
+              variant: "error",
+            });
+        }
+        return;
       }
+
+      await fetchSectors(currentPage);
+      reset();
+      toast({ title: "Setor criado com sucesso!", variant: "success" });
     },
     [currentPage, fetchSectors, reset]
   );
@@ -185,3 +198,4 @@ export function useSectorModal() {
     refreshSectors,
   };
 }
+

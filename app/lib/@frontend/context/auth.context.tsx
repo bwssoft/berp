@@ -10,7 +10,8 @@ import React, {
   useState,
   useMemo,
 } from "react";
-import { IProfile, IUser } from "../../@backend/domain";
+import { IProfile } from "@/backend/domain/admin/entity/profile.definition";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
 import { logout } from "../../@backend/action/auth/login.action";
 import { useSessionExpiry } from "../hook/use-session-expiry";
 
@@ -75,7 +76,7 @@ export const AuthProvider = ({
       }
 
       const { findOneProfile } = await import(
-        "@/app/lib/@backend/action/admin/profile.action"
+        "@/backend/action/admin/profile.action"
       );
 
       const profileId = data.user.current_profile.id;
@@ -108,7 +109,7 @@ export const AuthProvider = ({
       }
 
       const { findOneUser, getUserAvatarUrl } = await import(
-        "@/app/lib/@backend/action/admin/user.action"
+        "@/backend/action/admin/user.action"
       );
 
       const userId = data.user.id;
@@ -194,3 +195,4 @@ export const AuthProvider = ({
 };
 
 export const useAuth = () => useContext(AuthContext);
+

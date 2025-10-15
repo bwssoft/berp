@@ -1,7 +1,9 @@
 // src/app/lib/@frontend/ui/modal/CreateAnnexHistoricalForm.tsx
 "use client";
 
-import { Button, Input } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+
 import { DocumentArrowUpIcon, PaperClipIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
@@ -52,13 +54,18 @@ export function CreateAnnexHistoricalForm({
                     onChange={handleFileChange}
                     className="hidden"
                     accept="
-            image/*,
-            application/pdf,
-            application/msword,
-            application/vnd.openxmlformats-officedocument.wordprocessingml.document,
-            application/vnd.ms-excel,
-            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-          "
+                        application/pdf,
+                        application/msword,
+                        application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                        application/vnd.ms-excel,
+                        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                        .pdf,
+                        .doc,
+                        .docx,
+                        .xls,
+                        .xlsx,
+                        image/*
+                    "
                 />
             </div>
 

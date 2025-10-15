@@ -1,11 +1,9 @@
-import {
-  IProduct,
-  IProductionOrder,
-  IProductionOrderRepository,
-} from "@/app/lib/@backend/domain";
-import { productionOrderRepository } from "@/app/lib/@backend/infra";
+import type { IProduct } from "@/backend/domain/commercial/entity/product.definition";
+import type { IProductionOrder } from "@/backend/domain/production/entity/production-order.definition";
+import type { IProductionOrderRepository } from "@/backend/domain/production/repository/production-order.repository";
+import { productionOrderRepository } from "@/backend/infra";
+import { RemoveMongoId } from "@/backend/decorators";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
 import { Filter } from "mongodb";
 
 namespace Dto {

@@ -1,4 +1,5 @@
-import { IClient, IProposal } from "../@backend/domain";
+import { IClient } from "@/backend/domain/commercial/entity/client.definition";
+import { IProposal } from "@/backend/domain/commercial/entity/proposal.definition";
 
 const types = {
   prospect: "Prospecção",

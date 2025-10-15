@@ -1,6 +1,7 @@
 "use client";
 
-import { Device, type ITechnology } from "@/app/lib/@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { type ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
   Card,
@@ -11,7 +12,8 @@ import {
 } from "@/app/lib/@frontend/ui/component/card";
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
-import { TechnologySearchForm } from "@/app/lib/@frontend/ui/form";
+import { TechnologySearchForm } from '@/frontend/ui/form/production/technology-search/technology-search-form';
+
 import {
   Settings,
   Zap,
@@ -250,3 +252,4 @@ export function FirmwareUpdatePage(props: Props) {
     </>
   );
 }
+

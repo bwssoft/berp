@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { OmieEnterpriseEnum } from "../@backend/domain/@shared/gateway/omie.gateway.interface";
+import { OmieEnterpriseEnum } from "@/backend/domain/@shared/gateway/omie.gateway.interface";
 
 const OmieSecretSchema = z.object({
   key: z.string(),
@@ -14,6 +14,7 @@ const EnviromentsSchema = z.object({
   AWS_S3_ACCESS_KEY: z.string(),
   AWS_S3_SECRET_KEY: z.string(),
   CNPJA_API_KEY: z.string(),
+  PRICE_TABLE_SCHEDULER_API_URL: z.string(),
 });
 
 export const config = EnviromentsSchema.parse({
@@ -49,4 +50,5 @@ export const config = EnviromentsSchema.parse({
   AWS_S3_ACCESS_KEY: process.env.AWS_S3_ACCESS_KEY,
   AWS_S3_SECRET_KEY: process.env.AWS_S3_SECRET_KEY,
   CNPJA_API_KEY: process.env.CNPJA_API_KEY,
+  PRICE_TABLE_SCHEDULER_API_URL: process.env.PRICE_TABLE_SCHEDULER_API_URL,
 });

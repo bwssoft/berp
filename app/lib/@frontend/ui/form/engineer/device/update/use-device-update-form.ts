@@ -1,5 +1,5 @@
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { IDevice } from "@/app/lib/@backend/domain";
+import { IDevice } from "@/backend/domain/engineer/entity/device.definition";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -55,3 +55,4 @@ export function useDeviceUpdateForm(props: Props) {
     reset: hookFormReset,
   };
 }
+

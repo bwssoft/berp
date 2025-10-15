@@ -1,20 +1,27 @@
 "use server";
 
-import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
+import { ISector } from "@/backend/domain/commercial/entity/sector.definition";
 import { createOneSectorUsecase } from "../../usecase/commercial/sector/create-one.sector.usecase";
 import { Filter } from "mongodb";
 import { findManySectorUsecase } from "../../usecase/commercial/sector/find-many.sector.usecase";
 import { updateOneSectorUsecase } from "../../usecase/commercial/sector/update-one.sector.usecase";
 import { revalidatePath } from "next/cache";
-import { PaginationResult } from "../../domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { deleteOneSectorUsecase } from "../../usecase/commercial/sector/delete-one.sector";
+import { AppError } from "@/app/lib/util/app-error";
 
 type CreateSectorInput = Omit<ISector, "id" | "created_at" | "updated_at">;
-
 export async function createOneSector(data: CreateSectorInput) {
-  const sector = await createOneSectorUsecase.execute(data);
-  revalidatePath("/commercial/account/form/create", "page");
-  return sector;
+  try {
+    const sector = await createOneSectorUsecase.execute(data);
+    revalidatePath("/commercial/account/form/create", "page");
+    return sector;
+  } catch (err) {
+    if (err instanceof AppError) {
+      return { error: err.message, code: err.code };
+    }
+    return { error: "Erro inesperado.", code: "UNKNOWN" };
+  }
 }
 
 export async function updateOneSector(
@@ -39,3 +46,4 @@ export async function deleteOneSector(filter: Partial<ISector>) {
   revalidatePath("/commercial/account/form/create", "page");
   return result;
 }
+

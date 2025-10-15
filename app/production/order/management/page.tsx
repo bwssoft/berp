@@ -1,4 +1,4 @@
-import { findManyProductionOrder } from "@/app/lib/@backend/action/production/production-order.action";
+import { findManyProductionOrder } from "@/backend/action/production/production-order.action";
 import { ProductionOrderTable } from "@/app/lib/@frontend/ui/table/production/production-order/table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
@@ -33,3 +33,4 @@ export default async function Example() {
     </div>
   );
 }
+

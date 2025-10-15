@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  ContactSelection,
-  IAccount,
-  IContact,
-} from "@/app/lib/@backend/domain";
+import {ContactSelection} from "@/backend/domain/commercial/entity/historical.definition";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,13 +49,17 @@ const schema = z
     }
 
     if (
-      ["Celular", "Telefone Residencial", "Telefone Comercial"].includes(
-        contactType
-      )
+      [
+        "Celular",
+        "Whatsapp",
+        "Telefone Residencial",
+        "Telefone Comercial",
+      ].includes(contactType)
     ) {
       const numericValue = unmaskPhoneNumber(data.contact);
       const isCellphone =
-        contactType === "Celular" && numericValue.length !== 11;
+        (contactType === "Celular" || contactType === "Whatsapp") &&
+        numericValue.length !== 11;
       const isLandline =
         (contactType === "Telefone Residencial" ||
           contactType === "Telefone Comercial") &&
@@ -67,8 +70,8 @@ const schema = z
           code: "custom",
           path: ["contact"],
           message:
-            contactType === "Celular"
-              ? "Celular deve ter 11 dígitos (incluindo DDD)"
+            contactType === "Celular" || contactType === "Whatsapp"
+              ? "Celular/WhatsApp deve ter 11 dígitos (incluindo DDD)"
               : "Telefone deve ter 10 dígitos (incluindo DDD)",
         });
       }
@@ -88,7 +91,6 @@ export function useSearchContactHistoricalAccount({
     name: "",
     type: "",
     contact: "",
-    channel: "",
   });
   const hasAutoSelectedRef = useRef(false);
 
@@ -111,22 +113,16 @@ export function useSearchContactHistoricalAccount({
     }
   }, [contacts]);
 
-  const isSelected = (id: string, channel: string) =>
-    tempSelectedContact?.id === id && tempSelectedContact?.channel === channel;
+  const isSelected = (id: string, type: string) =>
+    tempSelectedContact?.id === id && tempSelectedContact?.type === type;
 
   const toggleSelection = useCallback(
-    (
-      id: string,
-      name: string,
-      type: string,
-      contact: string,
-      channel: string
-    ) => {
+    (id: string, name: string, type: string, contact: string) => {
       setTempSelectedContact((prev) => {
-        if (prev?.id === id && prev?.channel === channel) {
+        if (prev?.id === id && prev?.type === type) {
           return undefined;
         } else {
-          return { id, name, type, contact, channel };
+          return { id, name, type, contact };
         }
       });
     },
@@ -143,7 +139,7 @@ export function useSearchContactHistoricalAccount({
 
         if (isValid) {
           const id = "outros-contact";
-          setTempSelectedContact({ id, name, type, contact, channel: type });
+          setTempSelectedContact({ id, name, type, contact });
           hasAutoSelectedRef.current = true;
         }
       } else if (!name || !type || !contact) {
@@ -209,3 +205,4 @@ export function useSearchContactHistoricalAccount({
     tempSelectedContact,
   };
 }
+

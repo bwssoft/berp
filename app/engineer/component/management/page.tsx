@@ -1,7 +1,8 @@
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
-import { IComponent } from "@/app/lib/@backend/domain";
-import { BackButton } from "@/app/lib/@frontend/ui/component";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyComponent } from "@/backend/action/engineer/component/component.action";
+import {IComponent} from "@/backend/domain/engineer/entity/component.definition";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
 import { ComponentTable } from "@/app/lib/@frontend/ui/table/engineer/component/component.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Filter } from "mongodb";
@@ -59,3 +60,4 @@ function query(props: Props["searchParams"]): Filter<IComponent> {
   const conditions: Filter<IComponent>[] = [];
   return {};
 }
+

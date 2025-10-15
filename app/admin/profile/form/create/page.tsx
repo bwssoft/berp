@@ -1,4 +1,5 @@
-import { CreateProfileForm } from "@/app/lib/@frontend/ui/form";
+import { CreateProfileForm } from '@/frontend/ui/form/admin/profile/create/create.profile.form';
+
 
 export default async function Page() {
   return (

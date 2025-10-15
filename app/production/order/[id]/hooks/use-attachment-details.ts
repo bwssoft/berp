@@ -1,5 +1,5 @@
-import { getSaleOrderAttachmentUrl } from "@/app/lib/@backend/action/omie/attachments/get-sale-order-attachment-url";
-import { OmieEnterpriseEnum } from "@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface";
+import { getSaleOrderAttachmentUrl } from "@/backend/action/omie/attachments/get-sale-order-attachment-url";
+import { OmieEnterpriseEnum } from "@/backend/domain/@shared/gateway/omie.gateway.interface";
 
 export function useAttachmentDetails() {
   async function downloadAttachment(params: {

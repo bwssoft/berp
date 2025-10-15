@@ -1,13 +1,14 @@
 import { useCallback } from "react";
-import { E34GEncoder, E34GParser } from "../../@backend/infra/protocol";
+import { E34GParser } from "@/backend/infra/protocol/parser/E34G";
+import { E34GEncoder } from "@/backend/infra/protocol/encoder/E34G";
 import { isIccid, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
-  Device,
   E3Plus4GConfig,
   IConfigurationProfile,
-} from "../../@backend/domain";
+} from "@/backend/domain/engineer/entity/configuration-profile.definition";
 
 namespace Namespace {
   interface Equipment {
@@ -167,6 +168,7 @@ export const useE3Plus4G = () => {
               port,
               equipment,
               config: {
+                check: undefined,
                 general: {
                   data_transmission_on,
                   data_transmission_off,

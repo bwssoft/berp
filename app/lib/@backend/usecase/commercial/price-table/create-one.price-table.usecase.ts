@@ -1,14 +1,12 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  AuditDomain,
-  IPriceTable,
-  IPriceTableRepository,
-} from "../../../domain";
-import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
-import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
 import { normalizeString } from "@/app/lib/util/normalize-string";
-import { findManyPriceTableUsecase } from "./find-many.price-table.usecase";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import type { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
+import type { IPriceTableRepository } from "@/backend/domain/commercial";
+import { priceTableRepository } from "@/backend/infra";
+import { auth } from "@/auth";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
+import { findManyPriceTableUsecase } from "@/backend/usecase/commercial/price-table/find-many.price-table.usecase";
 
 namespace Dto {
   export type Input = Omit<IPriceTable, "id" | "created_at" | "updated_at">;
@@ -85,11 +83,12 @@ class CreateOnePriceTableUsecase {
         id: crypto.randomUUID(),
         name: name ?? "",
         startDateTime: input.startDateTime,
-        endDateTime: input.endDateTime ?? input.startDateTime,
+        endDateTime: input.isTemporary ? input.endDateTime : undefined,
         isTemporary: input.isTemporary,
         groups: input.groups || [],
         status: input.status ?? "DRAFT",
         equipmentPayment: input.equipmentPayment ?? [],
+        equipmentSimcardPayment: input.equipmentSimcardPayment ?? [],
         simcardPayment: input.simcardPayment ?? [],
         servicePayment: input.servicePayment ?? [],
         created_at: nowIso,

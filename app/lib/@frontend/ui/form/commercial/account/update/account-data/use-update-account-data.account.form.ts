@@ -4,14 +4,16 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
-import { updateOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {ICnpjaResponse} from "@/backend/domain/@shared/gateway/cnpja.gateway.interface";
+import { updateOneAccount } from "@/backend/action/commercial/account.action";
 import { z } from "zod";
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useQueryClient } from "@tanstack/react-query";
 
 const schema = z
@@ -54,6 +56,15 @@ const schema = z
       .object({
         social_name: z.string().min(1, "Razão social é obrigatória"),
         fantasy_name: z.string().optional(),
+        status: z.string().optional(),
+        situationIE: z
+          .object({
+            id: z.string().optional(),
+            status: z.boolean().nullable().optional(),
+            text: z.string().optional(),
+          })
+          .optional(),
+        typeIE: z.string().optional(),
         state_registration: z
           .string()
           .max(14, "Inscrição Estadual deve ter no máximo 14 dígitos")
@@ -199,10 +210,13 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
         ? {
             cnpj: {
               sector: sectorData,
-              social_name: accountData?.social_name,
-              fantasy_name: accountData?.fantasy_name,
-              municipal_registration: accountData?.municipal_registration,
-              state_registration: accountData?.state_registration,
+              social_name: accountData?.social_name ?? "",
+              fantasy_name: accountData?.fantasy_name ?? "",
+              municipal_registration: accountData?.municipal_registration ?? "",
+              state_registration: accountData?.state_registration ?? "",
+              status: accountData?.status ?? "",
+              situationIE: accountData.situationIE ?? undefined,
+              typeIE: accountData?.typeIE ?? "",
             },
           }
         : {
@@ -237,6 +251,22 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
             fantasy_name: data.cnpj?.fantasy_name,
             state_registration: data.cnpj?.state_registration,
             municipal_registration: data.cnpj?.municipal_registration,
+            status: data.cnpj?.status,
+            ...(data.cnpj?.situationIE && data.cnpj.situationIE.id
+              ? {
+                  situationIE: {
+                    id: String(data.cnpj.situationIE.id),
+                    // coerce null -> false to satisfy zod boolean expectation
+                    status:
+                      data.cnpj.situationIE.status === null ||
+                      data.cnpj.situationIE.status === undefined
+                        ? false
+                        : Boolean(data.cnpj.situationIE.status),
+                    text: data.cnpj.situationIE.text ?? "",
+                  },
+                }
+              : {}),
+            typeIE: data.cnpj?.typeIE,
             ...(data.cnpj?.economic_group_holding?.name &&
             data.cnpj?.economic_group_holding?.taxId
               ? {
@@ -340,3 +370,4 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
     control: methods.control,
   };
 }
+

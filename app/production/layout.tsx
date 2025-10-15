@@ -1,6 +1,7 @@
 "use client";
 
-import { Layout } from "@/app/lib/@frontend/ui/component";
+import { Layout } from '@/frontend/layout/layout';
+
 import {
   WrenchScrewdriverIcon, // Auto Test
   Cog6ToothIcon, // Configurador
@@ -13,7 +14,8 @@ import {
   ChartBarIcon,
   ViewColumnsIcon, // Processo Produtivo
 } from "@heroicons/react/24/outline";
-import { useAuth } from "../lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { CheckCheckIcon, FolderDownIcon } from "lucide-react";
 
 export default function ProductionLayout({

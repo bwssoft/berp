@@ -1,4 +1,4 @@
-import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
+import { findManyProfile } from "@/backend/action/admin/profile.action";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
@@ -43,3 +43,4 @@ export const useChooseProfileForm = () => {
     handleSearchProfile,
   };
 };
+

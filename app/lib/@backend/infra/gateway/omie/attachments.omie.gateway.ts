@@ -1,5 +1,5 @@
-import { singleton } from "@/app/lib/util";
-import { IOmieAttachment } from "./@dto";
+import { singleton } from "@/app/lib/util/singleton";
+import type { IOmieAttachment } from "./@dto/attachment.dto";
 import { OmieGateway } from "./@base";
 
 class AttachmentOmieGateway extends OmieGateway {

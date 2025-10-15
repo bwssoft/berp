@@ -21,14 +21,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/app/lib/@frontend/ui/component/collapsible";
-import {
-  Button,
-  Input,
-  Textarea,
-  Badge,
-} from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Textarea } from '@/frontend/ui/component/text-area';
+import { Badge } from '@/frontend/ui/component/badge';
+
 import type { CreateMovementFormData } from "./use-create.movement.form";
-import type { IBase, IItem } from "@/app/lib/@backend/domain";
+import type {IBase} from "@/backend/domain/logistic/entity/base.entity";
+import type {IItem} from "@/backend/domain/logistic/entity/item.entity";
 import { movementConstants } from "@/app/lib/constant/logistic";
 
 interface MovementRowFormProps {
@@ -345,3 +345,4 @@ export function MovementRowForm({
     </div>
   );
 }
+

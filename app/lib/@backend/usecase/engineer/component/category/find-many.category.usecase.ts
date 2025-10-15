@@ -1,12 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
+import { RemoveFields } from "@/backend/decorators";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import type { IComponentCategory } from "@/backend/domain/engineer/entity/component.category.definition";
+import type { IComponentCategoryRepository } from "@/backend/domain/engineer/repository/component.category.repository";
+import { componentCategoryRepository } from "@/backend/infra";
 import type { Filter } from "mongodb";
-import { componentCategoryRepository } from "@/app/lib/@backend/infra";
-import {
-  IComponentCategory,
-  IComponentCategoryRepository,
-} from "@/app/lib/@backend/domain";
-import { RemoveFields } from "@/app/lib/@backend/decorators";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
   export interface Input {
@@ -38,3 +36,4 @@ class FindManyComponentCategoryUsecase {
 export const findManyComponentCategoryUsecase = singleton(
   FindManyComponentCategoryUsecase
 );
+

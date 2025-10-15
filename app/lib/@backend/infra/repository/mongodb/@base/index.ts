@@ -1,101 +1,147 @@
-import { IBaseRepository } from "@/app/lib/@backend/domain/@shared/repository/repository.interface";
 import {
-  AggregateOptions,
-  AggregationCursor,
-  Filter,
-  FindOptions,
-  MongoClient,
-  Sort,
-  TransactionOptions,
-  UpdateFilter,
+  type AggregateOptions,
+  type AggregationCursor,
+  type BulkWriteResult,
+  type Db,
+  type DeleteResult,
+  type Filter,
+  type FindCursor,
+  type FindOptions,
+  type InsertManyResult,
+  type InsertOneResult,
+  type MongoClient,
+  type TransactionOptions,
+  type UpdateFilter,
+  type UpdateResult,
+  type OptionalUnlessRequiredId,
+  type WithId,
 } from "mongodb";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import type { IBaseRepository } from "@/backend/domain/@shared/repository/repository.interface";
+import type { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { bCubeClientPromise } from "./b-cube";
+import { bSerialClientPromise } from "./b-serial";
 
-type Constructor = {
+type BaseRepositoryOptions = {
   collection: string;
   db: string;
-  client?: Promise<MongoClient>;
 };
 
-export class BaseRepository<Entity extends object>
+export abstract class BaseRepository<Entity extends object>
   implements IBaseRepository<Entity>
 {
-  protected collection: string;
-  protected db: string;
-  protected client: Promise<MongoClient>;
+  private readonly collectionName: string;
+  private readonly databaseName: string;
 
-  constructor({ collection, db, client }: Constructor) {
-    this.collection = collection;
-    this.db = db;
-    this.client = client ?? bCubeClientPromise;
+  protected constructor(options: BaseRepositoryOptions) {
+    this.collectionName = options.collection;
+    this.databaseName = options.db;
   }
 
-  async create(data: Entity) {
-    const db = await this.connect();
-    return db.collection(this.collection).insertOne(data);
+  protected async getClient(): Promise<MongoClient> {
+    if (this.databaseName === "b-serial") {
+      return bSerialClientPromise;
+    }
+
+    return bCubeClientPromise;
   }
 
-  async createMany(data: Entity[]) {
-    const db = await this.connect();
-    return db.collection(this.collection).insertMany(data);
+  protected async getDatabase(): Promise<Db> {
+    const client = await this.getClient();
+    const database =
+      this.databaseName === "b-serial"
+        ? this.databaseName
+        : this.databaseName || "berp";
+    return client.db(database);
   }
 
-  async findOne(params: Filter<Entity>, options?: FindOptions<Entity>) {
-    const db = await this.connect();
-    return db.collection<Entity>(this.collection).findOne(params, options);
+  protected async getCollection() {
+    const db = await this.getDatabase();
+    return db.collection<Entity>(this.collectionName);
+  }
+
+  async create(data: Entity): Promise<InsertOneResult<Entity>> {
+    const collection = await this.getCollection();
+    return collection.insertOne(
+      data as OptionalUnlessRequiredId<Entity>
+    );
+  }
+
+  async createMany(data: Entity[]): Promise<InsertManyResult<Entity>> {
+    const collection = await this.getCollection();
+    return collection.insertMany(
+      data as OptionalUnlessRequiredId<Entity>[]
+    );
+  }
+
+  async findOne(
+    params: Filter<Entity>,
+    options?: FindOptions<Entity>
+  ): Promise<Entity | null> {
+    const collection = await this.getCollection();
+    const result = await collection.findOne(params, options);
+    if (!result) {
+      return null;
+    }
+
+    // Remove the Mongo internal identifier to keep domain entities clean
+    const { _id, ...rest } = result as WithId<Entity> & Record<string, unknown>;
+    return rest as Entity;
   }
 
   async findMany(
-    params: Filter<Entity> = {},
+    params: Filter<Entity>,
     limit = 10,
-    page?: number,
-    sort: Sort = { _id: -1 }
+    page = 1,
+    sort?: Record<string, 1 | -1>
   ): Promise<PaginationResult<Entity>> {
-    const db = await this.connect();
-
-    const totalDocs = await db
-      .collection<Entity>(this.collection)
-      .countDocuments(params);
-
-    const chain = db
-      .collection<Entity>(this.collection)
-      .find(params)
-      .sort(sort)
+    const collection = await this.getCollection();
+    const cursor = collection
+      .find(params, {
+        ...(sort ? { sort } : {}),
+      })
+      .skip(limit > 0 ? (page - 1) * limit : 0)
       .limit(limit);
 
-    if (typeof page === "number") chain.skip((page - 1) * limit);
-
-    const docs = await chain.toArray();
-
-    const totalPages = Math.ceil(totalDocs / limit);
+    const rawDocs = (await cursor.toArray()) as WithId<Entity>[];
+    const docs = rawDocs.map(({ _id, ...doc }) => doc as Entity);
+    const total = await collection.countDocuments(params);
+    const pages = limit > 0 ? Math.ceil(total / limit) : 1;
 
     return {
-      docs: docs as Entity[],
-      total: totalDocs,
-      pages: totalPages,
+      docs,
+      total,
+      pages,
       limit,
     };
   }
 
-  async findCursor(params: Filter<Entity> = {}) {
-    const db = await this.connect();
-    return db.collection<Entity>(this.collection).find(params);
+  async count(params: Filter<Entity>): Promise<number> {
+    const collection = await this.getCollection();
+    return collection.countDocuments(params);
   }
 
-  async count(params: Filter<Entity> = {}) {
-    const db = await this.connect();
-    return db.collection<Entity>(this.collection).countDocuments(params);
+  async updateOne(
+    query: Filter<Entity>,
+    value: UpdateFilter<Entity>
+  ): Promise<UpdateResult<Entity>> {
+    const collection = await this.getCollection();
+    return collection.updateOne(query, value);
   }
 
-  async updateOne(query: Filter<Entity>, value: UpdateFilter<Entity>) {
-    const db = await this.connect();
-    return db.collection<Entity>(this.collection).updateOne(query, value);
+  async upsertOne(
+    query: Filter<Entity>,
+    value: UpdateFilter<Entity>
+  ): Promise<UpdateResult<Entity>> {
+    const collection = await this.getCollection();
+    return collection.updateOne(query, value, { upsert: true });
   }
 
-  async updateMany(query: Filter<Entity>, value: UpdateFilter<Entity>) {
-    const db = await this.connect();
-    return db.collection<Entity>(this.collection).updateMany(query, value);
+  async updateMany(
+    query: Filter<Entity>,
+    value: UpdateFilter<Entity>
+  ): Promise<UpdateResult<Entity>> {
+    const collection = await this.getCollection();
+    return collection.updateMany(query, value);
   }
 
   async updateBulk(
@@ -104,62 +150,59 @@ export class BaseRepository<Entity extends object>
       update: UpdateFilter<Entity>;
       upsert: boolean;
     }[]
-  ) {
-    const db = await this.connect();
-    const bulkOps = operations.map(({ filter, update, upsert }) => ({
-      updateOne: {
-        filter,
-        update,
-        upsert: upsert ?? false,
-      },
-    }));
-
-    return db.collection<Entity>(this.collection).bulkWrite(bulkOps);
+  ): Promise<BulkWriteResult> {
+    const collection = await this.getCollection();
+    return collection.bulkWrite(
+      operations.map((operation) => ({
+        updateOne: {
+          filter: operation.filter,
+          update: operation.update,
+          upsert: operation.upsert,
+        },
+      }))
+    );
   }
 
-  async deleteOne(query: Filter<Entity>) {
-    const db = await this.connect();
-    return db.collection<Entity>(this.collection).deleteOne(query);
+  async deleteOne(query: Filter<Entity>): Promise<DeleteResult> {
+    const collection = await this.getCollection();
+    return collection.deleteOne(query);
   }
 
-  async deleteMany(query: Filter<Entity>) {
-    const db = await this.connect();
-    return db.collection<Entity>(this.collection).deleteMany(query);
+  async deleteMany(query: Filter<Entity>): Promise<DeleteResult> {
+    const collection = await this.getCollection();
+    return collection.deleteMany(query);
   }
 
   async aggregate<T extends object>(
-    pipeline?: object[],
+    pipeline: object[] = [],
     options?: AggregateOptions
   ): Promise<AggregationCursor<T>> {
-    const db = await this.connect();
-    return db.collection(this.collection).aggregate<T>(pipeline, options);
+    const collection = await this.getCollection();
+    return collection.aggregate<T>(pipeline, options);
   }
 
   async withTransaction(
     operations: (client: MongoClient) => Promise<void>,
-    options: TransactionOptions = {}
+    options?: TransactionOptions
   ): Promise<void> {
-    const client = await this.client;
+    const client = await this.getClient();
     const session = client.startSession();
+
     try {
       await session.withTransaction(async () => {
         await operations(client);
       }, options);
-      await session.commitTransaction();
     } finally {
-      session.endSession();
+      await session.endSession();
     }
   }
 
-  async upsertOne(query: Filter<Entity>, value: UpdateFilter<Entity>) {
-    const db = await this.connect();
-    return db
-      .collection<Entity>(this.collection)
-      .updateOne(query, value, { upsert: true });
-  }
-
-  async connect() {
-    const client = await this.client;
-    return client.db(this.db);
+  async findCursor(
+    filter: Filter<Entity>
+  ): Promise<FindCursor<WithId<Entity>>> {
+    const db = await this.getDatabase();
+    return db.collection<Entity>(this.collectionName).find(filter);
   }
 }
+
+export { BaseRepository as default };

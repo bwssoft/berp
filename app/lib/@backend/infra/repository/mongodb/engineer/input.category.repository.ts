@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util";
 import { BaseRepository } from "../@base";
-import { IInputCategory } from "@/app/lib/@backend/domain";
+import { IInputCategory } from "@/backend/domain/engineer/entity/input.category.definition";
 
 class IInputCategoryRepository extends BaseRepository<IInputCategory> {
   constructor() {
@@ -12,3 +12,4 @@ class IInputCategoryRepository extends BaseRepository<IInputCategory> {
 }
 
 export const inputCategoryRepository = singleton(IInputCategoryRepository);
+

@@ -1,9 +1,11 @@
 "use client";
 
 import { Loader2, Settings } from "lucide-react";
-import { Button, Input } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+
 import { useIdentificationForm } from "./use-identification.form";
-import { ITechnology } from "@/app/lib/@backend/domain";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
 
 export function IdentificationForm(props: {
   onSubmit: (
@@ -70,3 +72,4 @@ export function IdentificationForm(props: {
     </form>
   );
 }
+

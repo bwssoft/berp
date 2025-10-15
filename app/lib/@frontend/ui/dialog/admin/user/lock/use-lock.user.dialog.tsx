@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { lockUser } from "@/app/lib/@backend/action/admin/user.action";
+import { lockUser } from "@/backend/action/admin/user.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 
 interface Params {
@@ -31,6 +31,7 @@ export function useLockUserDialog({ userId, willLock, onSuccess }: Params) {
 
       qc.invalidateQueries({ queryKey: ["findOneUser", userId] });
       qc.invalidateQueries({ queryKey: ["findManyUserAudit", userId] });
+      qc.invalidateQueries({ queryKey: ["findManyUser"] });
       onSuccess?.();
       setOpen(false);
     } catch (err) {
@@ -53,3 +54,4 @@ export function useLockUserDialog({ userId, willLock, onSuccess }: Params) {
     isLoading,
   };
 }
+

@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { findByRegex } from "@/app/lib/util";
-import { createOneCommand } from "@/app/lib/@backend/action/engineer/command/command.action";
+import { createOneCommand } from "@/backend/action/engineer/command/command.action";
 
 const schema = z.object({
   name: z.string(),
@@ -86,3 +86,4 @@ export function useCommandCreateForm() {
     commandPreview,
   };
 }
+

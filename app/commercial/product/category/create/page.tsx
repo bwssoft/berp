@@ -1,5 +1,7 @@
-import { BackButton } from "@/app/lib/@frontend/ui/component";
-import { CreateOneProductCategoryForm } from "@/app/lib/@frontend/ui/form";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
+import { CreateOneProductCategoryForm } from '@/frontend/ui/form/commercial/product-category/create/create.product.category.form';
+
 
 export default async function Page() {
   return (

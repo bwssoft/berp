@@ -1,8 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { AuditDomain, IContact, IContactRepository } from "../../../domain";
-import { contactRepository } from "../../../infra";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import { IContact } from "@/backend/domain/commercial/entity/contact.definition";
+import { IContactRepository } from "@/backend/domain/commercial/repository/contact.repository";
+import { contactRepository } from "@/backend/infra";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
 export type Output = {
   success?: IContact;

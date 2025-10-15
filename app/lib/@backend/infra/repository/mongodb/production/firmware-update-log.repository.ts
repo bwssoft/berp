@@ -1,7 +1,5 @@
-import {
-  IFirmwareUpdateLog,
-  IFirmwareUpdateLogRepository,
-} from "@/app/lib/@backend/domain";
+import type { IFirmwareUpdateLog } from "@/backend/domain/production/entity/firmware-update-log.definition";
+import type { IFirmwareUpdateLogRepository } from "@/backend/domain/production/repository/firmware-update-log.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
@@ -20,3 +18,4 @@ class FirmwareUpdateLogRepository
 export const firmwareUpdateLogRepository = singleton(
   FirmwareUpdateLogRepository
 );
+

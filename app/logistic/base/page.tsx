@@ -1,7 +1,8 @@
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyBase } from "@/app/lib/@backend/action/logistic/base.action";
-import { IBase } from "@/app/lib/@backend/domain";
-import { BackButton } from "@/app/lib/@frontend/ui/component";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyBase } from "@/backend/action/logistic/base.action";
+import {IBase} from "@/backend/domain/logistic/entity/base.entity";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
 import { BaseTable } from "@/app/lib/@frontend/ui/table/logistic/base/base.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Filter } from "mongodb";
@@ -59,3 +60,4 @@ function query(props: Props["searchParams"]): Filter<IBase> {
   const conditions: Filter<IBase>[] = [];
   return {};
 }
+

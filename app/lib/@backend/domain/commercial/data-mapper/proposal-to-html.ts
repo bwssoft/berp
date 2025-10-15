@@ -1,5 +1,5 @@
 import { singleton } from "../../../../util";
-import { IProposal } from "../..";
+import { IProposal } from "@/backend/domain/commercial/entity/proposal.definition";
 
 
 export interface IProposalToHtmlDataMapper {

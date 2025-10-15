@@ -1,17 +1,13 @@
 "use client";
 
 import { Building2, DollarSign, Tag, User } from "lucide-react";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  InfoField,
-} from "../../../component";
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+import { InfoField } from '@/frontend/ui/component/info-field';
+
 import { Separator } from "../../../component/separator";
-import { IAccount } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
 import { StatusBadge } from "../../../page/commercial/account/data/account.data";
 import {
   Tooltip,
@@ -121,17 +117,21 @@ export function AccountCard({
                   label="Inscrição Municipal"
                   value={account.municipal_registration}
                 />
-                {/* Campo adicional para preencher o grid se necessário */}
-                {account.status && (
-                  <div className="space-y-1">
-                    <dt className="text-sm font-medium text-muted-foreground">
-                      Situação CNPJ
-                    </dt>
-                    <dd className="flex items-center">
+                {/* Situação CNPJ - sempre exibido para empresas; mostra placeholder se ausente */}
+                <div className="space-y-1">
+                  <dt className="text-sm font-medium text-muted-foreground">
+                    Situação CNPJ
+                  </dt>
+                  <dd className="flex items-center">
+                    {account.status ? (
                       <StatusBadge status={account.status} type="general" />
-                    </dd>
-                  </div>
-                )}
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        ----
+                      </span>
+                    )}
+                  </dd>
+                </div>
                 <InfoField
                   label="Situação IE"
                   value={account.situationIE?.text}
@@ -148,7 +148,7 @@ export function AccountCard({
                     account.document.type
                   )}
                 />
-                <InfoField label="RG/CIN" value={account.rg} />
+                <InfoField label="RG" value={account.rg} />
                 {account.status && (
                   <div className="space-y-1">
                     <dt className="text-sm font-medium text-muted-foreground">
@@ -253,3 +253,4 @@ export function AccountCard({
     </TooltipProvider>
   );
 }
+

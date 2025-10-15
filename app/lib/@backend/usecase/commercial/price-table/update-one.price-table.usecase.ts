@@ -1,14 +1,12 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  AuditDomain,
-  IPriceTable,
-  IPriceTableRepository,
-} from "../../../domain";
-import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
-import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
 import { normalizeString } from "@/app/lib/util/normalize-string";
-import { findManyPriceTableUsecase } from "./find-many.price-table.usecase";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import type { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
+import type { IPriceTableRepository } from "@/backend/domain/commercial";
+import { priceTableRepository } from "@/backend/infra";
+import { auth } from "@/auth";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
+import { findManyPriceTableUsecase } from "@/backend/usecase/commercial/price-table/find-many.price-table.usecase";
 
 namespace Dto {
   export type Input = IPriceTable;
@@ -96,13 +94,14 @@ class UpdateOnePriceTableUsecase {
           $set: {
             name: input.name,
             startDateTime: input.startDateTime,
-            endDateTime: input.endDateTime,
+            endDateTime: input.isTemporary ? input.endDateTime : undefined,
             isTemporary: input.isTemporary,
             //se editar e salvar enquanto status for Aguardando Publicação, voltar o status para Rascunho.
             status:
               input.status == "AWAITING_PUBLICATION" ? "DRAFT" : input.status,
             groups: input.groups,
             equipmentPayment: input.equipmentPayment,
+            equipmentSimcardPayment: input.equipmentSimcardPayment,
             simcardPayment: input.simcardPayment,
             servicePayment: input.servicePayment,
             updated_at: updatedAt,

@@ -1,7 +1,5 @@
-import {
-  ITechnicalSheet,
-  ITechnicalSheetRepository,
-} from "@/app/lib/@backend/domain";
+import type { ITechnicalSheet } from "@/backend/domain/engineer/entity/technical-sheet.definition";
+import type { ITechnicalSheetRepository } from "@/backend/domain/engineer/repository/technical-sheet.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
@@ -17,3 +15,5 @@ class TechnicalSheetRepository
 }
 
 export const technicalSheetRepository = singleton(TechnicalSheetRepository);
+
+

@@ -1,4 +1,4 @@
-import { OmieBoolean } from "@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface";
+import { OmieBoolean } from "@/backend/domain/@shared/gateway/omie.gateway.interface";
 
 interface Det {
   ide: {
@@ -336,4 +336,5 @@ export interface IncluirPedidoVendaProduto {
   lista_parcelas: { parcelas: Parcela[] }
   det: Det[]
 }
+
 

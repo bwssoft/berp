@@ -1,15 +1,14 @@
 "use client";
 
 import { Controller } from "react-hook-form";
-import {
-  Button,
-  Checkbox,
-  Combobox,
-  Input,
-  useUpdateContactAccount,
-} from "../../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Input } from '@/frontend/ui/component/input';
+import { useUpdateContactAccount } from '@/frontend/ui/form/commercial/account/contact/update/use-contact.update.account';
+
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { IContact } from "@/app/lib/@backend/domain";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 import { ContactTable } from "@/app/lib/@frontend/ui/table/commercial/contact/table";
 import { maskPhoneNumber } from "@/app/lib/util/mask-phone-number";
 import { formatCpf, formatRgOrCpf } from "@/app/lib/util/format-rg-cpf";
@@ -277,3 +276,4 @@ export function UpdateContactAccountForm({
     </form>
   );
 }
+

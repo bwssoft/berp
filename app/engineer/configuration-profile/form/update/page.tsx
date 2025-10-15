@@ -1,13 +1,14 @@
 import {
   findManyClient,
   findOneClient,
-} from "@/app/lib/@backend/action/commercial/client.action";
-import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+} from "@/backend/action/commercial/client.action";
+import { findOneConfigurationProfile } from "@/backend/action/engineer/configuration-profile.action";
 import {
   findManyTechnology,
   findOneTechnology,
-} from "@/app/lib/@backend/action/engineer/technology.action";
-import { ConfigurationProfileUpsertForm } from "@/app/lib/@frontend/ui/form";
+} from "@/backend/action/engineer/technology.action";
+import { ConfigurationProfileUpsertForm } from '@/frontend/ui/form/engineer/configuration-profile/upsert/configuration-profile.upsert.form';
+
 
 interface Props {
   searchParams: {
@@ -42,7 +43,7 @@ export default async function Page(props: Props) {
     findOneTechnology({ id: configurationProfile.technology_id }),
   ]);
 
-  if (!client || !technology) {
+  if (!technology) {
     return (
       <div>
         <div className="flex flex-wrap items-center gap-6 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
@@ -76,3 +77,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

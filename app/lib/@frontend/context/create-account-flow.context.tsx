@@ -1,11 +1,9 @@
 "use client";
 
-import {
-  IAccount,
-  IAccountEconomicGroup,
-  IAddress,
-  IContact,
-} from "../../@backend/domain";
+import { IAccount } from "@/backend/domain/commercial/entity/account.definition";
+import { IAccountEconomicGroup } from "@/backend/domain/commercial/entity/account.economic-group.definition";
+import { IAddress } from "@/backend/domain/commercial/entity/address.definition";
+import { IContact } from "@/backend/domain/commercial/entity/contact.definition";
 import {
   createOneAccount,
   updateOneAccount,

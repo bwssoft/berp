@@ -1,7 +1,8 @@
-import { IInput, IInputRepository } from "@/app/lib/@backend/domain";
-import { inputRepository } from "@/app/lib/@backend/infra";
+import { IInput } from "@/backend/domain/engineer/entity/input.definition";
+import { IInputRepository } from "@/backend/domain/engineer/repository/input.repository";
+import { inputRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 class FindOneInputUsecase {
   repository: IInputRepository;
@@ -17,3 +18,4 @@ class FindOneInputUsecase {
 }
 
 export const findOneInputUsecase = singleton(FindOneInputUsecase);
+

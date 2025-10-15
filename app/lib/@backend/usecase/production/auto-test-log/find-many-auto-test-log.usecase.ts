@@ -1,15 +1,12 @@
-import {
-  IAutoTestLog,
-  IAutoTestLogRepository,
-} from "@/app/lib/@backend/domain";
-import { autoTestLogRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { Filter } from "mongodb";
+import { RemoveMongoId } from "@/backend/decorators";
+import type { IAutoTestLog } from "@/backend/domain/production/entity/auto-test-log.definition";
+import type { IAutoTestLogRepository } from "@/backend/domain/production/repository/auto-test-log.repository";
+import { autoTestLogRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
 
 namespace Dto {
   export interface Input extends Filter<IAutoTestLog> {}
-
   export type Output = IAutoTestLog[];
 }
 
@@ -27,4 +24,6 @@ class FindManyAutoTestLogUsecase {
   }
 }
 
-export const findManyAutoTestLogUsecase = singleton(FindManyAutoTestLogUsecase);
+export const findManyAutoTestLogUsecase = singleton(
+  FindManyAutoTestLogUsecase
+);

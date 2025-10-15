@@ -1,14 +1,9 @@
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
-import { IPriceTable } from "@/app/lib/@backend/domain";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/lib/@frontend/ui/component";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyPriceTable } from "@/backend/action/commercial/price-table.action";
+import {IPriceTable} from "@/backend/domain/commercial/entity/price-table.definition";
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+
 import { PriceTableFilterForm } from "@/app/lib/@frontend/ui/form/commercial/price-table/search/search.price-table.form";
 import { PriceTableTable } from "@/app/lib/@frontend/ui/table/commercial/price-table/price-table.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
@@ -83,6 +78,7 @@ export default async function PriceTablePage(props: Props) {
           <PriceTableTable
             currentPage={_page}
             restrictEdit={canEdit}
+            restrictClone={canCreate}
             data={priceTables ?? { docs: [], pages: 0, total: 0, limit: 10 }}
           />
         </CardContent>
@@ -248,3 +244,4 @@ function buildFinalQuery(
   if (conditions.length === 1) return conditions[0];
   return { $and: conditions };
 }
+

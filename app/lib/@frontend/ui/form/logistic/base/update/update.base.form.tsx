@@ -1,11 +1,16 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useUpdateBaseForm } from "./use-update.base.form";
-import { Input, Radio, Textarea } from "../../../../component";
+import { Input } from '@/frontend/ui/component/input';
+import { Radio } from '@/frontend/ui/component/radio';
+import { Textarea } from '@/frontend/ui/component/text-area';
+
 import { Controller } from "react-hook-form";
 import { baseConstants } from "@/app/lib/constant/logistic";
-import { IBase, IEnterprise } from "@/app/lib/@backend/domain";
-import { Select } from "../../../../composite";
+import {IBase} from "@/backend/domain/logistic/entity/base.entity";
+import {IEnterprise} from "@/backend/domain/business/entity/enterprise.entity";
+import { Select } from '@/frontend/ui/composite/select';
+
 
 interface Props {
   enterprises: IEnterprise[];
@@ -104,3 +109,4 @@ export function UpdateOneBaseForm(props: Props) {
     </form>
   );
 }
+

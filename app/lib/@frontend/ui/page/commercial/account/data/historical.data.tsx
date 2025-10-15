@@ -1,38 +1,35 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { findManyHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
 import { CreateHistoricalForm } from "../../../../form/commercial/account/historical/create/create.historical.form";
-import { TimelineItem } from "../../../../list/commercial/historical/time-line-item";
+import { TimelineTable } from "../../../../list/commercial/historical/time-line-table";
 import { CreateAnnexHistoricalModal } from "../../../../modal/comercial/account-attachments/create/annex-historical/annex-historical.create.commercial.modal";
 import { useCreateHistoricalForm } from "../../../../form/commercial/account/historical/create/use-create.historical.form";
 import { useCreateAnnexHistoricalModal } from "../../../../modal/comercial/account-attachments/create/annex-historical/use-annex-historical.create.commercial.modal";
 import { useState } from "react";
-import { IHistorical } from "@/app/lib/@backend/domain";
+import {IHistorical} from "@/backend/domain/commercial/entity/historical.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 interface Props {
-    accountId: string;
-    historical: IHistorical[]
+  accountId: string;
+  historical: PaginationResult<IHistorical> | null;
+  currentPage?: number;
 }
 
-export function HistoricalDataPage({ historical, accountId }:Props) {
-    const [file, setFile] = useState<{ name: string; url: string; id: string }>();
-    
-    const {
-      handleDownload,
-    } = useCreateHistoricalForm({accountId})
+export function HistoricalDataPage({
+  historical,
+  accountId,
+  currentPage,
+}: Props) {
+  const [file, setFile] = useState<{ name: string; url: string; id: string }>();
 
-    const { 
-      open, 
-      closeModal, 
-      openModal
-    } = useCreateAnnexHistoricalModal()
+  const { handleDownload } = useCreateHistoricalForm({ accountId });
 
+  const { open, closeModal, openModal } = useCreateAnnexHistoricalModal();
 
-    return (
+  return (
     <div className="w-full max-w-[1400px] mx-auto space-y-6">
       <CreateHistoricalForm
-        historical={historical ?? []}
+        historical={historical?.docs ?? []}
         accountId={accountId}
         openModalAnnex={openModal}
         closeModalAnnex={closeModal}
@@ -40,22 +37,24 @@ export function HistoricalDataPage({ historical, accountId }:Props) {
         setFile={setFile}
       />
 
-      <TimelineItem
+      <TimelineTable
         onClickButtonDownload={(id: string, name: string) =>
-            handleDownload(id, name)
+          handleDownload(id, name)
         }
         historical={historical}
+        currentPage={currentPage}
       />
 
       <CreateAnnexHistoricalModal
-          closeModal={closeModal}
-          onFileUploadSuccess={(name, url, id) => {
-            setFile({ name, url, id });
-            closeModal();
-          }}
-          open={open}
-          accountId={accountId}
+        closeModal={closeModal}
+        onFileUploadSuccess={(name, url, id) => {
+          setFile({ name, url, id });
+          closeModal();
+        }}
+        open={open}
+        accountId={accountId}
       />
     </div>
-    )
+  );
 }
+

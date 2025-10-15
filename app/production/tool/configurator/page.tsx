@@ -1,5 +1,5 @@
-import { findOneConfigurationProfile } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
-import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { findOneConfigurationProfile } from "@/backend/action/engineer/configuration-profile.action";
+import { findOneTechnology } from "@/backend/action/engineer/technology.action";
 import { ConfiguratorPage } from "@/app/lib/@frontend/ui/page/production/tool/configurator/configurator.page";
 
 interface Props {
@@ -32,3 +32,4 @@ export default async function Page(props: Props) {
     />
   );
 }
+

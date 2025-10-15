@@ -1,4 +1,4 @@
-import { IUser } from "@/app/lib/@backend/domain/admin/entity/user.definition";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
@@ -12,3 +12,4 @@ class UserRepository extends BaseRepository<IUser> {
 }
 
 export const userRepository = singleton(UserRepository);
+

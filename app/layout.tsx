@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import "./globals.css";
-import { Root } from "./lib/@frontend/layout";
+import { Root } from '@/frontend/layout/root';
+
 
 export default async function RootLayout({
   children,

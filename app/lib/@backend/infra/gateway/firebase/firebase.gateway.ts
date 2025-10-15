@@ -2,7 +2,7 @@ import { initializeApp, FirebaseApp } from "firebase/app";
 import { getStorage, ref, uploadBytes, getDownloadURL, FirebaseStorage, getBytes, deleteObject } from "firebase/storage";
 import { config } from "@/app/lib/config";
 import { singleton } from "@/app/lib/util/singleton";
-import { IFirebaseGateway } from "@/app/lib/@backend/domain/@shared/gateway/firebase.gateway.interface";
+import { IFirebaseGateway } from "@/backend/domain/@shared/gateway/firebase.gateway.interface";
 
 
 class FirebaseGateway implements IFirebaseGateway {
@@ -58,3 +58,4 @@ class FirebaseGateway implements IFirebaseGateway {
 }
 
 export const firebaseGateway = singleton(FirebaseGateway)
+

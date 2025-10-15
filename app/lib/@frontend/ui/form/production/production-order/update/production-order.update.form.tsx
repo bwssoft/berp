@@ -1,7 +1,8 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import { IProduct, IProductionOrder } from "@/app/lib/@backend/domain";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
+import {IProductionOrder} from "@/backend/domain/production/entity/production-order.definition";
 import { useProductionOrderUpdateForm } from "./use-production-order-update-form";
 import { productionOrderConstants } from "@/app/lib/constant/production-order";
 
@@ -206,3 +207,4 @@ export function ProductionOrderUpdateForm(props: Props) {
     </form>
   );
 }
+

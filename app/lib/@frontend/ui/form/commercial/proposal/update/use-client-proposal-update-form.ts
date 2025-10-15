@@ -1,6 +1,7 @@
-import { downloadOneProposalDocument, updateOneProposalById } from '@/app/lib/@backend/action/commercial/proposal.action';
-import { Currency, FreightType, IClient, IProposal } from '@/app/lib/@backend/domain';
-import { OmieEnterpriseEnum } from '@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface';
+import { downloadOneProposalDocument, updateOneProposalById } from '@/backend/action/commercial/proposal.action';
+import {Currency, FreightType, IProposal} from "@/backend/domain/commercial/entity/proposal.definition";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
+import { OmieEnterpriseEnum } from '@/backend/domain/@shared/gateway/omie.gateway.interface';
 import { toast } from '@/app/lib/@frontend/hook/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
@@ -204,3 +205,4 @@ export function useProposalUpdateForm(props: Props) {
     watch
   };
 }
+

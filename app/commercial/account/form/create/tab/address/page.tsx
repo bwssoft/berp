@@ -2,11 +2,12 @@
 
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { AddressDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/tab/address/address.data";
-import { AccountNotFoundState } from "@/app/lib/@frontend/ui/component";
+import { AccountNotFoundState } from '@/frontend/ui/component/empty-state/empty-state';
+
 import { PageFooterButtons } from "./page-footer-buttons";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMemo, useEffect, useState } from "react";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -74,3 +75,4 @@ export default function Page() {
     </div>
   );
 }
+

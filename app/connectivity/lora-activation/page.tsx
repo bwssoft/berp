@@ -1,5 +1,5 @@
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
-import { findManyTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { findManyTechnology } from "@/backend/action/engineer/technology.action";
 import { LoraActivationModal } from "@/app/lib/@frontend/ui/modal/connectivity/lora-activation/lora-activation.modal";
 import { ActivateList } from "./activate-list";
 
@@ -57,3 +57,4 @@ export default async function LoraActivation(props: Props) {
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
-import { IHistorical } from "@/app/lib/@backend/domain";
+import { IHistorical } from "@/backend/domain/commercial/entity/historical.definition";
 
 class HistoricalRepository extends BaseRepository<IHistorical> {
   constructor() {
@@ -12,3 +12,4 @@ class HistoricalRepository extends BaseRepository<IHistorical> {
 }
 
 export const historicalRepository = singleton(HistoricalRepository);
+

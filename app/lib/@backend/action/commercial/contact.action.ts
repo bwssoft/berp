@@ -1,16 +1,12 @@
 "use server";
 
 import { Filter } from "mongodb";
-import { IContact } from "../../domain";
-import {
-  createOneContactUsecase,
-  findManyContactUsecase,
-  findOneContactUsecase,
-} from "../../usecase";
-import {
-  deleteOneContactUsecase,
-  updateOneContactUsecase,
-} from "../../usecase/commercial/contact";
+import { IContact } from "@/backend/domain/commercial/entity/contact.definition";
+import { createOneContactUsecase } from "../../usecase/commercial/contact/create-one.contact.usecase";
+import { findManyContactUsecase } from "../../usecase/commercial/contact/find-many.contact.usecase";
+import { findOneContactUsecase } from "../../usecase/commercial/contact/find-one.contact.usecase";
+import { deleteOneContactUsecase } from "../../usecase/commercial/contact/delete-one.contact.usecase";
+import { updateOneContactUsecase } from "../../usecase/commercial/contact/update-one.contact.usecase";
 import { deleteManyContactUsecase } from "../../usecase/commercial/contact/delete-many-contact.usecase";
 
 export async function createOneContact(

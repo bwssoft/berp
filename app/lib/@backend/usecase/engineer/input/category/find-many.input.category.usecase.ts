@@ -1,12 +1,11 @@
+
 import { singleton } from "@/app/lib/util/singleton";
+import { RemoveFields } from "@/backend/decorators";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import type { IInputCategory } from "@/backend/domain/engineer/entity/input.category.definition";
+import type { IInputCategoryRepository } from "@/backend/domain/engineer/repository/input.category.repository";
+import { inputCategoryRepository } from "@/backend/infra";
 import type { Filter } from "mongodb";
-import { inputCategoryRepository } from "@/app/lib/@backend/infra";
-import {
-  IInputCategory,
-  IInputCategoryRepository,
-} from "@/app/lib/@backend/domain";
-import { RemoveFields } from "@/app/lib/@backend/decorators";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
 
 namespace Dto {
   export interface Input {
@@ -17,6 +16,7 @@ namespace Dto {
   }
   export type Output = PaginationResult<IInputCategory>;
 }
+
 class FindManyInputCategoryUsecase {
   repository: IInputCategoryRepository;
 

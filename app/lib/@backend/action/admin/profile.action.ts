@@ -1,13 +1,11 @@
 "use server";
 
-import { IProfile } from "@/app/lib/@backend/domain";
-import {
-    activeProfileUsecase,
-    createOneProfileUsecase,
-    findManyProfileUsecase,
-    findOneProfileUsecase,
-    setLockedControlProfileUsecase,
-} from "../../usecase";
+import { IProfile } from "@/backend/domain/admin/entity/profile.definition";
+import { activeProfileUsecase } from "../../usecase/admin/profile/active.profile.usecase";
+import { createOneProfileUsecase } from "../../usecase/admin/profile/create-one.profile.usecase";
+import { findManyProfileUsecase } from "../../usecase/admin/profile/find-many.profile.usecase";
+import { findOneProfileUsecase } from "../../usecase/admin/profile/find-one.profile.usecase";
+import { setLockedControlProfileUsecase } from "../../usecase/admin/profile/set-locked-control.profile.usecase";
 import { Filter } from "mongodb";
 import { revalidatePath } from "next/cache";
 
@@ -76,3 +74,4 @@ export async function activeProfile(input: { id: string; active: boolean }) {
     revalidatePath("/admin/control");
     return result;
 }
+

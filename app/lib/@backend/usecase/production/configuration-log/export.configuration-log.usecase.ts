@@ -1,16 +1,14 @@
-import {
-  IConfigurationLog,
-  IConfigurationLogRepository,
-} from "@/app/lib/@backend/domain";
+import type { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
+import type { IConfigurationLogRepository } from "@/backend/domain/production/repository/configuration-log.repository";
 import {
   configurationLogRepository,
   firebaseGateway,
-} from "@/app/lib/@backend/infra";
+} from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
+import type { Filter } from "mongodb";
 import ExcelJS from "exceljs";
 import { PassThrough } from "stream";
-import { IFirebaseGateway } from "@/app/lib/@backend/domain/@shared/gateway";
+import type { IFirebaseGateway } from "@/backend/domain/@shared/gateway/firebase.gateway.interface";
 
 namespace Dto {
   export interface Input extends Filter<IConfigurationLog> {}
@@ -48,35 +46,58 @@ class ExportConfigurationLogUsecase {
     });
     const worksheet = workbook.addWorksheet("ConfigurationLogs");
 
-    // Cabeçalho
-    worksheet
-      .addRow([
-        "Status",
-        "Tecnologia",
-        "Serial",
-        "IMEI",
-        "ICCID",
-        "Firmware",
-        "Usuário",
-        "Data de Criação",
-      ])
-      .commit();
+    // Cabecalho
+    worksheet.addRow([
+      "Status",
+      "Usuário",
+      "Perfil",
+      "Data",
+      "Serial",
+      "IMEI",
+      "ICCID",
+      "Tecnologia",
+      "Firmware",
+      "Check",
+      "Check normalizado"
+    ]);
 
     // 4. Itera sobre o cursor e adiciona linhas
-    const cursor = await this.repository.findCursor(arg);
+    const cursor = await this.repository.aggregate<IConfigurationLog>([
+      {
+        $match: arg,
+      },
+      {
+        $setWindowFields: {
+          partitionBy: {
+            user_id: "$user.id",
+            equipment_imei: "$equipment.imei",
+          },
+          sortBy: { created_at: -1 },
+          output: { rank: { $rank: {} } },
+        },
+      },
+      { $match: { rank: 1 } },
+      { $unset: "rank" },
+      { $sort: { created_at: 1 } },
+    ]);
     cursor.batchSize(1000);
 
     for await (const doc of cursor) {
       worksheet
         .addRow([
           doc.status ? "Sucesso" : "Falha",
-          doc.technology.system_name,
+          doc.user.name,
+          doc.desired_profile.name,
+          new Date(doc.created_at).toLocaleString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+          }),
           doc.equipment.serial,
           doc.equipment.imei,
           doc.equipment.iccid ?? "--",
+          doc.technology.system_name,
           doc.equipment.firmware,
-          doc.user.name,
-          doc.created_at.toLocaleString(),
+          doc.applied_profile?.check?.raw_check ?? "--",
+          doc.applied_profile?.check?.normalized_check ?? "--"
         ])
         .commit();
     }
@@ -106,3 +127,4 @@ class ExportConfigurationLogUsecase {
 export const exportConfigurationLogUsecase = singleton(
   ExportConfigurationLogUsecase
 );
+

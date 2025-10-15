@@ -1,5 +1,7 @@
 import * as React from "react";
-import { Button, Dialog } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Dialog } from '@/frontend/ui/component/dialog';
+
 
 interface Props {
   open: boolean;

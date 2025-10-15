@@ -1,10 +1,8 @@
 "use server";
 
-import {
-  accountAttachmentHistoricalObjectRepository,
-  accountAttachmentObjectRepository,
-  accountAttachmentRepository,
-} from "../../infra";
+import { accountAttachmentHistoricalObjectRepository } from "../../infra/repository/s3/commercial/account-attachment-historical.repository";
+import { accountAttachmentObjectRepository } from "../../infra/repository/s3/commercial/account-attachment.repository";
+import { accountAttachmentRepository } from "../../infra/repository/mongodb/commercial/account-attachment.repository";
 
 export async function downloadAccountAttachmentHistorical(id: string) {
   try {

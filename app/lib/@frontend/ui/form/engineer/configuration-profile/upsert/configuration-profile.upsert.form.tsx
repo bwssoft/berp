@@ -5,15 +5,10 @@ import {
   Props,
   useConfigurationProfileUpsertForm,
 } from "./use-configuration-profile.upsert.form";
-import {
-  Button,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 import { GeneralConfigurationProfileForm } from "../config/general.configuration-profile.form";
 import { SpecificE3Plus4GConfigurationProfileForm } from "../config/specific.e3-plus-4g.configuration-profile.form";
 import { FormProvider } from "react-hook-form";
@@ -46,6 +41,7 @@ export function ConfigurationProfileUpsertForm(props: Props) {
     handleSubmit,
     handleChangeTechnology,
     technology,
+    handleChangeClient,
   } = useConfigurationProfileUpsertForm(props);
 
   function renderSpecificForm(system: string | undefined) {
@@ -150,39 +146,17 @@ export function ConfigurationProfileUpsertForm(props: Props) {
 
                 <FormField
                   control={form.control}
-                  name="client_id"
-                  defaultValue={defaultValues?.client.id}
+                  name="manual_client"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cliente</FormLabel>
-                      <Select
-                        value={field.value}
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          const selected = clients.find((c) => c.id === value);
-                          if (selected) {
-                            handleChangeName({
-                              document: selected.document.value,
-                            });
-                          }
-                        }}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione um cliente" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {clients.map((client) => (
-                            <SelectItem key={client.id} value={client.id}>
-                              {client.company_name ?? client.trade_name} –{" "}
-                              {client.document.value}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
+                    <Input
+                      value={field.value}
+                      onChange={(event) => {
+                        field.onChange(event.target.value);
+                        handleChangeClient(event.target.value);
+                      }}
+                      label="Cliente"
+                      placeholder="Nome - CNPJ"
+                    />
                   )}
                 />
               </div>

@@ -1,5 +1,6 @@
-import { findOneFirmware } from "@/app/lib/@backend/action/engineer/firmware/firmware.action";
-import { FirmwareUpdateForm } from "@/app/lib/@frontend/ui/component";
+import { findOneFirmware } from "@/backend/action/engineer/firmware/firmware.action";
+import { FirmwareUpdateForm } from '@/frontend/ui/form/engineer/firmware/update/firmware.update.form';
+
 
 interface Props {
   searchParams: { id: string };
@@ -42,3 +43,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

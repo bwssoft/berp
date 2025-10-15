@@ -1,16 +1,14 @@
-import {
-  IFirmwareUpdateLog,
-  IFirmwareUpdateLogRepository,
-} from "@/app/lib/@backend/domain";
+import type { IFirmwareUpdateLog } from "@/backend/domain/production/entity/firmware-update-log.definition";
+import type { IFirmwareUpdateLogRepository } from "@/backend/domain/production/repository/firmware-update-log.repository";
 import {
   firmwareUpdateLogRepository,
   firebaseGateway,
-} from "@/app/lib/@backend/infra";
+} from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
+import type { Filter } from "mongodb";
 import ExcelJS from "exceljs";
 import { PassThrough } from "stream";
-import { IFirebaseGateway } from "@/app/lib/@backend/domain/@shared/gateway";
+import type { IFirebaseGateway } from "@/backend/domain/@shared/gateway/firebase.gateway.interface";
 
 namespace Dto {
   export interface Input extends Filter<IFirmwareUpdateLog> {}
@@ -104,3 +102,4 @@ class ExportFirmwareUpdateLogUsecase {
 export const exportFirmwareUpdateLogUsecase = singleton(
   ExportFirmwareUpdateLogUsecase
 );
+
