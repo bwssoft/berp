@@ -1,4 +1,4 @@
-import { IProduct } from "../../commercial";
+import { IProduct } from "@/backend/domain/commercial/entity/product.definition";
 
 interface IDevice {
   id: string;

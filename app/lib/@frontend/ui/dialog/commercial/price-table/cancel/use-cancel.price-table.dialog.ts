@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { cancelPriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
+import { cancelPriceTable } from "@/backend/action/commercial/price-table.action";
 
 interface UseCancelPriceTableDialogProps {
   priceTableId?: string;
@@ -57,3 +57,4 @@ export function useCancelPriceTableDialog({
     handleCancelPriceTable,
   };
 }
+

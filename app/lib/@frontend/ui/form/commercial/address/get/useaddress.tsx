@@ -1,4 +1,4 @@
-import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
+import { findManyAddress } from "@/backend/action/commercial/address.action";
 import { useQuery } from "@tanstack/react-query";
 
 export const addressesQueryKey = (accountId: string) => [
@@ -21,3 +21,4 @@ export function useAddresses(accountId: string) {
 
   return { addresses, loading: isLoading };
 }
+

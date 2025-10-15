@@ -1,11 +1,14 @@
-// import { findAllProductionOrderWithProduct } from "@/app/lib/@backend/action";
+// import { findAllProductionOrderWithProduct } from "@/backend/action";
 // import { BarChart } from "@/app/lib/@frontend/ui/component";
 // import PieChart from "@/app/lib/@frontend/ui/chart/pie.chart";
 // import { productionOrderConstants } from "@/app/lib/constant";
 // import { months } from "@/app/lib/constant/months";
-// import { IFinancialOrder, IProduct, IProductionOrderLegacy } from "@/app/lib/@backend/domain";
+// import {IFinancialOrder} from "@/backend/domain/financial/entity/financial-order.definition";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
+import {IProductionOrderLegacy} from "@/backend/domain/production/entity/production-order.definition";
 
-import { BarChart } from "@/app/lib/@frontend/ui/chart";
+import { BarChart } from '@/frontend/ui/chart/bar.chart';
+
 
 // export default async function Page() {
 //   const productionOrders = (await findAllProductionOrderWithProduct()) as unknown as (IProductionOrderLegacy & {
@@ -332,3 +335,4 @@ export default async function Page() {
   );
 
 }
+

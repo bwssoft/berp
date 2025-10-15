@@ -14,3 +14,5 @@ export interface IAddress {
   created_at?: Date;
   updated_at?: Date;
 }
+
+export default IAddress;

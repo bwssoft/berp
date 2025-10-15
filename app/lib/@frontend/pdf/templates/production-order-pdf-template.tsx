@@ -1,13 +1,11 @@
 "use client";
-import {
-  IClient,
-  IProduct,
-  IFinancialOrder,
-  saleOrderStageMapping,
-  IProductionOrder,
-  ITechnology,
-  IProductCategory,
-} from "@/app/lib/@backend/domain";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
+import {IFinancialOrder, saleOrderStageMapping} from "@/backend/domain/financial/entity/financial-order.definition";
+import {IProductionOrder} from "@/backend/domain/production/entity/production-order.definition";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
+import {IProductCategory} from "@/backend/domain/commercial/entity/product.category.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { productionOrderConstants } from "@/app/lib/constant";
 import { formatDate } from "@/app/lib/util";
 import { PageBreak, Tailwind } from "@fileforge/react-print";
@@ -375,3 +373,4 @@ function SaleOrderSection({ saleOrder }: SaleOrderSectionProps) {
     </div>
   );
 }
+

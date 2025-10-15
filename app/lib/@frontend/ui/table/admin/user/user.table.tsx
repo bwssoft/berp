@@ -1,7 +1,7 @@
 "use client";
 
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import { IUser } from "@/app/lib/@backend/domain";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./user.columns";
 import {
@@ -10,7 +10,8 @@ import {
 } from "@/app/lib/@frontend/ui/modal";
 import { Pagination } from "../../../component/pagination";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 const PAGE_SIZE = 10;
 
@@ -62,3 +63,4 @@ export function UserTable({ data, currentPage = 1 }: Props) {
     </>
   );
 }
+

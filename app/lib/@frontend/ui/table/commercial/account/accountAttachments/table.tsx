@@ -1,9 +1,9 @@
 "use client";
 
-import { IAccountAttachment } from "@/app/lib/@backend/domain";
+import {IAccountAttachment} from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { createColumns } from "./columns";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../../component/pagination";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 
@@ -42,3 +42,4 @@ export function AccountAttachmentsTable(props: Props) {
       </div>
     );
 }
+

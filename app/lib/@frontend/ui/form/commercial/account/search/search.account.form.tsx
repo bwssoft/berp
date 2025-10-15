@@ -3,15 +3,10 @@
 import { useForm } from "react-hook-form";
 import { useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Button,
-  Input,
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 import { useSectorModal } from "../../../../modal/comercial/sector";
 import {
   Form,

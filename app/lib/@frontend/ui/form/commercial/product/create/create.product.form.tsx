@@ -1,11 +1,10 @@
 "use client";
 
-import {
-  Button,
-  Input,
-  Label,
-  Textarea,
-} from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Label } from '@/frontend/ui/component/label';
+import { Textarea } from '@/frontend/ui/component/text-area';
+
 import {
   Select,
   SelectContent,
@@ -23,7 +22,7 @@ import {
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
 import { useCreateProductForm } from "./use-create.product.form";
-import { IProductCategory } from "@/app/lib/@backend/domain";
+import {IProductCategory} from "@/backend/domain/commercial/entity/product.category.definition";
 
 interface Props {
   categories: IProductCategory[];
@@ -286,3 +285,4 @@ export function CreateOneProductForm(props: Props) {
     </Form>
   );
 }
+

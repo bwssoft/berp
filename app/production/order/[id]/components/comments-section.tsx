@@ -1,12 +1,9 @@
 "use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Button,
-  Textarea,
-} from "@/app/lib/@frontend/ui/component";
+import { Avatar, AvatarFallback, AvatarImage } from '@/frontend/ui/component/avatar';
+import { Button } from '@/frontend/ui/component/button';
+import { Textarea } from '@/frontend/ui/component/text-area';
+
 
 const comments: { user: { name: string; pic?: string }; content: string }[] = [
   {

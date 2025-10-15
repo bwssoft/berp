@@ -1,16 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import {
-  Button,
-  Input,
-  Label,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Toggle,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Label } from '@/frontend/ui/component/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+import { Toggle } from '@/frontend/ui/component/toggle';
+
 import { Plus, Trash2 } from "lucide-react";
 
 interface PriceTier {

@@ -1,8 +1,9 @@
-import { IProposal, IProposalRepository } from "@/app/lib/@backend/domain";
-import { proposalRepository } from "@/app/lib/@backend/infra";
+import { IProposal } from "@/backend/domain/commercial/entity/proposal.definition";
+import { IProposalRepository } from "@/backend/domain/commercial/repository/proposal.repository";
+import { proposalRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 import { type Filter } from "mongodb";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
+import { RemoveMongoId } from "@/backend/decorators";;
 
 class FindOneProposalUsecase {
   repository: IProposalRepository;
@@ -18,3 +19,4 @@ class FindOneProposalUsecase {
 }
 
 export const findOneProposalUsecase = singleton(FindOneProposalUsecase);
+

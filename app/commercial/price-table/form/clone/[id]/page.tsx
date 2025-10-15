@@ -3,7 +3,7 @@
 import { UpsertPriceTableForm } from "@/app/lib/@frontend/ui/form/commercial/price-table/create/price-table.upsert.form";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
 import { useRouter } from "next/navigation";
 
 export default function ClonePriceTablePage() {

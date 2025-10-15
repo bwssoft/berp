@@ -5,15 +5,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { IUser } from "@/app/lib/@backend/domain";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { useRouter } from "next/navigation";
 import { userConstants } from "@/app/lib/constant";
 import { useEffect, useState } from "react";
-import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
-import { updateOneUser } from "@/app/lib/@backend/action/admin/user.action";
+import { findManyProfile } from "@/backend/action/admin/profile.action";
+import { updateOneUser } from "@/backend/action/admin/user.action";
 import { removeSpecialCharacters } from "@/app/lib/util/removeSpecialCharacters";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useSession } from "next-auth/react";
 
 const updateSchema = z
@@ -176,3 +177,4 @@ export function useUpdateOneUserForm(user: IUser) {
     setSearchTerm,
   };
 }
+

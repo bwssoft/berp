@@ -1,25 +1,32 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { IFinancialOrder, IFinancialOrderRepository } from "@/app/lib/@backend/domain"
-import { financialOrderRepository } from "@/app/lib/@backend/infra"
+
+import { singleton } from "@/app/lib/util/singleton";
+import type { IFinancialOrder } from "@/backend/domain/financial/entity/financial-order.definition";
+import type { IFinancialOrderRepository } from "@/backend/domain/financial/repository/order.repository";
+import { financialOrderRepository } from "@/backend/infra";
 
 class CreateOneFinancialOrderUsecase {
-  repository: IFinancialOrderRepository
+  repository: IFinancialOrderRepository;
 
   constructor() {
-    this.repository = financialOrderRepository
+    this.repository = financialOrderRepository;
   }
 
   async execute(input: Omit<IFinancialOrder, "id" | "created_at" | "code">) {
-    const last_financial_order = await this.repository.findOne({}, {sort: {code: -1}, limit: 1})
+    const lastFinancialOrder = await this.repository.findOne(
+      {},
+      { sort: { code: -1 }, limit: 1 }
+    );
 
-    const _input = Object.assign(input, {
-      created_at: new Date(),
+    const payload = Object.assign(input, {
       id: crypto.randomUUID(),
-      code: (last_financial_order?.code ?? 0) + 1
-    })
+      created_at: new Date(),
+      code: (lastFinancialOrder?.code ?? 0) + 1,
+    });
 
-    return await this.repository.create(_input)
+    return await this.repository.create(payload);
   }
 }
 
-export const createOneFinancialOrderUsecase = singleton(CreateOneFinancialOrderUsecase)
+export const createOneFinancialOrderUsecase = singleton(
+  CreateOneFinancialOrderUsecase
+);

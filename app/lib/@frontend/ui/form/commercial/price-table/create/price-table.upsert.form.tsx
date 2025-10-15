@@ -7,7 +7,11 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { Button, DateInput, Input, Toggle } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { DateInput } from '@/frontend/ui/component/date-input';
+import { Input } from '@/frontend/ui/component/input';
+import { Toggle } from '@/frontend/ui/component/toggle';
+
 import {
   EquipmentAccessoryPriceForm,
   SimCardPriceForm,
@@ -23,7 +27,7 @@ import { CancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial
 import { PublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/publish.price-table.dialog";
 import { useCancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/use-cancel.price-table.dialog";
 import { usePublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/use-publish.price-table.dialog";
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
 import { InactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/inactivate.price-table.dialog";
 import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/use-inactivate.price-table.dialog";
 import { BillingConditionsSection } from "../conditions-form/conditions.form";
@@ -870,3 +874,4 @@ export function UpsertPriceTableForm({
     </div>
   );
 }
+

@@ -1,4 +1,6 @@
-import { CrmLayout, Toaster } from "@/app/lib/@frontend/ui/component";
+import { CrmLayout } from '@/frontend/layout/crm-layout';
+import { Toaster } from '@/frontend/ui/component/toaster';
+
 import "../globals.css";
 
 export default function RootLayout({

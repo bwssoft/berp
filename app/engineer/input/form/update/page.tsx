@@ -1,7 +1,9 @@
-import { findOneInput } from "@/app/lib/@backend/action/engineer/input/input.action";
-import { findManyInputCategory } from "@/app/lib/@backend/action/engineer/input/input.category.action";
-import { BackButton } from "@/app/lib/@frontend/ui/component";
-import { UpdateOneInputForm } from "@/app/lib/@frontend/ui/form";
+import { findOneInput } from "@/backend/action/engineer/input/input.action";
+import { findManyInputCategory } from "@/backend/action/engineer/input/input.category.action";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
+import { UpdateOneInputForm } from '@/frontend/ui/form/engineer/input/update/update.input.form';
+
 
 interface Props {
   searchParams: {
@@ -57,3 +59,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

@@ -1,10 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IFirmwareUpdateLog,
-  IFirmwareUpdateLogRepository,
-} from "@/app/lib/@backend/domain";
-import { firmwareUpdateLogRepository } from "@/app/lib/@backend/infra";
-import { RemoveFields } from "../../../decorators";
+import { RemoveFields } from "@/backend/decorators";
+import type { IFirmwareUpdateLog } from "@/backend/domain/production/entity/firmware-update-log.definition";
+import type { IFirmwareUpdateLogRepository } from "@/backend/domain/production/repository/firmware-update-log.repository";
+import { firmwareUpdateLogRepository } from "@/backend/infra";
+import { randomUUID } from "crypto";
 
 class CreateManyFirmwareUpdateLogUsecase {
   repository: IFirmwareUpdateLogRepository;
@@ -15,20 +14,16 @@ class CreateManyFirmwareUpdateLogUsecase {
 
   @RemoveFields("_id")
   async execute(input: Omit<IFirmwareUpdateLog, "id" | "created_at">[]) {
-    const _input: IFirmwareUpdateLog[] = [];
-    for (const p in input) {
-      const configuration_log = input[p];
-      _input.push(
-        Object.assign(configuration_log, {
-          created_at: new Date(),
-          id: crypto.randomUUID(),
-        })
-      );
-    }
+    const payload = input.map((log) =>
+      Object.assign(log, {
+        id: randomUUID(),
+        created_at: new Date(),
+      })
+    );
 
-    await this.repository.createMany(_input);
+    await this.repository.createMany(payload);
 
-    return _input;
+    return payload;
   }
 }
 

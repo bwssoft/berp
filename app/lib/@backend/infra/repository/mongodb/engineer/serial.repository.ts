@@ -1,7 +1,7 @@
-import { ISerial, ISerialRepository } from "@/app/lib/@backend/domain";
+import { ISerial } from "@/backend/domain/engineer/entity/serial.definition";
+import { ISerialRepository } from "@/backend/domain/engineer/repository/serial.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
-import { bSerialClientPromise } from "../@base/b-serial";
 
 class SerialRepository
   extends BaseRepository<ISerial>
@@ -11,9 +11,9 @@ class SerialRepository
     super({
       collection: "serial",
       db: "b-serial",
-      client: bSerialClientPromise,
     });
   }
 }
 
 export const serialRepository = singleton(SerialRepository);
+

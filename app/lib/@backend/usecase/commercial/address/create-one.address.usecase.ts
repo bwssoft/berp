@@ -1,12 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  AuditDomain,
-  IAddress,
-  IAddressRepository,
-} from "@/app/lib/@backend/domain";
-import { addressRepository } from "@/app/lib/@backend/infra/repository";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import type { IAddress } from "@/backend/domain/commercial/entity/address.definition";
+import type { IAddressRepository } from "@/backend/domain/commercial";
+import { addressRepository } from "@/backend/infra";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
 class CreateOneAddressUsecase {
   repository: IAddressRepository;
@@ -42,3 +40,4 @@ class CreateOneAddressUsecase {
 }
 
 export const createOneAddressUsecase = singleton(CreateOneAddressUsecase);
+

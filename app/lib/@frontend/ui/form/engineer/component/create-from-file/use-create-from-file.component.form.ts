@@ -1,9 +1,7 @@
-import { createManyComponent } from "@/app/lib/@backend/action/engineer/component/component.action";
-import {
-  Component,
-  IComponent,
-  IComponentCategory,
-} from "@/app/lib/@backend/domain";
+import { createManyComponent } from "@/backend/action/engineer/component/component.action";
+import { Component } from "@/backend/domain/engineer/entity/component.definition";
+import type { IComponent } from "@/backend/domain/engineer/entity/component.definition";
+import type { IComponentCategory } from "@/backend/domain/engineer/entity/component.category.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { xlsxToJson } from "@/app/lib/util";
 import { getRandomHexColor } from "@/app/lib/util/get-hex-color";
@@ -170,3 +168,4 @@ export function useCreateFromFileComponentForm(props: Props) {
     handleFile,
   };
 }
+

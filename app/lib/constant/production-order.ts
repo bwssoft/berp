@@ -1,4 +1,7 @@
-import { EProductionOrderPriority, EProductionOrderStage } from "../@backend/domain";
+import {
+  EProductionOrderPriority,
+  EProductionOrderStage,
+} from "@/backend/domain/production/entity/production-order.definition";
 
 const stage: Record<EProductionOrderStage, string> = {
   [EProductionOrderStage.in_approval]: "Em Aprovação",

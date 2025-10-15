@@ -7,8 +7,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useDebounce } from "@/app/lib/@frontend/hook/use-debounce";
-import { findManyProfile } from "@/app/lib/@backend/action/admin/profile.action";
-import { findManyUser } from "@/app/lib/@backend/action/admin/user.action";
+import { findManyProfile } from "@/backend/action/admin/profile.action";
+import { findManyUser } from "@/backend/action/admin/user.action";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 
 const schema = z.object({
@@ -166,3 +166,4 @@ export const useSearchProfileForm = () => {
         handleSearchProflile,
     };
 };
+

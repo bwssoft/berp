@@ -1,6 +1,8 @@
-import { findManyComponentCategory } from "@/app/lib/@backend/action/engineer/component/component.category.action";
-import { BackButton } from "@/app/lib/@frontend/ui/component";
-import { CreateOneComponentForm } from "@/app/lib/@frontend/ui/form";
+import { findManyComponentCategory } from "@/backend/action/engineer/component/component.category.action";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
+import { CreateOneComponentForm } from '@/frontend/ui/form/engineer/component/create/component.create.form';
+
 
 export default async function Page() {
   const { docs: categories } = await findManyComponentCategory({ filter: {} });
@@ -27,3 +29,4 @@ export default async function Page() {
     </div>
   );
 }
+

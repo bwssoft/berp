@@ -3,21 +3,23 @@
 import {
   fetchCnpjData,
   fetchNameData,
-} from "@/app/lib/@backend/action/cnpja/cnpja.action";
+} from "@/backend/action/cnpja/cnpja.action";
 import {
   findOneAccount,
   updateOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
+} from "@/backend/action/commercial/account.action";
 import {
   createOneAccountEconomicGroup,
   updateOneAccountEconomicGroup,
   findOneAccountEconomicGroup,
   validateHoldingEnterpriseNotInAnyGroup,
   validateControlledEnterprisesNotInHolding,
-} from "@/app/lib/@backend/action/commercial/account.economic-group.action";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { EconomicGroup, IAccount } from "@/app/lib/@backend/domain";
-import { useAuth } from "@/app/lib/@frontend/context";
+} from "@/backend/action/commercial/account.economic-group.action";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
+import {EconomicGroup} from "@/backend/domain/commercial/entity/account.economic-group.definition";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidCNPJ } from "@/app/lib/util/is-valid-cnpj";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -1076,3 +1078,4 @@ export function useUpdateEconomicGroupForm(
     isLoading,
   };
 }
+

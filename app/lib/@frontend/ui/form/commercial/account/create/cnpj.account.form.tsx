@@ -2,23 +2,18 @@
 
 import { Controller } from "react-hook-form";
 import { useCreateAccountFormContext } from "@/app/lib/@frontend/context/create-account-form.context";
-import {
-  Input,
-  Combobox,
-  Button,
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "../../../../component";
+import { Input } from '@/frontend/ui/component/input';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Button } from '@/frontend/ui/component/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 import { PlusIcon } from "@heroicons/react/24/outline";
 import {
   SectorModal,
   useSectorModal,
 } from "../../../../modal/comercial/sector";
 import { useState } from "react";
-import { deleteOneSector } from "@/app/lib/@backend/action/commercial/sector.action";
+import { deleteOneSector } from "@/backend/action/commercial/sector.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import {
   FormControl,
@@ -29,7 +24,7 @@ import {
 } from "../../../../component/form";
 import { SectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/delete-sector.dialog";
 import { useSectorDeleteDialog } from "../../../../dialog/commercial/sector/delete/use-delete-sector.dialog";
-import { ISector } from "@/app/lib/@backend/domain";
+import {ISector} from "@/backend/domain/commercial/entity/sector.definition";
 
 export function CNPJAccountForm() {
   const {
@@ -369,3 +364,4 @@ export function CNPJAccountForm() {
     </div>
   );
 }
+

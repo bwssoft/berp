@@ -1,8 +1,10 @@
 "use-client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../../../component";
-import { IItem, Item } from "@/app/lib/@backend/domain";
+import { Button } from '@/frontend/ui/component/button';
+
+import {IItem} from "@/backend/domain/logistic/entity/item.entity";
+import {Item} from "@/backend/domain/logistic/entity/item.entity";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Badge } from "../../../component/badge";
@@ -102,3 +104,4 @@ const getTypeColor = (type: string) => {
       return "bg-gray-100 text-gray-800";
   }
 };
+

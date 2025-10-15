@@ -1,7 +1,7 @@
-import { IFirmwareUpdateLogRepository } from "@/app/lib/@backend/domain";
-import { firmwareUpdateLogRepository } from "@/app/lib/@backend/infra";
+import { IFirmwareUpdateLogRepository } from "@/backend/domain/production/repository/firmware-update-log.repository";
+import { firmwareUpdateLogRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 namespace Dto {
   export type Input = {};
@@ -62,3 +62,4 @@ class StatsFirmwareUpdateLogUsecase {
 export const statsFirmwareUpdateLogUsecase = singleton(
   StatsFirmwareUpdateLogUsecase
 );
+

@@ -1,7 +1,5 @@
-import {
-  IIdentificationLog,
-  IIdentificationLogRepository,
-} from "@/app/lib/@backend/domain";
+import type { IIdentificationLog } from "@/backend/domain/production/entity/identification-log.definition";
+import type { IIdentificationLogRepository } from "@/backend/domain/production/repository/identification-log.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
@@ -20,3 +18,4 @@ class IdentificationLogRepository
 export const identificationLogRepository = singleton(
   IdentificationLogRepository
 );
+

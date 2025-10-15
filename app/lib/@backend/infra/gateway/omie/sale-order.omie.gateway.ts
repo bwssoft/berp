@@ -1,6 +1,6 @@
-import { singleton } from "@/app/lib/util";
+import { singleton } from "@/app/lib/util/singleton";
 import { OmieGateway } from "./@base";
-import { OmieSaleOrderStage } from "@/app/lib/@backend/domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
+import { OmieSaleOrderStage } from "@/backend/domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
 
 class SaleOrderOmieGateway extends OmieGateway {
   async updateStage(saleOrderId: string, statusId: OmieSaleOrderStage) {
@@ -18,3 +18,4 @@ class SaleOrderOmieGateway extends OmieGateway {
 }
 
 export const saleOrderOmieGateway = singleton(SaleOrderOmieGateway);
+

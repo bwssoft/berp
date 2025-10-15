@@ -6,14 +6,14 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { ContactSelection, IContact } from "@/app/lib/@backend/domain";
-import {
-  Button,
-  Checkbox,
-  Combobox,
-  Input,
-  useSearchContactHistoricalAccount,
-} from "@/app/lib/@frontend/ui/component";
+import {ContactSelection} from "@/backend/domain/commercial/entity/historical.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Input } from '@/frontend/ui/component/input';
+import { useSearchContactHistoricalAccount } from '@/frontend/ui/form/commercial/account/historical/contact/search/use-create-contact.historical.form';
+
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
 
 import { Controller } from "react-hook-form";
@@ -365,3 +365,4 @@ export function SearchContactHistoricalAccountForm({
     </div>
   );
 }
+

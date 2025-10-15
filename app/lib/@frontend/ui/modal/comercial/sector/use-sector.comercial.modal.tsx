@@ -4,14 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ISector } from "@/app/lib/@backend/domain/commercial/entity/sector.definition";
+import { ISector } from "@/backend/domain/commercial/entity/sector.definition";
 import {
   createOneSector,
   findManySector,
   updateOneSector,
-} from "@/app/lib/@backend/action/commercial/sector.action";
+} from "@/backend/action/commercial/sector.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 const SectorSchema = z.object({ name: z.string().trim().min(1) });
 type SectorForm = z.infer<typeof SectorSchema>;
@@ -198,3 +198,4 @@ export function useSectorModal() {
     refreshSectors,
   };
 }
+

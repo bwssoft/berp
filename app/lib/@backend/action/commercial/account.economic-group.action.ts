@@ -2,13 +2,11 @@
 
 import { Filter } from "mongodb";
 import { IAccountEconomicGroup } from "../../domain/commercial/entity/account.economic-group.definition";
-import {
-  createOneAccountEconomicGroupUsecase,
-  findManyAccountEconomicGroupUsecase,
-  findOneAccountEconomicGroupUsecase,
-  updateOneAccountEconomicGroupUsecase,
-  deleteOneAccountEconomicGroupUsecase,
-} from "../../usecase/commercial/account-economic-group";
+import { createOneAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/create-one.account-economic-group.usecase";
+import { findManyAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/find-many.account-economic-group.usecase";
+import { findOneAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/find-one.account-economic-group.usecase";
+import { updateOneAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/update-one.account-economic-group.usecase";
+import { deleteOneAccountEconomicGroupUsecase } from "../../usecase/commercial/account-economic-group/delete-one.account-economic-group.usecase";
 import { revalidatePath } from "next/cache";
 
 export async function createOneAccountEconomicGroup(

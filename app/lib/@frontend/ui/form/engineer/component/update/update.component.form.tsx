@@ -1,11 +1,10 @@
 "use client";
 
-import {
-  Button,
-  Input,
-  Label,
-  Textarea,
-} from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Label } from '@/frontend/ui/component/label';
+import { Textarea } from '@/frontend/ui/component/text-area';
+
 import {
   Select,
   SelectContent,
@@ -22,7 +21,8 @@ import {
   FormMessage,
 } from "@/app/lib/@frontend/ui/component/form";
 import { Trash2, Plus, Loader2 } from "lucide-react";
-import { IComponent, IComponentCategory } from "@/app/lib/@backend/domain";
+import {IComponent} from "@/backend/domain/engineer/entity/component.definition";
+import {IComponentCategory} from "@/backend/domain/engineer/entity/component.category.definition";
 import { commonConstants } from "@/app/lib/constant";
 import { useUpdateComponentForm } from "./use-update.component.form";
 
@@ -322,3 +322,4 @@ export function UpdateOneComponentForm(props: Props) {
     </Form>
   );
 }
+

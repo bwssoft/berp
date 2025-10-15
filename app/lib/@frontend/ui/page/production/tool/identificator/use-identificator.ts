@@ -1,11 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Device,
-  IIdentificationLog,
-  ITechnology,
-} from "../../../../../../@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { IIdentificationLog } from "@/backend/domain/production/entity/identification-log.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { ISerialPort } from "../../../../../hook/use-serial-port";
 import { useTechnology } from "../../../../../hook/use-technology";
 

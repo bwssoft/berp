@@ -1,9 +1,7 @@
 "use client";
 
-import {
-  IFinancialOrder,
-  saleOrderStageMapping,
-} from "@/app/lib/@backend/domain";
+import {IFinancialOrder, saleOrderStageMapping} from "@/backend/domain/financial/entity/financial-order.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { formatDate } from "@/app/lib/util/format-date";
 
 type SaleOrderDetailsProps = {

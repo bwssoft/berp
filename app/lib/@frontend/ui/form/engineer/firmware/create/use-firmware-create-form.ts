@@ -1,4 +1,4 @@
-import { createOneFirmware } from "@/app/lib/@backend/action/engineer/firmware/firmware.action";
+import { createOneFirmware } from "@/backend/action/engineer/firmware/firmware.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -57,3 +57,4 @@ export function useFirmwareCreateForm() {
     reset: hookFormReset,
   };
 }
+

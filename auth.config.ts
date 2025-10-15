@@ -1,5 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
-import { IProfile } from "./app/lib/@backend/domain";
+import type { IProfile } from "@/backend/domain/admin/entity/profile.definition";
 import { NextResponse } from "next/server";
 
 // Definição das rotas protegidas e não protegidas

@@ -5,7 +5,7 @@ import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { auth } from "@/auth";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { authenticate } from "@/app/lib/@backend/action/auth/login.action";
+import { authenticate } from "@/backend/action/auth/login.action";
 
 const schema = z.object({
     username: z.string(),
@@ -55,3 +55,4 @@ export function useLoginUserForm() {
         errors: methods.formState.errors,
     };
 }
+

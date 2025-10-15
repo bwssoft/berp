@@ -1,11 +1,9 @@
-import {
-  IConfigurationProfile,
-  IConfigurationProfileRepository,
-} from "@/app/lib/@backend/domain";
-import { configurationProfileRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { Filter } from "mongodb";
+import { RemoveMongoId } from "@/backend/decorators";
+import type { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import type { IConfigurationProfileRepository } from "@/backend/domain/engineer/repository/configuration-profile.repository.interface";
+import { configurationProfileRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
 
 namespace Dto {
   export interface Input extends Filter<IConfigurationProfile> {}
@@ -104,3 +102,4 @@ class FindManyConfigurationProfileUsecase {
 export const findManyConfigurationProfileUsecase = singleton(
   FindManyConfigurationProfileUsecase
 );
+

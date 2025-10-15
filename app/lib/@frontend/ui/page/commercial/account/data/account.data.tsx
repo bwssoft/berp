@@ -1,13 +1,9 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/lib/@frontend/ui/component";
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+
 
 import {
   AlertCircle,
@@ -21,7 +17,11 @@ import ContactCard from "@/app/lib/@frontend/ui/card/commercial/account/contact.
 import { AccountCard } from "@/app/lib/@frontend/ui/card/commercial/account/account.card";
 import { EconomicGroupCard } from "@/app/lib/@frontend/ui/card/commercial/account/economic-group.card";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
-import { IAccount, IAddress, IContact, IAccountEconomicGroup } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {IAddress} from "@/backend/domain/commercial/entity/address.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
+import {IAccountEconomicGroup} from "@/backend/domain/commercial/entity/account.economic-group.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import {
   CreateContactModal,
   SearchContactModal,
@@ -32,9 +32,9 @@ import {
 } from "../../../../modal";
 import { useState } from "react";
 import { useAddressUpdateModal } from "../../../../modal/comercial/address/update/use-address.update.modal";
-import { useAddressModal } from "../../../../modal/comercial/address/use-address.modal";
+import { useAddressModal } from "../../../../modal/comercial/address/create/use-address.modal";
 import { AddressUpdateModal } from "../../../../modal/comercial/address/update";
-import { CreateAddressModal } from "../../../../modal/comercial/address";
+import { CreateAddressModal } from "../../../../modal/comercial/address/create";
 import { AddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/delete.address";
 import { useAddressDeleteDialog } from "../../../../dialog/commercial/account/address/delete/use-delete.address";
 import { DeleteContactDialog } from "../../../../dialog/commercial/account/contact/delete/delete.contact.dialog";
@@ -42,7 +42,7 @@ import { useDeleteContactDialog } from "../../../../dialog/commercial/account/co
 import { useEconomicGroupUpdateModal } from "../../../../modal/comercial/economic-group/update/use-economic-group.update.modal";
 import { useAccountDataUpdateModal } from "../../../../modal/comercial/account/update/use-account-data.update.modal";
 import { AccountDataUpdateModal } from "../../../../modal/comercial/account/update/account-data.update.modal";
-import { refreshOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import { refreshOneAccount } from "@/backend/action/commercial/account.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -234,12 +234,14 @@ export function AccountDataPage(props: Props) {
                 </Badge>
               </CardTitle>
               <div className="flex items-center gap-2">
-                {account.document.type == "cnpj" && account.document.value && economicGroup && (
-                  <SearchContactModal
-                    holdingTaxId={account.document.value}
-                    economicGroup={economicGroup}
-                  />
-                )}
+                {account.document.type == "cnpj" &&
+                  account.document.value &&
+                  economicGroup && (
+                    <SearchContactModal
+                      holdingTaxId={account.document.value}
+                      economicGroup={economicGroup}
+                    />
+                  )}
                 {hasPermissionContacts && (
                   <Button
                     variant={"ghost"}
@@ -493,3 +495,4 @@ export function StatusBadge({ status, type = "general" }: StatusBadgeProps) {
     </Badge>
   );
 }
+

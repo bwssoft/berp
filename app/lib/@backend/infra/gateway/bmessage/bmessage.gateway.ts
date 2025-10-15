@@ -1,7 +1,7 @@
 import path from "path";
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
-import { IBMessageGateway } from "../../../domain/@shared/gateway/bmessage.gateway.interface";
+import { IBMessageGateway } from "@/backend/domain/@shared/gateway/bmessage.gateway.interface";
 import fs from "fs";
 import { singleton } from "@/app/lib/util";
 import { HtmlParams } from "./@base/rpc/mail/HtmlParams";

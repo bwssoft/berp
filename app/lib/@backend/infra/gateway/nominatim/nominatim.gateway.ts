@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { INominatimInterface } from "../../../domain/@shared/gateway/nominatim.gateway.interface";
+import { INominatimInterface } from "@/backend/domain/@shared/gateway/nominatim.gateway.interface";
 
 class NominatimGateway {
     private baseUrl = "https://nominatim.openstreetmap.org/search";

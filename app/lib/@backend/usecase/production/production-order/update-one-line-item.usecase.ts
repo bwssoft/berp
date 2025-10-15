@@ -1,5 +1,5 @@
-import { IProductionOrderRepository } from "@/app/lib/@backend/domain";
-import { productionOrderRepository } from "@/app/lib/@backend/infra";
+import { IProductionOrderRepository } from "@/backend/domain/production/repository/production-order.repository";
+import { productionOrderRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 
 class UpdateOneProductionOrderLineItemUsecase {
@@ -28,3 +28,4 @@ class UpdateOneProductionOrderLineItemUsecase {
 export const updateOneProductionOrderLineItemUsecase = singleton(
   UpdateOneProductionOrderLineItemUsecase
 );
+

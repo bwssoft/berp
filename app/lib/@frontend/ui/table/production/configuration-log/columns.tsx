@@ -3,9 +3,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
-import { Device, IConfigurationLog } from "@/app/lib/@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
 import Link from "next/link";
-import { Button } from "../../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { deviceConstants } from "@/app/lib/constant";
 
@@ -91,3 +93,4 @@ export const columns: ColumnDef<Row>[] = [
     },
   },
 ];
+

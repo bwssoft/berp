@@ -1,10 +1,8 @@
 "use client";
 
-import {
-  Device,
-  type IConfigurationProfile,
-  type ITechnology,
-} from "@/app/lib/@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import type { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import type { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import {
   Card,
@@ -15,7 +13,8 @@ import {
 } from "@/app/lib/@frontend/ui/component/card";
 import { Badge } from "@/app/lib/@frontend/ui/component/badge";
 import { Separator } from "@/app/lib/@frontend/ui/component/separator";
-import { TechnologyAndConfigurationProfileSearchForm } from "@/app/lib/@frontend/ui/form";
+import { TechnologyAndConfigurationProfileSearchForm } from '@/frontend/ui/form/production/technology-and-configuration-profile-search/technology-and-configuration-profile-search-form';
+
 import {
   Settings,
   Zap,
@@ -289,3 +288,4 @@ export function ConfiguratorPage(props: Props) {
     </>
   );
 }
+

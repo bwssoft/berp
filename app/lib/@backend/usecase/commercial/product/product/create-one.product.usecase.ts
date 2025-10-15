@@ -1,6 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IProduct, IProductRepository } from "@/app/lib/@backend/domain";
-import { productRepository } from "@/app/lib/@backend/infra";
+import { IProduct } from "@/backend/domain/commercial/entity/product.definition";
+import { IProductRepository } from "@/backend/domain/commercial/repository/product.repository";
+import { productRepository } from "@/backend/infra";
 
 class CreateOneProductUsecase {
   repository: IProductRepository;
@@ -39,3 +40,4 @@ class CreateOneProductUsecase {
 }
 
 export const createOneProductUsecase = singleton(CreateOneProductUsecase);
+

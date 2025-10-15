@@ -1,23 +1,20 @@
 "use client";
 import { useUpdateAccountForm } from "./use-update-account-data.account.form";
-import { IAccount, ISector } from "@/app/lib/@backend/domain";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {ISector} from "@/backend/domain/commercial/entity/sector.definition";
 import { PlusIcon } from "lucide-react";
 import { SectorModal, useSectorModal } from "@/app/lib/@frontend/ui/modal";
-import { Combobox } from "@/app/lib/@frontend/ui/component";
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+
 import { Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
 import { formatLgpdCpf } from "@/app/lib/util/format-lgpd-cpf";
 import { formatLgpdCnpj } from "@/app/lib/util/format-lgpd-cnpj";
-import {
-  Button,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 
 import {
   FormControl,
@@ -289,3 +286,4 @@ export function UpdateAccountDataForm({
     </FormProvider>
   );
 }
+

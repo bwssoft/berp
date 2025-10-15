@@ -1,7 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IProposal, IProposalRepository } from "@/app/lib/@backend/domain"
-import { proposalRepository } from "@/app/lib/@backend/infra"
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { IProposal } from "@/backend/domain/commercial/entity/proposal.definition";
+import { IProposalRepository } from "@/backend/domain/commercial/repository/proposal.repository";
+import { proposalRepository } from "@/backend/infra"
+import { RemoveMongoId } from "@/backend/decorators";
 
 class CreateOneProposalUsecase {
   repository: IProposalRepository
@@ -25,3 +26,4 @@ class CreateOneProposalUsecase {
 }
 
 export const createOneProposalUsecase = singleton(CreateOneProposalUsecase)
+

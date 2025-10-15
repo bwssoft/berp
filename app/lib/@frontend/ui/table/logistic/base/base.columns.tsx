@@ -1,8 +1,10 @@
 "use-client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../../../component";
-import { IBase, Base } from "@/app/lib/@backend/domain";
+import { Button } from '@/frontend/ui/component/button';
+
+import {IBase} from "@/backend/domain/logistic/entity/base.entity";
+import {Base} from "@/backend/domain/logistic/entity/base.entity";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { baseConstants } from "@/app/lib/constant/logistic";
@@ -80,3 +82,4 @@ const getTypeColor = (type: Base.Type) => {
   };
   return colors[type];
 };
+

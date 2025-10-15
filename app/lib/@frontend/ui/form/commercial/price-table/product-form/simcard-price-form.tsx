@@ -1,16 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Button,
-  Input,
-  Label,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Combobox,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Label } from '@/frontend/ui/component/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+
 import { Plus, Trash2 } from "lucide-react";
 
 interface SimCardTier {

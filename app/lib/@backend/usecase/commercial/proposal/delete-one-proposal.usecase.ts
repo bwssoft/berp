@@ -1,6 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IProposal, IProposalRepository } from "@/app/lib/@backend/domain"
-import { proposalRepository } from "@/app/lib/@backend/infra"
+import { IProposal } from "@/backend/domain/commercial/entity/proposal.definition";
+import { IProposalRepository } from "@/backend/domain/commercial/repository/proposal.repository";
+import { proposalRepository } from "@/backend/infra"
 
 class DeleteOneProposalUsecase {
   repository: IProposalRepository
@@ -15,3 +16,4 @@ class DeleteOneProposalUsecase {
 }
 
 export const deleteOneProposalUsecase = singleton(DeleteOneProposalUsecase)
+

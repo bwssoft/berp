@@ -20,13 +20,8 @@ import { Separator } from "@/app/lib/@frontend/ui/component/separator";
 import { Cpu, Settings, Zap, Navigation, Activity, Cable } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { ConfigurationProfileSchema } from "../upsert/use-configuration-profile.upsert.form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../../component";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 
 export function SpecificNB2ConfigurationProfileForm() {
   const { control } = useFormContext<ConfigurationProfileSchema>();

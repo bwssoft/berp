@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { setUserActive } from "@/app/lib/@backend/action/admin/user.action";
+import { setUserActive } from "@/backend/action/admin/user.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 
 interface Params {
@@ -57,3 +57,4 @@ export function useActiveUserDialog({
     isLoading,
   };
 }
+

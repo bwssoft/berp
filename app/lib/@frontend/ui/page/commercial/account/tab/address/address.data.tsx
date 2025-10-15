@@ -1,13 +1,9 @@
 "use client";
 
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/lib/@frontend/ui/component";
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+
 
 import { MapPin, Plus } from "lucide-react";
 import { AddressCard } from "@/app/lib/@frontend/ui/card/commercial/account/address.card";
@@ -18,11 +14,11 @@ import {
 } from "@/app/lib/@frontend/context/create-account-flow.context";
 
 import { useState } from "react";
-import { useAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/use-address.modal";
+import { useAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/create/use-address.modal";
 import { useAddressUpdateModal } from "@/app/lib/@frontend/ui/modal/comercial/address/update/use-address.update.modal";
 import { useAddressDeleteDialog } from "@/app/lib/@frontend/ui/dialog/commercial/account/address/delete/use-delete.address";
 import { AddressUpdateModal } from "@/app/lib/@frontend/ui/modal/comercial/address/update";
-import { CreateAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address";
+import { CreateAddressModal } from "@/app/lib/@frontend/ui/modal/comercial/address/create";
 import { AddressDeleteDialog } from "@/app/lib/@frontend/ui/dialog/commercial/account/address/delete/delete.address";
 import StepNavigation from "@/app/lib/@frontend/ui/card/commercial/tab/account-tab";
 import { useAccountStepProgress } from "@/app/lib/@frontend/ui/card/commercial/tab/use-account-step-progress";

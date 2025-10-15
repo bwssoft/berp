@@ -1,12 +1,13 @@
 import type { Filter } from "mongodb";
-import {
-  IAccountRepository,
-  IContact,
-  IContactRepository,
-} from "@/app/lib/@backend/domain";
-import { accountRepository, contactRepository } from "@/app/lib/@backend/infra";
+
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
+import type {
+  IAccountRepository,
+  IContactRepository,
+} from "@/backend/domain/commercial";
+import type { IContact } from "@/backend/domain/commercial/entity/contact.definition";
+import { accountRepository, contactRepository } from "@/backend/infra";
 
 class UpdateOneContactUsecase {
   repository: IContactRepository;
@@ -60,3 +61,4 @@ class UpdateOneContactUsecase {
 }
 
 export const updateOneContactUsecase = singleton(UpdateOneContactUsecase);
+

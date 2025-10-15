@@ -1,5 +1,5 @@
-import { findOneClientWithConfigurationProfile } from "@/app/lib/@backend/action/commercial/client.action";
-import { findManyTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { findOneClientWithConfigurationProfile } from "@/backend/action/commercial/client.action";
+import { findManyTechnology } from "@/backend/action/engineer/technology.action";
 import { ConfigurationProfileCreateFromCrmForm } from "@/app/lib/@frontend/ui/form/engineer/configuration-profile/create-from-crm";
 
 interface Props {
@@ -55,3 +55,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

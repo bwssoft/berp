@@ -1,4 +1,4 @@
-import { deleteOneConfigurationProfileById } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+import { deleteOneConfigurationProfileById } from "@/backend/action/engineer/configuration-profile.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import {
   CheckCircleIcon,
@@ -123,3 +123,4 @@ export const columns: ColumnDef<{
     },
   },
 ];
+

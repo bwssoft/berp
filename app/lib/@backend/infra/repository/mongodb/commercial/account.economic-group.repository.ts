@@ -1,4 +1,4 @@
-import { IAccountEconomicGroup } from "@/app/lib/@backend/domain";
+import { IAccountEconomicGroup } from "@/backend/domain/commercial/entity/account.economic-group.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
@@ -14,3 +14,4 @@ class AccountEconomicGroupRepository extends BaseRepository<IAccountEconomicGrou
 export const accountEconomicGroupRepository = singleton(
   AccountEconomicGroupRepository
 );
+

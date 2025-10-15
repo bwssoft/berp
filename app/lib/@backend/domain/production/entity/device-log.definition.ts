@@ -1,4 +1,4 @@
-import { Device } from "../../engineer";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 
 interface Technology {
   id: string;

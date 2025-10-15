@@ -2,7 +2,8 @@
 
 import { useAccountStepProgress } from "@/app/lib/@frontend/ui/card/commercial/tab/use-account-step-progress";
 import StepNavigation from "@/app/lib/@frontend/ui/card/commercial/tab/account-tab";
-import { IAddress, IContact } from "@/app/lib/@backend/domain";
+import {IAddress} from "@/backend/domain/commercial/entity/address.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 
 interface Props {
     accountId: string;
@@ -19,3 +20,4 @@ export function AccountData({ accountId, addresses, contacts }: Props) {
 
     return <StepNavigation steps={steps} />;
 }
+

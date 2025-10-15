@@ -1,4 +1,4 @@
-import { findAllRequestToUpdate } from "@/app/lib/@backend/action/engineer/firmware/request-to-update.action";
+import { findAllRequestToUpdate } from "@/backend/action/engineer/firmware/request-to-update.action";
 import { FirmwareRequestToUpdateTable } from "@/app/lib/@frontend/ui/table/engineer/firmware-request-to-update/table";
 
 export default async function Example() {
@@ -22,3 +22,4 @@ export default async function Example() {
     </div>
   );
 }
+

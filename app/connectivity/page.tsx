@@ -1,7 +1,9 @@
 "use client";
 
-import { GridList } from "../lib/@frontend/ui/component";
-import { useAuth } from "../lib/@frontend/context";
+import { GridList } from '@/frontend/ui/component/grid-list';
+
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { Activity } from "lucide-react";
 
 const actions = [

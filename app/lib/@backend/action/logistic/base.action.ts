@@ -1,12 +1,10 @@
 "use server";
 
-import {
-  createOneBaseUsecase,
-  findOneBaseUsecase,
-  updateOneBaseUsecase,
-  findManyBaseUsecase,
-} from "@/app/lib/@backend/usecase";
-import { IBase } from "@/app/lib/@backend/domain";
+import { createOneBaseUsecase } from "@/backend/usecase/logistic/base/create-one.base.usecase";
+import { findOneBaseUsecase } from "@/backend/usecase/logistic/base/find-one.base.usecase";
+import { updateOneBaseUsecase } from "@/backend/usecase/logistic/base/update-one.base.usecase";
+import { findManyBaseUsecase } from "@/backend/usecase/logistic/base/find-many.base.usecase";
+import { IBase } from "@/backend/domain/logistic/entity/base.entity";
 import { Filter } from "mongodb";
 
 export async function createOneBase(input: Omit<IBase, "id" | "created_at">) {
@@ -32,3 +30,4 @@ export async function updateOneBaseById(
 ) {
   return await updateOneBaseUsecase.execute(query, value);
 }
+

@@ -1,19 +1,14 @@
-import {
-  formatWelcomeEmail,
-  generateRandomPassword,
-  singleton,
-} from "@/app/lib/util";
-import {
-  AuditDomain,
-  IBMessageGateway,
-  IUser,
-  IUserRepository,
-} from "@/app/lib/@backend/domain";
-import { bmessageGateway, userObjectRepository, userRepository } from "@/app/lib/@backend/infra";
+import { formatWelcomeEmail, generateRandomPassword } from "@/app/lib/util";
+import { singleton } from "@/app/lib/util/singleton";
+import type { IUser } from "@/backend/domain/admin/entity/user.definition";
+import type { IUserRepository } from "@/backend/domain/admin/repository/user.repository";
+import { bmessageGateway, userObjectRepository, userRepository } from "@/backend/infra";
 import { randomInt } from "crypto";
 import { hash } from "bcrypt";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import type { IBMessageGateway } from "@/backend/domain/@shared/gateway/bmessage.gateway.interface";
 
 namespace Dto {
   export type Input = {
@@ -153,3 +148,5 @@ class CreateOneUserUsecase {
 }
 
 export const createOneUserUsecase = singleton(CreateOneUserUsecase);
+
+

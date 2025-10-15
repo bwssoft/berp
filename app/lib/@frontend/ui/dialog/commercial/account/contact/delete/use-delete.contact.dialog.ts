@@ -3,14 +3,15 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { deleteOneContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
+import { deleteOneContact } from "@/backend/action/commercial/contact.action";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
 import {
   findOneAccount,
   updateOneAccount,
-} from "@/app/lib/@backend/action/commercial/account.action";
+} from "@/backend/action/commercial/account.action";
 import { useSearchParams } from "next/navigation";
-import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
+import { useCreateAccountFlow } from '@/frontend/context/create-account-flow.context';
+
 import { useAuth } from "@/app/lib/@frontend/context/auth.context";
 
 export function useDeleteContactDialog() {
@@ -126,3 +127,4 @@ export function useDeleteContactDialog() {
     deleteContactLocally,
   };
 }
+

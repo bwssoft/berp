@@ -1,29 +1,22 @@
+
 import { singleton } from "@/app/lib/util/singleton";
-import { IFinancialOrderRepository } from "@/app/lib/@backend/domain";
-import { financialOrderRepository } from "@/app/lib/@backend/infra";
+import type { IFinancialOrderRepository } from "@/backend/domain/financial/repository/order.repository";
+import { financialOrderRepository } from "@/backend/infra";
 
 class DeleteFinancialOrderUsecase {
   financialOrderRepository: IFinancialOrderRepository;
 
   constructor() {
-    this.financialOrderRepository = financialOrderRepository
+    this.financialOrderRepository = financialOrderRepository;
   }
 
-  async execute(input: {
-    proposal_id: string,
-  }) {
-    const { proposal_id } = input
-    try {
-      await this.financialOrderRepository.deleteOne(
-        {
-          proposal_id: proposal_id,
-        }
-      )
-    } catch (err) {
-      throw err;
-    }
-  }
+  async execute(input: { proposal_id: string }) {
+    const { proposal_id } = input;
 
+    return await this.financialOrderRepository.deleteOne({
+      proposal_id,
+    });
+  }
 }
 
 export const deleteFinancialOrderUsecase = singleton(

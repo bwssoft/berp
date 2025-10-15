@@ -5,8 +5,10 @@ import {
   UserGroupIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/24/outline"; // ícones alinhados ao contexto comercial
-import { GridList } from "../lib/@frontend/ui/component";
-import { useAuth } from "../lib/@frontend/context";
+import { GridList } from '@/frontend/ui/component/grid-list';
+
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { Package } from "lucide-react";
 
 const actions = [

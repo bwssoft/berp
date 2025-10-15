@@ -1,7 +1,8 @@
-import { findAllCommand } from "@/app/lib/@backend/action/engineer/command/command.action";
-import { findAllDevice } from "@/app/lib/@backend/action/engineer/device.action";
-import { findAllFirmware } from "@/app/lib/@backend/action/engineer/firmware/firmware.action";
-import { ScheduleCreateForm } from "@/app/lib/@frontend/ui/component";
+import { findAllCommand } from "@/backend/action/engineer/command/command.action";
+import { findAllDevice } from "@/backend/action/engineer/device.action";
+import { findAllFirmware } from "@/backend/action/engineer/firmware/firmware.action";
+import { ScheduleCreateForm } from '@/frontend/ui/form/engineer/schedule/create/schedule.create.form';
+
 
 export default async function Page() {
   const commands = await findAllCommand();
@@ -30,3 +31,4 @@ export default async function Page() {
     </div>
   );
 }
+

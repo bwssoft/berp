@@ -1,5 +1,7 @@
 "use client";
-import { Button, Input } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+
 import { useCreateAnnexForm } from "./use-create.annex.form";
 import { DocumentArrowUpIcon, PaperClipIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon, XCircleIcon } from "@heroicons/react/24/outline";

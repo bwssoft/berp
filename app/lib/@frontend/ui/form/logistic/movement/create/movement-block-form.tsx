@@ -22,12 +22,15 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import type { IBase, IItem } from "@/app/lib/@backend/domain";
+import type {IBase} from "@/backend/domain/logistic/entity/base.entity";
+import type {IItem} from "@/backend/domain/logistic/entity/item.entity";
 import { MovementRowForm } from "./movement.row.form";
-import { SortableItem } from "../../../../component";
+import { SortableItem } from '@/frontend/ui/component/sortable-item';
+
 import type { MovementBlock } from "./use-create.movement.form";
 import { useFormContext } from "react-hook-form";
-import { Badge } from "@/app/lib/@frontend/ui/component";
+import { Badge } from '@/frontend/ui/component/badge';
+
 
 interface MovementBlockFormProps {
   blockIndex: number;
@@ -218,3 +221,4 @@ export function MovementBlockForm({
     </Card>
   );
 }
+

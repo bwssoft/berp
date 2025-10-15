@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { ISector } from "@/app/lib/@backend/domain";
+import { ISector } from "@/backend/domain/commercial/entity/sector.definition";
 import { BaseRepository } from "../@base";
 
 class SectorRepository extends BaseRepository<ISector> {
@@ -12,3 +12,4 @@ class SectorRepository extends BaseRepository<ISector> {
 }
 
 export const sectorRepository = singleton(SectorRepository);
+

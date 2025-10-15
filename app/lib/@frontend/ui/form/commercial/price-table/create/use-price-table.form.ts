@@ -11,7 +11,7 @@ import {
   updateOnePriceTable,
   validateBillingConditionsPriceTable,
   findOnePriceTable,
-} from "@/app/lib/@backend/action/commercial/price-table.action";
+} from "@/backend/action/commercial/price-table.action";
 import {
   IEquipmentPayment,
   IPriceRange,
@@ -19,8 +19,8 @@ import {
   IServicePayment,
   StatusPriceTable,
   IPriceTable,
-} from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
-import { IPriceTableCondition } from "@/app/lib/@backend/domain/commercial/entity/price-table-condition.definition";
+} from "@/backend/domain/commercial/entity/price-table.definition";
+import { IPriceTableCondition } from "@/backend/domain/commercial/entity/price-table-condition.definition";
 
 /** UFs do Brasil */
 export const BRAZILIAN_UF_ENUM = z.enum([
@@ -59,7 +59,6 @@ const PTBR_MONEY_REGEX = /^(\d{1,3}(\.\d{3})*|\d+)(,\d{2})?$/;
 const priceTableConditionSchema = z.object({
   id: z.string().min(1),
   /** UFs atendidas por esta condição */
-  salesFor: z.array(BRAZILIAN_UF_ENUM).optional(),
   salesFor: z.array(BRAZILIAN_UF_ENUM).optional(),
   /** Limite de faturamento (string pt-BR) */
   billingLimit: z
@@ -996,3 +995,4 @@ export const TO_BILL_FOR_OPTIONS = [
   { id: "31.941.680/0001-71", text: "MGC - 31.941.680/0001-71" },
   { id: "14.334.132/0001-64", text: "WFC - 14.334.132/0001-64" },
 ];
+

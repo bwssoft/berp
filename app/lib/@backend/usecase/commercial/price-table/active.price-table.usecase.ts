@@ -1,9 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IPriceTableRepository } from "../../../domain/commercial/repository/price-table.repository";
-import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import type { IPriceTableRepository } from "@/backend/domain/commercial";
+import { priceTableRepository } from "@/backend/infra";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
-import { AuditDomain } from "../../../domain/admin/entity/audit.definition";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
 namespace Dto {
   export type Input = { id: string };
