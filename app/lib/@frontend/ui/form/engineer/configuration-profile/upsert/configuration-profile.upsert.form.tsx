@@ -5,15 +5,10 @@ import {
   Props,
   useConfigurationProfileUpsertForm,
 } from "./use-configuration-profile.upsert.form";
-import {
-  Button,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 import { GeneralConfigurationProfileForm } from "../config/general.configuration-profile.form";
 import { SpecificE3Plus4GConfigurationProfileForm } from "../config/specific.e3-plus-4g.configuration-profile.form";
 import { FormProvider } from "react-hook-form";

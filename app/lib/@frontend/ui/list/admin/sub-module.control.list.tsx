@@ -1,7 +1,8 @@
 "use client";
 
-import { IProfile } from "@/app/lib/@backend/domain";
-import { SetLockedProfileForm } from "@/app/lib/@frontend/ui/form";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
+import { SetLockedProfileForm } from '@/frontend/ui/form/admin/profile/set-locked/set-locked.profile.form';
+
 import { ControlTree } from "@/app/lib/util";
 import {
   Disclosure,
@@ -14,14 +15,16 @@ import {
   IdentificationIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Button } from "../../component";
+import { Button } from '@/frontend/ui/component/button';
+
 import {
   AuditByControlCodeProfileModal,
   ProfileLinkedControlModal,
   useAuditByControlCodeProfileModal,
   useProfileLinkedControlModal,
 } from "../../modal";
-import { useAuth } from "../../../context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 interface Props {
   controlTree: ControlTree;
@@ -174,3 +177,4 @@ const renderControlTree = (
     </Disclosure>
   );
 };
+

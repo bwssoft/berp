@@ -1,4 +1,5 @@
-import { FirmwareCreateForm } from "@/app/lib/@frontend/ui/component";
+import { FirmwareCreateForm } from '@/frontend/ui/form/engineer/firmware/create/firmware.create.form';
+
 
 export default async function Page() {
   return (

@@ -1,9 +1,11 @@
 import { cn } from "@/app/lib/util";
 import { Inter } from "next/font/google";
 import { ReactQueryClientProvider } from "../providers/QueryClientProvider";
-import { Toaster } from "../ui/component";
+import { Toaster } from '@/frontend/ui/component/toaster';
+
 import HolyLoader from "holy-loader";
-import { AuthProvider } from "../context";
+import { AuthProvider } from '@/frontend/context/auth.context';
+
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import { Session403Guard } from "./session-403-guard";

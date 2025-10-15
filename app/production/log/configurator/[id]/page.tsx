@@ -1,5 +1,6 @@
-import { findOneConfigurationLog } from "@/app/lib/@backend/action/production/configuration-log.action";
-import { ConfigurationLogDescription } from "@/app/lib/@frontend/ui/description";
+import { findOneConfigurationLog } from "@/backend/action/production/configuration-log.action";
+import { ConfigurationLogDescription } from '@/frontend/ui/description/production/configuration-log/configuration-log.description';
+
 
 interface Props {
   params: Promise<{

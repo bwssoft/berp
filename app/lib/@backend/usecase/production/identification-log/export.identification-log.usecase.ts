@@ -1,16 +1,14 @@
-import {
-  IIdentificationLog,
-  IIdentificationLogRepository,
-} from "@/app/lib/@backend/domain";
+import type { IIdentificationLog } from "@/backend/domain/production/entity/identification-log.definition";
+import type { IIdentificationLogRepository } from "@/backend/domain/production/repository/identification-log.repository";
 import {
   identificationLogRepository,
   firebaseGateway,
-} from "@/app/lib/@backend/infra";
+} from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { Filter } from "mongodb";
+import type { Filter } from "mongodb";
 import ExcelJS from "exceljs";
 import { PassThrough } from "stream";
-import { IFirebaseGateway } from "@/app/lib/@backend/domain/@shared/gateway";
+import type { IFirebaseGateway } from "@/backend/domain/@shared/gateway/firebase.gateway.interface";
 
 namespace Dto {
   export interface Input extends Filter<IIdentificationLog> {}
@@ -106,3 +104,4 @@ class ExportIdentificationLogUsecase {
 export const exportIdentificationLogUsecase = singleton(
   ExportIdentificationLogUsecase
 );
+

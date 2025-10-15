@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { inactivatePriceTable } from "@/app/lib/@backend/action/commercial/price-table.action";
+import { inactivatePriceTable } from "@/backend/action/commercial/price-table.action";
 
 interface UseInactivatePriceTableDialogProps {
   priceTableId?: string;
@@ -57,3 +57,4 @@ export function useInactivatePriceTableDialog({
     handleInactivatePriceTable,
   };
 }
+

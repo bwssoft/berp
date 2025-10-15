@@ -7,7 +7,11 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { Button, DateInput, Input, Toggle } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { DateInput } from '@/frontend/ui/component/date-input';
+import { Input } from '@/frontend/ui/component/input';
+import { Toggle } from '@/frontend/ui/component/toggle';
+
 import {
   EquipmentAccessoryPriceForm,
   SimCardPriceForm,
@@ -23,7 +27,7 @@ import { CancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial
 import { PublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/publish.price-table.dialog";
 import { useCancelPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/cancel/use-cancel.price-table.dialog";
 import { usePublishPriceTableDialog } from "@/app/lib/@frontend/ui/dialog/commercial/price-table/publish/use-publish.price-table.dialog";
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
 import { InactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/inactivate.price-table.dialog";
 import { useInactivatePriceTableDialog } from "../../../../dialog/commercial/price-table/inactivate/use-inactivate.price-table.dialog";
 import { BillingConditionsSection } from "../conditions-form/conditions.form";
@@ -132,6 +136,8 @@ export function UpsertPriceTableForm({
     openDialog: openPublishPriceTableDialog,
     isLoading: isLoadingPublish,
     publishPriceTable,
+    fieldErrors,
+    clearFieldError,
   } = usePublishPriceTableDialog({
     priceTableId,
     onSuccess: () => {
@@ -371,13 +377,14 @@ export function UpsertPriceTableForm({
                         value={form.watch("startDateTime")}
                         onChange={(date) => {
                           form.setValue("startDateTime", date as Date);
+                           clearFieldError("startDateTime");
                         }}
                         placeholder="Selecione a data de início"
                         className="w-full"
                       />
-                      {form.formState.errors.startDateTime?.message && (
+                      {(fieldErrors.startDateTime || form.formState.errors.startDateTime?.message) && (
                         <p className="mt-1 text-sm text-red-600">
-                          {form.formState.errors.startDateTime?.message}
+                          {fieldErrors.startDateTime || form.formState.errors.startDateTime?.message}
                         </p>
                       )}
                     </div>
@@ -392,13 +399,14 @@ export function UpsertPriceTableForm({
                             value={form.watch("endDateTime")}
                             onChange={(date) => {
                               form.setValue("endDateTime", date as Date);
+                              clearFieldError("endDateTime");
                             }}
                             placeholder="Selecione a data de fim"
                             className="w-full"
                           />
-                          {form.formState.errors.endDateTime?.message && (
+                          {(fieldErrors.endDateTime || form.formState.errors.endDateTime?.message) && (
                             <p className="mt-1 text-sm text-red-600">
-                              {form.formState.errors.endDateTime?.message}
+                              {fieldErrors.endDateTime || form.formState.errors.endDateTime?.message}
                             </p>
                           )}
                         </>
@@ -866,3 +874,4 @@ export function UpsertPriceTableForm({
     </div>
   );
 }
+

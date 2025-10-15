@@ -1,8 +1,9 @@
 import type { Filter } from "mongodb";
-import { IAccount, IAccountRepository } from "@/app/lib/@backend/domain";
-import { accountRepository } from "@/app/lib/@backend/infra";
+import { IAccount } from "@/backend/domain/commercial/entity/account.definition";
+import { IAccountRepository } from "@/backend/domain/commercial/repository/account.repository";
+import { accountRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 
 namespace Dto {
   export interface Output {
@@ -110,3 +111,4 @@ class UpdateOneAccountUsecase {
 }
 
 export const updateOneAccountUsecase = singleton(UpdateOneAccountUsecase);
+

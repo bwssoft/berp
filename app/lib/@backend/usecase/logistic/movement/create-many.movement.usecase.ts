@@ -1,11 +1,9 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IMovement,
-  IMovementRepository,
-  Movement,
-} from "@/app/lib/@backend/domain";
-import { movementRepository } from "@/app/lib/@backend/infra";
-import { consolidateStockByMovementUseCase } from "../stock";
+import { consolidateStockByMovementUseCase } from "@/backend/usecase/logistic/stock/consolidate-by-movement.stock.usecasse";
+import type { IMovement } from "@/backend/domain/logistic/entity/movement.entity";
+import { Movement } from "@/backend/domain/logistic/entity/movement.entity";
+import type { IMovementRepository } from "@/backend/domain/logistic/repository/movement.repository";
+import { movementRepository } from "@/backend/infra";
 
 class CreateManyMovementUsecase {
   repository: IMovementRepository;
@@ -57,3 +55,4 @@ class CreateManyMovementUsecase {
 }
 
 export const createManyMovementUsecase = singleton(CreateManyMovementUsecase);
+

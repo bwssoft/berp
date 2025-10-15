@@ -1,14 +1,16 @@
 "use client";
 
-import { updateOneAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { IAddress } from "@/app/lib/@backend/domain";
+import { updateOneAddress } from "@/backend/action/commercial/address.action";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
+import {IAddress} from "@/backend/domain/commercial/entity/address.definition";
 import { LocalAddress } from "@/app/lib/@frontend/context/create-account-flow.context";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useCreateAccountFlow } from "@/app/lib/@frontend/context";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useCreateAccountFlow } from '@/frontend/context/create-account-flow.context';
+
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useSearchParams } from "next/navigation";
 import { getChangedFields } from "@/app/lib/util/get-changed-fields";
 
@@ -111,3 +113,4 @@ export function useAddressUpdateModal() {
     updateAddressLocally,
   };
 }
+

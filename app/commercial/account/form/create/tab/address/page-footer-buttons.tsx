@@ -1,7 +1,8 @@
 "use client";
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { Button } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { FakeLoadingButton } from "@/app/lib/@frontend/ui/component/fake-load-button";
 import { useRouter } from "next/navigation";
 import { useCreateAccountFlow } from "@/app/lib/@frontend/context/create-account-flow.context";

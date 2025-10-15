@@ -1,9 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IProductCategory,
-  IProductCategoryRepository,
-} from "@/app/lib/@backend/domain";
-import { productCategoryRepository } from "@/app/lib/@backend/infra";
+import type { IProductCategory } from "@/backend/domain/commercial/entity/product.category.definition";
+import type { IProductCategoryRepository } from "@/backend/domain/commercial";
+import { productCategoryRepository } from "@/backend/infra";
 
 class DeleteOneProductCategoryUsecase {
   repository: IProductCategoryRepository;
@@ -20,3 +18,4 @@ class DeleteOneProductCategoryUsecase {
 export const deleteOneProductCategoryUsecase = singleton(
   DeleteOneProductCategoryUsecase
 );
+

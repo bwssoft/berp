@@ -1,6 +1,6 @@
 "use client";
 
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { Pagination } from "../../../component/pagination";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { columns } from "./account.columns";
@@ -93,3 +93,4 @@ export function AccountTable({ data, currentPage = 1 }: Props) {
     </div>
   );
 }
+

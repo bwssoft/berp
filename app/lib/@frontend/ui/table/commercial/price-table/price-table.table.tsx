@@ -1,7 +1,7 @@
 "use client";
 
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import { IPriceTable } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
 import { Pagination } from "../../../component/pagination";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { createPriceTableColumns } from "./price-table.columns";
@@ -159,3 +159,4 @@ export function PriceTableTable({
     </>
   );
 }
+

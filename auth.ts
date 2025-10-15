@@ -3,12 +3,12 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { NextRequest, NextResponse } from "next/server";
-import { IProfile } from "./app/lib/@backend/domain";
+import type { IProfile } from "@/backend/domain/admin/entity/profile.definition";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { findOneUser } from "./app/lib/@backend/action/admin/user.action";
-import { findOneProfile } from "./app/lib/@backend/action/admin/profile.action";
-import { userObjectRepository } from "./app/lib/@backend/infra/repository/s3/admin/user.s3.repository";
+import { findOneUser } from "@/backend/action/admin/user.action";
+import { findOneProfile } from "@/backend/action/admin/profile.action";
+import { userObjectRepository } from "@/backend/infra";
 
 async function getAvatarUrl(imageKey: string | undefined): Promise<string> {
   if (!imageKey) return "/avatar.webp";

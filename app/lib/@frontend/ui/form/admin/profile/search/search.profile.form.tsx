@@ -2,7 +2,11 @@
 
 import { FunnelIcon } from "@heroicons/react/24/outline";
 import { Controller } from "react-hook-form";
-import { Button, Combobox, Input, Modal } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Input } from '@/frontend/ui/component/input';
+import { Modal } from '@/frontend/ui/component/modal';
+
 import { useSearchProfileForm } from "./use-search.profile.form";
 
 export function SearchProfileForm() {

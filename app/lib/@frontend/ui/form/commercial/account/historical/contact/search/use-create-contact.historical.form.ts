@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  ContactSelection,
-  IAccount,
-  IContact,
-} from "@/app/lib/@backend/domain";
+import {ContactSelection} from "@/backend/domain/commercial/entity/historical.definition";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -206,3 +205,4 @@ export function useSearchContactHistoricalAccount({
     tempSelectedContact,
   };
 }
+

@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "../../../component";
-import { IPriceTableService } from "@/app/lib/@backend/domain";
+import { Button } from '@/frontend/ui/component/button';
+
+import {IPriceTableService} from "@/backend/domain/commercial/entity/price-table-service.definition";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 export function serviceColumns(
@@ -30,3 +31,4 @@ export function serviceColumns(
     },
   ];
 }
+

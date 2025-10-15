@@ -2,9 +2,11 @@
 
 import { Controller } from "react-hook-form";
 import { useUpdateEconomicGroupForm } from "./use-update-economic-group-form";
-import { Combobox } from "@/app/lib/@frontend/ui/component";
-import { Button } from "@/app/lib/@frontend/ui/component";
-import { EconomicGroup } from "@/app/lib/@backend/domain";
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+
+import { Button } from '@/frontend/ui/component/button';
+
+import {EconomicGroup} from "@/backend/domain/commercial/entity/account.economic-group.definition";
 
 interface Props {
   accountId: string;
@@ -137,3 +139,4 @@ export function EconomicGroupAccountForm({
     </form>
   );
 }
+

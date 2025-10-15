@@ -1,8 +1,9 @@
 "use client";
 
-import { IProfile } from "@/app/lib/@backend/domain";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
 import { useChooseProfileForm } from "./use-choose.profile.form";
-import { Combobox } from "../../../../component";
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+
 
 interface Props {
   profile: IProfile | null;
@@ -40,3 +41,4 @@ export function ChooseProfileForm(props: Props) {
     </form>
   );
 }
+

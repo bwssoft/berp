@@ -1,12 +1,11 @@
-import { singleton } from "@/app/lib/util/singleton";
 import type { Filter } from "mongodb";
-import { productCategoryRepository } from "@/app/lib/@backend/infra";
-import {
-  IProductCategory,
-  IProductCategoryRepository,
-} from "@/app/lib/@backend/domain";
-import { RemoveFields } from "@/app/lib/@backend/decorators";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+
+import { singleton } from "@/app/lib/util/singleton";
+import { RemoveFields } from "@/backend/decorators";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import type { IProductCategoryRepository } from "@/backend/domain/commercial";
+import type { IProductCategory } from "@/backend/domain/commercial/entity/product.category.definition";
+import { productCategoryRepository } from "@/backend/infra";
 
 namespace Dto {
   export interface Input {
@@ -38,3 +37,4 @@ class FindManyProductCategoryUsecase {
 export const findManyProductCategoryUsecase = singleton(
   FindManyProductCategoryUsecase
 );
+

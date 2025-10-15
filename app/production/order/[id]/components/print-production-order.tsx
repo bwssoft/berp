@@ -1,15 +1,15 @@
 "use client";
 
-import {
-  IClient,
-  IProduct,
-  IProductCategory,
-  IProductionOrder,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
+import {IProduct} from "@/backend/domain/commercial/entity/product.definition";
+import {IProductCategory} from "@/backend/domain/commercial/entity/product.category.definition";
+import {IProductionOrder} from "@/backend/domain/production/entity/production-order.definition";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
 import { ProductionOrderPdfTemplate } from "@/app/lib/@frontend/pdf/templates/production-order-pdf-template";
 import { useBuildPdf } from "@/app/lib/@frontend/pdf/use-build-pdf";
-import { Button } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { PrinterIcon } from "@heroicons/react/24/outline";
 
 type PrintProductionOrderProps = {

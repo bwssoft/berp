@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { IAccount } from "@/app/lib/@backend/domain";
-import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import { findOneAccount } from "@/backend/action/commercial/account.action";
 
 export function useAccount(id: string) {
     const [account, setAccount] = useState<IAccount | null>(null);
@@ -23,3 +23,4 @@ export function useAccount(id: string) {
 
     return { account, loading };
 }
+

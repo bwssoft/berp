@@ -1,5 +1,5 @@
 "use client";
-import { findManyHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
+import { findManyHistorical } from "@/backend/action/commercial/historical.action";
 import { HistoricalDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/historical.data";
 import { useQuery } from "@tanstack/react-query";
 
@@ -28,3 +28,4 @@ export default function Page({ searchParams }: Props) {
     />
   );
 }
+

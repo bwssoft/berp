@@ -1,4 +1,4 @@
-import { ITechnology } from "../../@backend/domain";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { useBWS4G } from "./use-bws-4g";
 import { useE3Plus } from "./use-e3-plus";
 import { useE3Plus4G } from "./use-e3-plus-4g";

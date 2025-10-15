@@ -2,8 +2,9 @@
 
 import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
-import { AuditDomain, IPriceTable } from "@/app/lib/@backend/domain";
+import { findManyAudit } from "@/backend/action/admin/audit.action";
+import {AuditDomain} from "@/backend/domain/admin/entity/audit.definition";
+import {IPriceTable} from "@/backend/domain/commercial/entity/price-table.definition";
 
 const PAGE_SIZE = 10;
 
@@ -62,3 +63,4 @@ export function useAuditPriceTableModal() {
     handlePageChange,
   };
 }
+

@@ -1,12 +1,11 @@
-import {
-  IAccountEconomicGroup,
-  IAccountEconomicGroupRepository,
-} from "@/app/lib/@backend/domain";
+
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { accountEconomicGroupRepository } from "@/app/lib/@backend/infra";
-import { Filter } from "mongodb";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { RemoveMongoId } from "@/backend/decorators";
+import { accountEconomicGroupRepository } from "@/backend/infra";
+import type { Filter } from "mongodb";
+import type { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import type { IAccountEconomicGroupRepository } from "@/backend/domain/commercial";
+import type { IAccountEconomicGroup } from "@/backend/domain/commercial/entity/account.economic-group.definition";
 
 namespace Dto {
   export interface Input {
@@ -27,7 +26,7 @@ class FindManyAccountEconomicGroupUsecase {
 
   @RemoveMongoId()
   async execute(arg: Dto.Input): Promise<Dto.Output> {
-    return await this.repository.findMany(
+    return this.repository.findMany(
       arg.filter ?? {},
       arg.limit,
       arg.page,
@@ -39,3 +38,4 @@ class FindManyAccountEconomicGroupUsecase {
 export const findManyAccountEconomicGroupUsecase = singleton(
   FindManyAccountEconomicGroupUsecase
 );
+

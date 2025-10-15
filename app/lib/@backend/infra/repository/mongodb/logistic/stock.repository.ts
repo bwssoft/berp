@@ -1,4 +1,5 @@
-import { IStock, IStockRepository } from "@/app/lib/@backend/domain";
+import type { IStock } from "@/backend/domain/logistic/entity/stock.entity";
+import type { IStockRepository } from "@/backend/domain/logistic/repository/stock.repository.interface";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
@@ -15,3 +16,4 @@ class StockRepository
 }
 
 export const stockRepository = singleton(StockRepository);
+

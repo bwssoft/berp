@@ -1,9 +1,8 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IConfigurationLog,
-  IConfigurationLogRepository,
-} from "@/app/lib/@backend/domain";
-import { configurationLogRepository } from "@/app/lib/@backend/infra";
+import type { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
+import type { IConfigurationLogRepository } from "@/backend/domain/production/repository/configuration-log.repository";
+import { configurationLogRepository } from "@/backend/infra";
+import { randomUUID } from "crypto";
 
 class CreateOneConfigurationLogUsecase {
   repository: IConfigurationLogRepository;
@@ -13,14 +12,15 @@ class CreateOneConfigurationLogUsecase {
   }
 
   async execute(input: Omit<IConfigurationLog, "id" | "created_at">) {
-    const _input = Object.assign(input, {
+    const payload: IConfigurationLog = {
+      ...input,
+      id: randomUUID(),
       created_at: new Date(),
-      id: crypto.randomUUID(),
-    });
+    };
 
-    await this.repository.create(_input);
+    await this.repository.create(payload);
 
-    return _input;
+    return payload;
   }
 }
 

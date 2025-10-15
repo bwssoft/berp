@@ -1,21 +1,22 @@
-import {
-  AuditDomain,
-  IAccountAttachment,
-  IUser,
-} from "@/app/lib/@backend/domain";
-import {
+import type { IUser } from "@/backend/domain/admin/entity/user.definition";
+import type {
   IAccountAttachmentRepository,
   IAccountAttachmentObjectRepository,
-} from "@/app/lib/@backend/domain/commercial/repository";
+} from "@/backend/domain/commercial/repository";
+import type { IAccountAttachment } from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { getContentTypeFromFileName } from "@/app/lib/util/get-content-type-from-filename";
 import { singleton } from "@/app/lib/util/singleton";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
 
 interface CreateAccountAttachmentHistoricalUseCaseProps {
   accountAttachmentObjectRepository: IAccountAttachmentObjectRepository;
 }
-import { accountAttachmentRepository } from "@/app/lib/@backend/infra/repository/mongodb/commercial/account-attachment.repository";
+import {
+  accountAttachmentRepository,
+  accountAttachmentObjectRepository,
+} from "@/backend/infra";
 import { getCurrentUser } from "@/app/lib/util/get-current-user";
 
 export class CreateAccountAttachmentHistoricalUseCase {
@@ -114,9 +115,6 @@ export class CreateAccountAttachmentHistoricalUseCase {
 
 class CreateAccountAttachmentUseCaseImpl extends CreateAccountAttachmentHistoricalUseCase {
   constructor() {
-    const {
-      accountAttachmentObjectRepository,
-    } = require("@/app/lib/@backend/infra/repository/s3/commercial");
     super({ accountAttachmentObjectRepository });
   }
 }
@@ -124,3 +122,4 @@ class CreateAccountAttachmentUseCaseImpl extends CreateAccountAttachmentHistoric
 export const createAccountAttachmentHistoricalUsecase = singleton(
   CreateAccountAttachmentUseCaseImpl
 );
+

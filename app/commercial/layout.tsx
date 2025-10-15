@@ -1,6 +1,7 @@
 "use client";
 
-import { Layout } from "@/app/lib/@frontend/ui/component";
+import { Layout } from '@/frontend/layout/layout';
+
 import {
   BriefcaseIcon,
   Cog6ToothIcon,
@@ -10,7 +11,8 @@ import {
   UserGroupIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
-import { useAuth } from "../lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { Package } from "lucide-react";
 
 export default function ComercialLayout({

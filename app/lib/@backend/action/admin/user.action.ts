@@ -1,18 +1,16 @@
 "use server";
 import { Filter } from "mongodb";
 import { IUser } from "../../domain/admin/entity/user.definition";
-import {
-  activeUserUsecase,
-  createOneUserUsecase,
-  newPasswordUserUsecase,
-  lockUserUsecase,
-  findOneUserUsecase,
-  updateOneUserUsecase,
-  findManyUserUsecase,
-  resetPasswordUserUsecase,
-  requestNewPasswordUserUsecase,
-  getAvatarUrlUserUsecase,
-} from "../../usecase";
+import { activeUserUsecase } from "../../usecase/admin/user/active.user.usecase";
+import { createOneUserUsecase } from "../../usecase/admin/user/create-one.user.usecase";
+import { newPasswordUserUsecase } from "../../usecase/admin/user/new-password.user.usecase";
+import { lockUserUsecase } from "../../usecase/admin/user/lock.user.usecase";
+import { findOneUserUsecase } from "../../usecase/admin/user/find-one.user.usecase";
+import { updateOneUserUsecase } from "../../usecase/admin/user/update-one-user.usecase";
+import { findManyUserUsecase } from "../../usecase/admin/user/find-many.user.usecase";
+import { resetPasswordUserUsecase } from "../../usecase/admin/user/reset-password.user.usecase";
+import { requestNewPasswordUserUsecase } from "../../usecase/admin/user/request-new-password.user.usecase";
+import { getAvatarUrlUserUsecase } from "../../usecase/admin/user/get-avatar-url.user.usecase";
 import { revalidatePath } from "next/cache";
 import { getAvatarUrlByKeyUserUsecase } from "../../usecase/admin/user/get-avatar-url-by-key.user.usecase";
 

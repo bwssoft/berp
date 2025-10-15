@@ -1,11 +1,8 @@
 "use client";
 
-import {
-    CreateAnnexHistoricalForm,
-    Modal,
-    ModalBody,
-    ModalContent,
-} from "@/app/lib/@frontend/ui/component";
+import { CreateAnnexHistoricalForm } from '@/frontend/ui/form/commercial/account/account-attachments/create/annex-historical/create-historical.annex.form';
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+
 import { useCreateAnnexHistoricalModal } from "./use-annex-historical.create.commercial.modal";
 
 interface Props {

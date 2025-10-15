@@ -1,6 +1,7 @@
-import { findManyProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { findOneDevice } from "@/app/lib/@backend/action/engineer/device.action";
-import { DeviceUpdateForm } from "@/app/lib/@frontend/ui/component";
+import { findManyProduct } from "@/backend/action/commercial/product/product.action";
+import { findOneDevice } from "@/backend/action/engineer/device.action";
+import { DeviceUpdateForm } from '@/frontend/ui/form/engineer/device/update/device.update.form';
+
 
 interface Props {
   searchParams: { id: string };
@@ -46,3 +47,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

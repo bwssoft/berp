@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IRequestToUpdate } from "@/app/lib/@backend/domain";
+import { IRequestToUpdate } from "@/backend/domain/engineer/entity/request-to-update-firmware.definition";
 import { BaseRepository } from "../@base";
 
 class RequestToUpdateRepository extends BaseRepository<IRequestToUpdate> {
@@ -12,3 +12,4 @@ class RequestToUpdateRepository extends BaseRepository<IRequestToUpdate> {
 }
 
 export const requestToUpdateRepository = singleton(RequestToUpdateRepository)
+

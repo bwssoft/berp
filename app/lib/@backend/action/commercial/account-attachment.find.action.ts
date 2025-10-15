@@ -1,6 +1,6 @@
 "use server";
 
-import { IAccountAttachment } from "../../domain";
+import { IAccountAttachment } from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { Filter } from "mongodb";
 import { findManyAccountAttachmentUsecase } from "../../usecase/commercial/account-attachment/find-many-account-attachment.usecase";
 

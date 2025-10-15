@@ -1,5 +1,6 @@
-import { findOneCommand } from "@/app/lib/@backend/action/engineer/command/command.action";
-import { CommandUpdateForm } from "@/app/lib/@frontend/ui/component";
+import { findOneCommand } from "@/backend/action/engineer/command/command.action";
+import { CommandUpdateForm } from '@/frontend/ui/form/engineer/command/update/command.update.form';
+
 
 interface Props {
   searchParams: { id: string };
@@ -42,3 +43,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

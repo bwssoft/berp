@@ -1,11 +1,9 @@
 "use server";
 
-import { IControl } from "@/app/lib/@backend/domain";
-import {
-  countControlUsecase,
-  findManyControlUsecase,
-  findOneControlUsecase,
-} from "../../usecase";
+import { IControl } from "@/backend/domain/admin/entity/control.definition";
+import { countControlUsecase } from "../../usecase/admin/control/count.control.usecase";
+import { findManyControlUsecase } from "../../usecase/admin/control/find-many-control.usecase";
+import { findOneControlUsecase } from "../../usecase/admin/control/find-one-control.usecase";
 import { Filter } from "mongodb";
 
 export async function findManyControl(
@@ -24,3 +22,4 @@ export async function findOneControl(input: Partial<IControl>) {
 export async function countControl(input: Filter<IControl>) {
   return await countControlUsecase.execute(input);
 }
+

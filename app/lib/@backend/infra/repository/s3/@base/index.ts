@@ -1,177 +1,166 @@
+import { Readable } from "stream";
 import {
-  S3Client,
-  PutObjectCommand,
-  GetObjectCommand,
   DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { Readable } from "stream";
-import { getContentType } from "@/app/lib/util/get-content-type";
-import { IBaseObjectRepository } from "@/app/lib/@backend/domain/@shared/repository/object.repository.interface";
+import type { IBaseObjectRepository } from "@/backend/domain/@shared/repository/object.repository.interface";
 
-type Constructor = {
+type ObjectData<Entity> = {
+  data: Entity | Buffer;
+  key: string;
+  contentType?: string;
+};
+
+type BaseObjectRepositoryOptions = {
   bucket: string;
-  prefix: string;
+  prefix?: string;
   region: string;
   access_key: string;
   secret_key: string;
 };
 
-export class BaseObjectRepository<Entity extends object>
+export abstract class BaseObjectRepository<Entity extends object | Buffer>
   implements IBaseObjectRepository<Entity>
 {
-  private bucket: string;
-  private prefix: string;
-  private region: string;
-  private client: S3Client;
+  private readonly client: S3Client;
+  private readonly bucket: string;
+  private readonly prefix: string;
+  private readonly region: string;
 
-  constructor(args: Constructor) {
-    this.bucket = args.bucket;
-    this.prefix = args.prefix;
-    this.region = args.region;
+  protected constructor(options: BaseObjectRepositoryOptions) {
+    this.bucket = options.bucket;
+    this.prefix = options.prefix ?? "";
+    this.region = options.region;
+
     this.client = new S3Client({
-      region: args.region,
+      region: options.region,
       credentials: {
-        accessKeyId: args.access_key,
-        secretAccessKey: args.secret_key,
+        accessKeyId: options.access_key,
+        secretAccessKey: options.secret_key,
       },
     });
   }
 
-  private getKey(id: string) {
-    return `${this.prefix}${id}`;
+  private resolveKey(key: string) {
+    return `${this.prefix}${key}`;
   }
 
-  private async streamToBuffer(stream: Readable): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-      const chunks: any[] = [];
-      stream.on("data", (chunk) => chunks.push(chunk));
-      stream.on("end", () => resolve(Buffer.concat(chunks)));
-      stream.on("error", reject);
-    });
+  private async streamToBuffer(stream: Readable | Blob): Promise<Buffer> {
+    if (stream instanceof Readable) {
+      const chunks: Buffer[] = [];
+      for await (const chunk of stream) {
+        chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+      }
+      return Buffer.concat(chunks);
+    }
+
+    if (typeof (stream as Blob).arrayBuffer === "function") {
+      const buffer = await (stream as Blob).arrayBuffer();
+      return Buffer.from(buffer);
+    }
+
+    return Buffer.alloc(0);
   }
 
-  generateUrl(key: string) {
-    return `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
-  }
+  private async putObject(input: ObjectData<Entity>) {
+    const body = Buffer.isBuffer(input.data)
+      ? input.data
+      : Buffer.from(JSON.stringify(input.data));
 
-  async generateSignedUrl(key: string) {
-    const command = new GetObjectCommand({
-      Bucket: this.bucket,
-      Key: this.getKey(key),
-    });
-    // Isso fará com que expire em 24 horas.
-    const url = await getSignedUrl(this.client, command, { expiresIn: 86400 });
-    return url;
+    const contentType =
+      input.contentType ??
+      (Buffer.isBuffer(input.data)
+        ? "application/octet-stream"
+        : "application/json");
+
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: this.resolveKey(input.key),
+        Body: body,
+        ContentType: contentType,
+      })
+    );
   }
 
   async create(
-    props:
-      | { data: Entity | Buffer; key: string; contentType?: string }
-      | { data: Entity | Buffer; key: string; contentType?: string }[]
-  ) {
-    // Ensure props is always an array
-    const items = Array.isArray(props) ? props : [props];
-
-    // Helper function to create a single item
-    const uploadSingleItem = async ({
-      data,
-      key: _key,
-      contentType: customContentType,
-    }: {
-      data: Entity | Buffer;
-      key: string;
-      contentType?: string;
-    }) => {
-      const key = this.getKey(_key);
-      const isJson = typeof data === "object" && !(data instanceof Buffer);
-      const body = isJson ? JSON.stringify(data) : data;
-
-      // Use provided content type or detect from key/data
-      const contentType = customContentType || getContentType(key);
-
-      const command = new PutObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-        Body: body,
-        ContentType: contentType,
-      });
-
-      await this.client.send(command);
-    };
-
-    // Executar uploads em paralelo
-    try {
-      await Promise.all(items.map((item) => uploadSingleItem(item)));
-    } catch (error) {
-      throw new Error("Failed to create one or more objects in S3.");
-    }
+    input: ObjectData<Entity> | ObjectData<Entity>[]
+  ): Promise<void> {
+    const items = Array.isArray(input) ? input : [input];
+    await Promise.all(items.map((item) => this.putObject(item)));
   }
 
   async findOne(
     key: string
   ): Promise<{ data: Entity | Buffer; contentType: string } | null> {
+    const response = await this.client.send(
+      new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: this.resolveKey(key),
+      })
+    );
+
+    if (!response.Body) {
+      return null;
+    }
+
+    const buffer = await this.streamToBuffer(response.Body as Readable);
+    const contentType = response.ContentType ?? "application/octet-stream";
+
+    if (
+      !Buffer.isBuffer(buffer) ||
+      contentType.includes("application/json")
+    ) {
+      try {
+        const parsed = JSON.parse(buffer.toString("utf-8"));
+        return {
+          data: parsed as Entity,
+          contentType,
+        };
+      } catch {
+        return {
+          data: buffer,
+          contentType,
+        };
+      }
+    }
+
+    return {
+      data: buffer,
+      contentType,
+    };
+  }
+
+  async updateOne(key: string, data: Entity | Buffer): Promise<void> {
+    await this.putObject({ data, key });
+  }
+
+  async deleteOne(key: string): Promise<void> {
+    await this.client.send(
+      new DeleteObjectCommand({
+        Bucket: this.bucket,
+        Key: this.resolveKey(key),
+      })
+    );
+  }
+
+  generateUrl(key: string): string {
+    const resolvedKey = this.resolveKey(key);
+    const regionSegment = this.region ? `.${this.region}` : "";
+    return `https://${this.bucket}.s3${regionSegment}.amazonaws.com/${resolvedKey}`;
+  }
+
+  async generateSignedUrl(key: string, expiresIn = 900): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: this.bucket,
-      Key: this.getKey(key),
+      Key: this.resolveKey(key),
     });
 
-    try {
-      const response = await this.client.send(command);
-      const body = response.Body as Readable;
-      const contentType = response.ContentType || "application/octet-stream";
-      const buffer = await this.streamToBuffer(body);
-
-      if (contentType === "application/json") {
-        const json = JSON.parse(buffer.toString("utf-8"));
-        return { data: json as Entity, contentType };
-      }
-
-      return { data: buffer, contentType };
-    } catch (err) {
-      if ((err as any).$metadata?.httpStatusCode === 404) {
-        console.warn("Object not found:", key);
-        return null; // Objeto não encontrado
-      }
-      console.error("Error fetching object:", err);
-      throw new Error("Failed to fetch object from S3.");
-    }
-  }
-
-  async updateOne(key: string, data: Entity | Buffer) {
-    try {
-      const existing = await this.findOne(key);
-      if (!existing) {
-        throw new Error("Object not found");
-      }
-
-      const isJson = typeof data === "object" && !(data instanceof Buffer);
-      const body = isJson ? JSON.stringify(data) : data;
-
-      const command = new PutObjectCommand({
-        Bucket: this.bucket,
-        Key: key,
-        Body: body,
-        ContentType: existing.contentType,
-      });
-
-      await this.client.send(command);
-    } catch (error) {
-      console.error("Error updating object:", error);
-      throw new Error("Failed to update object in S3.");
-    }
-  }
-
-  async deleteOne(key: string) {
-    const command = new DeleteObjectCommand({
-      Bucket: this.bucket,
-      Key: this.getKey(key),
-    });
-
-    try {
-      await this.client.send(command);
-    } catch (error) {
-      throw new Error("Failed to delete object from S3.");
-    }
+    return getSignedUrl(this.client, command, { expiresIn });
   }
 }
+
+export { BaseObjectRepository as default };

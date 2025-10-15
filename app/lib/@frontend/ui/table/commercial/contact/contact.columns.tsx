@@ -6,7 +6,8 @@ import {
   PhoneIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { Checkbox } from "../../../component";
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+
 
 interface Props {
   handlePreferredContact: (

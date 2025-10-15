@@ -1,8 +1,6 @@
-import {
-  IProductionProcess,
-  IProductionProcessRepository,
-} from "@/app/lib/@backend/domain";
-import { productionProcessRepository } from "@/app/lib/@backend/infra";
+import type { IProductionProcess } from "@/backend/domain/production/entity/production-process.definition";
+import type { IProductionProcessRepository } from "@/backend/domain/production/repository/production-process.repository";
+import { productionProcessRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
 
 class DeleteOneProductionProcessUsecase {
@@ -20,3 +18,5 @@ class DeleteOneProductionProcessUsecase {
 export const deleteOneProductionProcessUsecase = singleton(
   DeleteOneProductionProcessUsecase
 );
+
+

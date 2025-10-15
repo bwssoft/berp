@@ -1,6 +1,8 @@
 "use client";
 
-import { Button, Input } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+
 import { useRequestNewPasswordUserForm } from "./use-request-new-password.user.form";
 
 export function RequestNewPasswordUserForm() {

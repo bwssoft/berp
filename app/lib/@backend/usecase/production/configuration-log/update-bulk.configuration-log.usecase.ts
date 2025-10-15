@@ -1,9 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IConfigurationLog,
-  IConfigurationLogRepository,
-} from "@/app/lib/@backend/domain";
-import { configurationLogRepository } from "@/app/lib/@backend/infra";
+import type { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
+import type { IConfigurationLogRepository } from "@/backend/domain/production/repository/configuration-log.repository";
+import { configurationLogRepository } from "@/backend/infra";
 
 class UpdateBulkConfigurationLogUsecase {
   repository: IConfigurationLogRepository;

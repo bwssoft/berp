@@ -1,3 +1,3 @@
-import { IBaseObjectRepository } from "../../@shared/repository/object.repository.interface";
+import type { IBaseObjectRepository } from "@/backend/domain/@shared/repository/object.repository.interface";
 
 export interface IProposalObjectRepository extends IBaseObjectRepository<Buffer> { }

@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Device,
-  IFirmwareUpdateLog,
-  ITechnology,
-} from "../../../../../../@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { IFirmwareUpdateLog } from "@/backend/domain/production/entity/firmware-update-log.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { ISerialPort } from "../../../../../hook/use-serial-port";
 import { useTechnology } from "../../../../../hook/use-technology";
-import { createManyFirmwareUpdateLog } from "@/app/lib/@backend/action/production/firmware-update-log.action";
+import { createManyFirmwareUpdateLog } from "@/backend/action/production/firmware-update-log.action";
 
 namespace Namespace {
   export interface UseFirmwareUpdateProps {
@@ -152,3 +150,4 @@ export const useFirmwareUpdate = (props: Namespace.UseFirmwareUpdateProps) => {
     setToDetect,
   };
 };
+

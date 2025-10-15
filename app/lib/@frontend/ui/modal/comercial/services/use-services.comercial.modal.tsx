@@ -4,14 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { IPriceTableService } from "@/app/lib/@backend/domain";
+import {IPriceTableService} from "@/backend/domain/commercial/entity/price-table-service.definition";
 import {
   createOnePriceTableService,
   findManyPriceTableService,
   deletePriceTableService,
-} from "@/app/lib/@backend/action/commercial/price-table-service.action";
+} from "@/backend/action/commercial/price-table-service.action";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 
 const ServiceSchema = z.object({ name: z.string().trim().min(1) });
 type ServiceForm = z.infer<typeof ServiceSchema>;
@@ -128,3 +128,4 @@ export function useServiceModal() {
     refreshServices: fetchServices,
   };
 }
+

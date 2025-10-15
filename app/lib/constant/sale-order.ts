@@ -1,5 +1,5 @@
-import { IFinancialOrder } from "../@backend/domain";
-import { OmieSaleOrderStage } from "../@backend/domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
+import { IFinancialOrder } from "@/backend/domain/financial/entity/financial-order.definition";
+import { OmieSaleOrderStage } from "@/backend/domain/@shared/webhook/omie/omie-sale-order.webhook.interface";
 
 //objeto para mapear o titulo dos cards nos insights dos forms de produto
 type StageOmieMapped = Record<

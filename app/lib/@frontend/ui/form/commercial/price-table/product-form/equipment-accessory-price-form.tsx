@@ -1,22 +1,21 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { Input } from "@/frontend/ui/component/input";
+import { Label } from "@/frontend/ui/component/label";
 import {
-  Input,
-  Label,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Toggle,
-} from "../../../../component";
+} from "@/frontend/ui/component/card";
+import { Toggle } from "@/frontend/ui/component/toggle";
+
 import { PriceTier, PriceTierInput } from "./price-tier-input";
 
 type PriceRange = { from: number; to: number; unitPrice: number };
 
-const toPriceTiers = (
-  priceRange?: PriceRange[]
-): PriceTier[] | undefined => {
+const toPriceTiers = (priceRange?: PriceRange[]): PriceTier[] | undefined => {
   if (!priceRange || priceRange.length === 0) {
     return undefined;
   }

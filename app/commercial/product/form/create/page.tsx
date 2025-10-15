@@ -1,6 +1,8 @@
-import { findManyProductCategory } from "@/app/lib/@backend/action/commercial/product/product.category.action";
-import { BackButton } from "@/app/lib/@frontend/ui/component";
-import { CreateOneProductForm } from "@/app/lib/@frontend/ui/form";
+import { findManyProductCategory } from "@/backend/action/commercial/product/product.category.action";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
+import { CreateOneProductForm } from '@/frontend/ui/form/commercial/product/create/create.product.form';
+
 
 export default async function Page() {
   const { docs: categories } = await findManyProductCategory({ filter: {} });
@@ -27,3 +29,4 @@ export default async function Page() {
     </div>
   );
 }
+

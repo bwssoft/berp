@@ -1,5 +1,6 @@
-import { findOneAutoTestLog } from "@/app/lib/@backend/action/production/auto-test-log.action";
-import { AutoTestLogDescription } from "@/app/lib/@frontend/ui/description";
+import { findOneAutoTestLog } from "@/backend/action/production/auto-test-log.action";
+import { AutoTestLogDescription } from '@/frontend/ui/description/production/auto-test-log/auto-test-log.description';
+
 
 interface Props {
   params: Promise<{

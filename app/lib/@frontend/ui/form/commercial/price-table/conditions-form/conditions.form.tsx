@@ -2,7 +2,11 @@
 
 import { useMemo } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { Button, Checkbox, Combobox, Input } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { Input } from '@/frontend/ui/component/input';
+
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useConditionsForm } from "./use-conditions.form";
 import { BrazilianUF } from "../create/use-price-table.form";

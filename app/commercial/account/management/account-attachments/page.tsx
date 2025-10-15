@@ -1,7 +1,7 @@
 "use client";
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyAccountAttachments } from "@/app/lib/@backend/action/commercial/account-attachment.find.action";
-import { IAccountAttachment } from "@/app/lib/@backend/domain";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyAccountAttachments } from "@/backend/action/commercial/account-attachment.find.action";
+import {IAccountAttachment} from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { AttachmentsDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/attachments.data";
 import { useQuery } from "@tanstack/react-query";
 import { Filter } from "mongodb";
@@ -59,3 +59,4 @@ function query(props: {
 
   return filter;
 }
+

@@ -1,7 +1,7 @@
 "use client";
 //tava reclamando da função cell nas colunas
 
-import { ITechnicalSheet } from "@/app/lib/@backend/domain";
+import {ITechnicalSheet} from "@/backend/domain/engineer/entity/technical-sheet.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./columns";
 
@@ -20,3 +20,4 @@ export function TechnicalSheetTable(props: Props) {
     />
   );
 }
+

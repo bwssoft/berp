@@ -2,8 +2,9 @@
 
 import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { findManyAudit } from "@/app/lib/@backend/action/admin/audit.action";
-import { AuditDomain, IUser } from "@/app/lib/@backend/domain";
+import { findManyAudit } from "@/backend/action/admin/audit.action";
+import {AuditDomain} from "@/backend/domain/admin/entity/audit.definition";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 
 export function useAuditUserModal() {
   const [open, setOpen] = useState(false);
@@ -54,3 +55,4 @@ export function useAuditUserModal() {
     page,
   };
 }
+

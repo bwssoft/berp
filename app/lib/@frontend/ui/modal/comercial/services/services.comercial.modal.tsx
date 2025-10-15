@@ -1,17 +1,14 @@
 "use client";
 
-import { IPriceTableService } from "@/app/lib/@backend/domain";
-import {
-  Button,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-} from "../../../component";
+import {IPriceTableService} from "@/backend/domain/commercial/entity/price-table-service.definition";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { ServiceTable } from "../../../table/commercial/services/services.table";
 
 interface FormValues {
@@ -80,3 +77,4 @@ export function ServiceModal({
     </Modal>
   );
 }
+

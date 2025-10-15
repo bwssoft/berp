@@ -1,12 +1,13 @@
 "use client";
 
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
-import { IComponentCategory } from "@/app/lib/@backend/domain";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
+import {IComponentCategory} from "@/backend/domain/engineer/entity/component.category.definition";
 import { DataTable } from "@/app/lib/@frontend/ui/component/data-table";
 import { columns } from "./component.category.columns";
 import { Pagination } from "../../../component/pagination";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 const PAGE_SIZE = 10;
 
@@ -46,3 +47,4 @@ export function ComponentCategoryTable({ data, currentPage = 1 }: Props) {
     </>
   );
 }
+

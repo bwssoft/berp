@@ -1,5 +1,5 @@
-import { exportConfigurationLog } from "@/app/lib/@backend/action/production/configuration-log.action";
-import { IConfigurationLog } from "@/app/lib/@backend/domain";
+import { exportConfigurationLog } from "@/backend/action/production/configuration-log.action";
+import {IConfigurationLog} from "@/backend/domain/production/entity/configuration-log.definition";
 import { useDisclosure } from "@/app/lib/@frontend/hook/use-disclosure";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { useToast } from "@/app/lib/@frontend/hook/use-toast";
@@ -135,3 +135,4 @@ export const useConfigurationLogSearchForm = ({
     filterDisclosure,
   };
 };
+

@@ -1,7 +1,7 @@
 "use server";
 
-import { OmieEnterpriseEnum } from "@/app/lib/@backend/domain/@shared/gateway/omie.gateway.interface";
-import { attachmentOmieGateway } from "@/app/lib/@backend/infra";
+import { OmieEnterpriseEnum } from "@/backend/domain/@shared/gateway/omie.gateway.interface";
+import { attachmentOmieGateway } from "@/backend/infra";
 
 type GetSaleOrderAttachmentUrlParams = {
   saleOrderId: string;
@@ -20,3 +20,4 @@ export async function getSaleOrderAttachmentUrl(
 
   return url;
 }
+

@@ -1,20 +1,22 @@
-import {
-  AuditDomain,
-  IAccountAttachment,
-  IUser,
-} from "@/app/lib/@backend/domain";
-import { IAccountAttachmentObjectRepository } from "@/app/lib/@backend/domain/commercial/repository";
+import type { IUser } from "@/backend/domain/admin/entity/user.definition";
+import type {
+  IAccountAttachmentObjectRepository,
+  IAccountAttachmentRepository,
+} from "@/backend/domain/commercial/repository";
+import type { IAccountAttachment } from "@/backend/domain/commercial/entity/account-attachment.definition";
 import { getContentTypeFromFileName } from "@/app/lib/util/get-content-type-from-filename";
 import { singleton } from "@/app/lib/util/singleton";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import {
+  accountAttachmentObjectRepository,
+  accountAttachmentRepository,
+} from "@/backend/infra";
 
 interface CreateAccountAttachmentUseCaseProps {
   accountAttachmentObjectRepository: IAccountAttachmentObjectRepository;
 }
-
-import { IAccountAttachmentRepository } from "@/app/lib/@backend/domain/commercial/repository/account-attachment.repository";
-import { accountAttachmentRepository } from "@/app/lib/@backend/infra/repository/mongodb/commercial/account-attachment.repository";
 
 export class CreateAccountAttachmentUseCase {
   private accountAttachmentObjectRepository: IAccountAttachmentObjectRepository;
@@ -108,9 +110,6 @@ export class CreateAccountAttachmentUseCase {
 
 class CreateAccountAttachmentUseCaseImpl extends CreateAccountAttachmentUseCase {
   constructor() {
-    const {
-      accountAttachmentObjectRepository,
-    } = require("@/app/lib/@backend/infra/repository/s3/commercial");
     super({ accountAttachmentObjectRepository });
   }
 }
@@ -118,3 +117,4 @@ class CreateAccountAttachmentUseCaseImpl extends CreateAccountAttachmentUseCase 
 export const createAccountAttachmentUsecase = singleton(
   CreateAccountAttachmentUseCaseImpl
 );
+

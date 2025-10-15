@@ -1,7 +1,9 @@
 "use client";
 
-import { Dialog, Button } from "@/app/lib/@frontend/ui/component";
-import { IAddress } from "@/app/lib/@backend/domain";
+import { Dialog } from '@/frontend/ui/component/dialog';
+import { Button } from '@/frontend/ui/component/button';
+
+import {IAddress} from "@/backend/domain/commercial/entity/address.definition";
 
 interface AddressDeleteDialogProps {
     address?: IAddress;
@@ -47,3 +49,4 @@ export function AddressDeleteDialog({
         </Dialog>
     );
 }
+

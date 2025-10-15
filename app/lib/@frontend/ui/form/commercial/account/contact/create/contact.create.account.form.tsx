@@ -1,14 +1,12 @@
 "use client";
 
 import { Controller } from "react-hook-form";
-import {
-  Button,
-  Checkbox,
-  Combobox,
-  ContactFormSchema,
-  Input,
-  useCreateContactAccount,
-} from "../../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Combobox } from '@/frontend/ui/component/combobox/index';
+import { ContactFormSchema, useCreateContactAccount } from '@/frontend/ui/form/commercial/account/contact/create/use-contact.create.account';
+import { Input } from '@/frontend/ui/component/input';
+
 import { ContactFormSchemaWithOrigin } from "./use-contact.create.account";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { ContactTable } from "@/app/lib/@frontend/ui/table/commercial/contact/table";

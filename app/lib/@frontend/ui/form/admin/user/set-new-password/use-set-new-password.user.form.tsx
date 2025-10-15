@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { updateUserPassword } from "@/app/lib/@backend/action/admin/user.action";
-import { logout } from "@/app/lib/@backend/action/auth/login.action";
+import { updateUserPassword } from "@/backend/action/admin/user.action";
+import { logout } from "@/backend/action/auth/login.action";
 
 const schema = z
   .object({
@@ -112,3 +112,4 @@ export function useSetNewPasswordUserForm(userId: string) {
     rules
   };
 }
+

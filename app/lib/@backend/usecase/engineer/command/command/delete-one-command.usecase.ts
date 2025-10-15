@@ -1,17 +1,19 @@
-import { singleton } from "@/app/lib/util/singleton"
-import { ICommand, ICommandRepository } from "@/app/lib/@backend/domain"
-import { commandRepository } from "@/app/lib/@backend/infra"
+import { singleton } from "@/app/lib/util/singleton";
+import type { ICommand } from "@/backend/domain/engineer/entity/command.definition";
+import type { ICommandRepository } from "@/backend/domain/engineer/repository/command.repository.interface";
+import { commandRepository } from "@/backend/infra";
 
 class DeleteOneCommandUsecase {
-  repository: ICommandRepository
+  repository: ICommandRepository;
 
   constructor() {
-    this.repository = commandRepository
+    this.repository = commandRepository;
   }
 
   async execute(input: Partial<ICommand>) {
-    return await this.repository.deleteOne(input)
+    return await this.repository.deleteOne(input);
   }
 }
 
-export const deleteOneCommandUsecase = singleton(DeleteOneCommandUsecase)
+export const deleteOneCommandUsecase = singleton(DeleteOneCommandUsecase);
+

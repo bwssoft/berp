@@ -1,4 +1,4 @@
-import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { findOneTechnology } from "@/backend/action/engineer/technology.action";
 import { AutoTestPanel } from "./@components/auto-test";
 
 interface Props {
@@ -39,3 +39,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

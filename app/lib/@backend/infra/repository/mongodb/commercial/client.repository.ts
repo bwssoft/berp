@@ -1,4 +1,4 @@
-import { IClient } from "@/app/lib/@backend/domain";
+import { IClient } from "@/backend/domain/commercial/entity/client.definition";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
@@ -12,3 +12,4 @@ class ClientRepository extends BaseRepository<IClient> {
 }
 
 export const clientRepository = singleton(ClientRepository)
+

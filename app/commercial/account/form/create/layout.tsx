@@ -1,4 +1,5 @@
-import { CreateAccountFlowProvider } from "@/app/lib/@frontend/context";
+import { CreateAccountFlowProvider } from '@/frontend/context/create-account-flow.context';
+
 
 interface CreateAccountLayoutProps {
   children: React.ReactNode;

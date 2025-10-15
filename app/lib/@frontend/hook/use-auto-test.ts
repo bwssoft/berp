@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { IAutoTestLog, ITechnology } from "../../@backend/domain";
+import { IAutoTestLog } from "@/backend/domain/production/entity/auto-test-log.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
 import { createManyAutoTestLog } from "../../@backend/action/production/auto-test-log.action";

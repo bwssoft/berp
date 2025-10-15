@@ -1,7 +1,9 @@
 // src/app/lib/@frontend/ui/modal/CreateAnnexHistoricalForm.tsx
 "use client";
 
-import { Button, Input } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+
 import { DocumentArrowUpIcon, PaperClipIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";

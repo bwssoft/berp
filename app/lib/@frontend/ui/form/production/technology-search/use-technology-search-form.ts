@@ -1,4 +1,4 @@
-import { findManyTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { findManyTechnology } from "@/backend/action/engineer/technology.action";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback } from "react";
@@ -41,3 +41,4 @@ export const useTechnologySearchForm = () => {
     handleSearchTechnology,
   };
 };
+

@@ -1,6 +1,6 @@
 "use client";
 import { Controller } from "react-hook-form";
-import { IFirmware } from "@/app/lib/@backend/domain";
+import {IFirmware} from "@/backend/domain/engineer/entity/firmware.definition";
 import { FileUpload } from "../../../../component/input-file";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useFirmwareUpdateForm } from "./use-firmware-update-form";
@@ -196,3 +196,4 @@ export function FirmwareUpdateForm(props: Props) {
     </form>
   );
 }
+

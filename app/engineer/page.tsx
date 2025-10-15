@@ -9,8 +9,10 @@ import {
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
 
-import { GridList } from "../lib/@frontend/ui/component";
-import { useAuth } from "../lib/@frontend/context";
+import { GridList } from '@/frontend/ui/component/grid-list';
+
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { Cpu, InspectionPanel, Wrench } from "lucide-react";
 
 const actions = [

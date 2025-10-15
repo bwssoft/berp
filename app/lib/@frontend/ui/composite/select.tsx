@@ -1,14 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Select as ShadSelect,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Label,
-} from "@/app/lib/@frontend/ui/component";
+import { Select as ShadSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+import { Label } from '@/frontend/ui/component/label';
+
 import { cn } from "@/app/lib/util/cn";
 
 export function Select<T>(props: {

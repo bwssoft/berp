@@ -2,12 +2,12 @@
 
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { useConfigurationProfileUpdateForm } from "./use-configuration-profile.update-from-crm.form";
-import {
-  IClient,
-  IConfigurationProfile,
-  ITechnology,
-} from "@/app/lib/@backend/domain";
-import { Button } from "../../../../component";
+import {IClient} from "@/backend/domain/commercial/entity/client.definition";
+import {IConfigurationProfile} from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
+import {} from "@/backend/domain/admin/entity/control.definition";
+import { Button } from '@/frontend/ui/component/button';
+
 
 interface Props {
   clients: IClient[];
@@ -377,3 +377,4 @@ export function ConfigurationProfileUpdateFromCrmForm(props: Props) {
     </form>
   );
 }
+

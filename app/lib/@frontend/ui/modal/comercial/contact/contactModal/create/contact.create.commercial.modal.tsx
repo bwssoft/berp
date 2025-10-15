@@ -1,11 +1,8 @@
 "use client";
 
-import {
-  CreateContactAccountForm,
-  Modal,
-  ModalBody,
-  ModalContent,
-} from "@/app/lib/@frontend/ui/component";
+import { CreateContactAccountForm } from '@/frontend/ui/form/commercial/account/contact/create/contact.create.account.form';
+import { Modal, ModalBody, ModalContent } from '@/frontend/ui/component/modal';
+
 import { ContactFormSchemaWithOrigin } from "@/app/lib/@frontend/ui/form/commercial/account/contact/create/use-contact.create.account";
 import React from "react";
 

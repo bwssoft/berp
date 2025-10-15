@@ -1,5 +1,6 @@
 import { usePathname } from "next/navigation";
-import { IAddress, IContact } from "@/app/lib/@backend/domain";
+import {IAddress} from "@/backend/domain/commercial/entity/address.definition";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 import {
   LocalAddress,
   LocalContact,
@@ -74,3 +75,4 @@ export function useAccountStepProgress({
       (step.id === "contact" && contacts.length > 0),
   }));
 }
+

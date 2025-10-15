@@ -1,5 +1,6 @@
-import { findOneIdentificationLog } from "@/app/lib/@backend/action/production/identification-log.action";
-import { IdentificationLogDescription } from "@/app/lib/@frontend/ui/description";
+import { findOneIdentificationLog } from "@/backend/action/production/identification-log.action";
+import { IdentificationLogDescription } from '@/frontend/ui/description/production/identification-log/identification-log.description';
+
 
 interface Props {
   params: Promise<{
