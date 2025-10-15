@@ -4,7 +4,9 @@ import { useCallback, useEffect, useRef } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button, Input, Label } from "../../../../component";
+import { Label } from "../../../../component/label";
+import { Input } from "../../../../component/input";
+import { Button } from "../../../../component/button";
 
 const OPEN_RANGE_TO = Number.MAX_SAFE_INTEGER.toString();
 
@@ -301,14 +303,9 @@ export function PriceTierInput({
               )}
               <div className="flex-1">
                 <Label className="text-sm">Preço por unidade</Label>
-                <Input
-                  {...unitPriceRegister}
-                  placeholder="0"
-                />
+                <Input {...unitPriceRegister} placeholder="0" />
                 {unitPriceError && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {unitPriceError}
-                  </p>
+                  <p className="text-xs text-red-500 mt-1">{unitPriceError}</p>
                 )}
               </div>
             </div>
@@ -331,9 +328,7 @@ export function PriceTierInput({
         <Button type="button" variant="outline" onClick={handleAddTier}>
           Adicionar faixa
         </Button>
-        {rootError && (
-          <p className="text-xs text-red-500">{rootError}</p>
-        )}
+        {rootError && <p className="text-xs text-red-500">{rootError}</p>}
       </div>
     </div>
   );
