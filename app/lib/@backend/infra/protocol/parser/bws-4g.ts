@@ -304,7 +304,7 @@ export class Bws4gParser {
 
   static firmware(input: string) {
     if (typeof input !== "string") return undefined;
-    if (!input.includes("BWSiot_E3+4G")) return undefined;
+    if (!input.includes("BWS4G_SC")) return undefined;
     return input;
   }
 
