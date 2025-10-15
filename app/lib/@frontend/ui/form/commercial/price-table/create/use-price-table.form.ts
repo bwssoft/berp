@@ -235,15 +235,15 @@ const createPriceRange = (tiers: any[]): IPriceRange[] => {
       tier?.to !== undefined && tier?.to !== null && tier?.to !== ""
         ? tier.to
         : tier?.isLast
-        ? Number.MAX_SAFE_INTEGER
-        : undefined;
+          ? Number.MAX_SAFE_INTEGER
+          : undefined;
 
     const to =
       rawTo === undefined
         ? Number.MAX_SAFE_INTEGER
         : typeof rawTo === "string"
-        ? Number(rawTo)
-        : Number(rawTo);
+          ? Number(rawTo)
+          : Number(rawTo);
 
     const unitPriceSource =
       tier?.unitPrice !== undefined && tier?.unitPrice !== null
@@ -877,7 +877,7 @@ export function usePriceTableForm({
 
       setMessageErrorCondition({
         status: validationResult.status,
-        message: validationResult.messages[0] ?? "",
+        message: validationResult.messages ?? "",
       });
 
       if (validationResult.status !== "green") {
@@ -1022,4 +1022,3 @@ export const TO_BILL_FOR_OPTIONS = [
   { id: "31.941.680/0001-71", text: "MGC - 31.941.680/0001-71" },
   { id: "14.334.132/0001-64", text: "WFC - 14.334.132/0001-64" },
 ];
-
