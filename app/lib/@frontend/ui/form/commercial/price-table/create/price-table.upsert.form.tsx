@@ -132,6 +132,8 @@ export function UpsertPriceTableForm({
     openDialog: openPublishPriceTableDialog,
     isLoading: isLoadingPublish,
     publishPriceTable,
+    fieldErrors,
+    clearFieldError,
   } = usePublishPriceTableDialog({
     priceTableId,
     onSuccess: () => {
@@ -371,13 +373,14 @@ export function UpsertPriceTableForm({
                         value={form.watch("startDateTime")}
                         onChange={(date) => {
                           form.setValue("startDateTime", date as Date);
+                           clearFieldError("startDateTime");
                         }}
                         placeholder="Selecione a data de início"
                         className="w-full"
                       />
-                      {form.formState.errors.startDateTime?.message && (
+                      {(fieldErrors.startDateTime || form.formState.errors.startDateTime?.message) && (
                         <p className="mt-1 text-sm text-red-600">
-                          {form.formState.errors.startDateTime?.message}
+                          {fieldErrors.startDateTime || form.formState.errors.startDateTime?.message}
                         </p>
                       )}
                     </div>
@@ -392,13 +395,14 @@ export function UpsertPriceTableForm({
                             value={form.watch("endDateTime")}
                             onChange={(date) => {
                               form.setValue("endDateTime", date as Date);
+                              clearFieldError("endDateTime");
                             }}
                             placeholder="Selecione a data de fim"
                             className="w-full"
                           />
-                          {form.formState.errors.endDateTime?.message && (
+                          {(fieldErrors.endDateTime || form.formState.errors.endDateTime?.message) && (
                             <p className="mt-1 text-sm text-red-600">
-                              {form.formState.errors.endDateTime?.message}
+                              {fieldErrors.endDateTime || form.formState.errors.endDateTime?.message}
                             </p>
                           )}
                         </>
@@ -438,12 +442,15 @@ export function UpsertPriceTableForm({
                 />
 
                 {/* mensagens de erro ou sucesso na validação das condições */}
-                {messageErrorCondition.status && (
-                  <StatusBanner
-                    status={status}
-                    message={messageErrorCondition.message}
-                    statusStyles={STATUS_STYLES}
-                  />
+                {messageErrorCondition && messageErrorCondition.message.map(
+                    (item, index) => (
+                    <StatusBanner
+                      key={index}
+                      status={messageErrorCondition.status}
+                      message={item}
+                      statusStyles={STATUS_STYLES}
+                    />
+                )
                 )}
               </DisclosurePanel>
             </div>

@@ -96,7 +96,7 @@ class UpdateOnePriceTableUsecase {
           $set: {
             name: input.name,
             startDateTime: input.startDateTime,
-            endDateTime: input.endDateTime,
+            endDateTime: input.isTemporary ? input.endDateTime : undefined,
             isTemporary: input.isTemporary,
             //se editar e salvar enquanto status for Aguardando Publicação, voltar o status para Rascunho.
             status:
