@@ -108,6 +108,7 @@ export const useBWS4G = () => {
     openTransport: async (transport) => {
       await openPort(transport, {
         baudRate: 115200,
+        stopBits: 1,
       });
     },
     closeTransport: closePort,
