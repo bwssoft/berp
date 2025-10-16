@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
 import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import Link from "next/link";
-import { Button } from '@/frontend/ui/component/button';
+import { Button } from "@/frontend/ui/component/button";
 
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
@@ -278,6 +278,52 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       },
     },
   ],
+  DM_BWS_4G: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => {
+        const before = row.original.equipment_before.serial ?? "--";
+        const after = row.original.equipment_after.serial ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: "IMEI",
+      accessorKey: "equipment.imei",
+      cell: ({ row }) => {
+        const before = row.original.equipment_before.imei ?? "--";
+        const after = row.original.equipment_after.imei ?? "--";
+
+        return (
+          <div className="flex flex-col">
+            <span
+              title={`Antes: ${before}`}
+              className="text-sm text-muted-foreground"
+            >
+              {before}
+            </span>
+            <span title={`Depois: ${after}`} className="text-sm font-medium">
+              {after}
+            </span>
+          </div>
+        );
+      },
+    },
+  ],
 };
 
 /**
@@ -309,4 +355,3 @@ export function getColumns(type: Device.Model): ColumnDef<Row>[] {
     },
   ];
 }
-

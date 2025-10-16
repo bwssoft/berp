@@ -97,6 +97,15 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
         } => Boolean(i.equipment?.serial && i.equipment?.firmware)
       );
 
+      if (!validDetected.length) {
+        toast({
+          title: "Atenção!",
+          description:
+            "Nenhum dispositivo válido foi detectado para configuração.",
+        });
+        return;
+      }
+
       const configurationResult = await handleConfiguration(
         validDetected,
         configuration_profile
@@ -152,11 +161,19 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       // update state with configuration process result
       setConfigured((prev) => prev.concat(dataSavedOnDb));
 
-      toast({
-        title: "Sucesso!",
-        description: "Equipamentos configurados com sucesso.",
-        variant: "success",
-      });
+      if (dataSavedOnDb.every((log: IConfigurationLog) => !!log.status)) {
+        toast({
+          title: "Sucesso!",
+          description: "Processo de configuração finalizado.",
+          variant: "success",
+        });
+      } else {
+        toast({
+          title: "Error!",
+          description: "Ocorreu um erro durante a configuração.",
+          variant: "error",
+        });
+      }
 
       redirectToCheckEnabled && redirectToCheck(dataSavedOnDb);
     } catch (error) {
