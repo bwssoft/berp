@@ -459,14 +459,18 @@ export const useBWS4G = () => {
 
       try {
         const messages = [
+          { command: "DF\r\n", key: "debug_off", matcher: "Debug OFF" },
+
           {
             key: "write_imei",
             command: `13041SETSN,${id}`,
           },
           {
+            delay_before: 300,
             key: "read_imei",
             command: `IMEI`,
           },
+          { command: "DN\r\n", key: "debug_on", matcher: "Debug ON" },
         ] as const;
 
         const init_time = Date.now();
