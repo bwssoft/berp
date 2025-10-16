@@ -146,7 +146,7 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(result),
       });
-      if (!res.ok) throw new Error("Erro ao salvar log de configuração");
+      if (!res.ok) throw new Error("Erro ao salvar os logs");
       const dataSavedOnDb = await res.json();
 
       // update state with configuration process result
