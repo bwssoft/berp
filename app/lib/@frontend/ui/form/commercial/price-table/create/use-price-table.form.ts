@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { addDays } from "date-fns";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import {
   createOnePriceTable,
@@ -433,7 +434,7 @@ export function usePriceTableForm({
           if (cloneMode) {
             // For clone mode: only set endDateTime if the original table is temporary
             endDateTime = existingPriceTable.isTemporary
-              ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+              ? addDays(new Date(), 1)
               : undefined;
           } else {
             // For edit mode: preserve existing logic
@@ -441,7 +442,7 @@ export function usePriceTableForm({
               // If it's temporary, use existing endDateTime or set a default
               endDateTime = existingPriceTable.endDateTime
                 ? new Date(existingPriceTable.endDateTime)
-                : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+                : addDays(new Date(), 1);
             } else {
               // If it's not temporary, endDateTime should be undefined
               endDateTime = undefined;
@@ -496,10 +497,7 @@ export function usePriceTableForm({
         if (!value.isTemporary) {
           form.setValue("endDateTime", undefined);
         } else if (value.isTemporary && !value.endDateTime) {
-          form.setValue(
-            "endDateTime",
-            new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-          );
+          form.setValue("endDateTime", addDays(new Date(), 1));
         }
       }
     });
