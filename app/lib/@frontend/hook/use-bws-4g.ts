@@ -458,24 +458,10 @@ export const useBWS4G = () => {
       const { port, equipment } = detected;
 
       try {
-        const identification = await findOneSerial({ serial: id });
-        if (!identification) {
-          throw new Error("Serial não encontrado na base");
-        }
-
         const messages = [
           {
-            key: "write_serial",
-            command: `WINS=${id}`,
-          },
-          {
             key: "write_imei",
-            command: `13041SETSN,${identification.imei}`,
-          },
-          {
-            key: "read_serial",
-            command: `RINS`,
-            delay_before: 2000,
+            command: `13041SETSN,${id}`,
           },
           {
             key: "read_imei",
@@ -489,13 +475,9 @@ export const useBWS4G = () => {
           messages,
         });
 
-        const [imei, serial] = [
-          Bws4gParser.imei(response.read_imei),
-          Bws4gParser.serial(response.read_serial),
-        ];
+        const imei = Bws4gParser.imei(response.read_imei);
 
-        const status =
-          identification.serial === serial && identification.imei === imei;
+        const status = id === imei;
 
         const end_time = Date.now();
         return {
@@ -513,8 +495,8 @@ export const useBWS4G = () => {
             imei: equipment.imei,
           },
           equipment_after: {
-            serial,
             imei,
+            serial: imei,
           },
         };
       } catch (error) {
