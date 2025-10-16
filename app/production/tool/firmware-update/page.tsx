@@ -1,4 +1,4 @@
-import { findOneTechnology } from "@/app/lib/@backend/action/engineer/technology.action";
+import { findOneTechnology } from "@/backend/action/engineer/technology.action";
 import { FirmwareUpdatePage } from "@/app/lib/@frontend/ui/page/production/tool/firmware-update/firmware-update.page";
 
 interface Props {
@@ -20,3 +20,4 @@ export default async function Page(props: Props) {
 
   return <FirmwareUpdatePage technology={technology} />;
 }
+

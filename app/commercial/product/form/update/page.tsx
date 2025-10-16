@@ -1,9 +1,8 @@
-import { findOneProduct } from "@/app/lib/@backend/action/commercial/product/product.action";
-import { findManyProductCategory } from "@/app/lib/@backend/action/commercial/product/product.category.action";
-import {
-  BackButton,
-  UpdateOneProductForm,
-} from "@/app/lib/@frontend/ui/component";
+import { findOneProduct } from "@/backend/action/commercial/product/product.action";
+import { findManyProductCategory } from "@/backend/action/commercial/product/product.category.action";
+import { BackButton } from '@/frontend/ui/component/back-button';
+import { UpdateOneProductForm } from '@/frontend/ui/form/commercial/product/update/update.product.form';
+
 
 interface Props {
   searchParams: {
@@ -59,3 +58,4 @@ export default async function Page(props: Props) {
     </div>
   );
 }
+

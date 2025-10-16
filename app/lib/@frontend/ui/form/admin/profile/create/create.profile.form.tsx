@@ -1,7 +1,8 @@
 "use client";
 import { Button } from "@/app/lib/@frontend/ui/component/button";
 import { useCreateProfileForm } from "./use-create.profile.form";
-import { Input } from "../../../../component";
+import { Input } from '@/frontend/ui/component/input';
+
 
 export function CreateProfileForm() {
     const { handleSubmit, register, handleCancelCreate, errors } =

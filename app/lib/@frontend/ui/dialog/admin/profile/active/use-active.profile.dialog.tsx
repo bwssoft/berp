@@ -3,7 +3,7 @@
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useCallback, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { activeProfile } from "@/app/lib/@backend/action/admin/profile.action";
+import { activeProfile } from "@/backend/action/admin/profile.action";
 
 export function useActiveProfileDialog() {
   const [open, setOpen] = useState(false);
@@ -61,3 +61,4 @@ export function useActiveProfileDialog() {
 
   return values;
 }
+

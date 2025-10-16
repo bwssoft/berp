@@ -1,8 +1,10 @@
+import type { Filter } from "mongodb";
+
 import { singleton } from "@/app/lib/util/singleton";
-import { type Filter } from "mongodb";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { IPriceTable, IPriceTableRepository } from "@/app/lib/@backend/domain";
-import { priceTableRepository } from "../../../infra/repository/mongodb/commercial/price-table.repository";
+import { RemoveMongoId } from "@/backend/decorators";
+import type { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
+import type { IPriceTableRepository } from "@/backend/domain/commercial";
+import { priceTableRepository } from "@/backend/infra";
 
 class FindOnePriceTableUsecase {
   repository: IPriceTableRepository;
@@ -20,3 +22,4 @@ class FindOnePriceTableUsecase {
 }
 
 export const findOnePriceTableUsecase = singleton(FindOnePriceTableUsecase);
+

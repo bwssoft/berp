@@ -1,4 +1,4 @@
-import { ITechnology } from "@/app/lib/@backend/domain";
+import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { useHandleParamsChange } from "@/app/lib/@frontend/hook/use-handle-params-change";
@@ -54,3 +54,4 @@ export function useSearchLoraActivationForm(props: Props) {
     handleClearForm,
   };
 }
+

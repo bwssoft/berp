@@ -1,4 +1,4 @@
-import { IContact } from "@/app/lib/@backend/domain";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 
 export interface ContactListItem {
   contactId: string;
@@ -11,3 +11,4 @@ export interface ContactListItem {
   contactItems: IContact["contactItems"];
   originType: string;
 }
+

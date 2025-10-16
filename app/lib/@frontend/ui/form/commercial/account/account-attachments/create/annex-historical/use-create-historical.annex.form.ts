@@ -6,11 +6,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { useState } from "react";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useQueryClient } from "@tanstack/react-query";
 
-import { createAccountAttachmentHistorical } from "@/app/lib/@backend/action/commercial/account-attachment.historical.action";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
+import { createAccountAttachmentHistorical } from "@/backend/action/commercial/account-attachment.historical.action";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
 
 const schema = z.object({
   name: z.string().min(1, "Nome do anexo é obrigatório"),
@@ -107,3 +108,4 @@ export function useCreateAnnexHistoricalForm({ accountId, closeModal, handleFile
     isUploading,
   };
 }
+

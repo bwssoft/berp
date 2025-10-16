@@ -1,7 +1,5 @@
-import {
-  IConfigurationLog,
-  IConfigurationLogRepository,
-} from "@/app/lib/@backend/domain";
+import type { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
+import type { IConfigurationLogRepository } from "@/backend/domain/production/repository/configuration-log.repository";
 import { singleton } from "@/app/lib/util/singleton";
 import { BaseRepository } from "../@base";
 
@@ -18,3 +16,4 @@ class ConfigurationLogRepository
 }
 
 export const configurationLogRepository = singleton(ConfigurationLogRepository);
+

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { publishPriceTableUsecase } from "@/app/lib/@backend/usecase/commercial/price-table/publish.price-table.usecase";
-import { activatePriceTableUsecase } from "@/app/lib/@backend/usecase/commercial/price-table/active.price-table.usecase";
+import { publishPriceTableUsecase } from "@/backend/usecase/commercial/price-table/publish.price-table.usecase";
+import { activatePriceTableUsecase } from "@/backend/usecase/commercial/price-table/active.price-table.usecase";
 
 export const runtime = "nodejs";
 
@@ -34,3 +34,4 @@ export async function POST(req: NextRequest) {
     { status: out.success ? 200 : 400 }
   );
 }
+

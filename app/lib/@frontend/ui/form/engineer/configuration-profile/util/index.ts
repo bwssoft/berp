@@ -1,4 +1,4 @@
-import { EType } from "@/app/lib/@backend/domain";
+import {EType} from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { configurationProfileConstants } from "@/app/lib/constant";
 import { z } from "zod";
@@ -39,3 +39,4 @@ export const generateConfigurationProfileLinkForClient = async (
       })
     );
 };
+

@@ -4,14 +4,16 @@ import { isValidCPF } from "@/app/lib/util/is-valid-cpf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { IAccount, ICnpjaResponse } from "@/app/lib/@backend/domain";
-import { updateOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
+import {IAccount} from "@/backend/domain/commercial/entity/account.definition";
+import {ICnpjaResponse} from "@/backend/domain/@shared/gateway/cnpja.gateway.interface";
+import { updateOneAccount } from "@/backend/action/commercial/account.action";
 import { z } from "zod";
 
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
 import { isValidRG } from "@/app/lib/util/is-valid-rg";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useQueryClient } from "@tanstack/react-query";
 
 const schema = z
@@ -368,3 +370,4 @@ export function useUpdateAccountForm({ accountData, closeModal }: Props) {
     control: methods.control,
   };
 }
+

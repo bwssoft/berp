@@ -1,18 +1,15 @@
 import { useCallback } from "react";
-import {
-  BwsNb2,
-  BwsNb2Parser,
-  BwsNb2Encoder,
-} from "../../@backend/infra/protocol";
+import { BwsNb2, BwsNb2Parser } from "@/backend/infra/protocol/parser/nb-2";
+import { BwsNb2Encoder } from "@/backend/infra/protocol/encoder/nb-2";
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
   Config,
-  Device,
-  IConfigurationProfile,
   BwsNb2Config,
-} from "../../@backend/domain";
+  IConfigurationProfile,
+} from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { findOneSerial } from "../../@backend/action/engineer/serial.action";
 
 namespace Namespace {

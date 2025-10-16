@@ -1,17 +1,14 @@
 import { useCallback } from "react";
-import {
-  BwsLora,
-  BwsLoraParser,
-  BwsLoraEncoder,
-} from "../../@backend/infra/protocol";
+import { BwsLora, BwsLoraParser } from "@/backend/infra/protocol/parser/lora";
+import { BwsLoraEncoder } from "@/backend/infra/protocol/encoder/lora";
 import { sleep, typedObjectEntries } from "../../util";
 import { Message, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
-  Device,
   IConfigurationProfile,
   BwsLoraConfig,
-} from "../../@backend/domain";
+} from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { getDayZeroTimestamp } from "../../util/get-day-zero-timestamp";
 import { genKeyLorawan } from "../../util/generate-key-lora-wan";
 

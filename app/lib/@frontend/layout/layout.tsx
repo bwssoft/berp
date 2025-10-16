@@ -1,4 +1,5 @@
-import { useAuth } from "../context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import NavBar from "../ui/component/nav-bar";
 import { NavItem, SideBar } from "../ui/component/sidebar";
 

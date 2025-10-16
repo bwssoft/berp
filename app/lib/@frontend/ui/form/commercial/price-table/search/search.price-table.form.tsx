@@ -3,16 +3,11 @@
 import { useForm } from "react-hook-form";
 import { useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Button,
-  DateInput,
-  Input,
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+import { DateInput } from '@/frontend/ui/component/date-input';
+import { Input } from '@/frontend/ui/component/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 type FilterFormData = {

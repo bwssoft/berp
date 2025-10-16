@@ -1,6 +1,7 @@
 import { Controller } from "react-hook-form";
 import { useCreateAccountFormContext } from "@/app/lib/@frontend/context/create-account-form.context";
-import { Input } from "../../../../component";
+import { Input } from '@/frontend/ui/component/input';
+
 
 export function CpfAccountForm() {
   const { methods } = useCreateAccountFormContext();

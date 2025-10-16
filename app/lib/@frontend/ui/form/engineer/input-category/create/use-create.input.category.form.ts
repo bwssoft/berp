@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { createOneInputCategory } from "@/app/lib/@backend/action/engineer/input/input.category.action";
+import { createOneInputCategory } from "@/backend/action/engineer/input/input.category.action";
 
 // Schema de validação com Zod
 const schema = z.object({
@@ -83,3 +83,4 @@ export function useCreateOneInputCategoryForm() {
     handleCancel,
   };
 }
+

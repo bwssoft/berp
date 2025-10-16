@@ -1,4 +1,4 @@
-import { IEnterprise } from "@/app/lib/@backend/domain";
+import { IEnterprise } from "@/backend/domain/business/entity/enterprise.entity";
 import { BaseRepository } from "../@base";
 import { singleton } from "@/app/lib/util/singleton";
 
@@ -12,3 +12,4 @@ class EnterpriseRepository extends BaseRepository<IEnterprise> {
 }
 
 export const enterpriseRepository = singleton(EnterpriseRepository);
+

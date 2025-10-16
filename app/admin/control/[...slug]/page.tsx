@@ -2,8 +2,8 @@ import {
   countControl,
   findManyControl,
   findOneControl,
-} from "@/app/lib/@backend/action/admin/control.action";
-import { findOneProfile } from "@/app/lib/@backend/action/admin/profile.action";
+} from "@/backend/action/admin/control.action";
+import { findOneProfile } from "@/backend/action/admin/profile.action";
 import { SubModuleControlList } from "@/app/lib/@frontend/ui/list/admin/sub-module.control.list";
 import { buildControlTree } from "@/app/lib/util";
 

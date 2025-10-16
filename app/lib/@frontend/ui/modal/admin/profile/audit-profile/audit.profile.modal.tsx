@@ -1,7 +1,8 @@
 "use client";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { Modal, ModalBody, ModalContent } from "../../../../component/modal";
-import { IAudit, IProfile } from "@/app/lib/@backend/domain";
+import {IAudit} from "@/backend/domain/admin/entity/audit.definition";
+import {IProfile} from "@/backend/domain/admin/entity/profile.definition";
 import { AuditTable } from "../../../../table/admin/audit/audit.table";
 
 interface Props {
@@ -43,3 +44,4 @@ export function AuditProfileModal({
     </Modal>
   );
 }
+

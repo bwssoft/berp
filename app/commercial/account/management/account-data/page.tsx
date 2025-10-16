@@ -1,10 +1,10 @@
 "use client";
 
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { findManyContact } from "@/app/lib/@backend/action/commercial/contact.action";
-import { findOneAccountEconomicGroup } from "@/app/lib/@backend/action/commercial/account.economic-group.action";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findOneAccount } from "@/backend/action/commercial/account.action";
+import { findManyAddress } from "@/backend/action/commercial/address.action";
+import { findManyContact } from "@/backend/action/commercial/contact.action";
+import { findOneAccountEconomicGroup } from "@/backend/action/commercial/account.economic-group.action";
 import { AccountDataPage } from "@/app/lib/@frontend/ui/page/commercial/account/data/account.data";
 import { useQueries, useQuery } from "@tanstack/react-query";
 
@@ -145,3 +145,4 @@ export default function Page({ searchParams }: Props) {
     />
   );
 }
+

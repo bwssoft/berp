@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { inactivatePriceTableUsecase } from "@/app/lib/@backend/usecase/commercial/price-table/inactivate.price-table.usecase";
+import { inactivatePriceTableUsecase } from "@/backend/usecase/commercial/price-table/inactivate.price-table.usecase";
 
 export const runtime = "nodejs";
 
@@ -33,3 +33,4 @@ export async function POST(req: NextRequest) {
     { status: out.success ? 200 : 400 }
   );
 }
+

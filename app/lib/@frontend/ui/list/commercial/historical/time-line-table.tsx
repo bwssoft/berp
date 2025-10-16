@@ -1,6 +1,6 @@
 "use client";
-import { IHistorical } from "@/app/lib/@backend/domain";
-import { PaginationResult } from "@/app/lib/@backend/domain/@shared/repository/pagination.interface";
+import {IHistorical} from "@/backend/domain/commercial/entity/historical.definition";
+import { PaginationResult } from "@/backend/domain/@shared/repository/pagination.interface";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
 import {
   ArrowDownTrayIcon,
@@ -193,3 +193,4 @@ export function TimelineTable({
     </div>
   );
 }
+

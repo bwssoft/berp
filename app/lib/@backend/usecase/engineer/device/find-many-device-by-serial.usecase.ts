@@ -1,11 +1,10 @@
-import {
-  IDevice,
-  IDeviceRepository,
-  IProduct,
-} from "@/app/lib/@backend/domain";
-import { deviceRepository } from "@/app/lib/@backend/infra";
+
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
+import type { IProduct } from "@/backend/domain/commercial/entity/product.definition";
+import type { IDevice } from "@/backend/domain/engineer/entity/device.definition";
+import type { IDeviceRepository } from "@/backend/domain/engineer/repository/device.repository.interface";
+import { deviceRepository } from "@/backend/infra";
 
 class FindManyDeviceBySerialUsecase {
   repository: IDeviceRepository;
@@ -21,8 +20,8 @@ class FindManyDeviceBySerialUsecase {
     return (await aggregate.toArray()) as (IDevice & { product: IProduct })[];
   }
 
-  pipeline(serial: string[]) {
-    const pipeline = [
+  private pipeline(serial: string[]) {
+    return [
       { $match: { serial: { $in: serial } } },
       {
         $lookup: {
@@ -46,7 +45,6 @@ class FindManyDeviceBySerialUsecase {
         },
       },
     ];
-    return pipeline;
   }
 }
 

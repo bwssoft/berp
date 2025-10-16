@@ -1,9 +1,8 @@
+
 import { singleton } from "@/app/lib/util/singleton";
-import { componentCategoryRepository } from "@/app/lib/@backend/infra";
-import {
-  IComponentCategory,
-  IComponentCategoryRepository,
-} from "@/app/lib/@backend/domain";
+import type { IComponentCategory } from "@/backend/domain/engineer/entity/component.category.definition";
+import type { IComponentCategoryRepository } from "@/backend/domain/engineer/repository/component.category.repository";
+import { componentCategoryRepository } from "@/backend/infra";
 
 class CreateOneComponentCategoryUsecase {
   repository: IComponentCategoryRepository;
@@ -18,15 +17,15 @@ class CreateOneComponentCategoryUsecase {
     try {
       await this.repository.create({
         ...componentCategory,
-        created_at: new Date(),
         id: crypto.randomUUID(),
+        created_at: new Date(),
       });
       return { success: true };
-    } catch (e) {
+    } catch (error) {
       return {
         success: false,
         error: {
-          usecase: e instanceof Error ? e.message : JSON.stringify(e),
+          usecase: error instanceof Error ? error.message : JSON.stringify(error),
         },
       };
     }

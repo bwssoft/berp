@@ -1,12 +1,11 @@
-import {
-  IClient,
-  IClientRepository,
-  IConfigurationProfile,
-} from "@/app/lib/@backend/domain";
-import { clientRepository } from "@/app/lib/@backend/infra";
+import type { Filter } from "mongodb";
+
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
-import { Filter } from "mongodb";
+import { RemoveMongoId } from "@/backend/decorators";
+import { clientRepository } from "@/backend/infra";
+import type { IClientRepository } from "@/backend/domain/commercial";
+import type { IClient } from "@/backend/domain/commercial/entity/client.definition";
+import type { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
 
 namespace Dto {
   export interface Input extends Filter<IClient> {}
@@ -62,3 +61,4 @@ class FindOneClientWithConfigurationProfileUsecase {
 export const findOneClientWithConfigurationProfileUsecase = singleton(
   FindOneClientWithConfigurationProfileUsecase
 );
+

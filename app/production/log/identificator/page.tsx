@@ -1,9 +1,10 @@
-import { IdentificationLogSearchForm } from "@/app/lib/@frontend/ui/form";
+import { IdentificationLogSearchForm } from '@/frontend/ui/form/production/identification-log/search/search.identification-log.form';
+
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
-import { IIdentificationLog } from "@/app/lib/@backend/domain";
+import {IIdentificationLog} from "@/backend/domain/production/entity/identification-log.definition";
 import { Filter } from "mongodb";
-import { findManyIdentificationLog } from "@/app/lib/@backend/action/production/identification-log.action";
+import { findManyIdentificationLog } from "@/backend/action/production/identification-log.action";
 import { DevicesIdentifiedTable } from "@/app/lib/@frontend/ui/table/production/devices-identified/table";
 import { IdentificationLogTable } from "@/app/lib/@frontend/ui/table/production/identification-log/table";
 
@@ -131,3 +132,4 @@ function query(props: Props["searchParams"]): Filter<IIdentificationLog> {
   // Retorna um filtro vazio se não houver condições
   return {};
 }
+

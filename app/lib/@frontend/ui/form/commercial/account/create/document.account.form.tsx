@@ -2,7 +2,9 @@
 
 import { Controller } from "react-hook-form";
 import { useCreateAccountFormContext } from "@/app/lib/@frontend/context/create-account-form.context";
-import { Button, Input } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+
 import { useState } from "react";
 import { maskCpfCnpj } from "@/app/lib/util/format-mask-cpf-cnpj";
 

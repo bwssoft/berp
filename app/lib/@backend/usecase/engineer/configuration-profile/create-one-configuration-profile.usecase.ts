@@ -1,9 +1,8 @@
+
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IConfigurationProfile,
-  IConfigurationProfileRepository,
-} from "@/app/lib/@backend/domain";
-import { configurationProfileRepository } from "@/app/lib/@backend/infra";
+import type { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import type { IConfigurationProfileRepository } from "@/backend/domain/engineer/repository/configuration-profile.repository.interface";
+import { configurationProfileRepository } from "@/backend/infra";
 import { auth } from "@/auth";
 
 class CreateOneConfigurationProfileUsecase {
@@ -20,18 +19,22 @@ class CreateOneConfigurationProfileUsecase {
     >
   ) {
     const session = await auth();
-    if (!session) return;
-    const configuration_profile = Object.assign(input, {
-      created_at: new Date(),
+    if (!session) {
+      return;
+    }
+
+    const configurationProfile = Object.assign(input, {
       id: crypto.randomUUID(),
+      created_at: new Date(),
       user_id: session.user.id,
       validation: {
         by_human: false,
         by_system: false,
       },
     });
-    await this.repository.create(configuration_profile);
-    return configuration_profile;
+
+    await this.repository.create(configurationProfile);
+    return configurationProfile;
   }
 }
 

@@ -1,4 +1,4 @@
-import { IConfigurationProfile } from "../../@backend/domain";
+import { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { configurationProfileE3Plus } from "./e3-plus";
 import { configurationProfileE3Plus4G } from "./e3-plus-4g";
 

@@ -1,4 +1,4 @@
-import { IUser } from "../../admin";
+import { IUser } from "@/backend/domain/admin/entity/user.definition";
 
 export interface IAccountAttachment {
   id: string;
@@ -8,3 +8,5 @@ export interface IAccountAttachment {
   file?: File;
   accountId: string;
 }
+
+export default IAccountAttachment;

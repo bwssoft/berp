@@ -1,6 +1,6 @@
 "use client";
 
-import { ContactSelection } from "@/app/lib/@backend/domain";
+import {ContactSelection} from "@/backend/domain/commercial/entity/historical.definition";
 import {
   XMarkIcon,
   EnvelopeIcon,
@@ -82,3 +82,4 @@ export function SelectedContactBadge({
     </div>
   );
 }
+

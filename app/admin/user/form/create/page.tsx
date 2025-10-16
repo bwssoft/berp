@@ -1,4 +1,5 @@
-import { CreateOneUserForm } from "@/app/lib/@frontend/ui/form";
+import { CreateOneUserForm } from '@/frontend/ui/form/admin/user/create-one/create-one.user.form';
+
 
 export default async function Page() {
   return (

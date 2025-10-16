@@ -1,11 +1,10 @@
-import { findOneAccount } from "@/app/lib/@backend/action/commercial/account.action";
-import { findManyAddress } from "@/app/lib/@backend/action/commercial/address.action";
-import { IContact } from "@/app/lib/@backend/domain";
+import { findOneAccount } from "@/backend/action/commercial/account.action";
+import { findManyAddress } from "@/backend/action/commercial/address.action";
+import {IContact} from "@/backend/domain/commercial/entity/contact.definition";
 
-import {
-    BackButton,
-    CreateOneAccountForm,
-} from "@/app/lib/@frontend/ui/component";
+import { BackButton } from '@/frontend/ui/component/back-button';
+import { CreateOneAccountForm } from '@/frontend/ui/form/commercial/account/create/create.account.form';
+
 import { AccountData } from "@/app/lib/@frontend/ui/page/commercial/account/tab/account/account.data";
 
 interface Props {
@@ -46,3 +45,4 @@ export default async function Page({ searchParams }: Props) {
         </div>
     );
 }
+

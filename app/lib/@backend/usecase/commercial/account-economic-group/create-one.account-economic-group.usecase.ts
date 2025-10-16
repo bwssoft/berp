@@ -1,12 +1,10 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  AuditDomain,
-  IAccountEconomicGroup,
-  IAccountEconomicGroupRepository,
-} from "../../../domain";
-import { accountEconomicGroupRepository } from "../../../infra";
+import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
+import type { IAccountEconomicGroup } from "@/backend/domain/commercial/entity/account.economic-group.definition";
+import type { IAccountEconomicGroupRepository } from "@/backend/domain/commercial";
+import { accountEconomicGroupRepository } from "@/backend/infra";
 import { auth } from "@/auth";
-import { createOneAuditUsecase } from "../../admin/audit";
+import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
 export type CreateOneAccountEconomicGroupOutput = {
   success: boolean;

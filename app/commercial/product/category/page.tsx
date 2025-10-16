@@ -1,7 +1,8 @@
-import { restrictFeatureByProfile } from "@/app/lib/@backend/action/auth/restrict.action";
-import { findManyProductCategory } from "@/app/lib/@backend/action/commercial/product/product.category.action";
-import { IProductCategory } from "@/app/lib/@backend/domain";
-import { BackButton } from "@/app/lib/@frontend/ui/component";
+import { restrictFeatureByProfile } from "@/backend/action/auth/restrict.action";
+import { findManyProductCategory } from "@/backend/action/commercial/product/product.category.action";
+import {IProductCategory} from "@/backend/domain/commercial/entity/product.category.definition";
+import { BackButton } from '@/frontend/ui/component/back-button';
+
 import { ProductCategoryTable } from "@/app/lib/@frontend/ui/table/commercial/product/product.category.table";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Filter } from "mongodb";
@@ -61,3 +62,4 @@ function query(props: Props["searchParams"]): Filter<IProductCategory> {
   const conditions: Filter<IProductCategory>[] = [];
   return {};
 }
+

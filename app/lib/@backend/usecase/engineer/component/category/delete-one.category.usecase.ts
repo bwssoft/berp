@@ -1,9 +1,8 @@
+
 import { singleton } from "@/app/lib/util/singleton";
-import { componentCategoryRepository } from "@/app/lib/@backend/infra";
-import {
-  IComponentCategory,
-  IComponentCategoryRepository,
-} from "@/app/lib/@backend/domain";
+import type { IComponentCategory } from "@/backend/domain/engineer/entity/component.category.definition";
+import type { IComponentCategoryRepository } from "@/backend/domain/engineer/repository/component.category.repository";
+import { componentCategoryRepository } from "@/backend/infra";
 
 class DeleteOneComponentCategoryUsecase {
   repository: IComponentCategoryRepository;

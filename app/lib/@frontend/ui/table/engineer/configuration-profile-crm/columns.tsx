@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { generateConfigurationProfileLinkForClient } from "../../../form/engineer/configuration-profile/util";
 import { SelectColumn } from "./select-column";
-import { deleteOneConfigurationProfileById } from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+import { deleteOneConfigurationProfileById } from "@/backend/action/engineer/configuration-profile.action";
 
 export const columns: ColumnDef<{
   id: string;
@@ -86,3 +86,4 @@ export const columns: ColumnDef<{
     },
   },
 ];
+

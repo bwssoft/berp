@@ -26,7 +26,8 @@ import {
   useState,
 } from "react";
 import { useIsOnPathname } from "../../hook/is-on-pathname";
-import { useAuth } from "../../context";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { ShowVersion } from "./show-version";
 
 export type NavItem = {

@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Button, Input, PasswordInput } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Input } from '@/frontend/ui/component/input';
+import { PasswordInput } from '@/frontend/ui/component/input-password';
+
 import { useLoginUserForm } from "./use-login.user.form";
 import { FakeLoadingButton } from "../../../../component/fake-load-button";
 

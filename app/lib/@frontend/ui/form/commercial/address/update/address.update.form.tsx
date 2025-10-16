@@ -2,14 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { Button, Checkbox, Input } from "../../../../component";
+import { Button } from '@/frontend/ui/component/button';
+import { Checkbox } from '@/frontend/ui/component/checkbox';
+import { Input } from '@/frontend/ui/component/input';
+
 import { Combobox } from "@/app/lib/@frontend/ui/component/combobox";
 import { UF_LIST, type UF_CODES } from "@/app/lib/constant/brasil/uf";
 import {
   loadCountiesByUF,
   type County,
 } from "@/app/lib/constant/brasil/counties";
-import { IAddress } from "@/app/lib/@backend/domain";
+import {IAddress} from "@/backend/domain/commercial/entity/address.definition";
 import { useAddressUpdateForm } from "./use-address.update.form";
 import { Loader2 } from "lucide-react";
 
@@ -245,3 +248,4 @@ export function AddressUpdateForm({ address, closeModal, onSubmit }: Props) {
     </form>
   );
 }
+

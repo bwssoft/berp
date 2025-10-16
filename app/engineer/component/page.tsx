@@ -1,6 +1,8 @@
 "use client";
-import { useAuth } from "@/app/lib/@frontend/context";
-import { GridList } from "@/app/lib/@frontend/ui/component";
+import { useAuth } from '@/frontend/context/auth.context';
+
+import { GridList } from '@/frontend/ui/component/grid-list';
+
 import { Cog6ToothIcon, TagIcon } from "@heroicons/react/24/outline"; // ícones adequados para o contexto de componentes
 
 const actions = [

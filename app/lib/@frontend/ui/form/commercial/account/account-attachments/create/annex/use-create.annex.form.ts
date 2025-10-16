@@ -3,11 +3,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { createAccountAttachment } from "@/app/lib/@backend/action/commercial/account-attachment.action";
+import { createAccountAttachment } from "@/backend/action/commercial/account-attachment.action";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { createOneHistorical } from "@/app/lib/@backend/action/commercial/historical.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+import { createOneHistorical } from "@/backend/action/commercial/historical.action";
+import { useAuth } from '@/frontend/context/auth.context';
+
 
 const schema = z.object({
   name: z.string().min(1, "Nome do anexo é obrigatório"),
@@ -123,3 +124,4 @@ export function useCreateAnnexForm({
     isUploading,
   };
 }
+

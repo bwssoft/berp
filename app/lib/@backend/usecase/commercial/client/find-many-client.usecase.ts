@@ -1,7 +1,8 @@
-import { IClient, IClientRepository } from "@/app/lib/@backend/domain";
-import { clientRepository } from "@/app/lib/@backend/infra";
+import { IClient } from "@/backend/domain/commercial/entity/client.definition";
+import { IClientRepository } from "@/backend/domain/commercial/repository/client.repository";
+import { clientRepository } from "@/backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
 import type { Filter } from "mongodb";
 
 class FinaManyClientUsecase {
@@ -19,3 +20,4 @@ class FinaManyClientUsecase {
 }
 
 export const findManyClientUsecase = singleton(FinaManyClientUsecase);
+

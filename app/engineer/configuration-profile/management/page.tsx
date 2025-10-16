@@ -13,7 +13,7 @@ import Link from "next/link";
 import {
   findManyConfigurationProfile,
   statsConfigurationProfile,
-} from "@/app/lib/@backend/action/engineer/configuration-profile.action";
+} from "@/backend/action/engineer/configuration-profile.action";
 
 export default async function ConfigurationProfilePage() {
   const [configurationProfiles, stats] = await Promise.all([
@@ -112,3 +112,4 @@ export default async function ConfigurationProfilePage() {
     </div>
   );
 }
+

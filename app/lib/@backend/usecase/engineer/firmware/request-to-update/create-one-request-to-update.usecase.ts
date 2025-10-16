@@ -1,6 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton"
-import { IRequestToUpdate, IRequestToUpdateRepository } from "@/app/lib/@backend/domain"
-import { requestToUpdateRepository } from "@/app/lib/@backend/infra"
+import { IRequestToUpdate } from "@/backend/domain/engineer/entity/request-to-update-firmware.definition";
+import { IRequestToUpdateRepository } from "@/backend/domain/engineer/repository/request-to-update-firmware.repository";
+import { requestToUpdateRepository } from "@/backend/infra"
 
 class CreateOneRequestToUpdateUsecase {
   repository: IRequestToUpdateRepository
@@ -19,3 +20,4 @@ class CreateOneRequestToUpdateUsecase {
 }
 
 export const createOneRequestToUpdateUsecase = singleton(CreateOneRequestToUpdateUsecase)
+

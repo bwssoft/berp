@@ -1,11 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Device,
-  IIdentificationLog,
-  ITechnology,
-} from "../../../../../../@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { IIdentificationLog } from "@/backend/domain/production/entity/identification-log.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { ISerialPort } from "../../../../../hook/use-serial-port";
 import { useTechnology } from "../../../../../hook/use-technology";
 
@@ -24,13 +22,14 @@ namespace Namespace {
     status: "fully_identified" | "partially_identified" | "not_identified";
   }
 
-  export interface CurrentEquipment extends Omit<Equipment, "firmware" | "serial"> {
+  export interface CurrentEquipment
+    extends Omit<Equipment, "firmware" | "serial"> {
     serial: string;
     firmware: string;
   }
 
   export interface CurrentDetected extends Omit<Detected, "equipment"> {
-    equipment: CurrentEquipment
+    equipment: CurrentEquipment;
   }
 
   interface Equipment {
@@ -90,12 +89,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
       setIsIdentifying(true);
       const [current] = detected;
 
-      if (
-        !current.equipment ||
-        !current.equipment.firmware ||
-        !current.equipment.serial ||
-        !technology
-      ) {
+      if (!current.equipment || !current.equipment.serial || !technology) {
         toast({
           variant: "error",
           description: "Nenhum equipamento está apto para ser identificado.",
@@ -139,7 +133,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
             },
             {
               equipment: {
-                ...current.equipment as Namespace.CurrentEquipment,
+                ...(current.equipment as Namespace.CurrentEquipment),
                 ...result.equipment_after,
               },
               simcard: current.equipment?.iccid
@@ -182,7 +176,9 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
 
       if (!isDetecting && ports.length) {
         setIsDetecting(true);
-        const detected = (await handleDetection(ports)).filter((d) => d.response && d.response.serial);
+        const detected = (await handleDetection(ports)).filter(
+          (d) => d.response && d.response.serial
+        );
 
         setDetected(() => {
           const map = new Map();
@@ -195,7 +191,7 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
             });
           }
 
-          return Array.from(new Set(map.values()))
+          return Array.from(new Set(map.values()));
         });
 
         setIsDetecting(false);
@@ -206,7 +202,6 @@ export const useIdentification = (props: Namespace.useIdentificationProps) => {
 
     return () => clearInterval(interval);
   }, [ports, handleDetection, isIdentifying, isDetecting]);
-
 
   return {
     detected,

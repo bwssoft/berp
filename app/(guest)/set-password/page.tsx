@@ -1,4 +1,5 @@
-import { SetNewPasswordUserForm } from "@/app/lib/@frontend/ui/form";
+import { SetNewPasswordUserForm } from '@/frontend/ui/form/admin/user/set-new-password/set-new-password.user.form';
+
 
 interface Props {
   searchParams: {

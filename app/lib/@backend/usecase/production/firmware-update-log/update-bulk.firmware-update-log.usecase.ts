@@ -1,9 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import {
-  IFirmwareUpdateLog,
-  IFirmwareUpdateLogRepository,
-} from "@/app/lib/@backend/domain";
-import { firmwareUpdateLogRepository } from "@/app/lib/@backend/infra";
+import type { IFirmwareUpdateLog } from "@/backend/domain/production/entity/firmware-update-log.definition";
+import type { IFirmwareUpdateLogRepository } from "@/backend/domain/production/repository/firmware-update-log.repository";
+import { firmwareUpdateLogRepository } from "@/backend/infra";
 
 class UpdateBulkFirmwareUpdateLogUsecase {
   repository: IFirmwareUpdateLogRepository;

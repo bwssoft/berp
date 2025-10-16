@@ -3,24 +3,15 @@
 import type React from "react";
 import { useState } from "react";
 import { Upload, FileText, Edit3, Eye, AlertCircle } from "lucide-react";
-import {
-  Alert,
-  AlertDescription,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Textarea,
-} from "../../../../component";
+import { Alert, AlertDescription } from '@/frontend/ui/component/alert';
+import { Badge } from '@/frontend/ui/component/badge';
+import { Button } from '@/frontend/ui/component/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/frontend/ui/component/card';
+import { Input } from '@/frontend/ui/component/input';
+import { Label } from '@/frontend/ui/component/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/frontend/ui/component/tabs';
+import { Textarea } from '@/frontend/ui/component/text-area';
+
 import { RadioGroup, RadioGroupItem } from "../../../../component/radio-group";
 
 export function ActiveLoraForm() {

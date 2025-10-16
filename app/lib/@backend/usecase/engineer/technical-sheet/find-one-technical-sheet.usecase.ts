@@ -1,10 +1,9 @@
-import {
-  ITechnicalSheet,
-  ITechnicalSheetRepository,
-} from "@/app/lib/@backend/domain";
-import { technicalSheetRepository } from "@/app/lib/@backend/infra";
+
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";
+import { RemoveMongoId } from "@/backend/decorators";
+import type { ITechnicalSheet } from "@/backend/domain/engineer/entity/technical-sheet.definition";
+import type { ITechnicalSheetRepository } from "@/backend/domain/engineer/repository/technical-sheet.repository";
+import { technicalSheetRepository } from "@/backend/infra";
 
 class FindOneTechnicalSheetUsecase {
   repository: ITechnicalSheetRepository;

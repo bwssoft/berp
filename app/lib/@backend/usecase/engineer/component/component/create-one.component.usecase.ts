@@ -1,6 +1,7 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IComponent, IComponentRepository } from "@/app/lib/@backend/domain";
-import { componentRepository } from "@/app/lib/@backend/infra";
+import { IComponent } from "@/backend/domain/engineer/entity/component.definition";
+import { IComponentRepository } from "@/backend/domain/engineer/repository/component.repository";
+import { componentRepository } from "@/backend/infra";
 
 class CreateOneComponentUsecase {
   repository: IComponentRepository;
@@ -43,3 +44,4 @@ class CreateOneComponentUsecase {
 }
 
 export const createOneComponentUsecase = singleton(CreateOneComponentUsecase);
+

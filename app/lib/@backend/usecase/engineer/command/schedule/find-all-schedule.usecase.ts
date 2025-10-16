@@ -1,13 +1,11 @@
-import {
-  ICommand,
-  IDevice,
-  IFirmware,
-  ISchedule,
-  IScheduleRepository,
-} from "@/app/lib/@backend/domain";
-import { scheduleRepository } from "@/app/lib/@backend/infra";
 import { singleton } from "@/app/lib/util/singleton";
-import { RemoveMongoId } from "@/app/lib/@backend/decorators";;
+import { RemoveMongoId } from "@/backend/decorators";
+import type { ICommand } from "@/backend/domain/engineer/entity/command.definition";
+import type { IFirmware } from "@/backend/domain/engineer/entity/firmware.definition";
+import type { IDevice } from "@/backend/domain/engineer/entity/device.definition";
+import type { ISchedule } from "@/backend/domain/engineer/entity/command-schedule.definition";
+import type { IScheduleRepository } from "@/backend/domain/engineer/repository/command-schedule.repository.interface";
+import { scheduleRepository } from "@/backend/infra";
 
 class FindAllScheduleUsecase {
   repository: IScheduleRepository;
@@ -83,3 +81,4 @@ class FindAllScheduleUsecase {
 }
 
 export const findAllScheduleUsecase = singleton(FindAllScheduleUsecase);
+

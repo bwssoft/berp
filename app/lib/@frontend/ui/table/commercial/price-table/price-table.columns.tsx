@@ -1,9 +1,10 @@
 "use client";
 
-import { Button } from "@/app/lib/@frontend/ui/component";
+import { Button } from '@/frontend/ui/component/button';
+
 import { ColumnDef } from "@tanstack/react-table";
 import { Copy, History, Pencil } from "lucide-react";
-import { IPriceTable } from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
+import { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
 
 const getStatusDisplayText = (status: string) => {
   switch (status) {
@@ -195,3 +196,4 @@ export const createPriceTableColumns = ({
 
 // For backward compatibility, export default columns without handlers
 export const columns = createPriceTableColumns();
+

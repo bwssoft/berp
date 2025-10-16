@@ -1,5 +1,5 @@
 import { singleton } from "@/app/lib/util/singleton";
-import { IFirmware } from "@/app/lib/@backend/domain";
+import { IFirmware } from "@/backend/domain/engineer/entity/firmware.definition";
 import { BaseRepository } from "../@base";
 
 class FirmwareRepository extends BaseRepository<IFirmware> {
@@ -11,9 +11,9 @@ class FirmwareRepository extends BaseRepository<IFirmware> {
   }
 
   async findOneByName(name: string) {
-    const db = await this.connect();
-    return await db.collection(this.collection).findOne<IFirmware>({ name });
+    return this.findOne({ name } as Partial<IFirmware>);
   }
 }
 
 export const firmwareRepository = singleton(FirmwareRepository)
+

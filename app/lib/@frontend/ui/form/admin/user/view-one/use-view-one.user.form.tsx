@@ -1,13 +1,14 @@
-import { findOneProfile } from "@/app/lib/@backend/action/admin/profile.action";
+import { findOneProfile } from "@/backend/action/admin/profile.action";
 import {
   updateOneUser,
   getUserAvatarUrl,
-} from "@/app/lib/@backend/action/admin/user.action";
-import { useAuth } from "@/app/lib/@frontend/context";
+} from "@/backend/action/admin/user.action";
+import { useAuth } from '@/frontend/context/auth.context';
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
-import { IUser } from "@/app/lib/@backend/domain";
+import {IUser} from "@/backend/domain/admin/entity/user.definition";
 
 export function useViewOneUserForm(user?: IUser) {
   const { changeProfile, profile, refreshUserData } = useAuth();
@@ -93,3 +94,4 @@ export function useViewOneUserForm(user?: IUser) {
     errors,
   };
 }
+

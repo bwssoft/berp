@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  Device,
-  IClient,
-  IConfigurationLog,
-  IConfigurationProfile,
-  ITechnology,
-} from "../../@backend/domain";
+import { Device } from "@/backend/domain/engineer/entity/device.definition";
+import { IClient } from "@/backend/domain/commercial/entity/client.definition";
+import { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
+import { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
 import { diffObjects } from "../../util/get-object-diff";

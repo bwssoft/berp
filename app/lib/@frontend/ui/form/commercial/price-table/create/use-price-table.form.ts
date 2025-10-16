@@ -11,7 +11,7 @@ import {
   updateOnePriceTable,
   validateBillingConditionsPriceTable,
   findOnePriceTable,
-} from "@/app/lib/@backend/action/commercial/price-table.action";
+} from "@/backend/action/commercial/price-table.action";
 import {
   IEquipmentPayment,
   IPriceRange,
@@ -19,8 +19,8 @@ import {
   IServicePayment,
   StatusPriceTable,
   IPriceTable,
-} from "@/app/lib/@backend/domain/commercial/entity/price-table.definition";
-import { IPriceTableCondition } from "@/app/lib/@backend/domain/commercial/entity/price-table-condition.definition";
+} from "@/backend/domain/commercial/entity/price-table.definition";
+import { IPriceTableCondition } from "@/backend/domain/commercial/entity/price-table-condition.definition";
 
 /** UFs do Brasil */
 export const BRAZILIAN_UF_ENUM = z.enum([
@@ -216,19 +216,49 @@ const createPriceRange = (tiers: any[]): IPriceRange[] => {
   const filtered = tiers.filter((tier) => {
     const hasFrom =
       tier?.from !== undefined && tier?.from !== null && tier?.from !== "";
-    const hasPricePerUnit =
-      tier?.pricePerUnit !== undefined &&
-      tier?.pricePerUnit !== null &&
-      tier?.pricePerUnit !== "";
+    const hasUnitPrice =
+      (tier?.unitPrice !== undefined &&
+        tier?.unitPrice !== null &&
+        tier?.unitPrice !== "") ||
+      (tier?.pricePerUnit !== undefined &&
+        tier?.pricePerUnit !== null &&
+        tier?.pricePerUnit !== "");
 
-    return hasFrom && hasPricePerUnit;
+    return hasFrom && hasUnitPrice;
   });
 
   const mapped = filtered.map((tier) => {
+    const from =
+      typeof tier.from === "string" ? Number(tier.from) : Number(tier.from);
+
+    const rawTo =
+      tier?.to !== undefined && tier?.to !== null && tier?.to !== ""
+        ? tier.to
+        : tier?.isLast
+          ? Number.MAX_SAFE_INTEGER
+          : undefined;
+
+    const to =
+      rawTo === undefined
+        ? Number.MAX_SAFE_INTEGER
+        : typeof rawTo === "string"
+          ? Number(rawTo)
+          : Number(rawTo);
+
+    const unitPriceSource =
+      tier?.unitPrice !== undefined && tier?.unitPrice !== null
+        ? tier.unitPrice
+        : tier?.pricePerUnit;
+
+    const unitPrice =
+      typeof unitPriceSource === "string"
+        ? Number(unitPriceSource)
+        : Number(unitPriceSource);
+
     const priceRange = {
-      from: Number(tier.from),
-      to: tier.isLast ? Number.MAX_SAFE_INTEGER : Number(tier.to || 0),
-      unitPrice: Number(tier.pricePerUnit),
+      from,
+      to,
+      unitPrice,
     };
 
     return priceRange;
@@ -334,13 +364,10 @@ export function usePriceTableForm({
         if (payment.type === "batch" && payment.priceRange.length > 0) {
           targetCategory[payment.productId][rangeKey] = true;
           targetCategory[payment.productId][tiersKey] = payment.priceRange.map(
-            (range, index) => ({
-              id: (index + 1).toString(),
-              from: range.from.toString(),
-              to:
-                range.to === Number.MAX_SAFE_INTEGER ? "" : range.to.toString(),
-              pricePerUnit: range.unitPrice.toString(),
-              isLast: range.to === Number.MAX_SAFE_INTEGER,
+            (range) => ({
+              from: range.from,
+              to: range.to,
+              unitPrice: range.unitPrice,
             })
           );
         } else {
@@ -824,7 +851,6 @@ export function usePriceTableForm({
 
     try {
       const isValid = await form.trigger();
-
       if (!isValid) {
         const errors = form.formState.errors;
         let errorMessage = "Preencha todos os campos obrigatórios.";
@@ -840,6 +866,26 @@ export function usePriceTableForm({
         toast({
           title: "Campos obrigatórios",
           description: errorMessage,
+          variant: "error",
+        });
+        return;
+      }
+
+      const validationResult = await validateBillingConditionsPriceTable(
+        form.getValues().groups || []
+      );
+
+      setMessageErrorCondition({
+        status: validationResult.status,
+        message: validationResult.messages ?? "",
+      });
+
+      if (validationResult.status !== "green") {
+        toast({
+          title: "Erro de Validação!",
+          description:
+            validationResult.messages[0] ??
+            "Condições de faturamento inválidas, ajuste antes de salvar.",
           variant: "error",
         });
         return;
