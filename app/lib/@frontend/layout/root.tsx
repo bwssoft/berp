@@ -23,7 +23,7 @@ export function Root(props: Props) {
   return (
     <html lang="en" className="h-full">
       <ReactQueryClientProvider>
-        <SessionProvider>
+        <SessionProvider session={session}>
           <Session403Guard />
           <AuthProvider session={session}>
             <HolyLoader

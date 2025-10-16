@@ -58,7 +58,9 @@ export function SpecificNB2ConfigurationProfileForm() {
                 name="config.specific.data_transmission_event"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Envio de mensagens em modo evento</FormLabel>
+                    <FormLabel>
+                      Envio de mensagens em modo evento (seg)
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="60" {...field} />
                     </FormControl>
@@ -72,7 +74,9 @@ export function SpecificNB2ConfigurationProfileForm() {
                 name="config.specific.time_to_sleep"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Definir tempo para iniciar modo sleep</FormLabel>
+                    <FormLabel>
+                      Definir tempo para iniciar modo sleep (seg)
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="7200" {...field} />
                     </FormControl>

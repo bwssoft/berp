@@ -14,9 +14,23 @@ type DNS = {
   port: string;
 };
 
-type Voltage = {
-  initial: string;
-  final: string;
+type Password = {
+  old: string;
+  new: string;
+};
+
+type DataTransmission = number;
+
+type Timezone = number;
+
+type LockTypeProgression = {
+  n1: number;
+  n2: number;
+};
+
+type IgnitionByVoltage = {
+  initial: number;
+  final: number;
 };
 
 type Encoder =
@@ -25,139 +39,277 @@ type Encoder =
   | { command: "ip_secondary"; args: IP }
   | { command: "dns_primary"; args: DNS };
 
-export class Bws4GEncoder {
-  static serial(input: string): string | undefined {
-    if (!input || typeof input !== "string") return undefined;
-    return `WINS=${input}\r\n`;
-  }
-
-  static imei(input: string): string | undefined {
-    if (!input || typeof input !== "string") return undefined;
-    return `WIMEI=${input}\r\n`;
-  }
-
-  static odometer(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WODM=${input}\r\n`;
-  }
-
-  static data_transmission_on(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCN=${input}\r\n`;
-  }
-
-  static data_transmission_off(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCW=${input}\r\n`;
-  }
-
-  static data_transmission_event(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCE=${input}\r\n`;
-  }
-
-  static sleep(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCS=${input}\r\n`;
-  }
-
-  static keep_alive(input: number): string | undefined {
-    if (!input || typeof input !== "number") return undefined;
-    return `WCK=${input}\r\n`;
-  }
-
-  static ip_primary(input: IP): string | undefined {
-    if (!input.ip || typeof input.port !== "number") return undefined;
-    return `WIP1=${input.ip}:${input.port}\r\n`;
-  }
-
-  static ip_secondary(input: IP): string | undefined {
-    if (!input.ip || typeof input.port !== "number") return undefined;
-    return `WIP2=${input.ip}:${input.port}\r\n`;
-  }
-
-  static dns_primary(input: DNS): string | undefined {
-    if (!input.address || typeof input.port !== "number") return undefined;
-    return `WID1=${input.address}:${input.port}\r\n`;
-  }
-
-  static dns_secondary(input: DNS): string | undefined {
-    if (!input.address || typeof input.port !== "number") return undefined;
-    return `WID2=${input.address}:${input.port}\r\n`;
-  }
-
-  static apn(input: APN): string | undefined {
-    if (!input.address || !input.user) return undefined;
-    return `WIAP=${input.address},${input.user},${input.password}\r\n`;
-  }
-
-  static virtual_ignition_12v(input: Voltage): string | undefined {
-    if (typeof input.initial !== "number" || typeof input.final !== "number")
+export class BWS4GEncoder {
+  //comands
+  static apn(props: APN): string | undefined {
+    if (!props?.address) {
       return undefined;
-    return `WIG12=${input.initial},${input.final}\r\n`;
+    }
+    return `APN*${props.address}*${props.user ?? ""}*${props.password ?? ""}`;
   }
 
-  static virtual_ignition_24v(input: Voltage): string | undefined {
-    if (typeof input.initial !== "number" || typeof input.final !== "number")
+  static ip_primary(props: IP): string | undefined {
+    if (!props?.ip || !props?.port) return undefined;
+    return `IP1#${props.ip}#${props.port}#`;
+  }
+
+  static ip_secondary(props: IP): string | undefined {
+    if (!props?.ip || !props?.port) return undefined;
+    return `IP2#${props.ip}#${props.port}#`;
+  }
+
+  static dns_primary(props: DNS): string | undefined {
+    if (!props?.address || !props?.port) {
       return undefined;
-    return `WIG24=${input.initial},${input.final}\r\n`;
+    }
+    return `DNS1#${props.address}#${props.port}#`;
   }
 
-  static angle(input: number): string | undefined {
-    if (typeof input !== "number") return undefined;
-    return `WFA=${input}\r\n`;
+  static dns_secondary(props: DNS): string | undefined {
+    if (!props?.address || !props?.port) {
+      return undefined;
+    }
+    return `DNS2#${props.address}#${props.port}#`;
   }
 
-  static speed(input: number): string | undefined {
-    if (typeof input !== "number") return undefined;
-    return `WFV=${input}\r\n`;
+  static password(props: Password): string | undefined {
+    if (!props?.old || !props?.new) {
+      return undefined;
+    }
+    return `MODIFYPW${props.old}${props.new}`;
   }
 
-  static accel_threshold_for_ignition_on(input: number): string | undefined {
-    if (typeof input !== "number") return undefined;
-    return `WFTON=${input}\r\n`;
+  static timezone(props: Timezone): string | undefined {
+    if (typeof props !== "number") return undefined;
+    if (props < 0) {
+      return `TZW${props * -1}`;
+    }
+    return `TZE${props}`;
   }
 
-  static accel_threshold_for_ignition_off(input: number): string | undefined {
-    if (typeof input !== "number") return undefined;
-    return `WFTOF=${input}\r\n`;
+  static lock_type(props: number): string | undefined {
+    if (typeof props !== "number" || [30, 31, 1, 2].every((v) => v !== props)) {
+      return undefined;
+    }
+    return `MODE${props}`;
   }
 
-  static accel_threshold_for_movement(input: number): string | undefined {
-    if (typeof input !== "number") return undefined;
-    return `WFAV=${input}\r\n`;
+  static data_transmission_on(props: DataTransmission): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props)) return undefined;
+    return `HB${props}`;
+  }
+
+  static data_transmission_off(props: DataTransmission): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props)) return undefined;
+    return `SHB${props}`;
+  }
+
+  static odometer(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props) || props === 0) {
+      return undefined;
+    }
+    return `DK${props}`;
+  }
+
+  static keep_alive(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props) || props === 0) {
+      return undefined;
+    }
+    return `TX${props}`;
+  }
+
+  static accelerometer_sensitivity(props: number): string | undefined {
+    if (
+      typeof props !== "number" ||
+      Number.isNaN(props) ||
+      props < 0 ||
+      props > 10
+    ) {
+      return undefined;
+    }
+    return `SENSE${props}`;
+  }
+
+  static sensitivity_adjustment(props: number): string | undefined {
+    if (
+      typeof props !== "number" ||
+      Number.isNaN(props) ||
+      props < 60 ||
+      props > 2000
+    ) {
+      return undefined;
+    }
+    return `GS${props}`;
+  }
+
+  static lbs_position(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined;
+    }
+    return `LBS${props ? "ON" : "OFF"}`;
+  }
+
+  static led(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined;
+    }
+    return `LED${props ? "ON" : "OFF"}`;
+  }
+
+  static communication_type(props: string): string | undefined {
+    if (!["TCP"].includes(props)) {
+      return undefined;
+    }
+    return props;
+  }
+
+  static protocol_type(props: string): string | undefined {
+    if (!["E3+"].includes(props)) {
+      return undefined;
+    }
+    return `CHGPROT${props}`;
+  }
+
+  static anti_theft(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined;
+    }
+    return `AF${props ? "ON" : "OFF"}`;
+  }
+
+  static horimeter(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props) || props === 0) {
+      return undefined;
+    }
+    return `HR${props}`;
+  }
+
+  static jammer_detection(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined;
+    }
+    return `JD${props ? 1 : 0}`;
+  }
+
+  static clear_buffer(props: boolean): string | undefined {
+    if (typeof props !== "boolean" || props === false) {
+      return undefined;
+    }
+    return "CLEARBUFFER";
+  }
+
+  static clear_horimeter(props: boolean): string | undefined {
+    if (typeof props !== "boolean" || props === false) {
+      return undefined;
+    }
+    return "CLEARHORIMETER";
+  }
+
+  static input_1(props: number): string | undefined {
+    if (props !== 1 && props !== 2) {
+      return undefined;
+    }
+    if (props === 1) {
+      return "MASTER1";
+    }
+    if (props === 2) {
+      return "SLAVE1";
+    }
+    return undefined;
+  }
+
+  static input_2(props: number): string | undefined {
+    if (props !== 1 && props !== 2 && props !== 3) {
+      return undefined;
+    }
+    if (props === 1) {
+      return "MASTER2";
+    }
+    if (props === 2) {
+      return "SLAVE2";
+    }
+    if (props === 3) {
+      return "NEGATIVE2";
+    }
+    return undefined;
+  }
+
+  static angle_adjustment(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props)) {
+      return undefined;
+    }
+    return `TDET${props}`;
+  }
+
+  static lock_type_progression(props: LockTypeProgression): string | undefined {
+    if (!props?.n1 || !props?.n2) {
+      return undefined;
+    }
+    return `DC*${props.n1}*${props.n2}`;
+  }
+
+  static ignition_by_voltage(props: IgnitionByVoltage): string | undefined {
+    if (!props?.initial || !props?.final) {
+      return undefined;
+    }
+    return `VOLTAGE*${props.initial}*${props.final}`;
+  }
+
+  static max_speed(props: number): string | undefined {
+    if (typeof props !== "number" || Number.isNaN(props)) {
+      return undefined;
+    }
+    return `SPEED${props}`;
+  }
+
+  static ignition_status_hb(props: boolean): string | undefined {
+    if (typeof props !== "boolean") {
+      return undefined;
+    }
+    return `ISHB${props ? "ON" : "OFF"}`;
   }
 
   static commands() {
     return {
-      serial: Bws4GEncoder.serial,
-      imei: Bws4GEncoder.imei,
-      odometer: Bws4GEncoder.odometer,
-      data_transmission_on: Bws4GEncoder.data_transmission_on,
-      data_transmission_off: Bws4GEncoder.data_transmission_off,
-      data_transmission_event: Bws4GEncoder.data_transmission_event,
-      sleep: Bws4GEncoder.sleep,
-      keep_alive: Bws4GEncoder.keep_alive,
-      ip_primary: Bws4GEncoder.ip_primary,
-      ip_secondary: Bws4GEncoder.ip_secondary,
-      dns_primary: Bws4GEncoder.dns_primary,
-      dns_secondary: Bws4GEncoder.dns_secondary,
-      apn: Bws4GEncoder.apn,
-      virtual_ignition_12v: Bws4GEncoder.virtual_ignition_12v,
-      virtual_ignition_24v: Bws4GEncoder.virtual_ignition_24v,
-      angle: Bws4GEncoder.angle,
-      speed: Bws4GEncoder.speed,
-      accel_threshold_for_ignition_on:
-        Bws4GEncoder.accel_threshold_for_ignition_on,
-      accel_threshold_for_ignition_off:
-        Bws4GEncoder.accel_threshold_for_ignition_off,
-      accel_threshold_for_movement: Bws4GEncoder.accel_threshold_for_movement,
+      apn: BWS4GEncoder.apn,
+      ip_primary: BWS4GEncoder.ip_primary,
+      ip_secondary: BWS4GEncoder.ip_secondary,
+      dns_primary: BWS4GEncoder.dns_primary,
+      password: BWS4GEncoder.password,
+      timezone: BWS4GEncoder.timezone,
+      lock_type: BWS4GEncoder.lock_type,
+      data_transmission_on: BWS4GEncoder.data_transmission_on,
+      data_transmission_off: BWS4GEncoder.data_transmission_off,
+      odometer: BWS4GEncoder.odometer,
+      keep_alive: BWS4GEncoder.keep_alive,
+      accelerometer_sensitivity: BWS4GEncoder.accelerometer_sensitivity,
+      sensitivity_adjustment: BWS4GEncoder.sensitivity_adjustment,
+      lbs_position: BWS4GEncoder.lbs_position,
+      led: BWS4GEncoder.led,
+      communication_type: BWS4GEncoder.communication_type,
+      protocol_type: BWS4GEncoder.protocol_type,
+      anti_theft: BWS4GEncoder.anti_theft,
+      horimeter: BWS4GEncoder.horimeter,
+      jammer_detection: BWS4GEncoder.jammer_detection,
+      clear_buffer: BWS4GEncoder.clear_buffer,
+      clear_horimeter: BWS4GEncoder.clear_horimeter,
+      input_1: BWS4GEncoder.input_1,
+      input_2: BWS4GEncoder.input_2,
+      angle_adjustment: BWS4GEncoder.angle_adjustment,
+      lock_type_progression: BWS4GEncoder.lock_type_progression,
+      ignition_by_voltage: BWS4GEncoder.ignition_by_voltage,
+      max_speed: BWS4GEncoder.max_speed,
+      ignition_status_hb: BWS4GEncoder.ignition_status_hb,
     };
   }
 
   static encoder(props: Encoder): string | undefined {
     const { command, args } = props;
-    const commands = Bws4GEncoder.commands();
+    const commands = BWS4GEncoder.commands();
     return commands[command](args as any);
   }
 }
+
+// const status = "BATTERY EXTERNAL:11.49V;BATT_INT:0%;ACC:ON;GPRS:Ok;GPS:0;GSM:20;HR: ;Buffer Memory:0;Tech:4G E_UTRAN;IP:143.198.247.1;Port:2000;ENGINE MODE1"
+
+// const check =  "Sim=VAZIO SOS=PANIC APN=bws.br,bws,bws TZ=W0 HB=60,7200 MG=0 TX=300 BJ=0 ACCMODE=1 TDET=20 WKMODE=0 DD=0 OD=120 SDMS=2 TUR=1 PROT_COM=TCP DK=0 JD=1 LBS=ON OUT_MODE=2 LED=1 IV=1 ACC=1 GPRS=2G GPS=V PROT=E3+ DC=1500,8000 Voltage=13.50,12.50 AF=OFF GS=120 ACK=30 IN2_MODE=1 MQ=OFF"

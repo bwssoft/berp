@@ -5,9 +5,15 @@ import {
   Props,
   useConfigurationProfileUpsertForm,
 } from "./use-configuration-profile.upsert.form";
-import { Button } from '@/frontend/ui/component/button';
-import { Input } from '@/frontend/ui/component/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
+import { Button } from "@/frontend/ui/component/button";
+import { Input } from "@/frontend/ui/component/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/frontend/ui/component/select";
 
 import { GeneralConfigurationProfileForm } from "../config/general.configuration-profile.form";
 import { SpecificE3Plus4GConfigurationProfileForm } from "../config/specific.e3-plus-4g.configuration-profile.form";
@@ -32,6 +38,7 @@ import {
 import { Settings } from "lucide-react";
 import { SpecificNB2ConfigurationProfileForm } from "../config/specific.nb-2.configuration-profile.form";
 import { SpecificLoRaConfigurationProfileForm } from "../config/specific.lora.configuration-profile.form";
+import { SpecificBws4GConfigurationProfileForm } from "../config/specific.bws-4g.configuration-profile.form";
 
 export function ConfigurationProfileUpsertForm(props: Props) {
   const { clients, technologies, defaultValues } = props;
@@ -54,6 +61,8 @@ export function ConfigurationProfileUpsertForm(props: Props) {
         return <SpecificNB2ConfigurationProfileForm />;
       case "DM_BWS_LORA":
         return <SpecificLoRaConfigurationProfileForm />;
+      case "DM_BWS_4G":
+        return <SpecificBws4GConfigurationProfileForm />;
       default:
         return null;
     }

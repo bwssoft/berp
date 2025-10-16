@@ -210,7 +210,7 @@ export const useE3Plus4G = () => {
             command,
           })
         ),
-        { command: "CHECK", key: "check", delay_before: 1000 },
+        { command: "CHECK", key: "check", delay_before: 2000 },
         { command: "CXIP", key: "cxip" },
         { command: "STATUS", key: "status" },
       ] as const;

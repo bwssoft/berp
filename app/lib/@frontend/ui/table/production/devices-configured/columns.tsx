@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/app/lib/util";
 import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import Link from "next/link";
-import { Button } from '@/frontend/ui/component/button';
+import { Button } from "@/frontend/ui/component/button";
 
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
@@ -241,6 +241,44 @@ const columnMap: Partial<Record<Device.Model, ColumnDef<Row>[]>> = {
       ),
     },
   ],
+  DM_BWS_4G: [
+    {
+      header: "Serial",
+      accessorKey: "equipment.serial",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.serial}>
+          {row.original.equipment.serial ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "IMEI",
+      accessorKey: "equipment.imei",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.imei}>
+          {row.original.equipment.imei ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "ICCID",
+      accessorKey: "equipment.iccid",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.iccid}>
+          {row.original.equipment.iccid ?? "--"}
+        </p>
+      ),
+    },
+    {
+      header: "Firmware",
+      accessorKey: "equipment.firmware",
+      cell: ({ row }) => (
+        <p title={row.original.equipment.firmware}>
+          {row.original.equipment.firmware ?? "--"}
+        </p>
+      ),
+    },
+  ],
 };
 
 /**
@@ -272,4 +310,3 @@ export function getColumns(type: Device.Model): ColumnDef<Row>[] {
     },
   ];
 }
-

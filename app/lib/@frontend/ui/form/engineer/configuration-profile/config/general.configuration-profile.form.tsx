@@ -315,7 +315,7 @@ export function GeneralConfigurationProfileForm(props: Props) {
               name="config.general.data_transmission_on"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Intervalo Ligado (min)</FormLabel>
+                  <FormLabel>Intervalo Ligado (seg)</FormLabel>
                   <FormControl>
                     <Input placeholder="60" {...field} />
                   </FormControl>
@@ -328,7 +328,7 @@ export function GeneralConfigurationProfileForm(props: Props) {
               name="config.general.data_transmission_off"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Intervalo Desligado (min)</FormLabel>
+                  <FormLabel>Intervalo Desligado (seg)</FormLabel>
                   <FormControl>
                     <Input placeholder="7200" {...field} />
                   </FormControl>
