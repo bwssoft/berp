@@ -10,7 +10,6 @@ import { ISerialPort } from "./use-serial-port";
 import { useTechnology } from "./use-technology";
 import { diffObjects } from "../../util/get-object-diff";
 import { updateBulkConfigurationLog } from "../../@backend/action/production/configuration-log.action";
-
 namespace Namespace {
   export interface UseConfigurationProps {
     technology: ITechnology | null;
@@ -99,11 +98,23 @@ export const useCheckConfiguration = (
       // 3) Iterar, calcular checks e montar operações de bulk-update
       const bulkOps: Array<{
         query: { id: string };
-        value: Pick<
-          IConfigurationLog,
-          "equipment" | "checked" | "checked_at" | "applied_profile"
+        value: Partial<
+          Pick<
+            IConfigurationLog,
+            | "equipment"
+            | "checked"
+            | "checked_at"
+            | "applied_profile"
+            | "desired_profile"
+            | "id"
+            | "technology"
+            | "user"
+            | "status"
+            | "created_at"
+          >
         >;
       }> = [];
+
       const finalLogs = results.map(({ port, equipment, config, messages }) => {
         const now = new Date();
         let checked = false;
@@ -128,6 +139,28 @@ export const useCheckConfiguration = (
           ];
           checked = diffs.length === 0;
           configurationProfileId = configurationProfile.id;
+          const logId = crypto.randomUUID();
+          bulkOps.push({
+            query: { id: logId },
+            value: {
+              equipment,
+              checked,
+              checked_at: now,
+              desired_profile: {
+                id: configurationProfile.id,
+                name: configurationProfile.name,
+                config: configurationProfile.config,
+              },
+              applied_profile: config,
+              id: logId,
+              technology: {
+                id: technology!.id,
+                system_name: technology!.name.system,
+              },
+              status: true,
+              created_at: new Date(),
+            },
+          });
 
           // b) Senão, se vier um configurationLog, tentar encontrar o log existente
         } else if (configurationLog) {
@@ -151,20 +184,16 @@ export const useCheckConfiguration = (
             ];
             checked = diffs.length === 0;
             configurationLogId = existing.id;
+            bulkOps.push({
+              query: { id: configurationLogId },
+              value: {
+                equipment,
+                checked,
+                checked_at: now,
+                applied_profile: config,
+              },
+            });
           }
-        }
-
-        // c) Se achou um log antigo, prepara operação de update
-        if (configurationLogId) {
-          bulkOps.push({
-            query: { id: configurationLogId },
-            value: {
-              equipment,
-              checked,
-              checked_at: now,
-              applied_profile: config,
-            },
-          });
         }
 
         // d) Retorna o objeto final para setChecked
@@ -182,7 +211,15 @@ export const useCheckConfiguration = (
 
       // 4) Executa o bulk update e atualiza o state
       if (bulkOps.length) {
-        await updateBulkConfigurationLog(bulkOps);
+        const res = await fetch(
+          "/api/production/configuration-log/update-bulk",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(bulkOps),
+          }
+        );
+        if (!res.ok) throw new Error("Erro ao salvar os logs");
       }
       setChecked((prev) => [...prev, ...finalLogs]);
     } catch (error) {
