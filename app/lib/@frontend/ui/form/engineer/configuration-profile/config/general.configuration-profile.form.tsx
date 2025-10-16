@@ -9,8 +9,13 @@ import {
 } from "../../../../component/card";
 import { Clock, Network, Server, Wifi } from "lucide-react";
 import { Badge } from "../../../../component/badge";
-import { Input } from '@/frontend/ui/component/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/frontend/ui/component/tabs';
+import { Input } from "@/frontend/ui/component/input";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/frontend/ui/component/tabs";
 
 import {
   FormControl,
@@ -20,7 +25,7 @@ import {
   FormMessage,
 } from "../../../../component/form";
 import { useGeneralConfigurationProfileForm } from "./use-general.configuration-profile.form";
-import {ITechnology} from "@/backend/domain/engineer/entity/technology.definition";
+import { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 
 interface Props {
   technology: ITechnology | undefined;
@@ -310,7 +315,7 @@ export function GeneralConfigurationProfileForm(props: Props) {
               name="config.general.data_transmission_on"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Intervalo Ligado (s)</FormLabel>
+                  <FormLabel>Intervalo Ligado (min)</FormLabel>
                   <FormControl>
                     <Input placeholder="60" {...field} />
                   </FormControl>
@@ -323,7 +328,7 @@ export function GeneralConfigurationProfileForm(props: Props) {
               name="config.general.data_transmission_off"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Intervalo Desligado (s)</FormLabel>
+                  <FormLabel>Intervalo Desligado (min)</FormLabel>
                   <FormControl>
                     <Input placeholder="7200" {...field} />
                   </FormControl>
@@ -336,7 +341,7 @@ export function GeneralConfigurationProfileForm(props: Props) {
               name="config.general.keep_alive"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Keep Alive (min)</FormLabel>
+                  <FormLabel>Keep Alive (seg)</FormLabel>
                   <FormControl>
                     <Input placeholder="60" {...field} />
                   </FormControl>
@@ -350,4 +355,3 @@ export function GeneralConfigurationProfileForm(props: Props) {
     </Card>
   );
 }
-
