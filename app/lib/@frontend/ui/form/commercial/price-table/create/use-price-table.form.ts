@@ -709,8 +709,7 @@ export function usePriceTableForm({
   };
 
   const transformToPriceTablePayload = (
-    data: CreatePriceTableFormData,
-    status: StatusPriceTable = "DRAFT"
+    data: CreatePriceTableFormData
   ): IPriceTable => {
     const equipmentPayment: IEquipmentPayment[] = [];
     const equipmentSimcardPayment: IEquipmentPayment[] = [];
@@ -736,7 +735,7 @@ export function usePriceTableForm({
       startDateTime: data.startDateTime,
       endDateTime: data.isTemporary ? data.endDateTime : undefined,
       isTemporary: data.isTemporary,
-      status,
+      status: "DRAFT",
       equipmentPayment,
       equipmentSimcardPayment,
       simcardPayment: data.simCards || [],
@@ -756,7 +755,7 @@ export function usePriceTableForm({
     status: StatusPriceTable = "DRAFT"
   ) => {
     try {
-      const payload = transformToPriceTablePayload(data, status);
+      const payload = transformToPriceTablePayload(data);
 
       // Use appropriate action based on edit mode and clone mode
       // Clone mode should always create, not update
