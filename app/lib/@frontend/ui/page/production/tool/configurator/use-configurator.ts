@@ -9,8 +9,8 @@ import { ITechnology } from "@/backend/domain/engineer/entity/technology.definit
 import { ISerialPort } from "../../../../../hook/use-serial-port";
 import { useTechnology } from "../../../../../hook/use-technology";
 import { useRouter } from "next/navigation";
-import { createManyConfigurationLog } from "../../../../../../@backend/action/production/configuration-log.action";
 import _ from "lodash";
+import { toast } from "@/app/lib/@frontend/hook/use-toast";
 
 namespace Namespace {
   export interface UseConfigurationProps {
@@ -152,8 +152,19 @@ export const useConfiguration = (props: Namespace.UseConfigurationProps) => {
       // update state with configuration process result
       setConfigured((prev) => prev.concat(dataSavedOnDb));
 
+      toast({
+        title: "Sucesso!",
+        description: "Equipamentos configurados com sucesso.",
+        variant: "success",
+      });
+
       redirectToCheckEnabled && redirectToCheck(dataSavedOnDb);
     } catch (error) {
+      toast({
+        title: "Error!",
+        description: "Ocorreu um erro durante a configuração.",
+        variant: "error",
+      });
       console.error("[ERROR] configure use-configuration", error);
     } finally {
       setIsConfiguring(false);
