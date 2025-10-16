@@ -27,8 +27,13 @@ import { Cpu, Settings, Activity, Wifi, Cable, Power, Zap } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { ConfigurationProfileSchema } from "../upsert/use-configuration-profile.upsert.form";
 import { Switch } from "../../../../component/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/frontend/ui/component/select';
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/frontend/ui/component/select";
 
 export function SpecificLoRaConfigurationProfileForm() {
   const { control, watch } = useFormContext<ConfigurationProfileSchema>();
@@ -60,9 +65,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                 name="config.specific.data_transmission_position"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Intervalo de envio de mensagem (segundos)
-                    </FormLabel>
+                    <FormLabel>Intervalo de envio de mensagem (seg)</FormLabel>
                     <FormControl>
                       <Input placeholder="60" {...field} />
                     </FormControl>
@@ -156,7 +159,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Tempo de permanência no Modo LoRaWAN (segundos)
+                          Tempo de permanência no Modo LoRaWAN (seg)
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="3600" {...field} />
@@ -172,7 +175,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Intervalo de envio LoRaWAN em modo evento (segundos)
+                          Intervalo de envio LoRaWAN em modo evento (seg)
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="60" {...field} />
@@ -195,7 +198,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Tempo de permanência no Modo P2P (segundos)
+                          Tempo de permanência no Modo P2P (seg)
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="1800" {...field} />
@@ -210,7 +213,7 @@ export function SpecificLoRaConfigurationProfileForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Intervalo de envio P2P em modo evento (segundos)
+                          Intervalo de envio P2P em modo evento (seg)
                         </FormLabel>
                         <FormControl>
                           <Input placeholder="120" {...field} />

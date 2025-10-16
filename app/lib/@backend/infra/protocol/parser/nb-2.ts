@@ -88,23 +88,23 @@ const CHECK_MAPPER = {
   },
   data_transmission_event: {
     from: "RCE",
-    to: "RCE"
+    to: "RCE",
   },
   heading_detection_angle: {
     from: "RFA",
-    to: "ANGLE"
+    to: "ANGLE",
   },
   speed_alert_threshold: {
     from: "RFV",
-    to: "RFV"
+    to: "RFV",
   },
   accel_threshold_for_ignition_on: {
     from: "RFTON",
-    to: "RFTON"
+    to: "RFTON",
   },
   accel_threshold_for_ignition_off: {
     from: "RFTOF",
-    to: "RFTOF"
+    to: "RFTOF",
   },
   accel_threshold_for_movement: {
     from: "RFAV",
@@ -116,11 +116,11 @@ const CHECK_MAPPER = {
   },
   harsh_braking_threshold: {
     from: "RFMD",
-    to: "RFMD"
+    to: "RFMD",
   },
   full_configuration_table: {
     from: "RC",
-    to: "POSITION_TIME" 
+    to: "POSITION_TIME",
   },
   full_functionality_table: {
     from: "RF",
@@ -287,7 +287,7 @@ export class BwsNb2Parser {
 
     const value = parseFloat(dataTransmissionOff);
 
-    return isNaN(value) ? undefined : value;
+    return isNaN(value) ? undefined : value * 60;
   }
 
   /**
