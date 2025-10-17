@@ -25,6 +25,10 @@ export interface IPriceTable {
   created_at?: Date;
   updated_at?: Date;
 }
+
+export type CancelPriceTableSchedulePayload = {
+  scheduleId: string;
+};
 export interface IPriceRange {
   from: number;
   to: number;

@@ -2,7 +2,10 @@ import { singleton } from "@/app/lib/util/singleton";
 import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
 import type { IPriceTableRepository } from "@/backend/domain/commercial";
 import type { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
-import { priceTableRepository, priceTableSchedulerGateway } from "@/backend/infra";
+import {
+  priceTableRepository,
+  priceTableSchedulerGateway,
+} from "@/backend/infra";
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
@@ -20,6 +23,7 @@ class InactivatePriceTableUsecase {
   async execute(input: Dto.Input): Promise<Dto.Output> {
     try {
       const current = await this.repository.findOne({ id: input.id });
+
       if (!current) {
         return {
           success: false,
@@ -27,19 +31,17 @@ class InactivatePriceTableUsecase {
         };
       }
 
-      if (current.status === "INACTIVE") {
-        return { success: true };
-      }
-
       const now = new Date();
 
-      // 3) Se for PROVISÓRIA: ao inativar, reativar NORMAL que estiver PAUSED (se houver)
-      if (current.isTemporary) {
-        // Atualiza a provisória para INACTIVE
+      if (current.isTemporary && current.endScheduleId) {
         const updatedProv = await this.repository.updateOne(
           { id: input.id },
           { $set: { status: "INACTIVE", updated_at: now } }
         );
+
+        await priceTableSchedulerGateway.deleteSchedule({
+          scheduleId: current.endScheduleId,
+        });
 
         if (!updatedProv) {
           return {
@@ -48,21 +50,19 @@ class InactivatePriceTableUsecase {
           };
         }
 
-        // Reativar NORMAL PAUSED (no singular; se houver mais de uma, reativa todas por consistência)
-        const pausedNormals = await this.repository.findMany({
+        const pausedNormal = await this.repository.findOne({
           id: { $ne: input.id },
           isTemporary: false,
           status: "PAUSED",
         });
 
-        for (const t of pausedNormals.docs) {
+        if (pausedNormal?.id) {
           await this.repository.updateOne(
-            { id: t.id! },
+            { id: pausedNormal.id },
             { $set: { status: "ACTIVE", updated_at: now } }
           );
         }
       } else {
-        // 4) Se for NORMAL: apenas marcar como INACTIVE
         const updatedNorm = await this.repository.updateOne(
           { id: input.id },
           { $set: { status: "INACTIVE", updated_at: now } }
@@ -75,6 +75,8 @@ class InactivatePriceTableUsecase {
           };
         }
       }
+
+      // 3) Se for PROVISÓRIA: ao inativar, reativar NORMAL que estiver PAUSED (se houver)
 
       // 5) Auditoria
       const after = await this.repository.findOne({ id: input.id });
@@ -97,9 +99,6 @@ class InactivatePriceTableUsecase {
         });
       }
 
-      // Cancel any pending schedules for this price table
-      await this.cancelExistingSchedules(input.id);
-
       return { success: true };
     } catch (err: any) {
       console.error("Erro ao inativar a tabela de preço:", err);
@@ -109,14 +108,6 @@ class InactivatePriceTableUsecase {
           global: err instanceof Error ? err.message : JSON.stringify(err),
         },
       };
-    }
-  }
-
-  private async cancelExistingSchedules(priceTableId: string): Promise<void> {
-    try {
-      await priceTableSchedulerGateway.deleteSchedule(priceTableId);
-    } catch (error) {
-      console.warn("⚠️ Failed to cancel existing schedules:", error);
     }
   }
 }
