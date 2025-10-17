@@ -174,6 +174,8 @@ const STATUS_STYLES: Record<Status, string> = {
   blue: "bg-blue-100 border-l-blue-500 text-blue-800",
 };
 
+type PriceTableSchedulerGatewaySingleton = typeof import("@/backend/infra/gateway/price-table-scheduler/price-table-scheduler.gateway").priceTableSchedulerGateway;
+
 const uid = () => crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
 
 const createEmptyCondition = (): IPriceTableCondition => ({
@@ -750,11 +752,87 @@ export function usePriceTableForm({
     return payload;
   };
 
+  const cancelSchedulesForAwaitingPublication = async () => {
+    if (!priceTableId) {
+      return;
+    }
+
+    try {
+      const currentTable = await findOnePriceTable({ id: priceTableId });
+      if (!currentTable) {
+        return;
+      }
+
+      const { startScheduleId, endScheduleId, isTemporary } = currentTable;
+      const scheduleIds: string[] = [];
+
+      if (startScheduleId) {
+        scheduleIds.push(startScheduleId);
+      }
+
+      if (isTemporary) {
+        if (endScheduleId && !scheduleIds.includes(endScheduleId)) {
+          scheduleIds.push(endScheduleId);
+        }
+      }
+
+      if (!scheduleIds.length) {
+        return;
+      }
+
+      let schedulerGateway: PriceTableSchedulerGatewaySingleton | null = null;
+
+      try {
+        const schedulerModule = await import(
+          "@/backend/infra/gateway/price-table-scheduler/price-table-scheduler.gateway"
+        );
+        schedulerGateway = schedulerModule.priceTableSchedulerGateway;
+      } catch (error) {
+        console.warn(
+          "⚠️ Unable to load price table scheduler gateway on client:",
+          error
+        );
+        return;
+      }
+
+      if (!schedulerGateway) {
+        return;
+      }
+
+      await Promise.all(
+        scheduleIds.map((scheduleId) =>
+          schedulerGateway
+            .deleteSchedule({ scheduleId })
+            .catch((error) => {
+              console.warn(
+                `⚠️ Unable to cancel schedule '${scheduleId}' before publishing price table '${currentTable.id}':`,
+                error
+              );
+            })
+        )
+      );
+    } catch (error) {
+      console.warn(
+        "⚠️ Failed to cancel schedules before submitting awaiting publication price table:",
+        error
+      );
+    }
+  };
+
   const handleFormSubmission = async (
     data: CreatePriceTableFormData,
     status: StatusPriceTable = "DRAFT"
   ) => {
     try {
+      if (
+        status === "AWAITING_PUBLICATION" &&
+        priceTableId &&
+        editMode &&
+        !cloneMode
+      ) {
+        await cancelSchedulesForAwaitingPublication();
+      }
+
       const payload = transformToPriceTablePayload(data);
 
       // Use appropriate action based on edit mode and clone mode
