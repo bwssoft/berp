@@ -157,7 +157,7 @@ export function PriceTableFilterForm() {
             onChange={(value) =>
               form.setValue("created_date", value as Date | null)
             }
-            placeholder="Selecione a data de criação"
+            placeholder="Selecione a data de cadastro"
             name="created_date"
           />
         </div>
