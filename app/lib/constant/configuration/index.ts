@@ -1,6 +1,7 @@
 import { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { configurationProfileE3Plus } from "./e3-plus";
 import { configurationProfileE3Plus4G } from "./e3-plus-4g";
+import { configurationProfileBWS4G } from "./bws-4g";
 
 const type: { [key in IConfigurationProfile["type"]]: string } = {
   BOAT: "Barco",
@@ -55,6 +56,7 @@ export const configurationProfileConstants = {
   config: {
     DM_E3_PLUS: configurationProfileE3Plus,
     DM_E3_PLUS_4G: configurationProfileE3Plus4G,
+    DM_BWS_4G: configurationProfileBWS4G,
   },
   type,
   timezones,

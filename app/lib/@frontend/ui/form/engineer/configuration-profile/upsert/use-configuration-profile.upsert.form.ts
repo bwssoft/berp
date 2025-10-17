@@ -1,8 +1,6 @@
 import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import { EType } from "@/backend/domain/engineer/entity/configuration-profile.definition";
-import type {
-  IConfigurationProfile,
-} from "@/backend/domain/engineer/entity/configuration-profile.definition";
+import type { IConfigurationProfile } from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import type { ITechnology } from "@/backend/domain/engineer/entity/technology.definition";
 import type { IClient } from "@/backend/domain/commercial/entity/client.definition";
 import { toast } from "@/app/lib/@frontend/hook/use-toast";
@@ -173,6 +171,7 @@ export const e3Plus4GConfigSchema = z.object({
   ignition_status_hb: z.coerce.boolean().optional().default(true),
 });
 
+// Esquema para NB2
 export const nb2ConfigSchema = z.object({
   data_transmission_event: twoBytesSchema.optional(),
   odometer,
@@ -220,6 +219,7 @@ export const nb2ConfigSchema = z.object({
   input_4: z.coerce.number().optional(),
 });
 
+// Esquema para Lora
 export const loraConfigSchema = z.object({
   data_transmission_sleep: twoBytesSchema.optional(),
   data_transmission_position: twoBytesSchema.optional(),
@@ -282,11 +282,42 @@ export const loraConfigSchema = z.object({
   led_lighting: z.string().optional(),
 });
 
+// Esquema para E3Plus4G
+export const bws4GConfigSchema = z.object({
+  password: password,
+  timezone: z.coerce.number().optional(),
+  lock_type: z.coerce.number().optional(),
+  lock_type_variation: z.coerce.number().optional(),
+  odometer: odometer,
+  sensitivity_adjustment: sensitivity_adjustment,
+  lbs_position: z.coerce.boolean().optional().default(false),
+  led: z.coerce.boolean().optional().default(false),
+  anti_theft: z.coerce.boolean().optional().default(false),
+  jammer_detection: z.coerce.boolean().optional().default(false),
+  max_speed: oneBytesSchema.optional(),
+  communication_type: z.string().optional(),
+  protocol_type: z.string().optional(),
+  horimeter: twoBytesSchema.optional(),
+  clear_buffer: z.coerce.boolean().optional(),
+  clear_horimeter: z.coerce.boolean().optional(),
+  input_1: z.number().optional(),
+  input_2: z.number().optional(),
+  angle_adjustment: angle_adjustment,
+  lock_type_progression: z
+    .object({
+      n1: twoBytesSchema,
+      n2: twoBytesSchema,
+    })
+    .optional(),
+  ignition_status_hb: z.coerce.boolean().optional().default(true),
+});
+
 export type TechnologySystemName =
   | Device.Model.DM_E3_PLUS
   | Device.Model.DM_E3_PLUS_4G
   | Device.Model.DM_BWS_NB2
-  | Device.Model.DM_BWS_LORA;
+  | Device.Model.DM_BWS_LORA
+  | Device.Model.DM_BWS_4G;
 
 const schema = z.object({
   id: z.string().optional(),
@@ -311,6 +342,9 @@ const schema = z.object({
         }),
         loraConfigSchema.extend({
           technology_system_name: z.literal(Device.Model.DM_BWS_LORA),
+        }),
+        bws4GConfigSchema.extend({
+          technology_system_name: z.literal(Device.Model.DM_BWS_4G),
         }),
       ])
       .optional(),
@@ -497,4 +531,3 @@ export function useConfigurationProfileUpsertForm(props: Props) {
     handleChangeClient,
   };
 }
-
