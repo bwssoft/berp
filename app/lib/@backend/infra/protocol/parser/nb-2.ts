@@ -1,3 +1,5 @@
+import { BaseParser } from "./base";
+
 export namespace BwsNb2 {
   export interface AutoTest {
     ACELC: string; //"STK8321"
@@ -20,6 +22,12 @@ export namespace BwsNb2 {
     VCC: string; //"48"
     TEMP: string; //"25"
     DEV: string; // "DM_BWS_NB2"
+  }
+  export interface Detection {
+    serial?: string | undefined;
+    imei?: string | undefined;
+    firmware?: string | undefined;
+    iccid?: string | undefined;
   }
 }
 
@@ -128,7 +136,7 @@ const CHECK_MAPPER = {
   },
 };
 
-export class BwsNb2Parser {
+export class BWSNB2ReadParser extends BaseParser {
   static check(input: Record<string, any>) {
     if (Object.keys(input).length > 0) {
       const translatedCheck = Object.keys(input).reduce((check, key) => {
@@ -745,5 +753,44 @@ export class BwsNb2Parser {
     if (data === "0 0 0") return 1;
 
     if (data === "0 0 8") return 2;
+  }
+
+  static methods() {
+    return {
+      r_check: this.check,
+      r_serial: this.serial,
+      r_imei: this.imei,
+      r_iccid: this.iccid,
+      r_firmware: this.firmware,
+      r_auto_test: this.auto_test,
+      r_data_transmission_on: this.data_transmission_on,
+      r_data_transmission_off: this.data_transmission_off,
+      r_data_transmission_event: this.data_transmission_event,
+      r_keep_alive: this.keep_alive,
+      r_ip_primary: this.ip_primary,
+      r_ip_secondary: this.ip_secondary,
+      r_dns_primary: this.dns_primary,
+      r_dns_secondary: this.dns_secondary,
+      r_apn: this.apn,
+      r_time_to_sleep: this.time_to_sleep,
+      r_odometer: this.odometer,
+      r_virtual_ignition_12v: this.virtual_ignition_12v,
+      r_virtual_ignition_24v: this.virtual_ignition_24v,
+      r_heading_detection_angle: this.heading_detection_angle,
+      r_speed_alert_threshold: this.speed_alert_threshold,
+      r_accel_threshold_for_ignition_on: this.accel_threshold_for_ignition_on,
+      r_accel_threshold_for_ignition_off: this.accel_threshold_for_ignition_off,
+      r_accel_threshold_for_movement: this.accel_threshold_for_movement,
+      r_harsh_acceleration_threshold: this.harsh_acceleration_threshold,
+      r_harsh_braking_threshold: this.harsh_braking_threshold,
+      r_input_1: this.input_1,
+      r_input_2: this.input_2,
+      r_input_3: this.input_3,
+      r_input_4: this.input_4,
+      r_full_configuration_table: this.full_configuration_table,
+      r_full_functionality_table: this.full_functionality_table,
+      r_economy_mode: this.economy_mode,
+      r_lock_type: this.lock_type,
+    };
   }
 }

@@ -1,9 +1,9 @@
 import { useCallback } from "react";
-import { BwsNb2, BwsNb2Parser } from "@/backend/infra/protocol/parser/nb-2";
+import { BwsNb2, BWSNB2ReadParser } from "@/backend/infra/protocol/parser/nb-2";
 import { BwsNb2Encoder } from "@/backend/infra/protocol/encoder/nb-2";
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
-import { Message, useCommunication } from "./use-communication";
-import { ISerialPort, useSerialPort } from "./use-serial-port";
+import { Message, MessageV2, useCommunication } from "./use-communication";
+import { ISerialPort, readReader, useSerialPort } from "./use-serial-port";
 import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
   Config,
@@ -11,6 +11,7 @@ import {
   IConfigurationProfile,
 } from "@/backend/domain/engineer/entity/configuration-profile.definition";
 import { findOneSerial } from "../../@backend/action/engineer/serial.action";
+import { BWSNB2WriteParser } from "../../@backend/infra/protocol/parser/write/nb-2";
 
 namespace Namespace {
   interface Equipment {
@@ -81,8 +82,6 @@ const generateMessages = (
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([message, args]) => {
-    console.log("----generating messages------");
-    console.log("message", message);
     const _message = BwsNb2Encoder.encoder({ command: message, args } as any);
     if (!_message) return;
     response[message as Namespace.ConfigKeys] = _message;
@@ -91,21 +90,29 @@ const generateMessages = (
 };
 
 export const useNB2 = () => {
-  const { ports, openPort, closePort, getReader, writeToPort, requestPort } =
-    useSerialPort({});
+  const {
+    ports,
+    openPort,
+    closePort,
+    getReader,
+    writeToPort,
+    requestPort,
+    releaseReader,
+  } = useSerialPort({});
 
   // hook that handles communication process, like retries, delay between messages
-  const { sendMultipleMessages } = useCommunication<ISerialPort>({
+  const { sendMultipleMessages, send } = useCommunication<ISerialPort>({
     openTransport: async (transport) => {
       await openPort(transport, {
         baudRate: 115200,
         stopBits: 2,
+        bufferSize: 1024,
       });
     },
     closeTransport: closePort,
     sendMessage: async (
       port,
-      msg: Message<string, { delay_before?: number; check?: string }>
+      msg: Message<string, { check?: string; delay_before?: number }>
     ) => {
       const reader = await getReader(port);
       if (!reader) throw new Error("Reader não disponível");
@@ -121,6 +128,15 @@ export const useNB2 = () => {
       reader.releaseLock();
       return response;
     },
+    sendMessageV2: async (
+      port,
+      msg: MessageV2<{ delay_before?: number; check?: string }>
+    ) => {
+      const { command, delay_before } = msg;
+      if (delay_before) await sleep(delay_before);
+      await writeToPort(port, command);
+      console.log("[COMMAND]", command);
+    },
     options: {
       delayBetweenMessages: 200,
       maxRetriesPerMessage: 3,
@@ -132,209 +148,227 @@ export const useNB2 = () => {
   const handleDetection = useCallback(
     async (ports: ISerialPort[]) => {
       const messages = [
-        { command: "RIMEI\r\n", key: "imei", transform: BwsNb2Parser.imei },
-        { command: "ICCID\r\n", key: "iccid", transform: BwsNb2Parser.iccid },
-        { command: "RINS\r\n", key: "serial", transform: BwsNb2Parser.serial },
-        {
-          command: "RFW\r\n",
-          key: "firmware",
-          transform: BwsNb2Parser.firmware,
-        },
+        { command: "RIMEI\r\n" },
+        { command: "ICCID\r\n" },
+        { command: "RINS\r\n" },
+        { command: "RFW\r\n" },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
           try {
-            const response = await sendMultipleMessages({
+            const { pos } = await send({
               transport: port,
               messages,
+              preChunk: async (transport) => {
+                await getReader(transport);
+              },
+              posChunk: async (transport) => {
+                const reader = await getReader(transport);
+                const result = await readReader(reader, 30000);
+                return result;
+              },
             });
-            return { port, response };
+            const detection = pos
+              ? BWSNB2ReadParser.parser(
+                  pos,
+                  "r_imei",
+                  "r_serial",
+                  "r_firmware",
+                  "r_iccid"
+                )
+              : undefined;
+            return {
+              port,
+              response: {
+                imei: detection?.r_imei,
+                serial: detection?.r_serial,
+                firmware: detection?.r_firmware,
+                iccid: detection?.r_iccid,
+              },
+            };
           } catch (error) {
-            console.error("[ERROR] handleDetection", error);
+            console.error("[ERROR] handleDetection use-bws-4g", error);
             return { port };
           }
         })
       );
     },
-    [sendMultipleMessages]
+    [getReader, send]
   );
   const handleGetConfig = useCallback(
     async (detected: Namespace.Detected[]) => {
       const messages = [
         {
           command: "RCN\r\n",
-          key: "data_transmission_on",
+          key: "r_data_transmission_on",
           delay_before: 1000,
         },
         {
           command: "RCW\r\n",
-          key: "data_transmission_off",
+          key: "r_data_transmission_off",
         },
         {
           command: "RCE\r\n",
-          key: "data_transmission_event",
+          key: "r_data_transmission_event",
         },
         {
           command: "RCK\r\n",
-          key: "keep_alive",
+          key: "r_keep_alive",
         },
         {
           command: "RIP1\r\n",
-          key: "ip_primary",
+          key: "r_ip_primary",
         },
         {
           command: "RIP2\r\n",
-          key: "ip_secondary",
+          key: "r_ip_secondary",
         },
         {
           command: "RID1\r\n",
-          key: "dns_primary",
+          key: "r_dns_primary",
         },
         {
           command: "RID2\r\n",
-          key: "dns_secondary",
+          key: "r_dns_secondary",
         },
-        { command: "RIAP\r\n", key: "apn" },
+        { command: "RIAP\r\n", key: "r_apn" },
         {
           command: "RCS\r\n",
-          key: "time_to_sleep",
+          key: "r_time_to_sleep",
         },
-        { command: "RODM\r\n", key: "odometer" },
+        { command: "RODM\r\n", key: "r_odometer" },
         {
           command: "RIG12\r\n",
-          key: "virtual_ignition_12v",
+          key: "r_virtual_ignition_12v",
         },
         {
           command: "RIG24\r\n",
-          key: "virtual_ignition_24v",
+          key: "r_virtual_ignition_24v",
         },
         {
           command: "RFA\r\n",
-          key: "heading_detection_angle",
+          key: "r_heading_detection_angle",
         },
         {
           command: "RFV\r\n",
-          key: "speed_alert_threshold",
+          key: "r_speed_alert_threshold",
         },
         {
           command: "RFTON\r\n",
-          key: "accel_threshold_for_ignition_on",
+          key: "r_accel_threshold_for_ignition_on",
         },
         {
           command: "RFTOF\r\n",
-          key: "accel_threshold_for_ignition_off",
+          key: "r_accel_threshold_for_ignition_off",
         },
         {
           command: "RFAV\r\n",
-          key: "accel_threshold_for_movement",
+          key: "r_accel_threshold_for_movement",
         },
         {
           command: "RFMA\r\n",
-          key: "harsh_acceleration_threshold",
+          key: "r_harsh_acceleration_threshold",
         },
         {
           command: "RFMD\r\n",
-          key: "harsh_braking_threshold",
+          key: "r_harsh_braking_threshold",
         },
         {
           command: "RC\r\n",
-          key: "full_configuration_table",
+          key: "r_full_configuration_table",
         },
         {
           command: "RF\r\n",
-          key: "full_functionality_table",
+          key: "r_full_functionality_table",
         },
         {
           command: "RFSM\r\n",
-          key: "economy_mode",
+          key: "r_economy_mode",
         },
         {
           command: "ROUT\r\n",
-          key: "lock_type",
+          key: "r_lock_type",
         },
       ] as const;
 
       return await Promise.all(
         detected.map(async ({ port, equipment }) => {
           try {
-            const response = await sendMultipleMessages({
+            const { pos } = await send({
               transport: port,
               messages,
+              preChunk: async (transport) => {
+                await getReader(transport);
+              },
+              posChunk: async (transport) => {
+                const reader = await getReader(transport);
+                const result = await readReader(reader, 30000);
+                return result;
+              },
             });
 
-            const check = BwsNb2Parser.check(response);
-
-            console.log(
-              "🚀 ~ useNB2 ~ response.full_functionality_table:",
-              response.full_configuration_table,
-              response.full_functionality_table
-            );
+            const raw_config = pos
+              ? BWSNB2ReadParser.parser(
+                  pos,
+                  "r_data_transmission_on",
+                  "r_data_transmission_off",
+                  "r_data_transmission_event",
+                  "r_keep_alive",
+                  "r_ip_primary",
+                  "r_ip_secondary",
+                  "r_dns_primary",
+                  "r_dns_secondary",
+                  "r_apn",
+                  "r_time_to_sleep",
+                  "r_odometer",
+                  "r_virtual_ignition_12v",
+                  "r_virtual_ignition_24v",
+                  "r_heading_detection_angle",
+                  "r_speed_alert_threshold",
+                  "r_accel_threshold_for_ignition_on",
+                  "r_accel_threshold_for_ignition_off",
+                  "r_accel_threshold_for_movement",
+                  "r_harsh_acceleration_threshold",
+                  "r_harsh_braking_threshold",
+                  "r_full_configuration_table",
+                  "r_full_functionality_table",
+                  "r_economy_mode",
+                  "r_lock_type"
+                )
+              : {};
 
             const config = {
               general: {
-                keep_alive: BwsNb2Parser.keep_alive(response.keep_alive),
-                ip_primary: BwsNb2Parser.ip_primary(response.ip_primary),
-                ip_secondary: BwsNb2Parser.ip_secondary(response.ip_secondary),
-                dns_primary: BwsNb2Parser.dns_primary(response.dns_primary),
-                dns_secondary: BwsNb2Parser.dns_secondary(
-                  response.dns_secondary
-                ),
-                apn: BwsNb2Parser.apn(response.apn),
-                data_transmission_on: BwsNb2Parser.data_transmission_on(
-                  response.data_transmission_on
-                ),
-                data_transmission_off: BwsNb2Parser.data_transmission_off(
-                  response.data_transmission_off
-                ),
+                keep_alive: raw_config.r_keep_alive,
+                ip_primary: raw_config.r_ip_primary,
+                ip_secondary: raw_config.r_ip_secondary,
+                dns_primary: raw_config.r_dns_primary,
+                dns_secondary: raw_config.r_dns_secondary,
+                apn: raw_config.r_apn,
+                data_transmission_on: raw_config.r_data_transmission_on,
+                data_transmission_off: raw_config.r_data_transmission_off,
               },
-              check,
               specific: {
-                data_transmission_event: BwsNb2Parser.data_transmission_event(
-                  response.data_transmission_event
-                ),
-                time_to_sleep: BwsNb2Parser.time_to_sleep(
-                  response.time_to_sleep
-                ),
-                odometer: BwsNb2Parser.odometer(response.odometer),
-                virtual_ignition_12v: BwsNb2Parser.virtual_ignition_12v(
-                  response.virtual_ignition_12v
-                ),
-                virtual_ignition_24v: BwsNb2Parser.virtual_ignition_24v(
-                  response.virtual_ignition_24v
-                ),
-                heading_detection_angle: BwsNb2Parser.heading_detection_angle(
-                  response.heading_detection_angle
-                ),
-                speed_alert_threshold: BwsNb2Parser.speed_alert_threshold(
-                  response.speed_alert_threshold
-                ),
+                data_transmission_event: raw_config.r_data_transmission_event,
+                time_to_sleep: raw_config.r_time_to_sleep,
+                odometer: raw_config.r_odometer,
+                virtual_ignition_12v: raw_config.r_virtual_ignition_12v,
+                virtual_ignition_24v: raw_config.r_virtual_ignition_24v,
+                heading_detection_angle: raw_config.r_heading_detection_angle,
+                speed_alert_threshold: raw_config.r_speed_alert_threshold,
                 accel_threshold_for_ignition_on:
-                  BwsNb2Parser.accel_threshold_for_ignition_on(
-                    response.accel_threshold_for_ignition_on
-                  ),
+                  raw_config.r_accel_threshold_for_ignition_on,
                 accel_threshold_for_ignition_off:
-                  BwsNb2Parser.accel_threshold_for_ignition_off(
-                    response.accel_threshold_for_ignition_off
-                  ),
+                  raw_config.r_accel_threshold_for_ignition_off,
                 accel_threshold_for_movement:
-                  BwsNb2Parser.accel_threshold_for_movement(
-                    response.accel_threshold_for_movement
-                  ),
+                  raw_config.r_accel_threshold_for_movement,
                 harsh_acceleration_threshold:
-                  BwsNb2Parser.harsh_acceleration_threshold(
-                    response.harsh_acceleration_threshold
-                  ),
-                harsh_braking_threshold: BwsNb2Parser.harsh_braking_threshold(
-                  response.harsh_braking_threshold
-                ),
-                full_configuration_table: BwsNb2Parser.full_configuration_table(
-                  response.full_configuration_table
-                ),
-                full_functionality_table: BwsNb2Parser.full_functionality_table(
-                  response.full_functionality_table
-                ),
-                economy_mode: BwsNb2Parser.economy_mode(response.economy_mode),
-                lock_type: BwsNb2Parser.lock_type(response.lock_type),
+                  raw_config.r_harsh_acceleration_threshold,
+                harsh_braking_threshold: raw_config.r_harsh_braking_threshold,
+                full_configuration_table: raw_config.r_full_configuration_table,
+                full_functionality_table: raw_config.r_full_functionality_table,
+                economy_mode: raw_config.r_economy_mode,
+                lock_type: raw_config.r_lock_type,
               },
             };
 
@@ -345,7 +379,7 @@ export const useNB2 = () => {
               messages: messages.map(({ key, command }) => ({
                 key,
                 request: command,
-                response: response[key],
+                response: raw_config[key],
               })),
             };
           } catch (error) {
@@ -355,248 +389,225 @@ export const useNB2 = () => {
         })
       );
     },
-    [sendMultipleMessages]
+    [getReader, send]
   );
   const handleConfiguration = useCallback(
     async (
       detected: Namespace.Detected[],
       configuration_profile: IConfigurationProfile
     ) => {
-      const messages = [
-        ...typedObjectEntries(generateMessages(configuration_profile)).map(
-          ([key, command]) => {
-            if (key === "lock_type") {
-              return {
-                key,
-                command,
-                check: "ROUT",
-              };
-            } else {
-              return {
-                key,
-                command,
-              };
-            }
-          }
-        ),
+      const write_messages = typedObjectEntries(
+        generateMessages(configuration_profile)
+      ).map(([key, command]) => ({
+        key: `w_${key}`,
+        command,
+      }));
+      const read_messages = [
         {
           command: "RCN\r\n",
-          key: "read_data_transmission_on",
+          key: "r_data_transmission_on",
           delay_before: 1000,
         },
         {
           command: "RCW\r\n",
-          key: "read_data_transmission_off",
+          key: "r_data_transmission_off",
         },
         {
           command: "RCE\r\n",
-          key: "read_data_transmission_event",
+          key: "r_data_transmission_event",
         },
         {
           command: "RCK\r\n",
-          key: "read_keep_alive",
+          key: "r_keep_alive",
         },
         {
           command: "RIP1\r\n",
-          key: "read_ip_primary",
+          key: "r_ip_primary",
         },
         {
           command: "RIP2\r\n",
-          key: "read_ip_secondary",
+          key: "r_ip_secondary",
         },
         {
           command: "RID1\r\n",
-          key: "read_dns_primary",
+          key: "r_dns_primary",
         },
         {
           command: "RID2\r\n",
-          key: "read_dns_secondary",
+          key: "r_dns_secondary",
         },
-        { command: "RIAP\r\n", key: "read_apn" },
+        { command: "RIAP\r\n", key: "r_apn" },
         {
           command: "RCS\r\n",
-          key: "read_time_to_sleep",
+          key: "r_time_to_sleep",
         },
-        { command: "RODM\r\n", key: "read_odometer" },
+        { command: "RODM\r\n", key: "r_odometer" },
         {
           command: "RIG12\r\n",
-          key: "read_virtual_ignition_12v",
+          key: "r_virtual_ignition_12v",
         },
         {
           command: "RIG24\r\n",
-          key: "read_virtual_ignition_24v",
+          key: "r_virtual_ignition_24v",
         },
         {
           command: "RFA\r\n",
-          key: "read_heading_detection_angle",
+          key: "r_heading_detection_angle",
         },
         {
           command: "RFV\r\n",
-          key: "read_speed_alert_threshold",
+          key: "r_speed_alert_threshold",
         },
         {
           command: "RFTON\r\n",
-          key: "read_accel_threshold_for_ignition_on",
+          key: "r_accel_threshold_for_ignition_on",
         },
         {
           command: "RFTOF\r\n",
-          key: "read_accel_threshold_for_ignition_off",
+          key: "r_accel_threshold_for_ignition_off",
         },
         {
           command: "RFAV\r\n",
-          key: "read_accel_threshold_for_movement",
+          key: "r_accel_threshold_for_movement",
         },
         {
           command: "RFMA\r\n",
-          key: "read_harsh_acceleration_threshold",
+          key: "r_harsh_acceleration_threshold",
         },
         {
           command: "RFMD\r\n",
-          key: "read_harsh_braking_threshold",
+          key: "r_harsh_braking_threshold",
         },
         {
           command: "RC\r\n",
-          key: "read_full_configuration_table",
+          key: "r_full_configuration_table",
         },
         {
           command: "RF\r\n",
-          key: "read_full_functionality_table",
+          key: "r_full_functionality_table",
         },
         {
           command: "RFSM\r\n",
-          key: "read_economy_mode",
+          key: "r_economy_mode",
         },
         {
           command: "ROUT\r\n",
-          key: "read_lock_type",
+          key: "r_lock_type",
         },
       ] as const;
       return await Promise.all(
         detected.map(async ({ port, equipment }) => {
           try {
             const init_time = Date.now();
-            const response = await sendMultipleMessages({
+            const { pos } = await send({
               transport: port,
-              messages,
+              messages: [...write_messages, ...read_messages],
+              preChunk: async (transport) => {
+                await getReader(transport);
+              },
+              posChunk: async (transport) => {
+                const reader = await getReader(transport);
+                const result = await readReader(reader, 30000);
+                return result;
+              },
             });
             const end_time = Date.now();
-            const {
-              read_data_transmission_on,
-              read_data_transmission_off,
-              read_data_transmission_event,
-              read_keep_alive,
-              read_ip_primary,
-              read_ip_secondary,
-              read_dns_primary,
-              read_dns_secondary,
-              read_apn,
-              read_time_to_sleep,
-              read_odometer,
-              read_virtual_ignition_12v,
-              read_virtual_ignition_24v,
-              read_heading_detection_angle,
-              read_speed_alert_threshold,
-              read_accel_threshold_for_ignition_on,
-              read_accel_threshold_for_ignition_off,
-              read_accel_threshold_for_movement,
-              read_harsh_acceleration_threshold,
-              read_harsh_braking_threshold,
-              read_full_configuration_table,
-              read_full_functionality_table,
-              read_economy_mode,
-              read_lock_type,
-              ...configuration
-            } = response;
-            const configurationEntries = Object.entries(configuration ?? {});
-            const status =
-              configurationEntries.length > 0 &&
-              configurationEntries.every(
-                ([_, value]) => typeof value !== "undefined"
-              );
-
-            const readResponse = Object.keys(response).reduce((checkData, key) => {
-              if (key.includes("read_")) {
-                const newKey = key.replace("read_", "")
-                checkData[newKey] = response[key as keyof typeof response]
-              }
-
-              return checkData
-            }, {} as Record<string, any>)
+            const write_response = pos
+              ? BWSNB2WriteParser.parser(
+                  pos,
+                  ...(write_messages.map((msg) => msg.key) as any)
+                )
+              : {};
+            const read_response = pos
+              ? BWSNB2ReadParser.parser(
+                  pos,
+                  "r_serial",
+                  "r_imei",
+                  "r_data_transmission_on",
+                  "r_data_transmission_off",
+                  "r_data_transmission_event",
+                  "r_keep_alive",
+                  "r_ip_primary",
+                  "r_ip_secondary",
+                  "r_dns_primary",
+                  "r_dns_secondary",
+                  "r_apn",
+                  "r_time_to_sleep",
+                  "r_odometer",
+                  "r_virtual_ignition_12v",
+                  "r_virtual_ignition_24v",
+                  "r_heading_detection_angle",
+                  "r_speed_alert_threshold",
+                  "r_accel_threshold_for_ignition_on",
+                  "r_accel_threshold_for_ignition_off",
+                  "r_accel_threshold_for_movement",
+                  "r_harsh_acceleration_threshold",
+                  "r_harsh_braking_threshold",
+                  "r_input_1",
+                  "r_input_2",
+                  "r_input_3",
+                  "r_input_4",
+                  "r_full_configuration_table",
+                  "r_full_functionality_table",
+                  "r_economy_mode",
+                  "r_lock_type"
+                )
+              : {};
 
             return {
               equipment,
               port,
               init_time,
               end_time,
-              status,
-              messages: messages.map(({ key, command }) => ({
-                key,
-                request: command,
-                response: response[key],
-              })),
+              status: Object.entries(write_response).every(
+                ([_, value]) => typeof value !== "undefined"
+              ),
+              messages: [...write_messages, ...read_messages].map(
+                ({ key, command }) => ({
+                  key,
+                  request: command,
+                  response:
+                    write_response[key as keyof typeof write_response] ||
+                    read_response[key as keyof typeof read_response],
+                })
+              ),
               applied_profile: {
                 general: {
-                  keep_alive: BwsNb2Parser.keep_alive(read_keep_alive),
-                  ip_primary: BwsNb2Parser.ip_primary(read_ip_primary),
-                  ip_secondary: BwsNb2Parser.ip_secondary(read_ip_secondary),
-                  dns_primary: BwsNb2Parser.dns_primary(read_dns_primary),
-                  dns_secondary: BwsNb2Parser.dns_secondary(read_dns_secondary),
-                  apn: BwsNb2Parser.apn(read_apn),
-                  data_transmission_on: BwsNb2Parser.data_transmission_on(
-                    read_data_transmission_on
-                  ),
-                  data_transmission_off: BwsNb2Parser.data_transmission_off(
-                    read_data_transmission_off
-                  ),
+                  keep_alive: read_response.r_keep_alive,
+                  ip_primary: read_response.r_ip_primary,
+                  ip_secondary: read_response.r_ip_secondary,
+                  dns_primary: read_response.r_dns_primary,
+                  dns_secondary: read_response.r_dns_secondary,
+                  apn: read_response.r_apn,
+                  data_transmission_on: read_response.r_data_transmission_on,
+                  data_transmission_off: read_response.r_data_transmission_off,
                 },
-                check: BwsNb2Parser.check(readResponse),
                 specific: {
-                  data_transmission_event: BwsNb2Parser.data_transmission_event(
-                    read_data_transmission_event
-                  ),
-                  time_to_sleep: BwsNb2Parser.time_to_sleep(read_time_to_sleep),
-                  odometer: BwsNb2Parser.odometer(read_odometer),
-                  virtual_ignition_12v: BwsNb2Parser.virtual_ignition_12v(
-                    read_virtual_ignition_12v
-                  ),
-                  virtual_ignition_24v: BwsNb2Parser.virtual_ignition_24v(
-                    read_virtual_ignition_24v
-                  ),
-                  heading_detection_angle: BwsNb2Parser.heading_detection_angle(
-                    read_heading_detection_angle
-                  ),
-                  speed_alert_threshold: BwsNb2Parser.speed_alert_threshold(
-                    read_speed_alert_threshold
-                  ),
+                  data_transmission_event:
+                    read_response.r_data_transmission_event,
+                  time_to_sleep: read_response.r_time_to_sleep,
+                  odometer: read_response.r_odometer,
+                  virtual_ignition_12v: read_response.r_virtual_ignition_12v,
+                  virtual_ignition_24v: read_response.r_virtual_ignition_24v,
+                  heading_detection_angle:
+                    read_response.r_heading_detection_angle,
+                  speed_alert_threshold: read_response.r_speed_alert_threshold,
                   accel_threshold_for_ignition_on:
-                    BwsNb2Parser.accel_threshold_for_ignition_on(
-                      read_accel_threshold_for_ignition_on
-                    ),
+                    read_response.r_accel_threshold_for_ignition_on,
                   accel_threshold_for_ignition_off:
-                    BwsNb2Parser.accel_threshold_for_ignition_off(
-                      read_accel_threshold_for_ignition_off
-                    ),
+                    read_response.r_accel_threshold_for_ignition_off,
                   accel_threshold_for_movement:
-                    BwsNb2Parser.accel_threshold_for_movement(
-                      read_accel_threshold_for_movement
-                    ),
+                    read_response.r_accel_threshold_for_movement,
                   harsh_acceleration_threshold:
-                    BwsNb2Parser.harsh_acceleration_threshold(
-                      read_harsh_acceleration_threshold
-                    ),
-                  harsh_braking_threshold: BwsNb2Parser.harsh_braking_threshold(
-                    read_harsh_braking_threshold
-                  ),
+                    read_response.r_harsh_acceleration_threshold,
+                  harsh_braking_threshold:
+                    read_response.r_harsh_braking_threshold,
                   full_configuration_table:
-                    BwsNb2Parser.full_configuration_table(
-                      read_full_configuration_table
-                    ),
+                    read_response.r_full_configuration_table,
                   full_functionality_table:
-                    BwsNb2Parser.full_functionality_table(
-                      read_full_functionality_table
-                    ),
-                  economy_mode: BwsNb2Parser.economy_mode(read_economy_mode),
-                  lock_type: BwsNb2Parser.lock_type(read_lock_type),
+                    read_response.r_full_functionality_table,
+                  economy_mode: read_response.r_economy_mode,
+                  lock_type: read_response.r_lock_type,
                 },
               },
             };
@@ -614,8 +625,9 @@ export const useNB2 = () => {
         })
       );
     },
-    [sendMultipleMessages]
+    [send, getReader]
   );
+
   const handleAutoTest = useCallback(
     async (ports: ISerialPort[]) => {
       return await Promise.all(
@@ -668,7 +680,7 @@ export const useNB2 = () => {
                     {
                       key,
                       command: "AUTOTEST",
-                      transform: BwsNb2Parser.auto_test,
+                      transform: BWSNB2ReadParser.auto_test,
                     },
                   ] as const,
                 });
@@ -761,12 +773,12 @@ export const useNB2 = () => {
             check: "WIMEI=",
           },
           {
-            key: "read_serial",
+            key: "r_serial",
             command: `RINS\r\n`,
             delay_before: 3000,
           },
           {
-            key: "read_imei",
+            key: "r_imei",
             command: `RIMEI\r\n`,
           },
         ] as const;
@@ -778,8 +790,8 @@ export const useNB2 = () => {
         });
 
         const [imei, serial] = [
-          BwsNb2Parser.imei(response.read_imei),
-          BwsNb2Parser.serial(response.read_serial),
+          BWSNB2ReadParser.imei(response.r_imei),
+          BWSNB2ReadParser.serial(response.r_serial),
         ];
 
         const status =
