@@ -602,6 +602,65 @@ export class Bws4gParser {
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
   }
+
+  static methods() {
+    return {
+      check: this.check,
+      status: this.status,
+      serial: this.serial,
+      imei: this.imei,
+      iccid: this.iccid,
+      firmware: this.firmware,
+      apn: this.apn,
+      ip_primary: this.ip_primary,
+      ip_secondary: this.ip_secondary,
+      dns_primary: this.dns_primary,
+      dns_secondary: this.dns_secondary,
+      timezone: this.timezone,
+      lock_type: this.lock_type,
+      lock_type_variation: this.lock_type_variation,
+      data_transmission_on: this.data_transmission_on,
+      data_transmission_off: this.data_transmission_off,
+      odometer: this.odometer,
+      keep_alive: this.keep_alive,
+      accelerometer_sensitivity: this.accelerometer_sensitivity,
+      lbs_position: this.lbs_position,
+      cornering_position_update: this.cornering_position_update,
+      led: this.led,
+      sensitivity_adjustment: this.sensitivity_adjustment,
+      auto_test: this.auto_test,
+      max_speed: this.max_speed,
+      virtual_ignition_by_movement: this.virtual_ignition_by_movement,
+      communication_type: this.communication_type,
+      protocol_type: this.protocol_type,
+      anti_theft: this.anti_theft,
+      jammer_detection: this.jammer_detection,
+      angle_adjustment: this.angle_adjustment,
+      ignition_by_voltage: this.ignition_by_voltage,
+      input_1: this.input_1,
+      input_2: this.input_2,
+      horimeter: this.horimeter,
+    };
+  }
+
+  static parser<K extends keyof ReturnType<typeof Bws4gParser.methods>>(
+    input: string[],
+    ...keys: K[]
+  ): { [P in K]?: ReturnType<ReturnType<typeof Bws4gParser.methods>[P]> } {
+    const table = this.methods();
+    const out = {} as {
+      [P in K]?: ReturnType<ReturnType<typeof Bws4gParser.methods>[P]>;
+    };
+
+    for (const key of keys) {
+      const fn = table[key as keyof typeof table] as (line: string) => any; // cada parser: (string) => T | undefined
+      // chame a função explicitamente; se quiser garantir 'this', use call
+      out[key] = input
+        .map((line) => fn.call(this, line))
+        .find((v) => v !== undefined);
+    }
+    return out;
+  }
 }
 
 // const check = "Sim=VAZIO SOS=PANIC APN=bws.br,bws,bws TZ=W0 HB=60,7200 MG=0 TX=300 BJ=0 ACCMODE=1 TDET=20 WKMODE=0 DD=0 OD=120 SDMS=2 TUR=1 PROT_COM=TCP DK=0 JD=1 LBS=ON OUT_MODE=2 LED=1 IV=1 ACC=1 GPRS=2G GPS=V PROT=E3+ DC=1500,8000 Voltage=13.50,12.50 AF=OFF GS=120 ACK=30 IN2_MODE=1 MQ=OFF
