@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { E3Parser } from "@/backend/infra/protocol/parser/E3";
 import { E3Encoder } from "@/backend/infra/protocol/encoder/E3";
-import { typedObjectEntries } from "../../util";
-import { useCommunication } from "./use-communication";
+import { sleep, typedObjectEntries } from "../../util";
+import { MessageV2, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
@@ -104,6 +104,15 @@ export const useE3Plus = () => {
       await reader.cancel();
       reader.releaseLock();
       return response;
+    },
+    sendMessageV2: async (
+      port,
+      msg: MessageV2<{ delay_before?: number; check?: string }>
+    ) => {
+      const { command, delay_before } = msg;
+      if (delay_before) await sleep(delay_before);
+      await writeToPort(port, command);
+      console.log("[COMMAND]", command);
     },
     options: {
       delayBetweenMessages: 200,

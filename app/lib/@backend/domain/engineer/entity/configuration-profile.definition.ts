@@ -32,7 +32,7 @@ export interface Check {
 export interface Config<Specific> {
   general?: GeneralConfig;
   specific?: Specific;
-  check?: Check
+  check?: Check;
 }
 
 interface Validation {
@@ -272,15 +272,11 @@ export type Bws4GConfig = {
     | undefined;
   timezone?: number | undefined;
   lock_type?: number | undefined;
+  lock_type_variation?: number | undefined;
   odometer?: number | undefined;
-  economy_mode?: number | undefined;
   sensitivity_adjustment?: number | undefined;
   lbs_position?: boolean | undefined;
-  cornering_position_update?: boolean | undefined;
   led?: boolean | undefined;
-  virtual_ignition?: boolean | undefined;
-  virtual_ignition_by_voltage?: boolean | undefined;
-  virtual_ignition_by_movement?: boolean | undefined;
   optional_functions?: Record<string, boolean>;
   max_speed?: number | undefined;
   communication_type?: string | undefined;
@@ -293,14 +289,5 @@ export type Bws4GConfig = {
   input_1?: number | undefined;
   input_2?: number | undefined;
   angle_adjustment?: number | undefined;
-  lock_type_progression?: {
-    n1: number | undefined;
-    n2: number | undefined;
-  };
-  ignition_by_voltage?: {
-    initial: number | undefined;
-    final: number | undefined;
-  };
-  ack?: number | undefined;
   ignition_status_hb?: boolean | undefined;
 };

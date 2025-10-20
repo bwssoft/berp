@@ -18,6 +18,8 @@ type Timezone = number;
 
 type Locktype = number;
 
+type LocktypeVariation = number;
+
 type DataTransmission = number;
 
 type Odometer = number;
@@ -28,15 +30,9 @@ type AccelerometerSensitivity = number;
 
 type SensitivityAdjustment = number;
 
-type EconomyMode = number;
-
 type LBSPosition = boolean;
 
 type CorneringPositionUpdate = boolean;
-
-type IgnitionAlertPowerCut = boolean;
-
-type GprsFailureAlert = boolean;
 
 type Led = boolean;
 
@@ -77,25 +73,17 @@ interface Check extends Object {
   odometer?: Odometer;
   keep_alive?: KeepAlive;
   accelerometer_sensitivity?: AccelerometerSensitivity;
-  economy_mode?: EconomyMode;
   lbs_position?: LBSPosition;
-  cornering_position_update?: CorneringPositionUpdate;
   led?: Led;
-  virtual_ignition?: VirtualIgnition;
   max_speed?: number;
   sensitivity_adjustment?: number;
-  virtual_ignition_by_movement?: VirtualIgnitionByMovement;
-  virtual_ignition_by_voltage?: VirtualIgnitionByVoltage;
   communication_type?: CommunicationType;
   protocol_type?: ProtocolType;
   anti_theft?: AntiTheft;
   jammer_detection?: JammerDetection;
   angle_adjustment?: AngleAdjustment;
-  lock_type_progression?: LockTypeProgression;
-  ignition_by_voltage?: IgnitionByVoltage;
   input_1?: number;
   input_2?: number;
-  ack?: number;
 }
 
 interface Status {
@@ -182,29 +170,15 @@ export class Bws4gParser {
           parsed["accelerometer_sensitivity"] =
             Bws4gParser.accelerometer_sensitivity(value);
         }
-        if (key === "SDMS") {
-          parsed["economy_mode"] = Bws4gParser.economy_mode(value);
-        }
         if (key === "LBS") {
           parsed["lbs_position"] = Bws4gParser.lbs_position(value);
-        }
-        if (key === "TUR") {
-          parsed["cornering_position_update"] =
-            Bws4gParser.cornering_position_update(value);
         }
         if (key === "LED") {
           parsed["led"] = Bws4gParser.led(value);
         }
-        if (key === "IV") {
-          parsed["virtual_ignition"] = Bws4gParser.virtual_ignition(value);
-        }
+
         if (key === "OD") {
           parsed["max_speed"] = Bws4gParser.max_speed(value);
-        }
-
-        if (key === "ACCEL") {
-          parsed["virtual_ignition_by_movement"] =
-            Bws4gParser.virtual_ignition_by_movement(value);
         }
 
         if (key === "PROT_COM") {
@@ -224,18 +198,6 @@ export class Bws4gParser {
         if (key === "TDET") {
           parsed["angle_adjustment"] = Bws4gParser.angle_adjustment(value);
         }
-        if (key === "DC") {
-          parsed["lock_type_progression"] =
-            Bws4gParser.lock_type_progression(value);
-        }
-        if (key === "Voltage") {
-          parsed["ignition_by_voltage"] =
-            Bws4gParser.ignition_by_voltage(value);
-        }
-        if (key === "VOLTAGE") {
-          parsed["virtual_ignition_by_voltage"] =
-            Bws4gParser.virtual_ignition_by_voltage(value);
-        }
         if (key === "IN1_MODE") {
           parsed["input_1"] = Bws4gParser.input_1(value);
         }
@@ -245,9 +207,6 @@ export class Bws4gParser {
         if (key === "GS") {
           parsed["sensitivity_adjustment"] =
             Bws4gParser.sensitivity_adjustment(value);
-        }
-        if (key === "ACK") {
-          parsed["ack"] = Bws4gParser.ack(value);
         }
       });
     }
@@ -337,6 +296,7 @@ export class Bws4gParser {
       .replace(/IP1=|IP2=/g, "")
       .split(";");
     const raw = ips?.[0];
+    if (!raw) return undefined;
     const [ip, port] = raw.split(",");
     result = { ip, port: Number(port) };
     if (Object.keys(result).length === 0) return undefined;
@@ -355,32 +315,58 @@ export class Bws4gParser {
       .replace(/IP1=|IP2=/g, "")
       .split(";");
     const raw = ips?.[1];
+    if (!raw) return undefined;
     const [ip, port] = raw.split(",");
     result = { ip, port: Number(port) };
     if (Object.keys(result).length === 0) return undefined;
     return result;
   }
 
-  /*
-   * @example: DNS=dns.com:2000
+  /**
+   * Extrai o valor do dns primário de uma string que contém "DNS1=gw.dev.bws-infra.com,7001"
+   *
+   * @param input - A string que contém a informação do dns primário.
+   * @returns O valor numérico do dns primário ou undefined se o formato não for válido.
    */
-  static dns(input: string): DNS | undefined {
+  static dns_primary(input: string) {
     if (typeof input !== "string") return undefined;
 
-    let result: DNS = {} as DNS;
-    const regex = input
-      .replace(/\s+/g, "")
-      .replace(/IP1=|IP2=|DNS=/g, "")
-      .split(";");
-    const [address, port] = regex[2].split(",");
-    if (address) {
-      result["address"] = address;
-    }
-    if (port && !Number.isNaN(port)) {
-      result["port"] = Number(port);
-    }
-    if (Object.keys(result).length === 0) return undefined;
-    return result;
+    const match = input.match(/IP1=([^\s;]+)/);
+    if (!match) return undefined;
+
+    const [address, port] = match[1].split(/[:,]/);
+    if (!address || !port) return undefined;
+
+    const parsedPort = Number(port);
+    if (Number.isNaN(parsedPort)) return undefined;
+
+    return {
+      address,
+      port: parsedPort,
+    };
+  }
+  /**
+   * Extrai o valor do dns secundário de uma string que contém "RID2=gw.bws-infra.com:7001"
+   *
+   * @param input - A string que contém a informação do dns secundário.
+   * @returns O valor numérico do dns secundário ou undefined se o formato não for válido.
+   */
+  static dns_secondary(input: string) {
+    if (typeof input !== "string") return undefined;
+
+    const match = input.match(/IP2=([^\s;]+)/);
+    if (!match) return undefined;
+
+    const [address, port] = match[1].split(/[:,]/);
+    if (!address || !port) return undefined;
+
+    const parsedPort = Number(port);
+    if (Number.isNaN(parsedPort)) return undefined;
+
+    return {
+      address,
+      port: parsedPort,
+    };
   }
 
   /*
@@ -410,8 +396,22 @@ export class Bws4gParser {
   static lock_type(input: string): Locktype | undefined {
     if (typeof input !== "string") return undefined;
 
-    if (["1", "2", "3"].every((el) => el !== input)) return undefined;
-    return Number(input);
+    if (input === "PROG DIR") return 30;
+    if (input === "PROG INV") return 31;
+
+    return undefined;
+  }
+
+  /*
+   * @example 1 ou 2 ou 3
+   * tipo do bloqueio
+   */
+  static lock_type_variation(input: string): LocktypeVariation | undefined {
+    const _input = Number(input);
+    if (typeof input !== "string" || [1, 2].every((i) => _input !== i))
+      return undefined;
+
+    return isNaN(_input) ? undefined : _input;
   }
 
   /*
@@ -471,16 +471,6 @@ export class Bws4gParser {
   }
 
   /*
-   *@example 30
-   */
-  static economy_mode(input: string): EconomyMode | undefined {
-    if (typeof input !== "string") return undefined;
-
-    if (!input || Number.isNaN(input)) return undefined;
-    return Number(input);
-  }
-
-  /*
    * @example 30
    */
   static lbs_position(input: string): LBSPosition | undefined {
@@ -504,22 +494,6 @@ export class Bws4gParser {
 
     if (!input || (input !== "1" && input !== "0")) return undefined;
     return input === "1" ? true : false;
-  }
-
-  static virtual_ignition(input: string): VirtualIgnition | undefined {
-    if (typeof input !== "string") return undefined;
-
-    if (!input || (input !== "1" && input !== "0")) return undefined;
-    return input === "1" ? true : false;
-  }
-
-  static virtual_ignition_by_voltage(
-    input: string
-  ): VirtualIgnitionByVoltage | undefined {
-    if (typeof input !== "string") return undefined;
-
-    if (!input || (input !== "OFF" && input !== "ON")) return undefined;
-    return input === "ON" ? true : false;
   }
 
   static sensitivity_adjustment(
@@ -565,14 +539,14 @@ export class Bws4gParser {
   static communication_type(input: string): CommunicationType | undefined {
     if (typeof input !== "string") return undefined;
 
-    if (!input || (input !== "TCP" && input !== "UDP")) return undefined;
+    if (!input || input !== "TCP") return undefined;
     return input;
   }
 
   static protocol_type(input: string): ProtocolType | undefined {
     if (typeof input !== "string") return undefined;
 
-    if (!input || (input !== "E3+" && input !== "GT06")) return undefined;
+    if (!input || input !== "E3+") return undefined;
     return input;
   }
 
@@ -595,17 +569,6 @@ export class Bws4gParser {
 
     if (!input || Number.isNaN(input)) return undefined;
     return Number(input);
-  }
-  static lock_type_progression(input: string): LockTypeProgression | undefined {
-    if (typeof input !== "string") return undefined;
-
-    const [n1, n2] = input.split(",");
-    if (!n1 || !n2) return undefined;
-    if (Number.isNaN(n1) || Number.isNaN(n2)) return undefined;
-    return {
-      n1: Number(n2),
-      n2: Number(n1),
-    };
   }
   static ignition_by_voltage(input: string): IgnitionByVoltage | undefined {
     if (typeof input !== "string") return undefined;
@@ -640,14 +603,63 @@ export class Bws4gParser {
     return Number(input);
   }
 
-  /*
-   * @example 30
-   */
-  static ack(input: string): MaxSpeed | undefined {
-    if (typeof input !== "string") return undefined;
+  static methods() {
+    return {
+      check: this.check,
+      status: this.status,
+      serial: this.serial,
+      imei: this.imei,
+      iccid: this.iccid,
+      firmware: this.firmware,
+      apn: this.apn,
+      ip_primary: this.ip_primary,
+      ip_secondary: this.ip_secondary,
+      dns_primary: this.dns_primary,
+      dns_secondary: this.dns_secondary,
+      timezone: this.timezone,
+      lock_type: this.lock_type,
+      lock_type_variation: this.lock_type_variation,
+      data_transmission_on: this.data_transmission_on,
+      data_transmission_off: this.data_transmission_off,
+      odometer: this.odometer,
+      keep_alive: this.keep_alive,
+      accelerometer_sensitivity: this.accelerometer_sensitivity,
+      lbs_position: this.lbs_position,
+      cornering_position_update: this.cornering_position_update,
+      led: this.led,
+      sensitivity_adjustment: this.sensitivity_adjustment,
+      auto_test: this.auto_test,
+      max_speed: this.max_speed,
+      virtual_ignition_by_movement: this.virtual_ignition_by_movement,
+      communication_type: this.communication_type,
+      protocol_type: this.protocol_type,
+      anti_theft: this.anti_theft,
+      jammer_detection: this.jammer_detection,
+      angle_adjustment: this.angle_adjustment,
+      ignition_by_voltage: this.ignition_by_voltage,
+      input_1: this.input_1,
+      input_2: this.input_2,
+      horimeter: this.horimeter,
+    };
+  }
 
-    if (!input || Number.isNaN(input)) return undefined;
-    return Number(input);
+  static parser<K extends keyof ReturnType<typeof Bws4gParser.methods>>(
+    input: string[],
+    ...keys: K[]
+  ): { [P in K]?: ReturnType<ReturnType<typeof Bws4gParser.methods>[P]> } {
+    const table = this.methods();
+    const out = {} as {
+      [P in K]?: ReturnType<ReturnType<typeof Bws4gParser.methods>[P]>;
+    };
+
+    for (const key of keys) {
+      const fn = table[key as keyof typeof table] as (line: string) => any; // cada parser: (string) => T | undefined
+      // chame a função explicitamente; se quiser garantir 'this', use call
+      out[key] = input
+        .map((line) => fn.call(this, line))
+        .find((v) => v !== undefined);
+    }
+    return out;
   }
 }
 

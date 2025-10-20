@@ -20,9 +20,15 @@ export interface IPriceTable {
   equipmentSimcardPayment?: IEquipmentPayment[];
   simcardPayment?: ISimcardPayment[];
   servicePayment?: IServicePayment[];
+  startScheduleId?: string;
+  endScheduleId?: string;
   created_at?: Date;
   updated_at?: Date;
 }
+
+export type CancelPriceTableSchedulePayload = {
+  scheduleId: string;
+};
 export interface IPriceRange {
   from: number;
   to: number;

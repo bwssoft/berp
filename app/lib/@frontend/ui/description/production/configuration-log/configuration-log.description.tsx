@@ -1,5 +1,5 @@
 import React from "react";
-import {IConfigurationLog} from "@/backend/domain/production/entity/configuration-log.definition";
+import { IConfigurationLog } from "@/backend/domain/production/entity/configuration-log.definition";
 import { cn, getStatusProps } from "@/app/lib/util";
 import {
   Card,
@@ -25,7 +25,7 @@ interface Props {
   data: IConfigurationLog | null;
 }
 
-const renderDiff = (val: any) => {
+const renderByValueType = (val: any) => {
   if (val === null || val === undefined)
     return <span className="text-gray-400">–</span>;
   if (typeof val === "object") {
@@ -202,7 +202,7 @@ export function ConfigurationLogDescription({ data }: Props) {
                   <TableRow key={key}>
                     <TableCell>{key}</TableCell>
                     <TableCell>{request}</TableCell>
-                    <TableCell>{response ?? "--"}</TableCell>
+                    <TableCell>{renderByValueType(response) ?? "--"}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -213,6 +213,7 @@ export function ConfigurationLogDescription({ data }: Props) {
             </p>
           )}
         </div>
+
         <Separator className="col-span-3 my-4" />
 
         <div className="mt-6">
@@ -232,8 +233,8 @@ export function ConfigurationLogDescription({ data }: Props) {
                 {diffEntries.map(({ path, desired, applied }) => (
                   <TableRow key={path}>
                     <TableCell>{path}</TableCell>
-                    <TableCell>{renderDiff(desired)}</TableCell>
-                    <TableCell>{renderDiff(applied)}</TableCell>
+                    <TableCell>{renderByValueType(desired)}</TableCell>
+                    <TableCell>{renderByValueType(applied)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -248,4 +249,3 @@ export function ConfigurationLogDescription({ data }: Props) {
     </Card>
   );
 }
-

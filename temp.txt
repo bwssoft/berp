@@ -1,0 +1,22 @@
+﻿export class BaseParser {
+  static parser<K extends keyof ReturnType<typeof BwsNb2Parser.read_methods>>(
+    input: string[],
+    ...keys: K[]
+  ): {
+    [P in K]?: ReturnType<ReturnType<typeof BwsNb2Parser.read_methods>[P]>;
+  } {
+    const table = this.read_methods();
+    const out = {} as {
+      [P in K]?: ReturnType<ReturnType<typeof BwsNb2Parser.read_methods>[P]>;
+    };
+
+    for (const key of keys) {
+      const fn = table[key as keyof typeof table] as (line: string) => any; // cada parser: (string) => T | undefined
+      // chame a funÃ§Ã£o explicitamente; se quiser garantir 'this', use call
+      out[key] = input
+        .map((line) => fn.call(this, line))
+        .find((v) => v !== undefined);
+    }
+    return out;
+  }
+}

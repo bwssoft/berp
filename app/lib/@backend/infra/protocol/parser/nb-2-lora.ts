@@ -547,7 +547,7 @@ export class BwsNb2LoraParser {
 
     const value = parseFloat(dataTransmissionOff);
 
-    return isNaN(value) ? undefined : value;
+    return isNaN(value) ? undefined : value * 60;
   }
 
   /**

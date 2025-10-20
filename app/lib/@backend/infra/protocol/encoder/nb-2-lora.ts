@@ -48,7 +48,7 @@ export class BwsNb2LoraEncoder {
 
   static data_transmission_off(input: number): string | undefined {
     if (!input || typeof input !== "number") return undefined;
-    return `WCW=${input}\r\n`;
+    return `WCW=${input / 60}\r\n`;
   }
 
   static data_transmission_event(input: number): string | undefined {
