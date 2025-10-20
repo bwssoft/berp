@@ -8,9 +8,33 @@ interface Props {
   handleDisconnection?: (port: ISerialPort) => void;
 }
 
+type Reader = ReadableStreamDefaultReader<Uint8Array>;
+
 export const useSerialPort = (props: Props) => {
   const { handleDisconnection, handleConnection } = props;
   const [ports, setPorts] = useState<ISerialPort[]>([]);
+  const readerMapRef = useRef<WeakMap<ISerialPort, Reader>>(new WeakMap());
+
+  const releaseReader = useCallback(async (port: ISerialPort) => {
+    const reader = readerMapRef.current.get(port);
+    if (!reader) {
+      return;
+    }
+
+    readerMapRef.current.delete(port);
+
+    try {
+      await reader.cancel();
+    } catch (error) {
+      console.error("Error cancelling reader:", error);
+    } finally {
+      try {
+        reader.releaseLock();
+      } catch (releaseError) {
+        console.error("Error releasing reader lock:", releaseError);
+      }
+    }
+  }, []);
 
   const handleConnect = useCallback(
     (e: Event) => {
@@ -27,9 +51,10 @@ export const useSerialPort = (props: Props) => {
       const target = e.target as ISerialPort | null;
       if (!target) return;
       setPorts((prev) => prev.filter((el) => el !== target));
+      void releaseReader(target);
       handleDisconnection?.(target);
     },
-    [handleDisconnection]
+    [handleDisconnection, releaseReader]
   );
 
   useEffect(() => {
@@ -78,9 +103,7 @@ export const useSerialPort = (props: Props) => {
     try {
       if (port.readable) {
         if (port.readable.locked) {
-          const reader = port.readable.getReader();
-          await reader.cancel();
-          reader.releaseLock();
+          await releaseReader(port);
         }
       }
 
@@ -100,6 +123,7 @@ export const useSerialPort = (props: Props) => {
 
   const forgetPort = async (port: ISerialPort): Promise<void> => {
     try {
+      await releaseReader(port);
       await port.forget();
     } catch (error) {
       throw error instanceof Error
@@ -123,11 +147,30 @@ export const useSerialPort = (props: Props) => {
       throw Error("Readable stream not available");
     }
 
+    const storedReader = readerMapRef.current.get(port);
+    if (storedReader) {
+      return storedReader;
+    }
+
     if (port.readable.locked) {
       throw Error("Readable stream is already locked");
     }
 
     const reader = port.readable.getReader();
+
+    const cleanup = () => {
+      readerMapRef.current.delete(port);
+    };
+
+    reader.closed.catch(() => undefined).finally(cleanup);
+
+    const originalReleaseLock = reader.releaseLock.bind(reader);
+    reader.releaseLock = () => {
+      cleanup();
+      originalReleaseLock();
+    };
+
+    readerMapRef.current.set(port, reader);
 
     return reader;
   };
@@ -160,6 +203,7 @@ export const useSerialPort = (props: Props) => {
     openPort,
     writeToPort,
     getReader,
+    releaseReader,
   };
 };
 
@@ -240,3 +284,82 @@ interface Serial {
 export interface INavigator extends Navigator {
   serial: Serial;
 }
+
+export const readReader = async (
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+  timeout = 10_000, // timeout total (hard-stop)
+  idleMs = 1500 // encerra se ficar ocioso por esse tempo
+): Promise<string[]> => {
+  const decoder = new TextDecoder();
+  const lines = new Set<string>();
+  let buffer = "";
+
+  const start = Date.now();
+  let idleBudget = idleMs; // janela de ociosidade (pode ser ajustada se quiser)
+
+  // Lê um passo: corrida entre read() e timer de ociosidade
+  const readOnceOrIdle = async (): Promise<"read" | "idle" | "done"> => {
+    const idleSentinel = Symbol("idle");
+    const perRead = reader.read();
+
+    const winner = await Promise.race([
+      perRead,
+      new Promise<typeof idleSentinel>((resolve) =>
+        setTimeout(() => resolve(idleSentinel), idleBudget)
+      ),
+    ]);
+
+    if (winner === idleSentinel) return "idle";
+
+    const { value, done } = winner as ReadableStreamReadResult<Uint8Array>;
+    if (done) return "done";
+
+    if (value && value.byteLength) {
+      buffer += decoder.decode(value, { stream: true });
+
+      const parts = buffer.split(/\r?\n/);
+      buffer = parts.pop() ?? "";
+      for (const line of parts) {
+        if (line.length) lines.add(line);
+      }
+
+      // recebeu dados → reseta janela de ociosidade
+      idleBudget = idleMs;
+      return "read";
+    }
+
+    return "read";
+  };
+
+  try {
+    while (true) {
+      // Hard timeout total
+      if (Date.now() - start > timeout) break;
+
+      const state = await readOnceOrIdle();
+
+      if (state === "done") break;
+
+      if (state === "idle") {
+        break;
+      }
+
+      // state === "read": continua
+    }
+  } finally {
+    // empurra eventual parcial
+    if (buffer.length) lines.add(buffer);
+
+    // Se estourou o timeout total e o read() ficou pendente, cancele para liberar o lock
+    if (Date.now() - start > timeout) {
+      try {
+        await reader.cancel();
+      } catch {}
+      try {
+        reader.releaseLock();
+      } catch {}
+    }
+  }
+
+  return Array.from(lines);
+};

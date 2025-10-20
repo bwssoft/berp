@@ -1,8 +1,14 @@
 import { singleton } from "@/app/lib/util/singleton";
 import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
 import type { IPriceTableRepository } from "@/backend/domain/commercial";
-import type { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
-import { priceTableRepository, priceTableSchedulerGateway } from "@/backend/infra";
+import type {
+  CancelPriceTableSchedulePayload,
+  IPriceTable,
+} from "@/backend/domain/commercial/entity/price-table.definition";
+import {
+  priceTableRepository,
+  priceTableSchedulerGateway,
+} from "@/backend/infra";
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 
@@ -36,7 +42,8 @@ class CancelPriceTableUsecase {
         };
       }
 
-      // altera o status da tabela para cancelada
+      await this.cancelExistingSchedules(oldPriceTable);
+
       const updated = await this.repository.updateOne(
         { id: input.id },
         { $set: { status: "CANCELLED" } }
@@ -72,9 +79,6 @@ class CancelPriceTableUsecase {
         };
       }
 
-      // Cancel any pending schedules for this price table
-      await this.cancelExistingSchedules(input.id);
-
       return { success: true };
     } catch (err: any) {
       console.error("Erro ao cancelar tabela de preço:", err);
@@ -87,12 +91,42 @@ class CancelPriceTableUsecase {
     }
   }
 
-  private async cancelExistingSchedules(priceTableId: string): Promise<void> {
-    try {
-      await priceTableSchedulerGateway.deleteSchedule(priceTableId);
-    } catch (error) {
-      console.warn("⚠️ Failed to cancel existing schedules:", error);
+  private async cancelExistingSchedules(
+    priceTable: IPriceTable
+  ): Promise<void> {
+    const scheduleIds: string[] = [];
+
+    const { startScheduleId, endScheduleId, isTemporary } = priceTable;
+
+    if (startScheduleId) {
+      scheduleIds.push(startScheduleId);
     }
+
+    if (isTemporary) {
+      if (endScheduleId && !scheduleIds.includes(endScheduleId)) {
+        scheduleIds.push(endScheduleId);
+      }
+    } else if (endScheduleId && !scheduleIds.includes(endScheduleId)) {
+      scheduleIds.push(endScheduleId);
+    }
+
+    if (!scheduleIds.length) {
+      return;
+    }
+
+    await Promise.all(
+      scheduleIds.map(async (scheduleId) => {
+        try {
+          const payload: CancelPriceTableSchedulePayload = { scheduleId };
+          await priceTableSchedulerGateway.deleteSchedule(payload);
+        } catch (error) {
+          console.warn(
+            `Failed to cancel schedule '${scheduleId}' for price table '${priceTable.id}':`,
+            error
+          );
+        }
+      })
+    );
   }
 }
 

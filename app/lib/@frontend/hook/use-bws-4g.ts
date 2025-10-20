@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { Bws4g, Bws4gParser } from "@/backend/infra/protocol/parser/bws-4g";
-import { Bws4GEncoder } from "@/backend/infra/protocol/encoder/bws-4g";
+import { BWS4GEncoder } from "@/backend/infra/protocol/encoder/bws-4g";
 import { isIccid, isImei, sleep, typedObjectEntries } from "../../util";
-import { Message, useCommunication } from "./use-communication";
+import { Message, MessageV2, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
@@ -41,7 +41,7 @@ type LineMatcher =
 export const readResponse = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
   matcher?: LineMatcher,
-  timeout = 4500
+  timeout = 10000
 ): Promise<string | undefined> => {
   const decoder = new TextDecoder();
   let buffer = "";
@@ -92,7 +92,7 @@ const generateMessages = (
     ...profile.config.general,
     ...profile.config.specific,
   }).forEach(([command, args]) => {
-    const _message = Bws4GEncoder.encoder({ command, args } as any);
+    const _message = BWS4GEncoder.encoder({ command, args } as any);
     if (!_message) return;
     response[command as Namespace.ConfigKeys] = _message;
   });
@@ -122,14 +122,25 @@ export const useBWS4G = () => {
       console.info("-------------------------");
       console.info("[MESSAGE SENT]", command);
       await writeToPort(port, command);
+      console.time(command);
       const response = await readResponse(reader, matcher, timeout);
+      console.timeEnd(command);
       console.info("[RESPONSE MATCHED]", response);
       await reader.cancel();
       reader.releaseLock();
       return response;
     },
+    sendMessageV2: async (
+      port,
+      msg: MessageV2<{ delay_before?: number; check?: string }>
+    ) => {
+      const { command, delay_before } = msg;
+      if (delay_before) await sleep(delay_before);
+      await writeToPort(port, command);
+      console.log("[COMMAND]", command);
+    },
     options: {
-      delayBetweenMessages: 200,
+      delayBetweenMessages: 1000,
       maxRetriesPerMessage: 3,
       maxOverallRetries: 2,
     },
@@ -144,11 +155,11 @@ export const useBWS4G = () => {
           command: "IMEI",
           key: "imei",
           transform: Bws4gParser.imei,
-          delay_before: 1000,
+          delay_before: 1500,
         },
         { command: "ICCID", key: "iccid", transform: Bws4gParser.iccid },
         { command: "ET", key: "firmware", transform: Bws4gParser.firmware },
-        { command: "DN\r\n", key: "debug_on", matcher: "Debug ON" },
+        // { command: "DN\r\n", key: "debug_on", matcher: "Debug ON" },
       ] as const;
       return await Promise.all(
         ports.map(async (port) => {
@@ -192,10 +203,16 @@ export const useBWS4G = () => {
             const processed_status = Bws4gParser.status(status);
             const ip_primary = Bws4gParser.ip_primary(cxip);
             const ip_secondary = Bws4gParser.ip_secondary(cxip);
-            const dns_primary = Bws4gParser.dns(cxip);
+            const dns_primary = Bws4gParser.dns_primary(cxip);
+            const dns_secondary = Bws4gParser.dns_secondary(cxip);
             const horimeter = processed_status?.HR
               ? Bws4gParser.horimeter(processed_status.HR)
               : undefined;
+
+            const lock_type_variation = processed_status?.["OUT MODE"]
+              ? Bws4gParser.lock_type_variation(processed_status["OUT MODE"])
+              : undefined;
+
             return {
               port,
               equipment,
@@ -209,10 +226,12 @@ export const useBWS4G = () => {
                   apn,
                   keep_alive,
                   dns_primary,
+                  dns_secondary,
                 },
                 specific: {
                   ...processed_check,
                   horimeter,
+                  lock_type_variation,
                 },
               },
               messages: messages.map(({ key, command }) => ({
@@ -267,7 +286,8 @@ export const useBWS4G = () => {
             const processed_status = Bws4gParser.status(status);
             const ip_primary = Bws4gParser.ip_primary(cxip);
             const ip_secondary = Bws4gParser.ip_secondary(cxip);
-            const dns_primary = Bws4gParser.dns(cxip);
+            const dns_primary = Bws4gParser.dns_primary(cxip);
+            const dns_secondary = Bws4gParser.dns_secondary(cxip);
             const horimeter = processed_status?.HR
               ? Bws4gParser.horimeter(processed_status.HR)
               : undefined;
@@ -290,6 +310,7 @@ export const useBWS4G = () => {
                   apn,
                   keep_alive,
                   dns_primary,
+                  dns_secondary,
                 },
                 specific: {
                   ...processed_check,

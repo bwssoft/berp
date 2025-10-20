@@ -7,10 +7,10 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { Button } from '@/frontend/ui/component/button';
-import { DateInput } from '@/frontend/ui/component/date-input';
-import { Input } from '@/frontend/ui/component/input';
-import { Toggle } from '@/frontend/ui/component/toggle';
+import { Button } from "@/frontend/ui/component/button";
+import { DateInput } from "@/frontend/ui/component/date-input";
+import { Input } from "@/frontend/ui/component/input";
+import { Toggle } from "@/frontend/ui/component/toggle";
 
 import {
   EquipmentAccessoryPriceForm,
@@ -263,8 +263,10 @@ export function UpsertPriceTableForm({
 
   // Determine button visibility based on state
   const isCreatingNew = !editMode || !priceTableId;
-  const isDraft = priceTableStatus === "DRAFT" || priceTableStatus === null;
+  const isDraft = priceTableStatus === "DRAFT";
+  const isAwaitingPublication = priceTableStatus === "AWAITING_PUBLICATION";
   const isActive = priceTableStatus === "ACTIVE";
+  const isPaused = priceTableStatus === "PAUSED";
 
   return (
     <div className="space-y-4">
@@ -305,7 +307,7 @@ export function UpsertPriceTableForm({
           </Link>
 
           {/* Cancelar button - only show for DRAFT when editing */}
-          {isDraft && !isCreatingNew && (
+          {(isAwaitingPublication || isDraft) && (
             <Button
               type="button"
               variant="outline"
@@ -317,7 +319,7 @@ export function UpsertPriceTableForm({
           )}
 
           {/* Inativar button - only show for ACTIVE */}
-          {isActive && (
+          {(isActive || isPaused) && (
             <Button
               type="button"
               variant="outline"
@@ -328,7 +330,7 @@ export function UpsertPriceTableForm({
           )}
 
           {/* Salvar button - show for creating new or editing DRAFT */}
-          {(isCreatingNew || isDraft) && (
+          {(isCreatingNew || isDraft || isAwaitingPublication) && (
             <Button
               type="submit"
               form="price-table-form"
@@ -377,14 +379,16 @@ export function UpsertPriceTableForm({
                         value={form.watch("startDateTime")}
                         onChange={(date) => {
                           form.setValue("startDateTime", date as Date);
-                           clearFieldError("startDateTime");
+                          clearFieldError("startDateTime");
                         }}
                         placeholder="Selecione a data de início"
                         className="w-full"
                       />
-                      {(fieldErrors.startDateTime || form.formState.errors.startDateTime?.message) && (
+                      {(fieldErrors.startDateTime ||
+                        form.formState.errors.startDateTime?.message) && (
                         <p className="mt-1 text-sm text-red-600">
-                          {fieldErrors.startDateTime || form.formState.errors.startDateTime?.message}
+                          {fieldErrors.startDateTime ||
+                            form.formState.errors.startDateTime?.message}
                         </p>
                       )}
                     </div>
@@ -404,9 +408,11 @@ export function UpsertPriceTableForm({
                             placeholder="Selecione a data de fim"
                             className="w-full"
                           />
-                          {(fieldErrors.endDateTime || form.formState.errors.endDateTime?.message) && (
+                          {(fieldErrors.endDateTime ||
+                            form.formState.errors.endDateTime?.message) && (
                             <p className="mt-1 text-sm text-red-600">
-                              {fieldErrors.endDateTime || form.formState.errors.endDateTime?.message}
+                              {fieldErrors.endDateTime ||
+                                form.formState.errors.endDateTime?.message}
                             </p>
                           )}
                         </>
@@ -446,16 +452,15 @@ export function UpsertPriceTableForm({
                 />
 
                 {/* mensagens de erro ou sucesso na validação das condições */}
-                {messageErrorCondition && messageErrorCondition.message.map(
-                    (item, index) => (
+                {messageErrorCondition &&
+                  messageErrorCondition.message.map((item, index) => (
                     <StatusBanner
                       key={index}
                       status={messageErrorCondition.status}
                       message={item}
                       statusStyles={STATUS_STYLES}
                     />
-                )
-                )}
+                  ))}
               </DisclosurePanel>
             </div>
           </Disclosure>
@@ -874,4 +879,3 @@ export function UpsertPriceTableForm({
     </div>
   );
 }
-

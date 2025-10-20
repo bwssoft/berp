@@ -12,10 +12,15 @@ export type Message<R = any, M extends object = {}> = M & {
   timeout?: number;
 };
 
+export type MessageV2<M extends object = {}> = M & {
+  command: string;
+};
+
 export interface Props<Transport, M extends object = {}> {
   openTransport: (transport: Transport) => Promise<void>;
   closeTransport: (transport: Transport) => Promise<void>;
   sendMessage: (transport: Transport, msg: Message<any, M>) => Promise<any>;
+  sendMessageV2: (transport: Transport, msg: MessageV2<M>) => Promise<any>;
   options?: {
     delayBetweenMessages?: number;
     maxRetriesPerMessage?: number;
@@ -46,7 +51,13 @@ class RetryLimitExceededError extends Error {
 export function useCommunication<Transport, M extends object = {}>(
   props: Props<Transport, M>
 ) {
-  const { openTransport, closeTransport, sendMessage, options = {} } = props;
+  const {
+    openTransport,
+    closeTransport,
+    sendMessage,
+    sendMessageV2,
+    options = {},
+  } = props;
 
   const {
     delayBetweenMessages = 150,
@@ -135,5 +146,37 @@ export function useCommunication<Transport, M extends object = {}>(
     ]
   );
 
-  return { sendMultipleMessages, sendSingleMessage };
+  const send = useCallback(
+    async <
+      Msgs extends readonly MessageV2<M>[],
+      PRE = undefined,
+      POS = undefined,
+    >(input: {
+      transport: Transport;
+      messages: Msgs;
+      preChunk?: (transport: Transport) => Promise<PRE>;
+      posChunk?: (transport: Transport) => Promise<POS>;
+    }): Promise<{ pre?: PRE; pos?: POS }> => {
+      const { transport, messages, preChunk, posChunk } = input;
+      try {
+        await openTransport(transport);
+
+        const pre = preChunk ? await preChunk(transport) : undefined;
+
+        for (const msg of messages) {
+          await sendMessageV2(transport, msg);
+          await sleep(delayBetweenMessages);
+        }
+
+        const pos = posChunk ? await posChunk(transport) : undefined;
+
+        return { pre, pos };
+      } finally {
+        await closeTransport(transport);
+      }
+    },
+    [openTransport, closeTransport, delayBetweenMessages, sendMessageV2]
+  );
+
+  return { sendMultipleMessages, sendSingleMessage, send };
 }

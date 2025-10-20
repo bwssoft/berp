@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { E34GParser } from "@/backend/infra/protocol/parser/E34G";
 import { E34GEncoder } from "@/backend/infra/protocol/encoder/E34G";
 import { isIccid, sleep, typedObjectEntries } from "../../util";
-import { Message, useCommunication } from "./use-communication";
+import { Message, MessageV2, useCommunication } from "./use-communication";
 import { ISerialPort, useSerialPort } from "./use-serial-port";
 import { Device } from "@/backend/domain/engineer/entity/device.definition";
 import {
@@ -102,6 +102,15 @@ export const useE3Plus4G = () => {
       await reader.cancel();
       reader.releaseLock();
       return response;
+    },
+    sendMessageV2: async (
+      port,
+      msg: MessageV2<{ delay_before?: number; check?: string }>
+    ) => {
+      const { command, delay_before } = msg;
+      if (delay_before) await sleep(delay_before);
+      await writeToPort(port, command);
+      console.log("[COMMAND]", command);
     },
     options: {
       delayBetweenMessages: 200,
@@ -210,7 +219,7 @@ export const useE3Plus4G = () => {
             command,
           })
         ),
-        { command: "CHECK", key: "check", delay_before: 1000 },
+        { command: "CHECK", key: "check", delay_before: 2000 },
         { command: "CXIP", key: "cxip" },
         { command: "STATUS", key: "status" },
       ] as const;
