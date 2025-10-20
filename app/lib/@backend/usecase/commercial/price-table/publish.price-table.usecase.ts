@@ -210,43 +210,30 @@ class PublishPriceTableUsecase {
       }
     }
 
-    // 5) Criar agendamento ANTES de mudar o status
-    try {
-      const priceTableId = priceTable.id;
-      if (!priceTableId) {
-        return {
-          success: false,
-          error: { global: "ID da tabela de preços está ausente." },
-        };
-      }
-
-      if (isTemporary) {
-        await priceTableSchedulerGateway.createSchedules({
-          priceTableId,
-          startDateTime: priceTable.startDateTime.toISOString(),
-          endDateTime: priceTable?.endDateTime?.toISOString() || undefined,
-        });
-      } else {
-        await priceTableSchedulerGateway.createSchedules({
-          priceTableId,
-          startDateTime: priceTable.startDateTime.toISOString(),
-        });
-      }
-    } catch (schedulerError) {
-      console.error("❌ Erro ao criar agendamento:", schedulerError);
+    const priceTableId = priceTable.id;
+    if (!priceTableId) {
       return {
         success: false,
-        error: {
-          global:
-            "Falha ao agendar a publicação. Tente novamente ou contate o suporte.",
-        },
+        error: { global: "ID da tabela de preços está ausente." },
       };
     }
+    const scheduleResponse = await priceTableSchedulerGateway.createSchedules({
+      priceTableId,
+      startDateTime: priceTable.startDateTime.toISOString(),
+      endDateTime: priceTable?.endDateTime?.toISOString() || undefined,
+    });
 
     // 6) SOMENTE após sucesso do scheduler, atualiza status para "AWAITING_PUBLICATION"
     const updated = await this.repository.updateOne(
       { id: input.id },
-      { $set: { status: "AWAITING_PUBLICATION", updated_at: new Date() } }
+      {
+        $set: {
+          status: "AWAITING_PUBLICATION",
+          updated_at: new Date(),
+          startScheduleId: scheduleResponse?.startScheduleId,
+          endScheduleId: scheduleResponse?.endScheduleId,
+        },
+      }
     );
 
     if (!updated) {

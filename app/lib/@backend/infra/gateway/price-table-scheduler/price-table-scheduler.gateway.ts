@@ -2,8 +2,13 @@ import { singleton } from "@/app/lib/util";
 import { config } from "@/app/lib/config";
 
 export interface ScheduleResponse {
-  scheduleIds: string[];
-  arns: string[];
+  message: string;
+  startScheduleId: string;
+  startDateTime: string;
+  startScheduleArn?: string;
+  endScheduleId?: string;
+  endDateTime?: string;
+  endScheduleArn?: string;
 }
 
 export class PriceTableSchedulerGateway {
