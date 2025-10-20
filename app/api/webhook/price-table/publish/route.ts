@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { publishPriceTableUsecase } from "@/backend/usecase/commercial/price-table/publish.price-table.usecase";
 import { activatePriceTableUsecase } from "@/backend/usecase/commercial/price-table/active.price-table.usecase";
+import { priceTableRepository } from "@/backend/infra";
 
 export const runtime = "nodejs";
 
@@ -28,10 +28,39 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const priceTable = await priceTableRepository.findOne({ id: priceTableId });
+  if (!priceTable) {
+    return NextResponse.json(
+      { ok: false, error: { global: "Tabela de preços não encontrada." } },
+      { status: 404 }
+    );
+  }
+
+  if (!priceTable.isTemporary) {
+    try {
+      const activeNormal = await priceTableRepository.findOne({
+        id: { $ne: priceTableId },
+        isTemporary: false,
+        status: "ACTIVE",
+      });
+
+      if (activeNormal?.id) {
+        await priceTableRepository.updateOne(
+          { id: activeNormal.id },
+          { $set: { status: "INACTIVE", updated_at: new Date() } }
+        );
+      }
+    } catch (error) {
+      console.warn(
+        "Failed to inactivate currently active normal price table before activation webhook:",
+        error
+      );
+    }
+  }
+
   const out = await activatePriceTableUsecase.execute({ id: priceTableId });
   return NextResponse.json(
     { ok: out.success, error: out.error },
     { status: out.success ? 200 : 400 }
   );
 }
-

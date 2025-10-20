@@ -3,7 +3,10 @@ import { normalizeString } from "@/app/lib/util/normalize-string";
 import { AuditDomain } from "@/backend/domain/admin/entity/audit.definition";
 import type { IPriceTable } from "@/backend/domain/commercial/entity/price-table.definition";
 import type { IPriceTableRepository } from "@/backend/domain/commercial";
-import { priceTableRepository } from "@/backend/infra";
+import {
+  priceTableRepository,
+  priceTableSchedulerGateway,
+} from "@/backend/infra";
 import { auth } from "@/auth";
 import { createOneAuditUsecase } from "@/backend/usecase/admin/audit/create-one.audit.usecase";
 import { findManyPriceTableUsecase } from "@/backend/usecase/commercial/price-table/find-many.price-table.usecase";
@@ -26,8 +29,86 @@ namespace Dto {
 class UpdateOnePriceTableUsecase {
   repository: IPriceTableRepository = priceTableRepository;
 
-  async execute(input: Dto.Input): Promise<Dto.Output> {
+  private validateDateTimes(input: Dto.Input): Dto.Output | null {
     const nowIso = new Date();
+
+    if (input.startDateTime < nowIso) {
+      return {
+        success: false,
+        error: {
+          startDateTime: "A data/hora de início não pode estar no passado.",
+        },
+      };
+    }
+
+    if (input.isTemporary) {
+      if (!input.endDateTime) {
+        return {
+          success: false,
+          error: {
+            endDateTime:
+              "Para tabela provisória, informe a data/hora de término.",
+          },
+        };
+      }
+      if (input.endDateTime <= input.startDateTime) {
+        return {
+          success: false,
+          error: { endDateTime: "Término deve ser maior que o início." },
+        };
+      }
+    } else if (input.endDateTime && input.endDateTime < input.startDateTime) {
+      return {
+        success: false,
+        error: { endDateTime: "Término não pode ser menor que o início." },
+      };
+    }
+
+    return null;
+  }
+
+  private async validateNameUniqueness(
+    input: Dto.Input,
+    existing: IPriceTable
+  ): Promise<Dto.Output | null> {
+    if (input.name !== existing.name) {
+      const { docs } = await findManyPriceTableUsecase.execute({});
+      const normalized = normalizeString(input.name);
+      const duplicated = docs.find(
+        (t) => t.id !== existing.id && normalizeString(t.name) === normalized
+      );
+      if (duplicated) {
+        return {
+          success: false,
+          error: {
+            global: "Já existe uma Tabela de Preços com este nome.",
+            name: "Nome já está em uso.",
+          },
+        };
+      }
+    }
+    return null;
+  }
+
+  private async cancelExistingSchedules(existing: IPriceTable): Promise<void> {
+    try {
+      if (existing.startScheduleId) {
+        await priceTableSchedulerGateway.deleteSchedule({
+          scheduleId: existing.startScheduleId,
+        });
+      }
+
+      if (existing.isTemporary && existing.endScheduleId) {
+        await priceTableSchedulerGateway.deleteSchedule({
+          scheduleId: existing.endScheduleId,
+        });
+      }
+    } catch (error) {
+      console.warn("Failed to cancel existing schedules:", error);
+    }
+  }
+
+  async execute(input: Dto.Input): Promise<Dto.Output> {
     try {
       const existing = await this.repository.findOne({ id: input.id });
       if (!existing) {
@@ -37,88 +118,89 @@ class UpdateOnePriceTableUsecase {
         };
       }
 
-      // (talvez eu adicione essas validações no form do front tbm, mas to mantendo aq pra garantir)
-      if (input.startDateTime < nowIso) {
-        return {
-          success: false,
-          error: {
-            startDateTime: "A data/hora de início não pode estar no passado.",
-          },
-        };
-      }
-      if (input.isTemporary) {
-        if (!input.endDateTime) {
-          return {
-            success: false,
-            error: {
-              endDateTime:
-                "Para tabela provisória, informe a data/hora de término.",
-            },
-          };
-        }
-        if (input.endDateTime <= input.startDateTime) {
-          return {
-            success: false,
-            error: { endDateTime: "Término deve ser maior que o início." },
-          };
-        }
-      } else if (input.endDateTime && input.endDateTime < input.startDateTime) {
-        return {
-          success: false,
-          error: { endDateTime: "Término não pode ser menor que o início." },
-        };
+      // Validate date times
+      const dateValidationError = this.validateDateTimes(input);
+      if (dateValidationError) {
+        return dateValidationError;
       }
 
-      // Unicidade de nome (CI) só se o nome mudou
-      if (input.name !== existing.name) {
-        const { docs } = await findManyPriceTableUsecase.execute({});
-        const normalized = normalizeString(input.name);
-        const duplicated = docs.find(
-          (t) => t.id !== existing.id && normalizeString(t.name) === normalized
-        );
-        if (duplicated) {
-          return {
-            success: false,
-            error: {
-              global: "Já existe uma Tabela de Preços com este nome.",
-              name: "Nome já está em uso.",
-            },
-          };
-        }
-      }
-
-      const updatedAt = new Date();
-      const updated = await this.repository.updateOne(
-        { id: existing.id },
-        {
-          $set: {
-            name: input.name,
-            startDateTime: input.startDateTime,
-            endDateTime: input.isTemporary ? input.endDateTime : undefined,
-            isTemporary: input.isTemporary,
-            //se editar e salvar enquanto status for Aguardando Publicação, voltar o status para Rascunho.
-            status:
-              input.status == "AWAITING_PUBLICATION" ? "DRAFT" : input.status,
-            groups: input.groups,
-            equipmentPayment: input.equipmentPayment,
-            equipmentSimcardPayment: input.equipmentSimcardPayment,
-            simcardPayment: input.simcardPayment,
-            servicePayment: input.servicePayment,
-            updated_at: updatedAt,
-          },
-        }
+      // Validate name uniqueness
+      const nameValidationError = await this.validateNameUniqueness(
+        input,
+        existing
       );
-
-      if (!updated) {
-        return {
-          success: false,
-          error: { global: "Tabela de Preços não atualizada." },
-        };
+      if (nameValidationError) {
+        return nameValidationError;
       }
 
-      const after = await this.repository.findOne({ id: existing.id });
+      // Cancel existing schedules
+      await this.cancelExistingSchedules(existing);
 
+      // Update the price table
+      const updateResult = await this.updatePriceTable(input, existing);
+      if (!updateResult.success) {
+        return updateResult;
+      }
+
+      // Create audit record
+      if (existing.id) {
+        await this.createAuditRecord(existing, existing.id);
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error("Falha ao atualizar Tabela de Preços:", err);
+      return {
+        success: false,
+        error: { global: "Falha ao atualizar Tabela de Preços." },
+      };
+    }
+  }
+
+  private async updatePriceTable(
+    input: Dto.Input,
+    existing: IPriceTable
+  ): Promise<Dto.Output> {
+    const updatedAt = new Date();
+    const updated = await this.repository.updateOne(
+      { id: existing.id },
+      {
+        $set: {
+          name: input.name,
+          startDateTime: input.startDateTime,
+          endDateTime: input.isTemporary ? input.endDateTime : undefined,
+          isTemporary: input.isTemporary,
+          status: "DRAFT",
+          groups: input.groups,
+          equipmentPayment: input.equipmentPayment,
+          equipmentSimcardPayment: input.equipmentSimcardPayment,
+          simcardPayment: input.simcardPayment,
+          servicePayment: input.servicePayment,
+          startScheduleId: undefined,
+          endScheduleId: undefined,
+          updated_at: updatedAt,
+        },
+      }
+    );
+
+    if (!updated) {
+      return {
+        success: false,
+        error: { global: "Tabela de Preços não atualizada." },
+      };
+    }
+
+    return { success: true };
+  }
+
+  private async createAuditRecord(
+    existing: IPriceTable,
+    priceTableId: string
+  ): Promise<void> {
+    try {
+      const after = await this.repository.findOne({ id: priceTableId });
       const session = await auth();
+
       if (session?.user && after) {
         const { name: userName, email, id: user_id } = session.user;
         await createOneAuditUsecase.execute<IPriceTable, IPriceTable>({
@@ -129,14 +211,8 @@ class UpdateOnePriceTableUsecase {
           action: `Tabela de preços '${after.name}' atualizada.`,
         });
       }
-
-      return { success: true };
-    } catch (err) {
-      console.error("Falha ao atualizar Tabela de Preços:", err);
-      return {
-        success: false,
-        error: { global: "Falha ao atualizar Tabela de Preços." },
-      };
+    } catch (error) {
+      console.warn("Failed to create audit record:", error);
     }
   }
 }

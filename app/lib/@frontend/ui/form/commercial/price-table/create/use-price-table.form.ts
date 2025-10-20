@@ -174,6 +174,9 @@ const STATUS_STYLES: Record<Status, string> = {
   blue: "bg-blue-100 border-l-blue-500 text-blue-800",
 };
 
+type PriceTableSchedulerGatewaySingleton =
+  typeof import("@/backend/infra/gateway/price-table-scheduler/price-table-scheduler.gateway").priceTableSchedulerGateway;
+
 const uid = () => crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
 
 const createEmptyCondition = (): IPriceTableCondition => ({
@@ -750,24 +753,63 @@ export function usePriceTableForm({
     return payload;
   };
 
+  const getOperationMessages = (status: StatusPriceTable) => {
+    const isUpdate = editMode && !cloneMode;
+    const isDraft = status === "DRAFT";
+
+    if (isUpdate) {
+      return {
+        message: isDraft
+          ? "Alterações salvas!"
+          : "Tabela de preços atualizada com sucesso!",
+        description: isDraft
+          ? "Suas alterações foram salvas como rascunho."
+          : "Tabela de preços atualizada com sucesso!",
+      };
+    }
+
+    if (cloneMode) {
+      return {
+        message: "Tabela clonada com sucesso!",
+        description:
+          "Tabela foi clonada e você foi redirecionado para editá-la.",
+      };
+    }
+
+    return {
+      message: isDraft
+        ? "Rascunho salvo!"
+        : "Tabela de preços criada com sucesso!",
+      description: isDraft
+        ? "Suas alterações foram salvas como rascunho."
+        : "Tabela de preços criada com sucesso!",
+    };
+  };
+
+  const shouldRedirectAfterSubmission = (
+    result: any
+  ): result is { success: true; id: string } => {
+    const isCreatingNew = !editMode || cloneMode;
+    const hasValidId = result.success && "id" in result && result.id;
+
+    return isCreatingNew && hasValidId;
+  };
+
   const handleFormSubmission = async (
     data: CreatePriceTableFormData,
     status: StatusPriceTable = "DRAFT"
   ) => {
     try {
       const payload = transformToPriceTablePayload(data);
+      const isUpdate = editMode && !cloneMode;
 
-      // Use appropriate action based on edit mode and clone mode
-      // Clone mode should always create, not update
-      const result =
-        editMode && !cloneMode
-          ? await updateOnePriceTable(payload as IPriceTable)
-          : await createOnePriceTable(
-              payload as Omit<IPriceTable, "id" | "created_at" | "updated_at">
-            );
+      const result = isUpdate
+        ? await updateOnePriceTable(payload as IPriceTable)
+        : await createOnePriceTable(
+            payload as Omit<IPriceTable, "id" | "created_at" | "updated_at">
+          );
 
       if (result?.success) {
-        // Update price table status in state after successful save
         setPriceTableStatus(status);
 
         // Update payment data states after successful save
@@ -784,36 +826,10 @@ export function usePriceTableForm({
           setExistingServicePayment(payload.servicePayment);
         }
 
-        const message =
-          editMode && !cloneMode
-            ? status === "DRAFT"
-              ? "Alterações salvas!"
-              : "Tabela de preços atualizada com sucesso!"
-            : cloneMode
-              ? "Tabela clonada com sucesso!"
-              : status === "DRAFT"
-                ? "Rascunho salvo!"
-                : "Tabela de preços criada com sucesso!";
-
-        const description =
-          editMode && !cloneMode
-            ? status === "DRAFT"
-              ? "Suas alterações foram salvas como rascunho."
-              : "Tabela de preços atualizada com sucesso!"
-            : cloneMode
-              ? "Tabela foi clonada e você foi redirecionado para editá-la."
-              : status === "DRAFT"
-                ? "Suas alterações foram salvas como rascunho."
-                : "Tabela de preços criada com sucesso!";
-
+        const { message, description } = getOperationMessages(status);
         toast({ title: message, description, variant: "success" });
 
-        if (
-          (!editMode || cloneMode) &&
-          result.success &&
-          "id" in result &&
-          result.id
-        ) {
+        if (shouldRedirectAfterSubmission(result)) {
           router.push(`/commercial/price-table/form/edit/${result.id}`);
         }
       } else {
@@ -842,6 +858,18 @@ export function usePriceTableForm({
     }
   };
 
+  const getValidationErrorMessage = (errors: any) => {
+    if (errors.name || errors.startDateTime || errors.endDateTime) {
+      return "Preencha os campos obrigatórios: nome, data de início e data de fim.";
+    }
+
+    if (errors.groups) {
+      return "Preencha todos os campos obrigatórios nas condições de faturamento.";
+    }
+
+    return "Preencha todos os campos obrigatórios.";
+  };
+
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     setLoading(true);
@@ -850,15 +878,7 @@ export function usePriceTableForm({
       const isValid = await form.trigger();
       if (!isValid) {
         const errors = form.formState.errors;
-        let errorMessage = "Preencha todos os campos obrigatórios.";
-
-        if (errors.name || errors.startDateTime || errors.endDateTime) {
-          errorMessage =
-            "Preencha os campos obrigatórios: nome, data de início e data de fim.";
-        } else if (errors.groups) {
-          errorMessage =
-            "Preencha todos os campos obrigatórios nas condições de faturamento.";
-        }
+        const errorMessage = getValidationErrorMessage(errors);
 
         toast({
           title: "Campos obrigatórios",
