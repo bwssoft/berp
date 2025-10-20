@@ -1,5 +1,6 @@
 import { singleton } from "@/app/lib/util";
 import { config } from "@/app/lib/config";
+import type { CancelPriceTableSchedulePayload } from "@/backend/domain/commercial/entity/price-table.definition";
 
 export interface ScheduleResponse {
   message: string;
@@ -43,7 +44,9 @@ export class PriceTableSchedulerGateway {
     return response.json();
   }
 
-  async deleteSchedule(scheduleId: string): Promise<void> {
+  async deleteSchedule({
+    scheduleId,
+  }: CancelPriceTableSchedulePayload): Promise<void> {
     const response = await fetch(`${this.baseUrl}/schedule/${scheduleId}`, {
       method: "DELETE",
     });
